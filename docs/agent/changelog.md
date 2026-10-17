@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-17: Contact shows the church's address; content clean-up._
+
+**Decision.** The Contact sidebar's "Studio location" map is replaced by `ChurchAddress` ("Find us": the address from
+Site settings > Church facts, its "To confirm" tag and Get directions), and the send button uses the Auburn button
+style. In Sanity (backups first): the nine unused starter modules (portfolio, shop, guides and the rest) are switched
+off so no footer column or link points at a page this site does not build; the seeded satisfaction-guarantee line and
+service areas are cleared; Home's "Find your place" is now the stone-icon cards, followed by the Watch and This week
+blocks; What we believe has the baptism drawing band.
+
 _2026-10-17: icon cards, This week and Watch blocks; three Studio pages._
 
 **Decision.** Three FBC Auburn blocks live in `src/sanity/schemaTypes/auburnSections.ts` and are registered through
