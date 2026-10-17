@@ -1,0 +1,7987 @@
+# PORTS.md - the shared-improvement registry for the site family
+
+This starter is the **library of record** for improvements that generalize across the
+Astro + Sanity + Cloudflare sites built from it. When a fix stops being about one
+client and becomes a technique, it gets written down here as a **port card**, and its
+canonical implementation lives in this repo.
+
+A port card is one dated entry describing a single portable improvement: what it is,
+why it exists (the bug or the cost that produced it), where the canonical copy lives,
+how to install it in a site, and what has to be adapted per site. The applied-to matrix
+above the cards is the machine-checkable half: which repo in the family currently has
+it.
+
+**Docs-in-sync clause.** An improvement that generalizes gets a card **in the same
+commit that generalizes it**. Not a follow-up, not a TODO. A card written a week later
+is a card written from memory, and the reason a technique exists is the part that
+decays fastest. The same rule applies in reverse: when a card's real-world status
+changes (a site adopts it, a card is superseded), the matrix row moves in that commit.
+
+## Canonical files and the drift check
+
+Files this repo owns carry a marker on their first line, adapted to the file's comment
+syntax:
+
+```
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+```
+
+`node scripts/sync-check.mjs [site-repo]` walks a site repo, finds every marked file,
+and diffs it against this starter's copy of the same relative path. It prints
+`SAME` / `DRIFT` / `MISSING-IN-STARTER` per file with a summary, and exits 1 on any
+drift. Line endings are normalized (this family is authored on Windows and built on
+Linux CI), everything else is byte-exact. Locate the starter with `NCS_STARTER_DIR`,
+or leave it to find a sibling `ncs-astro-sanity-starter` directory. It is
+dependency-free, so it runs in any repo in the family whatever that repo has installed.
+
+Run it from the starter against itself for a self-check (everything must be `SAME`),
+and from each site during that site's sync session.
+
+**Most sites do not have the marker yet.** As of 2026-08-27 only this starter's copies
+carried it, so a cross-check from a site reported "no marked files found" rather than
+drift. Adding the marker line to a site's already-ported copies is the first act of that
+site's sync session. presacademy needs one: it is the source of most of these files and
+none of its copies are marked. WCP has had its session: 23 marked files as of
+2026-09-06, all `SAME`.
+
+**The marker is opt-in and one-way, so it proves nothing about what it does not cover.**
+A file with no marker is not thereby non-portable; it has simply never been looked at.
+That is what a harvest audit is for: read a site's unmarked files, decide portable /
+site-specific / dead for each, and either port the wins or write down why not. The
+first one (WCP, 2026-09-06) is recorded in the harvest notes under the cards it
+touched.
+
+### Card numbers are ids, and the one collision (37a-40a)
+
+A card's number is its permanent id: other repos' docs and code comments cite
+"PORTS.md card N", so a number is never reused and never shifted. A letter suffix
+normally marks a follow-on to the same card (28a and 28b amend 28; 29a-29d are 29's
+parts).
+
+**The exception, 2026-09-29.** Two unrelated sets were both numbered 37-40. The first,
+written 2026-09-06 as `## 37.` to `## 40.` without the "Card" prefix, is now
+**37a-40a**; the second, written 2026-09-07 as `## Card 37:` to `## Card 40:` and the
+only one with matrix rows until today, keeps 37-40. Here the letter is a
+disambiguator, not "a follow-on to card 37":
+
+| Id  | Card                                                  | Old citation meant it as |
+| --- | ----------------------------------------------------- | ------------------------ |
+| 37a | Drift opens its own pull request (propose-drift)      | "card 37", before 09-07  |
+| 38a | presacademy harvest audit                             | "card 38", before 09-07  |
+| 39a | The restore drill, and an off-site copy of the backup | "card 39", before 09-07  |
+| 40a | The public-data audit                                 | "card 40", before 09-07  |
+| 37  | Visual regression on a fixed-data styleguide          | "card 37", 09-07 onward  |
+| 38  | Studio Checkup                                        | "card 38", 09-07 onward  |
+| 39  | Year-rollover wizard                                  | "card 39", 09-07 onward  |
+| 40  | Studio Welcome pane                                   | "card 40", 09-07 onward  |
+
+**Citations elsewhere that mean the 37a-40a set** (found by a grep of every repo under
+`Projects/` on 2026-09-29; left as written, since this starter does not edit them):
+`_vault/clients/nixon-creative-studio.md` ("PORTS card 39" twice = 39a, "card 37" =
+37a), `_vault/gotchas/a-backup-you-have-never-restored.md` ("PORTS card 39" = 39a),
+`_vault/gotchas/ci-push-to-another-repo-403s-as-the-bot.md` ("PORTS.md card 37" =
+37a), `_vault/gotchas/sanity-public-dataset-is-public.md` ("PORTS card 40" = 40a).
+**Citations that mean the 37-40 set, correctly:** "PORTS.md card 37" in
+`playwright.config.ts`, `playwright.visual.config.ts` and `src/lib/reservedSlugs.ts`
+here and in fbcm and stonesteps-50k, plus fbcm's `tests/visual/styleguide.spec.ts`, and
+`_vault/clients/stone-steps-50k.md` ("now PORTS card 37", the axe-incomplete finding
+that card 37 records). fbcm and stonesteps-50k carry their own copies of PORTS.md with
+the same collision; they pick up this renumbering at their next sync.
+
+---
+
+## Applied-to matrix
+
+`yes` = present and current. `partial` = an ancestor or divergent form of the same idea,
+or present but not wired into that repo's gate. `fork` = present and working, but a
+deliberately diverged copy of a canonical file, left unmarked so sync-check skips it (the
+cell's sync-session entry says whether it can re-adopt). `no` = absent. `staged` = a
+session is installing it as of the date on the card. `template` = shipped as a workflow
+template, not wired. `n/a` = does not apply to that repo (no Sanity, no GA4, no
+path-scoped `_headers` rule, or the repo IS the library).
+
+Rows 30, 37a, 39a, 40a, 45, 56, 58 and 59 were added on 2026-09-29, filled from a grep of
+each repo's `origin/main` that day (see that date's sync-session entry for what was
+checked). Card 38a (the presacademy harvest audit) is a record of one audit, not a
+technique a repo adopts, so it has no row.
+
+Row 60 was rolled out to every live family repo on 2026-09-29/30, each port merged through a PR
+with its own before/after evidence (see the card's "Rollout" section). ncs-church-starter is
+archived and nixoncreativestudio has no Sanity, hence `n/a`.
+
+| #   | Card                                                                           | wcp     | presacademy | starter  | reid-design-site | mas-monograms | 2ndpreschicago | ncs-church-starter | nixoncreativestudio | stonesteps-50k |
+| --- | ------------------------------------------------------------------------------ | ------- | ----------- | -------- | ---------------- | ------------- | -------------- | ------------------ | ------------------- | -------------- |
+| 1   | with-workerd build wrapper                                                     | yes     | yes         | yes      | yes              | yes           | yes            | yes                | yes                 | yes            |
+| 2   | free-dist prebuild unlock                                                      | yes     | yes         | yes      | yes              | yes           | yes            | yes                | yes                 | yes            |
+| 3   | page-parity harness                                                            | yes     | yes         | yes      | yes              | yes           | yes            | yes                | yes                 | yes            |
+| 4   | sanity-lib seed/patch plumbing                                                 | partial | yes         | yes      | yes              | yes           | yes            | yes                | n/a                 | yes            |
+| 5   | stale-types CI guard                                                           | yes     | yes         | yes      | yes              | yes           | yes            | yes                | n/a                 | yes            |
+| 6   | Nightly Sanity backup workflow                                                 | yes     | yes         | template | yes              | yes           | yes            | template           | n/a                 | template       |
+| 7   | Uptime workflow                                                                | yes     | yes         | template | yes              | yes           | yes            | template           | yes                 | template       |
+| 8   | Playwright + axe + reflow suite                                                | yes     | yes         | yes      | yes              | yes           | yes            | no                 | yes                 | yes            |
+| 9   | contrast.ts + theme-token gate                                                 | yes     | yes         | yes      | yes              | yes           | yes            | yes                | yes                 | yes            |
+| 10  | Embedded-studio live-preview stack                                             | yes     | yes         | yes      | yes              | staged        | no             | yes                | n/a                 | yes            |
+| 11  | Preview click interceptor                                                      | yes     | yes         | yes      | yes              | staged        | no             | yes                | n/a                 | yes            |
+| 12  | Parity-gated page-builder conversion                                           | partial | yes         | partial  | partial          | no            | no             | no                 | no                  | partial        |
+| 13  | react/react-dom exact pin                                                      | no      | yes         | yes      | yes              | staged        | no             | yes                | no                  | yes            |
+| 14  | wrangler legacy_env pin                                                        | no      | yes         | yes      | yes              | staged        | no             | yes                | no                  | yes            |
+| 15  | PENDING.md / TESTING.md docs registry                                          | yes     | yes         | yes      | yes              | yes           | yes            | yes                | yes                 | yes            |
+| 16  | Quarterly slop sweep                                                           | no      | no          | no       | no               | no            | no             | no                 | no                  | no             |
+| 17  | In-canvas section controls (overlay insert/drag/duplicate/remove)              | partial | yes         | yes      | yes              | staged        | no             | yes                | n/a                 | yes            |
+| 18  | Chrome options (editable header/footer content)                                | yes     | yes         | yes      | yes              | staged        | no             | yes                | n/a                 | yes            |
+| 19  | Shareable draft links                                                          | no      | no          | yes      | yes              | no            | no             | yes                | n/a                 | yes            |
+| 20  | publishAt scheduled publishing (free-tier)                                     | no      | no          | template | no               | no            | no             | template           | n/a                 | template       |
+| 21  | Pages as first-class objects (duplicate / archive / SEO panel)                 | partial | no          | yes      | partial          | no            | no             | yes                | n/a                 | yes            |
+| 22  | Redirects on rename                                                            | yes     | no          | yes      | yes              | no            | no             | yes                | n/a                 | yes            |
+| 23  | Editor-defined forms                                                           | yes     | no          | yes      | no               | no            | no             | yes                | no                  | yes            |
+| 24  | Saved sections (section presets)                                               | partial | no          | yes      | no               | no            | no             | yes                | n/a                 | yes            |
+| 25  | Pre-publish page checks                                                        | partial | no          | yes      | yes              | no            | no             | yes                | n/a                 | yes            |
+| 26  | Appearance controls (surfaces, accents, rich twins, layout)                    | partial | yes         | partial  | partial          | no            | no             | yes                | no                  | partial        |
+| 27  | Undo & redo                                                                    | no      | yes         | yes      | yes              | no            | no             | no                 | n/a                 | yes            |
+| 28  | Floating in-canvas controls (accent word, "Edit here")                         | yes     | yes         | partial  | partial          | no            | no             | no                 | n/a                 | partial        |
+| 29  | Instant preview text                                                           | no      | yes         | yes      | yes              | no            | no             | no                 | n/a                 | yes            |
+| 29a | Local edit-state channel (LiveDraftBridge)                                     | no      | yes         | yes      | yes              | no            | no             | no                 | n/a                 | yes            |
+| 29b | Refresh scheduler (single-flight / stale discard / floor)                      | no      | yes         | yes      | yes              | no            | no             | no                 | n/a                 | yes            |
+| 29c | Preview morph (in-place reconcile)                                             | no      | yes         | yes      | yes              | no            | no             | no                 | n/a                 | yes            |
+| 29d | Staleness counts every channel                                                 | no      | yes         | yes      | yes              | no            | no             | no                 | n/a                 | yes            |
+| 30  | One branch vocabulary (main only; staging abandoned 2026-10-03)                | yes     | yes         | yes      | yes              | yes           | yes            | yes                | yes                 | no             |
+| 31  | Studio welcome tour (StudioTour)                                               | yes     | yes         | no       | no               | no            | no             | no                 | n/a                 | yes            |
+| 32  | Branded tool headings (ToolHeading)                                            | yes     | yes         | no       | no               | no            | no             | no                 | n/a                 | yes            |
+| 33  | Year-scoped lists for accumulating types                                       | yes     | yes         | no       | no               | no            | no             | no                 | n/a                 | no             |
+| 34  | Studio search weights (__experimental_search)                                  | yes     | yes         | no       | yes              | no            | no             | no                 | n/a                 | no             |
+| 35  | The family test standard (gates, suites, budgets)                              | yes     | yes         | yes      | yes              | yes           | yes            | no                 | yes                 | yes            |
+| 36  | sync-check as a CI gate                                                        | yes     | yes         | yes      | yes              | yes           | yes            | n/a                | yes                 | yes            |
+| 37a | Drift opens its own PR (propose-drift in CI)                                   | yes     | yes         | n/a      | yes              | yes           | yes            | no                 | yes                 | no             |
+| 39a | Restore drill + off-site backup copy                                           | yes     | yes         | yes      | yes              | yes           | yes            | no                 | n/a                 | yes            |
+| 40a | Public-data audit in CI                                                        | yes     | yes         | yes      | yes              | yes           | yes            | no                 | n/a                 | yes            |
+| 37  | Visual regression on a fixed-data styleguide                                   | yes     | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
+| 38  | Studio Checkup (what needs attention)                                          | yes     | no          | no       | no               | no            | no             | n/a                | no                  | yes            |
+| 39  | Year-rollover wizard                                                           | yes     | no          | no       | no               | no            | no             | n/a                | no                  | yes            |
+| 40  | Studio Welcome pane (task cards)                                               | yes     | no          | no       | no               | no            | no             | n/a                | no                  | yes            |
+| 41  | Guide handbook held as repo data                                               | yes     | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
+| 42  | External link health, on its own schedule                                      | yes     | no          | yes      | fork             | no            | no             | n/a                | no                  | yes            |
+| 43  | Contrast for what axe declines to judge                                        | no      | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
+| 44  | Fork residue audit                                                             | n/a     | n/a         | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | yes            |
+| 45  | The site's own contact endpoint                                                | yes     | staged      | yes      | no               | no            | no             | no                 | no                  | yes            |
+| 46  | Share cards in the brand's real typeface                                       | no      | no          | yes      | fork             | no            | no             | n/a                | no                  | yes            |
+| 47  | The icon set, from one drawing                                                 | no      | no          | yes      | yes              | no            | no             | n/a                | no                  | yes            |
+| 48  | Domain cutover script + zone audit                                             | no      | no          | yes      | no               | no            | no             | n/a                | no                  | partial        |
+| 49  | Automation patterns (import-and-deploy, record-and-bake)                       | no      | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
+| 50  | Production deploy workflow                                                     | partial | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
+| 51  | Compressed static server for Lighthouse                                        | no      | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
+| 52  | Radix islands hydrate at client:idle, not client:only                          | n/a     | partial     | yes      | yes              | no            | no             | n/a                | yes                 | partial        |
+| 53  | One accent splitter (heading-accent absorbs scriptAccent)                      | no      | no          | yes      | no               | no            | no             | n/a                | no                  | no             |
+| 54  | Analytics component (GA4 + Cloudflare beacon, canonical)                       | no      | no          | yes      | yes              | no            | no             | n/a                | yes                 | yes            |
+| 55  | Build reads always use the Sanity CDN; a PROD fetch error throws               | no      | no          | yes      | yes              | no            | no             | no                 | n/a                 | yes            |
+| 56  | No page-level `.catch()` swallows the PROD throw                               | no      | no          | yes      | yes              | no            | no             | no                 | n/a                 | partial        |
+| 57  | Preview cookie's value is checked, not its presence                            | no      | no          | yes      | yes              | no            | no             | no                 | n/a                 | no             |
+| 58  | GA4 fires only on the production hostname                                      | n/a     | n/a         | yes      | yes              | n/a           | n/a            | n/a                | no                  | no             |
+| 59  | `_headers`: one rule per path; /_astro/* owns its cache                        | yes     | n/a         | yes      | yes              | n/a           | n/a            | n/a                | yes                 | n/a            |
+| 60  | `astro dev` on Windows: repair @sanity/astro's dedupe alias                    | yes     | yes         | yes      | yes              | yes           | yes            | n/a                | n/a                 | yes            |
+| 61  | Reduced motion zeroes transitions; a spec holds it                             | yes     | yes         | yes      | yes              | yes           | yes            | n/a                | yes                 | yes            |
+| 62  | Dependabot config: grouped, pinned stack ignored                               | yes     | yes         | yes      | yes              | yes           | yes            | n/a                | yes                 | no             |
+| 63  | `astro dev`: pre-bundle what the first render discovers                        | n/a     | n/a         | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | yes            |
+| 64  | Tailwind `@source not` for baselines and docs                                  | n/a     | no          | yes      | yes              | no            | n/a            | n/a                | no                  | yes            |
+| 65  | dynamicList slices at a literal max, trims in the component                    | n/a     | n/a         | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | yes            |
+| 66  | `confirmed` flag + Provisional badge for unsourced content                     | n/a     | n/a         | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | yes            |
+| 67  | Tinted-chip variant-matrix contrast gate                                       | yes     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 68  | Never regenerate package-lock.json; `npm ci`                                   | yes     | no          | yes      | yes              | yes           | n/a            | n/a                | n/a                 | no             |
+| 69  | No `--` inside an SVG/XML comment                                              | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 70  | CI: parallel gates, sharded Playwright, scheduled Lighthouse                   | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | yes                 | yes            |
+| 71  | Tracked `.claude/settings.json` deny rules + shared conventions import         | no      | yes         | yes      | yes              | partial       | no             | n/a                | no                  | yes            |
+| 72  | Layout variants: structure as a brand.config axis                              | no      | no          | yes      | no               | no            | no             | no                 | no                  | no             |
+| 73  | Design directions before reskin (brief, references, mockups)                   | no      | no          | yes      | no               | no            | no             | n/a                | no                  | no             |
+| 74  | page-parity `--exclude` (parity-glob helper + test)                            | no      | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
+| 75  | Playwright fixture: Sanity images from a disk cache                            | no      | no          | yes      | no               | no            | no             | n/a                | n/a                 | yes            |
+| 76  | Visual suite webServer timeout from `PLAYWRIGHT_WEBSERVER_TIMEOUT_MS`          | no      | no          | yes      | no               | no            | no             | n/a                | no                  | no             |
+| 77  | Preview morph keeps client-state classes (reveal state)                        | no      | yes         | yes      | yes              | yes           | no             | n/a                | n/a                 | yes            |
+| 78  | `preview-stega.ts` exports `RUN_SOURCE`                                        | no      | yes         | yes      | yes              | yes           | no             | n/a                | n/a                 | yes            |
+| 79  | Redirect destinations keep `?query` and `#fragment`                            | no      | yes         | yes      | yes              | n/a           | no             | n/a                | n/a                 | yes            |
+| 80  | `sync-check` skips `_worktrees/` folders                                       | no      | no          | yes      | no               | no            | no             | n/a                | no                  | no             |
+| 81  | llms-full identity from brand config; audit shared field consts                | no      | yes         | yes      | no               | no            | no             | n/a                | n/a                 | yes            |
+| 82  | Invisible 44px hit area for small links                                        | no      | yes         | yes      | yes              | yes           | no             | n/a                | yes                 | yes            |
+| 83  | `measure-tap-targets.mjs` 390px tap-target scan                                | no      | yes         | yes      | no               | yes           | no             | n/a                | yes                 | no             |
+| 84  | Linux-runner font-swap layout-shift check (fallback faces, preload)            | no      | no          | no       | yes              | no            | no             | n/a                | no                  | no             |
+| 85  | MapLibre 6.x: `setMissingStyleImageResolver` for generated icons               | n/a     | n/a         | n/a      | n/a              | n/a           | no             | n/a                | n/a                 | yes            |
+| 86  | Production-write second factor (NCS_PRODUCTION_WRITE) for data scripts         | n/a     | partial     | yes      | no               | no            | no             | n/a                | n/a                 | no             |
+| 87  | Dead-weight scan: unused kits and packages inflate every page's CSS            | n/a     | yes         | no       | no               | no            | yes            | n/a                | staged              | no             |
+| 88  | Cloudflare beacon starts after load and idle, not deferred in head             | n/a     | no          | no       | no               | no            | no             | n/a                | staged              | no             |
+| 89  | Internal links end in a slash (`trailingSlash: 'always'`, `withTrailingSlash`) | n/a     | yes         | yes      | yes              | yes           | no             | n/a                | no                  | yes            |
+| 90  | Sanity backup: 14-day artifact, docs-only weekdays, full weekly                | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 91  | One text/picture column split (`.split`) and `measure-columns.mjs`             | no      | no          | yes      | yes              | no            | no             | n/a                | no                  | yes            |
+| 92  | Dependabot pins `astro` with its adapter; formatters in their own group        | n/a     | yes         | yes      | yes              | yes           | no             | n/a                | yes                 | yes            |
+| 93  | SanityImage srcset ladder starts at 160w; `sizes` trims dead steps             | n/a     | staged      | yes      | staged           | staged        | n/a            | n/a                | n/a                 | staged         |
+| 94  | Planned major stack upgrade (astro 7.3, adapter 14.3.4, wrangler 4.129)        | n/a     | staged      | yes      | staged           | staged        | no             | n/a                | staged              | staged         |
+| 95  | `audit:data`: live data vs compiled schema; `_type` backfill                   | n/a     | no          | yes      | no               | fork          | no             | n/a                | n/a                 | no             |
+| 96  | GA4 skips automated browsers (WebDriver, Lighthouse, PageSpeed, GTmetrix)      | n/a     | staged      | yes      | staged           | staged        | n/a            | n/a                | staged              | staged         |
+| 97  | astro 7.4 with adapter 14.4.0 (wrangler stays 4.129)                           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 98  | Date labels independent of build-machine timezone (`formatDate`)               | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+
+Row 73 (2026-10-03) is a workflow plus three scripts, not a drift-checked behaviour: a site takes it by running `npm run sync-check` and copying the marked files; every cell but the starter is `no` until that site does.
+
+Row 74 (2026-10-03): fbcm built this on 2026-09-20 and is the one site that already carries it; fbcm is not a
+column of this matrix, so it is recorded on the card. Of the columns here only stonesteps-50k carries a
+`PORTABLE`-marked `page-parity.mjs`, and it re-synced on 2026-10-03 (stonesteps-50k PR #70, `yes`);
+wcp, presacademy, reid-design-site, mas-monograms, 2ndpreschicago and nixoncreativestudio hold unmarked copies, so
+sync-check never compares them and each takes the change by hand. Those stay `no` until a site does.
+
+Row 75 (2026-10-03): fbcm built the fixture on 2026-09-26 (not a column; see the card). stonesteps-50k adopted it the same
+day (PR #76): `tests/fixtures.ts`, the `a11y`, `reflow` and `smoke` specs, and one `actions/cache` step in its `e2e` job so
+the shards share the image folder between runs; the saving is not yet measured (the first CI run was a cold cache).
+nixoncreativestudio has no Sanity, hence `n/a`. Every other cell is `no` until that site copies `tests/fixtures.ts`
+and switches its spec imports.
+
+Row 76 (2026-10-03): fbcm hard-coded the longer timeout on 2026-09-27 (not a column; see the card). Only fbcm marks
+`playwright.visual.config.ts`; presacademy and stonesteps-50k carry unmarked copies. All `no` until a site re-syncs.
+
+Rows 77 to 79 (2026-10-03) are fbcm fixes promoted into files that several sites carry MARKED and byte-identical to
+the old starter copy (presacademy, reid-design-site, mas-monograms, 2ndpreschicago, stonesteps-50k; see each card's
+blast-radius table). **Rolled out 2026-10-03:** presacademy (#57), reid-design-site (#108), mas-monograms (#69) and
+stonesteps-50k (#73) re-synced after the starter merge, each a byte-for-byte copy gated by its own CI; fbcm already
+had all three (not a column). mas-monograms does not carry `redirects.ts`, hence `n/a` on row 79. 2ndpreschicago is
+archived on GitHub, so it stays `no` and cannot take a PR. nixoncreativestudio has no Sanity, hence `n/a`.
+
+Row 81 (2026-10-03): fbcm built both parts and un-marked its copies (fbcm is not a column). Only presacademy and
+stonesteps-50k carry a MARKED `generate-llms-full.mjs` (byte-identical to the starter's before this card), so those are
+the two that resync; mas-monograms, 2ndpreschicago and reid-design-site hold unmarked, diverged copies and take the change
+by hand, or not at all. NO site carries a marked `audit-studio.mjs` (stonesteps-50k's is unmarked and older), so the audit
+half turns nothing red. All `no` cells stay `no` until that site copies the files. nixoncreativestudio has neither script,
+hence `n/a`. **Rolled out 2026-10-03:** presacademy (#59) and stonesteps-50k (#78) resynced the script and its
+`site-identity` helper. The committed `public/llms-full.txt` in presacademy, stonesteps-50k and 2ndpreschicago read
+'Studio Starter' / example.com, and resyncing the script did NOT fix that: the script fixes the site NAME and URL only, it
+still queries the starter's content types (services, process steps, FAQs, projects, journal entries, guides), so on a fork
+with different content (stonesteps-50k is a race site) it writes a near-empty stub (327 bytes there). stonesteps-50k's two
+public files were therefore hand-written from its live pages (#79; every number and name machine-checked against the
+pages) and its seo note says never to run `llms:full`; presacademy's `llms-full.txt` was removed (#60) because its build
+still runs on seed content, to be generated at launch. 2ndpreschicago is archived and still serves the placeholder. The
+lesson for any fork: before trusting `llms:full`, check its content types match the site's.
+
+Row 80 (2026-10-03): every site carries a MARKED `scripts/sync-check.mjs` byte-identical to the old starter copy
+(wcp at `site/scripts/`), so the cells are `no` until each re-syncs. presacademy, reid-design-site, mas-monograms and
+nixoncreativestudio (plus the archived wcp and 2ndpreschicago) enforce against live starter `main`: their required
+`build` goes RED on merge until they resync (blast-radius table on the card). stonesteps-50k and fbcm only self-check
+in CI. wcp and 2ndpreschicago are archived on GitHub, so they stay `no` and cannot take a PR. fbcm is not a column;
+it carries the old copy too.
+
+Rows 82 to 85 (2026-10-03) came out of one Impeccable audit pass over reid-design-site (PR #113), fbcm (PR #36, not a
+column) and stonesteps-50k (PR #77). A `yes` on 82 means the site carries its own variant of the fix, read from its
+`origin/main` (reid-design-site `.r-link::after`, stonesteps-50k `.tap-pad`); no two use the same class, and nothing is
+sync-checked because the CSS lives in each site's stylesheet. Row 83 is the one PORTABLE file: starter `yes`, every site
+`no` until it copies `scripts/measure-tap-targets.mjs` (fbcm keeps an unmarked original). On 82 to 84 a `no` means not
+measured, not known broken. Row 85 applies only where a site has `maplibre-gl`: stonesteps-50k is the only one found
+(`n/a` for the repos whose `package.json` has none; 2ndpreschicago is archived and was not checked).
+
+Rows 62 to 69 were added on 2026-10-03 and filled from the Ported-to lists of the vault
+gotcha notes they came from (`dependabot-secrets-and-pinned-stacks`,
+`a-stack-trace-names-source-not-instance`, `committed-parity-baselines-feed-tailwind`,
+`starter-bugs-hide-until-sanity-is-configured`, `summarised-scrape-is-not-source-data`,
+`tinted-chip-eats-muted-contrast`, `regenerated-lockfile-breaks-sanity-schema-extract`,
+`double-hyphen-in-svg-comment-blanks-the-image`), not re-grepped per repo. A `no` is a repo
+that note lists as still open; each repo's own port flips its cell. fbcm is outside the matrix
+and already carries 64 and 69.
+
+Rows for repos that have adopted nothing still exist on purpose: a future sweep ticks
+cells instead of inventing the table again.
+
+Card 30 changed meaning on 2026-10-03: the family convention is now `main` alone, and
+`staging` is abandoned everywhere (short-lived branches, PRs into `main`, required checks
+`build` and `test`, merge = production deploy). The row's cells record that a repo
+adopted the one-vocabulary rename; the dated card below is history and still describes
+the retired `main` + `staging` model.
+
+Card 28's starter cell reads `partial` for the same reason card 26's does, and the two
+have to be read together: this template forbids a per-block colour field, so the band
+card that is a third of that layer elsewhere has nothing here to write to and was
+deliberately not built. The two TEXT controls landed in full. See the card.
+
+---
+
+## Card 1: with-workerd build wrapper
+
+**Dated 2026-08-25 (presacademy), ported to the starter 2026-08-27.**
+**Canonical:** `scripts/with-workerd.mjs`
+
+On Astro 7 with `@astrojs/cloudflare` 14, `astro build` prerenders static pages by
+booting workerd through `@cloudflare/vite-plugin`. On Windows, the workerd binary that
+plugin pins dies instantly with `*** std::terminate() called with no exception` behind
+a `MiniflareCoreError [ERR_RUNTIME_FAILURE]`. The newer workerd bundled inside wrangler
+runs the identical config fine. The wrapper finds wrangler's copy and sets
+`MINIFLARE_WORKERD_PATH` before handing off, so `npm run build` (and therefore
+`npm run deploy`) works on a Windows machine.
+
+Deliberately narrow: Windows only, never overrides an explicit
+`MINIFLARE_WORKERD_PATH`, and no-ops when wrangler's binary is absent. Linux CI stays on
+the stock path.
+
+**Status in the starter:** installed and **wired** as of 2026-08-28, when this repo took
+the Astro 7 / adapter 14 upgrade: `"build": "node scripts/with-workerd.mjs astro build"`.
+(Before that it sat here as a no-op safety net, because adapter 13.5.5 did not route the
+prerender through the vite plugin and the crash could not occur.)
+
+**Per-site adaptation:** none. Retire the wrapper when the plugin's pinned workerd
+starts on Windows again.
+
+## Card 2: free-dist prebuild unlock
+
+**Dated 2026-08-26 (presacademy), ported to the starter 2026-08-27.**
+**Canonical:** `scripts/free-dist.mjs`
+
+A still-running `wrangler dev` / `astro preview` / `http-server` holds a handle on
+`dist/`. Astro empties dist at the start of every build, so the next build dies with
+`EPERM, Permission denied: \\?\...\dist\client`. It reads like a permissions problem and
+is really "something is still serving the last build". This cost two real deploys in one
+day.
+
+The script kills only `node.exe` / `workerd.exe` processes whose command line mentions
+**both** this project's directory **and** a known dev server, and prints every PID it
+stops. Windows only, so Linux CI is untouched.
+
+**Genericization done on the port:** the project root comes from the script's own
+location (`import.meta.url` -> `../`), so a copy dropped in any repo matches that repo's
+processes and nothing else, with no edit. The command-line match was switched from
+PowerShell's `-like` to an ordinal case-insensitive `IndexOf`: `-like` treats `[` and `]`
+as wildcard character classes, so a checkout path containing brackets would silently
+match nothing.
+
+**Status in the starter:** installed, exposed as `npm run free-dist`, **not** wired as a
+`prebuild` hook. Running PowerShell on every build is a behavior change a downstream
+project should opt into. To make it automatic:
+`"prebuild": "node scripts/free-dist.mjs"`.
+
+## Card 3: page-parity harness
+
+**Dated 2026-08-26 (presacademy), ported and parameterized 2026-08-27.**
+**Canonical:** `scripts/page-parity.mjs`, baselines in `scripts/.parity/`
+
+Captures each built page's rendered HTML, then diffs a later build against that
+snapshot. Built for a page-builder conversion where the promise was "same pixels", but
+it earns its place on any change that is supposed to be render-neutral: extracting a
+component, reordering imports, swapping a wrapper, bumping a dependency.
+
+Neither mode builds. The caller builds; the script reads existing output. That keeps it
+fast to re-run, keeps build noise out of the diff, and lets capture and compare be
+pointed at the same artifacts while debugging the normalizer itself.
+
+The normalizer strips exactly six classes of build-varying value and leaves everything
+else byte-faithful: `/_astro/` content hashes, Astro's generated `data-astro-cid-*` and
+transition-scope hashes, the `<astro-island>` render-order `prefix`, the BODY of every
+inlined `<style>` element, the contents and accessible name of an element with
+`role="timer"`, and whitespace between tags. Text, classes, ids, aria and JSON-LD are
+otherwise all compared.
+
+**Rule 5 added 2026-09-12 (stonesteps-50k), ported here the same day.** An element with
+`role="timer"` is by definition a value that counts, and a countdown server-rendered so the
+block never appears empty is computed from the clock AT BUILD TIME. Two identical rebuilds
+minutes apart therefore differ, and stonesteps' home page failed parity on every single
+build, which is how a gate teaches everyone to ignore it. Both the digits and the element's
+own `aria-label` are normalised to `TIMER`; the element, its other attributes and its
+structure are still compared. Nothing site-specific: `role="timer"` is the standard ARIA
+role for exactly this case. The scan is brace-balanced rather than a regex, because a
+timer's markup nests and a non-greedy `[\s\S]*?</div>` stops at the first inner close.
+
+**And rule 5 had a bug for a day, fixed 2026-09-13 (stonesteps-50k), pulled forward here.**
+That brace-balanced scan built its walk pattern inside a TEMPLATE LITERAL, where `\b` is a
+backspace character and not a word boundary. The pattern was therefore
+`<(/?)div<backspace>[^>]*>`, which matches nothing, so the walk never found a closing tag,
+the body end fell through to the end of the document, and the first timer on a page
+swallowed everything after it. With one timer per page that still normalised
+_consistently_, which is why it survived; with two (a hero clock and a footer clock) the
+second timer's opening tag sat inside the swallowed region, where only text nodes are
+rewritten, so its `aria-label` went through untouched and the page failed parity on every
+rebuild. It is `\\b` now. Worth remembering generally: a regex built in a template literal
+needs its backslashes doubled, and the failure is silent because an unmatched pattern is
+not an error.
+
+**The inlined-stylesheet rule, added 2026-09-18 (learned on stonesteps-50k, written
+here).** It is rule 4 in the file's list, and it is the reason the last sentence above no
+longer promises to compare inline styles. A project that sets
+`build.inlineStylesheets: 'always'` ships the whole stylesheet inside every page, so one
+changed colour token rewrites the same tens of kilobytes on all 31 routes at once.
+`parity compare` then answers with every page DIFF and a diff body that is pure CSS,
+which is not a parity report, it is a recapture instruction. Four full baseline
+recaptures were taken on stonesteps in a single week for exactly this, and not one of
+them carried information. The rule replaces each `<style>` element's BODY with its byte
+count and an FNV-1a checksum, so the stylesheet change still breaks parity, still names
+every affected page, and takes ONE line on each instead of the whole file. The `<style>`
+tag and its attributes are untouched, so a lost or added stylesheet is still real drift,
+and the checksum is deliberately a change detector, not a security primitive: it is
+written out inline so the file stays dependency-free.
+
+**Proof, 2026-09-18, in the starter.** Temporarily set `inlineStylesheets: 'always'`
+(121KB of CSS per page), capture, change `--color-tertiary` by one hex digit, rebuild,
+compare: ten of eleven pages report DIFF with a single changed line each,
+`- <style>/* CSS 121864B abec36b4 */</style>` against
+`+ <style>/* CSS 121864B ccd4b458 */</style>`. Config reverted, rebuilt, recaptured,
+11/11 PASS.
+
+**Parameterization done on the port:** the built-HTML root is auto-detected
+(`dist/client` when it holds an index.html, which is the adapter 14 shape, else `dist`,
+the adapter 13 shape) and can be overridden with `PARITY_DIST`. The chosen root prints
+on every run so a snapshot is never silently taken against the wrong tree. Routes are
+auto-discovered by walking the html root for `.html` files (asset directories skipped,
+sorted for determinism), so a fresh clone needs no edit; a project wanting a fixed
+plan-ordered subset fills in the `PAGES` constant and discovery switches off.
+
+**Proof in this repo (2026-08-27):** `npm run build`, capture (9 routes: home, about,
+services, process, faq, contact, journal, privacy, 404), `npm run build` again, compare
+-> 9/9 PASS. Baselines committed under `scripts/.parity/`.
+
+`npm run parity list | capture | compare [page]`.
+
+**Per-site adaptation:** re-capture baselines on first install, and again whenever a
+markup change is intended (say so in the commit message). Nested routes are stored with
+`/` flattened to `__` in the snapshot filename.
+
+**Addendum, 2026-10-03 (card 64): the baselines feed Tailwind.** `scripts/.parity/*.html` is
+committed, and Tailwind v4's automatic source detection skips only gitignored paths, so every
+class name in a baseline (and in the Markdown docs) keeps its CSS rule alive in the shipped
+sheet, and a parity compare can pass because its own baselines fed the build. `globals.css`
+now excludes `scripts/.parity`, `docs` and the root Markdown with `@source not`. After any
+change to that block: rebuild, recapture, rebuild, compare. Details on card 64.
+
+## Card 4: sanity-lib seed/patch plumbing
+
+**Dated 2026-08-25 (presacademy, distilled from WCP's `patch-lib.mjs` +
+`pagebuilder-lib.mjs`), ported 2026-08-27.**
+**Canonical:** `scripts/lib/sanity-lib.mjs`
+
+The three things every Sanity seed or patch script re-invents, in one import: a
+token-authed client built from the root `.env`; a **dry-run-by-default apply gate**
+(scripts print exactly what they would change and write nothing without `--apply`); and
+Portable Text builders, `_key` generation, and an **idempotent** asset uploader that
+caches asset ids in `scripts/.asset-map.json` so a re-run never re-uploads.
+
+The dry-run gate is the load-bearing part. These scripts mutate a live dataset, often
+against a quota, and the default has to be "show me".
+
+**Reconciliation done on the port:** presacademy's copy carried its own inline `.env`
+parser. This starter already ships `scripts/lib/loadEnv.mjs`, so the duplicate is gone
+and sanity-lib imports loadEnv. loadEnv is the keeper because it is stricter: it enforces
+a KEY shape, strips inline `# comments` from bare values, takes quoted values literally,
+and gives `process.env` precedence. The looser parser accepted `KEY=value # note` and put
+the comment inside the token, which is the shape of the `.env`-quoted-token 401 that cost
+a WCP session. A site porting sanity-lib must bring `loadEnv.mjs` with it, or repoint the
+import at its own equivalent; that is the file's only dependency beyond `@sanity/client`.
+
+**Per-site adaptation:** `apiVersion` and the env variable names. Add
+`scripts/.asset-map.json` to `.gitignore` (done here).
+
+**Related gotchas worth carrying:** a quoted token in `.env` produced a 401 that looked
+like a permissions problem; and Sanity refuses to delete a document that other documents
+still reference, so cleanup scripts must unlink before deleting.
+
+## Card 5: stale-types CI guard
+
+**Dated 2026-08-27 (pattern from presacademy's `.github/workflows/ci.yml`).**
+**Canonical:** the "Fail if committed Sanity types are stale" step in
+`.github/workflows/ci.yml`
+
+`npm run build` does not chain typegen, so `src/lib/sanity.types.ts` is committed by
+hand after every schema change, and sooner or later it is not. presacademy shipped types
+describing a schema that no longer existed, on a green build, on 2026-06-14. The guard is
+four lines: right after CI's own `npm run typegen`, fail if that regeneration produced a
+git diff.
+
+```yaml
+- name: Fail if committed Sanity types are stale
+  run: |
+    if ! git diff --quiet -- src/lib/sanity.types.ts; then
+      echo "::error::src/lib/sanity.types.ts is out of date. Run 'npm run typegen' and commit the result."
+      git --no-pager diff -- src/lib/sanity.types.ts
+      exit 1
+    fi
+```
+
+**Per-site adaptation:** the path to the generated types file, and it must sit after
+whatever step runs typegen. Verified against this repo 2026-08-27: `npm run typegen`
+reproduces the committed file exactly (the only local difference is line endings, which
+git normalizes, so the check is clean on Linux CI).
+
+## Card 6: Nightly Sanity backup workflow
+
+**Dated 2026-08-27, ENCRYPTION ADDED 2026-09-01 (pattern from
+`presacademy/.github/workflows/sanity-backup.yml`, encryption from
+`wcp-website` commit 73cfe3c).**
+**Canonical:** not yet installed in the starter. Reference implementation is
+presacademy's workflow (which now carries the encrypted version); the
+church-starter's template copy was upgraded to the encrypted version the same
+day. wcp-website also runs the encrypted version (it is where the pattern
+landed first, commit 73cfe3c).
+
+A nightly `sanity dataset export` of production (documents plus assets), ENCRYPTED,
+then uploaded as a workflow artifact, so a bad mutation or an accidental Studio
+"Remove field" is always recoverable. Structured as a `gate` job that checks whether
+BOTH secrets are set — `SANITY_AUTH_TOKEN` and `BACKUP_PASSPHRASE` — and an `export`
+job gated on it, so the workflow is safe to commit before the secrets exist.
+
+**The encryption is load-bearing on public repos — never port the pre-2026-09-01
+plaintext version.** Workflow artifacts on a PUBLIC repo are downloadable by any
+logged-in GitHub user, and most of this family is public, so an unencrypted dataset
+artifact publishes the client's content (directories, family details, whatever the
+dataset holds). The pattern: the gate refuses to export at all when
+`BACKUP_PASSPHRASE` is missing (warn + skip, never a plaintext upload), and the
+export is encrypted before upload with
+`openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:BACKUP_PASSPHRASE`,
+uploading only the `.enc`. Restore prepends one decrypt step (`openssl enc -d` with
+the same flags). The passphrase must ALSO live outside GitHub, somewhere the client
+can find it — GitHub never shows a secret again, and a backup nobody can decrypt is
+no backup.
+
+**The schedule-disabled-until-secret pattern.** presacademy commented its `schedule:`
+block out with the reason preserved in the file: the token was never set, so the daily
+gate job billed a minute a day just to log "skipping". `workflow_dispatch` stays on, so
+manual runs still work, and uncommenting one line activates it. Record the decision in
+the file, not only in a commit message, so the next person knows it was deliberate.
+
+**Public repos can leave the schedule on.** GitHub Actions minutes are free on public
+repositories, so the billing argument that justified disabling the schedule does not
+apply to them. Most of this family is public (all eight were confirmed public
+2026-07-14). Disable the schedule for private repos, or where the secret genuinely will
+not exist for months; otherwise leave it running.
+
+**Per-site adaptation:** the public Sanity project id and dataset name (the id is not a
+secret, it ships in the client bundle), the retention window, the restore steps
+(including the decrypt step) in that repo's ops doc, and where the off-GitHub copy of
+`BACKUP_PASSPHRASE` is kept for that client.
+
+## Card 7: Uptime workflow
+
+**Dated 2026-08-27 (pattern from `presacademy/.github/workflows/uptime.yml`).**
+**Canonical:** not yet installed in the starter. Reference implementation is
+presacademy's workflow.
+
+Hourly `curl` of a handful of key routes, failing the run if any does not return 200; a
+failed run notifies through GitHub. Activated by a `SITE_URL` **repo variable** (not a
+secret) so it never false-alarms before launch: with the variable unset it logs a warning
+and exits 0.
+
+Same schedule-disabled-until-configured pattern and the same public-repo exception as
+Card 6. GitHub's scheduler is best-effort and can be delayed under load, so this is a
+safety net, not monitoring. For real monitoring point a dedicated service at the
+homepage; UptimeRobot's free tier is enough.
+
+**Per-site adaptation:** the route list. Pick routes that exercise different data paths
+(a CMS-driven page, a collection index, a static legal page), not three variations of
+the homepage.
+
+## Card 8: Playwright + axe + 320-1440 reflow suite
+
+**Dated 2026-08-27. Canonical example: `presacademy/tests/`** (`smoke.spec.ts`,
+`a11y.spec.ts`, `a11y-dark.spec.ts`, `reflow.spec.ts`, `routes.ts`, `helpers.ts`).
+Not installed in the starter.
+
+Four specs over one shared route list: smoke (every route renders, no console errors),
+axe in light, axe in **dark** as a separate sweep, and a reflow sweep that loads every
+route at every width in the 320-1440 band and fails on horizontal overflow.
+
+The shape matters more than the code. A single route list (`routes.ts`) feeding all four
+specs is what keeps the suite honest when a route is added. The dark sweep is separate
+because axe audits the resting DOM and a theme swap is a different resting DOM. The
+reflow band starts at **320px** because WCAG 1.4.10 does, and a single mobile screenshot
+at 375 does not discharge it: WCP's 2026-07-14 audit swept 752 route-by-width
+combinations and the findings were all in places no one had screenshotted. CI later swept
+768 / 1024 / 1440 as well, on the same principle.
+
+**reid-design-site already has a variant of this suite whose CI never runs it.** A suite
+that does not run is worse than no suite: it reports green by being absent from the
+pipeline. Fixing that wiring is the reid row's first job, not writing new tests.
+
+**Per-site adaptation:** the route list, the a11y tag filter (WCP's `a11y-tag-filter`
+gotcha: filtering to `wcag2a` alone quietly drops the AA rules), and the settle helper
+that waits out animation before an axe pass.
+
+## Card 9: contrast.ts + theme-token gate
+
+**Dated 2026-08-27 (from presacademy `src/lib/contrast.ts`, itself the port of a WCP
+gate).**
+**Canonical:** `src/lib/contrast.ts` (the maths) and `src/lib/css-tokens.ts` (the
+reading), with `src/lib/theme-tokens.test.ts` as the starter's own application of them.
+
+WCAG 2.x contrast math as a tiny unit-testable module: `hexToRgb`, `relativeLuminance`,
+`contrastRatio`, `flatten` (compositing a translucent colour over its real backdrop,
+which is what a dark theme's white-at-12% hairline actually is), and the AA thresholds
+named as constants so a failure reads as intent instead of a magic number.
+
+It exists because this bug class is invisible to every other gate. An invisible focus
+ring, a border under 3:1, a button with no visible edge: axe has no rule for
+focus-indicator or custom-border contrast, and an axe sweep audits the resting DOM only.
+In WCP those all shipped on a green build with Lighthouse at 100.
+
+`hexToRgb` throws on anything it cannot parse, on purpose: a silently-zero colour makes a
+contrast test pass for the wrong reason.
+
+**The theme-token gate applied here.** `npm run apply-brand` rewrites the `@theme`
+palette in `globals.css` from `brand/brand.config.json`, and nothing else notices when a
+new project's palette pushes body text under 4.5:1. `theme-tokens.test.ts` parses the
+real hex tokens out of `globals.css` and asserts the pairs the design system actually
+renders (ink and both slate tones on both paper surfaces, white reversed out of the dark
+brand surfaces), so a bad reskin fails `npm test` before anyone looks at a screenshot.
+
+Scope is the light `@theme` block only. The shadcn `:root` / `.dark` overrides are
+authored in oklch with alpha and would need a colour-space conversion; that is a bigger
+job and is deliberately not attempted. Two token pairs are deliberately **not** asserted
+(`--color-secondary` and `--color-border-soft` on the paper surfaces): they are hairline
+dividers near 2:1 by design, not UI component boundaries. Any token used for a focus ring
+or a control edge must be added to the test with `AA_NON_TEXT`.
+
+**Per-site adaptation:** the token names and the pair list. Also worth carrying: WCP's
+measured accessible "ink" replacement shades, which solved the same problem by moving the
+palette rather than the pairs.
+
+**Harvest note (2026-09-06).** WCP's `src/lib/contrast.ts` is now byte-identical to this
+one and carries the marker, so the matrix row is `yes` rather than `partial`. The audit
+that did that turned up one thing worth writing down, and it is about THIS repo, not WCP.
+
+There are two token extractors in this starter and they are not the same quality. The
+one in `theme-tokens.test.ts` is a single unscoped `matchAll` for `--color-*: #hex`
+across the whole of `globals.css`. It is not scoped to a block, so it keeps the LAST
+declaration of each token wherever it appears, and it cannot see a `var(--other)` alias
+at all. Today it happens to be correct, because all ten hex `--color-*` declarations sit
+inside the one `@theme` block. The day anyone writes a hex `--color-*` into `.dark` or
+`@theme inline`, that test silently starts measuring the dark value and asserting it as
+a light pair, and it will still pass, which is the worst failure mode a gate has.
+
+The extractor in `surfaces.test.ts` is the correct one: brace-counted so a nested rule
+cannot end a block early, `@theme` / `@theme inline` / `:root` read as the light scope
+and `.dark` as the dark one, `var()` aliases followed to a concrete hex. WCP's
+`theme-tokens.test.ts` is the same design and covers both themes, which is why card 26
+rule 2 already describes the technique as if it were universal here. It is not: card 9's
+own file predates it.
+
+The fix is to lift that extractor into one shared helper and have `theme-tokens.test.ts`
+use it. Deliberately NOT done in the audit commit: it is a real change to a gate, the two
+test files run in different runners across the family, and it deserves its own session
+rather than riding along with a marker sync.
+
+### The reader is one module now (2026-09-06)
+
+**Canonical:** `src/lib/css-tokens.ts`. `theme-tokens.test.ts` and `surfaces.test.ts`
+both import it, and so does WCP's Vitest fork.
+
+**The bug was demonstrated before it was fixed, because "it passes" is not evidence a
+gate works.** With `--color-primary-dark: #2a2d31` planted in the `.dark` block of
+`globals.css`, the old file passed 12 of 12 while silently measuring the dark value:
+`--color-primary-dark` on `--color-bg` read 13.36:1 instead of 8.17:1, on
+`--color-bg-soft` 12.54:1 instead of 7.67:1, and white on `--color-primary-dark` 13.83:1
+instead of 8.46:1. Three asserted numbers wrong, build green. The same plant now fails
+the new gate by name. Not a hypothetical, and not a proof anyone should skip: the
+one-line reproduction is the whole reason this card is trustworthy.
+
+**Scope is the caller's choice, not the module's.** There is no single right answer to
+"the light scope" in this stylesheet, which is why the two gates cannot simply share one
+reader with one built-in scope. `BRAND_SCOPE` is a bare `@theme`: the brand palette
+`apply-brand` rewrites, and the only thing this card's gate asks about. `LIGHT_SCOPE`
+adds `@theme inline` and `:root`: what a shadcn semantic token actually resolves to on
+the page, which is what card 26's `surfaces.test.ts` asks about. They genuinely differ,
+because `@theme inline` re-points `--color-accent` at `var(--accent)` on purpose, so
+bare `text-accent` is theme-aware and is NOT the palette ink. A shared reader that
+silently picked one of those would have re-created the same class of bug in a new place.
+
+**Light-only stays deliberate and is no longer a limitation of the reader.** The pairs
+this gate asserts are unchanged, and every asserted value is unchanged; the dark half of
+the question is already measured, in both themes, by `surfaces.test.ts`.
+
+**Three of the new tests measure no colour at all.** They assert the scope premise: that
+the `@theme` block was found and holds the palette, that `.dark` declares none of the
+names this gate measures as light, and that the only later light-scope override of an
+asserted token is the recorded `--color-accent` one. A gate that can be wrong about
+WHICH declaration it read has to check that first, before any threshold means anything.
+
+**Family status of the extractor, audited 2026-09-06.** Every repo has a theme-token
+gate; they are not the same gate. `shared` means it imports `css-tokens.ts`.
+
+| repo                | theme-tokens.test.ts        | surfaces.test.ts |
+| ------------------- | --------------------------- | ---------------- |
+| starter             | shared                      | shared           |
+| wcp                 | shared (Vitest, own pairs)  | n/a              |
+| presacademy         | own copy, scoped + aliases  | own copy, same   |
+| ncs-church-starter  | unscoped hex-only (the bug) | scoped + aliases |
+| mas-monograms       | unscoped hex-only (the bug) | n/a              |
+| 2ndpreschicago      | unscoped hex-only (the bug) | n/a              |
+| reid-design-site    | per-block, but hex-only     | n/a              |
+| nixoncreativestudio | per-block, but hex-only     | n/a              |
+
+Three repos carry the exact silent-failure this session fixed. Two more are scoped
+correctly but alias-blind, which is the failure WCP's own gate was bitten by and records
+in its header: a `.dark` block that re-points a token with `var(--other)` is invisible to
+them, so they fall through to the light value and measure the wrong colour in dark.
+presacademy has the good logic twice and needs consolidating, not fixing.
+
+Those five ports are NOT done here, and the reason is specific rather than a shrug. Each
+site's `globals.css` puts its palette in a different place, so choosing `BRAND_SCOPE`
+against `LIGHT_SCOPE` per gate is a judgement per repo, and getting it wrong is exactly
+the silent failure being fixed. `ncs-church-starter`'s `staging` is also behind its
+`main`, so the family's staging-only push rule does not currently hold there. Do them a
+repo at a time, and plant the declaration and watch the old gate pass before replacing
+it: that is the acceptance test for this card.
+
+**Do not chase byte-identity on the test files.** `css-tokens.ts` is canonical and
+marked. `theme-tokens.test.ts` is not, in any repo: the runner (`node --test` here,
+Vitest in WCP and reid) and the pairs are legitimately per-site, and WCP's fork carries
+its own documented rationale in its header. Sharing the reader is the whole of what
+travels.
+
+## Card 10: Embedded-studio live-preview stack
+
+**Dated 2026-08-27. Canonical example: presacademy** (`src/pages/preview/live.ts`,
+`src/lib/preview-auth.ts`, `src/lib/cms-preview.ts`,
+`src/sanity/components/PreviewNavigator.tsx`) and WCP's equivalent. Not installed in the
+starter.
+
+Five parts that only work together: Sanity's `presentationTool` in the Studio config; an
+SSE endpoint (`/preview/live`) proxying Sanity's listen API so edits stream to the
+preview iframe; a fingerprint-based `preview-auth` so the draft-reading route cannot be
+hit by the public; a `NON_STEGA_FIELDS` list; and a `PreviewNavigator` document view.
+
+**`NON_STEGA_FIELDS` is not optional.** Stega hides roughly 1KB of invisible markers
+inside every string it touches, so `tone === 'chapel'` is `false` on an encoded value and
+the component silently takes the wrong branch **in preview only**. Every enum that drives
+rendering must be excluded. Add any new logic-driving dropdown field to that list the day
+you add the field.
+
+### Hard warning 1: one package, or `resolve.dedupe`
+
+A nested `studio/` package means **two node_modules trees**. The Studio shell resolves
+`sanity` / `styled-components` / `@sanity/ui` from the root; every file under `studio/`
+resolves them from `studio/node_modules`. Same pinned versions, two module instances, two
+React contexts. The ThemeProvider mounted by one styled-components is invisible to
+`useTheme` in the other, so the desk dies on its first custom-component render
+(styled-components error #18, then `Cannot read properties of undefined (reading 'v2')`)
+while the login screen, which is core code only, renders fine. This was the actual cause
+of presacademy's 2026-08-26 production Studio crashes, behind four failed fixes. WCP never
+hit it because its studio lives in the same package as the site.
+
+Two fixes: fold the studio into the root package (what presacademy did), or set
+`resolve.dedupe`. Keep the dedupe either way. The verification that matters is a disk
+audit, not a lockfile read: `find node_modules studio/node_modules -path
+"*@sanity/ui/package.json"` must print exactly **one** line. `@sanity/icons` is
+deliberately **not** deduped (sanity core wants v5, `@sanity/ui` v3 wants v3.8; icons are
+stateless so duplication is harmless, and deduping them broke the build on a missing v5
+`CogIcon`).
+
+### Hard warning 2: exact resolved versions, and the family's version skew
+
+The Sanity stack is pinned to a combination known to work **together**, and bumping one
+in isolation breaks it. The working set as of the phase-1 migration (2026-09-06): `sanity`
+6.9.1, `@sanity/vision` 6.9.1, `@sanity/ui` **3.5.4**, `@sanity/client` 7.26.2,
+`@sanity/visual-editing` 5.7.3, `@sanity/preview-url-secret` 4.1.5, `styled-components`
+6.4.3, `react` / `react-dom` / `react-is` 19.2.7, plus `sanity-plugin-media` 5.0.11,
+`sanity-plugin-utils` 2.0.6 (pinned through `overrides`; the default 2.0.17 drags in
+`@sanity/ui` v4) and `sanity-plugin-asset-source-unsplash` 7.0.15.
+
+**`sanity` 6.9.2 is the wall.** A PATCH release moved the core to `@sanity/ui` 4, which is
+a genuine migration (ESM only, a required `@sanity/ui/styles.css` import, heavy components
+moved to subpaths, deprecated props removed). Phase 1 stops at 6.9.1 on purpose. The exact
+pins in `package.json` are what stop npm resolving straight through that boundary.
+
+"Latest v3" is not close enough on the OLD core either. Pinning `@sanity/ui` to 3.5.3
+against `sanity` 6.4.0 cleared error #18 and then failed differently, `TypeError: Cannot
+read properties of undefined (reading 'v2')` from inside styled-components'
+`generateAndInjectStyles`, because 6.4.0 expected the 3.3.x theme shape. That pairing is
+now history (the core moved with the UI), but the lesson stands: any Sanity dependency
+change must be checked against a sibling repo's **resolved** versions, not its semver
+ranges.
+
+Phase-1 notes worth carrying to the next repo. `@sanity/visual-editing` appears as a
+dependency AND in `overrides`; edit both in the same pass or npm refuses the whole install
+with `EOVERRIDE`. `@sanity/preview-url-secret` has to move to 4.1.5, because 5.7.3 and
+6.9.1 both want `^4.1.2` and 4.0.8 would nest a second copy. `@sanity/ui` 3.5.4 nests its
+own `@sanity/icons` 5 where 3.3.5 used the hoisted 3.8; harmless, leave it. And 3.5.4
+still exports only `.`, `./_visual-editing`, `./theme` and `./package.json`, so plugin
+bumps that want `@sanity/ui/tooltip` stay blocked until phase 2.
+
+Related: `@sanity/ui` v3 has no subpath exports beyond `./theme`, so
+`import { useToast } from '@sanity/ui/toast'` is v4-only syntax and fails
+`sanity schema extract`. On v3, import from the package root.
+
+**Therefore: Studio files never port blindly across this family.** A file copied across a
+Sanity major boundary compiles and then dies at browser runtime, which is also where
+schema errors surface (they pass the build). Port the _pattern_ from these cards, then
+write the file against the target repo's actual major.
+
+### Starter status: INSTALLED 2026-08-28
+
+This repo is no longer the Sanity-5 outlier. It took the whole card in one session: the
+exact pin set above, the studio folded into the root package (nested `studio/` deleted),
+the Studio embedded at `/studio` via `@sanity/astro` 3.4.2, and all five preview parts
+standing. Verified `find node_modules -path "*@sanity/ui/package.json"` prints exactly
+one line and `grep -l "errors.md#" dist/client/_astro/*.js` exactly one file.
+
+Three adaptations earned on the way in, each of which the NEXT repo will hit:
+
+- **`@sanity/visual-editing` needs an `overrides` entry too, not just a dependency pin.**
+  `@sanity/astro` depends on it by caret range; left alone npm nests a NEWER copy under
+  `@sanity/astro/node_modules`, which drags a second `@sanity/ui` (3.5.4) in with it and
+  breaks the one-instance invariant. presacademy does not show this only because its
+  lockfile was resolved when 5.4.5 was the latest. Pin it in `overrides`.
+- **`sanity schema extract --force` DOES exist on 6.4.0.** An earlier WCP-derived note
+  said otherwise. Without `--force` the second run fails on "Schema file already exists",
+  so the typegen script needs it to be re-runnable. (`--workspace` is still only needed
+  with multiple workspaces.)
+- **`sanity build` writes to `./dist` by default**, which would clobber the Astro build.
+  There is deliberately no `studio:build` script; the Studio is built by `astro build`.
+  A standalone bundle needs an explicit dir: `npx sanity build .studio-dist`.
+
+Also worth carrying: `buildLegacyTheme` is **light-only**. It hard-codes white component
+backgrounds, so the Studio's Dark appearance setting leaves every panel white. Migrating
+to `@sanity/ui`'s `buildTheme` gets a real, tested dark mode and costs the brand tinting
+of the Studio chrome, which is a good trade; keep the brand in the logo and the fonts.
+
+### Genericization note for a template
+
+A template must fail closed **legibly**. A clone with no project id and no token was
+answering `/preview` with a bare 500 and a Sanity stack trace, which reads like a broken
+template rather than an unfinished setup. The starter's copy checks configuration at every
+preview entry point and answers **503** naming the two missing pieces plus the
+`sanity cors add` step. Carry that idea, not the exact strings.
+
+## Card 11: Preview click interceptor
+
+**Dated 2026-08-26 (WCP). Canonical example: WCP's `PreviewLayout`.** Not installed in
+the starter. presacademy has the preview stack but not this interceptor.
+
+Inside the preview iframe, a same-origin link click escapes to the **live** page: the
+Presentation navigator and edit panel stay pointed at the old document, and the Studio
+appears frozen. The fix is a click interceptor in the preview layout that remaps
+same-origin links into `/preview/*` so the navigator follows the click, while files, API
+routes and external links open in a new tab.
+
+Found on presacademy, fixed in WCP, still unported back. That direction of drift is
+exactly what this registry exists to stop.
+
+**Per-site adaptation: the route map is per-site.** The live-route-to-preview-route
+mapping encodes that site's URL structure, so this is a pattern to re-implement, not a
+file to copy. What ports is the three-way decision (remap / new tab / leave alone) and
+the reason.
+
+**Installed in the starter 2026-08-28**, including presacademy's later refinement: when
+the preview is EMBEDDED in the Studio, a click on a link with no preview route is
+suppressed entirely rather than opening a new tab, because inside Presentation that click
+is an edit gesture and a popping tab forces a switch back to the Studio every time. A
+standalone `/preview` tab still opens the new tab.
+
+**The map lives in THREE files that must agree**, and the starter says so in each:
+`SINGLETON_PREVIEW_PATHS` (`src/sanity/resolve.ts`, document to URL),
+`SINGLETON_BY_PATH` (`src/pages/preview/[...slug].astro`, URL to document type), and
+`FIRST_SEGMENT_PREVIEWABLE` (the interceptor). presacademy names two; the third is the
+one that silently degrades, because a missed entry there does not error, it just lets a
+click escape to the live site.
+
+### Edit-mode gate (2026-08-28 amendment)
+
+While Presentation's Edit toggle is ON, @sanity/visual-editing keeps
+outline boxes (`[data-sanity-overlay-element]`) in the DOM. The
+interceptor treats their presence (when embedded) as edit mode and
+suppresses ALL navigation - even links with preview equivalents. A
+CTA button click then selects the field and nothing else, which is
+what an editor mid-edit expects. Toggle Edit off and the boxes leave
+the DOM, so clicks browse the preview again (remap as before).
+
+## Card 12: Parity-gated page-builder conversion
+
+**Dated 2026-08-26 (presacademy). Reference:**
+`presacademy/docs/superpowers/plans/2026-08-26-page-builder-conversion.md`.
+Method, not code. The starter is page-builder-first already, so it holds the method for
+the sites that are not.
+
+Converting bespoke singleton pages into CMS-driven section types without changing a
+pixel or risking content. Four decisions carried the plan:
+
+- **D1. Ported sections do not join the shared section shell.** The existing blocks are
+  tone-adaptive so editors can recolor them; art-directed page markup is not. Those two
+  are mutually exclusive, and wrapping ported markup in the shared shell means subtly
+  different pixels. Ported types render their own exact markup with fixed surfaces.
+  Pixel-exactness wins over uniformity, at least through the conversion.
+- **D2. Heroes and the final CTA stay page-level fields; only the body converts.** Every
+  singleton already has hero and CTA fields editors know. Leaving them alone means no
+  churn and no way for an editor to delete the page's h1. What converts is the middle.
+- **D3. Fallback literals become default section arrays in code.** Each page's `??`
+  fallback copy is restructured as a `DEFAULT_SECTIONS` array the renderer uses when the
+  array is absent. That behavior is load-bearing: the credential-less CI build renders
+  complete pages, and the axe and reflow sweeps run against them. (This starter's
+  `src/data/defaultSections.ts` is the same idea, already standing.)
+- **D4. Additive migration, instant rollback.** Seed scripts only ever write the sections
+  array; every existing field is left untouched until a final cleanup phase. Rolling back
+  a converted page is `git revert` of its commit, because the old page file returns and
+  the old fields are still there. Old-field cleanup happens only after every page is
+  verified live, and never through the Studio's "Remove field" button.
+
+The gate that makes it safe is Card 3: capture before, convert, rebuild, compare, zero
+diff or it is not done.
+
+## Card 13: react/react-dom exact pin
+
+**Dated 2026-08-25 (presacademy).** Gotcha, not a file.
+
+`react` and `react-dom` must be the **exact** same version, in every package. Installing
+Sanity into the root pulled react to 19.2.8 while react-dom stayed 19.2.6, and the build
+died inside workerd behind a wall of Miniflare stack frames. The real message,
+`Incompatible React versions`, was buried **above** the wrapper.
+
+Pin both exact, no caret. General lesson: when a Miniflare or workerd failure looks
+unexplainable, read the lines **above** the `MiniflareCoreError`.
+
+**Starter status:** pinned exact 2026-08-28 with the Astro 7 upgrade: `react`,
+`react-dom` and `react-is` all `19.2.7`, no caret. `react-is` was added at the same time
+(the Sanity stack needs it, and it drifts the same way).
+
+**Adjacent, learned in that session:** a stale `package-lock.json` can hide the fix. An
+`overrides` entry added to collapse a nested duplicate did nothing on `npm install`
+because npm kept the already-resolved nested tree; the duplicate only disappeared after
+deleting the lockfile and node_modules and resolving clean. When a dedupe or override
+"does not work", verify on DISK (`find node_modules -path "*<pkg>/package.json"`) rather
+than trusting the install output, and be aware a clean re-resolve floats every caret.
+
+**Caveat, 2026-10-03 (card 68): do not delete the lockfile in a working repo.** That advice
+was right for presacademy's throwaway experiment and is wrong as a habit. Do it ONLY in a
+throwaway clone, never in the repo you will commit from, and NEVER as a bisect step: a
+regenerated lockfile floats ~259 transitive packages and can break `sanity schema extract`
+(`exports is not defined`), so every candidate "reproduces" the failure on its own. To
+collapse a duplicate, edit `overrides` in `package.json` and run `npm install` against the
+COMMITTED lock (it updates only the affected subtree), or prove the fix in a scratch clone and
+port only the `package.json` change. `npm ci` for any run you will reason from.
+
+## Card 14: wrangler legacy_env pin
+
+**Dated 2026-08-25 (presacademy).** Gotcha, not a file.
+
+`@astrojs/cloudflare` v14 writes `legacy_env: true` into the generated
+`dist/server/wrangler.json`, and wrangler 4.126+ rejects that field outright ("no longer
+supported"), so every `wrangler dev` / `deploy` against the generated config fails.
+presacademy pins `wrangler` to `~4.110.0`. Revisit when a newer adapter stops emitting
+the field.
+
+**Starter status (2026-08-28): pinned `~4.110.0`, with a finding.** The generated
+`dist/server/wrangler.json` from adapter **14.2.4** on this config contains **no**
+`legacy_env` field at all, and `wrangler dev` against it serves every route. So on this
+combination the pin is currently belt-and-braces rather than load-bearing. The reason it
+stays is a second, harder constraint: **the adapter's own peer range enforces the pair.**
+14.2.4 peers `wrangler ^4.83.0`, but 14.2.5 peers `wrangler ^4.125.0`, which is one minor
+away from the 4.126 rejection. So the starter pins the ADAPTER exact at 14.2.4 as well.
+Moving either one is a deliberate act: bump both, rebuild, inspect the generated config
+for `legacy_env`, and run a real `wrangler dev` before believing it.
+
+Adjacent, same family of pain: WCP's deploy must be
+`wrangler deploy -c dist/server/wrangler.json`; a plain `wrangler deploy` 404s every
+sub-route. And this starter pins `@astrojs/cloudflare` to exactly 13.5.5 because 13.6.0
+regressed the image optimizer (optimized images written to `dist/client/_astro/` while
+the optimizer reads `dist/_astro/`). Three separate adapter-version landmines; the shared
+rule is that adapter and wrangler versions are a matched pair, verified by a real build.
+
+## Card 15: PENDING.md / TESTING.md docs registry
+
+**Dated 2026-08-27. Origin: WCP (`site/docs/`).**
+
+Two flat markdown registries, kept authoritative rather than narrative:
+
+- **PENDING.md** - the open-patch and waiting-on-a-human queue. Every deferred change
+  with its blocker, so a new session can read the queue instead of rediscovering it. WCP
+  proved the value during the 2026-07 Sanity quota freeze: the entire queue survived the
+  freeze in the file and ran to completion in one sitting when quota returned.
+- **TESTING.md** - a map of which suite covers what, so nobody writes a fifth suite that
+  duplicates the third.
+
+The practice, not the filenames, is what ports: a registry is authoritative and gets
+edited in the same commit as the thing it tracks; a changelog is narrative and appends.
+Keeping both, and knowing which is which, is the whole trick.
+
+**In this starter:** `PORTS.md` (this file) is the machine-checkable registry of what is
+shared with the rest of the family, backed by `scripts/sync-check.mjs`.
+`docs/agent/changelog.md` stays the prose ledger. `docs/PENDING.md` was added 2026-08-28
+for the third thing neither of those covers: this repo's own open loops and
+waiting-on-a-human items. Something that needs to be _checked_ belongs here; something
+that needs to be _understood in sequence_ belongs in the changelog; something that is
+_still open_ belongs in PENDING.
+
+There is no TESTING.md yet: the suite is one `npm test` over `src/lib/*.test.ts` plus the
+parity harness, and a map of two things is not worth a file. Write one the day a second
+suite (Playwright, card 8) lands.
+
+---
+
+## Card 16: Quarterly slop sweep (2026-08-28)
+
+**What:** a scheduled REDUCTION pass per site, because the per-commit gates
+catch regressions but nothing schedules cleanup: an app keeps working while
+its code and docs quietly degrade, then one simple feature request breaks
+everything (the failure mode that bit presacademy's README/CLAUDE.md drift in
+June 2026).
+
+**The sweep, roughly one session per site:**
+
+1. Run the /simplify and code-review passes over recent hot spots.
+2. Dead-weight grep: unused deps (`npm ls` orphans, imports nothing
+   references), dead components, stale scripts without RAN/DO-NOT-RUN headers.
+3. Doc-drift check: CLAUDE.md commands/routes vs reality, PENDING.md pruning,
+   guide steps vs the actual Studio.
+4. Re-run sync-check and the site's full gates; log findings as gotchas or
+   PORTS cards when they generalize.
+
+**Cadence:** quarterly per actively-maintained site; on-demand before any big
+planned change on a dormant one. Tick the matrix cell with the sweep DATE
+rather than "yes" so staleness is visible.
+
+**Provenance:** distilled from community experience (the "AI slop is very
+real / the app keeps working while the code gets worse" lesson) and our own
+June drift incident.
+
+## Card 17: In-canvas section controls (2026-08-28)
+
+**What:** Squarespace-style editing inside the Presentation preview: each
+rendered section carries a `data-sanity` attribute (createDataAttribute ->
+`flexibleSections[_key=="..."]` on a REAL block box, never display:contents),
+which makes the visual-editing overlay outline it as an array item with
+insert-before/after (the grouped insert menu opens IN the canvas), duplicate,
+remove, and drag-to-reorder (on by default once the attribute exists; the
+mutation writes itself). Pair with `insertMenu.filter: true`. Attribute
+renders on preview surfaces only; the live build must stay byte-identical
+(parity enforces it).
+
+**DEPENDS ON card 10** (the full live-preview stack). Sites without it get
+card 10 first. Canonical implementation: presacademy; WCP has the attribute
+half already (sectionEditAttr).
+
+**Installed in the starter 2026-08-28.** Two adaptation notes:
+
+- **The array field name is per-repo, and here it is ONE name.** presacademy's
+  singletons use `flexibleSections` while its custom pages use `sections`, so its
+  `EditDoc` carries a discriminating `field`. This template holds every page's
+  sections in `pageBuilder`, singletons and `page` docs alike, so the field is a
+  single-member union kept only so the shape ports back.
+- **The preview-only wrapper does not need a component.** `SectionRenderer` picks
+  `const Wrap = editDoc ? 'div' : Fragment` and spreads the attribute. A
+  `<Fragment>` renders nothing, so the live build is byte-identical without a
+  second code path to keep honest. `npm run parity compare` passed 10/10 with the
+  feature installed, which is the proof.
+- **The grouped insert menu had to be created**, not merely switched on: this
+  template had no `insertMenu` config at all. `SECTION_INSERT_MENU` in
+  `src/sanity/schemaTypes/sections.ts` (four plain-language groups plus
+  `filter: true`) is shared by every `pageBuilder` array, including the curated
+  per-page lists, because a group whose types are all absent from a given array
+  simply does not render.
+
+**Rollout intent (Nathan, 2026-08-28): every Sanity site gets this.** Order:
+presacademy (canonical) -> WCP polish delta -> THE STARTER (upgrade the
+template once: Astro 7 / adapter 14 / Sanity 6.4 pin set / embedded
+single-package studio / preview stack / these controls - so future sites are
+born with it) -> church-starter inherits by sync -> reid (already Sanity 6,
+shortest hop, most active) -> mas -> 2ndpreschicago (after its DNS cutover).
+Follow-up polish on the same card: the insert menu's grid view with
+per-section-type preview thumbnails, and "duplicate page" in the navigator.
+
+### Card 10/17 lore corrections (mas upgrade, 2026-08-28)
+
+- **The one-styled-components invariant grep must be precise.**
+  `grep -l "errors.md#" dist/client/_astro/*.js` false-positives on any
+  bundle containing `polished` (a Sanity dependency using the same
+  filename). Use `styled-components/src/utils/errors.md#` as the
+  pattern. (The starter and church builds happened not to co-locate
+  polished, which is why 'one file' held there.)
+- **Stega markers are zero-width characters, not the Unicode tag
+  block** - measuring the tag block reads zero on a fully encoded
+  string and mimics a broken preview.
+- **`wrangler ~4.110` is LOAD-BEARING on some configs**: mas's adapter
+  14.2.4 build DOES emit legacy_env, unlike the starter's. The pin
+  stays a hard rule, not belt-and-braces.
+- **Keyless primitive arrays** (arrays of plain strings) have no `_key`;
+  in-canvas attributes must fall back to index paths or controls
+  silently do not render.
+- **The founding `overrides: {vite:"^7"}`** in older forks starves
+  Astro 7 of vite 8 and surfaces as "Could not find the prerender
+  entry point". Remove it in phase A.
+- **Auto-deploy-from-main repos**: the dashboard deploy command must
+  switch to `-c dist/server/wrangler.json` BEFORE the upgrade merges,
+  or /studio and /preview 404. Land on a holding branch until the
+  human flips it (mas: staging branch).
+
+## Card 18: Chrome options (editable header/footer content)
+
+**What:** the header and footer stop being code. One shared `navLink` object
+type gives every menu the same vocabulary, and Site Settings grows the fields
+that let an editor change the top menu, the footer link columns, the small-print
+row at the very bottom, the one header button, the logo, and three "show this
+bit of contact detail" switches - without a deploy. This is Phase A of the
+Unlocked Studio: the chrome is the last thing on a page that still needed a
+developer.
+
+**The navLink vocabulary.** `src/sanity/schemaTypes/navLink.ts`, registered as a
+top-level type and used by EVERY menu (top menu, dropdown children, footer
+columns, legal row, the header button's destination):
+
+- `label` - what visitors see.
+- `linkType` - radio: "A page on this site" / "Another website".
+- `internalPage` - a reference to a page document. The address is worked out
+  from the DEREFERENCED document type + slug, so renaming a slug can never
+  leave a dead menu link.
+- `externalUrl` - a full web address.
+- `href` - the original hand-typed address (see the compat rule below).
+
+Every document type listed in `internalPage.to[]` must have an entry in
+`SINGLETON_LIVE_PATHS` in `src/lib/nav-href.ts` (or the slug-based `page` case),
+or the link resolves to nothing. That map mirrors `SINGLETON_PREVIEW_PATHS` in
+`src/sanity/resolve.ts` with the `/preview` prefix removed; keep them in sync
+when a route moves.
+
+**The legacy-href-wins compat rule.** Every repo already had menus stored as
+`{label, href}` objects, most of them typed `navLink`. Nothing is renamed and
+nothing is migrated. `href` is kept on the shared type and it WINS over both
+newer fields, so today's menus render byte-identically; it hides itself once a
+link uses the picker. Where an inline object had a different name (the footer's
+`footerLink`), that member stays in the array alongside the shared type, titled
+"Link (typed address)", so columns written before the picker stay editable in
+place. Precedence inside one link, decided in exactly one function
+(`navHref()`): typed `href`, then the picked page, then the pasted URL. A link
+that resolves to nothing is DROPPED, never rendered as a dead `<a>`.
+
+**The centralized-fallback rule.** No component may re-implement a menu
+fallback. `resolveSiteSettings()` in `src/lib/siteSettings.ts` is the one place
+that decides what each chrome field resolves to, and Header / MobileNav / Footer
+read `settings.headerNav`, `.footerColumns`, `.legalNav`, `.headerCta`, `.logo`,
+`.showEmail`, `.showSocials`, `.showFooterSocials` and render. Two shapes of
+fallback, and which one a menu gets is decided by its built-in version:
+
+- A menu whose built-in version is DATA (the top menu, the header button)
+  resolves to that built-in when Sanity is empty, so the caller renders one loop
+  with no branch.
+- A menu whose built-in version is BESPOKE MARKUP (the starter's
+  Studio/Work/Free-tools columns, each link carrying its own module-visibility
+  flag; a legal row whose two links carry different link styles) resolves to an
+  EMPTY array, and the component keeps its own markup for that case. Flattening
+  those into data would change the rendered bytes of an untouched site, and
+  parity is the gate.
+
+The three switches use `onUnlessOff()`: `undefined` means YES. Sanity's
+`initialValue` only fills NEW documents, so a live singleton has no value for a
+newly added boolean at all - if undefined meant "off", the header would silently
+lose its email and socials the moment the field shipped.
+
+**Two more halves that are easy to forget.** The GROQ projection has to
+dereference the picked page (`"slug": internalPage->slug.current`,
+`"docType": internalPage->_type`), and `SITE_SETTINGS_PROJECTION` must be
+EXPORTED so `PreviewLayout.astro` fetches the chrome through it too. A preview
+shell that fetches the raw document leaves every picked-page link null, which
+looks like "the picker is broken" and is not.
+
+**Parity gotcha found installing this (starter + church, 2026-08-28):**
+importing `SanityImage.astro` into `Header.astro` for the logo pulls that
+component into the always-loaded chunk and RENAMES the site-wide CSS bundle
+(`BaseLayout.HASH.css` -> `SanityImage.HASH.css`), which fails parity on every
+page without one byte of markup changing. Build the logo URL with `urlFor()` and
+emit a plain `<img>` with a two-density srcset instead. A header renders on
+every page; what it imports is a site-wide decision.
+
+**Applied to:** presacademy yes (canonical) / wcp yes (its own navigation-doc
+flavor) / starter yes / church-starter yes / reid staged / mas staged /
+2ndpres parked (after its DNS cutover).
+
+## Card 19: Shareable draft links (2026-08-28)
+
+**Canonical:** `src/sanity/components/shareDraftLink.tsx`
+
+**What:** a "Copy share link" affordance in the Studio that hands an editor a URL
+an outside reviewer can open, with no Sanity login, to read the CURRENT DRAFT of
+one page. It sits in the publish menu of every document that has a page of its
+own (a document action registered in `sanity.config.ts`), and, in repos that ship
+the Presentation page navigator, as a per-row icon button on that list too.
+
+**Why:** "can the board chair read this before it goes live?" had two answers and
+both were wrong. Publish it and unpublish it, or make a volunteer a Sanity
+account. The mechanism to do it properly was already in the repo and had only
+ever been pointed at an iframe.
+
+**How the link is minted.** `createPreviewSecret()` from
+`@sanity/preview-url-secret/create-secret` - the same call the Presentation tool
+makes, from the Studio's own authenticated client. The returned secret is dropped
+into the URL the enable endpoint already understands:
+
+```
+/api/draft-mode/enable?sanity-preview-secret=<minted>&sanity-preview-pathname=/preview/<page>
+```
+
+`/api/draft-mode/enable` is NOT modified by this card. It still runs
+`validatePreviewUrl()` and still answers a bare 401 for an invalid, tampered, or
+expired secret before setting any cookie. The feature is additive: a new way to
+obtain a valid secret, not a new way in.
+
+**The TTL caveat, stated in the UI.** `SECRET_TTL` is a hard-coded `60 * 60` in
+`@sanity/preview-url-secret/constants`, and the validating query (`_updatedAt >
+now() - SECRET_TTL`) lives inside the package. There is no `ttl` option on the
+create call and no supported way to widen it, so **a share link works for about
+an hour and then stops**. Every surface says so out loud - the toast, the button
+tooltip, the document-action title, the church guide - because the alternative is
+a reviewer meeting a 401 the next morning and reporting the site as broken.
+Re-minting is one click, which is the intended answer to an expired link.
+
+The package also ships a "shared access" singleton with a NON-expiring secret
+(`toggle-preview-access-sharing`). Deliberately not used: it switches draft
+preview on for anyone who ever saw any link, forever, with no per-link
+revocation. For a volunteer-run site a one-hour link is the safer default.
+
+**HTTPS only.** The enable endpoint sets its cookie `secure: true; sameSite:
+none` (required because Presentation loads it cross-context). Browsers refuse a
+secure cookie over plain http, so share links work on the deployed origin and not
+against `http://localhost:4321`. Test them deployed.
+
+**Per-site adaptation:** none beyond having the preview stack (card 10). The
+module derives the preview path from that repo's own `pathForDoc()` in
+`src/sanity/urls.ts`, so a repo with different routes needs no edit here. Repos
+without a `PreviewNavigator.tsx` get the document action only, which is a
+complete feature on its own.
+
+**Applied to:** starter yes (canonical) / church-starter yes (document action
+only, it has no page navigator) / everything else pending rollout.
+
+## Card 20: publishAt scheduled publishing, free tier (2026-08-28)
+
+**Canonical:** `src/sanity/schemaTypes/_publishAt.ts`, `scripts/publish-due.mjs`,
+`.github/workflows/publish-due.yml`
+
+**What:** an editor sets "Publish automatically at" on a page, leaves it as a
+draft, and it publishes itself. Three small parts: a `datetime` field, a
+dependency-free Node script, and a half-hourly workflow.
+
+**Why:** Sanity's own Scheduled Drafts is a **Growth-plan** feature. Every site in
+this family runs on the free plan, and "write it Friday night, have it live
+Monday morning" is a thing volunteers actually ask for, so it gets built rather
+than bought.
+
+**The field.** `PUBLISH_AT_GROUP` + `publishAtField()` are exported as a PAIR and
+must be spread together - the group into the type's `groups`, the field into its
+`fields`. A field naming a group its type never declared is a hard Studio 6.4+
+crash, not a warning. The script's query is schema-agnostic, so adding the pair
+to a new document type is the entire installation: no script change, no workflow
+change.
+
+**Timezone honesty.** Sanity's datetime input shows and accepts the editor's
+LOCAL time and stores UTC; the script compares against `now()` evaluated by
+Sanity, so it is UTC on both sides and the runner's own clock is irrelevant. The
+description says "your own local time" so nobody has to reason about it, and
+"within the half hour" so nobody expects 9:00:00.
+
+**Publishing is two mutations in one request.** Sanity's own publish action is
+`createOrReplace` at the id without the `drafts.` prefix, then `delete` the draft.
+This mirrors that, in a single mutation array so it is atomic. `publishAt` is
+STRIPPED on the way through rather than cleared afterwards: the published
+document never carries a schedule, so there is no window in which a crash between
+two writes leaves a document that republishes itself every half hour.
+
+**The no-npm-install cron design, and why.** At `*/30` this runs 48 times a day.
+`npm ci` would spend a couple of minutes of Actions time per run installing
+several hundred megabytes in order to make three HTTP calls - roughly two hours
+of runner time a day to publish, on most days, nothing. So `publish-due.mjs`
+imports nothing from `node_modules`: it uses global `fetch` against Sanity's HTTP
+API and the job is checkout + setup-node + node, a few seconds. Its only local
+import is `scripts/lib/loadEnv.mjs`, itself dependency-free and used only for
+local runs. **If the script ever needs a package, the design broke; do not add an
+install step.**
+
+Endpoints, both `Authorization: Bearer <SANITY_AUTH_TOKEN>`:
+
+- `POST https://<projectId>.api.sanity.io/v2025-02-19/data/query/<dataset>?perspective=raw`
+  with `{query}`. `perspective=raw` is required - the default perspective hides
+  `drafts.*`, which are the only documents this cares about.
+- `POST https://<projectId>.api.sanity.io/v2025-02-19/data/mutate/<dataset>?returnIds=true`
+  with `{mutations:[{createOrReplace}, {delete}]}`.
+
+**Dry run by default.** Bare `node scripts/publish-due.mjs` prints the queue and
+writes nothing; `--apply` publishes. The workflow passes `--apply`. Same gate as
+every other Sanity script in `scripts/`, for the same reason: a human running it
+by hand cannot publish by accident.
+
+**Workflow gating** is card 6's two-job gate, copied verbatim: a `gate` job checks
+for the `SANITY_AUTH_TOKEN` secret and the `SANITY_PROJECT_ID` variable and emits
+a `::warning::` with `ready=false` when either is missing, and the `publish` job
+is `if: needs.gate.outputs.ready == 'true'`. A fork without the secret skips
+instead of failing. One difference from the backup workflow: this token must have
+WRITE access, where a read token is enough for the backup.
+
+**In both TEMPLATE repos the `schedule:` block ships COMMENTED OUT**, exactly as
+`sanity-backup.yml` does, because neither template has a Sanity project of its
+own and a gate job firing 48 times a day only to skip is the same waste in
+miniature. A fork uncomments one line. `workflow_dispatch` stays on, so a manual
+run always works.
+
+**Per-site adaptation:** set the secret and the variable, uncomment the schedule,
+and add the field pair to any document type that should be schedulable.
+
+**Applied to:** starter yes (canonical, on `page` + the `_pageSingleton` factory)
+/ church-starter yes (on `page` + the `churchPages` factory, so all eleven church
+page singletons) / everything else pending rollout.
+
+## Card 21: Pages as first-class objects (2026-08-28)
+
+**Canonical:** `src/sanity/pageOps.ts`, `src/sanity/components/pageActions.tsx`,
+`src/sanity/schemaTypes/_seoFields.ts`, `src/sanity/components/SeoSnippetInput.tsx`
+
+**What:** three verbs and one panel that turn a `page` document from a row in a
+list into something an editor can handle like a page in Squarespace.
+
+- **Duplicate.** Copies the page into a NEW DRAFT called "... copy", at a free
+  web address ("about" then "about-copy" then "about-copy-2"), with every nested
+  array `_key` regenerated.
+- **Archive / Restore.** Sets `archived` on both twins. Every live-site query
+  skips an archived page; nothing is deleted, so Restore is complete.
+- **Search & sharing.** The SEO group gains a live Google-snippet and share-card
+  preview at the top, and a "Keep this page out of Google" switch.
+
+**Why Duplicate had to be rebuilt.** Sanity ships a `duplicate` action, and it
+copies the slug. The copy is then a second document claiming an address that is
+already taken; the build can emit only one of them and which one wins is
+arbitrary. The config filters the stock action out for `page` and registers ours
+in its place, so the menu still reads "Duplicate" and now does the right thing.
+
+**Why Archive is not Delete.** Delete is refused while any other document links
+to the page, and it throws the words away. An event page an editor wants back
+next year is the common case, not the rare one. `archived` is a plain boolean;
+the live-site queries test `archived != true`, **never `archived == false`**, so
+a page created before the field existed stays visible. Delete is still there for
+a page that really should go.
+
+**Both twins, and only the twins that exist.** `setPageArchived()` looks up which
+of `<id>` / `drafts.<id>` are actually present before patching. A patch against a
+missing document id fails the WHOLE transaction, so patching both blind throws on
+a page that has no draft, which is most of them.
+
+**Archive needs a publish** to reach the live site, because the site is rebuilt
+from published content. Every toast says so.
+
+**One implementation, two surfaces.** The verbs are plain functions in
+`pageOps.ts`. `pageActions.tsx` puts them in the publish menu (every repo);
+`PreviewNavigator.tsx` puts them on a per-row "..." menu with an **Archived**
+group at the bottom of the list (only the repos that ship the page navigator).
+A repo with no navigator has the complete feature from the document actions
+alone, which is how the church starter has it.
+
+**REUSE, DO NOT RENAME (the SEO panel's one rule).** `seoFields()` takes the
+document's EXISTING SEO field definitions in a `reuse` argument and puts them in
+the right order, rather than defining new ones. A rename would move the data to a
+new path, and every page in the dataset would quietly go back to a default title.
+So on a type that already had SEO fields the helper contributes exactly two new
+things: the value-less `seoPreview` field whose custom input draws the previews,
+and `hideFromSearch`.
+
+**`hideFromSearch` has to be honoured in TWO places or it is a dead control:** a
+`<meta name="robots" content="noindex, follow">` on the page (the route passes
+`noindex` to `BaseLayout`), and the page dropped from the sitemap (the `filter`
+in `astro.config.mjs`, fed by a build-time query). One without the other is worse
+than neither, because the switch looks like it worked.
+
+**The preview is an INPUT, never a document VIEW.** It calls `useFormValue`,
+which needs a `FormValueProvider`. An input always renders inside the document
+form, so the provider is there. A standalone `S.view.component` pane does NOT get
+one inside the Presentation tool: the hook throws, the panel's error boundary
+trips, and the preview iframe stops refreshing. This cost the WCP repo an evening
+in 2026-07; keep the split.
+
+**Per-site adaptation:** `PAGE_OPS_TYPES` in `pageActions.tsx` is `{'page'}` -
+the multi-instance builder page every repo in this family has. Page SINGLETONS
+are deliberately excluded: one-per-site means duplicating or archiving one would
+leave the site with a route and no document. `pageOps.ts` reads and writes the
+slug in whichever shape the repo uses (Sanity's `slug` object, or WCP's plain
+string, which has to hold slashes), so no edit is needed there either. The only
+real per-site work is passing the repo's own SEO field definitions into
+`seoFields({ reuse })`, and wiring `noindex` on the routes that render `page`.
+
+**Applied to:** starter yes (canonical: publish-menu actions + navigator rows) /
+church-starter yes (publish-menu actions only, it has no page navigator) / WCP
+partial (the same feature, older and repo-specific: its navigator carries the
+verbs and its `seoFields.ts` predates this canonical copy) / everything else
+pending rollout.
+
+## Card 22: Redirects on rename (2026-08-28)
+
+**Canonical:** `src/lib/redirects.ts` (+ `src/lib/redirects.test.ts`),
+`src/sanity/components/slugRedirect.tsx`
+
+**What:** an editor changes a page's web address, presses Publish, and the old
+address keeps working. A `redirect` document type holds the forwards, a
+build-time read folds them into Astro's `redirects` map, and a wrapper around the
+stock Publish action files one automatically on a rename.
+
+**Why:** the manual Redirects list on its own depends on somebody remembering at
+exactly the wrong moment. Every bookmark, printed bulletin, and Google result for
+the old address 404s quietly until they do.
+
+**Build time, not request time.** These are `output: 'static'` sites, so the 404
+route is prerendered and middleware never runs for it. Making it SSR to read a
+redirect list would put a Worker invocation in front of the one route that exists
+to be cheap. The Cloudflare adapter turns the `redirects` map into real 301s at
+build, which cost nothing per request, and a publish rebuilds the site anyway.
+
+**The path arithmetic is shared and tested.** `src/lib/redirects.ts` is imported
+by BOTH `astro.config.mjs` (build) and the Studio action. If the two disagreed
+about what `/old-page/` means, an auto-filed redirect would sit in the Studio
+looking correct and never fire. Hence `redirects.test.ts`. The rules: normalize
+both sides, drop a self-redirect, drop a half-filled row, drop an external
+left-hand side (it could never match a request), later entry wins.
+
+**No type list in the action, on purpose.** Which documents have a slug-derived
+address is already encoded in each repo's `pathForDoc()` (`src/sanity/urls.ts`).
+A type with a fixed path returns the same string before and after, so the
+comparison is a no-op for it; a type with no public page returns null. That is
+what lets `slugRedirect.tsx` be byte-identical across repos with completely
+different routes, and why `redirects.ts` deliberately does NOT carry a
+document-type-to-path map the way WCP's ancestor version does.
+
+**The wrapper must be memoized.** A document-action wrapper needs a STABLE
+component identity across renders, or React unmounts and remounts the action
+every pass and the stock Publish action loses its own state (the "publishing..."
+spinner, the disabled logic). The actions resolver in `sanity.config.ts` runs on
+every render, so the wrapper is cached in a `WeakMap` keyed by the action it
+wraps.
+
+**It never blocks Publish.** A failed redirect write toasts a warning and
+publishes anyway. The editor's change is the important part; the forward can be
+added by hand.
+
+**Renames repoint, they do not chain.** A second rename patches the existing
+`A -> B` entry to `A -> C` rather than adding `B -> C`, so visitors always take
+one hop. An existing redirect for the same old address is never overwritten: it
+may have been hand-corrected.
+
+**The redirect is created PUBLISHED** (a plain `create`, not a draft), because
+the build-time reader only sees published documents. A draft redirect would look
+filed and never fire.
+
+**Fail-safe reads.** `cmsQuery()` in `astro.config.mjs` returns the empty answer
+for anything that is not a clean 200 - no project id, no token, Sanity down, bad
+data - so this feature can never fail a build.
+
+**Per-site adaptation:** a site that also carries hand-written launch redirects
+(WCP's Squarespace map) puts them BEFORE `...cmsRedirects` in the `redirects`
+object, so a Studio entry can correct a stale launch one without a code change.
+
+**Applied to:** starter yes (canonical) / church-starter yes / WCP yes (the
+original, with a repo-specific `redirects.ts` that also owns the doc-type path
+map, plus the launch-migration entries) / everything else pending rollout.
+
+### Addendum, 2026-09-29: the rename-and-back loop, and the live-page guard
+
+**Canonical:** `src/lib/redirect-guard.ts` (+ `redirect-guard.test.ts`), both PORTABLE,
+wired in `astro.config.mjs`. Folded back from reid-design-site (PR #43), where it was
+written while porting this card.
+
+**The hole "renames repoint, they do not chain" leaves.** Rename `/a` to `/b` and the
+action files `/a -> /b`. Rename it back to `/a` and the action files `/b -> /a`, and the
+repoint step skips the first entry because its `from` equals the new `to`. The map now
+holds `/a -> /b` AND `/b -> /a`, and the page lives at `/a`. Cloudflare applies
+`_redirects` BEFORE it serves any file, so the redirect shadows the real page and every
+visitor bounces between the two addresses. A hand-filed redirect from an address a
+published page already uses does the same thing with one entry.
+
+**The fix is at build time, not in the action.** The build is the one place that knows
+every address a page lives at right now, and `slugRedirect.tsx` has to stay
+byte-identical across the family. `astro.config.mjs` reads the published, non-archived
+slugged documents alongside the redirects (one query), turns each into its live path
+through a small `LIVE_PATH_BY_TYPE` table, and `dropRedirectsOverLivePages()` removes
+every entry whose `from` is one of them, with a `[redirects] skipped N ...` build warning
+naming each. The `redirect` document is not touched: it sits harmless in the Studio and
+starts working again if the page ever moves away. Archived pages are not built, so a
+redirect away from one is kept.
+
+**Why a separate file and not a function in `redirects.ts`.** Every repo carrying card 22
+has `redirects.ts` marked PORTABLE, so adding to it would turn every one of their
+sync-checks red at once for something each can adopt at its own sync. A new file drifts
+nobody.
+
+**Per-site adaptation:** `LIVE_PATH_BY_TYPE` lists the types whose address comes from a
+slug. The starter has `page` and `journalEntry`; Reid has `page`, `project`,
+`journalEntry` and `leadMagnet`. It is the same knowledge as `pathForDoc()`; it is
+repeated rather than imported because `astro.config.mjs` runs before the env that
+`src/sanity/urls.ts` reads is populated.
+
+**Reid's copy** (`src/lib/redirect-guard.ts`, unmarked, "Reid-only") is identical in
+code to this one; its header comment and its test's runner (vitest) differ. It re-adopts
+by taking this file and adding the marker.
+
+## Card 23: Editor-defined forms (2026-08-28)
+
+**Canonical:** `src/lib/custom-form-fields.ts` (+ `src/lib/custom-form-fields.test.ts`),
+`src/sanity/schemaTypes/formQuestion.ts`
+
+**What:** an editor writes their own form questions in the Studio and the site
+asks them. A `formQuestion` object holds one question (the words, an answer type,
+choices for a dropdown, and whether it must be answered); a `fields` array on the
+form surface holds up to twelve of them. Empty array, and the form is exactly the
+form that shipped. One question, and the visitor sees the editor's form.
+
+**Why:** "can you add a question to the form?" is the single most common request a
+volunteer or a small-business owner makes, and until now it was a developer
+ticket every time. The whole point of the page-builder is that it is not.
+
+**The standard contact block ALWAYS leads.** Name, email, and phone are drawn
+first, before any editor question, on every path. This is the load-bearing rule
+of the whole card, and it exists because the failure it prevents is silent: an
+editor builds a perfectly reasonable form, forgets to ask for an email address,
+and the site collects messages nobody can ever reply to. Nothing an editor can
+write removes that block. A schema that lets an editor define ALL the fields (as
+church-starter's older `form` document does) has this hole; this one does not.
+
+**The answers are folded into the message, and that is the entire design.** The
+renderer names each answer `custom_<n>` and carries the question text alongside
+it in `custom_<n>_label` (plus a `custom_<n>_req` marker). The submit path turns
+those into plain `Question: answer` lines and appends them to the `message` the
+site already sends. So a brand-new question needs NO code change, NO schema
+change, and no change to whatever receives the submission - Web3Forms, an email,
+a webhook, a Sanity `submission` document, a Google Sheet. Downstream never
+learns that editor-defined questions exist. Resist the temptation to give each
+question its own key in the payload: that is the version that needs a migration
+every time somebody renames a question.
+
+**Two pure functions, shared by both sides, unit-tested.**
+`normalizeCustomFields()` shapes the raw Sanity value into what the renderer
+draws; `parseCustomFieldEntries()` turns posted `[name, value]` pairs into the
+lines. They are in one dependency-free module because the renderer and the submit
+path MUST agree about the caps and about what "answered" means. `parse` takes an
+`Iterable<[string, string]>`, which is exactly what `FormData.entries()` gives a
+server route and what a React island can synthesize, so the same tested code
+serves a native POST and a client-side fetch.
+
+**The caps are deliberate and belong to the library, not the schema:** 12
+questions, 2000 characters per answer, 12000 characters over all answers, 200
+characters per question label. The Studio validates the 12 as well, but the
+Studio is not a security boundary - a stale open page can post anything. Twelve
+is also a design limit, not just a safety one: a longer form is the fastest way
+to lose the person filling it in.
+
+**It degrades instead of throwing.** A question with no label cannot be asked and
+a dropdown with no choices cannot be answered, so both are dropped; an unknown
+answer type falls back to a text box; questions past the cap are IGNORED rather
+than rejected, so a page a visitor left open before an edit still submits.
+
+**Never log an answer.** The parser returns a visitor-facing error string and
+nothing else. Form answers are the most personal data these sites handle.
+
+**Native validation plus `aria-required` plus a visible cue.** All three, on every
+required question, so the browser, assistive technology, and the eye agree. The
+honeypot on the existing form is preserved untouched.
+
+**Type name: `formQuestion`, not `formField`.** church-starter's `form` document
+already registers a `formField` array member, and two schema types with one name
+is a Studio-runtime crash that a build will not catch. The canonical file is
+byte-identical everywhere, so it cannot dodge the collision per-repo - the name
+had to be chosen to clear it once. WCP's ancestor version calls it `formField`;
+that is the one intentional divergence from the original.
+
+**Per-site adaptation:** wire the `fields` array into whatever the repo's form
+story already is, and fold the lines into whatever it already submits. WCP has an
+Astro API route and a native POST, so it appends the lines to the stored/emailed
+`message` server-side. Both templates are React islands posting to Web3Forms, so
+the fold happens in the island just before `fetch`, and the payload still carries
+one `message`. In the starter the questions REPLACE the built-in project
+questionnaire (a form asking both "rough budget range" and a church picnic
+question is nonsense); in church-starter they are an alternative to referencing a
+`form` document. In both, an empty array is a zero-diff no-op, which is what makes
+the change safe to ship: `page-parity compare` proves it.
+
+**Applied to:** starter yes (canonical, on `contactPage.formFields`) /
+church-starter yes (on the `sectionForm` page-builder block) / WCP yes (the
+original, `formField` + an `/api/contact` server fold) / everything else pending
+rollout.
+
+## Card 24: Saved sections (2026-08-28)
+
+**Canonical:** `src/sanity/actions/saveSectionPreset.tsx`, plus `addSectionToPage()`
+in `src/sanity/pageOps.ts`
+**Per repo:** `src/sanity/schemaTypes/sectionPreset.ts`,
+`src/sanity/pageBuilderConfig.ts`
+
+**What:** an editor keeps one band of a page and drops a copy of it on any other
+page. "Save a section as preset..." in a page's publish menu lists that page's
+sections, the editor picks one and names it, and a `sectionPreset` document is
+written. Adding it back is a copy, not a link.
+
+**Why:** the section an editor is proudest of is the one they most want to
+repeat, and today repeating it means either rebuilding it by hand or duplicating
+a whole page to get at one strip of it. The page-builder promises reuse and
+until now offered none.
+
+**THE SCHEMA SHAPE IS THE WHOLE TRICK.** `section` is an ARRAY of every section
+type, capped at one by validation. Sanity has no syntax for a union OBJECT
+field, and a field per type would be twenty fields. The array buys three things
+for free: the same grouped insert menu the page builder uses, the real section
+FORM (so a saved section is EDITABLE in place, not just replayed), and the
+type's own preview. `sectionType` is a read-only stamp copied out of the array
+when the preset is captured, so a list can label a preset without opening it.
+
+**No field groups on the type, deliberately.** An undefined group name is a
+fatal Studio-RUNTIME error in Sanity 6.4 that `astro build` does not catch. Four
+fields need no tabs, so the risk is simply not taken.
+
+**Why a document action and not the section's own menu.** Array-item menus are
+built from the array input's options and the visual-editing overlay's toolbar is
+internal; Sanity opens neither to a plugin. A document action is the surface we
+own.
+
+**It writes a PUBLISHED preset and reads the DRAFT page.** A preset is a tool,
+not content: nothing about it reaches the website, so "publish your saved
+section before you can use it" would be ceremony. The source is the draft
+because a section is usually saved right after it is made.
+
+**Adding one always writes to the DRAFT of the target page**, and the section
+lands at the BOTTOM. A saved section that went live on click would be a publish
+nobody asked for. When the target has no draft yet, one is made from the
+published document first, which is exactly what typing in the form would have
+done. Every `_key` is regenerated at every depth on the way in AND on the way
+out, so the same preset can go on the same page twice.
+
+**THE INSERT SURFACE DIFFERS PER REPO, AND THAT IS THE INTERESTING PART.** The
+verb is one function (`addSectionToPage` in the canonical `pageOps.ts`); only
+the direction of the question changes:
+
+- **Repos with the Presentation navigator** (starter, wcp) get a collapsible
+  "Saved sections" group under the page list, one "add" button per row, adding
+  to the page the preview is currently showing. Current page = the sticky
+  pending navigation intent ?? `params.preview`, matched against row hrefs (exact
+  first, `endsWith` fallback) - the same resolution the row highlight uses, so a
+  click and an immediate "Add" can never disagree. Disabled with a plain-words
+  tooltip when no page is open, or when the open page has no builder array.
+- **Repos with no navigator** (church-starter) get "Add to a page..." on the
+  saved section ITSELF, listing the pages grouped Main / Custom. Same verb,
+  reversed direction. Archived pages are left out: adding to a page that is off
+  the site is almost certainly a misclick.
+
+A page's own "+ Add section" picker can offer schema TYPES only, never
+documents, which is why neither surface is inside it.
+
+**Applied to:** starter yes (canonical + navigator group) / church-starter yes
+(canonical + "Add to a page..." action) / WCP partial (the original: its own
+`sectionPreset`, its own `saveSectionPreset.tsx` and navigator group, all
+pre-config-object - see the fold-back note on card 25) / everything else pending
+rollout.
+
+## Card 25: Pre-publish page checks (2026-08-28)
+
+**Canonical:** `src/lib/page-checks.ts` (+ `src/lib/page-checks.test.ts`),
+`src/sanity/actions/checkPage.tsx`
+**Per repo:** `src/sanity/pageBuilderConfig.ts`
+
+**What:** "Check this page..." in a page's publish menu reads the DRAFT back and
+reports three kinds of "worth a look": photos with no alt text, sections with
+nothing typed in them, and links to same-site addresses no page seems to own.
+
+**Why:** an editor about to publish has no way to ask "did I forget anything?"
+short of reading the whole page again, and the three things they forget are
+always the same three.
+
+**IT NEVER BLOCKS PUBLISH AND IT NEVER EDITS.** Sanity's own required-field
+validation already stops genuinely broken content; this is the softer layer
+above it. Every line of copy says "worth a look" rather than "wrong", the dialog
+ends with a line admitting it can be mistaken, and the Publish button is
+untouched while it is open. The moment a courtesy check starts refusing things,
+editors learn to click past it.
+
+**Every check is a heuristic that UNDER-REPORTS on purpose.** The link check
+compares by FIRST PATH SEGMENT only, because `/events/harvest-supper` and
+`/journal/spring-refresh` are real addresses built by code from a collection and
+no `page` document owns them; matching whole paths would flag half the site and
+the feature would be ignored inside a week. Alt text is accepted in any of the
+three shapes the family models it in (`alt` on the image, `alt` beside it,
+`<key>Alt` beside it), so a parent holding two images and one alt reads as
+described. That miss is the right trade.
+
+**"Empty" needs two exemption lists or it is permanently silent.** Setting keys
+(`variant`, `tone`, `layout`, `background`, ...) are enum values with an
+initialValue, so a completely untouched section already has several strings in
+it; they do not count as words. And sections that fill THEMSELVES from a
+collection (an FAQ list, an auto list, a form) are skipped whole: a dynamic list
+with no heading is not an empty section, it is a section whose words live in the
+Events list.
+
+**THE CONFIG OBJECT IS THE PORT.** WCP's ancestor hard-codes its own array field
+name (`sections`), its own `SETTING_KEYS`, its own `SELF_FILLING_SECTIONS`, and
+its own `CODE_OWNED_PATHS` in the library file, which makes that file
+unshareable: the three repos name their builder arrays `pageBuilder`,
+`sections`, and `flexibleSections`, and no two agree on which sections are
+self-filling. The canonical core now takes a `PageCheckConfig` and every
+repo-specific answer arrives from `src/sanity/pageBuilderConfig.ts`, at a path
+every repo shares. That file also carries `SECTION_HOST_TYPES` (type -> builder
+field), which is what wires card 24's actions and the document-actions resolver,
+so a fork adapts BOTH cards by editing one file.
+
+**Two shape changes came with the config, and both are deliberate:**
+
+1. **Section numbering runs on across several arrays.** A repo with a main
+   builder and an "extra sections" append zone shows the editor one list, so the
+   checks count one list.
+2. **The header (hero) is NOT checked for emptiness by default.** WCP's version
+   checks it. Here `header.checkEmpty` is opt-in, because in two of the three
+   repos a page whose banner is one background photo over built-in copy is a
+   perfectly normal page, and flagging it would be the false positive that
+   teaches an editor to ignore the dialog. WCP sets it true when it folds back.
+
+**FUTURE WCP SYNC TASK (done 2026-08-28).** WCP still runs the pre-config ancestor of
+`page-checks.ts`, `checkPage.tsx`, `saveSectionPreset.tsx` and its own
+`sanity-keys.ts`. Folding it forward is: add `src/sanity/pageBuilderConfig.ts`
+with `sectionArrays: ['sections']`, `header: { label: 'Hero (top banner)',
+fields: ['hero'], checkEmpty: true }`, its `SELF_FILLING_SECTIONS` and
+`CODE_OWNED_PATHS` lists, and `SECTION_HOST_TYPES` for `page` (+ `hubPage` if
+the hub ever gains the action); drop in the four canonical files; move
+`newKey`/`regenerateKeys` from `src/lib/sanity-keys.ts` to `pageOps.ts` (which
+WCP does not yet carry) or keep `sanity-keys.ts` and re-point the canonical
+imports - the second is drift, so prefer the first; port the Vitest suite to the
+node:test canonical copy; and add the PORTABLE markers. Nothing about it is
+urgent: the ancestor works, it is simply not shared.
+
+**Applied to:** starter yes (canonical) / church-starter yes (canonical) / WCP
+partial (the pre-config ancestor, see the fold-back note above) / everything
+else pending rollout.
+
+---
+
+## Card 26: Appearance controls (2026-08-28)
+
+**Canonical:** `src/lib/inline-rich.ts`, `src/lib/heading-accent.ts`,
+`src/components/InlineRich.astro`
+**Per repo (NOT canonical, on purpose):** `src/lib/surfaces.ts` +
+`src/lib/surfaces.test.ts`, `src/lib/layout-variants.ts` +
+`src/lib/layout-variants.test.ts`, `src/sanity/components/SwatchInput.tsx`,
+the `.heading-accent` / `.accent-*` / `.surface-*` rules in
+`src/styles/globals.css`
+
+**What:** the four things an editor kept asking for and could not have. A
+section's SURFACE, picked from a row of designed colour chips. Its ACCENT, the
+small colour inside it. BOLD AND ITALIC inside a short support line that was a
+plain string. And ONE WORD of a heading in the accent colour. Plus the layout
+half: how many cards across, and which side the picture is on.
+
+### The five rules that make it safe
+
+1. **A surface is a designed PAIR, never a picker.** Every option is a
+   background bundled with the ink and the link colour that belong on it. There
+   is no hex entry and no colour wheel, so an editor cannot produce an
+   unreadable band. `src/lib/surfaces.ts` is the one place the classes, the
+   Studio swatch literals and the gate all read.
+2. **The contrast gate resolves the REAL tokens, in BOTH themes.** The test
+   parses `src/styles/globals.css`, walks `@theme` / `@theme inline` / `:root`
+   for light and `.dark` for dark, follows `var()` aliases, and measures every
+   pair: AA 4.5:1 for body, headings and links, 3:1 for the accent as a mark. It
+   also pins the literal hexes the Studio draws with to the resolved tokens, so
+   a rebrand cannot leave the swatch row showing colours the site abandoned.
+   **If a pair fails, fix the pair. Never lower a threshold.**
+
+   This rule described `surfaces.test.ts` and, until 2026-09-06, ONLY
+   `surfaces.test.ts`. It was written as though the technique were universal in
+   this repo; it was not, and card 9's own gate was reading tokens with a single
+   unscoped `matchAll` that could silently measure the dark value and assert it
+   as a light pair. The reader now lives in `src/lib/css-tokens.ts` and both
+   gates import it, so the rule is true of both. The scope each gate passes it
+   still differs on purpose: see card 9.
+
+3. **The default emits NO class.** The house accent returns `null` from
+   `accentClass()` and the original tone values emit exactly the strings they
+   always did, so every already-published section renders byte-identical HTML.
+   `scripts/page-parity.mjs compare` at zero diffs is the standing proof, and it
+   is the acceptance test for this card in any repo.
+4. **Rich text arrives as a TWIN, not a migration.** The plain string field
+   keeps its name, its type and its stored value; a sibling `<name>Rich`
+   portable-text field allows `strong` and `em` and nothing else. The plain
+   field hides only once the twin holds text; the renderer prefers the twin.
+   A dataset with no twins is a dataset that renders exactly as before.
+5. **Headings get ONE accent.** The colour accent is the sibling of the script
+   accent, and where both exist the script accent wins and the colour one is
+   skipped. Two accents in one heading is decoration.
+
+### The stega trap (the bug class this card exists to avoid)
+
+`headingAccent` is matched against the heading with `indexOf`. In the
+Presentation preview both strings arrive carrying an invisible run of Unicode
+tag characters, so a naive match never fires and the accent silently does
+nothing IN PREVIEW ONLY. Two defences, and you want both: `heading-accent.ts`
+strips both sides with `plain()` (that helper also runs on the live site, where
+the NON_STEGA list does not exist), and `headingAccent` goes on
+`NON_STEGA_FIELDS` in `src/lib/cms-preview.ts`. Every new enum from this card
+(`accent`, and `tone`'s new values) goes on that list too, and `accent` goes on
+`extraSettingKeys` in `src/sanity/pageBuilderConfig.ts` — it ships with an
+`initialValue`, so counted as content it would make card 25's "nothing typed
+here" check permanently silent.
+
+The accepted cost, stated plainly: on a heading that HAS an accent word, the
+cleaned string is what renders, so click-to-edit on that one heading stops
+working in the preview. Every other field still works, and the live site is
+unaffected because it never carries stega at all.
+
+### The layout half
+
+`src/lib/layout-variants.ts` is a REGISTRY, not a formula, and that is the
+point: the grids in one repo do not agree with each other about where a phone
+stops stacking, so collapsing them into a formula moves live pages. Each entry
+carries its section's real class strings verbatim, plus `baseColumns` (the
+unprefixed grid class the component itself carries) and `phoneColumns`. The test
+replays the two together for every option and fails if any option changes what a
+320px phone renders — which is what lets an existing reflow sweep stand in for
+the non-default values. A drift test re-derives `baseColumns` from the `.astro`
+source so the copy cannot go stale. DENSITY is documented, never duplicated:
+whatever padding knob the repo already has is the density control.
+
+### THE RIGHT-CLICK DISCOVERY
+
+The in-canvas section verbs from card 17 — insert (with the picture picker),
+duplicate, move, remove — live on **RIGHT-CLICK inside the section outline**,
+plus a draggable tag at the outline's corner. Hovering only outlines. Three
+passages in presacademy's guide promised a hover toolbar that does not exist,
+which is exactly why a real editor could not find the controls; corrected
+2026-08-28 after that report. **Any guide that teaches card 17 must teach the
+right-click gesture and the corner drag tag by name.** Verified live in the
+deployed Studio.
+
+### The curly-apostrophe gotcha (a build break, not a nit)
+
+Guide copy in `src/sanity/guides/content.tsx` lives in SINGLE-quoted string
+literals and the file's convention is curly quotes. A straight `'` typed inside
+one of those strings terminates it and breaks the build. presacademy shipped
+exactly that and needed a follow-up commit. Write `outline’s`, not `outline's`.
+
+### Adapting it to a repo that has no shared shell
+
+The accent needs one element to hang a class on. In a repo where every section
+paints its own `<section>` and a renderer owns an automatic surface cadence
+(this starter), there is nothing to hang it on and no per-section colour field is
+allowed anyway — see `CLAUDE.md` #9. So here the card lands PARTIAL and
+honestly: `surfaces.ts` formalises the surfaces the cadence already assigns and
+gates them, the heading accent is one fixed brand colour (the editor picks the
+WORD, not the colour), the rich twins and the layout registry land in full, and
+there is no surface swatch, no accent enum and no `SwatchInput.tsx`. Do not
+"fix" that by adding a tone field: it would break the cadence the renderer
+exists to protect.
+
+**On `SwatchInput.tsx` being per-repo:** the component SHAPE is identical
+everywhere; only the dot map is brand-specific. It could be canonicalised by
+taking the two maps as props. Left per-repo until a third repo wants it; the
+seam is the two `*Swatches` adapters and the two exported wrappers.
+
+**Applied to:** presacademy yes (origin) / WCP partial (it has the emphasis
+layer — `emphasisText` + `emphasis.ts` with `stegaClean` — and its section
+colour knobs predate this card, so surfaces/accents there are an ancestor form,
+not this one) / starter yes (partial by design, see above) / church-starter yes
+(full: six surfaces, three accents, six rich twins, five heading accents, six
+column registries) / reid-design-site pending / mas-monograms pending.
+
+---
+
+## Card 27: Undo & redo (2026-08-28)
+
+**Canonical:** `src/sanity/undoRedo.ts`, `src/sanity/components/UndoRedo.tsx`,
+`src/lib/undoRedo.test.ts`
+
+**What:** Squarespace's Ctrl+Z, in the Studio, for everything an editor does to a
+draft. Two document actions ("Undo last change", "Redo") in the publish menu, and
+`Ctrl+Z` / `Ctrl+Shift+Z` / `Ctrl+Y` (`Cmd` on a Mac) with a page open. Not just
+typing: sections added, dragged, duplicated or removed, photos swapped or
+cleared, backgrounds and options changed. The gap this closes is the one an
+editor notices within an hour of arriving from Squarespace: a mis-drag had no
+answer short of Version history, which is five clicks and a scary word.
+
+### The mechanism
+
+Every mutation Sanity accepts lands in a transaction log, and each entry carries
+a **mendoza patch in both directions**:
+
+```
+GET /data/history/<dataset>/transactions/<draftId>
+    ?effectFormat=mendoza&excludeContent=true&excludeMutations=true
+    &includeIdentifiedDocumentsOnly=true&reverse=true&limit=25
+```
+
+NDJSON, newest first, each line `{id, timestamp, author, documentIDs, effects}`
+with `effects[<docId>] = {apply, revert}`. Apply `revert` to the document as it
+stands and you have it as it was; apply `apply` to that and you are forward
+again. This is sanity's OWN history request (`Timeline.fetchMoreTransactions`
+in `sanity/lib/_chunks-es/index2.js` sends exactly these parameters, plus a
+`toTransaction` paging cursor we do not need), so it needs no extra permission
+and no extra token: it goes through `useClient(...).request()`, on the editor's
+own session.
+
+### The postmortem: it shipped, and it lied (2026-08-28)
+
+The first version of this card went live on presacademy and **reported success
+while changing nothing**. Worth reading before touching any of it.
+
+**The repro.** A page open in Presentation, its background changed with an
+in-canvas chip (card 28). Ctrl+Z. The toast said "Change undone" three times and
+`background.tone` stayed `'chapel'` through all three.
+
+**What the transaction log actually showed.** The draft's entire history was
+FOUR transactions: one client-UUID create at 16:45:56 whose `apply` was a
+whole-document literal already carrying `tone: 'chapel'` (the overlay's
+`createIfNotExists` + `set`, batched into one transaction by the optimistic
+actor), then three server-id transactions at 16:46:41, 16:47:21 and 16:47:24
+**whose only effect was to move `_updatedAt`**. Those three were the undos. They
+landed, they were not overwritten by anything, and they wrote the document back
+to itself.
+
+So the popular hypothesis — Presentation's optimistic actor holding an in-memory
+snapshot and clobbering our write — was **wrong**, and the log proved it: there
+were no competing transactions at all. Two ordinary bugs, both ours:
+
+1. **A create transaction's `revert` is `[]`, an EMPTY patch, not a null
+   literal. And `applyPatch(doc, [])` returns the document UNCHANGED.** The code
+   detected "this transaction created the draft" by testing `applyPatch`'s result
+   for `null`, which never fired. The delete branch was unreachable, so the
+   "previous" document was the current one, and `createOrReplace` wrote it back.
+   The unit tests passed throughout because the FAKE built create-reverts as
+   `[0, null]` — the fixture encoded the same wrong assumption as the code, which
+   is the real lesson: a fake that agrees with the bug proves nothing.
+2. **`client.createOrReplace(doc, {transactionId})` silently ignores the id.**
+   In @sanity/client, `_create` (behind `create`, `createOrReplace`,
+   `createIfNotExists`) builds its body as `{mutations: [...]}` and never copies
+   `options.transactionId` into it; only `_mutate` does. Every id we minted was
+   dropped, the server assigned its own, and `ownTransactionIds` therefore
+   recognised none of our own writes — which silently broke multi-step undo.
+
+**The three fixes.** Absence is now read from the patch shape
+(`revert.length === 0`), never inferred from `applyPatch`. Our own writes are
+recorded by the id the SERVER returns, so nothing depends on the client
+forwarding one. And a new honesty rule: before writing, the candidate is
+compared with the current document ignoring `_updatedAt` and `_rev`, and a
+transaction that would not move anything is skipped in favour of the next one
+back. This feature is no longer able to say "Change undone" while the document
+stands still. Re-introducing bug 1 alone now fails 8 tests.
+
+A fourth shape exists too and is handled: a transaction with **both** patches
+empty, which names the document but changed nothing about it (seen on
+`drafts.homePage` in the live log). It is never a useful step back and is
+skipped.
+
+### Three findings, all verified against a live dataset before the code was written
+
+1. **`excludeContent=false` is REFUSED.** The API answers `403 permissionDenied`
+   with "This API requires excludeContent to be true". The effects come back
+   regardless — `excludeContent` drops the mutation payloads, not the effects —
+   so there is nothing lost, and a test asserts the flag so it cannot be flipped
+   back by someone tidying.
+2. **A transaction's `id` IS the `_rev` the document carries afterwards.** That
+   is the whole rev guard, and it is why no extra bookkeeping is needed to know
+   whether the log we just read explains the document in front of us.
+3. **`_rev` MUST be stripped before `applyPatch`.** It is not part of the value
+   the effects were computed against, and leaving it on shifts every field index
+   in the patch: the document comes back with `_type` reading `"homePage3:54"`
+   and a paragraph turned into an array of single letters. Sanity's own
+   `applyMendozaPatch` does the same strip. This looks like data corruption and
+   is really an off-by-one; it would be a miserable afternoon to find twice.
+
+### The rules that make it safe
+
+- **Drafts only, which makes it inherently publish-safe.** Only the `drafts.`
+  id is ever read or written. A publish is a mutation on the PUBLISHED twin, so
+  it is not in this log at all and cannot be stepped over. No special case
+  needed; the scope is the safety.
+- **The rev guard.** Before writing, the newest transaction touching the draft
+  must have `id === draft._rev`. If it does not, something landed that we cannot
+  see, and undo refuses with "Someone else edited since" rather than clobbering
+  it.
+- **The draft-creation edge.** If the transaction being undone CREATED the
+  draft — read from `revert.length === 0`, never from `applyPatch`, see the
+  postmortem — the honest undo is deleting the draft.
+  That is allowed only after checking the published twin still exists. With no
+  twin it refuses: "This would remove the only copy". Ctrl+Z must never be able
+  to lose a document.
+- **Repeated undo steps BACK, not back and forth.** Naively re-reading the
+  newest transaction oscillates between two states forever, because our own undo
+  is itself the newest transaction. A per-document register of the transaction
+  ids we wrote, plus the originals already stepped past, makes `nextUndoTarget`
+  skip both. Applying that target's `revert` to the current document is still
+  correct, because each undo leaves the document in exactly the state that
+  target produced. There is a test named for the oscillation.
+- **Redo invalidation, in one line.** Each undo/redo records the `_rev` it left
+  the document at. If the document has moved off that rev by the next call, the
+  whole stack is dropped: any transaction we did not make — the editor typing, a
+  colleague, a script — changes `_rev`, and the states the redo stack pointed at
+  are no longer reachable by replaying `apply`.
+- **The input-focus rule.** The shortcut does nothing, and calls no
+  `preventDefault`, when focus is inside
+  `input, textarea, select, [contenteditable="true"], [data-slate-editor]`. The
+  browser's own per-field undo and the Portable Text editor's own history win
+  there, which is what an editor expects. This shortcut is for everything
+  outside a text box.
+- **In memory, and it says so.** The stack is a module-level Map, gone on
+  reload. The guide says undo is for the last few minutes and Version history is
+  the deep restore.
+
+### The active-document problem, and the pragmatic answer
+
+The keyboard listener has to live in a `studio.components.layout` wrapper (a
+plugin has no other window-level seam), and a layout wrapper cannot ask "which
+document is open?" — the router shape is internal and moves between versions.
+
+So the ACTIONS tell the layout. Both actions render whenever a document pane is
+open, so `useUndoRedo(documentId)` pushes its id onto a module-level stack on
+mount and splices it off on unmount; `activeDocumentId()` returns the newest,
+which is what an editor means by "this one" with two panes side by side. The
+listener reads it **at the moment of the key press**, not at render, so it
+outlives every pane that opens under it. No document open, no shortcut: the key
+press falls through untouched.
+
+### Two deliberate deviations from the obvious design
+
+**We do not supply transaction ids at all.** The first version minted a UUID and
+passed `{transactionId}`, which reads as though it works and does not — see the
+postmortem. Our own writes are now recognised by the id the SERVER assigns,
+read back out of the mutation result (`returnDocuments: false` gives
+`{transactionId, ...}`), which is also the document's new `_rev`. That is the id
+actually in the log, so nothing depends on the client forwarding one. The
+request carries `tag=undo-redo.transactions` for anyone reading the API log.
+
+**`mendoza` is imported bare, and it is not a direct dependency.** It arrives
+hoisted at `node_modules/mendoza` as a transitive dep of `sanity` (verified in
+both repos before wiring). `sanity` re-exports nothing mendoza-shaped, and
+importing through a transitive PATH would be worse. If a repo in the family ever
+hoists it somewhere else, that repo cannot take this card until `mendoza` is
+added to its `package.json` — check `node_modules/mendoza/package.json` exists
+before porting.
+
+### Installing it in a site
+
+Copy the three canonical files, then two lines of wiring in `sanity.config.ts`:
+`undoRedoShortcuts()` in `plugins`, and `UndoAction, RedoAction` appended to the
+action list for the page-builder types (beside cards 24 and 25 — a page is where
+a mis-drag actually costs something). Nothing schema-side changes, so no typegen
+and no parity movement. Add the guide entry: it must say Ctrl+Z works OUTSIDE
+text boxes, that inside a text box the text box's own undo runs, that the
+shortcut is not heard over the Presentation preview (use the menu there), and
+that Version history remains the deep restore.
+
+**Known limit: the preview iframe eats the key.** A key pressed while focus is
+inside Presentation's iframe goes to the iframe's window, not the Studio's, so
+the shortcut is dead exactly when an editor has just used an in-canvas chip.
+The two document actions are unaffected and are the reliable path. Forwarding
+the key out was considered and declined: it needs a postMessage protocol between
+the public preview island and the Studio layout wrapper — key handling in a
+public bundle plus an origin check — for a shortcut with a working button two
+inches away.
+
+**Verified without a browser session:** the whole of the pure logic — the
+request shape, NDJSON parsing, the rev guard, absence detection, target
+selection, the no-op skip, stack invalidation — is unit tested (41 assertions),
+and undo/redo run end to end against a miniature in-memory Sanity through the
+REAL `applyPatch`. That fake is now faithful in the three ways that caused the
+incident: creates carry an EMPTY revert, `_updatedAt` moves on every write, and
+a caller-supplied `transactionId` is ignored. Re-introducing the create-detection
+bug fails 8 tests. The live translog was read (read-only) against presacademy's
+production dataset, which is where every finding here came from.
+
+What is STILL not exercised without a Studio open, and is now in
+`docs/PENDING.md`: the two actions rendering, the layout composing with an
+existing `studio.components.layout`, the key press itself, multi-step undo
+against a real server, and whether a whole-document `createOrReplace` is safe
+while Presentation's optimistic actor holds in-flight patches for the same
+draft (the log showed no sign of trouble during the incident, but that is
+absence of evidence).
+
+**Applied to:** starter yes / presacademy yes / WCP pending / church-starter
+pending / reid-design-site pending / mas-monograms pending / 2ndpreschicago
+pending / nixoncreativestudio n/a (no Studio).
+
+## Card 28: The floating in-canvas control layer (2026-08-28)
+
+**Dated 2026-08-28 (presacademy), canonicalized in the starter the same day.**
+**Canonical:** `src/lib/sanity-path.ts`, `src/lib/inline-rich.ts`,
+`src/lib/inline-rich-write.ts` (+ their `.test.ts`), the word-picker half of
+`src/lib/heading-accent.ts`, `src/components/preview/overlay/usePopover.ts`,
+`overlay/useDraftDocument.ts`, `overlay/styles.ts`
+**Read card 28b next:** it is the two-way reconciliation with presacademy and
+WCP, and it is where the `multiline` seam and the mark-boundary regression tests
+actually landed.
+**Per repo (NOT canonical, on purpose):** `src/lib/section-fields.ts` +
+`src/lib/section-fields.test.ts`, `overlay/index.ts`, `overlay/tool-theme.ts`,
+`overlay/HeadingAccentPicker.tsx`, `overlay/TextPopover.tsx`, and (where a repo
+has one) the surface/band card
+
+**What:** Squarespace-style popovers inside the Presentation canvas. Click a
+heading and pick its accent word by clicking the word. Click a subhead and type
+the new line where the line is, with bold and italic, instead of hunting for its
+box in the form. Elsewhere in the family the same layer also carries a
+surface/band swatch card off a handle in each section's corner.
+
+### The five mechanics, each of which cost a real bug
+
+1. **A custom overlay component only mounts on a node the schema resolves to a
+   FIELD.** The host builds the resolver context through `getField(node)` and
+   bails on `!field`, and the schema hook resolves no field for a bare array item
+   (`sections[_key=="x"]`) on its own — so the resolver is never called for a
+   section wrapper at all. The first version of this layer put the swatch row
+   there and it never mounted. The fix is to give the control a real field to
+   hang on: the renderer emits a small PREVIEW-ONLY handle inside each
+   band-carrying section whose `data-sanity` names `…[_key=="x"].background`.
+   The bare-item case is deliberately NOT kept as a fallback: it can never fire,
+   and a branch that can never fire is a branch that will one day be trusted.
+2. **Controls open on CLICK, not hover.** `activated` in this host means "in the
+   viewport", so a control drawn on `activated` appears on every matching element
+   on the page at once. Gate on `focused`, which is the click.
+3. **A card must keep its OWN open state.** `focused` is not ours to lean on: the
+   host clears it on `overlay/blur` and RECOMPUTES it on every
+   `presentation/focus` the Studio sends back, keeping it only for the element
+   whose path matches the Studio's focus path exactly. A card gated on `focused`
+   therefore unmounts a beat after opening, while the pointer is still travelling
+   toward it. What the host does NOT do is unmount the component: it renders an
+   element's overlay for `activated || focused`, so the component stays mounted
+   with its state intact. Hence: `focused` turning truthy OPENS the card, and only
+   the close button, Escape, or an outside press may close it. The card also
+   renders FLUSH to its anchor — the six pixels of gap belong to the overlay via
+   `paddingTop` on the anchor box, not to `top: calc(100% + 6px)` — so the pointer
+   never crosses unowned pixels on the way in.
+4. **Gate twice, and the second gate is PER INSTANCE.** Carrying a field is not
+   the same as honouring it. A section whose art-directed band style ignores the
+   colour knob, or which is rendering a coaching placeholder rather than its real
+   markup, must not be offered a control the renderer will ignore. The type check
+   comes from the registry; the instance check reads the section value itself.
+5. **Writes go through `useDocuments` from `@sanity/visual-editing/react`.**
+   `doc.patch()` sends the mutation over the comlink to the parent Studio window,
+   which applies it with the editor's own session exactly as if they had typed in
+   the form. So every write lands in the DRAFT, shows in the unpublished-changes
+   badge, is covered by card 27's undo, and still needs Publish — and the preview
+   island never grows a token or a write client, which it must not, because it is
+   public code in a public bundle.
+
+### Stega, twice
+
+Strip before matching and re-attach when writing. `splitHeadingWords` cleans the
+heading before splitting it, so the words offered are real words rather than
+words wearing an invisible payload, and the value stored is a slice of the CLEAN
+string, which is what `splitHeadingAccent` will later match against. On the
+instant-text side the payload is split off and concatenated back on, so a node
+this layer writes to keeps the stega it arrived with and click-to-edit never
+degrades (card 29).
+
+### The drift gate
+
+`section-fields.ts` duplicates knowledge that really lives in the schema, because
+the overlay runs in the preview iframe and the schema lives in the parent window.
+The duplicate is allowed only because a test measures it: `section-fields.test.ts`
+parses the block libraries and fails if a section gains or loses `headingAccent`
+or a rich twin without the registry being updated. It re-derives the heading FIELD
+NAME too, which is the part a list could not carry — four of this template's five
+accent types call their big line `headline`, not `heading`, and a control that
+assumed `heading` would offer no words at all and never say why.
+
+### The starter carries no band card, and that is the right answer
+
+This is the honest half of the card. `CLAUDE.md` #9 and PORTS card 26: in this
+template a page-builder block carries **no surface or colour field**, because
+`SectionRenderer` owns the alternating band cadence so that reordering a page can
+never break its rhythm. A band card needs a field to write to. Adding one to get
+the control would trade an architectural guarantee for a convenience, so the
+starter's card 28 is deliberately **two controls, not three**, and the drift gate
+now asserts the absence: `no page-builder block carries a surface or colour
+field` fails if anyone ever adds one. Do not "fix" this by adding a tone field.
+
+The band-card STYLES still live in the canonical `overlay/styles.ts`
+(`handleAnchor`, `panel`, `panelHead`, `closeButton`, `optionRow`, `optionDot`,
+`groupLabel`), unused here and tree-shaken out of the bundle, because the
+vocabulary belongs to the family rather than to one site and the next repo should
+inherit it rather than re-derive it. Verified shaken: no string unique to those
+objects survives into the built island.
+
+### One accepted gap, stated plainly
+
+A heading whose accent word HAS matched renders the stega-CLEANED string — that
+is card 26's documented cost — so that element carries no path and the overlay
+offers nothing on it. The picker is therefore the way IN to an accent and the way
+to fix one that does not match (a typo'd accent leaves the heading encoded, so
+the control is still there); changing a word that currently matches is still done
+in the form. Closing that gap means the same preview-only-handle trick mechanic 1
+describes, aimed at the heading rather than the band. It is possible and was not
+done: it would need every section bridge to learn its own edit doc, which is a
+wider change than this card earns.
+
+### Per-repo adaptation, and the seams left for a fold-back
+
+`tool-theme.ts` is the whole per-repo surface of the look: six values — paper,
+ink, muted, line, shadow, font — that `styles.ts` draws everything from. That
+split is new here; presacademy and WCP each bake the palette into their copy of
+`styles.ts`, which is precisely what stopped the file being shared. `sanity-path.ts`
+got the same treatment: presacademy's ancestor baked its two page-builder array
+names into a module constant, so `readSectionPath` now TAKES the names and the
+repo's list lives in `section-fields.ts`. Same move card 22 made on
+`redirects.ts`, for the same reason.
+
+**Left per-repo, with the divergence noted for a later fold-back:** the two card
+components. presacademy and WCP's copies are structurally the same file and differ
+in three ways — the label strings ("Colour a word" / "Underline a word"), the
+selected-state colour, and which registry helper they call
+(`headingAccentFieldFor` + `readSectionPath` on presacademy, a single
+`resolveAccentTarget` on WCP). The starter takes WCP's `resolveAccentTarget`
+shape, which is the more general one: it returns the heading path AND the accent
+path, so a repo whose accent lives inside a nested object needs no second code
+path. Folding the components themselves together would mean passing the two label
+strings and one colour as props; worth doing when a fourth repo wants them,
+not before.
+
+**Applied to:** presacademy yes (origin, reconciled onto the canonical copies
+2026-08-28 - card 28b) / WCP yes (full, band card included; same reconciliation,
+same day) / starter partial by design (see above) / church-starter yes (all three
+controls) / reid-design-site partial (its own two cards, a script-accent picker
+and a layout card, on the canonical hooks and styles) / mas-monograms partial
+(text card only) / 2ndpreschicago pending / nixoncreativestudio n/a.
+
+---
+
+## Card 29: Instant preview text (2026-08-28)
+
+**Dated 2026-08-28 (presacademy), canonicalized in the starter the same day.**
+**Canonical:** `src/lib/preview-stega.ts`, `src/lib/preview-text-diff.ts`,
+`src/lib/preview-text-nodes.ts` (+ their `.test.ts`).
+**Per-repo wiring:** `src/components/preview/overlay/useInstantText.ts`,
+`src/components/preview/overlay/timing.ts`, `src/components/preview/VisualEditingOverlay.tsx`.
+
+The old loop, end to end: type in the Studio, Studio autosave commits, Sanity indexes
+the change, the Worker's `/preview/live` listen fires, EventSource, debounce, refetch
+this preview URL on the server, swap `<main>`. Every hop is small; together they were
+1.5-3 seconds, and the editor spent them watching a page that still said the old thing.
+
+The frame already holds a live copy of the draft. `<VisualEditing>` starts an
+optimistic-document actor whose remote feed is the STUDIO, not Sanity: the Studio runs
+its own listen at `visibility: "transaction"` and relays every mutation over the
+comlink. So the frame learns about an edit before the query index has caught up, which
+is exactly what the server refetch has to wait for. Watch the actor, diff the document
+against the last one seen, and for every PLAIN STRING that changed write the new
+characters straight into the text nodes showing it. The refetch still happens; it stops
+being the thing anyone waits for.
+
+**Three tested pure helpers are what make this safe to point at a live page**, and all
+three are deliberately narrow:
+
+- `preview-text-diff.ts` reports only plain string leaves, only when BOTH sides are
+  strings, and never inside portable text (a block's marks, splits and merges move text
+  between spans as you type, so patching one span can show a sentence that never
+  existed). Array items are matched by `_key`, never by position, so a reorder reports
+  nothing instead of reporting every string as changed.
+- `preview-stega.ts` splits and reattaches the invisible `@vercel/stega` run every
+  preview string carries, and decodes it to `{id, type, path}`. Hand-rolled on purpose:
+  `@vercel/stega` is not a direct dependency, `@sanity/visual-editing-csm` is installed
+  NESTED and does not resolve from `src/`, and the one importable utility (`stegaClean`)
+  throws away the half we need. Forty lines beats a dependency.
+- `preview-text-nodes.ts` writes ONLY into a node whose visible characters are EXACTLY
+  the old value, and reattaches the payload it split off. So click-to-edit does not
+  degrade (the node keeps its identity), an accented heading whose text was cut in two
+  never matches, and a value rendered inside a longer sentence never matches. Everything
+  that does not match is left for the refresh. A missed instant update is invisible; a
+  wrong one is a lie about what the page says.
+
+**Measured, deployed:** keystroke to paint went from 413ms / 1429ms (two consecutive
+isolated keystrokes) to roughly 100-140ms. The swap itself costs about 4ms; everything
+else is the channel, which is card 29a.
+
+**Adapting it:** the three libs are byte-portable. The hook is not: it reads the
+optimistic document API, and how a repo gets a draft snapshot differs. presacademy wraps
+that in an `overlay/useDraftDocument.ts` because its in-canvas controls (card 28) also
+WRITE through it; the starter only reads, so the single `getDocument().getSnapshot()`
+call lives inside `useInstantText` itself. Both swallow the throw a cold frame produces
+rather than warning once per keystroke.
+
+## Card 29a: The local edit-state channel (2026-08-28)
+
+**Canonical:** `src/lib/preview-live-draft.ts` (+ `.test.ts`).
+**Per-repo wiring:** `src/sanity/components/LiveDraftBridge.tsx`, mounted from
+`PreviewNavigator.tsx`; received in `overlay/useInstantText.ts`.
+
+Card 29 made the swap cost 4ms and left a 1-2 second wait entirely UPSTREAM of it: the
+actor's feed is still a listen, so an edit is autosaved, committed and made visible as a
+transaction before the frame hears a word. The Studio has the answer a whole round trip
+earlier, in the local document store its form writes optimistic patches into, and the
+Studio and the preview iframe are same-origin. So post it across.
+
+**The priority lesson, which is the whole card.** `useEditState(id, type, priority)`
+takes the priority the local store schedules the observer at. The Studio's own
+`PostMessageRefreshMutations` asks for `'low'`, because it only needs to know THAT a
+document changed, eventually. This needs to know WHAT it says, now. Measured live on the
+deployed Studio, 2026-08-28: under `'low'` the store coalesced isolated keystrokes into
+the autosave commit, and one keystroke reached the preview in **413ms** and the next in
+**1429ms** - the editor's "still a second or two". Under `'default'`: **~100-140ms**.
+Use `'default'`. The 60ms trailing throttle in the bridge, not the store's scheduler, is
+what keeps this cheap: a keystroke is one snapshot, a burst is one post.
+
+**Four things keep the bridge from being a liability.** It renders null and holds no
+state. It is mounted from the navigator, which is the one place inside Presentation that
+already knows which page the preview is showing, and unmounted the moment that
+resolution goes away. It is throttled trailing. It never throws: a missing iframe, a
+cross-origin one, a frame mid-navigation are all swallowed.
+
+**Every message is untrusted.** The island ships in the public preview bundle and
+`window.addEventListener('message')` hears from any frame that cares to speak, so
+`parseLiveDraft` is a rejection funnel: the origin check is the caller's, and the
+envelope, the document, its `_id` and `_type` must be exactly right or the message is
+dropped silently. Nothing throws and nothing logs; a hostile page learns nothing and
+costs nothing. `document: null` is meaningful and sent on purpose ("this page has no
+draft"), which reads as silence rather than as an edit.
+
+**Source arbitration.** Both channels feed ONE "last document I applied" memory, and the
+diff is against that memory, so a snapshot OLDER than the memory does not read as
+"nothing changed" - it reads as a change BACK to the older words. The local channel is
+always ahead of the actor by construction, so every actor snapshot landing mid-burst is
+exactly that stale snapshot. `acceptsSource` therefore holds the actor back for
+`LOCAL_LEAD_MS` (2000ms) after any local snapshot: longer than one autosave round trip,
+short enough that a channel which stops (an older Studio, a preview opened outside
+Presentation, the navigator not resolving the page) hands control back within one edit.
+Nothing is lost when it does.
+
+**Adapting it:** `LIVE_DRAFT_MESSAGE` is `'pa:live-draft'` and stays that way in every
+repo. It is an arbitrary token whose only job is to match at both ends, and changing it
+per repo would fork a file that is otherwise identical everywhere for no gain.
+
+## Card 29b: The refresh scheduler (2026-08-28)
+
+**Canonical:** `src/lib/preview-refresh.ts` (+ `.test.ts`).
+**Per-repo wiring:** the scheduler loop in `VisualEditingOverlay.tsx`.
+
+**The failure, measured in the deployed Studio.** With `localStorage.previewTiming = '1'`
+set, a single burst of edits logged SIX overlapping soft refreshes - 1128, 1505, 1131,
+1245, 1494, 1228ms - which is six concurrent server renders of the same preview URL. A
+`/preview` render costs about 0.9s of Worker CPU (a public page costs about 0.1s), so six
+at once is how the editor got **`Error 1102: Worker exceeded resource limits`**.
+
+The old scheduler debounced with `clearTimeout`/`setTimeout` and nothing else. The
+debounce only guarded the window BEFORE a fetch started; once one was in flight, the next
+change event scheduled a fresh timer and a fresh fetch. No in-flight guard, no ceiling on
+concurrency, and no test of whether an arriving response was still worth having.
+
+**That last omission is the visible bug**, the one an editor reports as "the text I typed
+appears seconds later" even though instant text logs 4-6ms:
+
+```
+t0   refresh A starts        (server will render the PRE-edit page)
+t1   the edit lands, instant text writes the new words   <- page correct
+t2   refresh B starts
+t3   A's response arrives and replaces <main> with PRE-edit HTML
+```
+
+The words revert at t3 and only come back when B lands. With several racing, the LAST to
+land can be the STALEST, so the revert outlives every retry. Instant text was never slow;
+it was being undone.
+
+**Three rules, all pure so they can be tested rather than argued about:**
+
+1. **Single flight.** At most one refresh in flight. Change events arriving during one
+   set `dirty`; that flag runs exactly ONE more refresh afterwards, not one per event.
+2. **Stale discard.** Every attempt is stamped with `changeSeq` as it read at fetch
+   start. If the sequence has moved by the time the response lands, that HTML predates a
+   change we already know about and is not swapped in at any price. It marks the state
+   dirty instead, and the follow-up renders the truth.
+3. **Rate limit.** `REFRESH_MIN_INTERVAL_MS = 1200`, a floor on the interval between the
+   STARTS of consecutive refreshes. **Why 1200:** a `/preview` render is about 0.9s, so
+   anything below about a second means a burst is still overlapping renders - the exact
+   thing that tripped the 1102. An 80ms debounce with a 0.9s render is what produced six
+   at once. 1200ms leaves a real gap after a typical render instead of queueing the next
+   against its tail, and costs the editor nothing perceptible because instant text is
+   already showing the words. Raise it if the Worker runs hot; lowering it below the
+   render time re-creates the pile-up. `REFRESH_DEBOUNCE_MS` stays 80: it only has to be
+   wide enough that one autosave's two or three events share a refetch, because the
+   Studio already did the "wait for the editor to stop typing" batching.
+
+`dirty` is never dropped, only deferred, so the LAST refresh of a burst always happens
+and every caller of the comlink `refresh` promise resolves (Presentation spins its
+refresh button until it does).
+
+## Card 29c: The preview morph (2026-08-28)
+
+**Canonical:** `src/lib/preview-morph.ts` (+ `.test.ts`).
+**Per-repo wiring:** the morph + fast-path branch in `VisualEditingOverlay.tsx`.
+
+**The failure, measured in the deployed Studio.** The editor's words: the text
+"disappears for a second and then reappears after another second". The instrumentation
+around one keystroke found: a SINGLE keystroke produced TWO `#main` swaps about two
+seconds apart (the rate-limited follow-up, deliberate); nothing was left faded, hidden or
+zero-height afterwards at +0/+100/+400/+900ms across forty sampled elements, so this was
+never an animation replaying; `#main` held FOURTEEN `<img>` elements and zero
+astro-islands; and callbacks scheduled at +100/+400/+900ms all fired about a SECOND late,
+so the main thread was blocked for roughly that long at swap time.
+
+The cause was one line: `current.replaceWith(next)`. That throws the whole live `#main`
+subtree away and inserts a freshly parsed one, so every image becomes a brand-new element
+that has to be re-fetched, re-decoded and re-laid out. Both the blank-then-fill and the
+main-thread block, twice per keystroke, for a page whose words instant text had ALREADY
+corrected.
+
+**Deployed after:** images rebuilt per refresh **14 -> 0**; main-thread block at swap
+**~1000ms -> 12ms**; shrink/reflow events during sustained typing **-> 0**.
+
+**The image-identity rule.** `IMAGE_SOURCE_ATTRIBUTES` is `src`, `srcset`, `sizes`
+(`sizes` is in the list because it selects which `srcset` candidate is used, so writing
+it can change the resource even when `srcset` has not). When both sides are the same
+`<img>` pointing at the same bitmap, the morph EXCLUDES those three names explicitly. The
+attribute sync already refuses to write an unchanged value, so on its own this is
+redundant - it is stated as a GUARANTEE rather than a coincidence, because reusing image
+elements is the single biggest reason the file exists and a future tightening of
+`syncAttributes` must not be able to reintroduce a `src` write by accident. A test asserts
+nothing was written to them.
+
+**The fallback contract.** Every cap and every thrown error makes `morph` return false,
+and the caller then does exactly what it used to do: RE-PARSE the response and
+`replaceWith` it. Re-parse, not reuse - `to`'s children are MOVED into `from` as the walk
+goes, so a bailed morph leaves `to` no longer a whole `<main>`. A morph bug can therefore
+make the preview slow again, but it can never leave a half-updated page on screen.
+
+**The fast-path skip.** `isRedundantRender(fetched, live, lastAccepted)` is plain string
+equality on markup the same serializer produced. Two ways a render is known-redundant:
+`fetched === live` (the page already reads as the server says) and
+`fetched === lastAccepted` (the server re-rendered the same bytes, so it has NOT caught up
+with what instant text has since written). Case 2 is why a skip must NOT fire the
+soft-refresh event: that event is also the pending-swap memory's "the server now agrees"
+signal, and firing it there would retire swaps that have not landed. Nothing further is
+normalized on purpose - collapsing whitespace or sorting attributes would buy a few more
+skips and risk declaring two genuinely different pages equal, and the cost of a miss is
+now only a cheap morph.
+
+**Matching:** keyed children (`id`, `data-sanity`, `data-stype`, `data-key`, most
+specific first) claim their old counterpart wherever it sits, so a section reorder moves
+nodes instead of rebuilding them; keyless children claim the next unclaimed KEYLESS old
+child, and positional matching deliberately steps over keyed ones. `data-sanity` is the
+attribute that actually carries this: every section wrapper gets one from
+`src/lib/preview-edit-attr.ts`, built from the document id and the array item's `_key`.
+
+**Adapting it:** the file is written against a minimal structural interface
+(`MorphNode`/`MorphElement`/`MorphCharacterData`) rather than the DOM, the same trick
+`preview-text-nodes.ts` plays with `TextLike`, so the algorithm is tested with plain
+objects under `node:test`. Real `Element`/`Text` satisfy it structurally. Nothing in it is
+repo-specific.
+
+## Card 29d: Staleness counts every channel (2026-08-28)
+
+**Canonical:** the `seen` history in `src/lib/preview-live-draft.ts` and `applyKnownChange`
+in `src/lib/preview-text-nodes.ts` (both `.test.ts` covered).
+**Per-repo wiring:** the `noteInstantChange` bump in `VisualEditingOverlay.tsx`, passed to
+`useInstantText` as `onDocument`.
+
+**The bug:** "half my text disappears, then a second later it comes back." It survived
+cards 29b and 29c, and it had TWO causes.
+
+**Cause one: the sequence only counted the slowest channel.** Card 29b's stale discard
+compares the sequence a render was stamped with against the newest one KNOWN - and the
+sequence was bumped only by the SSE change events, which fire at Sanity's transaction
+visibility, about a second behind the keystroke. The instant-text path learns of the same
+edit in ~100ms over the local channel (card 29a). Between those two instants a render
+could START before an edit, LAND after it, and still be judged current; the morph then
+wrote the server's half-typed sentence over the finished one. Fix: every document instant
+text applies calls `onChange` too. **Staleness is a property of the newest KNOWN document,
+not of the slowest channel that could have told us about it.** This raises the number of
+DISCARDS during a burst and not the number of RENDERS - rules 1 and 3 of card 29b cap
+starts at one per `REFRESH_MIN_INTERVAL_MS` however many changes arrive between them. It
+marks the state dirty as well, on purpose: the server still has to render the newest text
+eventually, and a discard that scheduled nothing would leave the page correct only by
+instant text's grace, with structural edits unrendered.
+
+**Cause two: the re-apply could only recognise one stale value.** After a refresh, each
+pending swap was re-applied only where the node read exactly `previous`, on the reasoning
+that server HTML is either up to date or still showing the value the burst started from.
+It can be neither: a render that started mid-burst reads the query index at ITS OWN
+instant, so its words are an INTERMEDIATE value, the sentence as it stood half a second
+ago. That matched neither `previous` nor `next`, so the re-apply could not correct it and
+half a sentence sat on the page until the following render.
+
+**The value-history repair.** `PendingSwap.seen` keeps every OTHER value the field has
+been seen to hold this session, oldest first, capped at `MAX_SEEN = 12` (a render is at
+most a second or two behind and the local channel posts at most every 60ms, so a dozen
+covers far more history than any accepted render carries). The cap eats from just AFTER
+the oldest entry, because the oldest is the value the first server render of the burst is
+still going to arrive holding. `applyKnownChange` writes when the node reads exactly one
+of `seen` and is not already showing `next`.
+
+**Why that is still the same promise.** The match is still EXACT, against a value the
+field ACTUALLY HELD in a snapshot we diffed, and the node was matched to the field by its
+stega identity, not by searching the page for words. So "this node shows a value from this
+field's own past" means exactly "this node is showing a stale render of this field", and
+writing the newest value is a correction, not a guess. A node showing anything else - a
+transformed rendering, another editor's words, a value from before this session - matches
+nothing and is left alone. A missed instant update is invisible; a wrong one is a lie
+about what the page says.
+
+`rememberSwap` stays keyed by FIELD and never by source, which is what lets the two
+channels take turns on one field without either forgetting the other's work, and it drops
+the entry entirely when `next` comes back around to the original `previous` (the editor
+undid it): the field is level with the server, so there is nothing left to correct.
+
+### The two operational rules this layer depends on
+
+Neither is enforceable by a test, so they are written here.
+
+1. **Preview pages MUST send `Cache-Control: no-store`.** These SSR responses carried no
+   Cache-Control at all, so browsers applied HEURISTIC caching, and the Presentation
+   iframe kept serving the PREVIOUS deploy's page - stale island hashes, new editor
+   features invisible - until the cache aged out. Draft content is per-cookie anyway;
+   caching it was never right. Set it on the preview route
+   (`src/pages/preview/[...slug].astro`); `/preview/live` already sent it.
+2. **`visibility: 'query'` on the `/preview/live` listen must never be weakened.** It is
+   tempting to set `'transaction'` to make the preview feel faster. Do not. `'query'` means
+   Sanity waits until the change is visible to a QUERY before signalling, which is exactly
+   what the overlay does next: refetch this page from the server. A `'transaction'` event
+   fires earlier, and the refetch it triggers would return data that is STILL STALE, so
+   the morph would re-render the page with the OLD words - over the new ones instant text
+   has already put there. The earlier signal already reaches the frame by a different
+   road: the Studio relays its own transaction-visibility listen over the comlink, and
+   that is what instant text listens to. This one stays slow on purpose.
+
+## Card 28a: Two fixes back from ncs-church-starter (2026-08-28)
+
+Card 28's canonical files were written here and ported into `ncs-church-starter`
+in the same afternoon. Porting them found two things this repo had not, and both
+were fixed HERE and re-synced outwards rather than being patched downstream.
+
+**1. `normalizeRuns` stored a double space across a mark boundary.**
+`src/lib/inline-rich-write.ts`. The merge step collapses `"a "` + `" b"` to one
+space only when the two runs carry the SAME marks, because that is the branch
+that concatenates them. `<b>a </b><i> b</i>` cannot merge, so the collapse never
+saw the pair and the twin stored two spaces. The rule now also applies across a
+boundary, dropping the space from the SECOND run - a leading space inside an
+emphasised span renders as an over-long underline or a wide bold, so it belongs
+to the run that is not emphasised. Covered by a new case in
+`inline-rich-write.test.ts` (418 tests here, was 417).
+
+Church's own copy of the function had reached the same fix independently and by
+a different route: it also pushed an UNMARKED space for a `<br>` inside a
+`<strong>`, which is worse - `<b>a<br>b</b>` then stores three spans instead of
+one. This repo's `pushText(' ')` (which inherits the current marks) is the right
+call and was kept; only the boundary rule was taken.
+
+**2. `styles.ts` gained a `note` style.** A short muted paragraph inside a panel,
+where a group of rows would otherwise be. Church needs it because its surface
+card has to say WHY it is offering nothing on a section with a background photo:
+that section paints white text over the picture and never wears its surface
+classes. Unused here, like `panel`/`optionRow`/`optionDot` and for the same
+stated reason - the vocabulary belongs to the family, and the bundler drops what
+nobody imports.
+
+**Also confirmed from church's side, no change needed:** `readSectionPath`'s new
+`arrayFields` parameter is exactly what church required (it has TWO arrays,
+`flexibleSections` and `sections`), and the `tool-theme.ts` seam let church swap
+in its own six values without touching `styles.ts`. Both generalizations paid for
+themselves on their first port.
+
+**What church does NOT share, correctly:** it has three controls, not two. Card
+26 gave every shell-aware block a `background` object with a `tone` and an
+`accent`, so a surface card there has a real field to write to; this template
+still has none by design (CLAUDE.md #9). `section-fields.ts`, `overlay/index.ts`,
+`overlay/tool-theme.ts` and the card components stay per-repo.
+
+## Card 28b: presacademy and WCP reconciled onto card 28 (2026-08-28)
+
+Card 28 shipped on presacademy and WCP FIRST, and only then were the shared
+pieces canonicalized here. So the two repos that INVENTED the layer were the two
+carrying the only un-canonical copies of it, and `sync-check` could not see them
+at all: 33 marked files in presacademy and 16 in WCP against church's 50. That is
+the shape a library of record is supposed to make impossible, and it is why this
+card exists.
+
+**Canonical after this pass** (marked in the starter, presacademy and WCP):
+`src/lib/sanity-path.ts`, `src/lib/inline-rich.ts`, `src/lib/inline-rich-write.ts`,
+`src/lib/heading-accent.ts`, `src/components/preview/overlay/usePopover.ts`,
+`overlay/useDraftDocument.ts`, `overlay/styles.ts`. Marked counts went 33 -> 42
+(presacademy) and 16 -> 21 (WCP; its two deliberate, self-documenting drifts in
+`UndoRedo.tsx` and `shareDraftLink.tsx` are unchanged and still expected).
+
+### The bug the reconciliation was really for
+
+`normalizeRuns` stored a DOUBLE SPACE across a mark boundary - card 28a, fixed
+here and in church that same afternoon, and still broken in BOTH origin repos
+until now. presacademy's copy had no boundary handling whatsoever.
+
+**WCP shared the bug**, by a different route. Its `normalizeRuns` had been
+rewritten around lines rather than around one merge loop, and the merge inside a
+line still only fired for runs with IDENTICAL marks, so `<b>a </b><i> b</i>`
+walked straight past it exactly as presacademy's did. Neither repo had a case for
+it. Both do now: presacademy took the canonical `inline-rich-write.test.ts`
+verbatim (it runs `node --test`, like the starter), and WCP has its own vitest
+case, `drops a double space that meets ACROSS a mark boundary`, which asserts the
+run list AND the `htmlToRuns` path that produced it.
+
+### WCP's multi-line handling came UP, not away
+
+This is the half that is not tidying. WCP's `emphasis-write.ts` was more capable
+than the canonical file, not less: it was RUN_BREAK-aware, so `bold\nitalic` kept
+its two lines and its two marks. That is not a fork to flatten - `emphasisHtml`
+there joins stored blocks with `<br />`, so a volunteer who typed two lines in
+the form HAS two blocks, and collapsing them would have deleted a line break the
+moment anybody opened the in-canvas card. The starter's one-paragraph rule is
+equally right for the starter, whose reader joins blocks with a space.
+
+So the behaviour became a SEAM rather than a fork, the third one on this card
+after `arrayFields` and `tool-theme.ts`:
+
+- `RUN_BREAK` (a plain `'\n'`) moved into the canonical `inline-rich.ts`, where a
+  reader that emits breaks and a writer that stores them can both see it.
+- `RichWriteOptions.multiline` is **off by default**, so the starter, church,
+  presacademy, reid and mas keep byte-identical behaviour and byte-identical test
+  output. WCP's `TextPopover.tsx` passes `{ multiline: true }` at both call sites.
+- `normalizeRuns` took WCP's line structure and the starter's boundary fix. With
+  no break in the input it is exactly the old single-paragraph function; with
+  breaks it trims each line and drops blank ones.
+- `runsToInlineRich` is now one block per line, which is one block when there is
+  no break. `runsToHtml` renders a break as `<br>`.
+
+**One latent bug was fixed on the way in.** WCP's version SPLIT run text on
+`'\n'`, so a run whose text merely CONTAINED a newline - source formatting
+between two tags, or a pretty-printed Word paste - became two lines. Only a run
+whose WHOLE text is `RUN_BREAK` is a break now, `htmlToRuns` squeezes whitespace
+as it pushes text so it can never accidentally emit one, and the plain-text half
+of a paste goes through a new `textToRuns(text, options)` instead of leaning on
+the collision. Covered in both suites.
+
+### What did NOT move, and why that is the answer
+
+- **The canonical `styles.ts` was not changed at all.** reid-design-site and
+  mas-monograms carry it, `usePopover.ts`, `useDraftDocument.ts` and
+  `sanity-path.ts` too, so any edit to those four would have put five repos into
+  drift to serve two. presacademy and WCP took the canonical copies as they
+  stand, and each got a `tool-theme.ts` holding its own six values. The visible
+  cost is three touches of Studio-only chrome (a selected row's rule, a hover
+  tint, a filled button), which is what the six-value seam is FOR.
+- **WCP's two extras stayed per-repo**, exported from its `tool-theme.ts` and
+  spread onto the canonical styles by its own card components: `TOOL_ACCENT` (the
+  brand navy for a selected state) and `dialogReset` (its cards are real
+  `<dialog open>` elements and reset the user-agent layout). Two repos wanting an
+  accent value is evidence, not a mandate; fold it into `ToolTheme` as an OPTIONAL
+  field the day a third does, so no sibling's `tool-theme.ts` has to change.
+- **`optionDot` kept its canonical `(background, size)` shape.** WCP passed a
+  `{dot, dotDark}` band object; it now computes the split-fill gradient in a local
+  `dotFill()`, which is the move church already made and documented.
+- **WCP's word picker was NOT extracted into `heading-accent.ts`.** It lives in
+  `src/lib/emphasis.ts` beside a `splitHeadingAccent` that is a different function
+  from this repo's (`HeadingAccentParts | null`, and a 24-character cap), rendered
+  through by two public `.astro` components. Splitting that module to share forty
+  lines would have touched PUBLIC OUTPUT, which this pass was not allowed to
+  change. WCP's `splitHeadingWords` is also the better one - it refuses to OFFER a
+  word its own matcher would refuse to match - but that improvement is tied to a
+  cap this template does not have, so porting it up would add a knob nobody here
+  turns. presacademy's `heading-accent.ts` differed only in comments and took the
+  canonical copy.
+
+### The rename, and why it was required rather than tidy
+
+WCP's write half was called `emphasis-write.ts`. `sync-check` matches by PATH, so
+a marked file at a different path reports MISSING-IN-STARTER forever; the file had
+to become `src/lib/inline-rich-write.ts` to be covered at all. The fallout was
+three import sites (`TextPopover.tsx`, `section-fields.ts`, and the test), plus
+one comment in `emphasis.ts` and one link in `docs/PAGE_BUILDER.md`.
+
+The READ half was NOT renamed, and should not be. `emphasis.ts` is imported by
+fourteen files, holds `emphasisHtml` and the heading accents, and is named after
+the schema type (`emphasisText`) that it reads. Instead WCP gained a 40-line
+`src/lib/inline-rich.ts` that re-exports `RUN_BREAK`, `emphasisRuns as
+inlineRichRuns` and `InlineRun` from it, plus the two structural block types.
+That is the specifier the canonical writer imports, so the seam is a rename and
+not a second implementation. It is deliberately UNMARKED: it is an adapter, and
+an adapter claiming to be canonical would report drift forever.
+
+### Tests do not travel, and the docs now say so
+
+The starter and presacademy run `node --test`; WCP runs vitest. So a canonical
+`.test.ts` can be adopted verbatim in presacademy and never in WCP. WCP keeps its
+own suites for `sanity-path` and `inline-rich-write`, unmarked, which is the rule
+its `docs/TESTING.md` already wrote down for the seven `preview-*` suites.
+
+**Verified:** starter `npm test` 418 -> 425, 0 fail; church 449, 0 fail, still
+50 SAME / 0 drift. presacademy `tsc` 8 errors before and after (all pre-existing),
+`npm test` 452 -> 464 0 fail, build green, `page-parity compare` 13/13 PASS,
+sync-check 42 SAME / 0 drift. WCP `tsc` 1 error before and after (pre-existing),
+`npm run test:unit` 709 -> 713 0 fail across 45 files, `npm run check` exit 0,
+`npm run format:check` clean, build green, `page-parity compare` 27/27 PASS,
+sync-check 19 SAME / 2 expected drift. Its preview island
+(`VisualEditingOverlay`) went **23,389 -> 23,604 bytes raw, 8,633 gzipped: +215
+bytes** for the seam, the two new helpers and a `tool-theme.ts` - measured by
+stashing the change, rebuilding, restoring, and rebuilding again. Nobody but an
+editor in draft mode ever downloads it, and 27/27 parity says the public pages
+did not move by a byte.
+
+## Sync sessions
+
+A sync session is a pass over one repo: run `sync-check`, reconcile drift, install the
+cards that repo should have, add the PORTABLE marker to its canonical copies, and tick
+the matrix.
+
+### 2026-08-27: starter established as the library of record
+
+Installed in `ncs-astro-sanity-starter`: `scripts/with-workerd.mjs`,
+`scripts/free-dist.mjs`, `scripts/page-parity.mjs` (parameterized html root plus route
+auto-discovery) with baselines in `scripts/.parity/`, `scripts/lib/sanity-lib.mjs`
+(reconciled onto the existing `loadEnv.mjs`), `src/lib/contrast.ts` with
+`src/lib/theme-tokens.test.ts`, the stale-types guard in `.github/workflows/ci.yml`, and
+the new `scripts/sync-check.mjs`. PORTS.md created with cards 1-15 and the matrix above.
+
+Verified: parity capture / rebuild / compare 9/9 PASS; `sync-check` self-check 6/6 SAME;
+`npm run check` green.
+
+Cross-check run from presacademy with `NCS_STARTER_DIR` set: **no marked files found**,
+as expected, because presacademy's copies predate the marker. presacademy needs a sync
+session whose first act is adding the marker line to `scripts/with-workerd.mjs`,
+`scripts/free-dist.mjs`, `scripts/page-parity.mjs`, `scripts/lib/sanity-lib.mjs` and
+`src/lib/contrast.ts`, after reconciling each against this repo's now-canonical version
+(page-parity and sanity-lib both changed on the way in, so those two will report DRIFT
+the moment the marker lands). No presacademy files were modified in this session.
+
+WCP has a parallel session porting the parity harness, the stale-types guard, and the
+backup and uptime workflows; those four cells read "yes" until it lands.
+
+WCP session outcome notes (2026-08-27): backup/uptime/stale-types
+guard/parity all landed. Adaptations recorded on their cards: Sanity
+6.4 has no `schema extract --force` and multi-workspace repos need
+`--workspace`; typegen config lives in sanity-typegen.json; the
+parity harness is a PATTERN, not an identical-canonical file (WCP
+added Instagram normalizer rules and an env-divergence gotcha: the
+Playwright webServer builds with fake tracker ids, so compare only
+against a plain build). The workflow-level working-directory default
+breaks no-checkout gate jobs; scope defaults to the export job.
+
+Family-wide sweep completed 2026-08-27/28: every repo had its first
+sync session (reid, mas-monograms, 2ndpreschicago, church-starter,
+nixoncreativestudio, plus presacademy's marker session). Adaptation
+notes earned along the way, now part of the cards' lore:
+
+- reid's Playwright CI job must build with REAL Sanity ids (its
+  hidden-route stubs derive from live sectionVisibility data); the
+  suite passed 140/140 and gates for real.
+- Multi-hop origins (nixoncreativestudio: apex 301 -> www 307 ->
+  slash) need curl -sSL in uptime; single-hop sites pin literal 200s
+  on trailing-slash paths.
+- Templates gate backup on a SANITY_PROJECT_ID variable instead of a
+  hardcoded id, schedules commented for forks (church-starter).
+- mas-monograms' new stale-types guard caught a REAL stale-types bug
+  on its first run (studioGuide video fields).
+- Cutover watch: secondpreschicago.org AND reiddesignllc.com still
+  serve from Squarespace; their SITE_URL variables wait for DNS.
+- loadEnv.mjs is now PORTABLE-marked here (this commit). The five
+  downstream Sanity repos carry the unmarked copy; each pulls the
+  marked version forward at its next session (church-starter's
+  PENDING documents why marking downstream-first is wrong).
+
+### 2026-08-28: the starter takes the full modern stack (cards 1, 10, 11, 13, 14, 17)
+
+The template upgrade card 17's rollout plan called for, done in one session and gated per
+phase: Astro 6.3 to 7.2 with `@astrojs/cloudflare` 14.2.4 and wrangler `~4.110.0`; the
+Sanity 6.4 pin set; the nested `studio/` package folded into the root and embedded at
+`/studio`; the preview stack; and the in-canvas section controls. Full detail is in
+`docs/agent/changelog.md`; the reusable lessons are folded into cards 1, 10, 11, 13, 14
+and 17 above rather than repeated here.
+
+Gate results: `npm run build` green, `npm test` 94/94, `npm run parity compare` 10/10
+twice, `sync-check` self-check 7/7 SAME (no canonical file needed changing), one
+`@sanity/ui` on disk, one `errors.md#` chunk, typegen byte-stable, and `wrangler dev`
+serving `/`, `/about/` and `/studio/` with the Studio mounting in a real browser.
+
+Parity baselines were re-captured **twice**, both times with the diff classes enumerated
+first: once for the Astro 7 upgrade (generator string, island uid, minifier output,
+text-node whitespace) and once for a `sonner`/react-aria attribute that arrived with a
+clean lockfile re-resolve. Nothing structural moved in either.
+
+**What is NOT verified here, and what the next repo should do differently:** this
+template has no Sanity project, so the preview could only be proven to fail closed
+(503 naming the missing config; `/preview/live` 403 without the Studio cookie). Rendering
+a real draft, the click-to-edit overlay, and the in-canvas controls need a configured
+project and a `SANITY_TOKEN`. A site repo installing this card should run that check for
+real, in a browser, before ticking its cell.
+
+**Next in card 17's order:** reid-design-site (already Sanity 6, shortest hop), then
+mas-monograms, then 2ndpreschicago after its DNS cutover. ncs-church-starter should
+inherit most of this by sync from here rather than by a fresh port.
+
+### Card 10/17 rollout complete (2026-08-28, late)
+
+Every Sanity repo except 2ndpreschicago (parked for DNS cutover) now
+carries the modern stack. "staged" = verified and pushed to a
+`staging` HOLDING BRANCH because those repos auto-deploy from main
+via Cloudflare Workers Builds; the dashboard deploy command must
+become `npx wrangler deploy -c dist/server/wrangler.json` BEFORE the
+merge, or every SSR route 404s. reid additions to the lore:
+sanity-plugin-iframe-pane floats a third @sanity/ui by caret (drop it,
+presentationTool supersedes it); pass a per-request client into query
+functions with the memo skipped so draft reads never leak between
+Worker requests; and verify surprising upstream markup changes in a
+real browser before pinning (radix accordion's dropped aria-controls
+was deliberate and axe-clean).
+
+### 2026-08-28 (later): edit-mode gate + sticky page-list navigation
+
+Two editor reports from presacademy, fixed and rolled to every
+Presentation repo (presacademy, wcp, starter, church-starter [layout
+only - no navigator], reid + mas staging branches):
+
+1. Edit-mode gate in PreviewLayout's interceptor (see Card 11's
+   amendment).
+2. STICKY navigation in PreviewNavigator: a page-list click during a
+   preview page load was silently dropped, because Presentation can
+   only hand the iframe its next URL once the new page's
+   visual-editing script reconnects. The navigator now records the
+   click's intent, highlights the row immediately, and re-issues
+   navigate() every 750ms until params.preview reports arrival (~6s
+   cap). When the first navigate lands, `current` matches at once and
+   no retry ever fires.
+
+Verified on the presacademy build: an edit-mode click on a CTA leaves
+the URL untouched; the same click without overlay boxes remaps into
+/preview/*.
+
+### 2026-08-28 (later still): the chrome joins the preview as a template part
+
+The preview shell renders the REAL Header and Footer around every
+page (they were chrome-less only because header links used to bounce
+the iframe onto the live site - the click interceptor closed that
+hole). siteSettings is fetched draft-aware in PreviewLayout so chrome
+edits live-update. Each piece is wrapped in a data-sanity attribute
+via the new docEditAttr(id, type, path) helper in preview-edit-attr:
+the WordPress-template-part gesture. In Edit mode the header/footer
+outline as editable surfaces and a click opens the owning document in
+the edit panel. Applied to presacademy (header->title,
+footer->mission), wcp (header->the navigation doc's mainNav,
+footer->siteSettings; its chrome already rendered via linkBase),
+starter, church-starter, reid + mas staging (all
+header->siteSettings.title, footer->tagline). Headers/Footers accept
+an optional siteSettings prop with clean fallbacks in every repo, so
+a null fetch can never blank the chrome.
+
+### 2026-08-28: card 18 lands in both templates (chrome options)
+
+Card 18 ported from presacademy (canonical) into the starter and
+church-starter in one pass. Each got the shared `navLink` type
+(registered in schemaTypes/index.ts), `src/lib/nav-href.ts` carrying
+its OWN singleton -> live-path map, the dereferencing
+NAV_LINK_PROJECTION plus an exported SITE_SETTINGS_PROJECTION that
+PreviewLayout now fetches through, and the chrome fallbacks pulled out
+of Header/Footer into resolveSiteSettings. New Site Settings fields in
+both: headerCta {show,label,link}, legalNav, logo (image + alt),
+showEmail, showSocials, showFooterSocials; navItems and footerColumns
+were REUSED, with the inline navLink member swapped for the shared
+type and the legacy footerLink kept beside it.
+
+Three adaptation notes worth carrying to the next repo:
+
+- **The starter's resolver is chrome-only.** church-starter already had
+  a `resolveSiteSettings` covering identity/contact/social, so the
+  menus joined it. The starter had no such module, so the new one
+  resolves the chrome and nothing else; its Header/Footer still read
+  identity fields off the raw document. Folding those in is a separate,
+  parity-risky change.
+- **Two fallbacks stayed in the components on purpose**: the starter's
+  footer columns (per-link module-visibility flags) and both footers'
+  legal rows (links with different link styles). They resolve to an
+  empty array and the component keeps its built-in markup. See the
+  centralized-fallback rule on the card.
+- **The header's max menu length is per-repo.** presacademy and the
+  starter cap navItems at 6; church-starter's own built-in menu is
+  seven entries wide, so it caps at 7. Capping below a repo's own
+  default menu would be a validation error nobody could satisfy.
+
+Both repos verified green: `npx tsc --noEmit` clean (TS5101 baseUrl
+deprecation only), `npm run build` clean, `node scripts/page-parity.mjs
+compare` 10/10 (starter) and 20/20 (church), unit tests pass, and
+`sanity schema extract --enforce-required-fields` succeeds. The parity
+run is what caught the SanityImage-import CSS-bundle rename recorded on
+the card. Baselines were NOT regenerated in either repo.
+
+### 2026-08-28: publishing confidence lands in both templates (cards 19 + 20)
+
+Unlocked Studio Phase E, written here first and installed in
+church-starter in the same pass. Three files are byte-identical
+across the two repos and PORTABLE-marked here:
+`src/sanity/components/shareDraftLink.tsx`,
+`src/sanity/schemaTypes/_publishAt.ts`, `scripts/publish-due.mjs`.
+The fourth, `.github/workflows/publish-due.yml`, differs only in the
+paragraph naming which template it is sitting in.
+
+Three adaptation notes for the next repo:
+
+- **church-starter has no PreviewNavigator.** The share affordance is
+  therefore the document action alone there, which is why the module
+  was written as a `useShareDraftLink()` hook with the action beside
+  it rather than as navigator markup. The starter, which does have a
+  navigator, calls the same hook from a per-row button. Any repo
+  gains the navigator button by adding one `<Button>`; none of them
+  needs a navigator to get the feature.
+- **Where the field went, and where it did not.** Both repos put the
+  group/field pair on `page` and on their page-singleton factory. In
+  church-starter that factory backs all eleven church page
+  singletons, so coverage is broad. In the starter the factory is
+  currently uncalled (every core singleton is hand-authored), so only
+  `page` carries the field in practice. Hand-authored singletons in
+  either repo do NOT have it yet; adding it is spreading
+  `PUBLISH_AT_GROUP` into that type's `groups` and `publishAtField()`
+  into its `fields`, together, and nothing else. The script never
+  needs to know.
+- **The dry-run could not be exercised against real data.** Neither
+  template has a `.env` or a Sanity project, so `publish-due.mjs` was
+  proven only to parse, to fail closed on a missing project id and on
+  a missing token, and to keep the token out of every message. The
+  first fork to enable this should run the bare (dry) form against a
+  real dataset with one scheduled draft before uncommenting the cron.
+
+Both repos verified green: `npx tsc --noEmit` clean (TS5101 baseUrl
+deprecation only), `npm run typegen` re-run and committed,
+`npm run build` clean, `node scripts/page-parity.mjs compare` 10/10
+(starter) and 20/20 (church) - nothing here touches built HTML - unit
+tests 94/94 and 60/60, and `sanity schema extract
+--enforce-required-fields` succeeds in both with `publishAt` present
+and optional. Prettier reformatted `page.ts` in both repos and
+`_pageSingleton.ts` / `churchPages.ts` beyond the edited lines; those
+files had drifted from `npm run format` before this session.
+
+### 2026-08-28: Pages as first-class objects, in both templates (cards 21, 22)
+
+Installed in `ncs-astro-sanity-starter` (canonical) and
+`ncs-church-starter`: `src/lib/redirects.ts` + `redirects.test.ts`,
+`src/sanity/pageOps.ts`, `src/sanity/components/pageActions.tsx`,
+`src/sanity/components/slugRedirect.tsx`,
+`src/sanity/components/SeoSnippetInput.tsx`,
+`src/sanity/schemaTypes/_seoFields.ts` (all seven PORTABLE-marked and
+byte-identical across the two repos), plus a per-repo
+`schemaTypes/redirect.ts`, the `archived` + Search & sharing wiring on
+each `page` type, a Redirects list under Pages in each desk structure,
+the build-time redirect and hidden-page reads in each
+`astro.config.mjs`, and the actions wiring in each `sanity.config.ts`.
+The starter additionally grew the per-row "..." menu and the
+**Archived** group in `PreviewNavigator.tsx`; the church starter has
+no navigator and takes the document actions alone, which is the
+complete feature.
+
+The reference implementation was WCP's, and three things were
+deliberately NOT copied straight across:
+
+- **`redirects.ts` lost the doc-type-to-path map.** WCP's version owns
+  `pathForPageSlug` / `pathForPostSlug` / `pathForDocSlug`. Both
+  templates already have that map, per repo, in
+  `src/sanity/urls.ts` (`pathForDoc`), so the canonical file keeps only
+  the pure path arithmetic and the publish action asks `pathForDoc`
+  instead. That is what makes both `redirects.ts` and
+  `slugRedirect.tsx` byte-identical in repos whose routes have nothing
+  in common, and it removed the need for a `SLUG_REDIRECT_TYPES` list.
+- **The verbs were pulled out of the navigator into `pageOps.ts`.** In
+  WCP they live inside `PreviewNavigator.tsx`. The church starter has
+  no navigator, so a navigator-only feature would have been
+  church-shaped as "not available". Splitting logic from surface gave
+  the church the full feature through document actions and gave the
+  starter both surfaces from one implementation.
+- **Menu drag was skipped in both, on purpose (mission call).** WCP's
+  navigator can drag a page into the header menu because WCP's menu is
+  a `navigation` singleton of page references. In these templates the
+  menu is `siteSettings.navItems`, already fully editable in Site
+  settings, and the navigator's groups are publication-state groups,
+  not menu-membership groups. A drag target would have had to be
+  invented rather than ported.
+
+Adaptation notes earned on the way:
+
+- **`archived` reaches the live site through four queries, not one.**
+  `getAllPageSlugs` (so the route is never built), the nav link
+  projection plus `navHref` (so a menu link to an archived page is
+  dropped instead of pointing at a 404), and the sitemap read in
+  `astro.config.mjs`. Every test is `archived != true`, never
+  `archived == false`.
+- **Patching both twins needs a presence check first.** A patch against
+  a missing document id fails the whole transaction, so
+  `setPageArchived` looks up which of `<id>` / `drafts.<id>` exist
+  before building it. WCP's navigator got this right by carrying
+  `hasDraft` / `hasPublished` on each row; a function with no row to
+  read has to ask.
+- **`hideFromSearch` was added only to `page`, not to the page
+  singletons.** The singletons' SEO fields are hand-authored per type
+  and nothing on the routes reads a `noindex` from them yet; a switch
+  with no second half is a dead control, which is exactly what
+  `_seoFields.ts`'s header warns against. The starter's uncalled
+  `_pageSingleton` factory was edited and then reverted for that
+  reason. Extending it later is: pass the type's existing three SEO
+  fields into `seoFields({ reuse })`, add `hideFromSearch` to that
+  page's GROQ projection, pass `noindex` to `BaseLayout`, and add the
+  type to the sitemap read.
+- **The global `CharacterCountInput` wrapper is safe over a field-level
+  custom input.** It renders `props.renderDefault(props)` untouched for
+  anything without a max length, so the value-less `seoPreview` field
+  reaches `SeoSnippetInput` normally. Worth knowing before adding any
+  other custom input to these repos.
+- **`sanity schema extract --path` is resolved relative to the repo
+  root and rejects an absolute Windows path** (it tries to `mkdir`
+  `<repo>\C:\Users\...`). Pass a bare filename and delete it after.
+
+Both repos verified green: `npx tsc --noEmit` clean (TS5101 baseUrl
+deprecation only), `npm run lint` with no new findings (the starter's
+one pre-existing error in `pageBuilder.types.ts` is untouched), prettier
+clean on every edited file, `npm run build` clean, `npm run typegen`
+re-run and committed, `sanity schema extract
+--enforce-required-fields` succeeds in both, unit tests **106/106**
+(starter, 94 + 12) and **72/72** (church, 60 + 12), and
+`node scripts/page-parity.mjs compare` **10/10** and **20/20** with no
+regeneration - nothing here changes rendered HTML until an editor
+archives a page or ticks a switch. `sync-check` self-check in the
+starter is 17/17 SAME, and the cross-check from church against the
+starter is 16/16 SAME (church still does not carry the marker on
+`scripts/page-parity.mjs`, which is a pattern rather than an identical
+canonical file).
+
+### 2026-08-28: sync-check learns the nested-app rule
+
+wcp keeps its whole app under site/, so every marked file there
+reported MISSING-IN-STARTER - the checker compared repo-relative
+paths only. sync-check.mjs now retries a miss once with the first
+path segment stripped (one segment, only on a miss, labeled in the
+output as "(starter: <path>)"). First run against wcp immediately
+surfaced two real drifts (free-dist / with-workerd carrying
+pre-genericization em-dash comments; starter copies pulled forward)
+plus the documented deliberate icons-5 drift in shareDraftLink.
+
+### 2026-08-28: editor-defined forms land in both templates (card 23)
+
+Both templates learned to let an editor write their own form questions,
+ported from wcp's Unlocked Studio Phase D. Three new canonical files,
+byte-identical in both: `src/lib/custom-form-fields.ts`, its test, and
+`src/sanity/schemaTypes/formQuestion.ts`. The starter hangs the `fields`
+array on `contactPage` (`formFields`) and teaches `ContactForm.tsx` to
+draw the questions and fold the answers; church-starter hangs it on the
+`sectionForm` page-builder block, with a new `QuestionsForm.tsx` island
+beside the untouched `FormRenderer.tsx`.
+
+Adaptation notes earned on the way:
+
+- **The type is `formQuestion`, not `formField`.** church-starter's
+  `form` document already registers a `formField` array member. Two
+  schema types with one name is a browser-runtime Studio crash that
+  `astro build` does not catch, and a byte-identical canonical file
+  cannot rename itself per repo. Named once, for the whole family.
+- **Neither template has a form API route, and neither needed one.**
+  Both post client-side to Web3Forms from a React island. The lib's
+  `parseCustomFieldEntries` takes an `Iterable<[string, string]>`, so
+  the island synthesizes the same pairs a native POST would produce and
+  the fold happens just before `fetch`. Same tested code, no route, no
+  new env var. `PUBLIC_WEB3FORMS_KEY` still gates delivery, and the
+  keyless fallback each repo already had (inline notice in the starter,
+  mailto in church) is preserved.
+- **An island prop must be SPREAD, not passed, to keep parity.** Astro
+  serializes island props into the rendered `<astro-island>` element, so
+  passing `customFields={[]}` would change the HTML of a page with no
+  questions. `contact.astro` builds `questionProps` and spreads an empty
+  object instead, and parity stays zero-diff.
+- **church's `sectionForm.form` reference stopped being plainly
+  required.** It is now a custom rule: a Form document OR at least one
+  question. A section built the old way still cannot be left empty.
+- **The starter's questions replace the built-in questionnaire**
+  (location, project type, budget, timeline, message, source), matching
+  wcp's variant semantics. `validate()` returns early on the studio
+  fields when questions exist, and the payload omits them rather than
+  sending blanks.
+
+Verified in both repos: `npx tsc --noEmit` clean, `npm run build` green,
+`sanity schema extract --enforce-required-fields` succeeds, `npm run
+typegen` regenerates cleanly (78 and 118 schema types). Unit tests
+**124/124** (starter, 106 + 18) and **90/90** (church, 72 + 18).
+`page-parity compare` **10/10** and **20/20** - an empty questions array
+is a zero-diff no-op, which is the proof the change is additive.
+`sync-check` self-check in the starter is 20/20 SAME; from church the
+three new canonical files all report SAME. One PRE-EXISTING drift
+remains in church: `scripts/sync-check.mjs` never received the
+nested-app rule from the session above. Untouched here, still open.
+
+### 2026-08-28: saved sections + pre-publish checks land in both templates (cards 24 + 25)
+
+Both templates learned wcp's Unlocked Studio Phase C and E: keep a
+section and reuse it, and read a page back before publishing. Four new
+canonical files, byte-identical in both (`src/lib/page-checks.ts`, its
+test, `src/sanity/actions/checkPage.tsx`,
+`src/sanity/actions/saveSectionPreset.tsx`), one canonical file
+extended (`addSectionToPage()` joins duplicate and archive in
+`src/sanity/pageOps.ts`), and two per-repo files each: the
+`sectionPreset` document against that repo's own section union, and
+`src/sanity/pageBuilderConfig.ts`.
+
+**The config-object restructure is deliberate canonical evolution,
+ahead of wcp's copy.** wcp's ancestor bakes its own field names and
+lists into the library file, which is exactly why it could not be
+shared. Card 25 carries the fold-back recipe; nothing about it is
+urgent.
+
+Adaptation notes earned on the way:
+
+- **The section union is reused, never rewritten.** The starter's
+  preset takes `[...SECTION_TYPES, ...RICH_SECTION_TYPES]` (the widest
+  union in the repo, so a preset can be saved from any page);
+  church-starter's takes `FLEXIBLE_SECTION_MEMBERS`. Both carry the
+  repo's own `sectionArrayOptions`, so the picker inside a preset reads
+  exactly like the picker on a page. A hand-written member list would
+  have gone stale on the next block added.
+- **`sectionLabel` had to learn both naming conventions.** The starter
+  suffixes its types (`imageTextSection`), church-starter prefixes them
+  (`sectionImageText`). One canonical function strips either, so both
+  read "Image text". wcp, which only suffixes, is unaffected by the
+  added prefix rule.
+- **The insert surface is where the two repos genuinely differ, and
+  splitting the verb from the surface is what let both have the
+  feature.** The starter has the Presentation navigator, so it got the
+  "Saved sections" group with per-row "add to the page you are looking
+  at". church-starter has no navigator at all, so the same verb hangs
+  on the saved section instead: "Add to a page..." with a page picker.
+  Same `addSectionToPage`, opposite direction. This is the same lesson
+  cards 21/22 recorded, met again.
+- **`PageOpsClient` grew `createIfNotExists` and `patch`.** Both
+  existing call sites cast through `as unknown as PageOpsClient`, so
+  widening the interface broke nothing, and the real Sanity client
+  satisfies all of it.
+- **One list wires three things.** `SECTION_HOST_TYPES` in
+  `pageBuilderConfig.ts` is the document-actions gate, the navigator's
+  "can a saved section go here?" test, and church's page picker. In
+  church that list is the generic `page` plus eighteen singletons that
+  all share `flexibleSections`, so the actions resolver branches once
+  on a set rather than naming types in three places.
+- **The starter's `additionalSections` append zone is read by the
+  checks but is never an add TARGET.** A saved section goes to the main
+  builder; the checks still walk both, numbered as one list, because
+  that is how the editor sees the page.
+- **The navigator's live `listen` had to widen to
+  `*[_type in ["page", "sectionPreset"]]`,** or a section just saved
+  from a page would not appear in the panel until the tool was
+  reopened.
+
+Verified in both repos: `npx tsc --noEmit` clean (TS5101 baseUrl
+deprecation only), `npm run build` green, `page-parity compare`
+**10/10** and **20/20** (nothing here touches rendered HTML until an
+editor adds a section), `sanity schema extract
+--enforce-required-fields` succeeds, `npm run typegen` regenerates
+cleanly (79 and 119 schema types), `npm run lint` with no new findings
+(the starter's one pre-existing `pageBuilder.types.ts` error is
+untouched), prettier clean on every new and edited file. Unit tests
+**150/150** (starter, 124 + 26) and **116/116** (church, 90 + 26).
+`sync-check` self-check in the starter is 24/24 SAME and the
+cross-check from church is 23/23 SAME, the five shared files included.
+The pre-existing church drift on `scripts/sync-check.mjs` (no
+nested-app rule) is still open and still untouched.
+
+### 2026-08-28: the client offer written down
+
+docs/CLIENT-OFFER.md states what the Unlocked Studio program lets you
+promise a client, what stays locked and why that is the product, the
+free-plan roles reality (Admin/Editor only; Growth unlocks custom
+roles and Sanity's own scheduling - card 20 exists so scheduling does
+not need it), the theme-presets default-no decision, the care plan,
+and the words to avoid (requests served, not page views; one-hour
+share links; count the seats).
+
+### 2026-08-28: card 25 fold-back landed in wcp
+
+wcp is now canonical on page-checks.ts (SAME) with its own
+pageBuilderConfig.ts. Deliberately divergent there, by design, with
+reasons in the file headers: the two action files (wcp's volunteer
+guide quotes their labels verbatim) and pageOps (wcp's duplicate
+must strip hubKey and branch hub preview hrefs; canonical pageOps
+has no hub concept). Test files are per-runner everywhere: the
+canonical suite is node:test, wcp's is vitest with the same cases.
+
+### 2026-08-28: appearance controls land in both templates (card 26)
+
+Ported from presacademy, adapted per repo. Three new canonical files
+(`src/lib/inline-rich.ts`, `src/lib/heading-accent.ts`,
+`src/components/InlineRich.astro`) now carry the PORTABLE marker and
+report SAME in both directions; everything else is deliberately
+per-repo, because the colour maps are the brand.
+
+**church-starter got it in full.** Six surface pairs (Paper, Warm,
+Bright card, Chapel green, Chapel deep, Ink — `card` and `ink` are
+the additions, the four originals emit their old classes), three
+accents (Bronze default/no class, Chapel green, Ink) wired once in
+SectionShell so every pill and accent word follows with no per-block
+colour edit, swatch chips in the Studio, six rich twins, five heading
+accents, and a six-entry column registry with two new controls
+(steps, dynamic list). 75-assertion contrast gate, tightest pair
+5.99:1, nothing lowered. 209 tests, parity 20/20, typegen committed.
+Its guide gained a "Change how a section looks" entry and — the other
+half of the editor report — its `sections` guide now teaches the
+right-click gesture, and the stale "there is no live preview inside
+Sanity" line is gone, because there is.
+
+**starter got it partial ON PURPOSE**, and the card says why: CLAUDE.md
+#9 forbids a per-block surface field here (the SectionRenderer owns
+the alternating cadence so reordering cannot break the rhythm) and
+there is no shared section shell to hang an accent class on. So
+`surfaces.ts` formalises and GATES the four surfaces the cadence and
+the components already paint — including the shadcn `:root`/`.dark`
+overrides that theme-tokens.test.ts explicitly left out — the heading
+accent is one fixed brand colour with the word as the only choice,
+and the rich twins and layout registry land in full through
+SectionHeading.astro, which serves nearly every section at once. No
+tone field, no accent enum, no SwatchInput. 208 tests, parity 10/10,
+sync-check 27 SAME.
+
+Not yet swept for this card: reid-design-site, mas-monograms,
+2ndpreschicago, nixoncreativestudio. WCP stays `partial`: it has the
+emphasis layer and its own older colour knobs.
+
+### 2026-08-28: undo & redo land in both templates (card 27)
+
+Three canonical files, byte-identical in both repos and both marked:
+`src/sanity/undoRedo.ts` (the transaction-log machinery),
+`src/sanity/components/UndoRedo.tsx` (two document actions plus the
+keyboard plugin), `src/lib/undoRedo.test.ts` (27 tests). Wiring is two
+lines per repo: `undoRedoShortcuts()` in `plugins`, and
+`UndoAction, RedoAction` beside cards 24 and 25 on the page-builder
+types. No schema change, so no typegen and no parity movement.
+
+**The mechanism was established empirically, not from memory.** A
+read-only dry run against presacademy's production dataset settled
+three things the same morning: `excludeContent=false` is refused with a
+403, a transaction's `id` is the `_rev` it leaves behind (which is the
+rev guard, free), and `_rev` must be stripped before `applyPatch` or
+the reverted document comes back with its `_type` reading
+`"homePage3:54"`. The same dry run replayed five real transactions of
+`drafts.homePage` and confirmed `apply(revert(doc)) === doc` exactly.
+All three are written into the card and the file header, because the
+third one in particular looks like corruption rather than an
+off-by-one.
+
+**presacademy** also gained the guide entry "Undo a change", and the
+`sections` guide's see-also now points at it. The line it already
+carried — "Removing a section is undoable before you publish" — is
+finally true in the way an editor would read it.
+
+**starter** got the same three files and the same wiring. Its
+`sanity.config.ts` has no layout component of its own, so the plugin's
+layout is the only one; presacademy's composes on top of `StudioLayout`
+(fonts), which is the arrangement to watch when porting to a repo that
+already wraps the layout.
+
+Verification: 235 tests in the starter, 258 in presacademy, both
+green; `tsc --noEmit` clean in both; both build; starter parity 10/10;
+sync-check 30 SAME self-check and 19 SAME cross-check. presacademy's
+parity harness reports 0/13, and it does so on a clean tree too
+(verified by stashing) — a pre-existing baseline drift in the theme
+script, unrelated to this card and still open.
+
+What no test can reach without a Studio open: the actions rendering in
+the publish menu, the plugin layout composing with an existing one, and
+the key press itself. Those are the three things to click first.
+
+### 2026-08-28: tsc was blind behind TS5101
+
+npx tsc --noEmit stops at the TS5101 baseUrl deprecation before
+checking any file, so every repo whose only type gate was bare tsc
+verified nothing. Found when WCP's astro check caught a real bug in
+canonical undoRedo.ts (the as-RawDoc contextual-generic trap, now
+fixed canonically). tsconfigs carry ignoreDeprecations '6.0' now;
+the trustworthy gate for Astro repos is astro check, and bare tsc's
+leftover noise (.astro imports, cloudflare:workers types) is
+environmental, not code. Follow-up decision queued: install
+@astrojs/check family-wide so every repo gates like WCP.
+
+### 2026-08-28: card 28 - the floating in-canvas layer (presacademy first)
+
+Squarespace-style popovers in the Presentation canvas, built on the
+overlay-component API (components prop on <VisualEditing>; resolver
+runs only in Edit mode with the optimistic actor ready; controls
+must opt into PointerEvents over the pointer-events:none layer).
+Surface/accent chips on section hover, click-a-word headingAccent,
+Edit-here popovers (textarea for hero fields, strong/em-only
+contenteditable for rich twins with an allow-list paste tokenizer),
+and preset-adds adopting the neighbour's tone (caller-side;
+pageOps stays byte-exact). Writes go through useDocuments from
+@sanity/visual-editing/react - comlink to the Studio, drafts always,
+no browser token, covered by card 27's undo. A drift gate parses
+blocks.ts so schema and registry cannot diverge silently. Live on
+presacademy only; canonicalization here after Nathan's deployed
+click-through. Known follow-up: canonical pageOps.ts:225 has a
+type-only .commit error on PageOpsPatch that only astro check-gated
+repos can see - fix at the next sync.
+
+### 2026-08-28 (later): card 27 shipped broken, and what the log said
+
+Undo reported success and changed nothing, three times, on deployed
+presacademy. The full account is in card 27's postmortem; the short
+version is that both causes were ours and neither was the one everyone
+guessed.
+
+The suspicion was that Presentation's optimistic actor was overwriting
+our mutation. The transaction log for `drafts.pricingPage` refuted it
+in about a minute: four transactions, one create carrying the tone, and
+three undo writes whose only effect was to move `_updatedAt`. No
+competing transactions at all. The undos landed; they wrote the
+document back to itself.
+
+Cause one: a create transaction's `revert` is `[]`, and
+`applyPatch(doc, [])` returns the document unchanged, so the null test
+that was supposed to mean "this created the draft" never fired. Cause
+two: `@sanity/client`'s `_create` never forwards `options.transactionId`
+into the request body (only `_mutate` does), so every id we minted was
+dropped and our own writes were unrecognisable to us.
+
+**The part worth carrying to every other card.** The unit tests were
+green through all of it, because the fake built create-reverts as
+`[0, null]` — the fixture encoded the same wrong assumption as the code.
+A fake that agrees with the bug proves nothing. The fake is now faithful
+in the three ways that mattered (empty revert on create, `_updatedAt`
+moving on every write, caller transaction ids ignored), and
+re-introducing cause one fails 8 tests instead of 0.
+
+A third rule came out of it that is not a bug fix but a policy: an undo
+that would not move anything other than `_updatedAt` is skipped in
+favour of the next step back, so the feature cannot say "Change undone"
+while the document stands still.
+
+Both repos: 249 tests in the starter, 341 in presacademy, sync-check 30
+SAME self / 19 SAME cross, no new tsc errors either side. The deployed
+round trip - the actions rendering, multi-step undo against a real
+server, and whether a whole-document write is safe beside the
+optimistic actor - is in presacademy's `docs/PENDING.md`, along with
+the leftover `drafts.pricingPage` fixture for Nathan to discard.
+Ctrl+Z over the preview iframe stays a documented limitation.
+
+### 2026-08-28 (later still): cards 29-29d canonicalized in the starter
+
+The preview reliability and speed layer, built and proven on the deployed
+presacademy Studio with measurements, brought here as canonical.
+
+**Marked PORTABLE (14 files, byte-exact to presacademy apart from the marker
+line):** `src/lib/preview-stega.ts`, `preview-text-diff.ts`,
+`preview-text-nodes.ts`, `preview-live-draft.ts`, `preview-refresh.ts`,
+`preview-morph.ts`, `preview-navigation.ts`, and each one's `.test.ts`. All seven
+are pure: no DOM, no Sanity client, no repo names. `preview-morph` and
+`preview-text-nodes` are written against minimal structural interfaces
+(`MorphElement`, `TextLike`) precisely so they can be tested under `node:test`,
+which has no DOM. 110 assertions came with them; the suites ported verbatim.
+
+**preview-navigation.ts, 2026-09-12 (stonesteps-50k, ported here the same day):** gained
+`toPreviewPath`. The bounce machine compares with strict equality, and on a DEPLOYED Studio
+`params.preview` is the absolute url with `?sanity-preview-perspective=drafts` on the end,
+while every row href is root-relative. So the target was never sighted, the bounce was
+waited out instead of answered, and the two-clicks bug this file exists to remove was back,
+only on deployed Studios. `PreviewNavigator.tsx` now runs `params.preview` through
+`toPreviewPath` before anything compares it (and its row highlight lost the `endsWith`
+workaround that was the same mismatch patched in one place). The test file carries the
+absolute-url timeline that would have caught it.
+
+**Left per-repo (adapted, no marker):** `VisualEditingOverlay.tsx` (the scheduler
+loop, the morph and fast-path branch, `noteInstantChange`, the bfcache
+pagehide/pageshow handling), `overlay/useInstantText.ts`, `overlay/timing.ts`,
+`LiveDraftBridge.tsx`, `PreviewNavigator.tsx`, `pages/preview/live.ts`,
+`pages/preview/[...slug].astro`, `layouts/PreviewLayout.astro`. Each of those
+either names this repo's own document types or wires into a surface whose shape
+differs between sites.
+
+**Two infra fixes travelled with them.** The `/preview/live` SSE leak: `send()`
+throwing means the client went away MID-WRITE, so `cancel()` never fires; that
+path used to set `open = false` and leave the read loop holding a live Sanity
+listen open forever. It now closes AND aborts upstream, and `request.signal` is
+wired as a third road out because it fires even while parked in `reader.read()`.
+And `PreviewLayout.astro` now skips its chrome fetch when
+`x-preview-soft-refresh` is present: the refetch consumes exactly `#main`, and
+nothing inside `#main` reads `chromeSettings`, so the swapped HTML is
+byte-for-byte what a full render produces while the render costs one fewer Sanity
+round trip.
+
+**The navigator's two-click bug is fixed here too.** The starter carried the same
+sticky retry presacademy had: re-issue `navigate(sameHref)` every 750ms. That
+could never work, because leaving `params.preview` at the value it already held
+means Presentation's effect never re-runs and nothing is posted to the iframe.
+`preview-navigation.ts` replaces it with a bounce-aware intent machine: hold the
+intent THROUGH the match, watch for the flip back to the path we came from, and
+re-issue on that flip - which is a real change to `params.preview`, so the host
+effect does run. Capped at 4 attempts inside a 4s window.
+
+**One real divergence — CLOSED 2026-08-28 by card 28.** presacademy's
+`useInstantText` reads the draft through `overlay/useDraftDocument.ts`, which also
+carries `setAt`/`setInside`/`unsetAt` and a `write()` for the card-28 in-canvas
+controls, and which imports a `src/lib/sanity-path.ts` this repo did not have.
+When cards 29-29d landed here the starter had no such controls and only ever
+READ, so the single `getDocument().getSnapshot()` call lived inside
+`useInstantText` itself and `useDraftDocument.ts` was not ported. Card 28 brought
+both files in the same day, marked canonical, and `useInstantText` now takes
+`readNow` from the shared hook. There is no second door to the optimistic document
+in this repo any more.
+
+**Nothing was skipped for want of a surface.** Everything on the list had an
+equivalent in this repo, including the PreviewLayout chrome fetch (one here,
+two on presacademy: this repo has no announcement bar).
+
+**Verification:** `tsc --noEmit` 46 errors before and 46 after, all pre-existing
+and all environmental (`cloudflare:workers`, `.astro` imports, the Sanity
+`insertMenu` readonly-groups noise, and the known `pageOps.ts:225` `.commit`
+type-only error card 28's entry already flags); `npm test` 249 -> 359, 0 fail;
+`npm run lint` back to its pre-existing 1 error + 7 warnings, none in touched
+files; `npm run build` clean; `page-parity compare` 10/10 PASS (this whole layer
+is preview-only, so any parity movement would have been a bug); `sync-check`
+self-check 44 SAME / 0 drift; `sync-check ../presacademy` 19 SAME / 0 drift.
+
+**Why the cross-check does not list the new files, and what to do about it.**
+`sync-check` walks the SITE repo for the marker, and presacademy's copies of
+these fourteen do not carry it yet - that repo's session marked 19 other files
+and stopped there. So the new cards are invisible to the cross-check until
+presacademy adds the marker line, which is the first act of its next sync
+session. Byte-identity was verified by hand in the meantime (each starter copy
+diffed against presacademy's with the marker line stripped: identical, all
+fourteen), so the moment the marker lands they report SAME with no reconciliation
+needed.
+
+**One deliberate oddity to leave alone.** `LIVE_DRAFT_MESSAGE` is `'pa:live-draft'`
+in the canonical file and will stay that way everywhere. It is an arbitrary token
+whose only job is to match at both ends of one repo's postMessage channel;
+renaming it per repo would fork an otherwise identical file for nothing.
+
+### 2026-08-28: card 28 canonicalized here, minus the band card
+
+The floating in-canvas layer, brought from presacademy and cross-read against
+WCP's independent port. Two working implementations of the same idea on two
+different vocabularies is what made the generic/per-repo line easy to draw:
+whatever the two agreed on down to the prose was portable, whatever they spelled
+differently was the repo talking.
+
+**Marked PORTABLE (6 files + 2 suites):** `src/lib/sanity-path.ts`,
+`src/lib/inline-rich-write.ts` and both `.test.ts`; the word-picker half of
+`src/lib/heading-accent.ts` (already canonical, extended in place);
+`src/components/preview/overlay/usePopover.ts`, `overlay/useDraftDocument.ts`,
+`overlay/styles.ts`.
+
+**Left per-repo, unmarked:** `src/lib/section-fields.ts` + its drift gate (the
+registry IS the vocabulary), `overlay/index.ts` (the control map),
+`overlay/tool-theme.ts` (six brand values), and the two card components. The card
+says which seam a later fold-back would cut.
+
+**Two files were genericized on the way in, and neither repo's copy is the one
+that landed.** `sanity-path.ts`'s `readSectionPath` now takes the page-builder
+array names instead of owning them, and `styles.ts` reads its palette from the
+new per-repo `tool-theme.ts` instead of declaring it inline. Both are the card-22
+`redirects.ts` move: keep the arithmetic, hand the vocabulary in. presacademy and
+WCP will both report DRIFT on these two the moment they mark their copies, and
+the resolution is to take the starter's shape, not to fold the constants back.
+
+**What the starter's own doctrine ruled out.** No band card, no surface control,
+no tone field: `CLAUDE.md` #9 and card 26 both say a block here carries no colour
+field, and `SectionRenderer` owns the cadence precisely so reordering cannot break
+the rhythm. That is recorded on the card as the correct outcome rather than a gap,
+and `section-fields.test.ts` now ASSERTS the absence, so the doctrine is a test
+instead of a promise. The band-card styles still ship in the canonical
+`styles.ts`, unused and tree-shaken, for the next repo.
+
+**Vocabulary discovered here:** `headingAccent` on five types (`richTextSection`
+matched against `heading`; `ctaBandSection`, `servicesGridSection`,
+`testimonialsSection` and `faqSection` against `headline`), six `subhead` /
+`subheadRich` twins (the four above minus `richTextSection`, plus `teamSection`
+and `dynamicListSection`), and the two document-level hero strings
+`heroHeadline` / `heroSubhead`, which only the bespoke pages render.
+
+**Verification:** `npx tsc --noEmit` 46 errors before and 46 after, all
+pre-existing and environmental; `npm test` 359 -> 417, 0 fail (58 new: 14 for
+`sanity-path`, 19 for `inline-rich-write`, 17 in the new `section-fields` drift
+gate, and 8 for the word picker); `npm run lint` back to its pre-existing 1 error + 7
+warnings, none in touched files; prettier clean on every touched file;
+`npm run build` clean; `page-parity compare` **10/10** (this whole layer is
+preview-only, so any parity movement would have been a bug); `sync-check`
+self-check 44 -> **51 SAME / 0 drift**; `sync-check ../presacademy` **33 SAME /
+0 drift**.
+
+**One drift introduced, deliberately.** `sync-check ../ncs-church-starter` now
+reports **42 SAME / 1 drifted**: `src/lib/heading-accent.ts`, because the word
+picker was added to the canonical copy and church's copy ends where the file used
+to. It is a pure append — the diff is "site: (end of file)" at line 78 — so the
+resolution is to pull the starter's copy forward at church's next sync session,
+which is also the session where church gets all three controls (it has the full
+card-26 vocabulary, including the surfaces a band card needs). No church file was
+touched here.
+
+**Bundle.** The preview island (`VisualEditingOverlay`) went 10,679 -> 25,426
+bytes raw, 9,546 gzipped. It is loaded `client:only` and only when draft mode is
+on, so no public visitor ever downloads it; the public pages are byte-identical,
+which is what the parity run proves.
+
+**What no test can reach without a Studio open**, and what is now in
+`docs/PENDING.md`: the resolver actually mounting on a heading, the picker writing
+through the comlink into the draft, the paste allow-list against a real Word
+paste, and the "Edit here" card's blur-saves behaviour. This template has no Sanity
+project, so card 28 is proven here only as far as the build and the pure logic go.
+
+### 2026-08-28: presacademy and WCP reconciled onto card 28 (card 28b)
+
+The pass card 28b describes, run as one session over four repos. Nothing was
+committed or pushed in any of them.
+
+**Starter (library of record).** `src/lib/inline-rich.ts` gained `RUN_BREAK`;
+`src/lib/inline-rich-write.ts` gained the `multiline` seam, `textToRuns`, a
+whitespace squeeze in `pushText`, and a line-aware `normalizeRuns` that keeps the
+card 28a boundary fix; `inline-rich-write.test.ts` gained 7 cases. `npm test`
+418 -> 425, 0 fail. `tsc` 46 errors before and after, none in touched files. The
+four files reid-design-site and mas-monograms carry (`styles.ts`, `usePopover.ts`,
+`useDraftDocument.ts`, `sanity-path.ts`) were deliberately NOT touched, so neither
+repo moved.
+
+**ncs-church-starter.** Took the three changed canonical files as a straight copy.
+`npm test` 449, 0 fail; `sync-check` **50 SAME / 0 drift**, unchanged. (Its `tsc`
+has pre-existing `insertMenu.groups` readonly errors in the schema, untouched
+here.)
+
+**presacademy.** Took nine canonical files, gained
+`overlay/tool-theme.ts`, and moved `SECTION_ARRAY_FIELDS` from `sanity-path.ts`
+into `section-fields.ts` (three call sites updated: `section-fields.ts` x2,
+`HeadingAccentPicker.tsx`, `SurfaceChips.tsx`). `sync-check` **33 -> 42 SAME /
+0 drift**.
+
+**WCP.** Same nine minus the two test files (vitest, see card 28b), plus the
+`emphasis-write.ts` -> `inline-rich-write.ts` rename, the new
+`src/lib/inline-rich.ts` adapter and the new `overlay/tool-theme.ts`. `sync-check`
+**16 -> 21 marked, 19 SAME / 2 drifted** - the two drifts are the pre-existing,
+self-documenting ones in `UndoRedo.tsx` and `shareDraftLink.tsx` and are expected.
+
+**All five siblings after the pass:** presacademy 42/0/0, WCP 19/2/0 (both drifts
+expected), ncs-church-starter 50/0/0, reid-design-site 17/0/0, mas-monograms
+25/0/0.
+
+### 2026-09-29: reid-design-site's upgrade program (PR #43), audited cell by cell
+
+Reid merged its upgrade program on 2026-09-29 (`8af0229`, PR #43). Its changelog and
+PENDING.md say what was ported; every cell below was checked against `origin/main`
+instead (git grep / git show, plus `sync-check` from this repo's `origin/main`: 34 marked
+files, 34 SAME, 0 drift). The column had drifted badly: six cells still said `staged`
+for work that shipped on 2026-08-28, and most of today's adoptions were not recorded.
+
+**Reid column, changed cells** (old -> new, evidence):
+
+- 10 staged -> yes: `src/pages/preview/[...slug].astro`, `preview/live.ts`,
+  `api/draft-mode/{enable,disable}.ts`; `@sanity/astro` with `studioBasePath: '/studio'`.
+- 11 staged -> yes: the click interceptor with its edit-mode gate in
+  `src/layouts/PreviewLayout.astro`.
+- 12 no -> partial: `homePage` and the other singletons carry `pageBuilder` since the
+  marker-based retrofits (`c69b380` Home, `30555c8` Services), parity baselines in
+  `scripts/.parity/`; not presacademy's D1-D4 plan as written.
+- 13 staged -> yes: `react`, `react-dom`, `react-is` all exactly `19.2.8`.
+- 14 staged -> yes, on a newer pair: adapter exactly `14.3.0` with wrangler `~4.129.0`,
+  the generated `dist/server/wrangler.json` checked for `legacy_env` on 2026-09-29 (Reid
+  `CLAUDE.md`, `stack-and-config.md`). The rule is kept; the starter's `~4.110.0` pin is
+  not what Reid runs.
+- 17 staged -> yes: section `data-sanity` wrappers, and the grouped insert menu
+  (`SECTION_INSERT_MENU` in `sections.ts`, `src/lib/insert-menu.test.ts`) on all fourteen
+  builder arrays, in the form and the canvas.
+- 18 staged -> yes: shared `navLink` type, `src/lib/nav-href.ts`, `resolveSiteSettings()`
+  exposing `footerColumns`, `legalNav`, `headerCta`, `showEmail`.
+- 19 no -> yes: `shareDraftLink.tsx` SAME, appended by `withEditorActions`
+  (`src/sanity/editorActions.ts`).
+- 21 no -> partial: a soft-delete Archive/Restore of its own (`actions/archive.tsx`, a
+  `trashedItem` snapshot) rather than the `archived` flag; no Duplicate override and no
+  SEO snippet panel. `pageOps.ts` is present and SAME, used only for `readSlug()`.
+- 22 no -> yes: `redirect` type, `slugRedirect.tsx` and `redirects.ts` SAME, the build
+  map in `astro.config.mjs`, plus the live-page guard now folded back here (card 22
+  addendum).
+- 25 no -> yes: `checkPage.tsx` and `page-checks.ts` SAME, with a Reid config that derives
+  a "Main content" unit from the schema.
+- 26 no -> partial: the layout half (`SectionLayoutCard`) and script accents; no
+  surfaces, no inline-rich twins.
+- 27 no -> yes: `undoRedo.ts`, `UndoRedo.tsx` SAME, in the publish menu and on Ctrl+Z.
+- 28 no -> partial: `ScriptAccentPicker` and `SectionLayoutCard` over the canonical
+  `usePopover` / `useDraftDocument` / `styles` / `sanity-path` (all SAME), with a
+  `section-fields.ts` registry; no text popover.
+- 29, 29a-29d no -> yes: `LiveDraftBridge.tsx`, `overlay/useInstantText.ts`, and the
+  `preview-{live-draft,refresh,morph,text-diff,text-nodes,stega}.ts` modules all SAME.
+- 34 no -> yes: 13 `__experimental_search` weights across the content types.
+- 42 no -> fork: its own `check-live-links.mjs` that walks every document, deliberately
+  unmarked. Now canonical here (card 42 addendum), so Reid can re-adopt.
+- 46 no -> fork: the share-card bug is fixed by a different renderer, satori + resvg with
+  the real `@fontsource` faces in `src/integrations/og-cards.ts`, drawn on every build;
+  `render-og.mjs` was deleted.
+- 47 no -> yes: `generate-favicons.mjs` SAME; `apple-touch-icon.png`, `icon-192/512`,
+  `site.webmanifest` in `public/`.
+- 52 no -> yes: MobileNav at `client:idle` (`Header.astro`), trigger in every page's HTML.
+- 54 partial -> yes: `Analytics.astro`, `analytics/{GoogleAnalytics,CloudflareBeacon}`,
+  `analytics-config.ts` all SAME, privacy disclosure derived from the config.
+- 55 no -> yes: `useCdn: true` on the build client, `sanityFetch()` retries twice and
+  throws in a production build (`src/lib/sanity.ts`).
+- 57 no -> yes: `isStudioPreview()` called in `preview/[...slug].astro` and
+  `preview/live.ts` (and in the new `/api/stats`).
+
+**Reid cells in the new rows:** 30 yes (`origin/staging`, CI on `[main, staging]`); 37a
+yes (`propose-drift.mjs` in `ci.yml`); 39a yes (`restore-dataset.mjs`, `RESTORE-DRILL.md`,
+`r2 object put` in `sanity-backup.yml`); 40a yes (`public-data-audit.mjs` in `ci.yml`); 45
+no (Web3Forms); 56 yes (no `.catch(() =>` left on a static route; the preview routes and
+a PROD-rethrowing `Footer.astro` keep theirs on purpose); 58 yes (GoogleAnalytics SAME,
+`tests/smoke.spec.ts` localhost test); 59 yes (three rules, `/_astro/*` owns the immutable
+cache; the source of card 59).
+
+**Cells left as they were, checked:** 20, 23, 24, 31-33, 37-41, 43, 48-51 and 53 are
+still `no`: no `publishAt`, Web3Forms rather than `formQuestion`, no presets, no tour /
+ToolHeading / year lists / visual suite / Checkup / rollover / Welcome pane, the guide is
+a Sanity singleton rather than repo data, no contrast spec, the cutover was done by hand,
+no `deploy.yml` (Workers Builds deploys `main`), `lhci` still on `staticDistDir`, and
+`scriptAccent.ts` with no `heading-accent.ts`.
+
+**Not ported, and why:** card 53 is the next drift Reid will feel (four files still on
+`splitScriptAccent`); card 45 would replace Web3Forms, which is a business decision;
+cards 37-40 wait on a Studio-first pass.
+
+**Folded back from Reid in the same session** (each in its own commit, card and code
+together): the redirect live-page guard (card 22 addendum), the `_headers` same-path trap
+(new card 59), link health that walks every document (card 42 addendum), and the two
+garbled phrases in `.gitattributes`. **For Reid's next sync:** re-adopt
+`scripts/check-live-links.mjs` and `src/lib/redirect-guard.ts` (+ its test, as a vitest
+port) from here with the marker, replacing its forks (the guard's code is identical; the
+link checker adds `archived != true`), and optionally the `link-health.yml` comment.
+Nothing here changed a file Reid carries marked, so its sync-check stays green until it
+chooses to.
+
+**Other rows, new cells from the same grep** (not audited beyond it): wcp's `/_astro/*`
+rule already owns `Cache-Control` (59 yes) and it has `src/pages/api/contact.ts` (45
+yes); nixoncreativestudio's `GoogleAnalytics.astro` has no hostname guard (58 no, as card
+58 says); stonesteps-50k has no `origin/staging` (30 no), no `propose-drift` in CI (37a
+no) and two page-level catches left (56 partial); ncs-church-starter has no restore
+script, drift PR or public-data audit (37a/39a/40a no).
+
+## Card 30: One branch vocabulary across the family (2026-08-29)
+
+Six repos had four conventions between them: this one still on `master`,
+presacademy on `main` + `staging`, wcp and church-starter on `main` alone, and
+reid + mas on `main` + a `modern-stack` holding branch. Every repo is now
+`main` (production) + `staging` (edge preview), and nothing else.
+
+**The renames went through GitHub's rename API, not delete-and-recreate.** That
+API moves open PRs, retargets branch protection, and leaves a redirect for the
+old name, so an old clone or a stale bookmark still resolves instead of 404ing.
+Locally: `git branch -m`, `fetch --prune`, `branch -u`, and for this repo
+`remote set-head origin -a` so `origin/HEAD` follows.
+
+- ncs-astro-sanity-starter `master` -> `main` (default branch too)
+- reid-design-site `modern-stack` -> `staging`
+- mas-monograms `modern-stack` -> `staging`
+
+`staging` is not decoration - it is a deploy target. presacademy's
+`deploy-staging.yml` is now in all six, pointed at a `<worker>-staging` Worker
+so production is never touched, and gated on `CLOUDFLARE_API_TOKEN` so it warns
+and skips rather than failing where the secret is absent (same dormant-commit
+pattern as `uptime.yml`). Worker names: `ncs-astro-sanity-starter-staging`,
+`presacademy-staging`, `wcp-website-staging`, `church-starter-staging`,
+`reid-design-site-staging`, `mas-monograms-staging`.
+
+**A bug in the file being ported, found on the way out.** presacademy's
+`deploy-staging.yml` ran `wrangler deploy --name presacademy-staging` - a PLAIN
+deploy, which reads the source `wrangler.jsonc` and knows nothing about the
+adapter's generated asset manifest, so every sub-route 404s on these hybrid
+static+SSR builds. That is the same trap every repo's `npm run deploy` already
+avoids with `-c dist/server/wrangler.json`, and card 18's own note warns about
+it for the Workers Builds dashboard command. Fixed in presacademy and never
+copied: all six now run `deploy -c dist/server/wrangler.json --name <worker>`.
+The preview had presumably never been exercised, or this would have surfaced as
+a staging site whose home page worked and whose every other page did not.
+
+Every `ci.yml` push trigger is now `[main, staging]`. Two of these repos gained
+CI on the branch they were actually working on: reid and mas only ever built on
+`main`, so every `modern-stack` push - including the card 28 one - ran no CI at
+all.
+
+**Still human-side for reid and mas:** both auto-deploy from `main` through
+Cloudflare Workers Builds, and card 18's activation note still stands. Check
+each project's Workers Builds branch configuration after this rename - if it
+names branches explicitly, `modern-stack` no longer exists under that name.
+
+---
+
+## Card 31: Studio welcome tour (2026-08-31)
+
+**Dated 2026-08-30 (WCP), ported to presacademy 2026-08-31. Canonical copy: not
+in the starter yet — WCP's `src/sanity/components/StudioTour.tsx` is the
+reference.**
+
+A first-visit stepped welcome dialog for the Studio, the same pattern as WCP's
+hub tour: mounted by the custom `studio.components.layout` wrapper every repo
+in this family already has (it loads the brand fonts), shown once per browser
+via a versioned localStorage key, and replayable from the Welcome pane via a
+CustomEvent. Every storage read is try/caught so a blocked localStorage (a
+thumbnail renderer, a locked-down browser) can never take the Studio down.
+
+Why it exists: these Studios are handed to non-technical volunteer editors,
+and the first session decides whether they trust the tool. The tour's steps
+teach the five things every editor needs on day one — nothing is live until
+Publish, click the page to edit it, the ＋ starters, the Media library, and
+where help lives.
+
+**Adapt per site:** the step list (name the site's own tools and guide by
+their real titles), the SEEN_KEY prefix, and (multi-workspace Studios only,
+like WCP) workspace-aware middle steps via `useWorkspace()`. Bump SEEN_KEY
+whenever the steps change enough that returning editors should see them again.
+
+---
+
+## Card 32: Branded tool headings (2026-08-31)
+
+**Dated 2026-08-30 (WCP), ported to presacademy 2026-08-31. Canonical copy:
+not in the starter yet — each site adapts its own logo.**
+
+One `ToolHeading` component — the site's mark beside a display-font heading —
+opens every custom Studio tool (Welcome, Checkup, setup wizard, stats, export,
+cleanup). Before it, each tool hand-rolled a plain `<Heading>`, so the tools
+read as unrelated white panels; after it, they read as one family, and a new
+tool gets the brand moment for free by importing the component.
+
+**Adapt per site:** the mark asset and any chip/backing the mark needs for
+contrast (presacademy reuses StudioLogo's paper chip; WCP uses the sun+cloud
+emblem with a display-font class).
+
+---
+
+## Card 33: Year-scoped lists for accumulating types (2026-08-31)
+
+**Dated 2026-08-31 (WCP), ported to presacademy 2026-08-31. Canonical copy:
+not in the starter yet — WCP's `yearScopedList` in `src/sanity/structure.ts`
+is the reference (presacademy carries the single-type `yearScopedEvents`).**
+
+Types that accumulate forever (updates, events, sign-up sheets, celebrations,
+news, newsletters, hours ledgers) become unusable flat lists by year three: an
+editor scrolls past a hundred dead rows to find this week's. The structure
+helper opens such a type as "This school year (YYYY–YY)" — the default pane —
+plus one pane per past year and an Everything list at the bottom. Presentation
+only: nothing moves or archives. School years run Aug 1 – Jul 31, named by
+their fall. Undated documents need a deliberate choice per type: content that
+was WRITTEN at a moment (updates, posts) falls back to `_createdAt`; an
+undated EVENT is an ongoing one ("Monthly info session") and belongs in EVERY
+year pane — bucketing it by creation date empties the default view once the
+creation year's pane ages out (bit presacademy 2026-08-31).
+
+Two invariants: the folder's `.id()` must equal the old flat list's id so
+guide links and bookmarks keep landing; and on a repo with soft-delete
+(`archived`), every pane's filter must carry NOT_ARCHIVED or archived rows
+resurface only in the year panes.
+
+**Adapt per site:** the type list and each type's date field, the
+FIRST_CONTENT_YEAR floor, and the school-year boundary if the client's year
+is not Aug–Jul.
+
+---
+
+## Card 34: Studio search weights (2026-08-31)
+
+**Dated 2026-08-31 (WCP), ported to presacademy 2026-08-31. Canonical: a
+pattern, not a file.**
+
+`__experimental_search` on the content document types, weighting the fields
+editors actually see — title 5, hero headline / display heading 4, summary or
+SEO description 2 (and `name` 5 / `question` 5 on people/FAQ types). Without
+it the Studio's 🔍 matches internal titles only, and an editor searching the
+words on a page finds nothing. Two lines per type; add them whenever a new
+content type lands.
+
+**Adapt per site:** the field paths per type (page hero fields differ per
+repo — and remember which repos use Sanity's slug TYPE vs plain strings; see
+the d209b1d drift gate).
+
+---
+
+## Card 35: The family test standard (2026-09-06)
+
+**Dated 2026-09-06. Every Astro site in the studio runs the same quality gates.
+WCP was the reference implementation; presacademy, reid-design-site,
+mas-monograms, 2ndpreschicago and nixoncreativestudio were brought up to it on
+2026-09-06, and this starter on the same day. Canonical copies live here.**
+
+Card 8 was the Playwright half of this. Card 35 is the whole thing, because the
+suites are only as good as the gates around them: `astro check` had never run on
+several of these repos and found 242 real type errors on presacademy, 222 here,
+19 on reid, 16 on mas and 13 on 2nd Pres, including two sites whose Studio logo
+rendered `src="[object Object]"` in production.
+
+**The gates.** `ci.yml`, on push to `main` and `staging` plus every PR, two
+parallel jobs:
+
+- **build**: `npm ci`, Sanity typegen with a three-attempt retry loop (runner
+  flake, see card 5), the stale-types guard, `npx astro check`, `npm run lint`,
+  `npm run format:check`, `npm run test:unit`, `npm run build`,
+  `npm run check:links`.
+- **test**: `npx playwright install --with-deps chromium webkit`, then the
+  suites, with `playwright-report/` uploaded as an artifact for 14 days.
+
+`lighthouse.yml` is a SEPARATE workflow, not a step inside CI, so a slow audit
+never delays the build verdict and a repo can re-run it alone.
+`lighthouserc.json` carries an EXPLICIT `url` list: with `staticDistDir` alone
+lhci auto-discovers pages and caps at five, so it audits a near-random subset.
+Accessibility is a hard gate at 1.0, LCP 4500ms and CLS 0.1 are hard,
+performance / SEO / best-practices are warnings so ordinary CI variance does not
+block a PR.
+
+**The suites**, in `tests/`: `smoke` (every route 200s and carries the site name
+in its title), `a11y` (axe, light, zero violations), `a11y-dark` (axe again
+after forcing the theme, plus a focus-indicator check), `reflow` (no horizontal
+overflow at 320, 768, 1024, 1440). Chromium runs everything; a real WebKit
+iPhone 14 profile runs smoke and both axe sweeps. Visual regression is
+deliberately NOT part of this: it belongs only where a site has a fixture-driven
+`/styleguide` route with fixed data (WCP, presacademy). Screenshotting
+CMS-driven pages flakes with content.
+
+**Five things this standard exists to stop, each one a real incident:**
+
+- **The linkinator skip pattern.** WCP's `--skip "^(?!http://localhost)"`
+  matched linkinator's own 127.0.0.1 seed, so every green CI run for months had
+  scanned ZERO links. The correct pattern is
+  `^https?://(?!(localhost|127[.]0[.]0[.]1)[:/])`, and the check is to read the
+  log: it must say "scanned N links" with N greater than zero. On this repo the
+  first honest run found 135 broken internal links across ten pages.
+- **A prettier pass can silently eat a meaningful space** in an Astro template,
+  and `prettier-plugin-astro` cannot parse a `<script>` nested inside a template
+  expression at all (it reads the script body's braces as expression delimiters
+  and throws). Ignore those files or move the script into its own component, and
+  diff the built HTML TEXT before and after the format commit. This repo has
+  `npm run parity` for exactly that; elsewhere, do it by hand.
+- **A Tailwind `focus:ring` is a box-shadow**, and WebKit renders native form
+  controls itself and DROPS box-shadow on them. A `<select>` carrying
+  `focus:outline-none` plus a ring has no focus indicator at all on Safari and
+  iOS while Chromium looks perfect. Selects need `outline`. Six of them here.
+- **A WebM-first `<video>` never fires `load` in WebKit.** Navigate with
+  `waitUntil: 'domcontentloaded'`; with `'load'` the run hangs until the test
+  times out and the report says nothing useful.
+- **axe has no rule for focus-indicator contrast**, and an axe sweep only ever
+  audits the resting DOM. That blind spot is how WCP shipped eight forms whose
+  dark-mode focus ring measured 1.13:1, on a green build with Lighthouse at 100.
+  `a11y-dark.spec.ts` asserts the indicator EXISTS; `theme-tokens.test.ts` pins
+  its contrast.
+
+**What is canonical here and what is not.** Marked `PORTABLE` and byte-exact
+across the family: `playwright.config.ts`, `tests/helpers.ts`,
+`tests/smoke.spec.ts`, `tests/a11y.spec.ts`, `tests/a11y-dark.spec.ts`,
+`tests/reflow.spec.ts`. Every per-site list was pushed OUT of them into
+`tests/routes.ts`, which is the seam: the route list, the hidden-route list, and
+`FORM_ROUTES`. `smoke.spec.ts` reads the title from `src/data/site.ts` rather
+than a literal, so `npm run apply-brand` cannot leave it asserting the previous
+project's name.
+
+Deliberately NOT marked, and the reason matters: `ci.yml` and `lighthouse.yml`
+carry a per-site `env:` block of PUBLIC_SANITY_\* identifiers, and
+`lighthouserc.json` carries a per-site `url` list, so a byte-exact drift check
+would fail forever on every repo and teach everyone to ignore it. Copy their
+SHAPE; the parts that must not diverge are ci.yml's step list, its concurrency
+group, the linkinator skip, and lighthouserc.json's `assert` block. `.prettierrc`
+is identical family-wide but is plain JSON with no comment syntax, so it cannot
+carry a first-line marker; `.prettierignore` is legitimately per-site (each repo
+ignores a different set of unparseable templates). Two of this repo's own
+PORTABLE scripts, `sync-check.mjs` and `page-parity.mjs`, were listed in
+`.prettierignore` here, because formatting them would rewrite their quoting and
+put sibling repos into DRIFT on the next check. That family-wide pass happened
+on 2026-09-06: see card 36. They are formatted and no longer ignored anywhere.
+
+**Adapt per site:** `tests/routes.ts` (derive from `src/pages` and check each
+path against the built `dist/client`), the `url` list in `lighthouserc.json`,
+the `env:` blocks, the reveal selectors in `tests/helpers.ts` if a site's polish
+layer gates on something else, and whether `a11y-dark` applies at all (a site
+with no dark theme skips it). The Playwright port is 4321 by default and
+overridable with `PLAYWRIGHT_PORT`, so a run can share a machine with a dev
+server or another repo's suite.
+
+---
+
+## Card 36: sync-check as a CI gate (2026-09-06)
+
+**Dated 2026-09-06. `scripts/sync-check.mjs` runs in every repo's `ci.yml`
+instead of only ever by hand. Two canonical scripts were formatted family-wide
+in the same pass so prettier can never reopen a drift. wcp got its first copy
+of the script at all.**
+
+Card 28 gave the family a drift check. It found drift months late, because
+nothing ran it. The gate is five lines of YAML in the build job, after the
+install step, and needs no token: all of these repos are public.
+
+```yaml
+- name: Check out the library of record
+  uses: actions/checkout@v7
+  with:
+    repository: NateJ45/ncs-astro-sanity-starter
+    ref: ${{ github.ref_name == 'staging' && 'staging' || 'main' }}
+    path: .ncs-starter
+
+- name: Canonical files have not drifted
+  env:
+    NCS_STARTER_DIR: ${{ github.workspace }}/.ncs-starter
+  run: |
+    node scripts/sync-check.mjs
+    rm -rf "$NCS_STARTER_DIR"
+```
+
+**The `rm -rf` is not tidiness, it is required.** `actions/checkout` refuses a
+path outside the workspace, so the library lands INSIDE the repo, and every
+whole-tree tool further down the build job then sweeps it. mas-monograms found
+this within a minute of the first push: `prettier --check .` tried to format
+the library's `astro.config.mjs` using mas's node_modules and died resolving
+`@fontsource/libre-baskerville`. `eslint .` (presacademy, reid-design-site)
+would have done the same. Deleting the checkout the moment the check passes
+beats adding `.ncs-starter` to a `.prettierignore`, a `.gitignore` and an
+eslint config in six repos, because that list has to be remembered again for
+the next whole-tree tool anyone adds. Same reasoning as dropping the
+`.prettierignore` entries above: prefer the fix that cannot be forgotten.
+
+The walker skips `.ncs-starter` by name as well. That is belt and braces on
+purpose: the skip covers a LOCAL run against a checkout someone left in place,
+the `rm -rf` covers the rest of the CI job.
+
+The starter itself runs the SELF-CHECK form instead: no second checkout, just
+`node scripts/sync-check.mjs`, which resolves the library to this repo root.
+
+**The `ref:` line is load-bearing, and it was not in the original sketch.** A
+staging build checks against the starter's `staging`; a main build, and any PR,
+against its `main`. Without it the family's two-branch promotion model cannot
+stage a canonical change AT ALL: this very card is the proof, because the six
+sites were made to match a starter whose fix existed only on staging, so every
+site's staging run would have failed against the starter's main for a reason
+nobody could act on. It also makes the PROMOTION ORDER load-bearing:
+
+> Promote the starter to main FIRST, then the sites. A site on main checks
+> against the starter on main, so a site promoted ahead of the starter goes red
+> until the starter catches up.
+
+That ordering is a real cost of the gate and worth saying out loud rather than
+discovering it on a red main.
+
+**The prettier conflict, and why the ignore lost.** `sync-check.mjs` writes
+`'the site\'s improvement'`; prettier's `singleQuote` rule prefers whichever
+quote needs fewer escapes and rewrites it to `"the site's improvement"`. The
+same is true of `page-parity.mjs`, plus four over-long template literals it
+would rewrap. The old defence was to list both files in the starter's
+`.prettierignore`. It did not work, and could not:
+
+- The ignore entries were never propagated. As of 2026-09-06 the starter and
+  2ndpreschicago ignored both, reid-design-site and nixoncreativestudio ignored
+  only `sync-check.mjs`, and wcp, presacademy and mas-monograms ignored
+  neither. So a `prettier --write` during the card 35 rollout reformatted
+  presacademy's and mas-monograms' copies, and the check went red in exactly
+  the repos the ignore was supposed to protect.
+- An ignore is a standing obligation on seven files nobody reads. Formatting is
+  a one-time cost with a fixed point: once the canonical bytes ARE prettier's
+  output, `prettier --write` is a no-op forever and `format:check` becomes a
+  SECOND guard on the canonical text rather than a threat to it.
+
+So both files were formatted here, dropped from every `.prettierignore` that
+listed them, and the formatted bytes were copied into all six site repos in the
+same pass. The change is quoting and line wrapping only; no behaviour changed.
+Do not re-add the ignore lines.
+
+**Two things the pass turned up.**
+
+- `scripts/page-parity.mjs` is marked `PORTABLE` HERE but carries no marker in
+  any of the six site repos, so sync-check has never checked it anywhere. The
+  starter's `.prettierignore` comment claimed it was "carried BYTE-EXACT by
+  reid-design-site, mas-monograms and presacademy"; it is not. Card 3 says the
+  harness is shared, and the matrix says `yes` for every repo, but the file has
+  genuinely diverged (each site has its own PAGES list) and is a fork in
+  practice. Either mark it and reconcile, or write the fork down. Left alone
+  here on purpose: it is a bigger decision than a formatting pass.
+- nixoncreativestudio and 2ndpreschicago were not carrying a quoting drift at
+  all. Their `sync-check.mjs` predated card 28a's NESTED-APP RULE (2026-08-28),
+  the one that lets wcp's `site/scripts/foo.mjs` match the starter's
+  `scripts/foo.mjs`. They took the current copy forward.
+
+**wcp.** The repo the whole family copied from had no `scripts/sync-check.mjs`,
+so it was the one repo that could not say when it had drifted. It now carries
+the canonical copy at `site/scripts/sync-check.mjs`, next to its siblings, and
+the NESTED-APP RULE is what makes the nested path resolve. Its first run ever
+checked 22 marked files and found three drifts, all three real:
+
+- **`src/lib/preview-morph.ts` had a fix nobody else had.** wcp added a
+  KEEP-AS-IS SUBTREE guard on 2026-08-30: an element carrying `data-morph-keep`
+  is not morphed, because a `server:defer` island streams its real body through
+  inline scripts that a `DOMParser` parse never runs, so the FETCHED tree still
+  holds the fallback skeleton and morphing it in swapped a live widget for its
+  skeleton on every soft refresh. That is the hub preview's "widgets disappear"
+  bug. Ported UP into the canonical copy here and out to presacademy,
+  reid-design-site and mas-monograms. It is inert where the attribute is never
+  set: the guard requires it on BOTH trees. Card 29c's file, so no new row.
+- **`src/sanity/components/UndoRedo.tsx` and
+  `src/sanity/components/shareDraftLink.tsx` are a genuine fork**, and the
+  MARKER WAS DROPPED in wcp rather than either copy being changed. wcp resolves
+  `@sanity/icons` 5.2.1 (transitively, it has no direct dependency); the starter
+  and every other site pin 3.8.0. The 5.x barrel stopped re-exporting each icon,
+  so wcp imports `@sanity/icons/Undo` where the canonical copy imports from the
+  package root. Neither copy can adopt the other without breaking a build, so
+  this is the case the drift rule reserves for dropping the marker and writing
+  the fork down. Both files now carry a FORKED header saying what differs, why,
+  and what to do when the starter moves to icons 5: re-mark and take the
+  starter's copy. Nothing else in either file differs.
+
+wcp's remaining 20 marked files were already byte-exact, which is the useful
+half of the result: the drift that had accumulated in the repo nobody could
+check was three files, and two of them were a dependency-version fork rather
+than rot.
+
+**Also folded in:** `ncs-church-starter` was archived on 2026-09-06, so the
+header comment in `sync-check.mjs` (canonical, hence one edit here that
+propagates), this repo's `CLAUDE.md` and 2ndpreschicago's README stopped
+describing it as a live peer. PORTS.md keeps its column and its historical
+cards: those are a record of what happened, not a claim about today.
+
+**Adapt per site:** nothing, except wcp, whose workflows sit at the repo root
+while the app lives in `site/`. Its build job already sets
+`defaults.run.working-directory: site`, so the `run:` line is unchanged, but the
+checkout `path:` and `NCS_STARTER_DIR` are both relative to
+`github.workspace` (the repo root), NOT to `site/`. Put the starter checkout at
+`.ncs-starter` at the root and point `NCS_STARTER_DIR` at it there.
+
+## Card 37a: Drift opens its own pull request (2026-09-06)
+
+`sync-check` detects drift and stops the build, but porting the improvement
+up was still an errand you had to remember to start, in another repo, after
+the build that blocked you. `scripts/propose-drift.mjs` closes that: when the
+check fails in a site, CI copies that site's version of the drifted files into
+a `sync/from-<site>` branch here and opens a PR.
+
+It deliberately does **not** merge. Whether a change belongs in the library
+every future project inherits is a judgement, not a diff, and the same file
+can legitimately be an improvement in one site and a fork in another.
+
+The cost of not having it: wcp-website's `preview-morph.ts` carried a
+`data-morph-keep` fix that the other five repos lacked for roughly three
+months, and it only surfaced because a sync session happened to look.
+
+Needs `GH_ACTIONS_PAT` with write access to THIS repo, not only to the site
+repos. Without it the step warns and the build still fails on sync-check, so
+the gate never depends on the automation working.
+
+### The push needs `-c http.<host>.extraheader=`, and this card was wrong without it
+
+This card described a working mechanism for several hours before one existed.
+Written is not verified: the step was wired into six repos, all of them green,
+and it had never once opened a PR.
+
+The acceptance test that settled it (mas-monograms#36): drift a canonical file
+on purpose, push it, and watch for a PR appearing HERE that nobody started.
+Anything weaker tests that the code is present, not that it works.
+
+Attempts one and two failed identically:
+
+```
+remote: Permission to NateJ45/ncs-astro-sanity-starter.git denied to github-actions[bot].
+fatal: ... The requested URL returned error: 403
+```
+
+which reads exactly like a missing or wrong `GH_ACTIONS_PAT` and is not that.
+The PAT was present and correct throughout and was never consulted. The push
+needs `-c http.https://github.com/.extraheader=`: an empty extraheader sends no
+header, and `-c` overrides every config scope for that one command.
+
+Resist the obvious explanation. "actions/checkout persisted its credentials
+into the clone" is wrong, and attempt two was built on it: unsetting the key at
+`--local` scope fixed nothing, because the run that finally worked printed
+`persisted credential keys: (none)`. The header comes from a scope `--local`
+does not list. That one print is the only reason the false diagnosis died
+instead of shipping with a confident comment explaining it.
+
+Two lessons, both earned the expensive way:
+
+- A step that exits 0 so it cannot mask the real failure equally cannot report
+  its own. Give it diagnostics or its breakage is silent forever.
+- When a fix is reasoned rather than observed, test the mechanism directly
+  before spending a CI round trip. The precedence question here took about a
+  minute locally with a deliberately bogus header: the push fails without the
+  override and succeeds with it.
+
+## Card 38a: presacademy harvest audit, and eleven files that were already the same (2026-09-06)
+
+The second harvest audit of the family (WCP was card 35's neighbour) went
+through `src/lib/**` and `scripts/**` in presacademy. presacademy is the
+ANCESTOR of most of this library, so the expectation going in was byte drift
+on files the starter had generalised after copying them. What it actually
+found was that the drift is almost entirely legitimate: the two repos have
+different singleton sets, different brand colours and a different section
+model, and the files that carry any of those cannot be byte-identical.
+
+Eleven files were already identical and are now marked in both repos:
+
+    scripts/generate-llms-full.mjs
+    src/lib/phone.ts
+    src/lib/portable-text-headings.ts
+    src/lib/reading-time.ts
+    src/lib/scriptAccent.ts
+    src/lib/slugify.ts
+    src/lib/slugify.test.ts
+    src/lib/subscribe.ts
+    src/lib/utils.ts
+    src/lib/utils.test.ts
+
+plus `scripts/lib/loadEnv.mjs`, which was already marked here and merely
+lacked the header in presacademy.
+
+Two of those needed a change first, and both went UP.
+
+**`scripts/generate-llms-full.mjs`.** presacademy still carried its own
+inlined `loadEnv()`, an eleven-line copy predating `scripts/lib/loadEnv.mjs`.
+The shared loader is strictly better: it strips inline `#` comments outside
+quotes, takes quoted values literally, and tolerates leading whitespace on the
+key. presacademy now imports it, which is what made the file identical.
+
+**`src/lib/utils.test.ts`.** The library's copy named three tests wrong. When
+the empty-array case was corrected from "returns 0" to "returns 1", the two
+neighbouring cases were renamed with it, so the library shipped
+`test('returns 1 for null/undefined input')` asserting `0`, and the same for
+non-array input. presacademy had two of the three right. The names now say
+what each branch does, with a comment recording WHY the branches disagree:
+`readingTimeFromPortableText` floors an ARRAY at one minute, and returns a
+bare `0` for anything that is not an array so the caller can hide the label.
+Nothing about the assertions changed; the test file was lying about itself.
+
+DELIBERATELY NOT MARKED, with the reason, because a marker is a promise to
+keep two files byte-identical forever and an unactionable red check is how a
+checker gets ignored:
+
+- `src/lib/nav-href.ts` - the singleton-to-route table is per-site by
+  definition. The starter also has an `pageArchived` guard presacademy has
+  no `archived` field to use.
+- `src/lib/preview-auth.ts` - identical but for the `VERSION` namespace
+  constant, which is deliberately per-site so a shared token yields a
+  different cookie fingerprint on each. The file's own comment says
+  "rename this on a fork".
+- `src/lib/sanity.ts`, `queries.ts`, `schemas.ts`, `siteSettings.ts`,
+  `section-fields.ts`, `surfaces.ts`, `layout-variants.ts`,
+  `sectionVisibility.ts` - all carry the site's own document types,
+  section list or token set.
+- `scripts/lib/render-og.mjs`, `scripts/generate-og-*.mjs` - brand
+  typography and layout.
+- `scripts/generate-logo-variants.mjs`, `scripts/optimize-logo-files.mjs` -
+  identical today, but both hard-code the brand ink hexes (`#3D3D3D`,
+  `#F5F0EB`). Marking them would turn the first rebrand into a CI failure
+  in a repo that did nothing wrong.
+- `scripts/page-parity.mjs` - already carries a header explaining that it
+  is a PATTERN, not a canonical file, and that the starter's copy is the
+  parameterized descendant. That header is the convention working.
+
+### Two places presacademy is still ahead, both blocked on a consumer here
+
+**`sectionFieldEditAttr` (`src/lib/preview-edit-attr.ts`).** presacademy
+exports a second attribute builder that targets a FIELD inside a section
+(`pageBuilder[_key=="..."].background`) rather than the bare array item. The
+distinction is load-bearing and was learned in a deployed Studio: the overlay
+will outline a node whose attribute names an array item, which is what gives
+the section its insert/duplicate/drag menu, but a custom overlay COMPONENT
+only mounts on a node the Studio schema resolves to a FIELD. An array item is
+not one, so `getField` returns nothing and the component resolver is never
+called. That is the whole reason presacademy's in-canvas background swatch
+row can get on screen. The library has no in-canvas field control yet, so it
+has nowhere to put the function; port it the day it grows one.
+
+**Vertical centring in `scripts/lib/render-og.mjs`.** The library composites
+the wordmark at `top: 200`, the rule at `y: 330` and the first tagline line at
+`top: 360`, all fixed. presacademy measures the rendered wordmark and tagline,
+sums the group height and centres it, so a card with one tagline line and a
+card with three are both balanced. The library's numbers are tuned for two
+lines and only for two. The port is real but not a copy: presacademy's version
+is entangled with its three-part wordmark ("The Presbyterian / Academy",
+keyword in green), so adopting it means separating the centring math from the
+wordmark parsing first.
+
+## Card 39a: The restore drill, and an off-site copy of the backup (2026-09-06)
+
+`sanity-backup.yml` had been green nightly on all five Sanity sites for months
+(presacademy alone: 33 successful runs, a 28.8 MB encrypted tarball). Nobody
+had ever restored one. Those runs prove the export and encrypt steps work and
+say nothing about whether a client's content can be recovered, which is the
+only property the backup exists for. Same shape as card 37a and as the link
+checker that scanned nothing: green means no test failed, not that a test would
+have failed.
+
+Two things close it.
+
+**`scripts/restore-dataset.mjs`** does decrypt, import and a document count in
+one command. The count is the point: a restore that imports 0 documents exits 0
+just as loudly as one that imports 4,000, so the script prints what it ended up
+with and tells you to compare it against production. It refuses to target
+`production` without `--i-understand-this-overwrites-production` - no short
+form, no env var - because the realistic disaster is not a corrupt tarball, it
+is someone restoring three-week-old content over a live site at 9pm while
+fixing something smaller. It deletes the decrypted plaintext afterwards, since
+an unencrypted dataset in a working copy is the leak the workflow's encrypt
+step exists to prevent.
+
+It resolves the CLI as `sanity.cmd` on win32. The workflow can hardcode
+`./node_modules/.bin/sanity` because it only runs on Ubuntu; this script runs on
+whoever's laptop, and a restore is not the moment to discover that path does not
+exist on Windows.
+
+**An R2 copy in the workflow.** Actions artifacts expire at 90 days (the workflow keeps 14 since 2026-10-13, card 90) and live in
+the same GitHub account as the repo they protect, so one lost account loses the
+site and its backups together. The step reuses `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID`, which every site already has - but the token needs
+"Workers R2 Storage: Edit" added, and a deploy-only token will 403. Gated on a
+`BACKUP_R2_BUCKET` variable and skips with a warning when unset: a missing
+off-site copy must never fail a backup that is otherwise working. Keyed by repo
+and date so one bucket holds the family and no upload overwrites an earlier
+good copy.
+
+**What the first real drill found (2026-09-07, wcp-website).** The drill passed
+— 370 documents restored against production's 371, the one difference being
+`_.schemas.wcp`, a system document Sanity's export excludes by design — but it
+could not be run as written, and three separate things had to be fixed first.
+Every one of them was an instruction that had been committed and never
+executed:
+
+- **The passphrase was unrecoverable.** `docs/SANITY.md` told you to create it
+  with `openssl rand -base64 32 | gh secret set BACKUP_PASSPHRASE ...`, then
+  added "(store the value before piping it away)" — which that command makes
+  impossible. GitHub never shows a secret again. Every encrypted backup since
+  the secret was set was undecryptable: green runs, a proper `Salted__`
+  tarball, an off-site copy, and nothing openable. Generate and READ it, save
+  it, then set it — two steps, never one.
+- **The off-site step was truncated.** The `for` loop had no closing `done` in
+  all five ported repos, while the starter's copy was correct. It passed only
+  because the guard's `exit 0` ran before bash reached the malformed loop; the
+  moment `BACKUP_R2_BUCKET` was set it died with "syntax error: unexpected end
+  of file". Following this card's own instruction would have turned five green
+  backups red.
+- **The token lookup and `--create` were both wrong for a real repo.** The
+  script checked `SANITY_API_WRITE_TOKEN` and `SANITY_AUTH_TOKEN`;
+  wcp-website's `.dev.vars` uses `SANITY_TOKEN` and nothing else, so the drill
+  stopped with "No write token found" while a valid write token sat in the
+  file. And `--create` cannot work with any content token: creating a dataset
+  needs the project-admin grant `sanity.project.datasets/create`. Create the
+  scratch dataset under your own CLI login (`npx sanity dataset create
+restore-drill -p <projectId>` — `-p`, not `--project`, which prints the whole
+  help text and reads like a different error), then run without `--create`.
+
+The lesson is the card's own thesis turned on the card: writing the drill is
+not running it, and a script that has never been run is a backup that has never
+been restored. Two sites (2ndpreschicago, mas-monograms) turned out to have no
+backup at all — the export job skips without `SANITY_AUTH_TOKEN` and reports
+success.
+
+`docs/RESTORE-DRILL.md` is the ten-minute exercise. Run it at launch and after
+any change to the workflow, the CLI major version or the passphrase, then log
+the date - an untested backup and one tested eleven months ago are different
+things and only the log tells them apart.
+
+### What the first real drill found (presacademy, 2026-09-06)
+
+**The backup was fine. The script was not.** It took four attempts, and every
+failure was in the recovery path rather than in the data - which is exactly the
+part that had never been exercised. Each one would otherwise have landed during
+an actual incident:
+
+1. **It read only `process.env`.** The passphrase was in `.env` the whole time,
+   where every other script in this family looks. Now uses `loadEnv`.
+2. **It preferred `SANITY_AUTH_TOKEN` over `SANITY_API_WRITE_TOKEN`.** A machine
+   with both would have handed the import the backup's READ token and failed on
+   permissions, looking exactly like a broken backup. Write wins now.
+3. **It shelled out to `openssl`.** Fine on a runner; on Windows openssl usually
+   exists only via Git's `mingw64\bin` and is often not on PATH. A recovery tool
+   must not depend on a binary the recovering machine may lack, so the decrypt
+   is now pure Node - verified byte-identical to openssl's output on a real
+   27.5 MB backup (both produce 28,792,515 bytes).
+4. **It spawned `node_modules/.bin/sanity.cmd`.** Since the fix for
+   CVE-2024-27980 Node refuses to spawn a `.cmd` without `shell: true`, failing
+   as a bare `EINVAL`. It now runs the CLI's own JS entry through
+   `process.execPath`: no shell, and so no quoting question when `count(*)` is
+   passed as an argument.
+5. **It swallowed a failed `dataset create`,** so the import died later with
+   "Dataset not found" and a twenty-line client stack trace pointing at the
+   wrong thing entirely. It now verifies the dataset exists and names the real
+   cause.
+
+And a sixth, caught before it shipped: the check in (5) first called `die()`,
+which uses `process.exit()` and therefore SKIPS the `finally` block. It would
+have printed "the decrypted tarball has been removed" while leaving 28 MB of
+client content in plaintext on disk - the error path reintroducing the very leak
+the encrypt step exists to prevent. It throws now, and cleanup always runs.
+
+Also learned: `sanity dataset create` needs a project-admin grant that a content
+write token does not carry, so the scratch dataset is created by hand first.
+
+Result: 112 documents restored against 113 in production, and the one difference
+was `_.schemas.churchstarter`, a schema manifest rather than content. Established
+by diffing the id sets, not by assuming a single missing document was drift.
+
+## Card 40a: The public-data audit: what can a stranger read? (2026-09-06)
+
+Sanity's free plan is "2 datasets (public only)". A public dataset is readable
+by anyone over a plain URL with no token, and the project id is not a secret -
+it appears in every image URL in the page source (51 times on wcp-website's
+homepage). `?query=*` needs no knowledge of the schema.
+
+wcp-website had 37 family directory entries public: 40 children's names, 71
+parents, 33 home addresses. The Family Hub gate in front of them is correctly
+built - shared password reduced to a fingerprint in server-side KV, fails
+closed, rotation logs everyone out. It protects the PAGE. The Content Lake API
+is a second door and it was open.
+
+The root cause was a written assumption. `src/sanity/env.ts` said "The dataset
+is PRIVATE, so all reads happen server-side" - a comment, never checked, that
+the whole design rested on. Nothing in the new-project checklist said a public
+dataset is public, so nothing caught it for months.
+
+`scripts/public-data-audit.mjs` queries each site's dataset **anonymously** -
+the absence of a token is the whole point - and fails when personal data comes
+back. `public-data-policy.json` holds the exceptions, each with a reason, so the
+judgement is made once in daylight rather than against a red build at 9pm.
+
+Three design decisions worth keeping:
+
+- **It never prints values.** These repos are public, so the build log is as
+  public as the dataset. A checker that pasted the exposed data into a world
+  readable log would be a worse leak than the one it reports.
+- **Personal field NAMES fail; personal-looking VALUES only notify.** An email
+  in a privacy policy is deliberate publishing. Failing builds over it teaches
+  everyone to add blanket allows, and then the check protects nothing.
+- **It refuses to skip.** The first version could not find wcp-website's project
+  id (hardcoded in src/sanity/env.ts, not an env var) and exited 0 with a pass
+  over 37 exposed families. It now reads the source too, and a repo that depends
+  on Sanity with no resolvable id FAILS rather than reporting a pass it did not
+  earn. Same trap as cards 37a and 39a: green means no test failed, not that a
+  test would have failed.
+
+Tuning that mattered: `children` is Portable Text's field name for spans AND a
+nav submenu AND actual children, so it is flagged only when the contents look
+like people. Verified in both directions - wcp-website fails on
+`directoryEntry: 37 documents`, presacademy passes with its legal-page contact
+emails correctly reported as notices rather than failures.
+
+## Card 37: Visual regression on a fixed-data styleguide (2026-09-07)
+
+**What it is.** A `/styleguide` route that renders the design system with every value
+hardcoded, plus a SEPARATE Playwright config that screenshot-diffs it in both themes.
+Proven on stonesteps-50k; the technique came from wcp-website. **Brought home
+2026-09-18**, so the canonical copies are now `playwright.visual.config.ts` and
+`tests/visual/styleguide.spec.ts` in this starter (both marked PORTABLE), with
+`.github/workflows/visual.yml` and `src/pages/styleguide.astro` carried unmarked because
+each holds something legitimately per-site: the workflow's Sanity `env:` block, and the
+wall's own contents.
+
+**The cost that produced it.** Three defects shipped in one afternoon that every gate in
+that repo was structurally blind to. The footer still imported the FORKED REPO'S logo,
+so another client's wordmark sat at the bottom of every page. A base-layer rule pinned
+every heading to a cream token meant for dark grounds, so in light mode the whole site
+had cream headings on paper. And `.ticket--feature` was declared BEFORE `.ticket` with
+equal specificity, so the featured card silently lost its background and its heading
+rendered at 1.15:1. Types passed, 489 unit tests passed, axe passed. All three were
+found by a human looking at the site.
+
+**Why axe did not catch the contrast ones.** When a `text-shadow` is present, axe reports
+colour-contrast as INCOMPLETE rather than as a violation, and a suite asserting
+`violations === []` passes an incomplete silently. Worth knowing before trusting axe as a
+contrast gate.
+
+**Why a styleguide and not the real pages.** Baselines must move only when the DESIGN
+moves. Real pages carry live data: stonesteps has a countdown that changes every second
+and a results archive that grows every year. Shooting those churns the baseline on
+content, and a gate that goes red for nothing gets muted.
+
+**Two rules that keep it honest.**
+
+1. Baselines are a LINUX artefact. Font rasterisation differs from Windows, so they are
+   generated by `workflow_dispatch` in CI and committed. CI is the arbiter, exactly as
+   with the a11y sweeps.
+2. Refresh baselines only when the visual change is INTENDED, in the change that causes
+   it. A baseline updated to make the red go away converts the gate into decoration,
+   which is worse than no gate because it looks like cover.
+
+**Per-site adaptation.** The styleguide page itself: each site puts its own signature
+objects on the wall. Include the shared chrome (header and footer) whatever else you
+skip, since that is what catches an inherited logo. Exclude anything time-based.
+
+**Gotcha, hit immediately.** The main Playwright config's `testDir: './tests'` sweeps up
+`tests/visual/**` and runs it under the wrong settings, failing for having no baselines.
+The main config needs `testIgnore: '**/visual/**'`.
+
+**Second gotcha.** The regenerate job needs `permissions: contents: write`. The default
+GITHUB_TOKEN is read-only, so the job ran the suite and then could not push what it
+produced.
+
+**Third gotcha, and the amendment made on the way home (2026-09-18). "Expected to fail
+locally" is not a state a gate can survive in.** On stonesteps, rule 1 above left the
+dark snapshot red on every Windows run, and in that repo's first week every agent who
+touched it hit that red, spent time on it, and came away discounting the suite. The
+canonical spec therefore SKIPS on `process.platform === 'win32'` and prints the reason,
+naming the workflow that is allowed to judge it. `VISUAL_FORCE=1 npm run test:visual`
+runs it anyway for anyone debugging the harness rather than the design.
+
+The alternative was to suffix baselines by platform and commit a Windows set beside the
+Linux one. It is rejected, and the reason is the whole point of the gate: a second
+baseline that a laptop can regenerate at will, reviewed by nobody, is a second truth.
+Exactly one set of pixels is the truth and CI owns it. Skipping keeps that; suffixing
+quietly gives it away. Evidence that this is not hypothetical: stonesteps' working tree
+carries a stray `tests/visual/styleguide.spec.ts-snapshots/` holding
+`styleguide-{light,dark}-chromium-win32.png`, which is what happens when a laptop is
+allowed to write baselines at all.
+
+**So a fresh fork gets its first baselines from CI, never from a laptop:** apply the
+brand, then run the Visual regression workflow with `update: true`. Until that has
+happened the suite has nothing to compare against, which is why this starter ships
+`tests/visual/` with no `__screenshots__` directory.
+
+## Card 38: Studio Checkup, "what needs attention" (2026-09-07)
+
+**What it is.** A read-only Studio pane that runs a handful of high-signal GROQ queries
+and reports, in plain language, what an editor would want to fix. It mutates nothing; it
+points. From wcp-website's `HealthTool`; stonesteps-50k's `CheckupTool.tsx` is the race
+adaptation.
+
+**Why it generalizes.** Most of what goes wrong on a small content site is not a bug, it
+is a fact going stale: a date that has passed, prices the site still advertises, a detail
+nobody confirmed, a draft somebody forgot to publish. None of that fails a build or a
+test, because none of it is wrong code, and on a site edited twice a year nobody is
+looking.
+
+**The shape.** An array of `{ id, run(client) }` checks, each returning `null` when all
+is well or `{ severity, label, detail }` when not, sorted by severity. Each check is
+wrapped so ONE failing query cannot take the whole report down: a half-run report is
+useful, a blank pane is not.
+
+**Per-site adaptation.** Every check. The shape is portable, the questions are not. Write
+checks for what THIS site's owner would be embarrassed by, not for generic CMS hygiene.
+The best one in stonesteps flags that no trekker is marked in the latest results, because
+an unflagged early starter can take a record they were not eligible to win and nothing
+else on the site would ever mention it.
+
+## Card 39: Year-rollover wizard (2026-09-07)
+
+**What it is.** A read-only pane that reads current state, works out which of the
+once-a-year jobs are already done, and gives each one a live status plus a deep link.
+From wcp-website's `SetupWizard` (a school year); stonesteps-50k's `RaceYearTool.tsx` (a
+race year).
+
+**Why it beats the same list written as prose.** These sites are edited on an annual
+rhythm, which is exactly long enough to forget where you got to. A list that already
+knows the date is updated and the prices are not is worth more than one that asks the
+editor to remember.
+
+**The design decision worth copying.** Some steps CANNOT be derived and must be marked
+"worth checking" rather than guessed. In stonesteps that is the edition number (only a
+human knows whether it matches the new date) and the entry fees (only the registration
+provider knows what a runner is actually charged). Saying so is better than a green tick
+the tool cannot justify.
+
+## Card 40: Studio Welcome pane (2026-09-07)
+
+**What it is.** The Studio's landing screen: a short hello and a grid of TASK cards that
+deep-link straight to the job, instead of a menu the editor has to decode. From
+wcp-website's `WelcomePane`.
+
+**The routing rule, which cost a real bug.** A deployed embedded Studio is HASH-routed. A
+plain `<a href="/studio/structure/...">` leaves the Studio and 404s, so the click has to
+go through `router.navigateUrl`. Build the `href` as a best-effort real URL anyway so
+middle-click and open-in-new-tab still work, and let a modifier-click through. In
+stonesteps this lives in one shared `studioLink.ts` used by the Welcome pane, the year
+wizard and the guide breadcrumbs, so only one of them can be wrong.
+
+**Per-site adaptation.** The cards: order them by when the job comes up across a year,
+not by how the data happens to be organised.
+
+## Card 41: Guide handbook held as repo data (2026-09-07)
+
+**What it is.** A `Help & Guide` desk section whose guides are TYPED DATA in the repo
+(`src/sanity/guides/content.ts`), rendered read-only by a `GuideView` pane and grouped
+under titled dividers by category. From wcp-website.
+
+**Why data in the repo and not documents in Sanity.** Guides held as documents can be
+deleted by the person who most needs them, and do not travel with a fork. In the repo
+they cannot be lost and the next maintainer inherits them with the code.
+
+**Formatting convention worth keeping.** `**bold**` for a concept, backticks for a THING
+YOU CLICK (rendered as a small button-look chip, so a step can be skimmed for its
+clickable part), `_italics_` for an aside. Nothing else.
+
+**Add a drift gate.** stonesteps-50k carries `src/lib/studio-guides.test.ts`: unique
+slugs, every guide in a category the desk actually renders, no empty categories, every
+"See also" naming a real guide, and no em-dashes. Prose is exactly the kind of content
+nothing else checks.
+
+**Installed in the starter 2026-09-08, ADDITIVELY.** Help & Guide sits above the
+existing "Start Here" rather than replacing it. Start Here is three editable
+singletons and works well in a project that seeds them; a repo-data handbook cannot go
+empty. Shipping both lets a project keep whichever suits it and delete the other, which
+is a better default than the starter choosing for every future fork. The shipped guide
+set is deliberately GENERIC and is meant to be rewritten per project; stonesteps-50k is
+the worked example.
+
+**The trap this replaced.** The starter ships a "Start Here" panel written for a design
+studio ("Your business at a glance", "Brand kit", "Grow your studio"). In a fork whose
+client is not a design studio those are meaningless, and their three singleton documents
+are easy to leave unseeded, so all four panes open EMPTY. Check them on any fork.
+
+## Card 42: External link health, on its own schedule (2026-09-07)
+
+**What it is.** A dependency-free script that reads every EXTERNAL url out of the DATASET
+(not the source), probes each, and fails only on links that are genuinely gone. Run
+weekly by its own workflow. Proven on stonesteps-50k; **brought home 2026-09-18**, so
+the canonical copy is this starter's `scripts/check-live-links.mjs` (marked PORTABLE),
+with `.github/workflows/link-health.yml` alongside it.
+
+**What generalising it changed** (the field list below was replaced on 2026-09-29 by a
+walk of every document; see the addendum). The stonesteps version named that race's own document
+fields, and defaulted its project id to that project's. The canonical version reads the
+three structural places every site built from this starter has (header nav, footer
+columns, social links), the page-builder CTAs, and then a SWEEP of any document carrying
+a `url` or `externalUrl`, so sponsors, partners, suppliers and venues are covered without
+anyone editing the file. It also reads the site's own domain out of `src/data/site.ts`
+and treats absolute links to it as internal: `check:links` already covers those against
+the built output, and going red because the production host had a bad minute is
+uptime.yml's job, not this one's. With no `PUBLIC_SANITY_PROJECT_ID` it says so and exits
+0, which is how a fresh clone of the starter stands.
+
+**Why it is not part of CI.** The build's link checker walks the built site and skips
+external hosts on purpose: failing a build because a third party had a bad minute teaches
+everyone to ignore the build. A separate weekly schedule makes a red run information
+rather than a blocker.
+
+**Why it reads the dataset.** The links an editor can change live in Sanity, so checking
+the source checks the wrong thing.
+
+**The distinction that keeps it trusted.** A dead link and a refused one are not the same.
+404, 410, or a host that never answers is a failure. Anything else, typically a 400, 403
+or 429 bot wall, means the server answered and declined to talk to a script; Facebook
+does exactly this to group URLs that a browser opens fine. Those are REPORTED and do not
+fail the run. The first version conflated the two and would have cried wolf on its first
+scheduled run.
+
+**Needs no secrets** when the dataset is public.
+
+### Addendum, 2026-09-29: walk the documents, do not name the fields
+
+**Folded back from reid-design-site** (PR #43), which forked this script on its first
+real run. The field list above was the flaw. Against Reid's dataset the `url` /
+`externalUrl` sweep found 222 links, and every one was a `cdn.sanity.io` image asset
+(each `sanity.imageAsset` carries a `url`). It did NOT find what the check exists for:
+`shopItem.affiliateUrl`, `testimonial.reviewUrl`, and a header menu named `navItems`
+rather than `headerNav`. So it probed 222 images one at a time and would have reported
+"no broken links" about a `/shop` page it never looked at. A list of field names is a
+second copy of the schema, and the second copy is the one that goes stale.
+
+**The canonical copy now walks.** One query fetches every published document that is not
+Sanity's bookkeeping (`sanity.*`, `system.*`, `media.tag`), not archived (`archived !=
+true`) and not a `trashedItem`; `collect()` recurses through each one and keeps every
+string that is a WHOLE http(s) URL, recording its field trail
+(`guides[4].sections[4].links[0].url`) so the report says where in the Studio the dead
+link lives. Skipped: `_`-prefixed keys, `formActionUrl` (a POST endpoint no script
+should GET), and the hosts `cdn.sanity.io` and `api.web3forms.com`. The own-domain rule
+is unchanged, and `readOwnDomain()` now accepts both the starter's `const _domain =`
+and a literal `domain:` in `src/data/site.ts`. New: the run appends a markdown report to
+`$GITHUB_STEP_SUMMARY`, so the weekly result reads without opening the log. The probe
+(HEAD, then GET on a method objection; gone vs refused) is unchanged.
+
+**Evidence:** run from this starter against Reid's public dataset, 2026-09-29: 22
+documents, 10 external links, 1 gone (`wayfair.com/professional/`, 404), 3 refusing a
+script (Facebook 400, Arhaus 430, RH 403), the same result Reid's fork reported. Its
+links sat in `siteSettings` fields and a `studioPlaybook` array four levels deep, none
+of which the field list could name.
+
+**Adopting it:** a site with the old canonical copy just takes the new one (sync-check
+will show it as drift). reid-design-site's fork (unmarked) can now be replaced by this
+file with the marker; the only behaviour difference is `archived != true`, and its
+`link-health.yml` differs only in comments.
+
+## Card 43: Contrast for the elements axe declines to judge (2026-09-08)
+
+**What it is.** `tests/contrast.spec.ts`: a Playwright suite that runs axe for
+colour-contrast, takes the INCOMPLETE list rather than the violations, and measures each
+of those elements itself. Canonical copy in this starter, first built in stonesteps-50k.
+
+**The hole it fills, which is in a file every repo here already runs.** axe reports three
+outcomes per rule, not two: violations, passes, and incomplete. `a11y.spec.ts` and
+`a11y-dark.spec.ts` both assert `results.violations` is empty. That is the correct
+assertion, and it means an incomplete passes in silence. axe returns incomplete for
+colour-contrast whenever it cannot determine the background, and the commonest reason by
+a distance is **"this element uses complex text shadows"**.
+
+**The measurement that prompted it.** On stonesteps-50k, across five routes in two
+themes: **466 incomplete contrast nodes, 205 unique elements**. Effectively every display
+heading on the site, because the design system puts a `text-shadow` on all of them. The
+contrast gate had never evaluated one of them. Two real contrast bugs shipped through a
+green axe run as a direct result, one of them a base-layer rule that made every heading
+in light mode cream-on-cream site-wide.
+
+Every repo in this family asserts on violations only. Checked 2026-09-08: none of
+wcp-website, presacademy, mas-monograms, nixoncreativestudio, this starter or
+stonesteps-50k handled incompletes. The blind spot is universal; only its size differs,
+and it scales with how much the design uses text-shadow.
+
+**Why it completes axe rather than replacing it.** It only ever looks at what axe
+declined to judge, so the two suites can never disagree about the same element, and the
+existing suites keep owning violations. A parallel contrast implementation would drift
+from axe and produce arguments about which one is right.
+
+**Elements over a photograph are MEASURED, not excused (2026-09-08).** The first version
+counted and printed them and never went red, on the reasoning that one colour is not an
+honest answer over an image. That is true and it was still a hole, because the moment a
+design puts type over photography or texture the exemption covers the riskiest text on
+the page. The gate now hides the element, photographs the region behind it, and builds a
+128-bucket luminance histogram of what is really there. It reports the ratio that holds
+for **95% of the area**, so a single bright pixel in a leaf cannot fail an otherwise
+sound label, and a genuinely busy background still does. Only a box that cannot be
+photographed at all stays undetermined.
+
+Two bugs found by deliberately injecting bad contrast, both worth knowing before trusting
+the numbers:
+
+- **The media check needs the element boxes, not an ancestor walk.** A hero photograph is
+  almost always an `<img>` with the type positioned over it, not a `background-image` on
+  an ancestor, so an ancestor walk sails past it and measures the section's flat colour.
+  Anything whose box OVERLAPS a media box is measured from pixels.
+- **The screenshot clip is in page coordinates, so it needs `fullPage: true`.** Without
+  it the same numbers are clipped against the viewport origin and anything below the fold
+  comes back as a slice of a different section entirely.
+
+**Two false alarms to expect, both already fixed in the canonical copy.** Any repo
+adopting this will meet them, and either one alone would have discredited the suite on
+its first run.
+
+1. **Resolve colours through a canvas, not a regex.** `getComputedStyle` does not promise
+   `rgb()`. Tailwind 4 emits oklch/oklab and Chromium hands it straight back, so
+   `oklab(0.944 0.002 0.065 / 0.8)` read as rgb() gives a luminance of nearly nothing and
+   a confident 1.17:1 for text that is fine. Painting one pixel and reading it back makes
+   the browser do the colour maths, so every syntax resolves and the alpha comes with it.
+2. **Skip outlined text.** Text drawn with `color: transparent` plus a
+   `-webkit-text-stroke` has no fill to measure; the stroke is what you see. Measuring the
+   fill reports a legible glyph as invisible.
+
+**Alpha is composited, not ignored.** `text-foreground/80` and its friends are only as
+readable as what shows through them, so the foreground is blended over the resolved
+background before measuring. Opacity utilities diluting a token past AA is a mistake this
+family has now made five times.
+
+**The bug it found on its first run, and what it says about dark palettes.** The home
+page's stat numbers measured 2.84:1 on the dark ground, under the 3:1 large text needs.
+Two separate causes, both worth checking in any repo:
+
+- **The `.dark` block had never lightened `--primary`.** It lightened `--link` and
+  `--ring` and left `--primary` a byte-for-byte copy of the light theme's brand rust. A
+  dark palette that copies a value across is not a dark palette for that value.
+- **`text-primary` maps to the `@theme` brand token, not the theme-aware shadcn one.**
+  The brand token is one constant for both themes by design, so no `.dark` override can
+  reach a component using the utility. Components rendering brand-coloured TEXT on a
+  surface that flips must use `text-[color:var(--primary)]`.
+
+Fixing the first is a seesaw worth measuring rather than guessing: on this palette
+`#b8462f` was the only value that both cleared 3:1 as text on bark and kept the cream
+button labels sitting ON it above 4.5:1. Anything lighter fixed the text and broke the
+buttons.
+
+**It found the same bug in this starter, on its first CI run.** The stat numbers on the
+home page measured 2.97:1 in dark mode, under the 3:1 large text needs. Same second cause
+as stonesteps: `text-primary` maps to the `@theme` brand token, and no `.dark` override
+can reach it. Unlike stonesteps, this repo's `.dark` HAD lightened its shadcn `--primary`
+correctly, so the palette was fine and only the component was wrong. Two repos, one shared
+component, the same defect, neither caught by anything else. Any fork made before
+2026-09-08 carries it.
+
+**`data-contrast-media`: the opt-in for dense vector layers (2026-09-08).** Pixel
+measurement is triggered by RASTER media only. Including `<svg>` swept in decorative
+topographic overlays that span whole sections, so every element inside them became "over
+media" and the run hit its measurement cap; the topo is a low-opacity vector over a solid
+colour and the ordinary colour path judges it correctly. But some vector layers really do
+change what is behind the type: stonesteps-50k's hero now wears a mud field dense enough
+to matter. Such a layer marks itself `data-contrast-media` and is measured like a
+photograph. Deliberately opt-in, because "measure every SVG" is the rule that broke, and
+the author of the layer is the one who knows whether it is dense enough to count.
+
+**The sampling bug that opt-in exposed, and the one to expect (2026-09-08).** Sampling
+hid only the element being measured. Any OTHER text overlapping its box therefore stayed
+in the photograph and was measured **as if it were the background**. A per-letter
+headline proved it: with one letter hidden its neighbours leaned into the gap, and the
+letter was reported at 1.05:1 against what was really the letter next to it. The gate now
+hides overlapping LEAF text elements too, which never takes out a whole section and
+leaves a real background (including a card's own photograph) painting exactly as it does.
+Any repo with tracked-out or per-character display type will meet this the first time
+that type sits over media.
+
+**An element with its own opaque background is its OWN backdrop (2026-09-08).**
+Checked BEFORE the media test, not after. Pixel sampling works by hiding the
+element and photographing what is behind it, which for a solid button
+photographs the page UNDER the button rather than the button. It surfaced the
+first time a decorative layer was allowed to run beneath the site chrome:
+stonesteps-50k's Register plate is cream on rust sitting over the hero's mud,
+and the gate reported it as cream on cream at 1.09:1. Alarming, and false. Any
+repo that puts a solid button over a photograph or a marked texture layer meets
+this immediately.
+
+**What axe still cannot see, and the design consequence.** axe reads element background
+COLOURS; it has no idea a CSS mask makes a layer 95% transparent. Four stacked mask
+layers at 26% alpha therefore model as a 57% veil across a whole band, and axe will fail
+small text under them, correctly by its own lights. Two takeaways: keep a decorative
+overlay to ONE element wherever small text sits under it, and put the transparency in the
+colour (`color-mix(... transparent)`) rather than in an `opacity` on a wrapper, so axe
+blends what the browser blends.
+
+**Update 2026-09-08: the incidental-decoration exemption.** The gate measured any element
+with text in it, which is stricter than WCAG and stricter than axe. WCAG 1.4.3 excludes
+"Incidental" text: text that is pure decoration carries no contrast requirement, and axe
+already skips it, because it does not evaluate aria-hidden text at all. Stone Steps hit
+this with oversized watermarks (a course record and a loop count set at 15rem behind their
+own bands at 6.5% ink), which are decoration by any reading and which the page states in
+full a few hundred pixels away.
+
+The exemption is `data-contrast-decorative` AND an aria-hidden ancestor. **Both halves are
+required on purpose.** The attribute says the author meant it; the aria-hidden proves the
+text really is out of the accessibility tree rather than merely inconvenient to fix. The
+attribute alone would be a one-word way to silence any failure, and a gate with a loophole
+is a gate that stops being trusted. Verified on the calling site by removing only the
+aria-hidden: all four contrast tests go red again.
+
+**Update 2026-09-08: `settle()` and animated overflow (`tests/helpers.ts`,
+`tests/reflow.spec.ts`).** Not this card's file, but the same session and the same lesson
+about a gate that cannot see what it is meant to catch. `settle()` injects
+`animation: none !important` before measuring, which is right for axe and for screenshots,
+where a half-played transition is flake, and precisely wrong for reflow: a transform does
+not affect layout, so an element animating past its container widens the DOCUMENT without
+changing anything visible standing still, and freezing it first snaps every such element
+back inside its box. A hero slideshow animating to `scale(1.09)` put a horizontal
+scrollbar on every page of Stone Steps while the reflow gate stayed green at four widths
+on every route. `settle()` now takes `freezeAnimations`, reflow opts out, and it samples
+the document across 2.4s and asserts on the WIDEST reading, because a looping animation is
+only over its container for part of its cycle.
+
+**Per-site adaptation.** None to the file, which is why it is canonical. It reads
+`routes` from the site's own `tests/routes.ts` and the theme key from `src/data/site.ts`,
+the same two seams `a11y-dark.spec.ts` already uses.
+
+## Card 45: The site's own contact endpoint (2026-09-08)
+
+**What it is.** `src/pages/api/contact.ts` plus `src/lib/contact-submission.ts` (pure,
+unit-tested), `src/lib/contact-transport.ts` (which transport the browser uses) and a
+generated D1 migration. The contact form posts to the SITE'S OWN Worker instead of a
+form service.
+
+**The premise that stopped being true.** A purely static site has nowhere to run code, so
+a form needs somebody else's backend: that is why this family shipped Web3Forms, and the
+only recorded reason for it was "NCS standard pattern". But every site here ships a
+Cloudflare Worker anyway, because the live preview and the SSR routes require one. The
+constraint that justified outsourcing the form has not applied for a long time, and
+nobody revisited it after the fork. Card 44's failure mode exactly: inherited assumption,
+correct code, nothing to flag it.
+
+**What owning it buys, in order of how much it matters.**
+
+1. **STORE FIRST, NOTIFY SECOND.** With a form service the email IS the record, so a
+   message that bounces, gets spam-filtered or is deleted never existed and nobody knows.
+   The endpoint writes the row before it tries to send. Verified under `wrangler dev` with
+   no email transport configured at all: the visitor gets HTTP 200, and the row lands with
+   `notified = 0` and `notify_error = "no notification transport configured"`. That is a
+   repairable problem instead of a lost customer.
+2. **The key leaves the client bundle.** A Web3Forms access key is public by design and
+   scrapeable from the built JS.
+3. **No monthly ceiling.** Web3Forms' free tier is 250 submissions a month.
+
+**Do NOT store submissions in Sanity.** The obvious idea, and wrong: a free-plan dataset
+is `aclMode: "public"`, so every document is readable by anyone with the project id and
+no token. Contact submissions are names, addresses and messages. Checked on
+stonesteps-50k before building anything, and it is why this uses D1.
+
+**The Cloudflare email rules, from the docs rather than from memory.** These decide what
+is possible per client, and two of them are easy to get wrong:
+
+- **Email Routing** (inbound, free) puts MX on the ROOT domain. The docs are explicit:
+  _"Cannot use Email Routing with external mail servers."_ Any client already on Google
+  Workspace or Microsoft 365 is out.
+- **Email Sending** (outbound) puts MX only on a `cf-bounce` subdomain, so it coexists
+  with an existing mail provider. It needs the **Workers Paid** plan: 3,000 emails a
+  month included per ACCOUNT, then $0.35 per 1,000.
+- **Sends to a verified destination address are free on any plan** and do not count
+  against the quota, which is exactly what a contact form notifying the site owner is.
+  The catch: _"You can only send from your routing domains."_
+- **Cloudflare DNS is required either way.** A client whose DNS is at their registrar
+  (stonesteps-50k is at GoDaddy) cannot use it at all without moving.
+
+For an agency hosting many client sites on one paid account, the workable shape is ONE
+sending domain you own, with every client site's Worker sending from it and `Reply-To`
+set to the visitor. That needs nothing from the client's DNS.
+
+**Per-site adaptation.** The bindings, and only the bindings. `wrangler.jsonc` carries the
+enable-it checklist commented out, because a fresh clone must build and deploy with no
+Cloudflare resources of its own, and an active binding with a placeholder id fails the
+deploy for anyone who has not created the database.
+
+**A gotcha that costs an hour.** Local D1 state is keyed PER CONFIG PATH. `wrangler dev`
+runs against `dist/server/wrangler.json`, so a migration applied with the root config
+lands in a different local database and the endpoint reports `no such table`. Apply it
+the way you run it: `--local -c dist/server/wrangler.json`.
+
+**Still unverified.** Nobody has watched an email actually arrive: that needs a paid
+account with an onboarded sending domain, which no site in the family has yet. The
+storage path, the validation, the honeypot, the timing check and the degraded answers are
+all verified end to end under `wrangler dev`. `Reply-To` is sent as a custom header with a
+retry without it, because the exact field name is not confirmed against a live send.
+
+### Addendum, 2026-09-18: somebody has now watched one arrive
+
+The paragraph above is superseded. stonesteps-50k moved its domain to Cloudflare DNS that
+morning (card 48), and the endpoint went from "built and waiting" to "working" in one
+sitting. The race director forwarded the test message back at 8:40 am: it reached
+`rd@stonesteps50k.com` from `website@stonesteps50k.com` with the visitor named and the
+subject intact. `Reply-To` as a custom header is confirmed against a live send, so the
+retry-without-it path is now belt and braces rather than the load-bearing part.
+
+**The six steps, in the order they worked.** They are also written into `wrangler.jsonc`
+next to the bindings, and into `docs/agent/deployment.md` for the human reading a runbook.
+
+1. `npx wrangler d1 create <site>-contact`, note the `database_id`.
+2. `npx wrangler d1 migrations apply <site>-contact --remote`.
+3. `npx wrangler email sending enable <domain>`. SPF and DKIM land under a `cf-bounce`
+   subdomain, so it coexists with the client's existing provider on the same domain.
+4. `npx wrangler secret put CONTACT_TO` and `CONTACT_FROM`.
+5. Uncomment the bindings, paste the id, deploy. Its own commit: a deploy that fails on a
+   binding is far easier to read when the binding is the only thing that changed.
+6. One labelled test submission, then read the row back and check `notified = 1`.
+
+**Step 6 is the only real proof, and this is the reason to insist on it.** The endpoint
+returns 200 for a stored-but-not-sent submission BY DESIGN, because the visitor did their
+part and the message exists. That design decision means a 200 cannot distinguish a working
+form from a silently broken one. The `notified` column can. Anyone who signs the form off
+on a 200 has verified nothing.
+
+**Two things a future session should hand to the human rather than attempt.** The remote
+migration (step 2) and the secret puts (step 4) both tripped a permission gate when an
+agent tried them: one writes to a live database, the other reads a value from a prompt.
+Everything else in the list is agent work. Say so up front instead of discovering it
+halfway through a cutover.
+
+**DMARC stays at `p=none`** until the client's own mail provider has DKIM configured.
+Stone Steps' mail is on Microsoft 365 with no DKIM set up, and tightening the policy first
+would have started failing the client's ordinary mail, which is a far bigger problem than
+a contact form. Enabling Cloudflare's sending domain does not change that: `cf-bounce` is
+its own subdomain and it aligns on its own.
+
+**Turnstile is still not wired anywhere.** The form ships no widget, so
+`TURNSTILE_SECRET` stays unset and the endpoint skips the check entirely. The honeypot and
+the timing check carried the load on a live form for a day with no spam. Wire Turnstile
+when a site actually attracts some.
+
+### Addendum, 2026-10-13: presacademy, the second site, and its differences
+
+presacademy applied the card on 2026-10-13 (presacademy PR #92; `staged` in the matrix until
+it merges and the live step 6 passes). Four things differ from Stone Steps, and each one is
+the likely shape for the next site:
+
+1. **Email ROUTING, not Email Sending.** presbyterianacademy.org had no mail provider at
+   all, so nothing stood in the way of Cloudflare taking the apex MX. Routing was enabled
+   on the root domain and the notification goes to a **verified destination address**: the
+   free path the card describes, with no sending-domain onboarding (`wrangler email sending
+enable` was never run) and no Workers Paid dependency. The catch is the same one the card
+   quotes: it sends only from the routing domain, so `CONTACT_FROM` is
+   `website@presbyterianacademy.org`. Two follow-ons a session must plan for: the
+   destination is live only after its owner clicks Cloudflare's verification email (until
+   then every row lands `notified = 0`, which is exactly what store-first is for), and once
+   the apex MX moves, mail to the domain's public address goes nowhere until a forwarding
+   rule exists for it.
+2. **D1 created through the API, ahead of the code.** The database and the remote migration
+   (card step 2) and the Worker secrets (step 4) were done by the main session before the
+   code branch existed, which is the hand-off the 2026-09-18 addendum recommends. The code
+   PR then only had to add the bindings, so its first deploy can be read on its own.
+3. **Turnstile wired for the first time, in a Sanity form-BUILDER renderer.** The starter's
+   `ContactForm.tsx` has fixed fields; presacademy's `FormRenderer.tsx` renders whatever an
+   editor built in Studio. A site-specific `src/lib/form-to-contact.ts` (unit-tested) maps
+   any form onto the endpoint's contract: `name` from a Name field or First + Last joined,
+   `email` from the Email field, `subject` naming the form, every other answer folded into
+   `message` as `Label: value` lines in form order. It also treats the email and first name
+   box as required even when an editor left them optional, because the endpoint refuses
+   without them. Turnstile notes that generalise:
+   - Explicit render (`?render=explicit&onload=...`), re-rendered on a light/dark class
+     toggle, the same pattern the old hCaptcha wiring used.
+   - **`size: "compact"` when the container is under 300px.** The normal and flexible
+     widgets are at least 300px wide, which overflows a 320px phone inside the page gutters.
+   - Remove the widget BEFORE swapping the form for its success message; removing it in the
+     effect cleanup, after React has already dropped the container, logs a Turnstile
+     "Cannot find Widget" warning.
+   - The honeypot input stays named `botcheck` and is SENT as `company`. A visible-to-autofill
+     input named `company` could be filled by a real visitor's browser and silently dropped.
+   - The live sitekey only works on the production domain, so a local `wrangler dev` of the
+     production build needs `PUBLIC_TURNSTILE_SITEKEY=1x00000000000000000000AA` at build
+     time and `--var TURNSTILE_SECRET:1x0000000000000000000000000000000AA` (or `2x...` to
+     exercise the refusal). The starter's comment names the variable
+     `PUBLIC_TURNSTILE_SITE_KEY`; presacademy uses `PUBLIC_TURNSTILE_SITEKEY`. Pick one
+     when the starter's own form wires Turnstile.
+   - CSP: `https://challenges.cloudflare.com` in `script-src` and `frame-src` only; the
+     widget's own requests run inside its iframe.
+4. **Local D1 lives under `dist/server/.wrangler`, so every `npm run build` wipes it.**
+   Re-apply the migration (`--local -c dist/server/wrangler.json`) after each build, or the
+   endpoint answers "no such table" again and looks like the per-config-path gotcha above.
+
+Also found: the Sanity form query projected `provider`, which serialized a stored Web3Forms
+access key into every form page's HTML as an island prop. Dropping it from the projection
+is part of the port for any site whose forms carry a stored key. The schema field itself was
+hidden, not removed, so Studio never offers "Remove field" on the stored data.
+
+## Card 44: Fork residue, and the audit that finds it (2026-09-08)
+
+**What it is.** A named failure mode rather than a file: **a template forked from a
+finished client build keeps that client's specifics, and each one stays invisible until a
+new project ships it.** This starter was forked from the Reid Design build, and building
+stonesteps-50k on it surfaced four separate pieces of residue, none of which any test,
+type check or lint could see.
+
+**The four, as found.**
+
+1. **A real client's logo.** `src/assets/logo-{light,dark}.png` were the Reid Design
+   wordmark and `Footer.astro` imported them, so every project put another client's mark
+   at the bottom of every page. It reached a live site. The header had always used the
+   neutral placeholder SVGs, which is exactly why nobody noticed: the two chrome
+   components disagreed, and only one of them is ever looked at during a build.
+2. **Another business's content.** The `studioPlaybook` singleton was seeded with
+   interior-design guidance: photographing finished rooms, before-and-after pairs, trade
+   sourcing accounts. Every fork inherited a playbook for a business it is not.
+3. **A hardcoded palette in a panel nothing rewrites.** `BrandKit.tsx` listed the
+   starter's slate-and-ink hexes. `apply-brand` rewrites the stylesheet, the identity
+   constants and the Studio theme, and had no idea this file existed, so a rebranded
+   project shipped a "Brand kit" confidently naming the wrong colours.
+4. **The template's own name in a deploy command.** `deploy-staging.yml` said
+   `--name ncs-astro-sanity-starter-staging`, so the first fork to set its Cloudflare
+   secrets and push a staging branch would have deployed its site under the template's
+   name.
+
+**Why none of it was caught.** Every one is CORRECT CODE containing the WRONG NOUN. Types
+pass, tests pass, lint passes, the build is green, and the page renders. The only detector
+is a person recognising a name that does not belong, which happens by luck and late.
+
+**The audit, worth running on any template before a fork and after one.**
+
+- `grep -ri "<origin client name>"` across the whole repo, including seed scripts, docs and
+  binary asset filenames. Then look at every image in `src/assets` and `public` with your
+  eyes, because a logo is not greppable.
+- Diff what the header uses against what the footer uses. Chrome components that disagree
+  about an asset are the classic tell.
+- List every file `apply-brand` (or the equivalent rebrand script) rewrites, then list
+  every file containing a brand hex, a brand font name or the site name. Anything in the
+  second list and not the first will drift silently on the next project.
+- Grep the workflows for the template's own repo or Worker name.
+- Read the seeded content, not just the schema. Placeholder text should say "replace
+  this"; if it says something specific and plausible, it belongs to somebody.
+
+**The rule that prevents the recurrence.** A template's placeholder content must be
+OBVIOUSLY placeholder. `studioNotes` survived this audit untouched because its seeded text
+reads "Replace this with a description of your ideal client"; `studioPlaybook` did not,
+because its text was real advice for a real trade. Plausible placeholder content is worse
+than none, since it gets shipped rather than replaced.
+
+**Related.** Card 43 is the same shape one level down: correct code, wrong colour, and no
+gate that could see it.
+
+---
+
+## Card 46: The share card was never in the brand's typeface (2026-09-13)
+
+**Canonical:** `scripts/lib/render-og.mjs`
+**Applies to:** every repo in the family. All of them generate OG cards, all of them
+load their faces from `@fontsource` packages, so all of them have shipped this.
+
+**The bug.** `render-og.mjs` drew through sharp's Pango bindings and asked for the
+brand's display face by NAME. Pango resolves fonts through **fontconfig**, which knows
+about fonts INSTALLED ON THE MACHINE and nothing whatsoever about `node_modules`. Every
+face in this family comes from an `@fontsource` package. So the request always missed and
+Pango silently fell back to whatever the build box had, on every build, on every fork.
+
+The file's own header admitted it and mis-sized it: "Pango falls back to a system serif
+if Libre Baskerville isn't installed on the build machine. Close enough for a
+social-preview thumbnail; the brand wordmark + colors carry the recognition." That is
+backwards. The typeface IS the recognition, and the fallback was not an edge case, it was
+the only case. Found on stonesteps-50k, where the cards were additionally still the
+starter's placeholder layout; the typeface half is the part that generalises.
+
+**The fix.** Render the card in headless chromium and `@font-face` the real woff2 as a
+data URI, resolved out of `node_modules` from the `fonts.display.imports` already in
+`brand.config.json`. No new configuration: the one place that names the face keeps naming
+it. Playwright is already a devDependency for the test suite.
+
+**What to keep when porting.**
+
+- The generators run BY HAND and the PNGs are committed, so CI still needs no browser.
+  If a repo ever generates them in CI it needs `npx playwright install chromium`.
+- `await page.evaluate(() => document.fonts.ready)` before the screenshot. Without it the
+  card can be photographed before the face decodes, which reproduces the exact bug.
+- One browser for the whole run, and **`closeRenderer()` at the end of every generator**.
+  A browser Playwright has not been told to close keeps the event loop alive forever, so
+  the script does all its work, writes every file, prints its last line and then hangs.
+  That looks exactly like a slow render; it cost two ten-minute timeouts before anyone
+  suspected the exit rather than the work.
+- `apply-brand` rewrites the `DEFAULTS` block by regex on two-space indentation and single
+  quotes. Keep that shape or a rebrand silently skips the file.
+- Resolution falls back to the CSS stack when no package is found, and warns. A card in
+  the wrong serif is worse than the right one and far better than no card.
+
+**The general lesson.** A build-time renderer that resolves fonts BY NAME will fail
+quietly and produce something plausible. Anything generated outside the browser needs the
+font handed to it as bytes.
+
+---
+
+## Card 47: The icon set, from one drawing (2026-09-13)
+
+**Canonical:** `scripts/generate-favicons.mjs`, `npm run favicon`
+**Applies to:** every repo. None of them shipped an apple-touch-icon or a manifest.
+
+**What was missing.** The starter shipped `favicon.svg` and a stale `favicon.ico` and
+nothing else: no `apple-touch-icon.png`, so an iOS home-screen shortcut got a browser-drawn
+default; no manifest; and no way to regenerate any of it when the mark changed. The two
+`theme-color` metas in `BaseLayout.astro` were hardcoded and **not rewritten by
+apply-brand**, so every fork painted its phone browser chrome in a palette it had
+otherwise replaced. On the starter itself those values did not even match its own
+`brand.config.json`.
+
+**The fix.** One script renders `favicon.ico` (16+32+48), `apple-touch-icon.png`,
+`icon-192`, `icon-512` and `site.webmanifest` from `public/favicon.svg` plus
+`brand.config.json`, and `apply-brand` gained a `BaseLayout.astro` step for the two
+theme colours.
+
+**Three things that are not obvious.**
+
+- **No transparency on the touch icons.** iOS composites its own background (white) behind
+  a transparent home-screen icon and then applies its own radius, so a transparent one
+  arrives as the mark floating on white with the brand's ground gone.
+- **No `purpose: maskable` entry** unless the artwork was drawn for it: a maskable icon
+  needs its mark inside the middle 80%, and a mark that fills its square gets cropped.
+- **The ICO is PNG-in-ICO.** The format allows a whole PNG per entry and every browser in
+  use has accepted that for over a decade, so the encoder is a 6-byte header plus a
+  16-byte directory entry per size. No dependency needed.
+
+**The rule this exists to enforce, and the reason it is in the script's header.** A
+FAVICON IS A MARK, NOT A SIGNATURE. On stonesteps-50k the favicon was the client's full
+four-line painted logo, 48KB of base64 PNG inside an SVG, and an unreadable smudge at the
+16 pixels a browser actually draws. Check legibility at 16 before shipping; if the logo
+has more than one word in it, draw a separate mark.
+
+---
+
+## Card 48: The domain cutover, and the zone audit inside it (2026-09-18)
+
+**Canonical:** `scripts/cutover.mjs`, `scripts/lib/zone-audit.mjs` (+ its `.d.mts`),
+`src/lib/zone-audit.test.ts`, `scripts/fixtures/godaddy-zone-export.txt`
+**Applies to:** every repo in the family, and every future client. Six of these sites are
+already on Cloudflare DNS; the seventh took a morning of hand work to get there, and the
+eighth would have taken the same morning.
+
+**What it is.** One script that takes a site from "the zone is not on Cloudflare" to "live
+on its own domain, with the mail intact". Find or create the zone as a full setup and print
+the two nameservers for the registrar. Audit a BIND export from the old registrar and
+import a cleaned copy. Once the zone goes active, attach the Worker to the apex and www as
+custom domains, file a 301 from www in the `http_request_dynamic_redirect` phase, and set
+`always_use_https` on, `min_tls_version` 1.2, `ssl` strict, `automatic_https_rewrites` on.
+Print the two commands it will not run. Verify from outside and print a table.
+
+**Where it came from.** stonesteps50k.com moved from GoDaddy to Cloudflare on 2026-09-18.
+Every step above was done by hand through the API and wrangler that morning, in order, with
+the client waiting, and every step is identical for the next site. A runbook a human
+follows at speed on the one irreversible morning of a project is a runbook with a step
+missed in it.
+
+**Dry run by default, and that is the whole safety model.** With no flags it makes no
+state-changing calls and no outside checks, and nothing leaves the machine, not even a GET.
+It reads the repo, prints the plan, and stops. `--write` is the only thing that lets it
+act. The blast radius here is a client's live domain and their mail, and a plan you can
+read and disagree with before anything happens is worth more than any amount of care in the
+calls themselves. Reads are suppressed in dry run too, deliberately: a plan that quietly
+depends on live account state reads differently to the person who has the credentials and
+the person who does not, and both of them have to be able to review it.
+
+**Idempotent, and it says why it is skipping.** Every step checks whether it is already
+done and prints the reason. Running it twice is a no-op; running it after a partial failure
+resumes. It also refuses to import over a zone that already holds records, because
+re-importing on top is exactly how a zone ends up with two SPF records.
+
+**It stops at "pending" on purpose.** A custom domain cannot be attached and a certificate
+cannot be issued until Cloudflare is authoritative. If the zone is not active the script
+says so, says what to do, and reports that nothing below was attempted. Half a cutover that
+announces itself is fine. Half a cutover that looks finished is not.
+
+### The zone audit, which is the part that earns its keep
+
+The website being wrong after a cutover is visible in a second. The MAIL being wrong is
+invisible until somebody does not get an email, and a registrar's export is the only
+picture anyone has of a client's mail setup. So the export gets read, not just imported.
+The findings below are not hypothetical: **one real export contained every single one.**
+
+- **Two SPF records on the apex.** RFC 7208 section 3.2 makes that a permerror, so every
+  SPF check on the domain fails. Both are merged into one.
+- **An SPF that names no include for the MX provider it can see.** Neither record on that
+  domain named Microsoft 365, which is what actually sends the client's mail. The provider
+  is detected from the MX and its include is added, FIRST, because SPF stops at the first
+  match and the 10-lookup limit is real.
+- **The merge takes the strictest qualifier present.** `-all` beats `~all`. A merge is the
+  moment to keep a policy, not to quietly loosen one.
+- **A DKIM value with leading whitespace.** A tab and a space at the front of a
+  hand-pasted key. Resolvers hand the value back byte for byte, so the verifier reads a key
+  that does not parse and every signature fails, with a record that looks right in every
+  UI. Stripped, and the record kept.
+- **Records pointing at the old host:** `_acme-challenge`, `ftp`, `staging`. Left out.
+- **Registrar cruft:** `_domainconnect`, and the eight GoDaddy Workspace Email names in a
+  zone whose mail has been on Microsoft 365 for years.
+- **The apex A and www are left out on purpose**, and the audit says so as `info` rather
+  than as a fault: the Worker custom domains create both themselves, with their own
+  certificates, and importing an A record for the apex could answer from the old host in
+  the window before the custom domain attaches.
+
+**The one rule in there that needed a second condition.** GoDaddy's mail names are dropped
+only when the MX says mail is elsewhere AND the record actually points at
+`secureserver.net`. Microsoft 365 wants an `autodiscover` CNAME of its own, and a name-only
+rule would have thrown away a record the new provider needs, breaking mail client setup for
+everyone on the domain. That case is a named test.
+
+**A cleaned file is written next to the original, in both modes, and kept.** It carries
+every dropped record as a comment saying why. On the day a client's mail misbehaves after a
+move, the diff between the two files is the first thing anybody wants to read.
+
+**The logic is pure and unit tested (25 cases) because it runs once per client.** Same
+reasoning as card 49's `raceDayDue`: a rule that fires once, on the one irreversible day of
+a client's project, is exactly the rule nobody notices is wrong.
+`scripts/lib/zone-audit.mjs` holds it, a `.d.mts` types it so a TypeScript test can import
+it with no directive, and `scripts/fixtures/godaddy-zone-export.txt` is the deliberately
+broken fixture.
+
+### Two commands it will not run, and why that is not laziness
+
+- `npx wrangler email sending enable <domain>` is a **beta** command that writes SPF and
+  DKIM under a `cf-bounce` subdomain and puts the account into an onboarding flow with no
+  documented stable REST equivalent. Wrapping a beta CLI in a script that runs against a
+  client's live mail domain trades a command somebody reads for one they do not. With
+  `--write` the script does check `wrangler email sending list` and skips the instruction
+  when the domain is already onboarded.
+- `npx sanity cors add https://<domain> --credentials` needs the interactive Sanity login,
+  not an API token. Skip it and the embedded Studio loads on the new origin and then fails
+  every request, which looks like a broken build rather than a missing CORS entry.
+
+**Per-site adaptation: none, which is the point.** The domain comes from
+`src/data/site.ts` and the Worker name from `wrangler.jsonc`, both already per-site.
+`--domain` and `--worker` exist for rehearsal against a fake domain, not for daily use: a
+cutover that takes the domain as an argument is a cutover where somebody can type the wrong
+one.
+
+**What it needs:** `CLOUDFLARE_API_TOKEN` (Zone:Edit, DNS:Edit, SSL:Edit, Workers:Edit) and
+`CLOUDFLARE_ACCOUNT_ID`, from the environment or `.env`.
+
+**One change to `sync-check.mjs` came with it.** `.mts` and `.cts` were added to its
+extension list. A plain-JS module in `scripts/lib/` that a TypeScript test imports gets a
+hand-written `.d.mts` beside it, and that declaration is as portable as the module it
+describes; without the extension its marker was scanned for and never found. That is the
+worst state a drift check can be in, because the file claims to be canonical and is
+silently not checked. 87 marked files now, all `SAME`.
+
+**Status: `partial` on stonesteps-50k on purpose.** The cutover HAPPENED there, by hand;
+the script did not exist yet and has not been run against a live zone in either direction.
+It is proved in dry run against a fake domain and its audit is proved against a fixture
+carrying every real fault. The first `--write` run is on the next client, and whoever does
+it should read the plan line by line rather than trusting this paragraph.
+
+---
+
+## Card 49: Two automation patterns for outside data (2026-09-18)
+
+**Canonical:** `docs/agent/automation-patterns.md`,
+`docs/templates/workflows/external-import.yml`,
+`docs/templates/workflows/record-and-bake-step.yml`
+**Worked examples (stonesteps-50k):** `scripts/import-results.mjs`,
+`.github/workflows/results-import.yml`, `scripts/weather-sync.mjs`,
+`scripts/lib/weather.mjs` + `weather.d.mts`
+**Applies to:** any client whose site shows data that lives in somebody else's system.
+
+**The rule underneath both.** A yearly touch is a touch that gets forgotten. A step that
+runs once a year, is nobody's job in particular, and produces a page that looks fine either
+way will eventually not happen, and the site is quietly stale for months. On Stone Steps
+every other yearly thing was already automatic and the weather was the one manual step
+left, which is exactly the one that would have been missed.
+
+**The templates are under `docs/templates/workflows/`, not `.github/workflows/`,** so
+nothing in this repo runs them. GitHub only executes what is in the real directory. A fork
+copies one across, fills in the `<ANGLE_BRACKET>` placeholders, and commits it.
+
+### Pattern 1: import and deploy on change
+
+An idempotent importer (deterministic `_id`s, `createOrReplace`) that **discovers what
+exists upstream rather than carrying a list**. A hardcoded list of years is a yearly touch
+wearing a disguise: it just moves the forgetting from "run the import" to "add 2027 to the
+array". A workflow that counts the documents before and after and deploys only when the
+count moved, with `concurrency` (`cancel-in-progress: false`, because a half-finished
+import is worse than a queued one) and a schedule dense around the event and weekly the
+rest of the year.
+
+Three details that are easy to get wrong. The count is a plain `curl` because a public
+dataset needs no token. The "after" count POLLS, because Sanity commits with
+`visibility: 'async'` and the query index trails the write by a second or two, which reads
+as "nothing changed". And credentials are checked in a STEP, never in an `if:`, because a
+secret cannot be read in an `if:` expression; missing ones warn and skip, which is what
+makes the file safe to commit before any of them exist.
+
+**The limit is documented in capitals in the file's own header.** A re-import that CORRECTS
+an existing row does not change the count, so it will not trigger a deploy; that is what
+`deploy_anyway` is for. A workflow that silently skips the deploy you needed is worse than
+one that admits when it will.
+
+### Pattern 2: record and bake
+
+A value knowable in advance becomes true later and must not be lost when the source moves
+on. It is recorded as **its own document** once a condition holds, and a build-time step
+bakes the derived data into a **committed file**.
+
+- **A document, not a field**, because the source field gets edited. The race date sits on
+  The Race months ahead and the editor moves it to next year as soon as the race is run.
+- **A committed file, not a fetch**, so a visitor never waits on a third-party archive and
+  the page cannot go blank when that archive is down.
+- **The condition is a pure function with an injectable clock** (`raceDayDue()` in
+  `scripts/lib/weather.mjs`, typed by a `.d.mts` beside it, unit tested), exposed as
+  `--as-of YYYY-MM-DD` so next November can be rehearsed today, and `--dry-run` so the
+  rehearsal writes nothing.
+- **Leave a margin for the source's own lag.** ERA5 publishes about five days behind and
+  answers with nulls before that, which would bake a blank bar into the page. Six days is
+  the margin. Every external archive has a lag; find out what it is rather than retrying a
+  source that is correctly saying "not yet".
+- **Fail soft on the network, always.** The bake runs before every build. A source that is
+  down must never block a deploy: warn with `::warning::`, keep the years already on file,
+  try again next time.
+
+**The two patterns compose.** The bake prints `changed=true|false` to `$GITHUB_OUTPUT`, so
+the import workflow folds it in as a second independent reason to deploy: one workflow, one
+deploy, two reasons it might be worth doing.
+
+**Why this is a card and not just a doc.** Neither pattern is about running races. The
+shapes are "the client's real data lives somewhere else" and "a value the site needs
+becomes true later", and most clients with anything dynamic have one of them. Writing them
+down as shapes is what stops the next one being rebuilt from scratch with the same three
+bugs in it.
+
+## Card 50: The production deploy nobody inherited (2026-09-18)
+
+**Canonical:** `.github/workflows/deploy.yml`
+**Applies to:** every project forked from this starter.
+
+**What was missing.** The starter shipped `deploy-staging.yml` for the `staging` branch
+and nothing at all for `main`. So every new project wrote this same workflow on day one:
+stonesteps-50k forked at 13:59 on 2026-09-07 and was authoring its own deploy workflow by
+20:30 that evening, from scratch, rediscovering each of the details below. Until a fork
+did that, a merged change was live only if somebody remembered to run `npm run deploy`
+from a laptop, and a Sanity publish was live only if somebody remembered twice, because
+the site is STATICALLY BUILT and publishing changes the dataset and nothing else.
+
+**The three triggers, and why each one is there.** `push` to `main` is the code path,
+with a `paths-ignore` for prose that cannot reach the built site. `repository_dispatch`
+on `sanity-publish` is the content path: a Sanity webhook POSTs GitHub's dispatches
+endpoint, and that is the piece that lets an editor's publish reach the live site on its
+own. `workflow_dispatch` is the human path. A missed deploy is a worse failure than a
+spare one, so the ignore list is short and everything else ships.
+
+**Five details that are not obvious, all of them load-bearing.**
+
+- **`concurrency` with `cancel-in-progress: false`.** Cancelling would abort a run mid
+  `wrangler deploy`. Three spare minutes beats an interrupted upload.
+- **Unit tests gate the deploy; Playwright does not.** `astro build` does not type-check,
+  so without the unit step a red repo could still ship, and three of those suites are
+  gates rather than ordinary tests. The browser matrix runs on the same push in ci.yml,
+  in parallel; duplicating it here buys nothing, because if it fails the fix is another
+  commit either way.
+- **The build fails when `PUBLIC_SANITY_PROJECT_ID` is missing**, rather than succeeding.
+  `sanityFetch` falls back silently with no project id, which is exactly right for a
+  fresh clone and exactly wrong to lay over a live site: it would ship empty pages at 200. The check is an explicit `if [ -z ... ]` with an `::error::`, not a hope.
+- **`deploy -c dist/server/wrangler.json`.** A bare `wrangler deploy` reads the SOURCE
+  `wrangler.jsonc`, which knows nothing about the adapter's generated asset manifest, and
+  every sub-route 404s. There is no `--name` here, unlike the staging deploy: production
+  IS the name in `wrangler.jsonc`, which `apply-brand` already rewrites.
+- **A smoke step, because a deploy that 200s on `/` and empties every sub-route is a
+  failure this family has already had once**, via `assets.not_found_handling`. It walks
+  the built routes and makes one content assertion, so an empty-but-200 deploy cannot
+  pass.
+
+**The generalisations made on the way home.** Nothing is named after a project. The
+Worker name comes from `wrangler.jsonc`. The smoke base URL comes from repo variable
+`PRODUCTION_URL` if a project set one, else the domain in `src/data/site.ts`, and when
+that is still the placeholder the step warns and skips rather than curling somebody
+else's server. The credential gate warns and skips instead of failing, so a fork with no
+Cloudflare secrets is never red for a reason it cannot yet fix, matching
+`deploy-staging.yml`, `uptime.yml` and `sanity-backup.yml`.
+
+**Where the family stands as of this card.** Only stonesteps-50k and wcp-website have a
+production deploy at all, and wcp's is its own divergent form, hence `partial`.
+presacademy, reid-design-site, mas-monograms, 2ndpreschicago and nixoncreativestudio all
+ship `deploy-staging.yml` and nothing for `main`, which is the gap this card closes for
+every fork made from today onward and a five-minute copy for every repo already out
+there.
+
+**Deliberately left out:** stonesteps' share-card freshness step, which needs an OG
+inputs record this starter does not have yet, and its race-day weather bake, which is
+that project's own. The card-freshness SHAPE is worth keeping when a project adds one,
+and it is written into the workflow as a comment: warn in `deploy.yml`, fail in `ci.yml`.
+A stale picture must never be able to stop a content change reaching the live site; a
+human pushing code can act on the same warning.
+
+---
+
+## Card 51: Lighthouse was measuring a site nobody is served (2026-09-18)
+
+**Canonical:** `scripts/serve-dist.mjs` (PORTABLE), and the `collect` block of
+`lighthouserc.json`
+**Applies to:** every repo. All of them deploy to Cloudflare, which compresses
+everything, and all of them audited against a server that does not.
+
+**The bug, and it is a measurement bug, which is the expensive kind.** `lhci`'s built-in
+static server (`staticDistDir`) sends every byte uncompressed. On 2026-09-17 stonesteps
+inlined its stylesheet into every page. Measured through a compressed harness the home
+page went from performance 88 to 99 and LCP 2.47s to 1.56s. Measured by CI it did not
+move at all: 4.2 to 4.9 seconds before and after, flapping either side of a 4.5 second
+hard gate on identical markup. That page was 435KB raw and 84KB gzipped, and at
+Lighthouse's mobile throttle of 1.6Mbps the raw file alone is two seconds of download
+before any CSS can run. CI was penalising the exact optimisation that helped every real
+reader, and a budget that behaves that way eventually gets raised instead of met.
+
+**The fix.** A dependency-free static server for `dist/client` that negotiates brotli or
+gzip from `Accept-Encoding`, sets the same immutable caching the deploy sets on
+`/_astro/*`, and resolves clean URLs to `index.html` the way the Worker does.
+`lighthouserc.json` swaps `staticDistDir` for
+`startServerCommand: node scripts/serve-dist.mjs --port 4173` plus
+`startServerReadyPattern: "serve-dist:"`. THE ASSERT BLOCK IS UNTOUCHED: it is the family
+test standard (card 35) and must not diverge. Only the collection changed, and only so
+that the numbers describe what a reader gets.
+
+**Three things to keep when porting.**
+
+- **Compress once and cache it.** The build is immutable for the life of the server, so a
+  cache keyed on path can never go stale, and it means Lighthouse's three runs are not
+  timing zlib on the second and third.
+- **The ready pattern is a contract.** The server's last line prints `serve-dist:` and
+  `lighthouserc.json` waits for it. Change the line and lhci hangs until its timeout with
+  no useful message.
+- **The url list changes shape.** With `staticDistDir` the URLs are
+  `http://localhost/about/index.html`; with a real server they are
+  `http://localhost:4173/about/`. Forget that and lhci audits nine 404s at a very good
+  LCP.
+
+**A caution rather than a rule.** If a repo has a capture or screenshot harness that must
+never be handed a stale compressed body, leave it on its own tiny uncompressed server.
+That is why stonesteps' map-poster capture keeps one.
+
+**Proof in this repo (2026-09-18):** `npm run build`, then
+`node scripts/serve-dist.mjs --port 4199`, then
+`curl -D - -H 'Accept-Encoding: br' http://localhost:4199/about` returns
+`Content-Encoding: br` with `Content-Length: 7504` against 29473 bytes uncompressed on
+`/`, gzip negotiates to `Content-Encoding: gzip`, and an `/_astro/*.css` request comes
+back `public, max-age=31536000, immutable`.
+
+---
+
+## Card 52: The Radix-cannot-SSR rule was never true, and it cost the nav its markup (2026-09-18)
+
+**Canonical:** `src/components/Header.astro` (the `<MobileNav>` directive),
+`src/components/MobileNav.tsx` (its header comment), and the three docs that
+stated the rule: `docs/agent/components.md`, `docs/agent/page-architecture.md`,
+`docs/agent/performance.md`.
+**Applies to:** every repo that carries a shadcn `Sheet`, `Dialog` or portal
+`DropdownMenu` behind `client:only="react"`, and every repo whose docs repeat the
+rule. The docs are not marked PORTABLE, so this card is the only thing that
+propagates the correction.
+
+**The claim.** Three files in this starter said, as a blanket rule, that shadcn
+primitives wrapping Radix's Dialog cannot server-render inside Astro: that the
+portal hook calls throw "Invalid hook call" during server render and blank the
+page, so they must be hydrated with `client:only="react"`. `components.md` said it
+in a subheading, which is the part people quote.
+
+**It is false on the pinned set.** stonesteps-50k ships a byte-identical
+`src/components/ui/sheet.tsx`, imports the same five primitives in its own
+`MobileNav.tsx`, and hydrates that island at `client:idle`, on the same
+react 19.2.7 / react-dom 19.2.7 / radix-ui ^1.4.3 / astro ^7.2.6 /
+@astrojs/cloudflare 14.2.4 set this starter pins. That site is live, passes its axe
+and smoke suites and scores 100 on Lighthouse. presacademy moved the same island off
+`client:only` on 2026-09-04 for the same reason and left its `components.md` heading
+behind. The rule was measured once on an older React and Radix pairing and then
+outlived the pairing.
+
+**Why a closed Sheet is safe.** A closed Radix Dialog renders only its trigger
+button on the server. The portal mounts nothing until the dialog opens, so there is
+no portal work during the server render at all.
+
+**What the wrong rule cost.** `client:only` skips SSR entirely. The hamburger button
+was absent from every page's server HTML until React loaded, and the React runtime
+sat on the critical path rather than behind `requestIdleCallback`. That is the same
+failure `page-architecture.md` already forbids for the desktop nav, one component
+over.
+
+**The fix.** `client:only="react"` becomes `client:idle`, and the docs state the
+real condition rather than a softened version of the false one.
+
+**The escape hatch is still real, and the docs must say so.** If a component
+genuinely cannot server-render, the symptom is unmistakable: an "Invalid hook call"
+thrown during the build's server render, naming the component. `client:only="react"`
+is the answer to that. `VisualEditingOverlay` in `src/layouts/PreviewLayout.astro`
+keeps it on purpose, being preview-only, Studio-coupled, and having nothing
+meaningful to render on the server.
+
+**Porting it is three greps and a browser.** Grep for `client:only` in `src/`, grep
+the docs for "Radix" and "can't SSR", switch the island, and open the drawer. Do not
+take the build passing as proof: `npm run build` passing only proves nothing threw.
+A working drawer, with focus trapped and returned, is the proof.
+
+**Proof in this repo (2026-09-18).** The committed parity baseline (built from the
+old directive) carried `client="only"` and zero occurrences of `aria-label="Open
+menu"`. After the change the built `/index.html` carries
+`client="idle"` and the trigger with Radix's full wiring:
+`aria-haspopup="dialog" aria-expanded="false" data-state="closed"
+data-slot="sheet-trigger"`. `npm run build` prerendered all thirteen routes with no
+"Invalid hook call". In a real browser at 375px, light and dark: the drawer opens,
+focus lands inside it, twelve Tab presses stay inside it, the rest of `<body>` goes
+`aria-hidden` (six siblings) with `pointer-events: none`, Escape closes it and focus
+returns to the trigger, and the console is empty. `npm run parity compare` showed
+ten of eleven pages changed, `/studio` alone unchanged because it carries no site
+header, and every changed line was the island gaining its server-rendered children.
+`npm run check`, `npm run test:unit` (488), `npm run format:check` and `npm test`
+(98 Playwright, axe light and dark on chromium and a WebKit iPhone profile) all pass.
+
+**Still carrying the false text as of 2026-09-18** (not edited by this session, for a
+later sync): `presacademy/docs/agent/components.md` (lines 20 and 36),
+`reid-design-site/docs/agent/components.md` (24, 26, 36) and its
+`docs/agent/performance.md` (76), `2ndpreschicago/docs/agent/components.md` (20, 22, 36) and its `docs/agent/performance.md` (67), `nixoncreativestudio/CLAUDE.md` (240)
+and `docs/agent/component-sources.md` (100) and `docs/stack-template/CLAUDE.md`
+(153), `stonesteps-50k/docs/agent/performance.md` (67, its table row, although its
+code and `components.md` are already correct), and the archived
+`ncs-church-starter`. wcp-website carries no copy of the claim and has no Sheet at all, so it is n/a; mas-monograms carries the wrong directive in `Header.astro` but no doc copy of the rule. nixoncreativestudio's `Header.astro` is already `client:idle`, so only its three doc copies are stale.
+
+## Card 53: One accent splitter, not two (2026-09-18)
+
+**Canonical:** `src/lib/heading-accent.ts` and `src/lib/heading-accent.test.ts`
+(both PORTABLE). `src/lib/scriptAccent.ts` and its test are DELETED by this card.
+**Applies to:** every repo that carries the in-canvas control layer. reid-design-site
+and mas-monograms carry four of these files and will read as drift until they sync.
+
+**The defect, and it is the kind that only bites the next person.** This repo had two
+functions that split a display heading around an accent word. `splitScriptAccent`
+(28 lines) matched with a case-sensitive `indexOf` and knew nothing about stega.
+`splitHeadingAccent` cleaned the stega payload off both arguments, matched
+case-insensitively, tolerated a null heading, and handed back the original heading
+alongside the split. `SectionHeading.astro` imported BOTH, and its own header comment
+said which of the two was the safe one. A component that needs a comment to explain
+which of its two identical-looking helpers is the correct one is a bug that has not
+happened yet.
+
+**What the two actually did, measured rather than assumed** (run before any code moved):
+
+| input                                     | `splitScriptAccent`                     | `splitHeadingAccent`                   |
+| ----------------------------------------- | --------------------------------------- | -------------------------------------- |
+| `('Design That Feels Like You', 'Feels')` | before `'Design That '`, word `'Feels'` | identical                              |
+| `('Hello World', 'hello')`                | `found: false`                          | `found: true`, word `'Hello'`          |
+| `('Love what you love', 'love')`          | word is the LAST `love`                 | word is the FIRST `Love`               |
+| `('  Padded heading  ', 'Padded')`        | before `'  '`, after `' heading  '`     | before `''`, after `' heading'`        |
+| heading carries a stega run               | the run lands inside `word` and renders | run stripped, halves clean             |
+| `(undefined, 'x')`                        | throws `TypeError`                      | `found: false`, `heading: ''`          |
+| miss                                      | `{found, before, word, after}`          | plus `heading`, the original untouched |
+
+**The merge, and the two ways it could have changed the site.** Only two rows above are
+behaviour changes on a live page rather than fixes, and both were checked before the
+merge, not after. (1) Case-insensitive matching can select a DIFFERENT occurrence: on
+`'Love what you love'` the old matcher found the only exact-case hit, at the end, and the
+new one takes the first. First-occurrence-only is the documented house rule for both
+accent fields, so the new answer is the intended one, and the case is recorded as a test
+that says CHANGED on its own line. (2) `plain()` trims, so on a HIT the rendered halves
+come from the trimmed heading. A padded heading is a content bug rather than a layout
+device, and `npm run parity compare` across every built route confirmed no page in this
+repo has one. On a MISS nothing changes at all: `heading` comes back untouched and every
+consumer renders its own `headline` anyway.
+
+**The dead ternary this uncovered.** `Hero.astro` called
+`splitScriptAccent(rotateEnabled ? headline : headline, rotateEnabled ? undefined : scriptAccent)`.
+The first ternary returns the same value on both branches and so did nothing. Only the
+ACCENT was ever meant to be conditional: when the rotator owns the first word of the
+headline there is no script accent to apply, so the accent argument goes `undefined`. The
+call now says exactly that. Hero was also the one caller that did not guard its heading
+argument, which the old splitter would have thrown on.
+
+**Tests move, they do not get deleted.** The retired file's 12 cases and 32 assertions
+were moved into `heading-accent.test.ts` under a describe block that names where they
+came from, and two of them were rewritten to record the deliberate behaviour change
+rather than dropped. 74 assertions before, 83 after. A refactor that comes out with
+fewer assertions than it went in with has lost coverage, not gained simplicity.
+
+**Porting it.** Delete `src/lib/scriptAccent.ts` and its test, point every
+`splitScriptAccent(` call at `splitHeadingAccent(`, drop the now-redundant `?? ''`
+guards at the call sites, and move the test cases. Check each repo's own content for a
+heading that repeats a word in two cases before assuming the change is invisible there:
+that is the one input where the two functions disagree about WHICH word to accent.
+
+## Card 54: The analytics a rebuild leaves behind (2026-09-18)
+
+**Canonical:** `src/components/Analytics.astro`,
+`src/components/analytics/GoogleAnalytics.astro` and
+`src/components/analytics/CloudflareBeacon.astro`, all three PORTABLE. Wired in
+`src/layouts/BaseLayout.astro` (per-repo, not marked), documented in `.env.example`,
+and passed through the Build step of `.github/workflows/deploy.yml` only.
+
+**The defect is an omission, not a bug, which is why it keeps happening.** A rebuild
+inherits the domain and the content but NOT the analytics tag, because the tag lived
+in whatever the old site was built in: a WordPress plugin, a theme header, a Wix
+setting. A rebuild's checklist is about what the new site DOES, and the tag is a thing
+the old site HAD. It has now cost this family twice.
+
+- **nixoncreativestudio** lost roughly six months. GA4 property 532519109 went dark in
+  2026-06 when the Astro rebuild never carried the previous site's gtag snippet.
+- **stonesteps-50k** lost its analytics on 2026-09-18, the day its domain moved off
+  WordPress onto a Worker. Property 552910285 has daily sessions through 09-17 and
+  zero from the 18th. It shipped with no measurement of ANY kind, because the
+  Cloudflare beacon is conditional on a token that was never set either.
+
+Nothing failed either time. The Worker answered, TLS matched, the forms delivered,
+every cutover check passed. The loss is invisible for weeks because a thirty day
+total decays one day at a time rather than dropping, so there is no moment where it
+looks broken. wcp-website and mas-monograms both still have cutovers ahead of them.
+
+**Two design decisions, each paid for by a different outage. Do not undo either.**
+
+1. **The library loads after the load event, not in the head.** Google's copy-paste
+   block puts about 100KB of third-party JavaScript in front of the render, and every
+   repo here gates LCP as a hard error. So `dataLayer` and the `gtag()` stub are
+   defined immediately and `gtag.js` is fetched at idle once the page has loaded.
+   Calls made before it arrives queue on the dataLayer rather than being lost, and
+   GA4 records the page view when the script lands. The reported numbers are
+   unchanged; only the moment of the network request moves.
+2. **The `<script>` element is built at runtime, not printed as a literal tag.**
+   Cloudflare Zaraz rewrites literal googletagmanager tags it finds in the HTML,
+   takes over the `gtag()` call, and queues it into its own payload. When Zaraz then
+   stops delivering, which it can do while still reporting a healthy config, the hits
+   vanish with no console error, no 5xx and no dashboard warning. Theology Matters
+   and FRT lost about 1,800 and 400 sessions respectively over eleven unnoticed days,
+   and restoring a normal snippet did not fix it because the replacement was swallowed
+   too. Creating the element in JavaScript means the rewriter never sees it. It costs
+   nothing, so it stays even on zones with no Zaraz today.
+
+**The shape: a wrapper, not conditions in the layout.** `Analytics.astro` owns the
+environment variables and the conditions; the two files under `analytics/` own the
+tags. nixoncreativestudio already used this split and stonesteps-50k kept the
+condition in `BaseLayout.astro` instead. The starter takes the wrapper, for a reason
+that is about drift rather than taste: **`Analytics.astro` carries the PORTABLE marker
+and `BaseLayout.astro` deliberately does not**, because the layout is heavily
+customised per site. Conditions placed in the layout get re-implemented in every repo
+and are invisible to `npm run sync-check`, which is exactly how reid-design-site ended
+up with the raw vendor snippet under a different variable name. A marked file makes
+that drift detectable. The split also exists for a smaller mechanical reason:
+prettier-plugin-astro cannot parse a `<script>` nested inside a template expression,
+so the tag needs a top-level component of its own either way.
+
+The secondary benefit is that "what analytics does this site have?" becomes a
+one-file question. Opening `Analytics.astro` is a checkable launch-list step in a way
+that grepping the layout for a tag is not.
+
+**Both tags are silent when unset, and that is a deliberate trade.** A fresh clone,
+local dev and preview builds all have to work with nothing configured, so an absent
+variable renders nothing rather than failing. The cost is that a missing variable
+cannot announce itself, which is precisely the failure above. The mitigation is not in
+the code: carry the tag over as a step on the cutover checklist, beside DNS and TLS,
+and prove it with a live hit. studio-status raising `ga4-flatline` is the backstop, not
+the check, because it needs several days of collapsed traffic before it can tell a dead
+tag from a quiet week.
+
+**Only `deploy.yml` gets the variables, on purpose.** Not `ci.yml`, not
+`lighthouse.yml`, not `deploy-staging.yml`. A Lighthouse run would otherwise file about
+eighteen localhost page views into the live property every time it ran, and once that
+data lands it is indistinguishable from real traffic. Since the tag loads after the
+load event it is outside LCP by construction, so the performance gate measures the same
+thing without it. The workflow carries that reasoning in a comment, because the
+omission looks like a mistake to anyone tidying the file later.
+
+**A second gap closed in the same commit.** `PUBLIC_CF_ANALYTICS_TOKEN` had never been
+passed through any workflow in this starter, so the Cloudflare beacon could not have
+rendered on any fork's deploy even with a token set. That is the same omission class as
+the GA4 one and half of what went wrong at stonesteps-50k, so both variables are wired
+here rather than leaving one to be discovered later.
+
+**GA4 SETS COOKIES, AND THE PRIVACY COPY HAS TO KNOW THAT.** Caught during review
+of this card, not after. The Cloudflare beacon is genuinely cookieless, and years
+of copy in this starter reflected that: the privacy page carried the reassurance
+"traffic is measured with Cloudflare Web Analytics, which counts page visits
+without setting cookies", inside a list headed "What doesn't happen". The moment
+GA4 became available that sentence was false for any fork that set
+`PUBLIC_GA_ID`, and nothing in the build would ever have flagged it. A privacy
+statement that is missing is a gap; one that actively denies a cookie the site is
+setting is a false statement to visitors.
+
+The fix is rule 15 applied to prose. `src/lib/analytics-config.ts` (PORTABLE)
+exports `hasGa`, `hasCfAnalytics` and `setsAnalyticsCookies`, and BOTH the
+component that renders the tags and the page that describes them read it. A fork
+that turns GA4 on cannot end up telling visitors it is off, because the copy is
+derived from the values that decide whether the script renders. `privacy.astro`
+now has a "How traffic is measured" section with three branches: no analytics,
+cookieless only, and GA4 naming the `_ga` cookies in plain words. The stale
+"no tracking pixels" claim went too, for the same reason.
+
+**Two obligations come with turning GA4 on, and they are not the same question.**
+(1) A privacy policy is required by Google's own Analytics terms, which oblige
+you to disclose your use of Analytics and of cookies. That is contractual and
+applies wherever the visitors are, so it is not a judgement call. (2) A consent
+banner is a judgement call, and it turns on audience rather than on the tag: the
+EU and UK ePrivacy rules want prior consent for analytics cookies, while a US
+audience generally does not, and the California thresholds are far above a small
+business site. This starter ships no banner and no consent gate. A fork serving
+EU or UK visitors has to decide that itself; `setsAnalyticsCookies` is the
+boolean to branch on if one is ever added, because it is the cookie that matters,
+not whether analytics exists.
+
+**A fork with no privacy route needs one before it sets `PUBLIC_GA_ID`.** Not
+every site in this family has the page: stonesteps-50k deliberately removed it
+during its build, on the correct reasoning at the time that a race with no
+analytics had nothing to disclose and a footer link to a 404 is worse than no
+link. Adding GA4 changed those facts, so that repo now needs the page back.
+
+**Per-repo work when porting.** Set `PUBLIC_GA_ID` as a repository VARIABLE (not a
+secret; it is public by design and appears in the page source). It is the web data
+stream Measurement ID, `G-XXXXXXXXXX`, NOT the numeric property id the GA4 admin screen
+shows beside the property name. Add the import and the `<Analytics />` tag to that
+repo's own `BaseLayout.astro`, near the end of `<head>`. If the repo already renders a
+beacon inline, delete it in the same change or the beacon doubles.
+
+**reid-design-site was `partial` until 2026-09-28 (see card 58).** It has GA4, but as Google's
+literal snippet inside `src/layouts/BaseLayout.astro`, under `PUBLIC_GA_MEASUREMENT_ID`
+rather than `PUBLIC_GA_ID`. So it has the data but neither of the two protections
+above, and its tag is in the exact form Zaraz swallows. Porting it means replacing the
+inline block, renaming the variable, and re-capturing the parity baselines, which
+currently have the snippet baked into all ten of them.
+
+**Verified state at time of writing (2026-09-18)**, by searching each repo for
+`googletagmanager` rather than assuming: nixoncreativestudio yes (origin of the
+component), stonesteps-50k yes, reid-design-site partial as above, and wcp-website,
+presacademy, mas-monograms and 2ndpreschicago all no.
+
+**How to verify a port, because config inspection and HTML scraping both lie here.**
+Since card 58 the tag does NOTHING on localhost, so the firing half of this check can
+only be done on the production host, after the deploy; locally, the check is that
+nothing fires (the smoke test holds that). On the live site, in a real browser:
+`typeof window.gtag === 'function'`; a `googletagmanager.com/gtag/js?id=` script present
+in the head; `performance.getEntriesByType('resource')` showing a
+`google-analytics.com/g/collect` entry (its `responseStatus` reads 0 and `transferSize`
+0, which is opaque cross-origin rather than failure, so a non-zero duration is the
+signal); no literal `<script src=googletagmanager>` in the built HTML; and no tag on
+`/studio`. Close the loop with a GA4 realtime report if there is a property to point at,
+querying `eventName` and `eventCount`. Do not query `unifiedScreenName`: it returns
+empty rows for web `page_view` and reads as a false negative. Those hits are real and
+land in the live property.
+
+**Addendum (2026-10-13): Lighthouse's "unused JavaScript" flag on `gtag/js` is the expected residue, not a regression.**
+An audit flagged about 100 KiB of unused Google tag JS on every page across the family. Every site's
+`GoogleAnalytics.astro` is byte-identical to this canonical copy, so the library already loads at idle after the
+load event (decision 1 above). Lighthouse still sees it because it waits for network quiet, and the idle timeout is
+4 s. Measured on reiddesignllc.com with PageSpeed Insights (mobile, Google's machines, 3 runs, medians): `gtag/js`
+transfers 176 KiB, of which 72 KiB is reported unused, with 183 ms of main-thread time (236 ms of JS CPU), all after
+the load event, at performance scores of 91 to 95. That cost is gtag itself. The only way to move it further out is
+to wait for a first interaction, and a visitor who reads and leaves without scrolling or tapping would then never
+send a `page_view`, so the bounce traffic would vanish from GA4. Nothing was changed. Revisit only if the tag ever
+moves in front of LCP, or if a site drops GA4 for the Cloudflare beacon alone.
+
+## Card 55: Build reads always use the Sanity CDN; a PROD fetch error throws (2026-09-23)
+
+**Origin: fbcm** (`897cec90`, not itself a column in the matrix above — it is a
+downstream client build, not a family template — but the bug and the fix are general
+and worth carrying into every repo with a `src/lib/sanity.ts`). **Canonical:**
+`src/lib/sanity.ts` in this starter (not PORTABLE-marked; each repo's copy has its own
+shape, so this ports by hand, not by `sync-check`).
+
+**The bug.** `useCdn: !readToken` was written on the belief that Sanity's CDN rejects
+token-authenticated requests, so a client with `SANITY_API_READ_TOKEN` set had to skip
+the CDN and hit the uncached API directly. That belief was wrong: the API CDN has
+accepted authenticated requests since API version 2021-03-25, and it serves the same
+token-widened result set the uncached API does. The practical effect: **every local
+build with a token in `.env` — which is the normal case once a repo is past its
+bootstrap phase — read the uncached API, not the CDN**, while CI (no token in that
+environment) stayed on the CDN throughout. A full build issues several hundred
+queries. On FBCM, five days of agent-heavy local work (rebuilds, `npm run parity`
+recaptures, Playwright's `webServer` builds) spent 325k requests against the Growth
+trial's 250k monthly API quota, while CI's CDN usage over the same window was 156k of
+a 1M CDN quota. The fix is one line: `useCdn: true`, unconditionally, on the published
+build client. A token does not disable CDN use; it only widens what the CDN serves.
+
+**The second half, found in the same file.** `sanityFetch`'s catch block logged a
+warning and returned the caller's fallback for every fetch error, in every
+environment, including a production build. That means a quota block (the failure
+mode above, before this fix) or a genuine Sanity outage during a deploy build would
+not fail the build — it would silently ship the fallback content (usually an empty
+array or `null`) to production. Fixed by checking `import.meta.env.PROD` in the catch:
+in a production build, throw (`` `[sanity] fetch failed during a production build:
+${String(err)}` ``) so the deploy stops and the live site keeps its last good build;
+in dev, keep the warn-and-return-fallback behavior so local iteration without a
+configured project, or against a flaky connection, does not grind to a halt. The
+existing "Sanity unconfigured, no network call, return fallback" short-circuit ahead
+of the `try` is untouched either way — a fresh clone with no `PUBLIC_SANITY_PROJECT_ID`
+still builds clean.
+
+**What to check before porting.** Not every repo's `sanity.ts` has this exact shape.
+Apply both changes only to the **published/build read client** (`perspective:
+'published'`, used for static generation). A repo with a separate preview or draft
+client (`perspective: 'drafts'`, used for the live-preview stack under `/preview/**`)
+must leave that client's `useCdn: false` alone — the draft perspective is explicitly
+CDN-incompatible in Sanity's own docs, unlike the published one, and that client's
+errors are already handled by the preview's own fail-open path, not this one.
+
+**Verified state at time of writing (2026-09-23)**, by reading each repo's
+`src/lib/sanity.ts` directly rather than assuming: fbcm fixed (origin), this starter
+and stonesteps-50k fixed in the same session as this card, and `ncs-church-starter`,
+`presacademy` and `mas-monograms-rebuild` all still carry both the `useCdn: !readToken`
+bug and the swallow-in-every-environment catch, unported as of this date. Background
+and the ported-to checklist: `_vault/gotchas/sanity-token-builds-bypass-the-cdn.md` in
+the studio vault.
+
+## Card 56: the PROD throw from card 55 was still getting swallowed by page-level `.catch()` (2026-09-24)
+
+**Origin: fbcm** (`a2e3b1c`). Card 55 made `sanityFetch` throw on a failed read
+during a production build, so a quota block or outage would stop the deploy instead
+of shipping empty content. It did not go far enough: every static route's own
+Sanity reads were separately wrapped in `.catch(() => null)` / `.catch(() => [])`,
+so the throw never reached the build. A dynamic route (`/[slug]`, `/journal/[slug]`)
+that took the caught `null` for "no such document" then did
+`if (!doc) return Astro.redirect('/404')`, which is a live route, not the build
+step, redirecting: a transient failed Sanity read published a real page as a
+redirect to `/404`. fbcm caught this on `/ministries` during a merge rebuild via
+`npm run parity compare`.
+
+**The fix, in three parts.**
+
+1. **`fetchWithRetry` inside `sanityFetch`.** A build makes a few hundred reads,
+   and a single network blip on one of them used to fail the whole build (correct
+   per card 55, but a blip is not an outage). `sanityFetch`'s `client.fetch` call
+   now goes through a small retry helper: two retries, waiting 500 ms then 1500 ms,
+   then rethrowing. A real outage or quota block still fails after about 2 s and
+   the build stops; a blip rides it out.
+2. **Static (prerendered) routes under `src/pages` no longer catch their own
+   Sanity reads.** `sanityFetch` already has its own fallback behavior for dev
+   and the unconfigured case; the page-level `.catch()` only ever caught the PROD
+   throw, defeating card 55's whole point. Removed from `404.astro`, `about.astro`,
+   `contact.astro`, `faq.astro`, `index.astro`, `privacy.astro`, `process.astro`,
+   `services.astro`, `journal/index.astro`, `journal/rss.xml.ts`, `journal/[slug].astro`
+   and `[slug].astro`. Catches were deliberately left in place in `preview/**`,
+   `api/**`, any route with `prerender = false`, and shared runtime/layout reads
+   that are not the build's own routing (`BaseLayout.astro`'s announcement fetch,
+   `Footer.astro`'s project list) — those are live-request paths, not the static
+   build.
+3. **The two dynamic routes get a defensive throw ahead of their existing
+   `/404` redirect.** `getStaticPaths` lists a document, so if the per-page fetch
+   for that same document comes back empty in a production build, that is a
+   failed or racing read, not a real 404. `[slug].astro` and `journal/[slug].astro`
+   now do:
+   ```
+   if (!doc && import.meta.env.PROD) {
+     throw new Error(`"${slug}" was listed but came back empty; refusing to publish it as a 404`);
+   }
+   if (!doc) return Astro.redirect('/404');
+   ```
+   The dev-mode redirect is unchanged, so local iteration without a configured
+   project still works.
+
+**What to check before porting.** Same shape as card 55: apply to the
+build/published read client and its routes only, not a separate preview/draft
+client (its catches are a live-request fail-open path, not this one). Read each
+page file individually rather than regexing across it — some repos' fallback
+shapes differ line to line (`[]` vs `[] as string[]` vs `null`), and a multi-line
+`.catch()` can span the query call.
+
+**Verified state at time of writing (2026-09-24):** fbcm fixed (origin, `a2e3b1c`),
+this starter fixed in the same session as this card. `stonesteps-50k`,
+`ncs-church-starter`, `presacademy` and `mas-monograms-rebuild` not yet checked for
+this half of the bug; check each one's static routes for a page-level `.catch()`
+sitting on top of a `sanityFetch` call before assuming card 55 alone protects them.
+
+## Card 57: The preview cookie's value is checked, not its presence (2026-09-26)
+
+**Origin: fbcm** (`d909d10d`, where it was filed as "card 29d"; that number is
+already this file's "Staleness counts every channel", so it lands here as 57 and
+fbcm's card should be renumbered at its next sync). **Canonical:**
+`src/lib/preview-auth.ts` (unchanged by this card) and its two callers here,
+`src/pages/preview/[...slug].astro` and `src/pages/preview/live.ts`. fbcm has a third
+caller, `src/pages/preview/post/[slug].astro`; any repo with more preview page routes
+has more.
+
+**The gap, in the starter and every repo on it.** `/api/draft-mode/enable` writes
+`await previewCookieValue()`, a SHA-256 fingerprint of `VERSION` plus the server's
+`SANITY_TOKEN`, into `sanity-preview-perspective`, and `isStudioPreview()` exists to
+compare a cookie against that fingerprint. Nothing called it. Every preview route asked
+only `cookies.has(perspectiveCookieName)`, so anyone who typed that cookie into a
+browser with any value (`true`, `drafts`) read unpublished drafts through the server's
+token, and could hold open `/preview/live` connections to Sanity's listener.
+
+**The fix.** Every presence check becomes
+
+```ts
+await isStudioPreview(cookies.get(perspectiveCookieName)?.value);
+```
+
+(`Astro.cookies` in an `.astro` route). In the page route the result IS `draftMode`, so
+a failed check shows published content, as a missing cookie always did. In
+`/preview/live` a failed check returns the existing 403 before any upstream connection
+opens. With `SANITY_TOKEN` unset, `previewCookieValue()` returns an empty string and
+the check fails closed. presacademy already gates `/api/stats` on the same check in
+production, which is the evidence the Presentation tool never rewrites the cookie's
+value after the handshake, so editors are not locked out.
+
+**What to check before porting.** First confirm the repo's `enable` route writes
+`await previewCookieValue()`, not a literal `'true'` (the visual-editing package's own
+convention). If it writes `'true'`, this check locks every editor out; port
+`preview-auth.ts` and the enable route first. Then grep `src/` (and `modules/`) for
+`cookies.has(perspectiveCookieName)` and every other read of that cookie, and change
+all of them: the gap is per route, and one missed route is the whole gap. Measure it on
+`wrangler dev` with four cookies: none, `true`, `drafts`, and the genuine fingerprint.
+
+**Verified state at time of writing (2026-09-26):** fbcm fixed (origin), this starter
+fixed in the same session as this card. stonesteps-50k, presacademy (its page routes;
+`/api/stats` is already correct), ncs-church-starter, wcp and mas-monograms-rebuild not
+yet checked.
+
+## Card 58: GA4 fires only on the production hostname (2026-09-28)
+
+**Canonical:** `src/components/analytics/GoogleAnalytics.astro` (rule 3 in its
+header) and `tests/smoke.spec.ts` (the localhost test). Amends card 54.
+
+**The hole in "only `deploy.yml` gets the variable".** Card 54 kept `PUBLIC_GA_ID`
+out of CI and Lighthouse so test runs could not file page views. That holds for CI
+and does nothing about a developer's `.env`: a local Playwright or Lighthouse run
+builds with it. reid-design-site's live property holds 236 (2026-07-28) and 234
+(2026-08-27) one-pageview `localhost` sessions, one per test, on the days its suites
+landed and its stack port ran, plus stray `*.workers.dev` hits. Once in, they are
+indistinguishable from real traffic and wreck a month's report.
+
+**The rule.** The snippet compares `location.hostname` with the site's own `site`
+URL (apex and `www.` both count) and off it does nothing: no dataLayer, no `gtag`,
+no request. Keyed off `Astro.site` so there is no per-repo configuration; every fork
+already sets `site` for its sitemap and canonicals. **It fails OPEN when `site` is
+unset** (the tag runs everywhere, as before), because failing closed would recreate
+the silent-dark failure card 54 exists to prevent. A fork whose site answers on a
+host that is neither the apex nor `www` of `site` (a second domain, a
+`*.workers.dev` it actually serves visitors on) will record nothing there: that is
+intended, and the fix is to serve the real domain, not to widen the list.
+
+**The test.** `tests/smoke.spec.ts` asserts no request to Google and no
+`dataLayer` on localhost. In CI the id is unset so it passes trivially; it bites on
+exactly the local run that caused the leak. Proven both ways on 2026-09-28 with a
+built-in dummy id: fails on the card-54 component (it caught the `gtag/js` request),
+passes on this one. A Node VM run of the built snippet confirmed `example.com` and
+`www.example.com` queue the `js`/`config` calls and inject the loader, while
+`localhost`, `127.0.0.1` and `*.workers.dev` get nothing.
+
+**Porting.** Pull the two files. Nothing else changes: same variable, same props. The
+localhost test belongs in whatever smoke spec the repo has, if its smoke spec is not
+the canonical one.
+
+**Verified state (2026-09-28):** this starter (origin), reid-design-site (ported in
+the same session as its full card-54 port, which is where the leak was found).
+nixoncreativestudio and stonesteps-50k pulled it on 2026-10-05 (nixoncreativestudio#104,
+stonesteps-50k#90; both verified live: the built page carries the allowed-host list for the
+apex and www). Verified live 2026-10-05: reid-design-site, nixoncreativestudio,
+stonesteps-50k. The others carry the same canonical file (md5 530459bb): mas-monograms,
+presacademy, fbcm. Why it mattered: September 2026 held 347 localhost sessions in the
+stonesteps-50k property and 22 of 29 in nixoncreativestudio's.
+
+## Card 59: `_headers` rules for the same path do not merge (2026-09-29)
+
+**Origin: reid-design-site** (PR #43, the full-CSP hardening). **Canonical:** the header
+comment of `public/_headers` and "Security headers" in `docs/agent/deployment.md`. A
+gotcha, not a file: each site's `_headers` is its own.
+
+**The trap.** Reid moved from `frame-ancestors` alone to a full Content-Security-Policy,
+and a Web Worker is governed by the CSP on its OWN script response, so it added a
+`/_astro/*` rule that only detached the policy (`! Content-Security-Policy`). The
+year-long immutable cache on every hashed asset vanished. `@astrojs/cloudflare`
+prepends its own `/_astro/*` rule at build carrying
+`Cache-Control: public, max-age=31536000, immutable`, and two rules for the same path
+do not add up: the result served `max-age=0, must-revalidate`. Nothing fails, nothing
+logs; the site just re-downloads every script and stylesheet on every visit.
+
+**Reproduced here** under `npm run preview` (wrangler 4.110, adapter 14.2.4): a
+`/_astro/` stylesheet answers `public, max-age=31536000, immutable` as built; append a
+second `/_astro/*` rule holding only `! Content-Security-Policy` and the same file
+answers `public, max-age=0, must-revalidate` AND still carries the CSP, so the detach
+did not take effect either. Replace both with ONE rule that detaches and sets the cache
+line, and it answers immutable with no CSP.
+
+**The fix is one rule that owns the cache.** The adapter skips its injection when a
+matching rule in `_headers` already sets `Cache-Control` (`buildAssetsHeadersContent()`
+returns null; the log line "Injected immutable Cache-Control for /_astro/* into
+_headers" disappears, the skip itself is debug-level). So any `/_astro/*` rule a site
+writes carries the cache line itself.
+
+**The other half: different patterns DO merge.** Cloudflare applies every matching
+rule's headers, and two `Content-Security-Policy` headers are both enforced (the browser
+intersects them). A public policy on `/*` therefore still binds `/studio/*`, and the
+Studio fails in ways that pass the build. `/studio/*` has to start with
+`! Content-Security-Policy` and then set its own.
+
+**Two more things Reid measured that belong with it.** `upgrade-insecure-requests`
+broke click navigation under `npm run preview` (a 307 to `http://127.0.0.1` rewritten to
+https) and buys nothing behind HSTS, so it is out. And the SSR routes get no `_headers`
+at all: a policy for `/preview/**` has to be set from the SSR code.
+
+**Starter status:** not exposed. `public/_headers` here has only the `/*` rule, and the
+built `dist/client/_headers` holds the adapter's `/_astro/*` rule first and ours second;
+verified under `npm run preview` 2026-09-29. The comment now warns before anyone adds a
+second rule, and `docs/agent/deployment.md` (whose headers list still claimed an
+`X-Frame-Options: DENY` that was never shipped) is corrected.
+
+**Applies to:** any site that adds a path-scoped rule to `_headers`. reid-design-site
+has it right (three rules, `/_astro/*` owning the cache, verified). Other repos with a
+full CSP should check that their `/_astro/*` files still answer `immutable` under their
+preview command.
+
+## Card 60: `astro dev` on Windows: repair @sanity/astro's dedupe alias (2026-09-29)
+
+**Origin: reid-design-site** (PR #48, https://github.com/NateJ45/reid-design-site/pull/48).
+**Canonical:** `src/lib/sanity-dedupe-alias.ts` (`fixSanityDedupeAlias()`, the Vite plugin,
+and `repairSanityDedupeAlias()`, the logic), tested in `src/lib/sanity-dedupe-alias.test.ts`,
+wired into `vite.plugins` in `astro.config.mjs`.
+
+**The trap.** On Windows, `astro dev` exits within a minute of starting:
+
+```
+Error during dependency optimization:
+Build failed with 364 errors:
+[MISSING_EXPORT] "DocumentStatus" is not exported by "node_modules/sanity/package.json".
+  node_modules/@sanity/orderable-document-list/dist/index.js:1:10
+```
+
+The tell is the path in the first line: a `package.json` where a module should be. Nothing
+else fails. `astro build`, CI, Lighthouse and production are all green, so the first person
+to see it is whoever next opens a dev server on a Windows machine.
+
+**The cause.** `@sanity/astro` (3.4.2 here; 3.5.1 has the same code) injects a dev-only
+Vite plugin, `sanity:module-dedupe` (`apply: 'serve'`, `enforce: 'pre'`). Its `config` hook
+returns `resolve.alias` entries `{ find: /^sanity$/, replacement: <dir> }` (and the same for
+`styled-components`) so every import of those packages lands on one copy. It builds `<dir>` as
+`createRequire(...).resolve('<pkg>/package.json').replace(/\/package\.json$/, "")`. That
+regex matches a FORWARD slash only. Node returns a backslash path on Windows, the replace
+matches nothing, and the alias ends up pointing at
+`C:\...\node_modules\sanity\package.json`, a JSON file with no exports. Find it with
+`grep -o "sanity:module-dedupe" node_modules/@sanity/astro/dist/sanity-astro.js`. Because
+`astro build` never loads the plugin, no CI run can catch this.
+
+**The rejected alternative.** The same plugin has an off switch,
+`SANITY_ASTRO_DISABLE_MODULE_DEDUPE=1`. With it set the crash goes away and the server
+stays up, but the Studio does not hydrate in the browser
+(`react-compiler-runtime ... does not provide an export named 'c'`). The switch drops the
+whole plugin, including the `optimizeDeps.include` list it also contributes, and the Studio
+needs that pre-bundling. Do not use it.
+
+**The fix.** A second plugin, ordered LAST (`enforce: 'post'` and a `config` hook with
+`order: 'post'`), that receives the merged config, finds any `resolve.alias` entry whose
+`find` is a RegExp and whose `replacement` is a string ending in
+`<sep>node_modules<sep>...<sep>package.json`, and cuts the file name off in place. It mutates
+rather than returning a corrected copy because array-valued config merges concatenate: a
+returned copy would sit BEHIND the broken entry and the broken entry would still win. It is
+a no-op on macOS and Linux (nothing matches), for the object form of `alias`, and once
+upstream fixes the regex, so leaving it in is safe. Delete it when `sanity:module-dedupe`
+uses a separator-safe replace.
+
+**Measured here (2026-09-29, Windows 11, Node 24.16.0, @sanity/astro 3.4.2, sanity 6.9.1,
+astro 7.2.9, adapter 14.2.4, wrangler 4.110.0, vite 8.2.2).**
+
+- **Reproduced first, on the unmodified tree.** `astro dev` died about 9 seconds in with
+  `Build failed with 346 errors:` and exit code 1. The count differs from Reid's 364, and the
+  first export named is `FormRow` from `node_modules/sanity/lib/presentation.js` rather than
+  `DocumentStatus`, because the optimizer scans different files first; every one of the
+  `[MISSING_EXPORT]` blocks names `node_modules/sanity/package.json`.
+- **Fixed.** `astro v7.2.9 ready in 26283 ms`, zero `MISSING_EXPORT`. `GET /` 200 in 4.85s
+  cold, `GET /studio/` 200 in 0.13s; both still 200 when polled at 1.5, 3.1 and 4.7 minutes
+  (0.1s to 1.1s). The run was ended by the 330s `timeout` (exit 124), and the "Workers
+  runtime crashed unexpectedly and is being restarted" line stamped at the same second is
+  that kill, not a fault.
+- **The Studio in a real browser.** `/studio/` hydrated to the Studio's own "Project not
+  found" screen (this worktree's `.env` carries no project id; the CORS errors to
+  `placeholder-project-id.api.sanity.io` are that, and expected on localhost). One request
+  each for `styled-components.js`, `sanity.js` and `react-compiler-runtime.js` from
+  `node_modules/.vite/deps/`, and no console message matching
+  `hydrat|does not provide|instances`.
+- **Build output unchanged.** `npm run build` with `origin/main`'s `astro.config.mjs` and
+  with this one, back to back: both exit 0, both 491 files under `dist/client`, and the
+  sorted file list and every file's sha1 are identical.
+  `grep -lF 'packages/styled-components/src/utils/errors.md#' dist/client/_astro/*.js` lists
+  exactly one file, and the loose `grep -l "errors.md#"` also finds one.
+- **Unrelated noise seen while doing it.** `astro dev` logs `[ERROR] Invalid hook call` on
+  each render of `/` (the response is still a 200). It appears identically with
+  `SANITY_ASTRO_DISABLE_MODULE_DEDUPE=1`, that is with no `sanity` alias in play at all, so
+  this change neither causes nor cures it. It is not investigated here.
+
+**Applies to:** every family repo using `@sanity/astro` with the embedded Studio, on any
+Windows dev machine. The regex is present in 3.4.2 (read here) and in 3.5.1, the latest
+release on 2026-09-29 (read from the published tarball, `npm pack @sanity/astro@3.5.1`), so
+upgrading does not fix it.
+
+**Adopting it in a site.** Copy the two files, then in that site's `astro.config.mjs` add
+`import { fixSanityDedupeAlias } from './src/lib/sanity-dedupe-alias.ts';` and put
+`fixSanityDedupeAlias()` in `vite.plugins` next to `tailwindcss()`. Check with `astro dev` on
+Windows and open `/studio/` in a real browser. **reid-design-site** carries an inline
+equivalent (`fixSanityDedupeAliasOnWindows` in its `astro.config.mjs`, plugin name
+`reid:fix-sanity-dedupe-alias`), which works and is marked `partial`; replace it with the
+canonical file, and add the marker, at its next sync session. Checked 2026-09-29: the
+installed `@sanity/astro` in presacademy, mas-monograms, stonesteps-50k and
+ncs-church-starter (and fbcm, outside the matrix) carries the same regex; wcp-website
+(`site/`, `^3.4.2`) and 2ndpreschicago (3.5.1) pin versions that do.
+
+**Rollout (2026-09-29/30).** Each port was verified on Windows before merging: unfixed
+repro, a fixed dev run, the Studio loaded in a browser, and `dist/client` compared file by
+file against that repo's main (identical apart from files that embed the build time).
+
+- **presacademy** [#40](https://github.com/NateJ45/presacademy/pull/40), **mas-monograms**
+  [#50](https://github.com/NateJ45/mas-monograms/pull/50): straight ports, crash reproduced and fixed.
+- **reid-design-site** [#57](https://github.com/NateJ45/reid-design-site/pull/57): its inline
+  equivalent replaced by the canonical module (vitest repo, so a local vitest spec instead of
+  the node:test one).
+- **stonesteps-50k** [#51](https://github.com/NateJ45/stonesteps-50k/pull/51): had already
+  excluded `sanity` from `optimizeDeps` as a workaround for this crash (blamed on rolldown),
+  which kept dev up but left the Studio unable to hydrate. The port drops that exclude, and the
+  Studio now hydrates. **Lesson: an `optimizeDeps.exclude` entry for `sanity` is this bug's
+  workaround in disguise; remove it when adopting the card.**
+- **wcp-website** [#41](https://github.com/NateJ45/wcp-website/pull/41) (`site/`, vitest): the
+  crash is fixed, but the Studio is still blank under dev from a separate WCP-only cause
+  (`"./styles.css" is not exported ... @sanity/ui`, suspected: `sanity-plugin-media` 6.1.7
+  nesting `@sanity/ui` 4.0.7). Its docs had blamed the spaces in its folder path; the crash
+  reproduced from a short path, so that note was corrected.
+- **2ndpreschicago** [#37](https://github.com/NateJ45/2ndpreschicago/pull/37): also excluded
+  `sanity`, so no crash; the exclude stays because this repo's Studio is blank under dev either
+  way on its phase-2 stack (sanity 6.12). The port is protective. The same PR pulled three
+  canonical files forward that had drifted since 2026-09-07.
+- **fbcm** [#5](https://github.com/NateJ45/fbcm/pull/5), outside the matrix: straight port.
+
+## Card 61: Reduced motion zeroes transitions; a spec holds it (2026-09-30)
+
+**Origin: fbcm** ([PR #6](https://github.com/NateJ45/fbcm/pull/6)). **Canonical:** the
+reduced-motion block in `src/styles/globals.css` (per-site file: copy the two changed lines
+and the comment), and `tests/reduced-motion.spec.ts` (PORTABLE), added to the
+`webkit-iphone` project's `testMatch` in `playwright.config.ts` (PORTABLE).
+
+**The trap.** The family's reduced-motion reset set `transition-duration: 0.01ms !important`
+on `*`, the common idiom (it keeps `transitionend` firing). But `transition-property`
+defaults to `all`, so the idiom gives EVERY element on the page a transition, and any
+property that changes after load starts one. WebKit never finishes a 10-microsecond
+transition. fbcm's `motion.spec.ts` "nothing on the home page is animating" failed on the
+`webkit-iphone` project on `main`: WebKit did apply `reduce` (`matchMedia` and a CSS probe
+rule agreed), yet two seconds after load 289 `CSSTransition`s on `tab-size` sat at
+`currentTime` 0, progress 0, and the count kept growing (35 at load, 67 at +2s, 228 after a
+navigation). Chromium finishes them at once, which is why it looked like a WebKit flake. It
+is a real-user bug too: a stuck transition holds its property at the OLD value on an iPhone
+with Reduce Motion on.
+
+**The fix.** `transition-duration: 0s !important; transition-delay: 0s !important;` A zero
+combined duration creates no transition at all; the delay matters, because a staggered
+delay alone creates one. The cost: `transitionend` no longer fires under `reduce`, so first
+check nothing waits on it (`grep -rnE "transitionend|ontransitionend" src`: none in the
+starter or fbcm). Animations keep `0.01ms`: Radix waits on `animationend` for exit
+animations, and animations finish correctly in WebKit.
+
+**The spec.** `tests/reduced-motion.spec.ts`: under `reducedMotion: 'reduce'`, every route in
+`routes.ts` must have nothing `running` in `document.getAnimations()` 2.5s after
+`domcontentloaded` (not `load`: a WebM-first video never fires it in WebKit). It runs on
+chromium and the WebKit iPhone profile; on chromium it still catches an infinite animation
+that escaped the reset.
+
+**Measured.** In fbcm the equivalent check failed on WebKit before the fix and passed after
+(PR #6: first fully green CI since 2026-09-28). In the starter the new spec passed BEFORE the
+fix as well (PR #41's first commit: 116 tests, the 16 new ones included), because the
+starter's pages do not trip the post-load property change that starts a transition. So the
+spec cannot prove the bug here; fbcm is the proof. It guards the rest of the family, whose
+pages may or may not trip it.
+
+**Applies to:** every live family repo carries the same reset (checked 2026-09-30 against
+each repo's `main`: presacademy, reid-design-site, mas-monograms, 2ndpreschicago,
+stonesteps-50k, wcp-website (`site/`), nixoncreativestudio, and fbcm outside the matrix,
+already fixed).
+
+**Adopting it in a site.** Change the two lines in its reduced-motion block (and add
+`transition-delay: 0s`), grep for `transitionend`, copy `tests/reduced-motion.spec.ts` and the
+`playwright.config.ts` `testMatch` change (or pull the canonical config), and let CI run it
+on WebKit. A route that fails lists what is still running.
+
+**Needs `@playwright/test` 1.63 or later.** The spec's `test.use({ reducedMotion: 'reduce' })`
+does not exist on 1.62: it fails type-check (`ts(2353)`), and at runtime the page would load
+WITHOUT reduced motion, so the spec would prove nothing. presacademy and wcp-website were on
+1.62 and took the bump (only `@playwright/test`, `playwright` and `playwright-core` move).
+
+**Rollout (2026-09-30).** Every port checked first that nothing listens for `transitionend`
+(none did), then ran the spec plus smoke on chromium and webkit-iphone before merging:
+[stonesteps-50k #52](https://github.com/NateJ45/stonesteps-50k/pull/52) (its config was an older
+canonical copy, pulled forward),
+[reid-design-site #60](https://github.com/NateJ45/reid-design-site/pull/60),
+[mas-monograms #51](https://github.com/NateJ45/mas-monograms/pull/51),
+[presacademy #41](https://github.com/NateJ45/presacademy/pull/41) (Playwright bump),
+[nixoncreativestudio #39](https://github.com/NateJ45/nixoncreativestudio/pull/39),
+[2ndpreschicago #39](https://github.com/NateJ45/2ndpreschicago/pull/39),
+[wcp-website #43](https://github.com/NateJ45/wcp-website/pull/43) (`site/`, Playwright bump), and
+fbcm (the origin, [PR #6](https://github.com/NateJ45/fbcm/pull/6)). None of these sites failed the
+spec BEFORE its fix either, locally; fbcm remains the only measured failure.
+
+## Card 62: Dependabot config: grouped, pinned stack ignored, secrets separate (2026-10-03)
+
+**Origin:** the 2026-09-04 Dependabot rollout across the six Astro repos
+(vault gotcha `dependabot-secrets-and-pinned-stacks`). **Canonical:** `.github/dependabot.yml`
+(per-repo: the ignore list is the repo's pinned set) and `docs/agent/deployment.md`,
+"Dependabot".
+
+The starter had no `dependabot.yml` at all, so a fork inherited no ignore-rule shape. It now
+opens one grouped npm PR (`minor-and-patch`, at most 5 open) and one `actions` group, weekly
+on Monday at 07:00 America/New_York, with no `target-branch` (`main` is the only long-lived
+branch). The `ignore:` list is the pinned set (`sanity`, `@sanity/*`, `sanity-plugin-*`,
+`react`, `react-dom`, `react-is`, `styled-components`, `@astrojs/cloudflare`, `wrangler`) plus
+`typescript` majors `>=7` (vault gotcha `typescript-not-7`: Dependabot re-proposes any version
+it has not been told to ignore, so closing the PR is not enough).
+
+**Blanket major ignore (2026-10-03, Nathan's decision).** The npm `ignore:` list also carries
+`dependency-name: '*'` with `update-types: ['version-update:semver-major']`, so no npm major
+opens a PR (the explicit pinned entries and `typescript >=7` stay: they document intent).
+Why: majors (`@astrojs/react` 7, `motion` 13, `primereact` 11, `eslint-plugin-astro`) piled up
+as PRs nobody could merge alone, because Astro, the adapter, Sanity and wrangler must move
+together with a real deploy test (vault gotcha `wrangler-bump-needs-real-deploy-test`). They
+wait for ONE planned, starter-first stack upgrade. The `github-actions` ecosystem is exempt.
+Adopting it in a site: copy the same two lines into that repo's npm `ignore:`.
+
+**Why each part exists.**
+
+- The file configures VERSION-update PRs only. Vulnerability alerts and automated security
+  fixes are separate repo settings (`gh api -X PUT repos/OWNER/REPO/vulnerability-alerts`,
+  `.../automated-security-fixes`), off on every repo until switched on.
+- Dependabot-triggered runs get the _Dependabot_ secrets store, not the Actions one. WCP's
+  build needed three tokens and every Dependabot PR failed with an ENOENT on a
+  Sanity-sourced page until `gh secret set NAME --app dependabot --repo OWNER/REPO` was run
+  for each `secrets.*` the CI build reads. The starter's PR build reads only repo VARIABLES,
+  so a fresh fork is fine; the day a fork adds a secret to CI, set it again for Dependabot.
+- Exact-pinned stacks break the moment Dependabot bumps one member (ERESOLVE against the
+  pinned peer, or a plugin importing a subpath the pinned `@sanity/ui` lacks). Put the set on
+  `ignore:` and move it by hand, together.
+- Linters ship new default rules in minors; exclude such a tool from the group so it lands
+  with its fixes. Never merge a dependency PR on local checks when its CI is red.
+
+**Adopting it in a site.** Copy the file, replace the `ignore:` list with that repo's own
+exact-pinned set, and run `gh secret set --app dependabot` for every `secrets.*` its CI reads.
+**No workflow was touched:** the starter has no dependabot-automerge workflow.
+
+## Card 63: `astro dev` pre-bundles what the first render discovers (2026-10-03)
+
+**Origin:** Stone Steps, 2026-09-16 (vault gotcha `a-stack-trace-names-source-not-instance`,
+withastro/astro#17834). **Canonical:** the `vite.environments.ssr.optimizeDeps.include` block
+in `astro.config.mjs` (per-repo file), and the debugging rule in
+`docs/agent/stack-and-config.md`.
+
+**The bug.** On `@astrojs/cloudflare` 14.2.4 the dev server discovers `astro/app/manifest`
+and `astro/logger/json` during the first render, the Vite optimizer re-bundles and reloads
+mid-request, `react-dom/server` keeps a React from the previous pass, and every React island
+fails to server-render ("Invalid hook call", then "Cannot read properties of null (reading
+'useState')") while the page answers 200. `astro build` never runs the optimizer, so CI and
+production cannot show it.
+
+**Reproduced in the starter, 2026-10-03** (Windows, `ASTRO_DEV_BACKGROUND=1 node
+node_modules/astro/bin/astro.mjs dev --json`, `node_modules/.vite` removed, one request to
+`/`): 2 optimizer reloads, 17 "Invalid hook call" warnings, 7 TypeErrors (`BackToTop`,
+`PortableText`, and others). With the block: 0 reloads, 0 TypeErrors, 1 warning on the first
+request and 3 after two more pages; pages still render correct HTML. Stone Steps also
+pre-bundles react for the `astro` environment; that second block is not part of this port and
+the leftover warnings did not need it.
+
+**The method (the part that generalises).** A path in a bundled runtime's stack trace is
+source-map output: it names where code was WRITTEN, not which copy executed. Prove module
+identity by making the file THROW (`throw new Error('PROBE_X')`, guarded so unrelated loads
+survive), and prove a probe's channel with a signal you know should arrive before trusting
+silence (`console.log` in the workerd module runner never reaches Astro's dev log; thrown
+errors do). Confirm which Vite environment (`client`, `ssr`, `astro`) is running with a
+`configEnvironment` probe. Remove the block when the adapter pin moves; re-measure.
+
+## Card 64: Tailwind must not scan committed baselines or docs (2026-10-03)
+
+**Origin:** FBCM, 2026-09-20 (vault gotcha `committed-parity-baselines-feed-tailwind`).
+**Canonical:** the `@source not` block after the imports in `src/styles/globals.css`.
+
+Tailwind v4 automatic source detection skips only gitignored paths. `scripts/.parity/*.html`
+is committed, and `CLAUDE.md`, `PORTS.md` and `docs/` name hundreds of utility classes in
+prose, so every one kept a CSS rule alive and a rendered-HTML parity compare could pass on
+rules its own baselines fed. FBCM caught it as a 101-byte inline-sheet difference after a
+deliberate recapture, fixed by naming two classes in a Markdown doc.
+
+**Fix in the starter:** `@source not '../../scripts/.parity'; @source not '../../docs';
+@source not '../../*.md';` (paths are relative to `src/styles/globals.css`).
+
+**Measured, 2026-10-03** (`npm run build`, no Sanity project): both shipped sheets shrank by
+4,478 bytes (121,565 to 117,087 and 121,890 to 117,412). The class-selector set lost 32 rules
+and gained none: `bg-blue-600`, `bg-indigo-600`, `text-gray-500` to `-900`, `text-indigo-*`,
+`ring-blue-500`, `ring-indigo-500`, `dark:bg-neutral-950`, `shadow-[0_4px_18px_...]`,
+`leading-[1.05]`, `h-[6.25rem]`, `blur`, `ease-in` and the like, all of which appear only in
+`docs/` prose and none in a built page or script. `parity compare` stayed 11/11 PASS on both
+sides, and the recapture produced a byte-identical baseline set (the starter links its
+stylesheet rather than inlining it, so the sheet shrank without moving one baseline byte).
+The proof of a fixed point is the same as FBCM's: the sheet's byte count does not move
+between two consecutive build-and-capture passes.
+
+**Adopting it in a site.** Add the three lines after the last `@import`, rebuild, recapture
+with `npm run parity capture`, rebuild, compare. A site with `inlineStylesheets: 'always'`
+WILL see every page's `<style>` placeholder change once; that is the expected recapture. Also
+exclude any other committed non-page HTML (screenshot `.yml` snapshots, fixtures, Storybook
+output). Keep class names out of prose the scanner can still see.
+
+## Card 65: dynamicListSection slices at a literal max (2026-10-03)
+
+**Origin:** Stone Steps, 2026-09-07 (vault gotcha `starter-bugs-hide-until-sanity-is-configured`,
+bug 1). **Canonical:** `sectionsProjection()` in `src/lib/queries.ts` and the `limit` trim in
+`src/components/sections/DynamicList.astro`, wired through `SectionRenderer.astro`.
+
+All four `dynamicListSection` arms sliced with `[0...limit]`. GROQ subscript ranges need
+INTEGER endpoints, so that is a parse error ("subscript ranges must have integer endpoints",
+confirmed against a live Sanity project on 2026-10-03), and a `$param` cannot stand in because
+`limit` is a per-BLOCK field. `sanityFetch` swallows the error and returns its fallback, so the
+section rendered empty on every site, forever, with a green build. It only surfaces as a
+`fetch error` line the first time a real project is attached.
+
+**Fix:** slice with the literal `[0...12]` (the schema's `limit` field is `min(3).max(12)` in
+`richSections.ts`) and trim to the block's own `limit` in the component
+(`items.slice(0, limit ?? items.length)`). Raising the schema max means raising the literal.
+`SectionRenderer` now passes `limit={s.limit}`. Guard: `src/lib/queries.test.ts` fails if any
+`[N...name]` range appears in `queries.ts`.
+
+**Adopting it in a site.** Grep for `\[0\.\.\.[a-z]` in the GROQ files; a `$param` slice is
+valid, a field-reference slice is not. Verify against the live API in ten seconds with `curl -G
+.../data/query/production --data-urlencode 'query=*[_type=="journalEntry"][0...12]{_id}'`.
+
+## Card 66: `confirmed` flag and Provisional badge for unsourced content (2026-10-03)
+
+**Origin:** Stone Steps, 2026-09-07 (vault gotcha `summarised-scrape-is-not-source-data`).
+**Canonical:** `src/components/Provisional.astro` and the "Schema conventions" section of
+`.claude/rules/sanity-schema.md`.
+
+A summarising fetch had already thrown away a page's structure, and its output was transcribed
+into a data file: shifted age brackets, invented record holders, 11 bare names where the source
+had 66 timed cells, a dead register link on every CTA, and a code comment that explained the
+truncation and made the fabrication read as a decision. The convention that fixes the class:
+content that did not come from the owner's own words carries a `confirmed` boolean (default
+`false`) and renders a visible badge until someone ticks it, so invented values announce
+themselves in the UI instead of depending on a developer's memory. The migration procedure
+that goes with it is in the same section: parse the DOM for anything tabular, verify by
+counting rows and timed cells at the source, resolve every outbound URL with one `curl`.
+
+`Provisional.astro` is small and self-contained (one component, utility classes only, no
+globals.css rule; the Stone Steps copy used a `.provisional` class). It renders nothing when
+`confirmed === true`. Deliberate departure from the Stone Steps copy: the explanation text is
+`text-foreground`, not `text-muted-foreground`, because the box is a tint (card 67). The
+starter ships no `confirmed` field and no caller, since it has no scraped data; the field
+snippet is in the rule file rather than a dead schema helper. Cost, measured: the unused component adds five
+class rules (`gap-x-3`, `gap-y-1`, `border-dashed`, `border-primary/55`, `bg-primary/10`),
++501 bytes per shipped sheet, and no rendered change.
+
+**Adopting it in a site.** Add the field to the document types a migration fills, put
+`<Provisional confirmed={doc.confirmed} what="..." />` beside the value, and keep unconfirmed
+values out of JSON-LD.
+
+## Card 67: Tinted-chip variant-matrix contrast gate (2026-10-03)
+
+**Origin:** West Chester Preschool Family Hub, 2026-09-07 (vault gotcha
+`tinted-chip-eats-muted-contrast`). **Canonical:** `src/lib/tint-contrast.test.ts` (runs under
+`npm run test:unit`) and the "Muted is not a safe neutral on a tint" paragraph in
+`docs/agent/accessibility.md`.
+
+Flattening a soft tint (`bg-primary/15`) over a surface lifts the composite several tonal
+steps, so a muted label with a comfortable margin on the bare surface can land under 4.5:1 on
+the tinted one, and an axe sweep cannot see it when the tint varies by DATA, because it only
+audits the variants the feed happened to render. The new test is hermetic: it reads the real
+tokens from `globals.css` (via `css-tokens.ts`), composites every tint (`--primary`,
+`--secondary`, `--accent`, `--muted`) at 10, 15, 20 and 30 percent over every surface
+(`--background`, `--card`, `--muted`) in both themes (96 cases), and asserts `--foreground`
+clears AA on all of them. It also scans `src/` for class strings that pair
+`text-muted-foreground` with a `bg-<token>/NN` tint and hard-asserts each resolvable one.
+
+**Measured on the current tokens (2026-10-03): `--muted-foreground` is NOT safe on a tint.**
+It is under 4.5:1 on 8 of the 96 variants: light `--primary/15` over `--muted` 4.46;
+`--primary/20` over `--background` 4.38 and over `--muted` 4.13; `--primary/30` over
+`--background` 3.78, `--card` 3.90 and `--muted` 3.59; dark `--primary/30` over `--card` and
+`--muted` 4.37. No tint in the starter's shipped components hits those (the scan finds 7
+muted-on-tint pairs, all `--input` at 30 to 80 percent in shadcn/Starwind primitives; the
+light ones resolve, the dark `--input` is an oklch alpha the reader cannot resolve and is
+skipped, listed in the test's diagnostics). So the muted result is a printed diagnostic, not a
+hard gate across the whole matrix (a fork's palette moves the numbers); brand tokens were not
+changed. Rule: on a tint, "neutral" means the full-strength `--foreground`; colour lives in the
+tint and an `aria-hidden` icon.
+
+**Adopting it in a site.** Copy the test, set `TINT_TOKENS`/`SURFACES` to the site's token
+names, add a row for every tinted chip or badge variant. If a site has a per-variant label
+colour, replace it with one shared constant so a per-variant colour is not expressible.
+
+## Card 68: Never delete or regenerate package-lock.json (2026-10-03)
+
+**Origin:** reid-design-site, 2026-09-05, about 3 hours lost (vault gotcha
+`regenerated-lockfile-breaks-sanity-schema-extract`). **Canonical:** CLAUDE.md rule 8 and
+`.claude/rules/dependencies.md`.
+
+A bisect that ran `rm -rf node_modules package-lock.json && npm install` on every attempt let
+about 259 transitive packages float to whatever was newest that day. One of them made the Vite
+SSR worker behind `sanity schema extract` (and so `npm run typegen`) evaluate a CommonJS
+module as ESM and die with `Error: exports is not defined`, with no module name in the stack.
+Because the lockfile was regenerated every run, every candidate "reproduced" the failure and
+the pristine baseline failed too. Restoring the committed lock and running `npm ci` passed
+immediately.
+
+**Rules:** bisect with the COMMITTED lockfile in place (`npm install` updates only the affected
+subtree; `git checkout -- package.json package-lock.json` between candidates); check
+`git diff --stat -- package-lock.json` before trusting a result; `npm ci`, never `npm install`,
+for any run you will reason from; let Dependabot propose bumps one package at a time.
+
+**Correction to card 13:** its "adjacent" note advised deleting the lockfile and node_modules
+to clear a stale dedupe. That is now caveated in place: throwaway clone only, never in the repo
+you commit from, never as a bisect step.
+
+## Card 69: No `--` inside an SVG or XML comment (2026-10-03)
+
+**Origin:** FBCM, 2026-09-19 (vault gotcha `double-hyphen-in-svg-comment-blanks-the-image`).
+**Canonical:** `docs/agent/images.md`, "SVG and XML comments", and the reskin skill's logo step.
+
+A `--` anywhere inside `<!-- ... -->` makes the whole SVG malformed XML. The browser fetches it
+(200, no console error, nothing in the network panel) and renders nothing, `naturalWidth`
+stays 0 forever, and curl cannot tell. FBCM's header comment named a CSS custom property
+(`--color-indigo-field`). Logo SVGs are where this happens: comments that mention tokens,
+`-- scaffold` markers or `git --flags`.
+
+**Guard:** name tokens without the leading dashes or put the note in a sibling README, and
+wait on `img.complete && img.naturalWidth > 0` (never `load`) in any screenshot or visual
+script. Audited in the starter on 2026-10-03: 3 SVGs, none has `--` in a comment.
+
+## Card 70: CI is parallel, sharded and builds once; Lighthouse is scheduled (2026-10-03)
+
+**What it is.** The shape of `ci.yml`, `lighthouse.yml` and `visual.yml`, plus one line in
+`playwright.config.ts`. Measured before the change: every PR built the site three times (the
+`build` job, Playwright's `webServer`, Lighthouse), the gates ran serially, and wall time was their
+sum: wcp-website CI 602s plus Lighthouse 853s, fbcm CI 647s plus Lighthouse 494s plus visual 326s.
+The hotspots by step: Lighthouse's 3 passes over every URL (749s of 848s on wcp), the Playwright
+browser download (286s on fbcm, though 38 to 53s on a normal day) and the serial Playwright run (674s on fbcm).
+
+**The shape.**
+
+- `static` (typegen, stale-types guard, astro check, lint, format, unit) and `site` (build, link
+  check, upload `dist/client`) run in parallel. `build` is a cheap aggregator over both.
+- `e2e` runs Playwright in 3 shards (`--shard=N/3`) against the uploaded build, with
+  `PLAYWRIGHT_SKIP_BUILD=1` so the config serves it instead of rebuilding. `test` is a cheap
+  aggregator over the shards. Browsers are cached by Playwright version; on a hit only
+  `install-deps` runs.
+- **`build` and `test` are REQUIRED status checks** in every repo's "main: PR + green CI" ruleset
+  (reid-design-site also requires `lighthouse`). Keep those job names, keep them failing when
+  anything behind them fails, and never put a path filter on `ci.yml`: a required check that never
+  reports blocks the merge forever.
+- Lighthouse: pull requests run only when score-moving paths change, on one URL per template
+  (`--collect.url` overrides the list, assertions and median-of-3 unchanged). Push to main and a
+  weekly cron run the full list. Not a required check, except on reid-design-site, whose
+  `lighthouse` job must keep reporting (no path filter there).
+- visual: the pull_request trigger gets the same `paths:` as the push trigger.
+
+**Measured per repo (the gain depends on how heavy the tests are).** Nixon CI about 9 to 4 minutes;
+fbcm 783s to about 570s; reid-design 321s to 246s; stonesteps 290s to 226s warm. **Small sites barely
+gain, and the sharded layout can lose:** mas-monograms measured 250 to 272s against 212s with the
+two-job original (the old jobs already ran in parallel, so the new shape only added a serial hop and
+a second install), so it kept ci.yml as it was and took only the Lighthouse change. Lighthouse is the
+reliable win everywhere, about 40 to 50% on PRs, plus not running at all on PRs that cannot move a score.
+
+**Adapt per site.** Keep the site's `env:` block and URL sample; keep its extra steps. Pick the
+Lighthouse sample by template, not by taste. A hybrid site whose Worker renders every page (nixoncreativestudio)
+has no `dist/client` to share, so its shards test the uploaded preview URL instead.
+
+### Second pass (fbcm measurement, 2026-10-03)
+
+Six speed-ups were measured on fbcm (PR 27, reviewed and merged). Two paid (B and F, the recipes
+below) and four did not (listed after them); the starter's own `ci.yml` took neither, because its numbers do not clear the bar (below).
+
+**B. Weighted shards.** Playwright's `--shard=N/3` hands each shard a contiguous block of an EQUAL
+NUMBER of tests, in project order, so one heavy group lands in one shard and the slowest shard sets
+the wall time. On fbcm 160 reflow tests are 45% of test time and sit together. Fix: set
+`PWTEST_SHARD_WEIGHTS: '268:181:125'` (colon separated, one weight per shard) in the env of the test
+step. Slowest shard job fell 342-378s to 268-286s. Pays when the slowest/mean ratio of the shard
+jobs is about 1.25x or worse. Caveats: it is an INTERNAL Playwright variable and may change without
+notice; the weights are test counts, so re-cut them when tests are added in bulk (run with
+`--reporter=json`, sum duration per test in project-then-file order, cut three blocks of equal
+time); a stale weight only unbalances the shards, it can never drop a test (the blocks always
+partition the whole list).
+
+**F. Link check as its own `links` job.** Move `npm run check:links` out of the end of `site`, so
+`site` ends at the artifact upload and the shards start straight away; a `links` job (`needs: [site]`:
+checkout, setup-node, `npm ci`, download `dist-client`, `npm run check:links`) runs beside the shards.
+`build` then needs `static` + `site` + `links`, so the check names are unchanged and the link check
+is still a gate. Saved about 30-50s per run on fbcm, where the link check takes 35-50s. Pays only
+when the link check is about 20s or more; below that the extra job's checkout and install cost
+more than it saves.
+
+**Why the starter did not take B or F** (last four `ci.yml` runs, 2026-10-03): the link check took
+0-1s (the starter has few pages), so F would only add a job. Shard test steps were 22/53/41s,
+31/53/38s, 26/53/31s and 23/53/38s, 1.30-1.44x slowest/mean on the step but only 1.03-1.20x on the
+shard JOBS (83-139s, dominated by install, browser libraries and runner variance), so the most B
+could win is about 14s of a 130s run, inside the noise. Measure the jobs, not the step, before
+adopting; a repo with heavier tests will clear the bar.
+
+**Measured NOT to pay (do not port):**
+
+- Astro/Vite build cache: the cache is 1.4 MB, nothing to win.
+- Playwright container image: about 10s of setup saved per shard, the tests no faster.
+- `node_modules` cache in the shards: about 25s per shard for 372 MB of cache; marginal.
+- Lighthouse reusing the CI build: saves runner time (about 220s) but not wall time, and changes
+  what the gate audits (the fixture build instead of the live-feed one).
+
+## Card 71: Tracked `.claude/settings.json` deny rules and one shared conventions file (2026-10-03)
+
+**What it is.** Two small pieces of Claude Code setup that every site repo in the family can copy.
+
+1. `.claude/settings.json` (PORTABLE, tracked), deny rules only: `git reset --hard`, `git push --force`,
+   `git push -f` and `git push --force-with-lease`, each as a `Bash(...)` and a `PowerShell(...)` rule, plus
+   the argument-order variants (`git push origin main --force`). It is the belt-and-braces layer for when the
+   studio plugin hooks that normally block these are absent. `.claude/settings.local.json` stays git-ignored
+   (it is in the user-level global ignore) and holds each person's own allow rules.
+2. `docs/claude/family-conventions.md` (PORTABLE): the "Code conventions" and "Working with Claude" text
+   that was copied, with small wording drift, into the CLAUDE.md of fbcm, presacademy, stonesteps-50k,
+   reid-design-site and this starter. It is pulled in with a plain `@docs/claude/family-conventions.md`
+   import line in CLAUDE.md.
+
+**Why.** The family rule is no `reset --hard` and no force pushes (the auto-mode classifier blocks them
+anyway, and routing around a block is not allowed), so a tracked rule can refuse them up front even where the
+studio plugin hooks are not installed. Separately, the same two CLAUDE.md sections were hand-copied into five
+repos and drifted in wording. The shared text is now one file, so `sync-check` shows when a copy has drifted.
+
+**Facts checked against the docs (code.claude.com, "Configure permissions" and "How Claude remembers your
+project").**
+
+- Deny is evaluated before ask and allow, and an allow rule cannot carve an exception out of a deny, so a
+  project deny beats the user's own allow rules.
+- `Bash(git reset --hard*)` has no space before the `*`, so it also matches `git reset --hard` with no
+  arguments and `git reset --hard@{1}`. Deny and ask rules match past a leading `VAR=x` assignment and
+  inside compound commands.
+- It does NOT match the same program in another form: `git -C . reset --hard`, `/usr/bin/git reset --hard`,
+  `bash -c 'git reset --hard'`. This is a seatbelt, not a security boundary.
+- `@path` imports are expanded into context at launch (no saving), resolve relative to the importing file, go
+  four hops deep, and a path outside the working directory raises an approval dialog. Hence the shared file
+  lives INSIDE each repo as a copy, not in a shared folder. Each import counts as its own file against the
+  200-line guidance.
+- The first-5-lines marker scan in `sync-check.mjs` needs no change: the markdown file carries it as an HTML
+  comment on line 1, and the JSON file (which has no comments) carries it as the value of a top-level
+  `"_portable"` key.
+
+**Canonical:** `.claude/settings.json`, `docs/claude/family-conventions.md`.
+
+**Adopt in a site repo.** Copy both files byte for byte, add the import line (`@docs/claude/family-conventions.md`)
+where the repo's own Code conventions / Working with Claude sections sit, delete those two sections, and
+keep any repo-specific bullet (light-only theme, a different scroll library) in a short section beside the
+import. A site that already has a tracked `.claude/settings.json` merges the `deny` array by hand and drops the
+`_portable` key from the marker check (it would then not be byte-exact, so leave the file unmarked there).
+Run `node scripts/sync-check.mjs`.
+
+**Rollout (2026-10-03).** Both pieces are on `main` in presacademy, stonesteps-50k, reid-design-site and fbcm
+(fbcm is not a matrix column; it adopted both too). mas-monograms took only the deny rules: it never
+carried the duplicated Code conventions / Working with Claude text, so it has no conventions import (hence
+`partial`). 2ndpreschicago is archived on GitHub, so no PR could be opened there. wcp and
+nixoncreativestudio are not Astro + Sanity site repos of this shape and were not part of the rollout.
+Two things the rollout turned up: stonesteps-50k already had the `@docs/claude/family-conventions.md`
+import line but no file behind it (a dangling import), and in Git Bash on Windows
+`git show origin/main:.claude/settings.json` can produce an empty file unless `MSYS_NO_PATHCONV=1` is set,
+so copy then check the byte size (597 and 2313) and run `sync-check` rather than trusting `cmp` alone
+(vault gotcha `git-bash-mangles-git-show-colon-paths`).
+
+**Not moved yet (and why).** The family-wide numbered rules (never click "Remove field", no em-dashes in public
+copy, desktop nav server-rendered, content is statically built, matched dependency set) are true in every
+Sanity repo, but each repo numbers them differently and other docs cite the numbers. They are the next
+candidate once the rule numbers stop being load-bearing.
+
+---
+
+## Card 72: Layout variants, the structure axis of brand.config.json (2026-10-03)
+
+**What it is.** Reskinning changed colours, fonts and radius on ONE fixed structure, so every site built from the starter had the same shape. `brand/brand.config.json` now has an optional `layout` block: four slots, three values each. The FIRST value of every slot is the original behaviour and the default.
+
+| Slot      | Values                          |
+| --------- | ------------------------------- |
+| `header`  | `inline`, `centered`, `minimal` |
+| `hero`    | `bleed`, `split`, `editorial`   |
+| `density` | `standard`, `airy`, `tight`     |
+| `cards`   | `standard`, `outline`, `soft`   |
+
+**Why it is built this way.**
+
+- **A default emits nothing.** `layoutAttrs()` returns `data-header`, `data-density` and `data-cards` only for non-default values and `Hero.astro` sets `data-hero` only for `split` and `editorial`. A site that never sets `layout` matches none of the new CSS. Measured on the starter before and after, default config: `/` and `/about/` at 390 and 1280, full page, 0 differing pixels in all four.
+- **CSS, not forked pages.** Header, density and cards are unlayered rules on `html[data-*]` at the end of `globals.css` (unlayered so they beat Tailwind utilities without `!important`). Density moves the two `--spacing-section-*` tokens, so bands, hero padding and dividers move together. Cards override the shared `.card-lift` surface. The one component branch is `Hero`'s `variant` prop (default `layout.hero`), because split and editorial change what is rendered, not only how: editorial never renders the image, so it is never fetched.
+- **One definition.** Slots, values and defaults live only in `src/lib/site-layout.ts`. `scripts/apply-brand.mjs` validates the schema enum (a validator `enum` check was added) and writes `src/data/layout.ts` whole, with no substitution patterns to drift. `src/lib/site-layout.test.ts` is a gate: it fails if the schema enums, `brand.config.json` and the lib disagree, or if a default would emit an attribute.
+- **Every variant has a baseline.** `src/pages/styleguide/layouts.astro` (fixed data, noindex, covered by the existing `/styleguide` sitemap filter) and `tests/visual/layouts.spec.ts` loop over `LAYOUT_SLOTS` at 390 and 1280: 24 shots. Header, density and cards are exercised by setting the same `<html>` attribute BaseLayout emits; the hero page renders all three. The hero image is a fake Sanity reference answered from `tests/visual/fixtures/layout-hero.jpg`, so no network. Baselines are Linux, generated in CI by `visual.yml` like the rest; existing baselines were not touched.
+- **Cost.** Hook classes added (`site-header__eyebrow`, `__row`, `__nav`, `__pill` in `Header.astro`, `__menu` in `MobileNav.tsx`), so rendered HTML differs by class names only; `npm run parity compare` will show exactly that.
+- **Not this.** `src/lib/layout-variants.ts` (card 26) is the per-SECTION column count and media side an editor picks in the Studio. This card is site-wide and set in the brand config.
+
+**Canonical files.** `src/lib/site-layout.ts` (PORTABLE) and its test; `tests/visual/layouts.spec.ts`. Starter-owned and adapted per site: `src/data/layout.ts` (generated), `src/pages/styleguide/layouts.astro`, the final block of `globals.css`, the hook classes in `Header.astro` / `MobileNav.tsx`, the `Hero.astro` variant, `BaseLayout.astro`'s `{...layoutAttrs(layout)}` on `<html>`, `apply-brand.mjs` and the brand schema.
+
+**Install in a site.** Copy `site-layout.ts` and its test, `tests/visual/layouts.spec.ts` and `tests/visual/fixtures/`; add the `layout` block to the site's `brand.config.json` and schema; add the `layout.ts` step and the `enum` check to its `apply-brand.mjs`; copy the variant CSS block and the hook classes; add the Hero variant and the `<html>` spread. Then run the default-unchanged check: screenshot `/` and one inner page at 390 and 1280 before and after, expect 0 differing pixels. Dispatch `visual.yml` with `update` to create the layouts baselines (and only those).
+
+**Adapt per site.** A site with a bespoke header or hero must re-map the hook classes in the CSS rather than drop them; the `cards` rules assume `.card-lift` is on every card surface (check with grep before trusting `soft` and `outline`). A site whose hero has no image gets no visible `split`.
+
+## Card 73: Design directions before a reskin (2026-10-03)
+
+**Origin:** the studio's own pattern. Every site built from this starter came out as the same
+layout in different colours, because the only step between "new client" and "built" was the reskin,
+and `brand.config.json` carried palette, fonts and radius, not structure. Card 72 added four coarse
+layout slots; this card covers the exploration that decides which slots, and what lies beyond them.
+**Canonical:** `.claude/commands/design-directions.md`, `scripts/capture-references.mjs`,
+`scripts/screenshot-directions.mjs`, `docs/templates/design-brief.md`, and the "Where this sits"
+section of `.claude/skills/reskin/SKILL.md`. Rules: `.claude/rules/design-flow.md`.
+
+**The flow:** brief -> references -> design-directions -> reskin.
+
+- **Brief.** `docs/templates/design-brief.md` splits into a PRODUCT.md and a DESIGN.md that the
+  impeccable skill can read (Stitch shape: six fixed sections), and forces three inputs that were
+  previously left to taste: references, anti-references, and "must NOT look like <previous client>".
+- **References.** `npm run references -- <urls>` screenshots each URL at 390 and 1280 into
+  `docs/references/<slug>/` and writes a README table with blank "what we like / what we avoid"
+  cells that survive re-runs. It fetches only the URLs it is given.
+- **Directions.** `/design-directions` produces 3 or 4 single-file homepage mockups plus a
+  comparison `index.html`. Divergence is forced by procedure, not hoped for: each direction is
+  assigned a distinct archetype (editorial, poster/typographic, image-led, index/directory, story,
+  bento, split-screen, quiet/document) BEFORE any design starts; a table of axes (layout skeleton,
+  nav pattern, hero structure, type pairing, density, imagery, colour role) must show a different
+  value per direction; shared hero or nav markup and the starter's own section order are forbidden;
+  each direction states what it rejects and what it costs. `npm run directions:shoot` captures
+  390, 768 and 1280 and fails on horizontal overflow. The command stops for Nathan's pick, records
+  it as a dated "Carry forward" entry, and hands off to the reskin skill. It never edits
+  `brand.config.json`.
+- **Reskin.** The skill now reads that entry, takes palette, fonts, radius and the matching `layout` slots from it, and
+  reports the structural decisions the config cannot carry as queued work.
+
+**Adapt per site.** Add the previous client's name to the brief's "must not look like" line. Mockups
+and reference captures live under `docs/`, which `.prettierignore` skips for `*.html` and
+`docs/references` (copy those two lines) and which Tailwind already excludes (card 64). Needs
+`@playwright/test` and `npx playwright install chromium`, both already true in this family.
+The npm scripts to copy are `references` and `directions:shoot`.
+
+**The reskin skill is NOT `PORTABLE:`-marked** (it never was), so `sync-check` will not carry the
+"Where this sits" section and the Step 8 "layout work the config cannot carry" paragraph from
+`.claude/skills/reskin/SKILL.md` to a site. Port those two edits by hand, or the flow stops at the
+command and the skill never reads the picked direction.
+
+---
+
+## Card 74: page-parity `--exclude`, the glob helper and its test (2026-10-03)
+
+**Origin:** fbcm (a content-heavy church site), 2026-09-20. Its pagination, tag and category routes
+multiply one template into hundreds of near-identical pages. Snapshotting every one adds baseline
+weight without adding coverage (the first page of each template already proves the template renders),
+and a real diff drowns in hundreds of copies of the same `DIFF` line. fbcm built the fix in its own copy
+of the harness and marked it `PORTABLE`, which showed up as `DRIFT` (`page-parity.mjs`) and
+`MISSING-IN-STARTER` (the two helper files) in `sync-check` until this card promoted it.
+**Canonical:** `scripts/page-parity.mjs`, `scripts/lib/parity-glob.mjs`, `scripts/lib/parity-glob.test.mjs`
+(all `PORTABLE`; the starter copies are byte-identical to fbcm's after line-ending normalisation).
+
+**What it is.** `capture` and `compare` take `--exclude <globs>` (or `--exclude=<globs>`), a comma-separated list
+matched against the page name the harness already prints and files things by (`blog/category/news/page/2`).
+`PARITY_EXCLUDE` is the env twin for callers that cannot pass flags; the flag wins when both are given.
+Excluded pages get no baseline and are never compared. The glob syntax is two tokens on purpose: `*` is one
+path segment, `**` is any number of segments including none; everything else is literal. Naming a page that
+the exclude removes (`capture blog/tag/x --exclude "blog/tag/**"`) fails as "Unknown page".
+
+**Backward compatible.** With neither flag nor env set, `parseExclude` returns a predicate that excludes
+nothing, so `getPages()` returns the same list as before and every existing caller (`npm run parity ...`,
+`capture [page]`, `compare [page]`, `list`) behaves the same. The only other change is the `Usage` text.
+Verified on the starter (2026-10-03, old `origin/main` harness against the new one, same `dist/client`): `capture` output and the 11 baselines are byte-identical, `compare` output is identical (11/11 PASS). With `--exclude faq` `capture` writes 10 and `compare` passes 10/10. Note `about/**` does NOT match the bare page `about` (the `/` is literal), so list the index page too when you mean it.
+
+**Wiring.** The starter had no tests under `scripts/`, so `package.json` gains
+`"test:scripts": "node --test scripts/lib/*.test.mjs"` (the same line fbcm uses), and `test:unit` ends with
+`&& npm run test:scripts`. `ci.yml`, `deploy.yml` and `check:full` all call `npm run test:unit`, so every caller
+runs the scripts tests with no workflow change (the first version of this card chained it onto `check:full`
+only, which CI never ran; fixed 2026-10-03). A site that ports `test:scripts` should chain it the same way.
+
+**Adapt per site.** Add your own default to a `parity:capture` / `parity:compare` pair, as fbcm does:
+`"parity:capture": "node scripts/page-parity.mjs capture --exclude \"blog/page/**,blog/tag/**,blog/category/**/page/**\""`.
+The list is per site, so it is a package.json script, never baked into the harness. Take the three files
+together (the harness now imports the helper, so a copy of `page-parity.mjs` without `scripts/lib/parity-glob.mjs`
+dies at import) and add the `test:scripts` script, chained onto the end of `test:unit`.
+
+**Per-repo status (checked 2026-10-03 against each repo's `origin/main`).**
+
+| Repo                                                                                   | Copy of `page-parity.mjs`                      | After this merges                                                                          |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| fbcm                                                                                   | marked, has the feature                        | SAME (byte for byte); CI only runs the self-check, nothing changes                         |
+| stonesteps-50k                                                                         | marked, identical to the OLD starter copy      | DRIFT under a manual `sync-check`; CI only runs the self-check, so no required check moves |
+| wcp, presacademy, mas-monograms, reid-design-site, nixoncreativestudio, 2ndpreschicago | unmarked (forked or a pattern copy on purpose) | not compared; port by hand if the site wants the flag                                      |
+
+**Rollout.** Not started. Order is in the PR description; CI runs `test:scripts` via `test:unit`.
+
+**Note on CI.** A site repo's `ci.yml` runs `sync-check` against the live starter `main` and fails the build on
+drift, but only for marked files. Marking a copy of `page-parity.mjs` in a site that checks against the starter
+therefore makes every later change to this file a red build there until it re-syncs. Mark a copy only when the
+site will keep it byte-identical.
+
+---
+
+## Card 75: Playwright fixture: Sanity images from a disk cache (2026-10-03)
+
+**Origin:** fbcm, 2026-09-26 (AVIF/WebP key fix 2026-09-27). Sanity's request log for fbcm counted 13.1 GB of
+image bandwidth in 533k browser requests in one week (2026-09-19 to 26), almost all of it Playwright runs, local
+and CI, loading every page's photographs from `cdn.sanity.io` again on every run. Sanity's free plan meters that
+bandwidth, so a test suite was spending a client's quota.
+**Canonical:** `tests/fixtures.ts` (new, `PORTABLE`), and the three marked specs that now import from it:
+`tests/a11y.spec.ts`, `tests/reflow.spec.ts`, `tests/smoke.spec.ts`.
+
+**What it is.** `tests/fixtures.ts` re-exports everything from `@playwright/test` and extends `test` so every
+browser context routes `https://cdn.sanity.io/images/**` through a disk cache in `node_modules/.cache/test-images/`.
+A Sanity image URL names its asset and its transform, so it never changes: the first run on a machine fetches each
+one once and keeps it; later runs are served from disk. Only a successful answer is kept (a blip is retried next
+run); files are written to temporary names and renamed so parallel workers never read half a file; `misses.log`
+gets one line per real fetch, so a warm run can prove it asked Sanity for nothing. `auto=format` is
+content-negotiated (Chromium gets AVIF, Playwright's WebKit gets WebP), so a browser that does not accept AVIF gets
+its own cache key; keyed on the URL alone, WebKit was served Chromium's AVIF and showed broken images. The route
+handler never fails a test on its own account: an error falls back to `route.continue()`, and an error there (the
+page already closed) is ignored. A spec that opens its own context (`browser.newContext`) calls
+`cacheSanityImages(ctx)` itself.
+
+**Measured on fbcm (2026-09-26):** a cold full run fetched 206 images (7 MB) and passed 514 tests; the next full run
+fetched 0 and passed 514.
+
+**Harmless where there is nothing to cache.** With an empty cache every image is fetched once, as before, and kept.
+A build with no Sanity project (this starter on CI, which builds from fallbacks) makes no `cdn.sanity.io` request,
+so the route never fires; the only side effect is an empty `node_modules/.cache/test-images/` folder. The pages
+under test are unchanged; only where the image bytes come from differs.
+
+**Smoke spec, hand-merged.** fbcm's `smoke.spec.ts` also carried two site-specific tests (its Wix-migration
+URL-preservation gate: a real post slug at `/post/<slug>` and the listing at `/blog`), and lacked this starter's
+card 58 localhost-GA test. The canonical smoke spec is the starter's (card 58 test kept) with the `./fixtures`
+import; the `/blog` and `/post` tests stay out because they assert one site's content and routes. fbcm keeps them in
+an unmarked spec of its own when it re-syncs.
+
+**Scope held back on purpose.** Only the three specs fbcm had already switched are switched here. The starter's
+`tests/reduced-motion.spec.ts` is a marked copy in presacademy, reid-design-site, mas-monograms, 2ndpreschicago and
+nixoncreativestudio, all of which run `sync-check` against live starter `main` and fail `build` on drift, so
+switching its import here would turn their required check red. `a11y-dark.spec.ts` and `contrast.spec.ts` can switch
+in a later pass (only stonesteps-50k marks them, and it self-checks).
+
+**Blast radius (checked 2026-10-03 against each repo's `origin/main`).** `a11y`, `reflow` and `smoke` are marked
+only in stonesteps-50k (self-check CI: it will show DRIFT under a manual `sync-check`, no required check moves) and
+fbcm (self-check CI). presacademy, reid-design-site, mas-monograms, 2ndpreschicago and nixoncreativestudio carry
+unmarked copies, so sync-check never compares them. `tests/fixtures.ts` is new: sync-check walks a site's marked
+files, so a new marked file in the starter cannot turn a site red.
+
+**Adopt in a site repo.** Copy `tests/fixtures.ts` byte for byte, change `from '@playwright/test'` to
+`from './fixtures'` in every spec (types such as `Page` re-export too), and call `cacheSanityImages(ctx)` in any spec
+that builds its own context. To share the cache across CI runs, add to the Playwright job in the site's own
+`ci.yml` (a site decision; the starter's CI has no Sanity images to cache):
+
+```yaml
+- name: Restore the test images
+  uses: actions/cache@v4
+  with:
+    path: node_modules/.cache/test-images
+    key: test-images-${{ runner.os }}-${{ github.run_id }}
+    restore-keys: test-images-${{ runner.os }}-
+```
+
+If the job also caches `node_modules`, exclude `!node_modules/.cache` from that cache so the two do not fight
+(fbcm does both).
+
+**Shared key or per-shard keys: measure first (2026-10-03).** With a sharded Playwright job, every shard shares the
+key above, and `actions/cache` lets only the first shard to finish save under it (`Unable to reserve cache` for the
+rest), so a shard whose pages need different images can re-fetch them every run. Measured: stonesteps-50k re-fetched
+19 images in one shard each run until each shard got its own key (`test-images-${{ runner.os }}-s${{ matrix.shard }}-${{ github.run_id }}`
+with the shard prefix, then the plain prefix, as `restore-keys`); afterwards all three shards held 31 images and fetched 0.
+fbcm's shared cache already held all 206 images (7.7 MB) and every shard fetched 0, so it kept the shared key (per-shard
+keys would triple cache writes for no gain). Rule: add a before and after step that counts `misses.log` lines and prints
+`fetched N images from Sanity this run`, and key per shard only if a shard reports a non-zero count on a warm run.
+End the `grep -c` counts in that report step with `|| true`: Actions runs steps under `bash -e` and `grep -c` exits 1
+on a zero count, which failed a shard's report step on stonesteps-50k (fixed in its #84). Test any such step under
+`bash -e`, not `bash -c`.
+
+**fbcm re-sync (follow-up PR in fbcm, not done here).** `a11y.spec.ts` and `reflow.spec.ts` become `SAME`.
+`tests/fixtures.ts` differs from fbcm's (unmarked) copy in the header comment only: the marker line, the card
+reference, and two fbcm-only references generalised (`this-sunday.spec.ts`, "CI restores the folder, ci.yml").
+`smoke.spec.ts` differs: fbcm moves its `/blog` and `/post` tests to an unmarked spec and takes this copy.
+
+---
+
+## Card 76: Visual suite webServer timeout from `PLAYWRIGHT_WEBSERVER_TIMEOUT_MS` (2026-10-03)
+
+**Origin:** fbcm, 2026-09-27. Its visual-regression run on CI timed out before a single screenshot: the
+`webServer` command in `playwright.visual.config.ts` is `npm run build && http-server ...`, so its timeout covers
+the BUILD, and fbcm builds about 390 pages in roughly four minutes on a runner. The family default of 180 s was
+written for sites of a few dozen pages. fbcm raised its copy to a literal `600_000`, which made the marked file
+`DRIFT`.
+**Canonical:** `playwright.visual.config.ts` (`PORTABLE`).
+
+**What it is.** The timeout is read from `PLAYWRIGHT_WEBSERVER_TIMEOUT_MS`. Unset, empty, non-numeric, zero or
+negative falls back to 180000, today's value, so every site that does not set it behaves exactly as before. A site
+with a large build sets it in the environment of its visual run rather than editing the file, so the file stays
+byte-identical across the family. Hard-coding fbcm's 600 s for everyone was rejected: a hung build on a small site
+would then take ten minutes to fail instead of three.
+
+**Adopt / fbcm re-sync (follow-up PR in fbcm, not done here).** Copy the file byte for byte, then set the variable
+where the visual suite runs. fbcm: either `"test:visual"` / `"test:visual:update"` in `package.json` (a
+cross-platform form needs `cross-env`, which fbcm does not have, so prefer the workflow) or, simplest, an `env:`
+block on the run step in `.github/workflows/visual.yml`:
+
+```yaml
+env:
+  PLAYWRIGHT_WEBSERVER_TIMEOUT_MS: '600000'
+```
+
+Until that lands, fbcm's copy (literal 600 s) reports `DRIFT` against this one under a manual `sync-check`; fbcm's
+CI only self-checks, so no required check moves.
+
+**Not changed:** `playwright.config.ts` (the main suite) still has a literal 180 s. fbcm's main config is unmarked
+(600 s), and fbcm did not mark or promote that change, so it was out of scope here. Making the main config read the
+same variable is a candidate follow-up: only stonesteps-50k marks a copy of it (and self-checks), so it would not
+turn any repo's required check red.
+
+---
+
+## Card 77: Preview morph keeps client-state classes (reveal state) (2026-10-03)
+
+**Origin:** fbcm, 2026-09-26. In the live draft preview, after any draft edit, the Staff page hero's two arch
+portraits sat clipped to nothing. The morph (`src/lib/preview-morph.ts`, card 29's refresh loop) synced each
+element's `class` attribute to the server's fresh HTML, and the server's HTML never carries the classes the page's
+own scripts add after load: the scroll-reveal observer's `is-visible`, the image curtain's `is-revealed`, the grid
+entrance's `is-staggered` (and fbcm's glyph draw `is-drawn`). Every refresh took them off, and since each observer
+runs once (`querySelectorAll('[data-reveal]:not(.is-visible)')` at load), anything already revealed went back to its
+hidden start state for good. This starter's `BaseLayout.astro` runs the same three observers, so the bug is here too.
+**Canonical:** `src/lib/preview-morph.ts` and `src/lib/preview-morph.test.ts` (both `PORTABLE`; byte-identical to
+fbcm's after this card).
+
+**What it is.** An exported `CLIENT_STATE_CLASSES` list (`is-visible`, `is-drawn`, `is-revealed`, `is-staggered`).
+When the morph syncs `class`, a class the LIVE element has from that list is kept if the server's copy lacks it;
+every other stale class is still removed, and the server's own classes still win. If the server drops the `class`
+attribute entirely, the state classes survive alone. If live and merged lists already agree, nothing is written.
+They are state, not content, so keeping them cannot hide an edit. A site with another post-load state class adds it
+to the list (in the starter, so the file stays canonical).
+
+**Test.** One new case in `preview-morph.test.ts`: reveal classes kept while a stale class goes, a plain sync when
+there is nothing to keep, state classes surviving a dropped attribute, and no write when already in agreement.
+
+**Blast radius (checked 2026-10-03 against each repo's `origin/main`; every marked copy is byte-identical to the
+starter copy BEFORE this card).**
+
+| Repo                | `preview-morph.ts` | `.test.ts` | CI mode                                       | Effect of merging this card            |
+| ------------------- | ------------------ | ---------- | --------------------------------------------- | -------------------------------------- |
+| presacademy         | marked             | marked     | live starter `main`, enforce step in `static` | `build` RED until re-synced            |
+| reid-design-site    | marked             | unmarked   | live starter `main`, enforce step in `static` | `build` RED until re-synced            |
+| mas-monograms       | marked             | marked     | live starter `main`, enforce step in `build`  | `build` RED until re-synced            |
+| 2ndpreschicago      | marked             | marked     | live starter `main`                           | repo archived on GitHub; no CI runs    |
+| stonesteps-50k      | marked             | marked     | self-check only                               | DRIFT under a manual `sync-check` only |
+| fbcm                | marked             | marked     | self-check only                               | becomes SAME                           |
+| wcp, nixoncreative. | none               | none       | live starter `main`                           | nothing                                |
+
+The re-sync in each red repo is a copy-forward of these two files (their copies equal the old starter copy), so the
+fix is mechanical; merge it right after this card, or this card right before the re-syncs are ready.
+
+---
+
+## Card 78: `preview-stega.ts` exports `RUN_SOURCE` (2026-10-03)
+
+**Origin:** fbcm, 2026-09-23. Its `highlight-words.ts` (a site-specific splitter that highlights chosen whole
+words in a band's text) has to find stega runs in a preview string and map cleaned indexes back to raw ones, or it
+splits the invisible payload and click-to-edit stops working. The exact character class already lived in `preview-stega.ts` as the private
+`RUN_SOURCE` (mirroring `@vercel/stega`'s `VERCEL_STEGA_REGEX`, including the legacy alphabet), so fbcm exported it
+rather than copy a regex that must never drift from the decoder. One keyword; no behaviour change.
+**Canonical:** `src/lib/preview-stega.ts` (`PORTABLE`; byte-identical to fbcm's after this card).
+
+**Why it is general.** Any module that measures, splits or rewrites a string that may carry stega (CLAUDE.md:
+"never compare or measure a stega-encoded string") needs the same pattern; importing it is the only way to stay in
+step with the decoder. Use: `new RegExp(RUN_SOURCE, 'gu')` (the `u` flag is required: the class includes astral code
+points).
+
+**Blast radius (checked 2026-10-03; every marked copy equals the starter copy before this card).** Marked in
+presacademy, reid-design-site and mas-monograms (all enforce sync-check against live starter `main`: `build` RED
+until re-synced), 2ndpreschicago (archived, no CI), stonesteps-50k (self-check only: manual DRIFT) and fbcm (becomes
+SAME). The re-sync is a copy-forward of one file.
+
+---
+
+## Card 79: Redirect destinations keep `?query` and `#fragment` (2026-10-03)
+
+**Origin:** fbcm, 2026-09-18, during its Wix migration. `buildRedirectMap` ran `normalizeRedirectPath` over the
+DESTINATION as well as the source, and that function drops everything after `?` or `#` on purpose (a source is a
+key matched on the request path alone). So every anchored or filtered target shipped truncated:
+`/visit#accessibility` went out as `/visit`, `/blog?category=ruminations` as `/blog`. 25 of fbcm's 42 targets were
+wrong, and only the anchor-free ones had been tested. Card 22's redirect stack is the same code here.
+**Canonical:** `src/lib/redirects.ts` and `src/lib/redirects.test.ts` (both `PORTABLE`; byte-identical to fbcm's
+after this card).
+
+**What it is.** A new exported `normalizeRedirectTarget`: the same path arithmetic as `normalizeRedirectPath`
+(leading slash, collapsed `//`, no trailing slash) on the path component only, with the `?query` and `#fragment`
+re-attached byte for byte. A bare `#top` or `?q=1` is anchored to `/`; external targets are untouched; blank is
+`null`. `buildRedirectMap` uses it for `to`. The self-redirect guard now compares PATHS (`from` against
+`normalizeRedirectPath(to)`), because `/a -> /a#top` and `/a -> /a?x=1` are both infinite loops even though the
+strings differ. Sources are normalized exactly as before, so every existing redirect key is unchanged.
+
+**Test.** Ten new cases in `redirects.test.ts` (fragment, query, both in order, bare query/fragment, external and
+blank, three `buildRedirectMap` shapes, the loop guard, and the source side still dropping both).
+
+**Caveat recorded by fbcm.** Its `scripts/verify-redirects.mjs` (not promoted; it reads fbcm's own redirect data)
+found that a `#fragment` in the emitted `Location` is not carried through by Cloudflare's redirect layer, while the
+`?query` is. So the query half is the one that changes visitor behaviour; keeping the fragment costs nothing and is
+correct if the platform ever passes it. Not re-verified on this starter: it has no Sanity project, so its redirect
+map is empty on every build here.
+
+**Blast radius (checked 2026-10-03; every marked copy equals the starter copy before this card).**
+
+| Repo                                                    | `redirects.ts` | `.test.ts` | CI mode                                       | Effect of merging this card            |
+| ------------------------------------------------------- | -------------- | ---------- | --------------------------------------------- | -------------------------------------- |
+| presacademy                                             | marked         | marked     | live starter `main`, enforce step in `static` | `build` RED until re-synced            |
+| reid-design-site                                        | marked         | unmarked   | live starter `main`, enforce step in `static` | `build` RED until re-synced            |
+| stonesteps-50k                                          | marked         | marked     | self-check only                               | DRIFT under a manual `sync-check` only |
+| fbcm                                                    | marked         | marked     | self-check only                               | becomes SAME                           |
+| mas-monograms, 2ndpreschicago, wcp, nixoncreativestudio | none           | none       | n/a                                           | nothing                                |
+
+`redirect-guard.ts` imports only `normalizeRedirectPath` and the `RedirectTarget` type, both unchanged, so it needs
+no edit in any repo.
+
+---
+
+## Card 80: `sync-check` skips `_worktrees/` folders (2026-10-03)
+
+**Origin:** fbcm, 2026-10-03. A local `node scripts/sync-check.mjs` in fbcm printed
+`85 same, 1 drifted, 86 missing in starter (172 marked file(s) checked)`. fbcm has 86 marked files; the other 86
+rows were paths like `_worktrees/product-md-answers/.claude/settings.json`, the full second copy of the repo that
+`git worktree add _worktrees/product-md-answers` makes. Every row was `MISSING-IN-STARTER` (the starter has no file
+at a `_worktrees/...` path), so the run exited 1 and the one real finding was lost in the noise.
+**Canonical:** `scripts/sync-check.mjs` (`PORTABLE`), plus a starter-only regression test,
+`scripts/lib/sync-check-skip-dirs.test.mjs` (not marked; sites that want it copy it by hand).
+
+**What it is.** One entry in `SKIP_DIRS`: `'_worktrees'`. The walker never descends into a folder with that exact
+name, wherever it sits in the tree. The studio puts agent and developer worktrees in `<repo>/_worktrees/<name>/`
+(Projects CLAUDE.md, "Folders and worktrees"), and each one carries a whole copy of the repo, node_modules aside.
+
+**Why a second entry and not a looser rule.** The set already held `'worktrees'`, which covers the older
+`.claude/worktrees/<name>/` convention (by name, because it is the last path segment that is tested, so the
+`.claude` parent does not matter). `worktrees` does not match `_worktrees`: `Set.has` is an exact comparison and the
+leading underscore makes it a different name. Both conventions exist in these repos, so there are two exact names.
+A substring or `*worktrees` suffix match was rejected: it would also hide a real folder such as
+`docs/old_worktrees-notes/` and a marked file in it would stop being checked, which is the failure this tool exists
+to prevent. The test pins that boundary.
+
+**CI is unaffected on the day, and that is why it was not caught.** A fresh `actions/checkout` has no `_worktrees`
+folder, so no CI run ever saw the doubled count. It is a local-run problem: it buries real drift for whoever runs
+`sync-check` in a checkout that has live worktrees (every working session here).
+
+**Test.** `scripts/lib/sync-check-skip-dirs.test.mjs` builds a throwaway site and starter in the temp dir and runs
+`sync-check.mjs` as a child process (the script is a CLI and runs at import, so it cannot be imported). Four cases:
+a control (two real marked files are found and compared), a marked file under `_worktrees/x/...` is not reported,
+the `.claude/worktrees/` skip still holds, and a marked file in a look-alike folder (`my_worktrees-notes/`) is still
+checked. Run first against the old script, the `_worktrees` case failed with `MISSING-IN-STARTER  _worktrees/...`
+and `(5 marked file(s) checked)`; with the entry it passes at `(2 marked file(s) checked)`. It runs under
+`npm run test:scripts`, which `test:unit` chains, so `ci.yml` needs no change.
+
+**Measured on fbcm (2026-10-03, same checkout, old script then new):**
+
+| Script              | Result line                                                              | Rows under `_worktrees/` |
+| ------------------- | ------------------------------------------------------------------------ | ------------------------ |
+| `origin/main` (old) | `85 same, 1 drifted, 86 missing in starter (172 marked file(s) checked)` | 86                       |
+| this branch         | `85 same, 1 drifted, 0 missing in starter (86 marked file(s) checked)`   | 0                        |
+
+The one remaining DRIFT is `scripts/sync-check.mjs` itself (fbcm still has the old copy), which is the signal
+working as intended.
+
+**Blast radius (checked 2026-10-03 against each repo's `origin/main`; every marked `sync-check.mjs` equals the
+starter copy before this card, normalising line endings).** Merging the starter change makes every repo whose CI
+checks out live starter `main` and ENFORCES the diff go red until it resyncs:
+
+| Repo                      | Marked copy                   | CI mode                                                                          | Effect of merging this card                                               |
+| ------------------------- | ----------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| presacademy               | `scripts/sync-check.mjs`      | live starter `main`, enforce step in `static` (feeds `build`)                    | required `build` RED until re-synced                                      |
+| reid-design-site          | `scripts/sync-check.mjs`      | live starter `main`, enforce step in `static` (feeds `build`)                    | required `build` RED until re-synced (`test` and `lighthouse` unaffected) |
+| nixoncreativestudio       | `scripts/sync-check.mjs`      | live starter `main`, enforce step in `static` (feeds `build`)                    | required `build` RED until re-synced                                      |
+| mas-monograms             | `scripts/sync-check.mjs`      | live starter `main`, enforce step inside the `build` job                         | required `build` RED until re-synced                                      |
+| stonesteps-50k            | `scripts/sync-check.mjs`      | self-check only                                                                  | DRIFT under a manual `sync-check` only                                    |
+| fbcm                      | `scripts/sync-check.mjs`      | self-check only                                                                  | DRIFT under a manual `sync-check` only                                    |
+| wcp (archived)            | `site/scripts/sync-check.mjs` | live starter `main` (`staging` on the `staging` branch), enforce step in `build` | would go red, but the repo is archived: no PRs, no CI runs                |
+| 2ndpreschicago (archived) | `scripts/sync-check.mjs`      | live starter `main` (`staging` on the `staging` branch), enforce step in `build` | would go red, but the repo is archived: no PRs, no CI runs                |
+| ncs-church-starter        | none                          | archived, no longer synced                                                       | nothing                                                                   |
+
+The enforce step uses `continue-on-error: true`, then a later step fails the job when the outcome was not `success`,
+and the job result feeds the required `build` check. Also on a DRIFT the `propose-drift.mjs` step tries to open a PR
+against the starter with the site's copy (it exits 0 whatever happens); that PR would carry the OLD file, so close it
+and resync instead.
+
+**Adopt (per site).** Same drill as cards 77 to 79: the starter PR merges only after the site resync PRs are ready.
+In each repo: branch from `origin/main`, copy `scripts/sync-check.mjs` from the starter byte for byte, run
+`node scripts/sync-check.mjs` with `NCS_STARTER_DIR` pointing at the starter (expect all `SAME`), push, and let `build`
+and `test` run. Optionally copy `scripts/lib/sync-check-skip-dirs.test.mjs` into a repo that has a `test:scripts`
+script. Nothing else changes: no workflow edit, no marker change.
+
+**Scope.** `.claude/worktrees` and `_worktrees` are skipped for `sync-check` only. Other whole-tree tools
+(prettier, eslint, Tailwind, Lighthouse) have their own ignore lists and were not touched or re-checked here.
+
+---
+
+## Card 81: `generate-llms-full` identity from `brand.config.json`; `audit-studio` shared field consts (2026-10-03)
+
+**Origin:** fbcm, 2026-09-18, in its copies of `scripts/generate-llms-full.mjs` and `scripts/audit-studio.mjs`. When fbcm
+un-marked them (fbcm PR #31, because they carry church-specific fields) two generic fixes stayed behind in those
+copies. One card, because the two travel in the same resync and share a blast radius. Each part was checked against
+the starter's `origin/main` copy before anything was written (below); both gaps are real.
+**Canonical:** `scripts/generate-llms-full.mjs`, `scripts/audit-studio.mjs`, and four new files under `scripts/lib/`:
+`site-identity.mjs`, `shared-field-consts.mjs` and their tests `site-identity.test.mjs`,
+`shared-field-consts.test.mjs` (all `PORTABLE`).
+
+### Part 1: `llms-full.txt` takes its identity from `brand/brand.config.json`
+
+**The bug.** The script fell back to the literal `Studio Starter` and `https://example.com` whenever `SITE_NAME` and
+`PUBLIC_SITE_URL` were not in the environment. `brand.config.json` is the committed source of truth for identity
+(`apply-brand` writes it into `src/data/site.ts`), but the script never read it, so a fork with a filled config still
+published another business's name and a dead domain in a file written to be ingested and repeated by language models.
+A build, a type check and a test all pass on that; only the noun is wrong (CLAUDE.md rule 11). It is not hypothetical:
+`public/llms-full.txt` on `origin/main` of presacademy, stonesteps-50k and 2ndpreschicago all start
+`# Studio Starter` and have six lines containing `example.com`.
+
+**Proof on a constructed fork** (a scratch repo with `brand/brand.config.json` = `{ "name": "Demo Church", "domain":
+"demochurch.org" }`, no SITE_NAME / PUBLIC_SITE_URL, both scripts run unchanged):
+
+| Script                | First line of `llms-full.txt` |
+| --------------------- | ----------------------------- |
+| starter `origin/main` | `# Studio Starter`            |
+| fbcm's copy           | `# Demo Church`               |
+| this card             | `# Demo Church`               |
+
+**What it is.** `resolveSiteIdentity({ env, brand })` in `scripts/lib/site-identity.mjs`, per field: env
+(`SITE_NAME`; `PUBLIC_SITE_URL`, then `SITE_URL`), then the brand config (`name`; `https://<domain>`), then today's
+placeholder. The URL is the apex, matching `url` in `src/data/site.ts`; a site served from www sets `PUBLIC_SITE_URL`,
+which wins.
+
+**Deliberately NOT fbcm's behaviour.** fbcm exits 1 when it finds no identity. The starter must not become stricter, so
+a missing, unreadable or incomplete config falls back exactly as before and the script prints one `[warn]` line naming
+what fell back (the module never throws or exits, so it cannot fail a build). Checked: with the starter's own
+placeholder config, or with no config at all, the output file is byte-identical to the old script's (`cmp`).
+fbcm's `www.` prefix, its `/post/` link path, its `serviceAreas` and `availabilityStatus` and the other church
+fields stay in fbcm.
+
+### Part 2: `audit-studio` reads module-level `defineField` constants
+
+**The bug.** `audit-studio.mjs` slices a type's source from its `defineType(` to the next one and collects every
+`name: '...'`. A field declared once as `const eyebrow = defineField({ name: 'eyebrow', ... })` and listed as the bare
+identifier `eyebrow` in several types has its `name:` literal where the CONST is declared, outside every slice, so
+each type looks as though it never declared the field and check 3 reports every stored value of it as a key the schema
+does not declare, which is exactly the "Remove field" bait rule 1 warns about. A shared const is the same idea as a
+helper call (`FIELD_HELPERS`), written without the parentheses. The starter's own schema has no such const today, so
+this is latent here and live in any fork that writes one (fbcm did).
+
+**Proof on a constructed schema** (one file: `const eyebrow = defineField(...)` listed in two document types, plus one
+stored document of each type carrying `eyebrow`; the check-3 logic replayed over the schema each script reads):
+
+| Script                | Schema map                             | Check 3                                       |
+| --------------------- | -------------------------------------- | --------------------------------------------- |
+| starter `origin/main` | `heroDemo: {heroDemo, title}`          | 2 findings, both `"eyebrow"` reported as bait |
+| fbcm's copy           | `heroDemo: {heroDemo, title, eyebrow}` | 0 findings                                    |
+| this card             | same as fbcm                           | 0 findings                                    |
+
+(The replay reads the schema exactly as the script does and applies check 3's own comparison. It runs offline because
+the live check needs a Sanity project, and a real run against a fake project id is just a 401.)
+
+**What it is.** `sharedFieldConsts(src)` maps each `const x = defineField({ ... name: 'y' })` to its field name and
+`sharedFieldNames(body, shared)` credits a type that lists `x` by bare identifier. fbcm's parser inline, moved to
+`scripts/lib/shared-field-consts.mjs` so it can be unit-tested (the audit is a CLI that runs at import). One deliberate
+extension over fbcm: the identifier may also be the last element before `]`
+(`fields: [defineField(...), eyebrow]`), which fbcm's `x,` pattern misses; the test pins it. Nothing is removed from
+what the audit finds, so existing callers see the same output.
+
+**Not promoted from fbcm's audit copy:** the `structuredInUse` guard on check 7, the `anchorField` helper and the
+trimmed `STRUCTURED` set. Those are judgements about fbcm's church data, not about the family.
+
+### Tests
+
+`site-identity.test.mjs` (8 cases): brand wins when env is empty, env wins per field, no or empty brand config keeps
+the placeholders and flags them, the starter's placeholder config is unchanged output, one missing field falls back
+alone, scheme and trailing slash normalised, an explicitly empty env value still wins, `readBrandConfig` on missing,
+invalid, array and null JSON. `shared-field-consts.test.mjs` (6 cases): const to field map, a const named differently
+from its field, credited in a type that lists it, last-element-before-`]`, look-alikes (`eyebrowish`, `obj.eyebrow`,
+the declaration itself) do not match, a file with no consts is a no-op. Both run under `npm run test:scripts`, which
+`test:unit` chains, so `ci.yml` needs no change.
+
+### Blast radius (checked 2026-10-03 against each repo's `origin/main`)
+
+| Repo                      | `generate-llms-full.mjs`                           | `audit-studio.mjs`             | CI mode                                                       | Effect of merging this card             |
+| ------------------------- | -------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- | --------------------------------------- |
+| presacademy               | MARKED, byte-identical to the starter's            | none                           | live starter `main`, enforce step in `static` (feeds `build`) | required `build` RED until re-synced    |
+| stonesteps-50k            | MARKED, byte-identical to the starter's            | unmarked, older, own copy      | self-check only                                               | DRIFT under a manual `sync-check` only  |
+| fbcm                      | unmarked (diverged on purpose)                     | unmarked (diverged on purpose) | self-check only                                               | nothing                                 |
+| reid-design-site          | unmarked (hard-coded `SITE`)                       | none                           | live starter `main`, enforce step in `static`                 | nothing (no marked copy of either file) |
+| mas-monograms             | unmarked, still has the placeholder fallback       | none                           | live starter `main`, enforce step in `build`                  | nothing                                 |
+| 2ndpreschicago (archived) | unmarked, still has the placeholder fallback       | none                           | archived, no CI                                               | nothing                                 |
+| nixoncreativestudio       | none                                               | none                           | live starter `main`                                           | nothing                                 |
+| wcp (archived)            | not checked locally (no checkout); archived, no CI | not checked locally            | archived, no CI                                               | nothing                                 |
+
+The two new lib modules and their tests are new marked files, but `sync-check` walks the SITE's marked files, so a site
+that does not have them is not reported. Only the `generate-llms-full.mjs` resync needs the two new files copied with
+it, because the script now imports `./lib/site-identity.mjs`.
+
+**Adopt (per site that carries a marked `generate-llms-full.mjs`: presacademy, stonesteps-50k).** Starter merges first,
+then in each repo: branch from `origin/main`, copy `scripts/generate-llms-full.mjs`, `scripts/lib/site-identity.mjs`
+and (optionally, if the repo has `test:scripts`) `scripts/lib/site-identity.test.mjs` from the starter byte for byte,
+set `name` and `domain` in `brand/brand.config.json` if they are still the placeholders, run `npm run llms:full` with
+`SANITY_API_READ_TOKEN` to regenerate and commit `public/llms-full.txt`, run `node scripts/sync-check.mjs`
+with `NCS_STARTER_DIR` set (expect all `SAME`), push, and let `build` and `test` run. No workflow edit, no marker
+change. A site that wants the audit half copies `scripts/audit-studio.mjs`, `scripts/lib/shared-field-consts.mjs` (and
+its test); none carries a marked audit today.
+
+---
+
+## Card 82: An invisible 44px hit area for small links, with no layout shift (2026-10-03)
+
+**Origin:** three sites, one day, one cause. The Impeccable design audit of the live sites on 2026-10-03 found links and
+buttons under 44px at phone width on reid-design-site, fbcm and stonesteps-50k. Each fixed it in its own audit PR, each
+landed on the same idea (grow the TAPPABLE box, not the visible one), and each named the class differently:
+reid-design-site PR #113 (`.r-link`), fbcm PR #36 (`.hit-44`), stonesteps-50k PR #77 (`.tap-pad` and `.tap-pad-lg`).
+**Canonical:** none. It is CSS that lives in each site's `globals.css`/`reid.css`, so no `PORTABLE` file carries it;
+the snippets below are the reference. The starter now carries fbcm's block as `.hit-44` in `src/styles/globals.css` (applied
+2026-10-03, see Status) and uses it on the footer's bottom-bar links and the "View larger map" link; copy that block.
+
+**What it is.** A small link whose box is 16 to 24px tall fails the 44px comfortable-touch floor (WCAG 2.5.5 AAA; 2.5.8
+sets 24px as the AA minimum). Padding it to 44px moves things you can see, and for a text link with an underline it drops
+the underline off the baseline. So the fix is a hit area the finger can land on that nothing else can see. Two shapes
+proved out.
+
+1. **A pseudo-element hit area** (reid-design-site, fbcm). For a standalone small link or control. fbcm's:
+
+   ```css
+   .hit-44::after {
+     content: '';
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     width: max(100%, 44px);
+     height: max(100%, 44px);
+     transform: translate(-50%, -50%);
+   }
+   ```
+
+   The element must be positioned. fbcm leaves that to the caller (`class="hit-44 relative"`) so a link that is already
+   `absolute` or `fixed` is never knocked back to `relative`. reid-design-site's version is for one link class and sets
+   `position: relative` on it: `.r-link::after { content: ''; position: absolute; inset: -0.75rem -0.15rem; }` (0.75rem
+   above and below the words, a hair either side). `max(100%, 44px)` is the better default: it only grows what is too small
+   and is centred, so a wide link is not widened for nothing.
+
+2. **Vertical padding on an inline box** (stonesteps-50k). For a link inside a sentence or a table cell. Padding on an
+   INLINE box does not move the line it sits in; it only grows the box the finger can hit.
+
+   ```css
+   @media (width < 48rem) {
+     .tap-pad {
+       padding-block: 0.55rem;
+     }
+     .tap-pad-lg {
+       padding-block: 1rem;
+     } /* 12px small-print links */
+   }
+   ```
+
+**What it must not do.**
+
+- **No visible layout shift.** Nothing you can see may move or resize: no `min-height`, no block padding, on a text link
+  that has an underline (fbcm's rule: the underline would drop). Re-measure the page height before and after; it should
+  be unchanged. (A standalone footer row or a button is different: give it real `min-height` or padding at its own rule, as
+  reid-design-site did for the footer index rows and base links, and stonesteps-50k for `.foot-link`.)
+- **Never take the element's `::after` when it already has one.** The hit area owns `::after`. reid-design-site had to move
+  `GoogleCite`'s separator dot from `::after` to `::before`, and wrote the rule down: a component that needs its own
+  pseudo-element on an `.r-link` uses `::before`. Grep the component for `::after` before adding the class.
+- **Do not steal a neighbour's tap.** Stacked rows closer than 44px apart overlap by a few px, and the later one in source
+  order wins the overlap, which is how any stacked list of links behaves. That is accepted at a few px; a hit area that
+  reaches well into another control is a bug. Card 83's script hit-tests this.
+- **Do not chase what is not a target.** A link inside a sentence is exempt under WCAG 2.5.8 ("Inline"). fbcm left its two
+  inline links alone and reported them separately; reid-design-site and stonesteps-50k gave them the invisible area anyway
+  because it costs nothing. An off-screen, `aria-hidden`, `tabindex="-1"` honeypot input is not a target either (reid's audit
+  listed a "13x13 contact checkbox"; it was the honeypot, left alone).
+- **A third-party icon keeps its look.** stonesteps-50k's MapLibre attribution toggle is a 24px icon; a bigger circle would
+  cover the credit it opens, so it gets `::after { content: ''; position: absolute; inset: -10px; }` and nothing else.
+
+**Measured (each site's own PR, before and after, at 390px).** fbcm: 81 targets under 44px on Home, Visit and Staff, 79
+fixed to 0 with the 2 inline links reported as exempt. stonesteps-50k: `/` 17 to 0, `/course/` 30 to 1 (the attribution
+toggle: its scan reads box sizes and does not credit the `::after`, so it still lists it). reid-design-site: not counted as a number in its PR; it
+reports axe-core 0 violations before and after on four routes and a hit area on `.r-link`, the footer contact links, the
+booking line and the header rating.
+
+**Adopt (per site).**
+
+1. Add the CSS above to the site's global stylesheet, outside any Tailwind layer that purges it.
+2. Add the class to each small standalone link (and `relative` if it is not positioned). Use the padding form for links in
+   prose and table cells.
+3. Run card 83's script at 390px before and after and quote both totals. Aim for 0 under 44px and 0 stolen-tap warnings.
+4. Write the rule into the site's layout/CSS rules file (the `::before` rule and "never pad an underlined text link").
+5. Build and look at it in light and dark: nothing visible should have moved.
+
+**Applied in the starter (2026-10-03, PR for `docs/PENDING.md` item 12).** `.hit-44` (fbcm's block, unchanged) in
+`src/styles/globals.css`; `relative hit-44` on the footer bottom-bar links (Privacy policy, legal links, site credit) and on
+"View larger map" in `ServiceAreaMap.astro`. The footer's column links are stacked rows only about 28px apart, where a 44px
+hit area would overlap its neighbours by 16px each, so they take real row height instead (`inline-flex min-h-[44px]
+min-w-[44px] items-center justify-center md:justify-start`, and the lists lose `space-y-2`): the footer is taller by about 16px
+per link on a phone. A one-word link ("FAQ", 27px wide) also needs `min-w-[44px]`, which the first pass missed: the scan checks
+width as well as height. The contact form's inputs, selects, textareas and Send button took `min-h-[44px]` (they are visible
+controls, so a real height, 40 to 42px up to 44px). None of those files is `PORTABLE`, so there is nothing to sync; a site
+repeats the same edits in its own footer and form. The footer social icons went from `h-10 w-10` to `h-11 w-11` (not rendered
+in the seed content, so not scan-verified).
+
+**Status, checked against each repo's `origin/main` on 2026-10-03.** Starter: `yes` (see above). reid-design-site: `.r-link::after` in
+`src/styles/reid.css`. stonesteps-50k: `.tap-pad` and `.tap-pad-lg` in `src/styles/globals.css`. fbcm (not a column):
+`.hit-44::after` in `src/styles/globals.css`. Every other cell is `no` meaning not adopted and not measured, not known to
+fail; a site is `no` until its own 390px scan says otherwise.
+
+**Three more ports (2026-10-04), each read from its merged PR.** All three reached 0 targets under 44px and 0 stolen taps
+at 390px; none needed a different idea, only a different mix of the shapes above. The shape depends on whether the
+element's `::after` is free and whether the control is native.
+
+- **presacademy** (PRs #61 and #62, merged 2026-10-04): `.hit-44` plus two more classes in `globals.css`. `.tap-44` is a
+  real 44px box for stacked lists such as footer links, where `.link-underline` already owns `::after` (the label sits in a
+  child `.link-underline` span so the underline hugs the text). `.check-44` is a 44px checkbox with a drawn 20px box. The
+  header, FAQ summaries (`-my-2 py-2` so accordion rows do not grow), filter chips and checkboxes needed it too. PR #62 was
+  a follow-up: the breadcrumb links on the course, event and faculty detail pages exist only with live Sanity content, so
+  the empty-Sanity CI build never rendered them and only the live scan found them (see card 83, lesson 2).
+- **mas-monograms** (PR #72, merged 2026-10-04): footer rows `min-h-[44px]`; `.hit-44` on the arrow links and the gallery
+  filter chips, with the chip rows at `gap-y-5` so neighbouring hit areas do not overlap; the quote form's radios and
+  checkbox redrawn by a `.choice-input` class at 18px plus `hit-44`. A native radio or checkbox cannot carry a pseudo-element
+  hit area (see card 83, lesson 5); high-contrast mode falls back to the native control.
+- **nixoncreativestudio** (PR #90, merged 2026-10-04): everything gated on `pointer: coarse` (`pointer-coarse:min-h-11` in
+  markup, `@media (pointer: coarse)` in `globals.css`), so a mouse desktop keeps its compact density and every touch device,
+  tablets included, gets 44px. Real box heights rather than `::after` hit areas, because three places already use `::after`
+  (`a.card-link` draws its arrow there, the heading copy-link its "Copied" bubble, the Coming Soon link its underline).
+  Measured by URL against production and the CI preview: 180 distinct failing elements on 20 routes to 0 (preview: 114 to 0
+  on 15 routes).
+
+Lesson for the choice between shapes, now with five sites behind it: grep the element for `::after` first. If it is taken,
+or the control is a native radio/checkbox, use a real box (`min-h-[44px]`, `.tap-44`) or redraw the control; if it is free,
+`.hit-44`. A visible footer gets taller either way (presacademy about 70px on a phone, mas-monograms about 300px), so expect
+`visual` baseline changes; regenerate them through the repo's visual workflow update input, then push an empty commit,
+because a commit pushed with a token triggers no checks.
+
+---
+
+## Card 83: `measure-tap-targets.mjs`, the 390px tap-target scan with a stolen-tap hit test (2026-10-03)
+
+**Origin:** fbcm PR #36, 2026-10-03 (the Impeccable audit fix), generalised here. It is the instrument card 82's numbers
+come from. **Canonical:** `scripts/measure-tap-targets.mjs` (`PORTABLE`, new in this card, so sync-check now covers it).
+
+**What it is.** A Playwright script that opens each path of a served copy of the site at phone width (390 by 844; mobile
+emulation and touch below 700px), scrolls the page in 500px steps so lazy content and reveal blocks settle, and lists every link, button, summary,
+input, select, textarea and `role=button`/`role=link` whose tappable area is under 44px in either direction.
+
+```
+node scripts/measure-tap-targets.mjs <baseUrl> [--width 390] [--paths /,/contact/] [--json out.json] [--include-closed-details]
+```
+
+- **The tappable area is the box grown by its own `::after`.** When an element has an absolutely positioned `::after`, the
+  effective size is `max(box, ::after box)` each way. So it credits card 82's hit area and a bare `getBoundingClientRect`
+  scan does not (the stonesteps-50k scan was the second kind, which is why it still listed the attribution toggle).
+- **Inline links are counted apart.** A link whose parent is a `p`, `dd` or `blockquote` with more than 12 other characters
+  of text is reported as `inline`, exempt under WCAG 2.5.8, and left out of the failing total.
+- **Stolen taps.** Every element that relies on a hit-area `::after` is hit-tested with `elementFromPoint` 3px inside its
+  top and bottom edges at the horizontal centre. If the point lands on something that is not the element or its descendant,
+  it is reported (`stolen`). Points outside the viewport are skipped at that scroll stop; each element is measured at several
+  stops, so it is hit-tested while on screen.
+- **Not a target:** `display: none`, `visibility: hidden`, zero or 1px boxes, anything inside `[inert]` or
+  `[aria-hidden="true"]`, anything off the left edge, and (2026-10-04, see "Closed `<details>`" below) anything inside a
+  closed `<details>` other than its own `<summary>`.
+- **Output and exit code.** Per path: the failing list, then a TOTAL line (`N under 44px, N inline-in-sentence (exempt), N
+lifted to 44px by a hit-area ::after, N stolen-tap warnings`). Exit 1 when any target is under 44px or any tap is stolen,
+  0 otherwise, 2 for a usage error. `--json` writes the full per-path list.
+
+**What changed from fbcm's copy.** Only wording and one default: `--paths` defaults to `/` (fbcm's was its own
+`/,/visit/,/staff/`), and the comments and the TOTAL line no longer name `.hit-44`/`PRODUCT.md`. The measuring logic is
+byte-for-byte fbcm's. fbcm's own copy is unmarked and differs by those lines; sync-check does not compare it, and it can
+take the starter copy as a straight overwrite.
+
+**Closed `<details>` (fixed 2026-10-04, closes `docs/PENDING.md` item 13; lesson 3 below is the origin).** Content inside
+a `<details>` without `open` is not rendered or tappable, but Chrome still reports a box for it, so the scan counted those
+links as under 44px and the hit test landed on whatever sat underneath (a mobile filter panel gave mas-monograms
+`/style-gallery/` 68 false stolen taps). The script now decides at scan time, from the live DOM: for each match it walks
+every ancestor `details:not([open])` (nested ones included) and skips the element unless it is that details' own
+`<summary>` or sits inside it. The summary of a closed details is always measured, content of an open details is measured,
+and content of an open details nested inside a closed one is skipped (the outer panel hides it). Nothing else changed:
+`hidden`, `display: none` and `visibility: hidden` were already skipped, so they were not touched. `--include-closed-details`
+restores the old behaviour. Pinned by `scripts/lib/measure-tap-targets.test.mjs` (starter-only, not PORTABLE; it serves a
+fixture of closed, open, nested and undersized-summary cases, runs the real script in headless Chromium and skips itself
+when Chromium is not installed). Fixture before the fix: 3 under 44px, 10 lifted, 6 stolen; after: 2 under 44px (the two
+undersized summaries, correctly), 4 lifted, 0 stolen. The starter's own 8 routes read the same before and after (0 under
+44px, 3 inline exempt, 9 lifted, 0 stolen). Because the script is `PORTABLE`, presacademy, mas-monograms and
+nixoncreativestudio take the new copy by straight overwrite; fbcm's unmarked original is unchanged.
+
+**What it does not do.**
+
+- **It does not measure text size.** The card's brief said "small-text scan": stonesteps-50k's audit PR describes a scan
+  that also counted text under 11px (2 groups to 0), but that variant is not committed anywhere on `main` (its `scripts/`
+  holds no such file), so it was not read and is not claimed here. A text-size floor check is still to be written.
+- **It is not a CI gate.** It needs a served site and a browser. It is the number to quote before and after a change.
+- **It reads one viewport width per run.** Run it twice for 390 and 360 if a site cares about both.
+- **Tightly stacked rows trip the stolen-tap check.** Footer link lists closer than 44px apart overlap by design (card 82),
+  so such a page can exit 1 on `stolen` while having nothing under 44px. Read the list; a few px of overlap in a stacked
+  list is the accepted trade, a hit area reaching into a different control is a bug.
+
+**Verified when this card was written (2026-10-03).** On a five-element fixture page (one 16px link, one link with a
+centred 44px `::after`, two stacked 16px rows with the `::after`, one inline link in a sentence, one 60 by 50 button) it
+printed `1 under 44px, 1 inline-in-sentence (exempt), 3 lifted to 44px by a hit-area ::after, 1 stolen-tap warnings` and
+exited 1, which is the right answer for that page (the stacked rows overlap). `prettier --check` and `eslint` pass on the
+file. It was also run against this starter's own production build (see Status).
+
+**Adopt (per site).** Copy `scripts/measure-tap-targets.mjs` byte for byte (`@playwright/test` and Chromium must be
+installed; every family site has them). Run `node scripts/sync-check.mjs` with `NCS_STARTER_DIR` set; expect `SAME`. Serve
+the build (`npm run serve:dist` where the repo has it, `npx http-server dist/client` otherwise) and pass `--paths` with the
+site's real routes. Optionally add an npm script. No workflow edit.
+
+**Status.** Starter: `yes`. presacademy, mas-monograms and nixoncreativestudio: `yes` (2026-10-04, each carries the
+byte-identical marked copy; PRs below). fbcm (not a column) has its own unmarked original. reid-design-site and
+stonesteps-50k have no marked copy.
+
+**Lessons from the three ports (2026-10-04; presacademy #61 and #62, mas-monograms #72, nixoncreativestudio #90).** The script
+is unchanged by these; they are how to read and run it.
+
+1. **Compare distinct failing elements, not the TOTAL.** The script scrolls in 500px steps and keys elements by position, so
+   a sticky element (the header) is listed again at every scroll stop and the raw TOTAL is inflated, about 3x.
+   Quote the number of distinct failing elements (nixoncreativestudio's notes say the same).
+2. **Scan the LIVE site after the deploy, not only the build.** CMS-driven pages (detail pages, forms, filters) do not
+   exist in an empty-Sanity CI build, so a clean build scan proves nothing about them. presacademy's build scan was 0 and the
+   live scan still found the breadcrumb links on its course, event and faculty pages (PR #62, a second PR).
+3. **False positive: content inside a closed `<details>`.** The script reports it with geometry, and the hit test lands on
+   whatever sits underneath, so the stolen-tap check fires. mas-monograms `/style-gallery/` reported 68 stolen taps because
+   its mobile filter panel is a closed `<details>`; with the panel opened the page was 0 under 44px and 0 stolen. Do not
+   "fix" the page for these. The fix belongs in the script (skip the content of a closed `<details>` other than its
+   `<summary>`); done 2026-10-04 in the starter (see "Closed `<details>`" above), so a site on the new copy no longer needs
+   the panel opened for the scan.
+4. **Running it.** Under Git Bash set `MSYS_NO_PATHCONV=1`, or `--paths /` is rewritten to a Windows path. Restart the static
+   server for each scan so it serves the current build. A server-rendered site (nixoncreativestudio) has no `dist` to serve:
+   scan by URL against production or the CI preview. nixoncreativestudio also saw headless Chromium killed mid-run on
+   Windows; run one path per process and retry. The script sets touch emulation, which is what makes `pointer: coarse`
+   rules match.
+5. **A native radio or checkbox cannot carry an invisible hit area** (a replaced control has no usable `::after`). Either
+   redraw it (mas-monograms `.choice-input` at 18px, presacademy `.check-44` with a 20px drawn box) or wrap it in a label
+   with `min-h-[44px]`. High-contrast mode falls back to the native control on a redrawn one.
+6. **A visible footer gets taller, so `visual` baselines move.** Regenerate them with the repo's visual workflow update
+   input, then push an empty commit: a commit pushed with a token triggers no checks.
+
+Results at 390px: presacademy 62 to 107 under 44px per route to 0 over 14 prebuilt routes and the 404, then 0 on the live
+site after #62; mas-monograms 23 to 149 per route (27 on `/`, 42 on `/request-a-quote/`, 149 on `/style-gallery/`) to 0 over 22
+routes; nixoncreativestudio 180 distinct elements on 20 production routes to 0 (PR preview, 15 routes: 114 to 0). In-sentence links are
+exempt in all three.
+
+**First reading on this starter** (`npm run build`, `npm run serve:dist`, 390px, 2026-10-03, seed content, exit 1). `/`: 6
+under 44px (the footer's About, Process, Services & Pricing, FAQ, Journal and Privacy policy links, 15 to 17px tall).
+`/services/`: the same 6. `/contact/`: 16, those 6 plus the form's 3 text inputs (42px), 5 selects (40px), the Send
+button (36px) and the "View larger map" link (15px). 0 inline, 0 lifted, 0 stolen. So the starter did not meet the 44px
+floor then. **Fixed 2026-10-03** (card 82, "Applied in the starter"): the same scan over `/`, `/services/`, `/contact/`,
+`/about/`, `/faq/`, `/journal/`, `/privacy/` and `/process/` went from 58 under 44px to 0, with 3 inline-in-sentence links
+exempt and 0 stolen taps.
+
+---
+
+## Card 84: Font-swap layout shift hides on Windows and Mac and shows on the Linux runner (2026-10-03)
+
+**Origin:** reid-design-site PR #113, 2026-10-03 (the Impeccable audit fix for the phone hero). **Canonical:** guidance;
+the one reusable piece is the metric-matched fallback `@font-face` pattern below. No `PORTABLE` file.
+
+**The trap.** Windows and macOS ship Georgia and Times New Roman. A Linux CI runner (the Lighthouse box) ships neither
+Georgia nor, usually, anything but Liberation/Tinos fonts, which are Times New Roman's metric twins. So the same page
+falls back to a DIFFERENT font on the runner than on the machine you test on, and a fallback-to-web-font shift that is
+invisible locally is a failing CLS number in CI. reid-design-site passed locally, then Lighthouse reported CLS 0.147
+(median) on `/` against the 0.1 gate (baseline 0.049) after the PR moved the hero's subhead and buttons above the phone fold.
+
+**Why a tuned fallback alone did not fix it.** The home headline uses `text-wrap: balance`, which re-wraps on tiny width
+differences. With the Times-metric fallback the headline broke a line differently from real Zodiak, so when Zodiak landed
+the subhead and buttons jumped 59px. Changing `Zodiak Fallback TNR`'s `size-adjust` from 118% to 128% did not change the
+wrap. When content sits below the headline and above the fold, the line breaks of a balanced headline cannot be kept
+stable by a fallback face; the web font has to be there at first paint.
+
+**What worked (two parts, both measured on a Linux runner throttled like Lighthouse).**
+
+1. **Preload the headline faces on the page that needs it, and only there.** Two font preload links in the home hero
+   (`<link rel="preload" href="..." as="font" type="font/woff2" crossorigin />`), one for the display face and one for the
+   hand-lettered accent face (about 25 KB and 36 KB). Shifts went from 3 (total 1.08, including an initial-paint artefact) to none (0). The site-wide "no font
+   preload" rule came from a Cormorant-era measurement where a preload delayed the hero photo; LCP headroom on `/` was 3.55s
+   against a 4.5s budget, and the PR's own Lighthouse job re-checked LCP. Re-measure LCP on any page you add a preload to.
+2. **A metric-matched fallback for a face that is far narrower than any serif.** Waterfall (a script face) is about 140px
+   wide where Georgia Italic is about 340px for the same word at hero size, so before it loaded the headline wrapped onto an
+   extra line (CLS 0.16 on a phone). The fix is a `size-adjust` fallback face, measured as web-font width over local-font
+   width on the real strings (ratio 0.42), times the base fallback's own adjust:
+
+   ```css
+   @font-face {
+     font-family: 'Waterfall Fallback';
+     font-style: italic;
+     src: local('Georgia Italic'), local('Georgia-Italic');
+     size-adjust: 45.9%; /* 109.28% x 0.42 */
+   }
+   @font-face {
+     font-family: 'Waterfall Fallback TNR';
+     font-style: italic;
+     src:
+       local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT'),
+       local('Liberation Serif Italic'), local('Tinos Italic');
+     size-adjust: 49.6%; /* 118.19% x 0.42 */
+   }
+   /* in the font stack, right after the web font */
+   --font-hand:
+     'Waterfall', 'Waterfall Fallback', 'Waterfall Fallback TNR', 'Zodiak', 'Zodiak Fallback',
+     Georgia, serif;
+   ```
+
+   After it, the fallback layout matched the loaded layout (subhead top 599px both ways) and local CLS was 0.005. The two
+   faces (Georgia, and the Times-metric twins for Linux) are what a Windows or Mac machine and a Linux runner each resolve
+   to; both are needed. The numbers are for that font at that size: re-measure if the face or its size changes.
+
+**How to check any site for it (this is the card's real value).**
+
+- Measure on the SAME OS family as CI, not on your own machine. A Playwright run in the Lighthouse job's container, or the
+  CI Lighthouse artifact itself, has the runner's fonts; a Windows or Mac run does not. Look at the layout-shift entries
+  (`PerformanceObserver` type `layout-shift`) with the page throttled like Lighthouse, not at the total alone.
+- Suspect it whenever a PR moves content from below the fold to above it, or changes a headline's size, wrap or font.
+- Order of fixes, cheapest first: metric-matched fallback (`size-adjust`, plus `ascent-override`, `descent-override` and
+  `line-gap-override` taken from the web font's own metrics, divided by `size-adjust` because the browser scales them too);
+  then a preload of just the faces the first screen uses; the site-wide ban on preloading is a default, not a law.
+- Do not ship a fallback you measured on one OS and call it done: list a Linux twin (`Liberation Serif`, `Tinos`,
+  `Liberation Sans`, `Arimo`) next to every `local('Georgia')`, `local('Times New Roman')` or `local('Arial')`.
+
+**Status, read from `origin/main` on 2026-10-03.** reid-design-site: `Waterfall Fallback` and `Waterfall Fallback TNR` in
+`src/styles/globals.css`, and the two preloads in `src/components/home/HomeHero.astro`. No other repo was checked for the
+trap; a `no` means not measured. The starter ships no metric-matched fallback faces of its own (`src/styles/globals.css` has no
+`size-adjust` descriptor, only the unrelated `-webkit-text-size-adjust`), which is the follow-up if a site hits this twice.
+
+---
+
+## Card 85: MapLibre 6.x: register generated icons with `setMissingStyleImageResolver`, not `styleimagemissing` (2026-10-03)
+
+**Origin:** stonesteps-50k PR #77, 2026-10-03 (the Impeccable audit fix; the console on `/course/` logged
+`Image "course-arrow" could not be loaded` on every page view). **Canonical:** guidance only. **The starter ships no
+MapLibre map component** (no `maplibre-gl` in its `package.json` or `src`), and neither do presacademy, reid-design-site,
+mas-monograms or nixoncreativestudio (checked in each `origin/main` `package.json`; fbcm, wcp and 2ndpreschicago were not
+checked). stonesteps-50k's `src/components/race/CourseMapLibre.tsx` is the only reference (`maplibre-gl ^6.10.0`). Read
+this card before a site adds a map.
+
+**The rule.** If a layer names an image that you draw yourself (a canvas arrow, a generated marker), supply it from
+`map.setMissingStyleImageResolver(...)`. Do NOT rely on a `map.on('styleimagemissing', ...)` listener: in 6.x the event
+fires only after the resolver has had its chance, and an image added by a listener is ignored, so the warning stays.
+stonesteps-50k tried the listener first and it did nothing.
+
+**The second half of the same bug.** The style, and so the layer that names the image, is parsed before the `load` event
+fires. Adding the image only inside `m.on('load', ...)` was too late, which is what logged the warning on every view.
+Register the resolver right after constructing the map, and keep the `load` call too, behind a `hasImage` guard so the
+second call (and any style reload) is a no-op:
+
+```ts
+const addArrowImage = () => {
+  if (m.hasImage('course-arrow')) return;
+  const S = 24;
+  const c = document.createElement('canvas');
+  c.width = S;
+  c.height = S;
+  const ctx = c.getContext('2d');
+  if (ctx) {
+    ctx.translate(S / 2, S / 2);
+    // Point along +x: MapLibre rotates a line symbol so the image's right edge follows the line.
+    ctx.beginPath();
+    ctx.moveTo(7, 0);
+    ctx.lineTo(-4, -5.5);
+    ctx.lineTo(-4, 5.5);
+    ctx.closePath();
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = 'rgba(26,23,18,0.75)';
+    ctx.lineWidth = 1.5;
+    ctx.fill();
+    ctx.stroke();
+    m.addImage('course-arrow', ctx.getImageData(0, 0, S, S), { pixelRatio: 2 });
+  }
+};
+m.setMissingStyleImageResolver((id) => {
+  if (id === 'course-arrow') addArrowImage();
+});
+m.on('load', () => {
+  addArrowImage(); // no-op if the resolver already ran
+  // ...
+});
+```
+
+The image added inside the resolver is used for that very render. Drawing the arrow on a canvas is deliberate: a text
+symbol would need a `glyphs` endpoint in the style and the arrow to exist in whatever font was substituted.
+
+**How to tell it worked.** Open the page with the console open: the `Image "..." could not be loaded` warning is gone (on
+stonesteps-50k only headless-GL performance notices remained).
+
+**Same PR, same file, a related MapLibre note.** MapLibre's own controls are small (24px attribution toggle, a 10px scale
+bar). stonesteps-50k kept the attribution icon's look and gave it a card 82 invisible hit area, raised the zoom stack to
+44px at 640px and under, and set the scale bar to 11px. A map added to a site needs the card 82 and card 83 pass too.
+
+**Status.** stonesteps-50k: `setMissingStyleImageResolver` is in `CourseMapLibre.tsx` on `origin/main` (read 2026-10-03,
+and the `styleimagemissing` word survives there only in the explanatory comment). Every other cell is `n/a` where no
+MapLibre dependency was found, `no` where it was not checked.
+
+---
+
+## Card 86: A second factor for production writes: `--apply` alone is one keystroke from live data (2026-10-04)
+
+**Origin:** nixoncreativestudio, redesign-2026 branch, commit `c631a66` (not merged to that repo's `main` when this
+card was written; the hash may change if the branch is squash-merged). **Canonical:** guidance plus a reference
+implementation in that repo (`scripts/cms/args.mjs`, `scripts/cms/production-load.mjs`,
+`.claude/rules/live-writes.md`). The starter's `scripts/lib/sanity-lib.mjs` (`PORTABLE`) has carried the guard since
+2026-10-13; see "Adopted in the starter" at the end of this card.
+
+**The incident.** A delegated agent wrote a markdown plan with `node -e "..."` in Git Bash. The text held backticked
+commands, and the shell ran them as command substitutions, including a content load that already carried its own
+`--yes`: `npm run cms:load -- --collection pages --url <the production domain> --yes`. Real page entries were written
+to production. The `--yes` flag was a deliberate gate and it did not help, because anything that can be typed into a
+shell string can contain the flag. The two things an accident cannot supply are a value in the process environment and
+a typed answer.
+
+**The rule.** A script that WRITES to a live target needs two independent things, and the second must not be something
+a command line can carry by accident:
+
+1. **Dry by default.** No write without `--apply` (or `--yes`), exactly the gate card 4's `sanity-lib` already gives.
+2. **A production second factor.** When the target is production (a Sanity `production` dataset, an EmDash instance
+   that is not the CI Worker or a local address), the run also needs `NCS_PRODUCTION_WRITE=yes` in the real process
+   environment, set in the same command under the write protocol. The reference implementation:
+
+```js
+// scripts/cms/args.mjs (nixoncreativestudio)
+if (!args.yes) fail('... rerun with --yes (or add --dry-run to read only).');
+if (process.env.NCS_PRODUCTION_WRITE !== 'yes') {
+  fail(
+    '--yes is not enough: set NCS_PRODUCTION_WRITE=yes in the same command, after a backup and a dry run.',
+  );
+}
+```
+
+A wrapper that already asks a person to type "yes" (`production-load.mjs`) sets the variable for its own child
+processes only after that answer. Tests of the guard use a dummy host such as `https://example.invalid`, never
+production.
+
+**Who may set it (policy wording changed 2026-10-13, Nathan's decision).** Nathan or a delegated agent may set
+`NCS_PRODUCTION_WRITE=yes`, but only under the write protocol, in this order: (1) back up first
+(`sanity dataset export production <file> --raw`, saved outside the repo); (2) do a dry run and read its output; (3) run
+the write with `--apply` plus the variable, set in the same command; (4) verify afterwards. The guard exists to stop
+accidental writes: a stray or pasted command line can carry `--apply` but never an environment variable. So the
+variable never goes in `.env`, a shell profile or a scheduled CI job (a site-specific CI allowance, such as the one in
+stonesteps-50k's write gate, is the only exception). This replaced "only with Nathan present" and "a delegated agent
+never sets it"; the code behaves exactly as before.
+
+**Two details that make it work.**
+
+- Read `process.env.NCS_PRODUCTION_WRITE` directly. `sanity-lib` builds its env from `loadEnv`, which merges the root
+  `.env` under `process.env`; if the guard read the merged object, someone would put the variable in `.env` once and the
+  guard would be permanently open. It must be a per-command value.
+- Never put backticks inside a shell string. Write any text that contains them with the Write tool, then run a script
+  file. This is the actual root cause; the guard limits the damage when it recurs.
+
+**What the sibling repos have (read from each working copy, 2026-10-04).** Counted as: scripts that call a Sanity
+write method (`commit`, `create`, `createOrReplace`, `delete`, `patch`, `transaction`) on a `createClient` client.
+This is a grep, so read the numbers as approximate.
+
+| Repo             | Scripts that write | Write the moment they run (no `--apply`, `--dry-run`, `--write` or `--yes`) | Notes                                                                                                                   |
+| ---------------- | ------------------ | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| presacademy      | 18                 | 0                                                                           | All 18 take `--apply` (12 through `sanity-lib`). One factor.                                                            |
+| fbcm             | 27                 | 0 found by grep                                                             | 25 through `sanity-lib`; `seed-core.mjs` reads argv but no write flag. One factor.                                      |
+| starter          | 1                  | 1 (`seed-core.mjs`)                                                         | `sanity-lib` is dry by default; `seed-core.mjs` is not and defaults to the `production` dataset.                        |
+| reid-design-site | 27                 | 23 (20 read no argv at all)                                                 | Most `patch-*` and `seed-*` scripts write on a bare run. `patch-site-phone.mjs` is typical.                             |
+| mas-monograms    | 12                 | 9                                                                           | Two through `sanity-lib`; `patch-footer-credit.mjs` and `seed-legal.mjs` write on a bare run.                           |
+| 2ndpreschicago   | 21                 | 19                                                                          | Nearly every `seed-*` writes on a bare run (`seed-staff.mjs`); `seed-sample-page.mjs` is flag-gated only by `--delete`. |
+| stonesteps-50k   | 11                 | 4                                                                           | `retire-27k-records.mjs` writes unless `--dry-run` is passed: dry is the opt-in, the opposite of the rule 16 default.   |
+
+Every one of these defaults its dataset to `production` (`env.PUBLIC_SANITY_DATASET ?? 'production'`) and holds a write
+token in `.env`, and none of the family has a second dataset for scratch writes, so for a Sanity site every write is a
+production write.
+
+**To adopt (the PORTABLE change; ordering per the Projects `CLAUDE.md`).** (1) In the starter's `sanity-lib.mjs`
+`apply()`: when `APPLY` is set and `dataset === 'production'`, exit unless `process.env.NCS_PRODUCTION_WRITE === 'yes'`,
+and print the reason. (2) Make `seed-core.mjs` dry by default through the same gate (it predates `sanity-lib`). (3) Per
+site, move each bare-run script onto `sanity-lib` or give it the same two lines; the retire scripts first. (4) Add the
+backtick rule and the variable to each repo's data-scripts rule. Do the starter PR as a draft first, then the sites.
+
+**Status, 2026-10-04.** nixoncreativestudio: implemented on the unmerged redesign-2026 branch (`staged`). Every other
+cell is `no` or `partial`: `partial` = every write script is dry by default behind one flag, so only the second factor is
+missing; `no` = at least one script writes on a bare run. wcp is a Bricks (WordPress) site with no Sanity scripts and
+ncs-church-starter is archived, hence `n/a`. fbcm has no matrix column; its row above is recorded here.
+
+**Adopted in the starter, 2026-10-13.** Steps (1), (2) and (4) above are done here:
+
+- `scripts/lib/sanity-lib.mjs` exports `productionWriteRefusal({ apply, dataset, processEnv })` and calls it at import with
+  `process.env` itself (never the `loadEnv` merge). With `--apply` on the `production` dataset and no
+  `NCS_PRODUCTION_WRITE=yes`, it prints why and exits 2 before any request, so it also covers scripts that test `APPLY`
+  themselves instead of calling `apply()`. A dry run and a non-production dataset are unaffected. It also takes an optional
+  `SANITY_API_HOST`, which the test uses to aim at `https://example.invalid`.
+- `scripts/lib/sanity-lib.test.mjs` (`PORTABLE`, runs in `test:scripts`): the pure check (only the exact value `yes` opens it),
+  then the real module in child processes with a fake project, a fake token and `SANITY_API_HOST=https://example.invalid`, all
+  in `process.env` so a real `.env` cannot leak in. Without the variable the child exits 2 with no request; with it, it passes
+  the guard and the write fails to resolve the dummy host, which proves it was attempted. Production is never touched.
+- `scripts/seed-core.mjs` now takes its client, `APPLY` and `apply()` from `sanity-lib`, so `npm run seed` is a dry run and
+  the write is `NCS_PRODUCTION_WRITE=yes npm run seed -- --apply`.
+- `.claude/rules/data-scripts.md` carries the gate, the dummy-host testing rule and the backtick rule; CLAUDE.md rule 16,
+  `OPERATIONS.md`, `docs/bootstrap/NEW-PROJECT.md` and the setup checklist point at it.
+
+**Rollout of the lib, 2026-10-13.** The new `sanity-lib.mjs` and its test were synced to presacademy, mas-monograms,
+stonesteps-50k, fbcm and reid-design-site (all five carried the identical old copy), one PR each after this one merged. That
+gives every script already built on `sanity-lib` the second factor. It does not change a script that builds its own client
+and writes on a bare run, so those cells stay `no` (or `partial` for presacademy) until step (3) is done per site; that is
+the next batch. nixoncreativestudio is `n/a`: its static rollback on 2026-10-09 removed the CMS write scripts and the
+guard with them.
+
+---
+
+## Card 87: Dead UI kits and packages inflate every page's CSS, and `find-dead-weight.mjs` finds them (2026-10-04)
+
+**Origin:** nixoncreativestudio, redesign-2026 branch, commit `b93e381` (dead kit, packages and the scan narrowed) and
+`1d580e1` (Lenis removed); not merged to that repo's `main` when this card was written. **Canonical:**
+`scripts/find-dead-weight.mjs` here (not `PORTABLE`; a read-only helper). Run it from a site root:
+`node scripts/find-dead-weight.mjs` (or `npm run deadweight`).
+
+**The trap.** Tailwind 4 scans every file under `src/` for class names and writes the CSS for each one it finds, whether
+or not the component holding the class is imported anywhere. A kit that was copied in "in case" therefore costs bytes on
+every page, and with `build.inlineStylesheets: 'always'` (stonesteps-50k) those bytes ride in every HTML response.
+nixoncreativestudio deleted Starwind, PrimeReact and 15 unused shadcn, Aceternity and Magic UI files plus a dozen unused
+packages and measured the home page's inline CSS going 137 to 100 KB raw (HTML brotli 37.7 to 33.2 KB); phone LCP on the
+five measured pages moved by 0 to 170 ms in that PR's own table, so treat it as a bytes win first.
+
+**Measured here, 2026-10-04.** The starter and four sites carry the same unused kit copy: `src/components/starwind/`
+(36 files, 90,035 bytes) and, in all but mas-monograms, `src/components/primereact/` (3 files), with nothing outside
+those folders importing them. Using Tailwind's own scanner (`@tailwindcss/oxide` with `@tailwindcss/node`, each repo's
+own `globals.css`, scanning `src/**/*` once with and once without the kit folders; raw CSS bytes, so no minifier,
+and the real build's other `@source not` lines are not applied):
+
+| Repo             | CSS from `src/` | Without the kit | Saved             | Real build today                                            |
+| ---------------- | --------------- | --------------- | ----------------- | ----------------------------------------------------------- |
+| starter          | 138,902         | 129,824         | 9,078 (6.5%)      | kit in the scan                                             |
+| reid-design-site | 129,231         | 117,547         | 11,684 (9.0%)     | kit in the scan                                             |
+| mas-monograms    | 138,094         | 129,500         | 8,594 (6.2%)      | kit in the scan (starwind only)                             |
+| stonesteps-50k   | 207,180         | 198,249         | 8,931 (4.3%)      | kit in the scan; CSS is inlined into every page             |
+| fbcm             | 181,862         | 173,126         | 0 in the real run | 28 `@source not` lines already exclude the kit and the rest |
+
+presacademy and 2ndpreschicago have no kit folders (both `yes` in the matrix). The numbers are a scan-level proxy: a
+real `astro build` before and after is the proof to attach to each site's PR.
+
+**What to do per site.** Run the script; confirm each hit by hand (it lists candidates: a CLI-only package such as
+`typescript` or `prettier-plugin-tailwindcss` is fine, and a component loaded by a computed name shows up as unused);
+delete the kit folder, its stylesheet (`starwind.css`) and the packages only it used (`primereact` is imported only by
+`src/components/primereact/` in every repo that has it); then `npm run build` and compare the CSS bytes. Where deleting
+is not wanted yet, an `@source not '../components/starwind';` line in `globals.css` stops the scan (the fbcm form) and
+leaves the files. Component hits from the 2026-10-04 run that are worth a look: starter `AboutPersonal`,
+`FeaturedJournal`, `Provisional`, `ServiceAreaCue`, `ui/animated-beam`, `ui/bento-grid`; reid-design-site `HomeServices`,
+`ui/animated-beam`, `ui/bento-grid`; stonesteps-50k 11 files; mas-monograms `ui/dropdown-menu`; presacademy and
+2ndpreschicago `FaqAccordion`; fbcm `ProcessStepIllustration`. Unverified: these are what the script printed, not
+confirmed dead.
+
+**Lenis (a design call, not a defect).** The smooth-scroll library is still installed and initialised in the starter,
+presacademy and 2ndpreschicago (`import('lenis')` in `BaseLayout.astro`, `"lenis"` in `package.json`; read
+2026-10-04). It was removed in fbcm on 2026-09-24, in reid-design-site on 2026-09-30 and in nixoncreativestudio in
+`1d580e1` (native scrolling). mas-monograms and stonesteps-50k never carried it. The starter's rule 5 still tells a fork
+to keep the Lenis navigation reset, so removing it from the starter is Nathan's decision; this card only records which
+repos still ship it and that three siblings dropped it without a card.
+
+**Inlined CSS is a measurement, not a rule.** nixoncreativestudio chose `inlineStylesheets: 'always'` because its
+sheet is about 25 KB and it measured faster (home 94 to 97 Lighthouse locally); a 130 to 200 KB sheet like the ones above
+is the case where it hurts, which is why shrinking the sheet comes first. fbcm uses `'auto'`, stonesteps-50k `'always'`.
+
+**Status.** starter, reid-design-site, mas-monograms and stonesteps-50k: kit present, `no`. presacademy and
+2ndpreschicago: no kit, `yes`. nixoncreativestudio: done on its unmerged branch (`staged`). fbcm: scan already excludes
+the kit but the files and packages remain (no matrix column; recorded here). Lenis: starter, presacademy and
+2ndpreschicago still ship it.
+
+---
+
+## Card 88: The Cloudflare beacon starts after load and idle, not as a deferred head script (2026-10-04)
+
+**Origin:** nixoncreativestudio, redesign-2026 branch, commit `fb82d0e` (not merged to that repo's `main` when this card
+was written). **Canonical:** `src/components/analytics/CloudflareBeacon.astro` in that repo; the starter's copy of that
+file (card 54, `PORTABLE`) still renders the old `<script defer>` and is NOT changed by this card. Changing it follows
+the marked-file ordering in the Projects `CLAUDE.md`.
+
+**The cost.** A `<script defer>` in `<head>` still starts downloading during the first paint, so the 7 KB beacon and
+its connection to `static.cloudflareinsights.com` compete with the hero image on a throttled phone link. A/B on a local
+production build with a dummy token, Lighthouse mobile, median of 5: home LCP 2015 to 1850 ms (the 2.6 s mode in the
+raw runs disappeared), `/contact` 1862 to 1558 ms, CLS and TBT 0 in both arms. That is local data from one site; the CI
+preview run is the authority, and the gain scales with how close the LCP element is to the beacon in the waterfall.
+
+**The shape.** A 0.7 KB inline script that adds `<script type="module" src=".../beacon.min.js" data-cf-beacon="...">`
+after the `load` event plus a `requestIdleCallback` (3 s timeout, 1.5 s `setTimeout` fallback), guarded by a flag so it
+runs once per visit (the beacon follows view transitions itself). Web Vitals come from the browser's buffered
+performance entries, so a late start still reports the page's LCP, CLS and INP. `type="module"` is what Cloudflare's
+current snippet uses. Do not go back to Partytown: its sandbox cost about 540 ms of throttled main-thread time, more
+than the beacon it isolated.
+
+**Where it stands (read from each working copy, 2026-10-04).** Every site and the starter loads the beacon with
+`defer` in the head: starter, reid-design-site and fbcm in `src/components/analytics/CloudflareBeacon.astro`;
+presacademy, mas-monograms, stonesteps-50k and 2ndpreschicago inline in `BaseLayout.astro` (these four never took card
+54's component, so they need the component first). The measurement above is from one site; each adopter should rerun
+the A/B (dummy token, so nothing reaches the real Web Analytics site) before merging.
+
+**Separate from this card: the edge script.** When Bot Fight Mode is on, Cloudflare injects
+`/cdn-cgi/challenge-platform/scripts/jsd/main.js` into the HTML at the edge. No code in a repo can remove it; it is a
+dashboard choice (nixoncreativestudio's `docs/redesign-2026/performance-handoff.md`). Its forensics measured beacon plus
+that script at about 467 ms of LCP and 4 Lighthouse points on production. Check `view-source` of a live page for
+`challenge-platform` before blaming the repo's own scripts.
+
+**Judged not portable, from the same redesign (so the next session does not redo the assessment).**
+
+- **ci-dataset from-scratch ordering** (`scripts/ci-dataset/rebuild.mjs`, commit `8380057`): build before dropping, drop
+  and deploy back to back, drop again once the new Worker is live because the OLD Worker's every-minute cron
+  (`"triggers": { "crons": ["* * * * *"] }`) re-seeds a dropped D1 database with the old schema. It exists only in
+  nixoncreativestudio: no other repo has a `ci-dataset` folder or a cron trigger in `wrangler.jsonc` (checked in the
+  starter, presacademy, reid-design-site, mas-monograms, stonesteps-50k, fbcm and 2ndpreschicago). The Sanity sites
+  have no per-PR dataset to rebuild. Revisit only if another site moves to EmDash or a cron-seeded Worker.
+- **Font split by `unicode-range` with a preloaded core file** (`scripts/brand/subset-fonts.py`, commit `3218b47`):
+  it saved 4 to 9 KB per face (Bebas 13.8 to 9.6 KB, Newsreader 22.5 to 13.8 KB) by trimming a latin Fontsource file to
+  the characters English copy uses, by hand with Python fontTools. The family's sites import Fontsource packages whose
+  default CSS already declares one face per subset with its own `unicode-range`, many use variable fonts, and
+  reid-design-site, mas-monograms, stonesteps-50k and fbcm already preload their critical
+  faces. The remaining win is small and per-face; not worth a family-wide script.
+- **`<img>` hero posters and CSS inlining as LCP levers:** design choices for that site's poster-first showreel and its
+  25 KB sheet (see card 87's note on inlining), with no family-wide before-and-after to cite.
+
+**Status.** nixoncreativestudio: done on its unmerged branch (`staged`). All other cells `no`; wcp is a Bricks site
+(no Astro), ncs-church-starter is archived, hence `n/a`. fbcm has no matrix column; its beacon is `defer`, as above.
+
+## Card 89: Internal links end in a slash, or every click is a 307 (2026-10-09)
+
+**Origin:** SEO audit 2026-10-09. Every family site linked `/about` while canonicals and the sitemap said `/about/`, and
+Cloudflare static assets answer the slashless form with a 307. Search Console reported "Page with redirect" and
+"Alternate page with proper canonical". Four sites were fixed first (reid-design-site #122, presacademy #68,
+mas-monograms #90, stonesteps-50k #92); this card carries the pattern into the starter so new sites start right.
+
+**The change.** `trailingSlash: 'always'` in `astro.config.mjs`; hand-written hrefs carry the slash; anything built at
+render time (nav, footer, CTA blocks, Portable Text link marks, `/journal/<slug>` queries, JSON-LD and breadcrumb urls)
+goes through `withTrailingSlash()` in `src/lib/href.ts` (`PORTABLE`, with `href.test.ts`). It leaves externals,
+`#anchors`, `mailto:`/`tel:`, files with an extension, `/studio` and `/api` alone, and keeps the slash before `?query`.
+
+**PORTABLE files touched, so sites drift until synced:** `src/lib/href.ts` and `src/lib/href.test.ts` (new; reid and
+stonesteps-50k named their own helper differently, so reconcile on sync), `src/lib/contact-transport.ts` (`/api/contact/`),
+`src/sanity/components/shareDraftLink.tsx` (`/api/draft-mode/enable/`).
+
+**Proof.** Grep the built HTML for `href="/..."` without a trailing slash and without a file extension: the count must
+be 0 (starter build: 135 of 231 before, 0 of 231 after).
+
+**Status.** Starter: merged with this PR. presacademy, reid-design-site, mas-monograms and stonesteps-50k merged 2026-10-09. 2ndpreschicago and
+nixoncreativestudio: not yet done.
+
+## Card 90: Sanity backup: 14-day artifact, documents-only on weekdays, full export weekly (2026-10-13)
+
+**Origin:** the account-wide GitHub Actions artifact storage quota filled up. reid-design-site's daily backup alone is
+about 557 MB, and six repos each kept 90 days of them. Nathan approved two cuts on 2026-10-13.
+
+**The change, in `.github/workflows/sanity-backup.yml`.**
+
+- `retention-days: 90` becomes `14`, and every comment and `::warning::` string that called it a "90-day GitHub
+  artifact" now says 14. The daily artifact is the day-level window; the weekly R2 copy (newest 12 kept by the R2
+  lifecycle rule, which stays at 90 days) covers anything older.
+- Two backup kinds, named in the file: `sanity-backup-<date>-full.tar.gz.enc` (documents and assets: the Monday
+  scheduled run and every manual run) and `-docs.tar.gz.enc` (documents only: the other six nights). The export step
+  decides the kind once and writes `BACKUP_KIND` to `$GITHUB_ENV`; the weekly R2 gate reads it instead of re-testing the
+  date, and the R2 loop only globs `*-full.tar.gz.enc`, so the export and the off-site copy cannot disagree.
+- **Docs-only is `--raw`, not `--no-assets`.** `--no-assets` runs `stripAssets`, which drops every image/file
+  reference out of the exported documents, so a `--replace` restore would wipe the images off production. `--raw`
+  keeps the asset documents and the references and only skips downloading the files (`@sanity/export` 6.2.1,
+  `export.ts`: `raw` selects the no-op stream and skips the download step). A `-docs` restore relies on the assets
+  still existing in the dataset; Sanity assets survive document edits and "Remove field", and only an explicit asset
+  delete removes one.
+- `@sanity/import` refuses asset documents that point at a different dataset, so a `-docs` file only restores into the
+  same project and dataset. Restore drills use a `-full` file.
+
+**Also in this round:** reid-design-site's workflow lacked the 2026-09-18 weekly gate and was copying to R2 every day.
+Ported from presacademy. mas-monograms has no encrypt step (its artifact is a plaintext `.tar.gz` on a public repo) and
+its R2 loop globs `.tar.gz.enc`, so it never uploads to R2; the workflow is disabled in GitHub (2026-10-03), so both
+are noted rather than changed.
+
+**The workflow is not a PORTABLE file**, so a site PR carrying it does not trip `sync-check`. `docs/RESTORE-DRILL.md`
+is PORTABLE and changed in the same PR (the 14 days, the `-full` file for the drill); sites drift on it until synced.
+
+**Proof.** `grep -n "retention-days" .github/workflows/sanity-backup.yml` shows 14 and `grep -n "90-day"` finds
+nothing. A manual run (full) and a docs-only run of the same workflow give very different artifact sizes (numbers in
+the PR).
+
+**Status.** Workflow: starter, presacademy, reid-design-site, stonesteps-50k, fbcm and mas-monograms, 2026-10-13.
+`docs/RESTORE-DRILL.md` sync to the sites: pending the starter merge. Sites without a `sanity-backup.yml` (wcp,
+2ndpreschicago, nixoncreativestudio): n/a.
+
+## Card 91: Every text-plus-picture band uses one split, and `measure-columns.mjs` measures it (2026-10-13)
+
+**Origin:** stonesteps-50k PR #31 "Every section starts its column in the same place" (merged 2026-09-18). The complaint was
+that section titles and the objects under them did not start at the same place and the site read as unfinished. Measured at
+1280 it was true three ways: seven components carried five different two-column grids (so the seam between words and picture
+landed at x=720, 678, 660, 752 and 749 on five consecutive scrolls), three objects were centred under headings that sat on the
+left edge, and one band set its own 72rem box inside the page's 82.5rem one. The starter had the same disease in a milder
+form: equal halves on `ImageText`, `FounderSection` and `ServiceAreaSection`, 1fr/1.2fr on `StorySection`, 1fr/1.1fr on the
+404, a plain 50/50 on the split hero (whose text started at x=0 plus its own padding, not on the content column), all at `md`.
+
+**The change.** Three custom properties on `:root` in `globals.css` and one grid class:
+
+- `--split-text: 1.1fr`, `--split-media: 0.9fr`, `--split-gutter: var(--spacing-l)`. The ratio is Stone Steps' (the page header
+  and course features already agreed on it, it gives prose about a 65 character measure, and the picture is always the narrow
+  track). Stone Steps wrote the numbers it measured (text 656, picture 536, gutter 40); the starter derives them: the column is
+  `--container-content` (82.5rem) less the `px-m` gutter, and the gutter is the spacing scale's `--spacing-l`. At 1280 that is
+  text 651, picture 533, gutter 48, seam at x=723 (x=605 with the picture on the left). A site changes the feel by editing
+  those three lines, never a band.
+- `.split` (text first) and `.split--media-first` (mirrored, so the picture leads and is still the narrow one). One column
+  below `lg`, so a 768px tablet does not show a half-width picture beside three words. Bands that lead with their picture keep
+  it first in the DOM and flip with `lg:order-*`, so the phone reading order does not change.
+- The split hero (`section[data-hero='split']`) cannot be a `.split` inside `max-w-content` because its picture bleeds to the
+  viewport edge. From `lg` it lays out five tracks (margin, text, gutter, picture, margin) from the same two weights and the
+  same gutter, so its text starts on the content column's left edge and its picture starts at the shared seam.
+- Adopted by `ImageText`, `FounderSection`, `StorySection`, `ServiceAreaSection` and the 404. Not touched, on purpose:
+  `AboutPersonal` (two columns of cards), `FeaturedWork`/`FeaturedJournal` (a lead item and a list, 1.55fr/1fr), the form rows
+  and the grids of three or four cards. A split is a band with words beside a picture; a grid of peers is another thing.
+- Stone Steps' other two rules (objects span the column or sit on its left edge; nothing centred at desktop) are about
+  objects that site draws (a tilted notice, a cut-out portrait), and the starter has none of them: its pictures are
+  `w-full` and its headings are `align` left by default (rule 17).
+
+**The instrument.** `node scripts/measure-columns.mjs <baseUrl> [--width 1280] [--paths /,/about/] [--json out.json]`
+(`PORTABLE`, with `scripts/lib/column-alignment.mjs` the pure analyser, `PORTABLE`, and `column-alignment.test.mjs`, starter
+only, 8 pure cases plus 3 that drive the real script in Chromium and skip without it). It reads each section's first
+heading and each two-column band with `getBoundingClientRect`, takes the page's column edge as the most common left edge
+(not a constant), groups seams by which side the picture is on, and exits 1 on a heading or band off the edge, a seam more
+than 1px from its group, or a `.split` band not in the `--split-text : --split-media` ratio. It also finds any other two-track
+grid with a picture in a column (`grid`), so a site that has NOT adopted `.split` can be measured for the before number.
+Centred headings are listed and exempt. Pass `MSYS_NO_PATHCONV=1` in Git Bash or `--paths /` becomes a Windows path.
+`/styleguide/layouts/` now carries a `data-fx="split-bands"` region (a picture on each side, a text-and-card band, a plain
+heading band) so there is something to measure on a build with no Sanity project; the visual suite does not shoot it.
+
+**Proof (starter build, 7 routes, 1280px):**
+
+|                                | before                                                | after                   |
+| ------------------------------ | ----------------------------------------------------- | ----------------------- |
+| Seams, picture right (3 bands) | 678, 678, 640 (hero), spread 38.4px                   | 723, 723, 723, spread 0 |
+| Seam, picture left             | 678 (equal halves, so it read as "picture right")     | 605                     |
+| Hero text left edge            | 0 (padding inside the box), off the column edge of 24 | 24                      |
+| Misaligned                     | 2                                                     | 0                       |
+
+At 1024 the spread went 30.7 to 0 and at 1920 40 to 0, with the edge on 324. At 390 every band stacks and only the edge rule
+applies (0 misaligned). Reflow sweep at 320, 390, 768, 1023, 1024, 1280 and 1920 over four routes: 0 horizontal overflows.
+Fallback content has no split bands on the real routes, so the numbers come from the layouts wall plus the 404.
+
+**Visual baselines.** Five committed baselines move, all in `tests/visual/__screenshots__/layouts.spec.ts/` and all at 1280:
+`hero-split-1280.png` (the split hero's picture column is now 557px, not 640px, and its text sits on the column edge) and,
+because the split hero's height changed and every region below it sits a sub-pixel lower, `hero-editorial-1280.png` and
+`cards-standard-1280.png`, `cards-outline-1280.png`, `cards-soft-1280.png` (each failed by one pixel of height).
+`hero-split-390.png` is byte-identical, and so are the 390 shots, the density, header and bleed shots (within tolerance)
+and both styleguide shots. The `visual.yml` regenerate (`update: true`) rewrites every baseline with renderer drift, so
+keep only the files that fail the check and restore the rest. Regenerate in CI, never on Windows. The `split-bands` wall
+sits after every shot region on purpose: content placed before them moved the 390 cards shots by a pixel too.
+
+**Which sites take it (optional per site; this card changes no site).** The `.split` block is a stylesheet addition plus a
+class swap on the band components, so it is a per-site port, not a `sync-check` drift. reid-design-site (`ImageText`,
+`AboutStory`, `ServiceArea`) and fbcm (`ImageText`, not a matrix column) carry the starter's own section components and are the
+direct fits. presacademy, mas-monograms, 2ndpreschicago and nixoncreativestudio have no section files by those names; run
+`measure-columns.mjs` on each and adopt only if it reports more than one seam. Adapting: keep the two weights at the site's
+house ratio, replace each band's own grid with `.split` (and `lg:order-*` for the flip), raise any `md` split to `lg`, and
+mind that `.split` is unlayered, so a Tailwind `gap-*` on the same element loses to `--split-gutter`.
+
+**Status.** Starter: merged with this PR. stonesteps-50k: the source, with its own measured numbers and its own
+object-alignment rules.
+
+reid-design-site (#145, 2026-10-13): tokens at Reid's house ratio (words 7fr, picture 5fr, gutter
+`clamp(2rem, 5vw, 5rem)`, the page hero's existing numbers). On `.split`: the page and project heroes, Meet Staci, the
+About story, ImageText (its `md:order-*` pair became `lg:order-*`, test updated), both service-area bands, the contact
+map and the call band; the full-bleed home hero lays the same five tracks out (its photo now starts on x=765 at 1280,
+was 747) and the contact form band takes the tokens with its grid areas. AboutPersonal (two columns of cards) is left
+alone. Before/after at 1280 on `/`, `/about/`, `/contact/`: 7 misaligned to 2 (AboutPersonal, and an OFF RATIO on
+the call band whose heading is capped at 14ch inside its track); `/contact/` went from seams 765/833/728 to four bands
+on 765. Note for other sites: `measure-columns` does not see a band laid out on a 12-column grid or a flex row (Reid's
+Meet Staci and About story), only as an off-edge heading, so read the "before" with that in mind.
+
+fbcm (#63, 2026-10-13, not a matrix column): fbcm's `ImageText` is no longer the starter's (577 lines; the photo's
+shape picks a 4, 5, 6 or 7 column width by design), so it is NOT on the split. Tokens at FBCM's ratio (7fr/5fr,
+`clamp(40px, 6vw, 104px)`); `.split` sets only `column-gap` there so Tailwind `gap-y-*` row gaps survive. On it: the
+Sunday access band, "Our building" and the pastors' letter. The pledge was tried and backed out (its liturgy lines
+wrapped at 7fr). `/visit/` spread 40.7px to 0; 7 misaligned to 6 over `/`, `/visit/`, `/who-we-are/` (the rest are
+the hero window, the pledge and headings centred by design).
+
+Every other site: not adopted.
+
+## Card 92: Dependabot pins `astro` with its adapter and gives formatters their own group (2026-10-13)
+
+**Origin:** a family-wide read of every failed `CI` run since 2026-09-20 (2026-10-13). Two mechanical causes kept
+Dependabot's `minor-and-patch` bundle red, so a red bundle stopped meaning a real bug. **Canonical:**
+`.github/dependabot.yml` (not `PORTABLE:` marked: each site keeps its own comments and ignore extras), with
+`docs/agent/deployment.md` "Dependabot" and `.claude/rules/dependencies.md` rule 8.
+
+**1. A lone `astro` minor breaks the build.** The bundle bumped `astro` 7.2.9 to 7.3.8 while `@astrojs/cloudflare`
+stayed on its pin (14.2.4, card 62's ignore list). Astro 7.3 no longer exports `beginContentEntryCollection`, which the
+adapter imports from `astro/app`, so `astro build` died with `[MISSING_EXPORT]` (starter run 38366446442, fbcm
+38366439425, stonesteps-50k 38330683556). The adapter imports Astro internals, so even an Astro patch can do this.
+`astro` now sits on the ignore list next to the adapter and wrangler and moves with them by hand, in a planned stack
+session with a real deploy test (vault gotcha `wrangler-bump-needs-real-deploy-test`). `@astrojs/*` integrations
+(react, sitemap, mdx) still flow as minors and patches; only the adapter couples to Astro's internals.
+
+**2. A formatter bump reds the whole bundle.** `prettier` and the `prettier-plugin-*` packages ride in the bundle, and a
+release that changes output fails `format:check` on files nobody touched. They now get a `formatters` group, listed
+ABOVE `minor-and-patch` (Dependabot puts a dependency in the first group that matches). If it reformats, only that small
+PR goes red: run `npm run format` on its branch and push (a human push re-triggers CI; a `GITHUB_TOKEN` push from a bot
+autofix would not, which is why there is no autofix job). Formatter MAJORS stay under card 62's `'*'` major ignore:
+prettier-plugin-astro 1.x (which reformats 33 to 91 `.astro` files per repo) is taken once per repo in the planned
+starter-first major upgrade, not from a Dependabot PR.
+
+**Correction (same day): first match is not enough.** GitHub documents that a dependency goes into the first group it
+matches, and a fresh run does that (stonesteps-50k #108 was prettier alone, #109 the bundle without it). But when Dependabot
+refreshes an OLDER bundle PR (title "... across 1 directory ..."), it rebuilds that one group without regard to the
+others: fbcm #55 and starter #106 pulled prettier back into `minor-and-patch` and closed the formatters PR as
+"superseded". So `minor-and-patch` also carries `exclude-patterns: [prettier, 'prettier-plugin-*']`, which holds on
+either path. Shipped in one PR per repo on 2026-10-13.
+
+**Adapt per site:** add the two blocks (plus the `exclude-patterns` line) to the npm entry; keep the site's existing comments, quoting style and extra
+ignores. A site whose adapter is newer (14.3.x) still pins `astro`: the next Astro minor can break 14.3 the same way.
+Exception: a site that lets the adapter and wrangler flow too (nixoncreativestudio) does NOT pin `astro`: there astro and the adapter ride the same bundle and cannot split, so it takes only the `formatters` group. When the stack is moved by hand, the `astro` ignore stays; the bump happens in `package.json` and the lockfile.
+
+**Status.** Live in the starter (#99) and all six live sites, merged 2026-10-13: presacademy #81, reid-design-site
+#135, mas-monograms #100 (+ #103), stonesteps-50k #104, nixoncreativestudio #124 (+ #126, formatters group only, see the
+exception above) and fbcm #50 (no matrix column). This card was renumbered from 90 to 92 after the Sanity backup card took
+90 first; the two follow-ups fixed the comments that cited 90. 2ndpreschicago is dormant and wcp archived: not taken.
+
+## Card 93: SanityImage's srcset ladder starts at 160w, not 400w (2026-10-13)
+
+**Origin:** a perf read of presacademy and mas-monograms on 2026-10-13. The ladder started at 400w, so every small slot
+downloaded a file 1.4 to 2x the bytes it painted. The clearest case: presacademy's `CourseCard` thumbnail is 112px wide
+on a phone (`sizes="... 7rem"`) and picks the 400w candidate. No live course has a cover image yet, so the live
+proof below uses the 96px faculty avatars and other small slots instead.
+
+**The change.** `src/lib/imageLadder.ts` (new; pure functions, no imports) holds `LADDER_STEPS =
+[160, 240, 320, 400, 600, 700, 800, 900, 1200, 1600, 2400]` and `buildLadder(width, sizes)`. `SanityImage.astro` replaces
+its inline `BREAKPOINTS` filter with one call. `imageLadder.test.ts` asserts the ladder, the cap at `width`, and that
+every slot needing 400px or more picks the same candidate as the old ladder (a model of the browser rule: the smallest
+candidate at least as wide as slot x DPR). A 112px slot at DPR 1 now picks 160w (was 400w), at DPR 2 240w, at DPR 3 400w.
+
+**`sizes` makes it data-driven.** When the caller passes `sizes` and every entry is a `px`, `vw`, `rem` or `em` length
+(optional media conditions; `min-width` raises the viewport a `vw` is read at, otherwise 320px), steps below 75% of the
+smallest slot are dropped from the srcset: `sizes="600px"` loses 160 and 240, `100vw` loses 160. Anything unreadable
+(`calc()`, `clamp()`, `%`) keeps the full ladder. The last candidate is always `width`, so the srcset is never empty.
+
+**Gotcha: no `sizes`, no gain.** The default `sizes` is `(max-width: {width}px) 100vw, {width}px`, which tells the browser
+the image fills the viewport; the small steps are never picked. Give every thumbnail an honest `sizes`.
+
+**Not `PORTABLE`.** `SanityImage.astro` is "Foundation, edit with care" and each site's copy carries its own props (presacademy
+`defer`, mas-monograms `style`, reid-design-site `defer` and hotspot position, stonesteps-50k `defer`, fbcm `style`), so
+`sync-check` does not gate it and the site PRs were not held for the starter. A site takes the card by: copy
+`src/lib/imageLadder.ts` and its test, add `import { buildLadder } from '@/lib/imageLadder';`, and replace the
+`BREAKPOINTS`/`widths` block with `const widths = buildLadder(width, sizes);`. The ladder block was byte-identical in
+all five site copies, so nothing else in the component changes.
+
+**Proof.** `node --experimental-strip-types --test src/lib/imageLadder.test.ts`: 9 pass. Live image bytes before and after
+per site are in the Status below.
+
+**Status.** Starter: merged with this PR. presacademy, mas-monograms, reid-design-site, stonesteps-50k, fbcm (no matrix
+column): `staged`. wcp, 2ndpreschicago and nixoncreativestudio have no `SanityImage`: n/a.
+
+## Card 94: The planned major stack upgrade, starter first (2026-10-13)
+
+**Origin:** card 62 keeps every npm major off Dependabot and card 92 pins `astro` with its adapter, so the family's
+majors are taken once, starter first, in one planned session. This is that session (approved 2026-10-13).
+**Canonical:** `package.json` and the lockfile, `.claude/rules/dependencies.md` rule 8, and the `prettier-plugin-astro`
+reformat of 60 `.astro` files.
+
+**Landed in the starter.** `astro` ^7.3.8, `@astrojs/cloudflare` **14.3.4** exact, `wrangler` **~4.129.0**, `@astrojs/react` 7,
+`@astrojs/mdx` 8, `motion` 14, `eslint-plugin-astro` 3, `prettier-plugin-astro` 1, `@portabletext/react` 8, and
+`cloudflare/wrangler-action` v4 in `deploy.yml` and the external-import template. Sanity, react and the rest of the rule-8 set did not move.
+
+**Decisions worth copying.**
+
+1. **wrangler goes to ~4.129.0, not the newest.** The adapter (14.2.5 onward) peers `wrangler ^4.125.0`, so the old
+   `~4.110.0` pin had to move. Every wrangler from 4.126 up bundles a miniflare 5 alpha or beta (4.150.0 is a `5.x-beta`);
+   4.129 is the line presacademy, reid-design-site and mas-monograms have already deployed with. The generated
+   `dist/server/wrangler.json` on 14.3.4 has no `legacy_env`. A real `wrangler deploy` of the starter to a throwaway Worker
+   uploaded 488 assets, started in 18 ms, and served `/` and `/studio/` with no console errors beyond the placeholder Sanity project.
+2. **`primereact` stays on 10.x.** v11 is a rewrite (compound unstyled primitives; the provider moves to `@primereact/core`;
+   `primereact/api` is gone, which `astro dev` showed as `primereact/api (imported by PrimeIsland.tsx)` not resolving while `astro build`
+   stayed green because no page imports the scaffold) and it moved from MIT to the PrimeUI License: a licence key is required
+   and an unverified key injects a banner. No site renders PrimeReact, so there is nothing to gain. Dependabot's major ignore
+   already keeps it from being proposed.
+3. **`prettier-plugin-astro` 1 is its own commit.** It reformats 60 files in the starter. The built HTML of all 12 prerendered
+   pages is identical after whitespace and class-order normalisation, but the starter builds without Sanity content, so each site
+   must repeat that diff on a build with its real content (gotcha `prettier-on-astro-templates`). Two `PORTABLE:` files are
+   reformatted by it (`InlineRich.astro`, `CloudflareBeacon.astro`), so site PRs go red on `sync-check` until this card merges:
+   push site branches without PRs, merge the starter, then open them.
+4. `@portabletext/react` 8 needs Node 22.12 and React 19 and has no API change; a server render of heading, link-in-strong
+   and bullet blocks matches v6 output. `motion` 14 only reaches `motion/react` in `animated-beam.tsx`.
+
+**Adapt per site:** take the same `package.json` moves where the site uses the package (a site already on 14.3.x or wrangler
+4.129 keeps its own exact pins), run `npm run format` with the new plugin as a separate commit, diff the built HTML on real content,
+and re-check the live page after the deploy. A site that renders PrimeReact must read decision 2 first.
+
+**Status.** Starter: merged with this PR. Sites (presacademy, mas-monograms, reid-design-site, stonesteps-50k, fbcm,
+nixoncreativestudio): `staged` as of 2026-10-13, one PR each after this merges. 2ndpreschicago is dormant and wcp archived: not taken.
+
+---
+
+## Card 95: `audit:data` checks live data against the compiled schema; `backfill-array-types` adds the missing `_type` (2026-10-13)
+
+**Origin:** mas-monograms, 2026-10-05 (`scripts/audit-data-vs-schema.mjs`, `scripts/backfill-array-types.mjs`,
+`scripts/lib/array-types.mjs`, run through `tsx`). **Canonical:** this starter, generalised and with no `tsx`:
+`scripts/audit-data-vs-schema.mjs`, `scripts/backfill-array-types.mjs`, `scripts/lib/array-types.mjs`,
+`scripts/lib/load-schema.mjs`, and the tests `scripts/lib/array-types.test.mjs` and `scripts/lib/load-schema.test.mjs`.
+All six are `PORTABLE`. `npm run audit:data` runs the audit. Vault gotchas: `array-items-without-type-break-the-studio`,
+`removed-schema-field-leaves-data-and-unknown-fields-banner`.
+
+**The bug.** Seed scripts on mas-monograms stored footer, nav, steps and add-on items as `{ _key, label, href }` with no
+`_type`. The site rendered them (it reads fields, not types), and no build, type check or test noticed. In the Studio, where
+the array allows more than one kind of item, each one was a red "Item of type object not valid for this list" row the editor
+could not open. `npm run audit:studio` reads the schema as text, so it cannot see the data at all.
+
+**What the audit checks.** It fetches every non-system document (published and `drafts.` twins) and walks it against the
+schema Sanity itself builds (`Schema.compile` from `@sanity/schema`, which arrives with `sanity`): an array object with no
+`_type` or no `_key`, a `_type` the array does not allow, a stored key the schema does not declare (the orphan behind the
+"Unknown fields" banner when a field is removed but its data is not unset), a value of the wrong kind, a dropdown value outside
+its list, and documents of a type the schema no longer has. Read only; exit 1 on any finding.
+
+**No `tsx`.** The schema is TypeScript with extensionless imports, which is why mas-monograms used `tsx`. The family decided
+against adding it, so `scripts/lib/load-schema.mjs` loads the schema in plain Node instead: Node 22.18+ and 24 strip types by
+default, and `module.registerHooks` adds the three things Node will not do on its own, retry an extensionless relative import
+with `.ts`/`.tsx`/`/index.ts`, map the `@/` alias to `src/`, and load each `.tsx` Studio component (and any CSS or image) as a
+stub, since a data audit never renders them. It loaded all five site schemas unchanged on 2026-10-13 (presacademy 66 types,
+mas-monograms 27, stonesteps-50k 77, fbcm 48, reid-design-site 42). A schema elsewhere sets `SANITY_SCHEMA_INDEX` (and
+`SANITY_SCHEMA_EXPORT` if the array is not called `schemaTypes`). CI's `node-version: 22` resolves to the newest 22.x, which has
+both features; an older Node gets a clear error.
+
+**The backfill.** `scripts/backfill-array-types.mjs` infers each typeless item's member (the only object member, or the
+member whose declared fields cover the item's keys with the fewest fields; a tie or no fit is reported `UNPLACED` and left
+alone), then patches only the top-level fields that change, guarded by `_rev`. It never changes a value, and a second run
+reports 0. It writes through `sanity-lib`, so it is dry by default and a production write needs `--apply` plus
+`NCS_PRODUCTION_WRITE=yes` (card 86). Back up the dataset first.
+
+**The seed rule that goes with it.** Every object in an array carries `_type` and `_key`, in `seed-core.mjs` and every site
+seed or patch script (`.claude/rules/scaffold.md`, `.claude/rules/data-scripts.md`).
+
+**Adapt per site:** copy the six files and add `"audit:data": "node scripts/audit-data-vs-schema.mjs"`; no new dependency.
+Run the audit read only against the live dataset; if it finds typeless items, back up, dry-run the backfill, have Nathan run
+it with the second factor, then re-run the audit. Orphan fields need their own idempotent unset script (mas-monograms
+`scripts/fix-orphan-data.mjs` is the model). mas-monograms replaces its `tsx` copies with these and can drop `tsx`.
+
+**Status, 2026-10-13.** Starter: `yes` with this PR. mas-monograms: `fork` (its own `tsx` copies, unmarked, applied
+2026-10-05). presacademy, reid-design-site, stonesteps-50k and fbcm: `no`, queued as the next batch (copy, run, backfill).
+fbcm has no matrix column; it is `no`.
+
+---
+
+## Card 96: GA4 skips automated browsers (2026-10-15)
+
+**Origin: Foundation for Reformed Theology** (WordPress, `frt-theme` PR 41), found 2026-10-15. **Canonical:**
+`src/components/analytics/GoogleAnalytics.astro` (rule 4 in its header). Amends cards 54 and 58. Vault gotcha:
+`test-browsers-count-as-ga4-visitors`.
+
+**The hole in card 58.** Card 58 keeps localhost out of the property, which stops a developer's `.env` leaking. It does
+nothing for a Playwright sweep or Lighthouse run against PRODUCTION, because the hostname is right. Every fresh test
+browser is a new GA4 "visitor": on 2026-10-14 a day of sweeps and audits against the live FRT site filed 194 visitors and
+244 page views (28-day totals read 1,244 against 508 the month before). GA4 cannot delete past data; it only washes out of a
+28-day window.
+
+**The rule.** The inline script computes
+`navigator.webdriver || /HeadlessChrome|Lighthouse|PTST|GTmetrix|Speed Insights/i.test(navigator.userAgent)` and runs the
+whole existing block (dataLayer, gtag, config, deferred loader) only when that is false AND the card-58 hostname rule
+passes. Playwright, Selenium and other WebDriver tools set `navigator.webdriver`; the pattern covers headless Chrome,
+Lighthouse and PageSpeed Insights, WebPageTest (PTST) and GTmetrix. **Fails open for real browsers:** a normal visitor has
+neither signal and is counted exactly as before. Nothing else in the file changes.
+
+**What it does not break.** Specs that assert GA events stub `window.gtag` themselves (stonesteps-50k
+`tests/ga-events.spec.ts`), so no test in the family needs the real tag to run under WebDriver. A spec that expects
+`window.dataLayer` to exist under Playwright on an allowed hostname would now see it undefined; none does today.
+
+**Porting.** Pull the one file. Same props, same variable, no config. Then check the live page with a headless
+Playwright load: requests to `googletagmanager` and `/g/collect` must be 0.
+
+**Status, 2026-10-15.** Starter: `yes` with this PR. presacademy, reid-design-site, mas-monograms, nixoncreativestudio,
+stonesteps-50k and fbcm: `staged` on branch `chore/ga-skip-automated` (no PRs until this merges, because their
+`sync-check` reads live starter `main`). fbcm has no matrix column. wcp is archived and 2ndpreschicago dormant: not taken.
+
+---
+
+## Card 97: astro 7.4 with `@astrojs/cloudflare` 14.4.0 (2026-10-17)
+
+**Origin:** astro 7.4.0 and `@astrojs/cloudflare` 14.4.0 were both released 2026-10-15. **Canonical:** `package.json` and
+the lockfile, `.claude/rules/dependencies.md` rule 8. Follows card 94 and keeps card 92's rule: `astro` and the adapter move
+together.
+
+**The move.** `astro` `^7.3.8` to `^7.4.0`, `@astrojs/cloudflare` `14.3.4` to `14.4.0` (exact). 14.4.0 peers `astro ^7.4.0`, so
+neither can move alone. `wrangler` stays `~4.129.0`. Nothing else in the rule-8 set moves.
+
+**Decisions worth copying.**
+
+1. **Install with the committed lockfile in place.** Edit the two versions in `package.json`, then run a plain `npm install`.
+   Do not run `npm install astro@... @astrojs/cloudflare@...`: it rewrote the exact adapter pin to a caret. The result is 45
+   version moves, all in the astro, adapter, vite (8.3.4), rolldown, shiki and workerd subtree, and 118 nested duplicates
+   collapsed (for example `@astrojs/react`'s private vite and rolldown copies).
+2. **Two wranglers is expected.** The adapter now needs `@cloudflare/vite-plugin` ^1.63.1, which nests wrangler 4.151 and a
+   miniflare 5 beta for build-time prerender. The deploy CLI is still the top-level wrangler 4.129.1 with its own miniflare and
+   workerd. Check with `npm ls wrangler miniflare`.
+3. **`k2` warning is expected.** The generated `dist/server/wrangler.json` gains `k2: []` and `upload_source_maps: true`.
+   Wrangler 4.129.1 prints `Unexpected fields found in top-level field: "k2"` and continues; the dry run exits 0. No
+   `legacy_env`.
+4. **Parity.** Markup is identical on all 12 pages. The only change is Astro's island bootstrap script, minified 3 bytes
+   shorter with the same behaviour. Re-capture the baseline in the same PR.
+
+**Adapt per site:** the same two `package.json` lines, `npm install`, `npm run build:full`, `npm run parity compare` (expect
+only the bootstrap script to differ), `wrangler deploy --dry-run -c dist/server/wrangler.json`, then a real deploy and a live check
+of `/` and `/studio/` in a browser. A site with locally bundled images also checks that optimized images land in
+`dist/client/_astro/` (the starter has none to check).
+
+**Status, 2026-10-17.** Starter: `yes` with this PR, verified by dry run and `wrangler dev`, not yet by a real deploy (PENDING
+item 4). Sites: `no`; port after the starter's first real deploy on this pair.
+
+---
+
+## Card 98: Date labels do not depend on the build machine's timezone (2026-10-17)
+
+**Origin:** found 2026-10-17 while verifying card 97: `npm run parity compare` on Nathan's PC (US Eastern) failed
+`styleguide/layouts`, where `<time datetime="2026-01-15">` rendered "January 14, 2026". CI builds in UTC, so the live sites
+were right; any local build or local `npm run deploy` west of Greenwich was a day early. **Canonical:** `src/lib/format-date.ts`
+and `src/lib/format-date.test.ts` (both PORTABLE). Vault gotcha: `build-zone-shifts-date-only-values`.
+
+**The bug.** Every component formatted dates with `new Date(value).toLocaleDateString('en-US', {...})` and no `timeZone`.
+That formats in the zone of the machine running the build. A Sanity `date` ("2026-01-15") parses as UTC midnight, which is the
+evening before anywhere in the Americas, so the label lost a day. A Sanity `datetime` moved too, by whatever the zone offset was.
+
+**The rule.** One helper, `formatDate(value, options?, timeZone = 'UTC', locale = 'en-US')`:
+
+1. A date-only value (`YYYY-MM-DD`) is a calendar day, not an instant. It is always formatted in UTC, the zone it was parsed
+   in, so it keeps its day whatever `timeZone` is passed.
+2. A full datetime is formatted in `timeZone`. **Default UTC**, chosen because the starter has no site timezone setting
+   (`src/data/site.ts` has none; card 20's "timezone honesty" note is about the publish cron, not display) and UTC is what CI
+   has always built with, so the change is render-neutral for production. A site that wants a late-evening post dated by its
+   own clock passes its IANA zone, for example `'America/New_York'`, from one constant.
+3. Missing or unparseable input returns `''`, as every local copy did, so callers keep rendering it conditionally.
+
+Presets: `LONG_DATE` (default, "January 15, 2026"), `SHORT_DATE` ("Jan 15, 2026"), `LONG_MONTH_YEAR`, `SHORT_MONTH_YEAR`.
+
+**Call sites moved.** `JournalCard`, `FeaturedJournal`, `FeaturedTestimonial`, `TestimonialCard`, `sections/DynamicList`,
+`pages/privacy.astro` and both labels in `pages/journal/[slug].astro`. The Studio preview subtitles in `announcement.ts` and
+`journalEntry.ts` are left alone on purpose: they run in the editor's browser, where the editor's own zone is the right one.
+
+**The test proves the zone, not just the output.** `format-date.test.ts` sets `process.env.TZ` (Node re-reads it) to UTC,
+New York, Pago Pago (UTC-11) and Kiritimati (UTC+14), and opens with a control assertion that the naive call really does
+drift under New York, so the test cannot pass vacuously on a UTC machine.
+
+**Verification.** `npm run parity compare` against the committed baseline passes 12/12 with the build run under
+`TZ=America/New_York` and again under `TZ=UTC`.
+
+**Porting.** Copy the two marked files, then grep the site for `toLocaleDateString` and `toLocaleString(` in `src/` (not the
+Studio schema previews) and replace each with `formatDate`. Sites with events (stonesteps-50k, fbcm, presacademy) also format
+times: a time of day needs the site's zone, never UTC, so pass it explicitly there and check an evening event. Build once with
+`TZ=America/New_York` and once with `TZ=UTC` and diff the HTML, or run parity under both.
+
+**Status, 2026-10-17.** Starter: `yes` with this PR. Sites: `no`. Every live site in the matrix formats dates at build time
+(presacademy 16 files, stonesteps-50k 17, fbcm 8, reid-design-site 5, mas-monograms 5, nixoncreativestudio 3), so each one
+has the bug on a local build.
