@@ -1,5 +1,20 @@
 # Change history
 
+_2026-10-17: the Studio kit, first part (Home, Site Guide, Checkup, staff view, Trash, tour)._
+
+**Decision.** The editor gets a plain Studio: it opens on **Home** (welcome, This week, Is it live?, Site health,
+Recent edits, Visitors placeholder, Ask), with **Site Guide** (search and print over the existing guides) and
+**Checkup** (pure rules, one fetch) in the top bar, and Structure and Presentation renamed **Content** and **Live
+preview**. A listed set of accounts, or with no list every non-administrator, sees the **staff view**: only those
+five tools, no Delete (everyday lists get **Move to Trash**, restorable from a Trash list), no Drafts menu or
+Releases link. `/build-info.json` records each build's time for "Is it live?". Everything generic sits in
+`src/sanity/kit/` and `src/lib/studio-{kit,checkup,trash}.ts`; the church's settings are one file,
+`src/sanity/kit.config.ts`. Two desk fixes came with it: singleton items carry their document id as their pane id
+(intent links opened a blank pane before), and every `media.*` type stays out of the desk root (a "Media Folder"
+list had leaked in). Verified: typegen, check, lint, test:unit (698 + 53 with main merged), build, format; signed in at `/studio` on
+`astro dev`, light and dark, staff and full view, a Trash round trip on a throwaway item (moved, restored, deleted),
+console clean. Not built yet: PENDING 1d.
+
 _2026-10-17: the starter's card 104 fixes, taken back (PORTS cards 104 and 105)._
 
 **Decision.** apply-brand now writes the share-image brand into `scripts/og-theme.mjs` and never touches the PORTABLE
