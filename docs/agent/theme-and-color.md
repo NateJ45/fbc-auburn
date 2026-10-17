@@ -1,6 +1,8 @@
 # Theme and color
 
 > Default palette tokens, shadcn token mapping, the three-state light/dark theme system, and the re-skin design seam.
+>
+> **FBC Auburn is light only (decided 2026-10-17, CLAUDE.md rule 3).** The theme toggle is removed and the bootstrap in `BaseLayout.astro` defaults to light and ignores the system setting; only a stored `dark` (seeded by the shared dark test suites) turns dark on. The rest of this page describes the starter's three-state system, which is still in the code underneath.
 
 ## Default palette
 

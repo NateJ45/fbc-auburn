@@ -48,7 +48,7 @@ Numbering is load-bearing; other docs cite it. Rules 1 to 7 and 10 are in full b
 
 1. **Never click "Remove field" in the Studio.** It deletes that field's data across every document and cannot be undone without a dataset restore. It appears when the Studio's schema is older than the data. Since the Studio is embedded (it ships with the site build) the sequence after a schema change is: edit schema, `npm run typegen`, commit, deploy. There is no separate `studio:deploy` step any more.
 2. **No em-dashes in public-facing site copy** (the text visitors read: page copy, component text, Sanity content). Use commas, colons, or restructure. Code comments, commit messages, plans, specs, and internal docs are exempt.
-3. **Build in both light AND dark mode** on every UI change. Detail in `docs/agent/theme-and-color.md`.
+3. **Light only** (decided 2026-10-17). There is no theme toggle and the system dark setting is ignored; do not add dark styles or verify UI in dark. The `.dark` tokens and the shared dark test suites stay (they seed the stored preference, which no visitor can set). Detail in `docs/agent/theme-and-color.md`.
 4. **Desktop nav is server-rendered** in `Header.astro`. Do not regress it to a client-only island. Detail in `docs/agent/page-architecture.md`.
 5. **Scrolling is the browser's own; there is no Lenis** (removed 2026-10-17, PORTS.md card 102). Astro's router resets to the top on a forward navigation and restores the position on Back/Forward; do not add a scroll library or an `after-swap` scroll call that fights it. In-page anchors and scroll controls glide through `html[data-smooth-scroll]` (set on the first press by the BaseLayout script, `no-preference` only); code that places the page itself uses `behavior: 'instant'`. Detail in `docs/agent/animation.md`, pinned by `tests/native-scroll.spec.ts`.
 6. **Content is statically built.** A Sanity edit only goes live after a rebuild (push to `main`, or the publish webhook). Detail in `docs/agent/deployment.md`.
@@ -83,7 +83,7 @@ Shared by every site repo in the family, so they live in one PORTABLE file impor
 
 ## Visual verification
 
-Every UI change is verified rendered, in light AND dark, at ~375px and ~1280px, with hover/focus/active states and the neighbouring sections checked, before it is reported done. Use the Playwright MCP; for Studio changes open `/studio` in a real browser and read the console. Full loop: `docs/claude/visual-verification.md`.
+Every UI change is verified rendered, in light (the only theme, rule 3), at ~375px and ~1280px, with hover/focus/active states and the neighbouring sections checked, before it is reported done. Use the Playwright MCP; for Studio changes open `/studio` in a real browser and read the console. Full loop: `docs/claude/visual-verification.md`.
 
 ## Style
 

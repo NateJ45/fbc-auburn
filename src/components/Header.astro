@@ -18,7 +18,6 @@ import { getImage } from 'astro:assets';
 import { site } from '@/data/site';
 import { Mail, Phone } from 'lucide-react';
 import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
-import ThemeToggle from './ThemeToggle';
 import MobileNav from './MobileNav';
 import { ChevronDown } from 'lucide-react';
 import logoLightAsset from '@/assets/logo-light.svg';
@@ -232,12 +231,7 @@ function isGroupActive(items: { href: string }[]) {
             )}
           </div>
         )}
-        {/* Hydrate when idle, not on load — the anti-FOUC inline script in
-            BaseLayout already applies the correct theme class before first
-            paint, so this React island only needs to be live by the time the
-            visitor moves to click it. Demoting from client:load shaves real
-            TBT off mobile Lighthouse runs. */}
-        <ThemeToggle client:idle />
+        {/* No theme toggle: FBC Auburn is light only (2026-10-17). */}
       </div>
     </div>
   </div>
