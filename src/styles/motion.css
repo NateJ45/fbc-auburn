@@ -498,6 +498,8 @@ html.motion .walk-steps li.active {
 .walk-plan .room-label {
   font: 600 15px var(--font-body);
   fill: var(--label);
+  /* color mirrors fill so contrast checks that read color see the real pair */
+  color: var(--label);
   paint-order: stroke;
   stroke: var(--plan-ground);
   stroke-width: 4px;
@@ -515,6 +517,7 @@ html.motion .walk-steps li.active {
 .walk-plan .tag text {
   font: 600 15px var(--font-body);
   fill: var(--tag-fg);
+  color: var(--tag-fg);
   text-anchor: middle;
 }
 /* At rest (no JS or reduced motion) the whole route and every stop are shown; the small tags

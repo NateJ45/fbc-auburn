@@ -348,7 +348,7 @@ export interface ProjectedRailStep {
   icon?: string;
   title?: string;
   body?: string;
-  times?: { _key: string; time?: string; label?: string }[];
+  times?: { _key: string; _type?: 'railTime'; time?: string; label?: string }[];
   linkLabel?: string;
   linkHref?: string;
 }
