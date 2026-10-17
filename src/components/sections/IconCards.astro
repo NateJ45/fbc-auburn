@@ -1,0 +1,105 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn): cards with stone icons. Borderless and airy, the large stone
+// icon is the hero of each card (DESIGN.md, Direction B's icons). Three across on a wide screen,
+// two on a tablet, one on a phone. A content block: the surface comes from the cadence.
+import CtaLink from '@/components/CtaLink.astro';
+import StoneIcon from '@/components/StoneIcon.astro';
+import { surfaceClass } from '@/lib/surfaces';
+import type { ProjectedIconCard } from '@/lib/pageBuilder.types';
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  cards?: ProjectedIconCard[];
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { eyebrow, heading, intro, cards = [], surface = 'background', headingId } = Astro.props;
+---
+
+<section class={surfaceClass(surface)} aria-labelledby={heading ? headingId : undefined}>
+  <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
+    {(eyebrow || heading || intro) && (
+      <div class="icon-cards__head">
+        {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
+        {heading && (
+          <h2 id={headingId} class="font-display text-h2 leading-tight">
+            {heading}
+          </h2>
+        )}
+        {intro && <p class="icon-cards__intro">{intro}</p>}
+      </div>
+    )}
+    <ul class="icon-cards" role="list">
+      {cards.map((card) => (
+        <li class="icon-card">
+          <StoneIcon name={card.icon} size={96} class="icon-card__icon reveal" />
+          <h3 class="icon-card__title">{card.title}</h3>
+          {card.body && <p class="icon-card__body">{card.body}</p>}
+          {card.note && <p class="icon-card__note">{card.note}</p>}
+          {card.link?.label && (
+            <p class="icon-card__link">
+              <CtaLink cta={card.link} variant="secondary" />
+            </p>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .icon-cards__head {
+    max-width: 44rem;
+    margin-bottom: clamp(2.2rem, 5vw, 3.5rem);
+  }
+  .icon-cards__intro {
+    margin-top: 0.8rem;
+    font-size: 1.2rem;
+    line-height: 1.55;
+    color: var(--muted-foreground);
+  }
+  .icon-cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  @media (min-width: 40rem) {
+    .icon-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 64rem) {
+    .icon-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .icon-card :global(.icon-card__icon) {
+    width: clamp(76px, 7vw, 96px);
+    height: auto;
+    margin-bottom: 1.1rem;
+  }
+  .icon-card__title {
+    font-size: 1.6rem;
+    line-height: 1.2;
+    color: var(--heading-solid);
+    margin-bottom: 0.5rem;
+  }
+  .icon-card__body {
+    color: var(--foreground);
+    line-height: 1.6;
+  }
+  .icon-card__note {
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--muted-foreground);
+  }
+  .icon-card__link {
+    margin-top: 1rem;
+  }
+</style>

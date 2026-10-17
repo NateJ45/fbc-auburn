@@ -47,6 +47,10 @@ export const CONTENT_TYPES = new Set([
   'storySection', // scaffold: about
   'serviceAreaSection',
   'guaranteeSection',
+  // FBC Auburn
+  'iconCardsSection',
+  'thisWeekSection',
+  'watchSection',
   // FBC Auburn stone-path blocks (auburnMotionSections.ts)
   'stepsRailSection',
   'walkSection',

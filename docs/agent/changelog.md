@@ -1,5 +1,18 @@
 # Change history
 
+_2026-10-17: icon cards, This week and Watch blocks; three Studio pages._
+
+**Decision.** Three FBC Auburn blocks live in `src/sanity/schemaTypes/auburnSections.ts` and are registered through
+`pageSectionSchemas`: "Cards with stone icons" (`iconCardsSection`: icon, title, a few sentences, a small note, an
+optional link; `IconCards.astro`), "This week" (`thisWeekSection`, around `ThisWeekList`) and "Watch"
+(`watchSection`, around `LastSunday`, with an editor-written line for when there is no video). All three are content
+blocks, so the cadence gives them the alternating surface. The hero has a stone-icon picker (`icon`, on
+`NON_STEGA_FIELDS` already) drawn above an inner page's title; the eight names are `src/lib/stone-icons.ts` and
+`StoneIcon.astro` renders one. Studio pages (`page.ts`) now take `PAGE_SECTION_TYPES` (general blocks plus team grid,
+FAQ and dynamic list). In Sanity: What we believe, Leadership and Ministries pages (doctrine and people are marked as
+the pastor's to write), and Home's "Find your place" became icon cards plus the Watch and This week blocks. Verified:
+typegen, check, test:unit, Home at 375 and 1280 with the church-data fixture, no sideways scroll at 320.
+
 _2026-10-17: the stone path and its motion, and Plan your visit with "Walk in with us"._
 
 **Decision.** Ported the studio mockups' v3 motion pass. Two new content blocks in `auburnMotionSections.ts`:

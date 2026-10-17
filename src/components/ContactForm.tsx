@@ -235,6 +235,35 @@ export default function ContactForm({
     }
   }, []);
 
+  // FBC Auburn: a visit chosen on Plan your visit arrives as ?visit=sunday-11 (the mockups' "Tell
+  // us you are coming"). With editor-written questions, pick the first list answer that starts
+  // "I am planning to visit" and start the first paragraph box with a friendly line. Only fills
+  // empty answers, and only on first load.
+  useEffect(() => {
+    if (!useCustom) return;
+    let visit = '';
+    try {
+      visit = new URLSearchParams(window.location.search).get('visit') ?? '';
+    } catch {
+      return;
+    }
+    if (!visit) return;
+    const hour = visit.match(/^sunday-(\d{1,2})$/)?.[1];
+    const line = hour
+      ? `Hello! I am planning to visit this Sunday for worship at ${hour}:00.`
+      : 'Hello! I am planning to visit.';
+    const next: Record<number, string> = {};
+    const choice = custom.findIndex(
+      (f) => f.kind === 'select' && f.options.some((o) => /^i am planning to visit/i.test(o)),
+    );
+    if (choice >= 0) {
+      next[choice] = custom[choice].options.find((o) => /^i am planning to visit/i.test(o)) ?? '';
+    }
+    const box = custom.findIndex((f) => f.kind === 'textarea');
+    if (box >= 0) next[box] = line;
+    setCustomValues((m) => ({ ...next, ...m }));
+  }, []);
+
   // Persist on every change, debounced lightly via the natural re-render cadence.
   useEffect(() => {
     if (!restoredOnce.current) return;

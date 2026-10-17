@@ -69,6 +69,8 @@ interface Props {
    * layouts fixture. With no image, split renders exactly as bleed does.
    */
   variant?: SiteLayout['hero'];
+  /** FBC Auburn: a stone icon above an inner page's title (ArchHero). */
+  icon?: string | null;
 }
 
 const {
@@ -84,6 +86,7 @@ const {
   rotatingWords,
   scriptAccent,
   variant,
+  icon,
 } = Astro.props as Props;
 
 const heroVariant = variant ?? layout.hero;
@@ -253,6 +256,7 @@ const wrapperHeight =
     secondaryCta={secondaryCta}
     headingId={headingId}
     size={size}
+    icon={icon}
   />
 ) : hasImage ? (
   <section

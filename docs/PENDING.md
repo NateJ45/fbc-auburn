@@ -112,28 +112,26 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
 
 - DONE 2026-10-17: the stepping-stone rail (`stepsRailSection`, on Home as "A Sunday with us") and
   the Plan your visit timeline, which is the "Walk in with us" block (`walkSection`: each stop
-  carries its time). Both in `auburnMotionSections.ts`; detail in `docs/agent/animation.md`.
-- New blocks still to build: icon cards ("Find your place", borderless with large stone icons;
-  give the icons `class="reveal"` so they land as they scroll in), the "This week" dated list, the
-  Watch band (light, video embed). Each needs a schema, typegen, a SectionRenderer branch and
-  Studio previews.
-- A stone-icon picker on the hero for inner pages (the big icon above the H1); a logic-driving
-  dropdown, so it goes into `NON_STEGA_FIELDS` (rule 8b).
-- Pages as Studio pages: What we believe, Leadership, Ministries, Watch. Plan your visit is DONE
-  (2026-10-17, page `page-plan-your-visit`), and every built-in "Plan your visit" button now goes
-  to /plan-your-visit/. What we believe gets the baptism drawing by choosing "The baptism drawing"
-  under Picture on a text-and-picture band (`art = baptism`).
-- The menu: Plan your visit, Watch, Events and Give (both ChurchTrac links out), plus the
-  full-screen Menu overlay; footer columns as in the mockups.
-- The contact form still asks the starter's interior-design questions (project type, budget,
-  timeline, location). Replace them with a visit form ("I am visiting on...", a question, a prayer
-  request) and the `?visit=sunday-11` pre-fill from the mockups.
+  carries its time). Both in `auburnMotionSections.ts`; detail in `docs/agent/animation.md`. Plan
+  your visit is a Studio page (`page-plan-your-visit`), and every built-in "Plan your visit" button
+  goes to /plan-your-visit/.
+- DONE 2026-10-17: "Cards with stone icons" (`iconCardsSection`), "This week" (`thisWeekSection`,
+  wraps `ThisWeekList`) and "Watch" (`watchSection`, wraps `LastSunday`) blocks, in
+  `src/sanity/schemaTypes/auburnSections.ts`; a stone-icon picker on the hero (`icon`, already on
+  `NON_STEGA_FIELDS`; the list is `src/lib/stone-icons.ts`); Studio pages What we believe,
+  Leadership, Ministries and Watch in Sanity; Home uses the cards, Watch and This week blocks.
+  Studio pages also accept the team grid, FAQ and dynamic list blocks.
+- DONE 2026-10-17: the Menu (a full-screen panel at every width, the header shows the first four
+  links) and the footer columns in Site settings; the contact form is a visit form (editor-written
+  questions in the Contact page; `?visit=sunday-11` pre-fills it).
 - DONE 2026-10-17: the motion layer and "Walk in with us" (`src/styles/motion.css`,
   `src/scripts/motion.ts`): reveals, the rail, the mark building itself with wave drift (About,
   "The story in our mark"), the baptism ring and ripples, the background path, stone dividers and
   nav stones. Waiting on the church: a rough plan of the building (which door guests use, where
   the fellowship hall, children's room and sanctuary are). Until then the Walk's drawing is
   placeholder geometry in `src/lib/walk-plan.ts` (ROOMS, STOPS, ROUTE); only those change.
+- Still open: Events and Give in the menu once the church's Church Trac links exist; the deacons'
+  team grid once names and permissions exist.
 - Photos: every arch shows the mark or a soft fill until the photo session.
 
 Service times, the 1959 founding and Hebrews 13:8 are still unconfirmed with the church; copy

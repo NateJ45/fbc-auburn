@@ -336,6 +336,43 @@ export interface ProjectedDynamicListSection {
 // Discriminated union
 // ---------------------------------------------------------------------------
 
+/** iconCardsSection (FBC Auburn): cards with a stone icon, title, text, note and link. Content block. */
+export interface ProjectedIconCard {
+  _key?: string;
+  _type?: 'iconCard';
+  icon?: string;
+  title?: string;
+  body?: string;
+  note?: string;
+  link?: ProjectedCtaBlock | null;
+}
+export interface ProjectedIconCardsSection {
+  _type: 'iconCardsSection';
+  _key: string;
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  cards?: ProjectedIconCard[];
+}
+
+/** thisWeekSection (FBC Auburn): the next seven days, derived. Content block. */
+export interface ProjectedThisWeekSection {
+  _type: 'thisWeekSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+}
+/** watchSection (FBC Auburn): words beside the latest YouTube message. Content block. */
+export interface ProjectedWatchSection {
+  _type: 'watchSection';
+  _key: string;
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  link?: ProjectedCtaBlock | null;
+  fallback?: string;
+}
+
 // ---------------------------------------------------------------------------
 // FBC Auburn stone-path blocks (src/sanity/schemaTypes/auburnMotionSections.ts)
 // ---------------------------------------------------------------------------
@@ -408,6 +445,10 @@ export type PageBuilderBlock =
   | ProjectedEmbedSection
   // Church-reverse-port
   | ProjectedDynamicListSection
+  // FBC Auburn
+  | ProjectedIconCardsSection
+  | ProjectedThisWeekSection
+  | ProjectedWatchSection
   // FBC Auburn stone-path blocks
   | ProjectedStepsRailSection
   | ProjectedWalkSection;

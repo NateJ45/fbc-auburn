@@ -17,7 +17,8 @@
 
 import { defineType, defineField } from 'sanity';
 import { DocumentsIcon } from '@sanity/icons/Documents';
-import { SECTION_TYPES, sectionArrayOptions } from './sections';
+import { sectionArrayOptions } from './sections';
+import { PAGE_SECTION_TYPES } from './richSections';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import { seoFields } from './_seoFields';
 import { RESERVED_SLUGS } from '../../lib/reservedSlugs';
@@ -68,7 +69,7 @@ export const page = defineType({
       type: 'array',
       group: 'content',
       description: 'Build the page by adding sections. Drag to reorder. Add as many as you like.',
-      of: SECTION_TYPES,
+      of: PAGE_SECTION_TYPES,
       // Grouped + searchable insert menu, in the form AND in the preview canvas.
       options: sectionArrayOptions,
     }),

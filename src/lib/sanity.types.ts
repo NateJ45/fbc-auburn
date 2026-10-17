@@ -87,6 +87,15 @@ export type SectionPreset = {
       } & EmbedSection)
     | ({
         _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -767,6 +776,45 @@ export type StepsRailSection = {
   secondaryCta?: CtaBlock;
 };
 
+export type WatchSection = {
+  _type: 'watchSection';
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  link?: CtaBlock;
+  fallback?: string;
+};
+
+export type ThisWeekSection = {
+  _type: 'thisWeekSection';
+  heading?: string;
+  intro?: string;
+};
+
+export type IconCardsSection = {
+  _type: 'iconCardsSection';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  cards?: Array<{
+    icon?:
+      | 'map-pin'
+      | 'clock'
+      | 'coffee'
+      | 'bible'
+      | 'praying-hands'
+      | 'blocks'
+      | 'music'
+      | 'giving-hand';
+    title?: string;
+    body?: string;
+    note?: string;
+    link?: CtaBlock;
+    _type: 'iconCard';
+    _key: string;
+  }>;
+};
+
 export type EmbedSection = {
   _type: 'embedSection';
   eyebrow?: string;
@@ -937,6 +985,8 @@ export type RichTextSection = {
 
 export type HeroSection = {
   _type: 'heroSection';
+  icon?:
+    'map-pin' | 'clock' | 'coffee' | 'bible' | 'praying-hands' | 'blocks' | 'music' | 'giving-hand';
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;
@@ -1081,10 +1131,28 @@ export type Page = {
       } & EmbedSection)
     | ({
         _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
       } & WalkSection)
+    | ({
+        _key: string;
+      } & FaqSection)
+    | ({
+        _key: string;
+      } & TeamSection)
+    | ({
+        _key: string;
+      } & DynamicListSection)
   >;
   addToMainNav?: boolean;
   navGroup?: 'top' | 'services' | 'resources';
@@ -1481,6 +1549,15 @@ export type AboutPage = {
       } & EmbedSection)
     | ({
         _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
       } & StepsRailSection)
     | ({
         _key: string;
@@ -1640,6 +1717,15 @@ export type HomePage = {
     | ({
         _key: string;
       } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
     | ({
         _key: string;
       } & StepsRailSection)
@@ -1925,6 +2011,9 @@ export type AllSanitySchemaTypes =
   | FounderSection
   | WalkSection
   | StepsRailSection
+  | WatchSection
+  | ThisWeekSection
+  | IconCardsSection
   | EmbedSection
   | LogoStripSection
   | SpacerSection

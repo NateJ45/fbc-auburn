@@ -15,6 +15,7 @@ import { getImage } from 'astro:assets';
 import SanityImage from '@/components/SanityImage.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import StoneHeading from '@/components/StoneHeading.astro';
+import StoneIcon from '@/components/StoneIcon.astro';
 import markLight from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 import type { ComponentProps } from 'astro/types';
@@ -30,6 +31,8 @@ interface Props {
   secondaryCta?: Cta | null;
   headingId: string;
   size?: 'tall' | 'short';
+  /** Inner pages: one large stone icon above the title (src/lib/stone-icons.ts). */
+  icon?: string | null;
 }
 
 const {
@@ -41,6 +44,7 @@ const {
   secondaryCta,
   headingId,
   size = 'short',
+  icon,
 } = Astro.props as Props;
 
 const masthead = size === 'tall';
@@ -71,6 +75,9 @@ const mark = hasImage ? null : await getImage({ src: markLight });
 >
   <div class="arch-hero__inner mx-auto max-w-content px-m">
     <div class="arch-hero__copy">
+      {!masthead && icon && (
+        <StoneIcon name={icon} size={112} loading="eager" class="arch-hero__icon reveal" />
+      )}
       {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
       <StoneHeading text={headline} id={headingId} />
       {intro && <p class="arch-hero__intro">{intro}</p>}

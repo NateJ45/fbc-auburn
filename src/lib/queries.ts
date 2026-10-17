@@ -91,6 +91,17 @@ export function sectionsProjection(field = 'pageBuilder'): string {
       ...,
       logos[]${IMAGE_PROJECTION}
     },
+    _type == "iconCardsSection" => {
+      ...,
+      cards[]{
+        ...,
+        link${CTA_PROJECTION}
+      }
+    },
+    _type == "watchSection" => {
+      ...,
+      link${CTA_PROJECTION}
+    },
     _type == "teamSection" => {
       ...,
       members[]{

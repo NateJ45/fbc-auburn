@@ -1,0 +1,27 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn): "This week at Auburn". The heading is the editor's; the rows are
+// derived from Site settings and the Church Trac calendar by ThisWeekList (docs/agent/church-data.md).
+import ThisWeekList from '@/components/church/ThisWeekList.astro';
+import { surfaceClass } from '@/lib/surfaces';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { heading = 'This week at Auburn', intro, surface = 'background', headingId } = Astro.props;
+---
+
+<section class={surfaceClass(surface)} aria-labelledby={headingId}>
+  <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
+    <h2 id={headingId} class="font-display text-h2 leading-tight">
+      {heading}
+    </h2>
+    {intro && <p class="mt-s max-w-2xl text-lg text-muted-foreground">{intro}</p>}
+    <div class="mt-l">
+      <ThisWeekList />
+    </div>
+  </div>
+</section>

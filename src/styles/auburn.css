@@ -320,3 +320,181 @@ h6 {
     max-height: 260px;
   }
 }
+
+/* Inner pages: the big stone icon above the title. */
+.arch-hero__icon {
+  display: block;
+  width: clamp(72px, 9vw, 112px);
+  height: auto;
+  margin-bottom: 1.2rem;
+}
+
+/* ---- The Menu button and the full-screen night menu (MobileNav.tsx) ---- */
+.menu-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0.45rem 1.05rem;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--foreground);
+  background: var(--background);
+}
+.menu-pill:hover {
+  background: var(--muted);
+}
+.menu-pill:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+/* Phones: the pill sits at the right of the centred logo row. From 64rem it joins the nav row. */
+.site-header__menu {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-m);
+  transform: translateY(-50%);
+}
+@media (min-width: 64rem) {
+  .site-header__menu {
+    position: static;
+    transform: none;
+    margin-left: var(--spacing-m);
+  }
+  .site-header__nav {
+    margin-left: auto;
+  }
+}
+.auburn-menu {
+  --menu-night: #1d2f44;
+  width: 100%;
+  max-width: none;
+  inset: 0;
+  border: 0;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  background: var(--menu-night);
+  color: #ffffff;
+  overflow-y: auto;
+}
+.auburn-menu > button {
+  color: #ffffff;
+  top: clamp(1rem, 3vw, 2rem);
+  right: clamp(1rem, 3vw, 2rem);
+}
+.auburn-menu > button:hover {
+  background: rgb(255 255 255 / 0.12);
+  color: #ffffff;
+}
+.auburn-menu__head {
+  padding: 0;
+}
+.auburn-menu__eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #96c3ea;
+}
+.auburn-menu__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  width: min(1200px, 100%);
+  margin-inline: auto;
+  padding-block: clamp(1rem, 4vw, 3rem);
+}
+@media (min-width: 54rem) {
+  .auburn-menu__grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+}
+.auburn-menu__main {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.auburn-menu__main > li > a {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 1.2rem + 2.4vw, 3rem);
+  line-height: 1.5;
+  color: #ffffff;
+  text-decoration: none;
+}
+.auburn-menu__main a:hover,
+.auburn-menu__main a:focus-visible {
+  color: #96c3ea;
+}
+.auburn-menu a:focus-visible {
+  outline: 3px solid #e8a93a;
+  outline-offset: 3px;
+}
+.auburn-menu__group {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #96c3ea;
+}
+.auburn-menu__sub {
+  list-style: none;
+  padding: 0;
+  margin: 0.3rem 0 0.6rem;
+}
+.auburn-menu__sub a {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: #ffffff;
+  text-decoration: none;
+}
+.auburn-menu__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+.auburn-menu__tagline {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+.auburn-menu__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.auburn-menu__contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ffffff;
+}
+.auburn-menu__social {
+  display: flex;
+  gap: 0.6rem;
+}
+.auburn-menu__social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid rgb(255 255 255 / 0.6);
+  border-radius: 999px;
+  color: #ffffff;
+}
+.auburn-menu__logo {
+  width: 220px;
+  height: auto;
+  margin-top: 0.8rem;
+}
+/* Phones: logo on the left and the Menu pill on the right, as in the mockups (the starter centres it). */
+@media (max-width: 63.99rem) {
+  .site-header__row {
+    justify-content: flex-start;
+  }
+}

@@ -26,6 +26,7 @@ import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { columnsField, headingAccentField, hideWhenRich, richTwin } from './_appearanceFields';
 import { sideOptions } from '../../lib/layout-variants';
+import { iconCardsSection, stoneIconField, thisWeekSection, watchSection } from './auburnSections';
 import { auburnSectionSchemas } from './auburnMotionSections';
 
 // Shared image field with required alt text (accessibility + SEO).
@@ -97,6 +98,11 @@ export const heroSection = defineType({
   type: 'object',
   icon: ComponentIcon,
   fields: [
+    // FBC Auburn: the big stone icon above an inner page's title (ArchHero.astro).
+    stoneIconField(
+      'Stone icon above the title (optional)',
+      'Inner pages show one large stone icon above the title.',
+    ),
     defineField({ name: 'eyebrow', title: 'Eyebrow (small line above)', type: 'string' }),
     defineField({
       name: 'headline',
@@ -598,6 +604,9 @@ export const pageSectionSchemas = [
   spacerSection,
   logoStripSection,
   embedSection,
+  iconCardsSection, // FBC Auburn
+  thisWeekSection, // FBC Auburn
+  watchSection, // FBC Auburn
   // FBC Auburn: the stepping-stone rail and the Walk in with us plan (auburnMotionSections.ts)
   ...auburnSectionSchemas,
 ];
@@ -628,7 +637,13 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
     {
       name: 'basics',
       title: 'Basics',
-      of: ['heroSection', 'richTextSection', 'imageTextSection', 'spacerSection'],
+      of: [
+        'heroSection',
+        'richTextSection',
+        'imageTextSection',
+        'iconCardsSection',
+        'spacerSection',
+      ],
     },
     {
       name: 'visit',
@@ -649,7 +664,7 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
     {
       name: 'media',
       title: 'Media',
-      of: ['gallerySection', 'videoSection', 'embedSection'],
+      of: ['watchSection', 'gallerySection', 'videoSection', 'embedSection'],
     },
     {
       name: 'business',
@@ -658,6 +673,7 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'storySection', // scaffold: about
         'founderSection', // scaffold: about
         'teamSection',
+        'thisWeekSection',
         'serviceAreaSection',
         'dynamicListSection',
         'ctaBandSection',

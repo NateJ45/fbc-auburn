@@ -18,8 +18,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-// FBC Auburn: the stone-path blocks (stepsRailSection, walkSection) are defined in their own file.
-const schema = ['sections.ts', 'auburnMotionSections.ts']
+// Every file that defines page-builder blocks: the site's own blocks (FBC Auburn keeps them in
+// auburnSections.ts and auburnMotionSections.ts) are checked the same way as the starter's.
+const schema = ['sections.ts', 'richSections.ts', 'auburnSections.ts', 'auburnMotionSections.ts']
   .map((f) => readFileSync(new URL('../sanity/schemaTypes/' + f, import.meta.url), 'utf8'))
   .join('\n');
 const defaults = readFileSync(new URL('../data/defaultSections.ts', import.meta.url), 'utf8');
@@ -27,7 +28,7 @@ const defaults = readFileSync(new URL('../data/defaultSections.ts', import.meta.
 /** Every `name: '...'` and `proseBody('...')` inside one block's defineType (nested names included, which only loosens the check). */
 function schemaFields(type: string): Set<string> {
   const start = schema.indexOf(`name: '${type}'`);
-  assert.ok(start >= 0, `${type} is not defined in sections.ts or auburnMotionSections.ts`);
+  assert.ok(start >= 0, `${type} is not defined in any section schema file`);
   const next = schema.indexOf('defineType(', start);
   const body = schema.slice(start, next < 0 ? undefined : next);
   // linkHrefField('name', ...) is auburnMotionSections.ts's address-field helper.
