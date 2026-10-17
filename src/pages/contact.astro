@@ -28,12 +28,23 @@ const heroHeadline = page?.heroHeadline ?? 'Contact us';
 const heroSubhead = page?.heroSubhead ?? '';
 const formIntroNote = page?.formIntroNote ?? '';
 
-// Editor-written form questions (contactPage.formFields). Shaped here so the
-// island receives a clean list. The prop is SPREAD rather than passed directly:
-// with no questions the island must receive no new prop at all, which keeps the
-// rendered page byte-for-byte what it was.
-const questions = normalizeCustomFields(page?.formFields);
-const questionProps = questions.length > 0 ? { customFields: questions } : {};
+// Editor-written form questions (contactPage.formFields), shaped here so the island receives a
+// clean list.
+// FBC Auburn: with no questions written in the Studio (a fresh build, CI), the form still asks
+// the church's visit questions, never the starter's interior-design questionnaire. The same two
+// questions are in the Contact page in Sanity; editing them there replaces these.
+const DEFAULT_VISIT_QUESTIONS = [
+  {
+    label: 'What is this about?',
+    kind: 'select',
+    options: ['I am planning to visit', 'A question', 'A prayer request', 'Something else'],
+    required: true,
+  },
+  { label: 'Your message', kind: 'textarea', required: true },
+];
+const written = normalizeCustomFields(page?.formFields);
+const questions = written.length > 0 ? written : normalizeCustomFields(DEFAULT_VISIT_QUESTIONS);
+const questionProps = { customFields: questions };
 
 const schedulingLink = page?.schedulingLink;
 const schedulingLinkLabel = page?.schedulingLinkLabel ?? 'Schedule a 20-minute discovery call.';

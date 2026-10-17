@@ -103,12 +103,39 @@ function initMotion() {
       const r = el.getBoundingClientRect();
       return [r.top + scrollY - bgTop, r.bottom + scrollY - bgTop] as const;
     });
+    // Nor over words or controls: the path sits above the section grounds (so it shows on the
+    // tinted bands), which put it on top of text too. A stone whose box, plus a small margin,
+    // touches a heading, paragraph, list item, link or button is left out, so the path runs
+    // through the gutters and the gaps between blocks and never across a sentence.
+    const bgLeft = bg.getBoundingClientRect().left;
+    const words = [
+      ...bg.querySelectorAll<HTMLElement>(
+        'h1, h2, h3, h4, p, li, a, button, label, input, textarea, select, blockquote, figcaption',
+      ),
+    ]
+      .map((el) => el.getBoundingClientRect())
+      .filter((r) => r.width > 0 && r.height > 0)
+      .map((r) => {
+        const top = r.top + scrollY - bgTop;
+        const left = r.left - bgLeft;
+        return [left, top, left + r.width, top + r.height] as const;
+      });
     const w = W < 560 ? 40 : 58;
+    const pad = 10;
+    const onWords = (x: number, y: number) =>
+      words.some(
+        ([l, t, r, b]) =>
+          x + w / 2 + pad > l &&
+          x - w / 2 - pad < r &&
+          y + w * 0.3 + pad > t &&
+          y - w * 0.3 - pad < b,
+      );
     let k = 0;
     for (let l = 40; l < len - 20; l += stepLen, k++) {
       const p = path.getPointAtLength(l);
       const q = path.getPointAtLength(Math.min(len, l + 1));
       if (skip.some(([a, b]) => p.y > a - 30 && p.y < b + 30)) continue;
+      if (onWords(p.x, p.y)) continue;
       const ang = (Math.atan2(q.y - p.y, q.x - p.x) * 180) / Math.PI;
       const img = document.createElementNS(NS, 'image');
       img.setAttribute('href', stoneUrls[k % 3]);
