@@ -21,6 +21,7 @@ The must-knows:
 - TypeScript strict, `output: 'static'` with a handful of SSR routes (`/preview/**`, `/api/draft-mode/*`). Node 22.12+. Tailwind 4 via `@tailwindcss/vite` (no `tailwind.config.mjs`; tokens in `@theme` in `src/styles/globals.css`). React 19 islands only where interactive.
 - The Sanity Studio is **embedded at `/studio`**. There is no separate studio dev server or deploy. Never run `npx sanity deploy`.
 - `sanityFetch(query, params, fallback)` in `src/lib/sanity.ts` is the single chokepoint for Sanity reads; with no project configured it returns the fallback, so `npm run build` works on a fresh clone.
+- The church's facts (address, service times, phone, founding year, YouTube channel, Church Trac feed) are typed ONCE in Site settings > Church facts, each with a `confirmed` flag, and drawn through `src/components/church/` (This Sunday, This week, the replay, the weather, the "To confirm" tag). Never type a time or address into a component: `docs/agent/church-data.md`.
 - Hosting is **Cloudflare Workers**, not Pages. Deploy with `npm run deploy` (`wrangler deploy -c dist/server/wrangler.json`). A bare `wrangler deploy` 404s every sub-route.
 
 ## Commands

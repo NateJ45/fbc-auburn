@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fixture for src/lib/church-feeds.ts (CHURCH_DATA_FIXTURE=1). Invented entries in the shape the
+     public channel feed serves; the video ids are placeholders, not real videos. -->
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <yt:channelId>UCxxxxxxxxxxxxxxxxxxxxxx</yt:channelId>
+ <entry>
+  <yt:videoId>upcomingAAA</yt:videoId>
+  <title>Sunday worship (scheduled)</title>
+  <published>2026-10-21T13:00:00+00:00</published>
+  <media:group><media:community><media:statistics views="0"/></media:community></media:group>
+ </entry>
+ <entry>
+  <yt:videoId>replayBBBBB</yt:videoId>
+  <title>Jesus Christ the Same &amp; Forever</title>
+  <published>2026-10-19T04:10:00+00:00</published>
+  <media:group><media:community><media:statistics views="42"/></media:community></media:group>
+ </entry>
+ <entry>
+  <yt:videoId>olderCCCCCC</yt:videoId>
+  <title>An older message</title>
+  <published>2026-10-12T04:10:00+00:00</published>
+  <media:group><media:community><media:statistics views="61"/></media:community></media:group>
+ </entry>
+</feed>

@@ -10,6 +10,22 @@ their heading `headline`, the process spacer's `size` and a mis-encoded em-dash,
 its buttons) is not taken: the split hero renders as ArchHero here, and the text hero is left as it is until the
 interior heroes are designed.
 
+_2026-10-17: church data, held once and derived everywhere._
+
+**Decision.** The church's facts live in Site settings, group "Church facts" (address, service times, phone flag,
+founding year, YouTube channel id, Church Trac iCal feed), each provisional fact with a `confirmed` flag; the values from
+the church's Facebook page were written to the dataset unconfirmed (backup first). `src/lib/church-facts.ts` derives the
+"This Sunday" line, the "This week" rows (service times merged per day plus calendar events, deduplicated), the map
+link and the public calendar link; unconfirmed facts show the inline "To confirm" tag (`NotConfirmed.astro`) and stay out
+of the JSON-LD. Build-time feeds (`church-feeds.ts`): the YouTube channel feed for the replay and the Church Trac iCal,
+both skipped with no setting and null on any failure. The iCal parser and the weather line are ported from First Baptist
+Muncie; the weather is a browser fetch from api.weather.gov after load (grid ILN 28,51), and it now skips an
+early-morning frost or fog clause ("Widespread Frost then Sunny" reads "sunny"). `deploy.yml` rebuilds every morning and
+Sunday afternoon so dates, replay and events move on their own. Seven drop-in components in `src/components/church/`,
+shown on `/styleguide/church-data/`; usage in `docs/agent/church-data.md`. Verified: typegen, check, test:unit, build,
+format:check; the wall at 375 and 1280 (light; the site is light only), no sideways scroll at 320, the play swap, the live forecast,
+the fixture and the no-feed states.
+
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
 
 **Decision.** `brand.config.json` carries the church's palette (deep sky everyday colour, ink text, white and
