@@ -197,6 +197,19 @@ function initMotion() {
       clearTimeout(resizeTimer);
     });
   }
+  // Late content (the replay thumbnail, the This week rows, lazy images) moves the blocks after the
+  // first lay, which would leave stones where words now are. Lay the path again whenever the page
+  // body changes height (debounced through the resize handler).
+  if (bg && 'ResizeObserver' in window) {
+    let lastH = bg.offsetHeight;
+    const ro = new ResizeObserver(() => {
+      if (bg.offsetHeight === lastH) return;
+      lastH = bg.offsetHeight;
+      resizeHandler();
+    });
+    ro.observe(bg);
+    disposers.push(() => ro.disconnect());
+  }
   layPath();
   onScroll();
   // Fonts change the page height; lay the path again once they are in.
