@@ -48,12 +48,12 @@ const root = resolve(__dirname, '../..');
 const DEFAULTS = {
   width: 1200,
   height: 630,
-  bg: '#FFFFFF', // Paper
-  primary: '#235E93', // Slate
-  primaryDark: '#1B4A75', // Slate Dark
-  accent: '#171A26', // Ink
-  taupe: '#2C5B3A', // Cool Gray
-  fontDisplay: 'Young Serif, Georgia, serif',
+  bg: '#FBFBFA', // Paper
+  primary: '#586577', // Slate
+  primaryDark: '#434E5C', // Slate Dark
+  accent: '#2A2D31', // Ink
+  taupe: '#AAB0B8', // Cool Gray
+  fontDisplay: 'Libre Baskerville, Georgia, Cambria, Times New Roman, serif',
 };
 
 /**

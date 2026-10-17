@@ -30,7 +30,10 @@ here: the default richText and imageText blocks named their heading `headline` (
 the headings never rendered), CtaLink ignored a default button's `href` (every default button went to /contact/), and
 the layout gate failed any fork that picks a layout (it now checks the config names real values and that
 `src/data/layout.ts` matches). Verified: check, test:unit (639 + 53), build, light and dark at 375 and 1280, no sideways
-scroll at 320. The rest of the mockups is queued in PENDING 1c.
+scroll at 320. The rest of the mockups is queued in PENDING 1c. Share-image colours come from
+`scripts/og-theme.mjs` through render-og's `theme` option: apply-brand writes them into the PORTABLE
+`scripts/lib/render-og.mjs`, which sync-check reports as DRIFT, so that file was put back to the starter's copy
+(re-check it after any apply-brand run until the starter fixes apply-brand).
 
 _2026-10-17: Sanity phase 2, `@sanity/ui` 4 and `@sanity/icons` 5 (PORTS card 103)._
 
