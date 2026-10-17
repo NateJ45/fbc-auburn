@@ -19,7 +19,6 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/Hero.astro';
 import ServiceCard from '@/components/ServiceCard.astro';
-import TestimonialCard from '@/components/TestimonialCard.astro';
 import JournalCard from '@/components/JournalCard.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import ImageText from '@/components/sections/ImageText.astro';
@@ -68,11 +67,6 @@ const service = {
   features: ['First feature', 'Second feature', 'Third feature'],
   ctaLabel: 'Learn more',
 };
-const testimonial = {
-  quote: 'A fixed quotation so the card has a body to wrap.',
-  attribution: 'A Client',
-  date: '2026-01-15',
-};
 const entry = {
   title: 'A fixed journal entry title',
   slug: { current: 'fixture' },
@@ -102,7 +96,6 @@ const entry = {
         <SectionHeading eyebrow="Cards" headline="Card surfaces" headingId="fx-cards" />
         <div class="mt-l grid gap-m md:grid-cols-3">
           <ServiceCard service={service} />
-          <TestimonialCard testimonial={testimonial} />
           <JournalCard entry={entry} />
         </div>
       </div>

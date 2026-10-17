@@ -65,8 +65,6 @@ const slug = (Astro.params.slug as string | undefined) || '';
 const SINGLETON_BY_PATH: Record<string, string> = {
   '': 'homePage',
   about: 'aboutPage', // scaffold: about
-  services: 'servicesPage', // scaffold: services
-  process: 'processPage', // scaffold: process
   faq: 'faqPage', // scaffold: faq
   contact: 'contactPage',
   journal: 'journalPage', // scaffold: journal
@@ -80,8 +78,6 @@ const SINGLETON_BY_PATH: Record<string, string> = {
 const BUILDER_SINGLETONS = new Set([
   'homePage',
   'aboutPage', // scaffold: about
-  'servicesPage', // scaffold: services
-  'processPage', // scaffold: process
 ]);
 
 // The heading-id prefix each live page passes to SectionRenderer. Matching it
@@ -90,8 +86,6 @@ const BUILDER_SINGLETONS = new Set([
 const ID_PREFIX: Record<string, string> = {
   homePage: 'home',
   aboutPage: 'about',
-  servicesPage: 'services', // scaffold: services
-  processPage: 'process', // scaffold: process
 };
 
 // Every hero / builder / CTA field any of the page types may carry. Absent

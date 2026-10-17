@@ -77,22 +77,16 @@ const colClass = columnsClass('dynamicListSection', columns);
 // marked, so this list shrinks with them.
 const KNOWN_SOURCES: string[] = [
   'journal', // scaffold: journal
-  'services', // scaffold: services
-  'testimonials', // scaffold: testimonials
   'faqs', // scaffold: faq
 ];
 
 // Source-specific fallback CTA link if no cta prop provided.
 const fallbackHref: Record<string, string> = {
   journal: '/journal/', // scaffold: journal
-  services: '/services/', // scaffold: services
-  testimonials: '/', // scaffold: testimonials
   faqs: '/faq/', // scaffold: faq
 };
 const fallbackLabel: Record<string, string> = {
   journal: 'Read all posts', // scaffold: journal
-  services: 'See all services', // scaffold: services
-  testimonials: 'See all reviews', // scaffold: testimonials
   faqs: 'Browse all FAQs', // scaffold: faq
 };
 ---
@@ -158,83 +152,6 @@ const fallbackLabel: Record<string, string> = {
                   )}
                 </div>
               )}
-            </li>
-          ))}
-        </ul>
-      )}
-      {/* scaffold:end */}
-
-      {/* scaffold: services */}
-      {/* ── Service cards ────────────────────────────────────────────── */}
-      {source === 'services' && (
-        <ul
-          class={`mt-section-lg grid grid-cols-1 ${colClass} list-none gap-m p-0`}
-          data-stagger-grid
-        >
-          {shown.map((item) => (
-            <li>
-              {item.href ? (
-                <a
-                  href={withTrailingSlash(item.href)}
-                  class="card-lift group block h-full rounded-md border border-border-soft bg-card p-m no-underline transition-colors hover:border-primary/40"
-                >
-                  <h3 class="font-display text-h4 text-foreground transition-colors group-hover:text-primary-dark">
-                    {item.title}
-                  </h3>
-                  {item.meta && (
-                    <p class="mt-xs text-xs font-semibold tracking-eyebrow text-link uppercase">
-                      {item.meta}
-                    </p>
-                  )}
-                  {item.summary && (
-                    <p class="mt-s line-clamp-3 text-sm leading-relaxed text-foreground/80">
-                      {item.summary}
-                    </p>
-                  )}
-                </a>
-              ) : (
-                <div class="h-full rounded-md border border-border-soft bg-card p-m">
-                  <h3 class="font-display text-h4 text-foreground">{item.title}</h3>
-                  {item.meta && (
-                    <p class="mt-xs text-xs font-semibold tracking-eyebrow text-link uppercase">
-                      {item.meta}
-                    </p>
-                  )}
-                  {item.summary && (
-                    <p class="mt-s line-clamp-3 text-sm leading-relaxed text-foreground/80">
-                      {item.summary}
-                    </p>
-                  )}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-      {/* scaffold:end */}
-
-      {/* scaffold: testimonials */}
-      {/* ── Testimonial cards ────────────────────────────────────────── */}
-      {source === 'testimonials' && (
-        <ul
-          class={`mt-section-lg grid grid-cols-1 ${colClass} list-none gap-m p-0`}
-          data-stagger-grid
-        >
-          {shown.map((item) => (
-            <li class="flex">
-              <blockquote class="flex flex-1 flex-col rounded-md border border-border-soft bg-card p-m">
-                {item.summary && (
-                  <p class="flex-1 leading-relaxed text-foreground/90 italic before:content-['“'] after:content-['”']">
-                    {item.summary}
-                  </p>
-                )}
-                <footer class="mt-m">
-                  <cite class="not-italic">
-                    <p class="text-sm font-semibold text-foreground">{item.title}</p>
-                    {item.meta && <p class="text-xs text-foreground/70">{item.meta}</p>}
-                  </cite>
-                </footer>
-              </blockquote>
             </li>
           ))}
         </ul>

@@ -127,129 +127,6 @@ export const founderSection = defineType({
 });
 // scaffold:end
 
-// scaffold: services
-// ── 2. servicesGridSection ───────────────────────────────────────────────────
-// Services grid. Auto-populates from the service collection at query time.
-// Editor controls heading copy; service cards come from the service docs.
-// Manages its own surface-warm bg-background (SELF_CONTAINED).
-export const servicesGridSection = defineType({
-  name: 'servicesGridSection',
-  title: 'Services grid',
-  type: 'object',
-  icon: ThLargeIcon,
-  fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
-    defineField({
-      name: 'headline',
-      title: 'Headline',
-      type: 'string',
-      validation: (R) => R.required(),
-    }),
-    defineField({
-      name: 'scriptAccent',
-      title: 'Handwritten accent word (optional)',
-      type: 'string',
-      description:
-        'One word from the headline to render in the script font. Must match exactly. Leave blank to skip.',
-    }),
-    headingAccentField(),
-    defineField({
-      name: 'subhead',
-      title: 'Subhead (optional)',
-      type: 'text',
-      rows: 2,
-      hidden: hideWhenRich('subheadRich'),
-    }),
-    richTwin('subheadRich', 'Subhead'),
-    defineField({ name: 'cta', title: 'Button (optional)', type: 'ctaBlock' }),
-    defineField({
-      name: 'footnote',
-      title: 'Footnote (optional)',
-      type: 'string',
-      description:
-        'Small-print line under the grid. Example: "Final pricing is always discussed before any work begins."',
-    }),
-    defineField({
-      name: 'variant',
-      title: 'Layout variant',
-      type: 'string',
-      initialValue: 'grid',
-      options: {
-        list: [
-          { title: 'Compact grid (home page, up to 4)', value: 'grid' },
-          { title: 'Full list with anchors (services page)', value: 'list' },
-        ],
-        layout: 'radio',
-      },
-    }),
-  ],
-  preview: {
-    select: { title: 'headline' },
-    prepare: ({ title }) => ({ title: title || 'Services grid', subtitle: 'Services grid' }),
-  },
-});
-// scaffold:end
-
-// scaffold: testimonials
-// ── 3. testimonialsSection ───────────────────────────────────────────────────
-// Testimonial grid with an optional featured pull-quote above.
-// References service testimonial docs (resolved at query time via sectionsProjection).
-// Manages its own surface-warm bg-background (SELF_CONTAINED).
-export const testimonialsSection = defineType({
-  name: 'testimonialsSection',
-  title: 'Testimonials',
-  type: 'object',
-  icon: StarIcon,
-  fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
-    defineField({
-      name: 'headline',
-      title: 'Headline',
-      type: 'string',
-      validation: (R) => R.required(),
-    }),
-    defineField({
-      name: 'scriptAccent',
-      title: 'Handwritten accent word (optional)',
-      type: 'string',
-      description: 'One word from the headline to render in the script font. Must match exactly.',
-    }),
-    headingAccentField(),
-    defineField({
-      name: 'subhead',
-      title: 'Subhead (optional)',
-      type: 'text',
-      rows: 2,
-      hidden: hideWhenRich('subheadRich'),
-    }),
-    richTwin('subheadRich', 'Subhead'),
-    defineField({
-      name: 'featuredQuote',
-      title: 'Featured testimonial (large pull-quote)',
-      type: 'reference',
-      to: [{ type: 'testimonial' }],
-      description: 'Optional. The large pull-quote above the grid.',
-    }),
-    defineField({
-      name: 'testimonialsToShow',
-      title: 'Testimonials in grid (in order)',
-      type: 'array',
-      of: [defineArrayMember({ type: 'reference', to: [{ type: 'testimonial' }] })],
-    }),
-    defineField({
-      name: 'attribution',
-      title: 'Attribution line (optional)',
-      type: 'string',
-      description: 'Example: "From the studio\'s Google reviews."',
-    }),
-  ],
-  preview: {
-    select: { title: 'headline' },
-    prepare: ({ title }) => ({ title: title || 'Testimonials', subtitle: 'Testimonials' }),
-  },
-});
-// scaffold:end
-
 // scaffold: about
 // ── 4. storySection ──────────────────────────────────────────────────────────
 // Long-form narrative block: sticky portrait, story prose, attribution + credential lines.
@@ -295,83 +172,6 @@ export const storySection = defineType({
       title: title || 'Story',
       subtitle: 'Story / narrative',
       media,
-    }),
-  },
-});
-// scaffold:end
-
-// scaffold: philosophy
-// ── 5. valuesSection ─────────────────────────────────────────────────────────
-// Numbered card grid of values or philosophy points.
-// Auto-populates from the philosophyPoint collection at query time.
-// Manages its own bg-muted surface (SELF_CONTAINED).
-export const valuesSection = defineType({
-  name: 'valuesSection',
-  title: 'Values / philosophy',
-  type: 'object',
-  icon: BulbOutlineIcon,
-  fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
-    defineField({
-      name: 'headline',
-      title: 'Headline',
-      type: 'string',
-      validation: (R) => R.required(),
-    }),
-    columnsField('valuesSection'),
-  ],
-  preview: {
-    select: { title: 'headline' },
-    prepare: ({ title }) => ({ title: title || 'Values', subtitle: 'Values / philosophy' }),
-  },
-});
-// scaffold:end
-
-// scaffold: process
-// ── 6. processSection ────────────────────────────────────────────────────────
-// Ordered process steps. Auto-populates from the processStep collection.
-// Two variants: 'full' (all steps, large cards) and 'preview' (first 4, compact grid).
-// Manages its own surface (SELF_CONTAINED) — 'full' on bg-background, 'preview' on bg-muted.
-export const processSection = defineType({
-  name: 'processSection',
-  title: 'Process steps',
-  type: 'object',
-  icon: OlistIcon,
-  fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
-    defineField({ name: 'headline', title: 'Headline (optional)', type: 'string' }),
-    defineField({ name: 'subhead', title: 'Subhead (optional)', type: 'text', rows: 2 }),
-    defineField({
-      name: 'variant',
-      title: 'Variant',
-      type: 'string',
-      initialValue: 'preview',
-      options: {
-        list: [
-          {
-            title: 'Preview (first 4 steps, compact grid with a link)',
-            value: 'preview',
-          },
-          {
-            title: 'Full (all steps, large detail cards)',
-            value: 'full',
-          },
-        ],
-        layout: 'radio',
-      },
-    }),
-    defineField({
-      name: 'cta',
-      title: 'Link button (preview variant only)',
-      type: 'ctaBlock',
-      description: 'Only shown in the "preview" variant. Leave blank to hide.',
-    }),
-  ],
-  preview: {
-    select: { title: 'headline', variant: 'variant' },
-    prepare: ({ title, variant }) => ({
-      title: title || 'Process steps',
-      subtitle: variant === 'full' ? 'Process steps (full)' : 'Process steps (preview)',
     }),
   },
 });
@@ -675,11 +475,7 @@ export const dynamicListSection = defineType({
 
 export const richSectionSchemas = [
   founderSection, // scaffold: about
-  servicesGridSection, // scaffold: services
-  testimonialsSection, // scaffold: testimonials
   storySection, // scaffold: about
-  valuesSection, // scaffold: philosophy
-  processSection, // scaffold: process
   serviceAreaSection,
   guaranteeSection,
   faqSection, // scaffold: faq
@@ -701,9 +497,6 @@ export const RICH_SECTION_TYPES = richSectionSchemas.map((s) => ({ type: s.name 
 export const HOME_SECTION_TYPES = [
   ...SECTION_TYPES,
   { type: 'founderSection' }, // scaffold: about
-  { type: 'servicesGridSection' }, // scaffold: services
-  { type: 'testimonialsSection' }, // scaffold: testimonials
-  { type: 'processSection' }, // scaffold: process
   { type: 'faqSection' }, // scaffold: faq
   { type: 'teamSection' },
   { type: 'dynamicListSection' },
@@ -712,7 +505,6 @@ export const HOME_SECTION_TYPES = [
 export const ABOUT_SECTION_TYPES = [
   ...SECTION_TYPES,
   { type: 'storySection' }, // scaffold: about
-  { type: 'valuesSection' }, // scaffold: philosophy
   { type: 'faqSection' }, // scaffold: faq
   { type: 'teamSection' },
   { type: 'dynamicListSection' },
@@ -720,7 +512,6 @@ export const ABOUT_SECTION_TYPES = [
 
 export const SERVICES_SECTION_TYPES = [
   ...SECTION_TYPES,
-  { type: 'servicesGridSection' }, // scaffold: services
   { type: 'serviceAreaSection' },
   { type: 'guaranteeSection' },
   { type: 'faqSection' }, // scaffold: faq
@@ -728,6 +519,5 @@ export const SERVICES_SECTION_TYPES = [
 
 export const PROCESS_SECTION_TYPES = [
   ...SECTION_TYPES,
-  { type: 'processSection' }, // scaffold: process
   { type: 'faqSection' }, // scaffold: faq
 ];

@@ -20,11 +20,7 @@ import GalleryGrid from '@/components/sections/GalleryGrid.astro';
 import QuoteBlock from '@/components/sections/QuoteBlock.astro';
 import VideoEmbed from '@/components/sections/VideoEmbed.astro';
 import FounderSection from '@/components/sections/FounderSection.astro'; // scaffold: about
-import ServicesGridSection from '@/components/sections/ServicesGridSection.astro'; // scaffold: services
-import TestimonialsSection from '@/components/sections/TestimonialsSection.astro'; // scaffold: testimonials
 import StorySection from '@/components/sections/StorySection.astro'; // scaffold: about
-import ValuesSection from '@/components/sections/ValuesSection.astro'; // scaffold: philosophy
-import ProcessSection from '@/components/sections/ProcessSection.astro'; // scaffold: process
 import ServiceAreaSection from '@/components/sections/ServiceAreaSection.astro';
 import GuaranteeSection from '@/components/sections/GuaranteeSection.astro';
 import FaqSection from '@/components/sections/FaqSection.astro'; // scaffold: faq
@@ -168,35 +164,6 @@ const wrapAttrs = (key: string | undefined) =>
           cta={s.cta}
           headingId={headingId}
         />
-      ) : // scaffold-branch: services
-      s._type === 'servicesGridSection' ? (
-        <ServicesGridSection
-          eyebrow={s.eyebrow}
-          headline={s.headline}
-          scriptAccent={s.scriptAccent}
-          headingAccent={s.headingAccent}
-          subhead={s.subhead}
-          subheadRich={s.subheadRich}
-          services={s.services ?? []}
-          cta={s.cta}
-          footnote={s.footnote}
-          variant={s.variant ?? 'grid'}
-          headingId={headingId}
-        />
-      ) : // scaffold-branch: testimonials
-      s._type === 'testimonialsSection' ? (
-        <TestimonialsSection
-          eyebrow={s.eyebrow}
-          headline={s.headline}
-          scriptAccent={s.scriptAccent}
-          headingAccent={s.headingAccent}
-          subhead={s.subhead}
-          subheadRich={s.subheadRich}
-          featuredQuote={s.featuredQuote}
-          testimonialsToShow={s.testimonialsToShow ?? []}
-          attribution={s.attribution}
-          headingId={headingId}
-        />
       ) : // scaffold-branch: about
       s._type === 'storySection' ? (
         <StorySection
@@ -208,26 +175,6 @@ const wrapAttrs = (key: string | undefined) =>
           credentialLine={s.credentialLine}
           serviceAreaLine={s.serviceAreaLine}
           surface={surface ?? 'background'}
-          headingId={headingId}
-        />
-      ) : // scaffold-branch: philosophy
-      s._type === 'valuesSection' ? (
-        <ValuesSection
-          eyebrow={s.eyebrow}
-          headline={s.headline}
-          points={s.points ?? []}
-          columns={s.columns}
-          headingId={headingId}
-        />
-      ) : // scaffold-branch: process
-      s._type === 'processSection' ? (
-        <ProcessSection
-          eyebrow={s.eyebrow}
-          headline={s.headline}
-          subhead={s.subhead}
-          steps={s.steps ?? []}
-          variant={s.variant ?? 'preview'}
-          cta={s.cta}
           headingId={headingId}
         />
       ) : s._type === 'serviceAreaSection' ? (

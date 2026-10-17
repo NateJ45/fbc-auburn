@@ -19,18 +19,12 @@ import { page } from './page';
 import { pageSectionSchemas } from './sections';
 import { richSectionSchemas } from './richSections';
 import { notFoundPage } from './notFoundPage';
-import { philosophyPoint } from './philosophyPoint'; // scaffold: philosophy
 import { privacyPage } from './privacyPage';
-import { processPage } from './processPage'; // scaffold: process
-import { processStep } from './processStep'; // scaffold: process
 import { redirect } from './redirect';
 import { sectionPreset } from './sectionPreset';
-import { service } from './service'; // scaffold: services
-import { servicesPage } from './servicesPage'; // scaffold: services
 import { siteSettings } from './siteSettings';
 import { studioGuide } from './studioGuide';
 import { studioNotes } from './studioNotes';
-import { testimonial } from './testimonial'; // scaffold: testimonials
 
 export const schemaTypes = [
   // Object types (embedded) first so they're defined before docs that reference them
@@ -49,8 +43,6 @@ export const schemaTypes = [
   businessInfo, // Content-side singleton: service areas, travel fees, availability, geo
   homePage,
   aboutPage, // scaffold: about
-  servicesPage, // scaffold: services
-  processPage, // scaffold: process
   faqPage, // scaffold: faq
   contactPage,
   journalPage, // scaffold: journal
@@ -62,12 +54,8 @@ export const schemaTypes = [
 
   // Reusable content collections
   announcement, // site-wide banner collection (enabled + date-windowed)
-  testimonial, // scaffold: testimonials
   faqCategory, // scaffold: faq
   faqItem, // scaffold: faq
-  philosophyPoint, // scaffold: philosophy
-  service, // scaffold: services
-  processStep, // scaffold: process
   journalCategory, // scaffold: journal
   journalEntry, // scaffold: journal
   // Custom pages built from the section library (multi-instance, not a singleton)

@@ -48,14 +48,6 @@ export function pathForDoc(schemaType: string, doc: any): string | null {
     case 'aboutPage':
       return '/about';
     // scaffold:end
-    // scaffold: services
-    case 'servicesPage':
-      return '/services';
-    // scaffold:end
-    // scaffold: process
-    case 'processPage':
-      return '/process';
-    // scaffold:end
     // scaffold: faq
     case 'faqPage':
       return '/faq';
@@ -76,22 +68,6 @@ export function pathForDoc(schemaType: string, doc: any): string | null {
       return slug ? `/journal/${slug}` : '/journal';
     // scaffold:end
     // Collections that render inside a parent page
-    // scaffold: services
-    case 'service':
-      return '/services';
-    // scaffold:end
-    // scaffold: process
-    case 'processStep':
-      return '/process';
-    // scaffold:end
-    // scaffold: philosophy
-    case 'philosophyPoint':
-      return '/about';
-    // scaffold:end
-    // scaffold: testimonials
-    case 'testimonial':
-      return '/';
-    // scaffold:end
     // scaffold: faq
     case 'faqItem':
       return '/faq';

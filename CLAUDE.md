@@ -1,16 +1,20 @@
-# NCS Astro + Sanity Starter: CLAUDE.md
+# First Baptist Church of Auburn website: CLAUDE.md
 
-Always-loaded rules for `ncs-astro-sanity-starter`. This file stays under 200 lines on purpose. File-specific rules live in `.claude/rules/*.md` and load only when you touch matching files; long reference lives in `docs/claude/` and `docs/agent/` and is read on demand. The docs map at the bottom lists every one of them.
+Always-loaded rules for this repo, the website for First Baptist Church of Auburn (Hamilton, Ohio). This file stays under 200 lines on purpose. File-specific rules live in `.claude/rules/*.md` and load only when you touch matching files; long reference lives in `docs/claude/` and `docs/agent/` and is read on demand. The docs map at the bottom lists every one of them.
+
+**This file is client-safe**: the repo is public and may be handed to the church, so it holds technical orientation only. Prices, contract text, strategy, opinions about people, private contacts and credentials never go in this repo (files, commits, PRs, issues, code comments).
+
+**Read this first.** Project records, rules and status are kept privately by the studio, outside this folder. Before doing any work, read the session guide: `C:\Users\natha\Documents\Claude\Projects\_vault\projects\first-baptist-auburn-session-guide.md`. Also read `~/.claude/CLAUDE.md` and the Projects `CLAUDE.md`.
 
 **Read `docs/PENDING.md` early in a session.** It is the live registry of open loops: queued work, known gaps, and waiting-on-a-human items. If you finish or discover one, update it in the same commit.
 
-Companion tactical runbook: `OPERATIONS.md`. New-project setup entry point: `docs/bootstrap/NEW-PROJECT.md`, rewritten 2026-09-18 from the order the Stone Steps build actually followed; it is the start for any team adapting this starter for a new client, and `docs/bootstrap/setup-checklist.md` is its sign-off. Cross-repo shared-improvement registry: `PORTS.md` (see Ports below).
+Companion tactical runbook: `OPERATIONS.md`. Setup followed the starter's `docs/bootstrap/NEW-PROJECT.md`; `docs/bootstrap/setup-checklist.md` is its sign-off. `PORTS.md` is a copy of the starter's registry of shared improvements (see Ports below).
 
-Design context: `PRODUCT.md` and `DESIGN.md` at the repo root are neutral PLACEHOLDERS describing the starter's defaults, not any client; a fork rewrites both (see rule 11).
+Design context: `PRODUCT.md` and `DESIGN.md` at the repo root are still the starter's neutral PLACEHOLDERS. The design brief, references and design directions rewrite both before the reskin (see Design flow and rule 11).
 
 ## What this is
 
-A production-ready **Astro 7 + Sanity v6 + Cloudflare Workers** site template, forked from the Reid Design build. **Page-builder-first**: home, about, services and process render through `SectionRenderer` from Sanity `pageBuilder` arrays, and any Studio page gets a `/[slug]` route. A new project pours in a brand (`brand/brand.config.json` then `npm run apply-brand`) and content. It ships FULL and subtracts: `npm run scaffold` removes the seven capabilities (`about`, `faq`, `journal`, `philosophy`, `process`, `services`, `testimonials`). Full overview and stack notes: `docs/claude/overview.md`.
+The church's site on **Astro 7 + Sanity v6 + Cloudflare Workers**, forked from `ncs-astro-sanity-starter` on 2026-10-17 (starter `main` at `f1ae0d3`). Sanity project `wdpzvn6m`, dataset `production` (public, so no personal data in it), Studio embedded at `/studio`. Worker `fbc-auburn`, pre-launch address https://fbc-auburn.nathanjnixon86.workers.dev (the church's own domain is not chosen yet; `src/data/site.ts` and `astro.config.mjs` `site:` move to it at cutover). **Page-builder-first**: pages render through `SectionRenderer` from Sanity `pageBuilder` arrays, and any Studio page gets a `/[slug]` route. Capabilities kept from the starter: `about`, `faq`, `journal`; `services`, `process`, `philosophy` and `testimonials` were removed with `npm run scaffold` at fork time. Full overview and stack notes: `docs/claude/overview.md`.
 
 The must-knows:
 
@@ -90,11 +94,11 @@ Files are either safe to edit by hand (`docs/claude/safe-to-edit.md`) or foundat
 
 ## Vault
 
-Business context and decisions live in the studio vault, not here: `_vault/clients/ncs-starter.md` at the Projects root (internal; no Work log rows). Read its `## Current state` first. Update repo docs in the same piece of work as any change; repo docs stay in the repo, and no vault notes are created inside this repo.
+Business context and decisions live in the studio vault, not here: the session guide above, then `_vault/clients/first-baptist-auburn.md` at the Projects root (read only its `## Current state`; log a Work log row per session of real work). Update repo docs in the same piece of work as any change; repo docs stay in the repo, and no vault notes are created inside this repo.
 
 ## Ports
 
-This repo owns `PORTS.md`, the registry of improvements shared across the site family, and the files marked `PORTABLE:`. A generalising fix gets a port card in the same commit that generalises it. Changing a marked file changes the family's copy, so keep it general. Cross-project lessons go to `_vault/gotchas/` with a "Ported to" checklist, ticked only when verified in that repo. Run `npm run sync-check` for drift. Full working rules: `.claude/rules/library-of-record.md`.
+The starter (`internal/ncs-astro-sanity-starter`) owns `PORTS.md` and the files marked `PORTABLE:`; the copies here stay byte-identical to it, and `npm run sync-check` (run from this repo, it finds the sibling starter) reports drift. Change a marked file in the starter first, never only here. A fix found here that is not church-specific goes back to the starter with a port card in the same commit that generalises it. Cross-project lessons go to `_vault/gotchas/`. Full working rules: `.claude/rules/library-of-record.md`.
 
 ## Docs map
 

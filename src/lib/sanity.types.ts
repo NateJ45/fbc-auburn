@@ -90,19 +90,7 @@ export type SectionPreset = {
       } & FounderSection)
     | ({
         _key: string;
-      } & ServicesGridSection)
-    | ({
-        _key: string;
-      } & TestimonialsSection)
-    | ({
-        _key: string;
       } & StorySection)
-    | ({
-        _key: string;
-      } & ValuesSection)
-    | ({
-        _key: string;
-      } & ProcessSection)
     | ({
         _key: string;
       } & ServiceAreaSection)
@@ -137,90 +125,6 @@ export type Slug = {
   _type: 'slug';
   current?: string;
   source?: string;
-};
-
-export type ProcessStep = {
-  _id: string;
-  _type: 'processStep';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  stepNumber?: number;
-  title?: string;
-  timeEstimate?: string;
-  shortDescription?: string;
-  features?: Array<string>;
-  tierNote?: string;
-  orderRank?: string;
-};
-
-export type Service = {
-  _id: string;
-  _type: 'service';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
-  slug?: Slug;
-  price?: string;
-  priceNumeric?: number;
-  shortDescription?: string;
-  features?: Array<string>;
-  bestFor?: string;
-  featuredImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  longDescription?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal';
-    listItem?: 'bullet' | 'number';
-    markDefs?: null;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  displayOrder?: number;
-  showOnHomepage?: boolean;
-  ctaLabel?: string;
-  orderRank?: string;
-};
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop';
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot';
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-};
-
-export type PhilosophyPoint = {
-  _id: string;
-  _type: 'philosophyPoint';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  description?: string;
-  displayOrder?: number;
-  orderRank?: string;
 };
 
 export type FaqCategoryReference = {
@@ -358,6 +262,22 @@ export type NotFoundPage = {
   secondaryCtaHref?: string;
   tertiaryCtaLabel?: string;
   tertiaryCtaHref?: string;
+};
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop';
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot';
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
 };
 
 export type BusinessInfo = {
@@ -544,20 +464,6 @@ export type AboutPageReference = {
   [internalGroqTypeReferenceTo]?: 'aboutPage';
 };
 
-export type ServicesPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'servicesPage';
-};
-
-export type ProcessPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'processPage';
-};
-
 export type FaqPageReference = {
   _ref: string;
   _type: 'reference';
@@ -600,8 +506,6 @@ export type NavLink = {
   internalPage?:
     | HomePageReference
     | AboutPageReference
-    | ServicesPageReference
-    | ProcessPageReference
     | FaqPageReference
     | ContactPageReference
     | JournalPageReference
@@ -719,22 +623,6 @@ export type ServiceAreaSection = {
   showTravelFees?: boolean;
 };
 
-export type ProcessSection = {
-  _type: 'processSection';
-  eyebrow?: string;
-  headline?: string;
-  subhead?: string;
-  variant?: 'preview' | 'full';
-  cta?: CtaBlock;
-};
-
-export type ValuesSection = {
-  _type: 'valuesSection';
-  eyebrow?: string;
-  headline?: string;
-  columns?: 2 | 3;
-};
-
 export type StorySection = {
   _type: 'storySection';
   eyebrow?: string;
@@ -768,69 +656,6 @@ export type StorySection = {
   attribution?: string;
   credentialLine?: string;
   serviceAreaLine?: string;
-};
-
-export type TestimonialReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'testimonial';
-};
-
-export type TestimonialsSection = {
-  _type: 'testimonialsSection';
-  eyebrow?: string;
-  headline?: string;
-  scriptAccent?: string;
-  headingAccent?: string;
-  subhead?: string;
-  subheadRich?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal';
-    listItem?: never;
-    markDefs?: null;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  featuredQuote?: TestimonialReference;
-  testimonialsToShow?: Array<
-    {
-      _key: string;
-    } & TestimonialReference
-  >;
-  attribution?: string;
-};
-
-export type ServicesGridSection = {
-  _type: 'servicesGridSection';
-  eyebrow?: string;
-  headline?: string;
-  scriptAccent?: string;
-  headingAccent?: string;
-  subhead?: string;
-  subheadRich?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: 'span';
-      _key: string;
-    }>;
-    style?: 'normal';
-    listItem?: never;
-    markDefs?: null;
-    level?: number;
-    _type: 'block';
-    _key: string;
-  }>;
-  cta?: CtaBlock;
-  footnote?: string;
-  variant?: 'grid' | 'list';
 };
 
 export type FounderSection = {
@@ -1124,8 +949,6 @@ export type CtaBlock = {
   internalLink?:
     | HomePageReference
     | AboutPageReference
-    | ServicesPageReference
-    | ProcessPageReference
     | FaqPageReference
     | ContactPageReference
     | JournalPageReference
@@ -1533,164 +1356,6 @@ export type FaqPage = {
   note?: string;
 };
 
-export type ProcessPage = {
-  _id: string;
-  _type: 'processPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  pageBuilder?: Array<
-    | ({
-        _key: string;
-      } & HeroSection)
-    | ({
-        _key: string;
-      } & RichTextSection)
-    | ({
-        _key: string;
-      } & ImageTextSection)
-    | ({
-        _key: string;
-      } & GallerySection)
-    | ({
-        _key: string;
-      } & QuoteSection)
-    | ({
-        _key: string;
-      } & StatSection)
-    | ({
-        _key: string;
-      } & CtaBandSection)
-    | ({
-        _key: string;
-      } & VideoSection)
-    | ({
-        _key: string;
-      } & SpacerSection)
-    | ({
-        _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
-      } & EmbedSection)
-    | ({
-        _key: string;
-      } & ProcessSection)
-    | ({
-        _key: string;
-      } & FaqSection)
-  >;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-};
-
-export type ServicesPage = {
-  _id: string;
-  _type: 'servicesPage';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  pageBuilder?: Array<
-    | ({
-        _key: string;
-      } & HeroSection)
-    | ({
-        _key: string;
-      } & RichTextSection)
-    | ({
-        _key: string;
-      } & ImageTextSection)
-    | ({
-        _key: string;
-      } & GallerySection)
-    | ({
-        _key: string;
-      } & QuoteSection)
-    | ({
-        _key: string;
-      } & StatSection)
-    | ({
-        _key: string;
-      } & CtaBandSection)
-    | ({
-        _key: string;
-      } & VideoSection)
-    | ({
-        _key: string;
-      } & SpacerSection)
-    | ({
-        _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
-      } & EmbedSection)
-    | ({
-        _key: string;
-      } & ServicesGridSection)
-    | ({
-        _key: string;
-      } & ServiceAreaSection)
-    | ({
-        _key: string;
-      } & GuaranteeSection)
-    | ({
-        _key: string;
-      } & FaqSection)
-  >;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubhead?: string;
-  heroImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  heroScriptAccent?: string;
-  stickyCtaLabel?: string;
-  servicesListEyebrow?: string;
-  servicesListHeadline?: string;
-  servicesListSubhead?: string;
-  serviceAreaSection?: {
-    eyebrow?: string;
-    headline?: string;
-    description?: string;
-  };
-  finalCtaEyebrow?: string;
-  finalCtaHeadline?: string;
-  finalCtaScriptAccent?: string;
-  finalCtaSubhead?: string;
-  finalCta?: CtaBlock;
-  finalCtaBackgroundImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: 'image';
-  };
-  note?: string;
-};
-
 export type AboutPage = {
   _id: string;
   _type: 'aboutPage';
@@ -1734,9 +1399,6 @@ export type AboutPage = {
     | ({
         _key: string;
       } & StorySection)
-    | ({
-        _key: string;
-      } & ValuesSection)
     | ({
         _key: string;
       } & FaqSection)
@@ -1894,15 +1556,6 @@ export type HomePage = {
       } & FounderSection)
     | ({
         _key: string;
-      } & ServicesGridSection)
-    | ({
-        _key: string;
-      } & TestimonialsSection)
-    | ({
-        _key: string;
-      } & ProcessSection)
-    | ({
-        _key: string;
       } & FaqSection)
     | ({
         _key: string;
@@ -1982,17 +1635,6 @@ export type HomePage = {
   processPreviewHeadline?: string;
   processPreviewSubhead?: string;
   processPreviewCta?: CtaBlock;
-  featuredTestimonial?: TestimonialReference;
-  testimonialsEyebrow?: string;
-  testimonialsHeadline?: string;
-  testimonialsScriptAccent?: string;
-  testimonialsSubhead?: string;
-  testimonialsToShow?: Array<
-    {
-      _key: string;
-    } & TestimonialReference
-  >;
-  testimonialsAttribution?: string;
   servicesGridEyebrow?: string;
   servicesGridHeadline?: string;
   servicesGridScriptAccent?: string;
@@ -2012,30 +1654,6 @@ export type HomePage = {
     crop?: SanityImageCrop;
     _type: 'image';
   };
-};
-
-export type Testimonial = {
-  _id: string;
-  _type: 'testimonial';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  quote?: string;
-  attribution?: string;
-  date?: string;
-  source?: 'Facebook' | 'Google' | 'Houzz' | 'Direct (email or text)' | 'Other';
-  location?: string;
-  photo?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: 'image';
-  };
-  featured?: boolean;
-  sourceType?: 'Google' | 'Facebook' | 'Houzz' | 'Direct';
-  reviewUrl?: string;
 };
 
 export type MediaTag = {
@@ -2151,11 +1769,6 @@ export type AllSanitySchemaTypes =
   | SectionPreset
   | JournalCategory
   | Slug
-  | ProcessStep
-  | Service
-  | SanityImageCrop
-  | SanityImageHotspot
-  | PhilosophyPoint
   | FaqCategoryReference
   | FaqItem
   | FaqCategory
@@ -2163,12 +1776,12 @@ export type AllSanitySchemaTypes =
   | StudioNotes
   | StudioGuide
   | NotFoundPage
+  | SanityImageCrop
+  | SanityImageHotspot
   | BusinessInfo
   | SiteSettings
   | HomePageReference
   | AboutPageReference
-  | ServicesPageReference
-  | ProcessPageReference
   | FaqPageReference
   | ContactPageReference
   | JournalPageReference
@@ -2181,12 +1794,7 @@ export type AllSanitySchemaTypes =
   | FaqSection
   | GuaranteeSection
   | ServiceAreaSection
-  | ProcessSection
-  | ValuesSection
   | StorySection
-  | TestimonialReference
-  | TestimonialsSection
-  | ServicesGridSection
   | FounderSection
   | EmbedSection
   | LogoStripSection
@@ -2209,11 +1817,8 @@ export type AllSanitySchemaTypes =
   | JournalPage
   | ContactPage
   | FaqPage
-  | ProcessPage
-  | ServicesPage
   | AboutPage
   | HomePage
-  | Testimonial
   | MediaTag
   | SanityImagePaletteSwatch
   | SanityImagePalette

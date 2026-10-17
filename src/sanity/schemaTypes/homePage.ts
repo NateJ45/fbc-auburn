@@ -25,7 +25,6 @@ export const homePage = defineType({
     { name: 'featuredWork', title: 'Featured Work' },
     { name: 'featuredJournal', title: 'Featured Journal' },
     { name: 'process', title: 'Process preview' },
-    { name: 'testimonials', title: 'Testimonials' }, // scaffold: testimonials
     { name: 'services', title: 'Services grid' },
     { name: 'final', title: 'Service area + final CTA' },
   ],
@@ -369,80 +368,6 @@ export const homePage = defineType({
       hidden: true,
       readOnly: true,
     }),
-
-    // scaffold: testimonials
-    // Testimonials (legacy — hidden for rollback safety)
-    defineField({
-      name: 'featuredTestimonial',
-      title: 'Featured testimonial',
-      type: 'reference',
-      to: [{ type: 'testimonial' }],
-      description: 'The large pull-quote at the top of the testimonial section.',
-      group: 'testimonials',
-      hidden: true,
-      readOnly: true,
-    }),
-    defineField({
-      name: 'testimonialsEyebrow',
-      title: 'Eyebrow',
-      type: 'string',
-      group: 'testimonials',
-      hidden: true,
-      readOnly: true,
-      initialValue: 'Kind Words.',
-    }),
-    defineField({
-      name: 'testimonialsHeadline',
-      title: 'Headline',
-      type: 'string',
-      group: 'testimonials',
-      hidden: true,
-      readOnly: true,
-      initialValue: 'Words from real homes.',
-    }),
-    defineField({
-      name: 'testimonialsScriptAccent',
-      title: 'Testimonials heading script accent (optional)',
-      type: 'string',
-      group: 'testimonials',
-      hidden: true,
-      readOnly: true,
-      description:
-        'Optional. One word or short phrase from the headline to render in the handwritten script accent font. Must match the headline text exactly (case-sensitive). Leave blank to skip. Use sparingly, one accent per heading.',
-    }),
-    defineField({
-      name: 'testimonialsSubhead',
-      title: 'Subhead',
-      type: 'text',
-      rows: 2,
-      group: 'testimonials',
-      hidden: true,
-      readOnly: true,
-      description:
-        'Warm line under the headline that frames the testimonials below. Focus on what clients value — how it felt to work together, how the space lives day to day.',
-      initialValue:
-        'The part that matters most: how it felt to work together, and how each space holds up to everyday life long after the last pillow is placed.',
-    }),
-    defineField({
-      name: 'testimonialsToShow',
-      title: 'Testimonials in grid (in order)',
-      type: 'array',
-      group: 'testimonials',
-      hidden: true,
-      readOnly: true,
-      of: [defineArrayMember({ type: 'reference', to: [{ type: 'testimonial' }] })],
-    }),
-    defineField({
-      name: 'testimonialsAttribution',
-      title: 'Attribution line',
-      type: 'string',
-      group: 'testimonials',
-      hidden: true,
-      readOnly: true,
-      description:
-        'Optional line under the testimonials grid. Example: "From the studio\'s Facebook recommendations."',
-    }),
-    // scaffold:end
 
     // Services grid (legacy — hidden for rollback safety)
     defineField({

@@ -42,7 +42,6 @@ import {
   PresentationIcon,
   ThumbsUpIcon,
   ColorWheelIcon,
-  OlistIcon, // scaffold: process
   ArrowRightIcon,
 } from '@sanity/icons';
 import { makeGuideView } from './components/GuideView';
@@ -57,8 +56,6 @@ const SINGLETON_TYPES = [
   // Core pages
   'homePage',
   'aboutPage', // scaffold: about
-  'servicesPage', // scaffold: services
-  'processPage', // scaffold: process
   'faqPage', // scaffold: faq
   'contactPage',
   'journalPage', // scaffold: journal
@@ -68,17 +65,12 @@ const SINGLETON_TYPES = [
   'studioNotes',
 ] as const;
 
-const ORDERABLE_TYPES = [
-  'service', // scaffold: services
-  'philosophyPoint', // scaffold: philosophy
-  'processStep', // scaffold: process
-] as const;
+const ORDERABLE_TYPES = [] as const;
 
 const HIDDEN_FROM_DEFAULT = new Set<string>([
   ...SINGLETON_TYPES,
   ...ORDERABLE_TYPES,
   'announcement', // placed explicitly under Content → Announcements
-  'testimonial', // scaffold: testimonials
   'faqItem', // scaffold: faq
   'faqCategory', // scaffold: faq
   'journalEntry', // scaffold: journal
@@ -90,7 +82,6 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   // (the "Media" tool in the top sidebar is where tags belong).
   'media.tag',
   // processStep is placed explicitly under Content → Process Steps
-  'processStep', // scaffold: process
 ]);
 
 /**
@@ -220,8 +211,6 @@ export const deskStructure = (S: StructureBuilder, context: StructureResolverCon
             .items([
               singletonWithPreview(S, 'homePage', 'Home', HomeIcon),
               singletonWithPreview(S, 'aboutPage', 'About', UserIcon), // scaffold: about
-              singletonWithPreview(S, 'servicesPage', 'Services', PackageIcon), // scaffold: services
-              singletonWithPreview(S, 'processPage', 'Process', OlistIcon), // scaffold: process
               singletonWithPreview(S, 'faqPage', 'FAQ', HelpCircleIcon), // scaffold: faq
               singletonWithPreview(S, 'contactPage', 'Contact', EnvelopeIcon),
               singletonWithPreview(S, 'journalPage', 'Journal (index page)', BookIcon), // scaffold: journal
@@ -279,34 +268,6 @@ export const deskStructure = (S: StructureBuilder, context: StructureResolverCon
 
               S.divider(),
 
-              // scaffold: services
-              orderableDocumentListDeskItem({
-                type: 'service',
-                title: 'Services',
-                icon: PackageIcon,
-                S,
-                context,
-              }),
-              // scaffold:end
-              // scaffold: philosophy
-              orderableDocumentListDeskItem({
-                type: 'philosophyPoint',
-                title: 'Philosophy Values',
-                icon: HeartIcon,
-                S,
-                context,
-              }),
-              // scaffold:end
-              // scaffold: process
-              orderableDocumentListDeskItem({
-                type: 'processStep',
-                title: 'Process Steps',
-                icon: OlistIcon,
-                S,
-                context,
-              }),
-              // scaffold:end
-              S.documentTypeListItem('testimonial').title('Testimonials').icon(StarIcon), // scaffold: testimonials
               S.documentTypeListItem('faqCategory').title('FAQ Categories').icon(TagIcon), // scaffold: faq
               S.documentTypeListItem('faqItem').title('FAQ Items').icon(HelpCircleIcon), // scaffold: faq
 

@@ -26,11 +26,7 @@ import type {
   VideoSection as _VideoSection,
   SpacerSection as _SpacerSection,
   FounderSection as _FounderSection, // scaffold: about
-  ServicesGridSection as _ServicesGridSection, // scaffold: services
-  TestimonialsSection as _TestimonialsSection, // scaffold: testimonials
   StorySection as _StorySection, // scaffold: about
-  ValuesSection as _ValuesSection, // scaffold: philosophy
-  ProcessSection as _ProcessSection, // scaffold: process
   ServiceAreaSection as _ServiceAreaSection,
   GuaranteeSection as _GuaranteeSection,
   // U7 new blocks — hand-authored below since typegen has not run yet
@@ -172,78 +168,9 @@ export type ProjectedFounderSection = { _key: string } & Omit<
   };
 // scaffold:end
 
-// scaffold: services
-/** servicesGridSection adds a `services` array resolved from the collection. */
-export type ProjectedServicesGridSection = { _key: string } & Omit<_ServicesGridSection, 'cta'> & {
-    cta?: ProjectedCtaBlock | null;
-    /** Resolved service documents from `*[_type == "service"]`. */
-    services?: Array<{
-      _id?: string;
-      _type?: string;
-      name?: string;
-      slug?: { current?: string };
-      price?: string;
-      priceNumeric?: number;
-      shortDescription?: string;
-      features?: string[];
-      bestFor?: string;
-      featuredImage?: ProjectedImage;
-      ctaLabel?: string;
-      [key: string]: unknown;
-    }>;
-  };
-// scaffold:end
-
-// scaffold: testimonials
-/** Testimonial shape after dereffing in the projection. */
-interface ProjectedTestimonial {
-  _id?: string;
-  _type?: string;
-  quote?: string;
-  attribution?: string;
-  detail?: string;
-  relatedProject?: { title?: string; slug?: string } | null;
-  [key: string]: unknown;
-}
-
-export type ProjectedTestimonialsSection = { _key: string } & Omit<
-  _TestimonialsSection,
-  'featuredQuote' | 'testimonialsToShow'
-> & {
-    featuredQuote?: ProjectedTestimonial | null;
-    testimonialsToShow?: ProjectedTestimonial[];
-  };
-// scaffold:end
-
 // scaffold: about
 export type ProjectedStorySection = { _key: string } & Omit<_StorySection, 'portrait'> & {
     portrait?: ProjectedImage | null;
-  };
-// scaffold:end
-
-// scaffold: philosophy
-/** valuesSection adds a `points` array resolved from the collection. */
-export type ProjectedValuesSection = { _key: string } & _ValuesSection & {
-    points?: Array<{
-      title?: string;
-      description?: string;
-      displayOrder?: number;
-    }>;
-  };
-// scaffold:end
-
-// scaffold: process
-/** processSection adds a `steps` array resolved from the collection + cta projection. */
-export type ProjectedProcessSection = { _key: string } & Omit<_ProcessSection, 'cta'> & {
-    cta?: ProjectedCtaBlock | null;
-    steps?: Array<{
-      stepNumber?: number;
-      title?: string;
-      timeEstimate?: string;
-      shortDescription?: string;
-      features?: string[];
-      tierNote?: string;
-    }>;
   };
 // scaffold:end
 
@@ -420,11 +347,7 @@ export type PageBuilderBlock =
   | ProjectedVideoSection
   | ProjectedSpacerSection
   | ProjectedFounderSection // scaffold: about
-  | ProjectedServicesGridSection // scaffold: services
-  | ProjectedTestimonialsSection // scaffold: testimonials
   | ProjectedStorySection // scaffold: about
-  | ProjectedValuesSection // scaffold: philosophy
-  | ProjectedProcessSection // scaffold: process
   | ProjectedServiceAreaSection
   | ProjectedGuaranteeSection
   // U7 new blocks

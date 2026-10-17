@@ -63,43 +63,6 @@ export function sectionsProjection(field = 'pageBuilder'): string {
       portrait${IMAGE_PROJECTION}
     },
     // scaffold:end
-    // scaffold: services
-    _type == "servicesGridSection" => {
-      ...,
-      cta${CTA_PROJECTION},
-      "services": *[_type == "service"] | order(orderRank asc, displayOrder asc)
-    },
-    // scaffold:end
-    // scaffold: testimonials
-    _type == "testimonialsSection" => {
-      ...,
-      "featuredQuote": featuredQuote->{
-        ...,
-        "relatedProject": relatedProject->{ title, "slug": slug.current }
-      },
-      "testimonialsToShow": testimonialsToShow[]->{
-        ...,
-        "relatedProject": relatedProject->{ title, "slug": slug.current }
-      }
-    },
-    // scaffold:end
-    // scaffold: philosophy
-    _type == "valuesSection" => {
-      ...,
-      "points": *[_type == "philosophyPoint"] | order(orderRank asc, displayOrder asc){
-        title, description, displayOrder
-      }
-    },
-    // scaffold:end
-    // scaffold: process
-    _type == "processSection" => {
-      ...,
-      cta${CTA_PROJECTION},
-      "steps": *[_type == "processStep"] | order(orderRank asc, stepNumber asc){
-        stepNumber, title, timeEstimate, shortDescription, features, tierNote
-      }
-    },
-    // scaffold:end
     _type == "serviceAreaSection" => {
       ...,
       "travelFees": *[_type == "businessInfo"][0].travelFees
@@ -150,17 +113,6 @@ export function sectionsProjection(field = 'pageBuilder'): string {
           _id, "title": title, "meta": publishedAt, "summary": excerpt,
           "href": "/journal/" + slug.current + "/",
           "coverImage": coverImage${IMAGE_PROJECTION}
-        },
-        // scaffold:end
-        // scaffold: services
-        source == "services" => *[_type == "service"] | order(orderRank asc, displayOrder asc)[0...12]{
-          _id, "title": name, "meta": price, "summary": shortDescription,
-          "href": "/services/#" + slug.current
-        },
-        // scaffold:end
-        // scaffold: testimonials
-        source == "testimonials" => *[_type == "testimonial"] | order(_createdAt desc)[0...12]{
-          _id, "title": attribution, "meta": detail, "summary": quote, "href": null
         },
         // scaffold:end
         // scaffold: faq
@@ -360,50 +312,7 @@ export async function getAboutPage() {
 
 // ---- Services page --------------------------------------------------------
 
-// scaffold: services
-export async function getServicesPage() {
-  return sanityFetch(
-    `*[_type == "servicesPage"][0]{
-    seoTitle,
-    seoDescription,
-    seoImage${IMAGE_PROJECTION},
-    ${sectionsProjection('pageBuilder')}
-  }`,
-    {},
-    null,
-  );
-}
-// scaffold:end
-
 // Minimal service list for JSON-LD on the services page.
-// scaffold: services
-export async function getServiceListForSchema() {
-  return sanityFetch(
-    `*[_type == "service"] | order(orderRank asc, displayOrder asc){
-    _id, name, slug, shortDescription, price, priceNumeric
-  }`,
-    {},
-    [],
-  );
-}
-// scaffold:end
-
-// scaffold: process
-// ---- Process page -----------------------------------------------------------
-
-export async function getProcessPage() {
-  return sanityFetch(
-    `*[_type == "processPage"][0]{
-    seoTitle,
-    seoDescription,
-    seoImage${IMAGE_PROJECTION},
-    ${sectionsProjection('pageBuilder')}
-  }`,
-    {},
-    null,
-  );
-}
-// scaffold:end
 
 // scaffold: faq
 // ---- FAQ page -------------------------------------------------------------

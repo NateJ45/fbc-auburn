@@ -1,113 +1,35 @@
-<div align="center">
+# First Baptist Church of Auburn: website
 
-# NCS Astro + Sanity Starter
+The website for First Baptist Church of Auburn (Hamilton, Ohio): a simple, welcoming site with sermons, giving, events and a plan-your-visit page.
 
-**A page-builder-first starter for small-business sites: Astro, Sanity and Cloudflare Workers, with editing on the page itself.**
+- **For Claude sessions:** see `CLAUDE.md`.
+- **Stack:** Astro 7, Sanity v6 (Studio embedded at `/studio`) and a Cloudflare Worker, forked from `ncs-astro-sanity-starter` on 2026-10-17.
+- **Status:** set up, not designed yet. The pages still show the starter's default content until the church's brand and content go in.
 
-[![CI](https://github.com/NateJ45/ncs-astro-sanity-starter/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/NateJ45/ncs-astro-sanity-starter/actions/workflows/ci.yml)
-![Astro 7](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)
-![Sanity v6](https://img.shields.io/badge/Sanity-v6-F36458?logo=sanity&logoColor=white)
-![Tailwind 4](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)
-![React 19](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
-![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-[![Use this template](https://img.shields.io/badge/Use%20this-template-2ea44f?logo=github)](https://github.com/NateJ45/ncs-astro-sanity-starter/generate)
+## What exists
 
-</div>
+| Thing              | Value                                                                           |
+| ------------------ | ------------------------------------------------------------------------------- |
+| Sanity project     | `wdpzvn6m`, dataset `production` (public read: never store personal data in it) |
+| Cloudflare Worker  | `fbc-auburn`                                                                    |
+| Pre-launch address | https://fbc-auburn.nathanjnixon86.workers.dev                                   |
+| Production domain  | not chosen yet                                                                  |
 
-## Why teams of one use it
+## Run it
 
-- **Edit on the page.** The Sanity Studio is embedded at `/studio` with a live draft preview: click the words you want to change, and add, duplicate, reorder or remove whole sections in place.
-- **Reskin in one command.** Palette, fonts, radius and a layout block (header, hero, density, card style) come from one brand config, so the next site does not look like the last one.
-- **Improvements travel.** `PORTS.md` is the registry of port cards that carry fixes to every site built from this starter (85 cards so far), and `scripts/sync-check.mjs` reports when a site's shared files have drifted.
-
-Quality gates in CI: Playwright on Chromium and a WebKit iPhone profile, axe accessibility checks, Lighthouse, and visual regression. A workflow for encrypted Sanity dataset backups ships in the template, and extra capabilities are opt-in modules (`modules/events`, `modules/resources`). Licensed under the [MIT License](LICENSE); security reports go through [SECURITY.md](SECURITY.md).
-
----
-
-# NCS Astro + Sanity Starter
-
-A reusable, production-grade starter for small-business marketing sites on **Astro + Sanity + Cloudflare Workers**, by [Nixon Creative Studio](https://nixoncreativestudio.com). It is the foundation the studio's client sites are built on, so a polished, editor-friendly site is an afternoon of setup instead of a month of plumbing.
-
----
-
-## Why it exists
-
-Every client project kept re-solving the same problems: a theme system, SEO, image handling, forms, a typed CMS layer, an editor guide, and a way to reskin the brand quickly. So those got extracted from a finished client build into one well-documented starting point. What is left for each new project is the part that should be unique: its brand identity and its content.
-
-## What it is
-
-**Page-builder-first.** The core pages (home, about, services, process) render from Sanity `pageBuilder` arrays through a shared `SectionRenderer`, and any page created in the Studio gets its own `/[slug]` route automatically. Editors compose pages from a palette of sections; no code changes to add or rearrange a page.
-
-**Batteries included, opt-in.** The infrastructure is already standing: theme tokens with light and dark, SEO and structured data, an animation and polish layer, forms plumbing, image handling, a typed Sanity layer, and an in-Studio editor guide. Extra capabilities live in a **module library** you enable per project, so a site carries only what it uses.
-
-**Edit on the page, not in a form.** The Sanity Studio is embedded at `/studio` and ships with a live draft preview: an editor picks a page from a list, sees it exactly as visitors will, clicks the words they want to change, and adds, duplicates, reorders or removes whole sections right on the page. Unpublished drafts stream in as they type. The public site stays fully static; the preview is the only part that runs server-side.
-
-**A real adoption path.** A one-command brand reskin (palette, fonts, radius and, since PORTS card 72, a `layout` block that picks header, hero, section density and card style), a starter dataset seed, and a documented Foundation-vs-safe-to-edit taxonomy (which files need a planned session and which are safe to touch) mean a new build follows a runbook instead of guesswork. The gotchas that cost time in production are written down where you will hit them.
-
-## Provenance
-
-Extracted and genericized from a finished client build, and hardened across every project since. The lineage runs from a Reid Design build, through this starter, into the church and school sites the studio has shipped. It is not a minimal scaffold: it ships with the patterns and the documented landmines of real, live work.
-
----
-
-## Stack
-
-- **Astro 7** (static output plus a few SSR preview routes) + TypeScript strict mode
-- **Sanity v6** headless CMS, Studio embedded at `/studio` (schemas in `src/sanity/schemaTypes/`)
-- **Tailwind 4** via `@tailwindcss/vite` (brand tokens in `src/styles/globals.css`)
-- **React 19** islands for interactivity; Astro components for everything static
-- **shadcn/ui** primitives; **Cloudflare Workers** hosting via `npm run deploy`
-
-## Getting started
-
-**To adopt this for a new client, read [`docs/bootstrap/NEW-PROJECT.md`](docs/bootstrap/NEW-PROJECT.md) first.** It is the single entry point: identity setup, design reskin, module enable, seed, and deploy, in order. Read [`CLAUDE.md`](./CLAUDE.md) before changing anything for the Foundation taxonomy and code style.
-
-```sh
-npm install
+```powershell
+npm ci
 npm run dev
 ```
 
-A fresh clone builds and runs with no Sanity project at all: pages render their built-in default sections. To turn on the CMS and the live preview you need three things, all covered in `docs/bootstrap/NEW-PROJECT.md`:
+The site serves on http://localhost:4321 and the Studio on http://localhost:4321/studio. `.env` and `.dev.vars` hold the Sanity values (copy them from `.env.example` and `.dev.vars.example`); they are git-ignored and never committed.
 
-1. `PUBLIC_SANITY_PROJECT_ID` in `.env` (see `.env.example`).
-2. `SANITY_TOKEN` as a Worker runtime secret (see `.dev.vars.example`; `npx wrangler secret put SANITY_TOKEN` in production).
-3. Your origins on the Sanity project's CORS allow list: `npx sanity cors add http://localhost:4321 --credentials`, and the same for the deployed URL.
+## Automatic jobs
 
-Without steps 2 and 3 the public site is unaffected; only the embedded Studio and the preview are off, and the preview routes say so instead of erroring.
+- **CI** (`.github/workflows/ci.yml`): static checks, one build, link check and the Playwright suite on every push and pull request. `build` and `test` are required to merge.
+- **Deploy** (`deploy.yml`): ships production on a push to `main`, on the Sanity publish webhook and on manual dispatch.
+- **Lighthouse** and **Visual regression**: run on pull requests and `main`.
+- **Sanity backup** (`sanity-backup.yml`): encrypted dataset exports.
+- **Dependabot**: weekly dependency updates.
 
-## Choosing a design direction
-
-Before a reskin, explore: `docs/templates/design-brief.md` (brief), `npm run references -- <urls>` (reference screenshots into `docs/references/`), the `/design-directions` command (3 or 4 static homepage mockups in `docs/design-directions/<date>-<slug>/`, screenshotted with `npm run directions:shoot`), then `/reskin`. Detail: OPERATIONS.md, "Design directions".
-
-## Quality gates
-
-Every site in this family runs the same checks, and a fork inherits them (PORTS.md card 35).
-
-```sh
-npm run check        # astro check + eslint
-npm run check:full   # typegen + build + unit tests
-npm run format:check # prettier
-npm run check:links  # linkinator over dist/client
-npm test             # Playwright: smoke, axe light, axe dark, reflow
-npx lhci autorun     # Lighthouse against the built dist/client
-```
-
-`ci.yml` runs the first five in two parallel jobs on every push and PR; `lighthouse.yml`
-runs the audit separately. Accessibility is a hard gate at 100, LCP 4500ms and CLS 0.1
-are hard, performance / SEO / best-practices are warnings. The Playwright suites run on
-Chromium and a real WebKit iPhone profile, because that is where a Tailwind focus ring
-on a `<select>` turns out to be invisible.
-
-Two more workflows ship dormant, gated on repo secrets and variables that do not exist
-in the template: `sanity-backup.yml` (nightly encrypted dataset export: full on Mondays and manual runs, documents only other nights, kept 14 days) and `uptime.yml`
-(hourly 200 check on four key pages). Set the secrets and uncomment the schedule to turn
-either on. `publish-due.yml` works the same way.
-
----
-
-Maintained by [Nixon Creative Studio](https://nixoncreativestudio.com).
-
-## License
-
-Released under the [MIT License](LICENSE), copyright 2026 Nathan Nixon / Nixon Creative Studio.
+How to deploy, patch content and run audits: `OPERATIONS.md`. Open loops: `docs/PENDING.md`.

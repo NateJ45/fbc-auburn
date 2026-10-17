@@ -107,10 +107,6 @@ test('unknown _type gets null surface (treated as unknown, not content)', () => 
 test('rich SELF_CONTAINED types get null surface', () => {
   const richSelf: string[] = [
     'founderSection', // scaffold: about
-    'servicesGridSection', // scaffold: services
-    'testimonialsSection', // scaffold: testimonials
-    'valuesSection', // scaffold: philosophy
-    'processSection', // scaffold: process
   ];
   for (const type of richSelf) {
     const rows = classifySections([block(type)]);
@@ -151,11 +147,7 @@ test('rich self-contained types do not advance the cadence counter', () => {
 test('every new rich type appears in SELF_CONTAINED_TYPES or CONTENT_TYPES', () => {
   const all8: string[] = [
     'founderSection', // scaffold: about
-    'servicesGridSection', // scaffold: services
-    'testimonialsSection', // scaffold: testimonials
     'storySection', // scaffold: about
-    'valuesSection', // scaffold: philosophy
-    'processSection', // scaffold: process
     'serviceAreaSection',
     'guaranteeSection',
   ];
