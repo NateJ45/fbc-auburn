@@ -87,6 +87,9 @@ export type SectionPreset = {
       } & EmbedSection)
     | ({
         _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
       } & FounderSection)
     | ({
         _key: string;
@@ -691,6 +694,30 @@ export type FounderSection = {
   cta?: CtaBlock;
 };
 
+export type IconCardsSection = {
+  _type: 'iconCardsSection';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  cards?: Array<{
+    icon?:
+      | 'map-pin'
+      | 'clock'
+      | 'coffee'
+      | 'bible'
+      | 'praying-hands'
+      | 'blocks'
+      | 'music'
+      | 'giving-hand';
+    title?: string;
+    body?: string;
+    note?: string;
+    link?: CtaBlock;
+    _type: 'iconCard';
+    _key: string;
+  }>;
+};
+
 export type EmbedSection = {
   _type: 'embedSection';
   eyebrow?: string;
@@ -860,6 +887,8 @@ export type RichTextSection = {
 
 export type HeroSection = {
   _type: 'heroSection';
+  icon?:
+    'map-pin' | 'clock' | 'coffee' | 'bible' | 'praying-hands' | 'blocks' | 'music' | 'giving-hand';
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;
@@ -1002,6 +1031,18 @@ export type Page = {
     | ({
         _key: string;
       } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FaqSection)
+    | ({
+        _key: string;
+      } & TeamSection)
+    | ({
+        _key: string;
+      } & DynamicListSection)
   >;
   addToMainNav?: boolean;
   navGroup?: 'top' | 'services' | 'resources';
@@ -1398,6 +1439,9 @@ export type AboutPage = {
       } & EmbedSection)
     | ({
         _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
       } & StorySection)
     | ({
         _key: string;
@@ -1551,6 +1595,9 @@ export type HomePage = {
     | ({
         _key: string;
       } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
     | ({
         _key: string;
       } & FounderSection)
@@ -1813,6 +1860,7 @@ export type AllSanitySchemaTypes =
   | ServiceAreaSection
   | StorySection
   | FounderSection
+  | IconCardsSection
   | EmbedSection
   | LogoStripSection
   | SpacerSection

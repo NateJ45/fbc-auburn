@@ -1,0 +1,34 @@
+---
+// Safe to edit by hand
+// One FBC Auburn stone icon by name (src/lib/stone-icons.ts). Decorative by default: the words
+// beside it carry the meaning, so it has an empty alt. Renders nothing for an unknown name.
+import { getImage } from 'astro:assets';
+import { isStoneIcon } from '@/lib/stone-icons';
+
+interface Props {
+  name?: string | null;
+  /** Rendered box in CSS pixels; the SVGs are square. */
+  size?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+const { name, size = 96, class: cls, loading = 'lazy' } = Astro.props;
+
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/brand/stone-icon-*.svg', {
+  eager: true,
+});
+const file = isStoneIcon(name) ? files[`../assets/brand/stone-icon-${name}.svg`] : undefined;
+const img = file ? await getImage({ src: file.default }) : null;
+---
+
+{img && (
+  <img
+    src={img.src}
+    alt=""
+    width={size}
+    height={size}
+    loading={loading}
+    decoding="async"
+    class:list={['stone-icon', cls]}
+  />
+)}

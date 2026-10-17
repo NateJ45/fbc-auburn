@@ -317,3 +317,11 @@ h6 {
     max-height: 260px;
   }
 }
+
+/* Inner pages: the big stone icon above the title. */
+.arch-hero__icon {
+  display: block;
+  width: clamp(72px, 9vw, 112px);
+  height: auto;
+  margin-bottom: 1.2rem;
+}

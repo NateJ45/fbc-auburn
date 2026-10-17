@@ -26,6 +26,7 @@ import GuaranteeSection from '@/components/sections/GuaranteeSection.astro';
 import FaqSection from '@/components/sections/FaqSection.astro'; // scaffold: faq
 import LogoStrip from '@/components/sections/LogoStrip.astro';
 import TeamGrid from '@/components/sections/TeamGrid.astro';
+import IconCards from '@/components/sections/IconCards.astro';
 import EmbedSection from '@/components/sections/EmbedSection.astro';
 import DynamicList from '@/components/sections/DynamicList.astro';
 import { classifySections } from '@/lib/sectionCadence';
@@ -78,6 +79,7 @@ const wrapAttrs = (key: string | undefined) =>
           secondaryCta={s.secondaryCta}
           scriptAccent={s.scriptAccent}
           size={s.size ?? 'short'}
+          icon={s.icon}
           headingId={headingId}
         />
       ) : s._type === 'ctaBandSection' ? (
@@ -211,6 +213,15 @@ const wrapAttrs = (key: string | undefined) =>
           headline={s.headline}
           logos={s.logos ?? []}
           layout={s.layout ?? 'row'}
+          headingId={headingId}
+        />
+      ) : s._type === 'iconCardsSection' ? (
+        <IconCards
+          eyebrow={s.eyebrow}
+          heading={s.heading}
+          intro={s.intro}
+          cards={s.cards ?? []}
+          surface={surface ?? 'background'}
           headingId={headingId}
         />
       ) : s._type === 'teamSection' ? (

@@ -500,6 +500,14 @@ export const HOME_SECTION_TYPES = [
   { type: 'dynamicListSection' },
 ];
 
+// FBC Auburn: Studio pages (page.ts) also take the team grid, the FAQ block and the dynamic list.
+export const PAGE_SECTION_TYPES = [
+  ...SECTION_TYPES,
+  { type: 'faqSection' }, // scaffold: faq
+  { type: 'teamSection' },
+  { type: 'dynamicListSection' },
+];
+
 export const ABOUT_SECTION_TYPES = [
   ...SECTION_TYPES,
   { type: 'storySection' }, // scaffold: about

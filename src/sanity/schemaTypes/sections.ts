@@ -26,6 +26,7 @@ import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { columnsField, headingAccentField, hideWhenRich, richTwin } from './_appearanceFields';
 import { sideOptions } from '../../lib/layout-variants';
+import { iconCardsSection, stoneIconField } from './auburnSections';
 
 // Shared image field with required alt text (accessibility + SEO).
 const imageWithAlt = (name = 'image', title = 'Image') =>
@@ -96,6 +97,11 @@ export const heroSection = defineType({
   type: 'object',
   icon: ComponentIcon,
   fields: [
+    // FBC Auburn: the big stone icon above an inner page's title (ArchHero.astro).
+    stoneIconField(
+      'Stone icon above the title (optional)',
+      'Inner pages show one large stone icon above the title.',
+    ),
     defineField({ name: 'eyebrow', title: 'Eyebrow (small line above)', type: 'string' }),
     defineField({
       name: 'headline',
@@ -576,6 +582,7 @@ export const pageSectionSchemas = [
   spacerSection,
   logoStripSection,
   embedSection,
+  iconCardsSection, // FBC Auburn
 ];
 
 // The list a pageBuilder array uses for `of`. Single source of truth so every
@@ -604,7 +611,13 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
     {
       name: 'basics',
       title: 'Basics',
-      of: ['heroSection', 'richTextSection', 'imageTextSection', 'spacerSection'],
+      of: [
+        'heroSection',
+        'richTextSection',
+        'imageTextSection',
+        'iconCardsSection',
+        'spacerSection',
+      ],
     },
     {
       name: 'proof',

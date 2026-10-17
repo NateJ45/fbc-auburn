@@ -336,6 +336,24 @@ export interface ProjectedDynamicListSection {
 // Discriminated union
 // ---------------------------------------------------------------------------
 
+/** iconCardsSection (FBC Auburn): cards with a stone icon, title, text, note and link. Content block. */
+export interface ProjectedIconCard {
+  _key?: string;
+  icon?: string;
+  title?: string;
+  body?: string;
+  note?: string;
+  link?: ProjectedCtaBlock | null;
+}
+export interface ProjectedIconCardsSection {
+  _type: 'iconCardsSection';
+  _key: string;
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  cards?: ProjectedIconCard[];
+}
+
 export type PageBuilderBlock =
   | ProjectedHeroSection
   | ProjectedRichTextSection
@@ -356,4 +374,6 @@ export type PageBuilderBlock =
   | ProjectedTeamSection
   | ProjectedEmbedSection
   // Church-reverse-port
-  | ProjectedDynamicListSection;
+  | ProjectedDynamicListSection
+  // FBC Auburn
+  | ProjectedIconCardsSection;
