@@ -216,6 +216,10 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 96  | GA4 skips automated browsers (WebDriver, Lighthouse, PageSpeed, GTmetrix)      | n/a     | staged      | yes      | staged           | staged        | n/a            | n/a                | staged              | staged         |
 | 97  | astro 7.4 with adapter 14.4.0 (wrangler stays 4.129)                           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
 | 98  | Date labels independent of build-machine timezone (`formatDate`)               | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 99  | Scaffold markers stay out of PORTABLE files; styleguide wall marked            | n/a     | n/a         | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | n/a            |
+| 100 | Scaffold prunes the Lighthouse, smoke and uptime route lists                   | n/a     | n/a         | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | n/a            |
+| 101 | Preview renders "no document" inside the layout, so Presentation connects      | n/a     | open        | yes      | open             | open          | n/a            | n/a                | n/a                 | open           |
+| 102 | Native scrolling replaces Lenis (router owns the reset; `data-smooth-scroll`)  | n/a     | no          | yes      | yes              | n/a           | no             | n/a                | staged              | n/a            |
 
 Row 73 (2026-10-03) is a workflow plus three scripts, not a drift-checked behaviour: a site takes it by running `npm run sync-check` and copying the marked files; every cell but the starter is `no` until that site does.
 
@@ -7490,12 +7494,10 @@ leaves the files. Component hits from the 2026-10-04 run that are worth a look: 
 2ndpreschicago `FaqAccordion`; fbcm `ProcessStepIllustration`. Unverified: these are what the script printed, not
 confirmed dead.
 
-**Lenis (a design call, not a defect).** The smooth-scroll library is still installed and initialised in the starter,
-presacademy and 2ndpreschicago (`import('lenis')` in `BaseLayout.astro`, `"lenis"` in `package.json`; read
-2026-10-04). It was removed in fbcm on 2026-09-24, in reid-design-site on 2026-09-30 and in nixoncreativestudio in
-`1d580e1` (native scrolling). mas-monograms and stonesteps-50k never carried it. The starter's rule 5 still tells a fork
-to keep the Lenis navigation reset, so removing it from the starter is Nathan's decision; this card only records which
-repos still ship it and that three siblings dropped it without a card.
+**Lenis (settled 2026-10-17).** The smooth-scroll library was still installed in the starter, presacademy and
+2ndpreschicago when this card was written (2026-10-04); fbcm, reid-design-site and nixoncreativestudio had dropped it
+without a card, and mas-monograms and stonesteps-50k never carried it. Nathan decided on 2026-10-17 to remove it from the
+starter and use the browser's own scrolling: see Card 102.
 
 **Inlined CSS is a measurement, not a rule.** nixoncreativestudio chose `inlineStylesheets: 'always'` because its
 sheet is about 25 KB and it measured faster (home 94 to 97 Lighthouse locally); a 130 to 200 KB sheet like the ones above
@@ -7503,8 +7505,7 @@ is the case where it hurts, which is why shrinking the sheet comes first. fbcm u
 
 **Status.** starter, reid-design-site, mas-monograms and stonesteps-50k: kit present, `no`. presacademy and
 2ndpreschicago: no kit, `yes`. nixoncreativestudio: done on its unmerged branch (`staged`). fbcm: scan already excludes
-the kit but the files and packages remain (no matrix column; recorded here). Lenis: starter, presacademy and
-2ndpreschicago still ship it.
+the kit but the files and packages remain (no matrix column; recorded here). Lenis: see Card 102.
 
 ---
 
@@ -7985,3 +7986,146 @@ times: a time of day needs the site's zone, never UTC, so pass it explicitly the
 **Status, 2026-10-17.** Starter: `yes` with this PR. Sites: `no`. Every live site in the matrix formats dates at build time
 (presacademy 16 files, stonesteps-50k 17, fbcm 8, reid-design-site 5, mas-monograms 5, nixoncreativestudio 3), so each one
 has the bug on a local build.
+
+## Card 99: scaffold markers stay out of PORTABLE files (2026-10-17)
+
+**Origin:** first-baptist-auburn's fork, 2026-10-17. `npm run scaffold -- --remove services,process,philosophy,testimonials --write`
+left two faults that the scaffold reported as success. **Canonical:** `scripts/lib/portable-scaffold-markers.test.mjs` (the
+guard), `scripts/audit-studio.mjs`, `src/pages/styleguide/layouts.astro`.
+
+**Fault 1, a broken import.** `/styleguide/layouts` (card 72's fixed-data wall) imported `TestimonialCard` and `JournalCard`
+with no markers. Removing `testimonials` deleted the component and left the import, so `astro check` failed with ts(2307);
+removing `journal` would have done the same. The imports, the fixture objects and the two template lines now carry
+`testimonials` and `journal` markers (`{/* scaffold: name */}` in the template, rule 14).
+
+**Fault 2, guaranteed drift.** `audit-studio.mjs` is PORTABLE, and its `RENDERED_BY` map carried five line markers, so the
+scaffold edited it in every fork that removed one of those capabilities, and the fork's `sync-check` reported DRIFT on day one.
+The markers are gone. Nothing else was needed: for a removed type, `resolve.ts` has no entry and no page holds the section,
+so check 5 reports nothing for it.
+
+**The rule.** A file marked `PORTABLE: canonical copy` never carries a scaffold marker: the scaffold edits whatever it marks,
+and a PORTABLE file must stay byte-identical. Make the code tolerate the missing capability instead.
+`portable-scaffold-markers.test.mjs` (runs in `test:scripts`, so CI and deploy cover it) fails on any marker in a tracked
+PORTABLE file; `scripts/scaffold.mjs` and the test itself are exempt because they document the syntax.
+
+**Verification.** In the starter: `check`, `test:unit` and prettier green; then `--remove testimonials,journal --write`, typegen,
+`check`, build and `test:unit` all green, discarded. In first-baptist-auburn: `sync-check` 126/126 same.
+
+**Not covered, by hand after a removal.** Three route lists name pages and carry no markers: `lighthouserc.json` (JSON takes no comments), the smoke loop in `.github/workflows/deploy.yml` and the route loop in `.github/workflows/uptime.yml`. Auburn edited all three by hand after removing `services` and `process`; left alone, Lighthouse 404s and the first deploy smoke fails (gotcha `lhci-url-list-404s-on-redirected-page`). Closed by card 100, which also covers the journal empty-state link.
+
+**Porting.** Nothing to copy into existing sites: none carries `audit-studio.mjs` as a PORTABLE copy, and none has run the
+scaffold since the wall arrived. A new fork gets both fixes from the starter.
+
+**Status, 2026-10-17.** Starter: `yes` with this PR. first-baptist-auburn: `yes` (forked from it).
+
+## Card 100: the scaffold prunes the Lighthouse, smoke and uptime route lists (2026-10-17)
+
+**Origin:** first-baptist-auburn's fork, 2026-10-17, the part card 99 left open (PENDING item 14). After
+`--remove services,process`, four places still named the removed pages and were edited by hand: the `url` list in
+`lighthouserc.json`, the smoke loop in `.github/workflows/deploy.yml`, the route loop in `.github/workflows/uptime.yml`, and
+the "see what we do" link to `/services/` in the journal's empty state, which `check:links` 404s. **Canonical:**
+`scripts/scaffold.mjs` (PORTABLE); the markers live in the three per-site files.
+
+**What changed.**
+
+- `scaffold.mjs` now walks `.github` and reads `.yml`, so a workflow takes `# scaffold: name` like any other file.
+- The two workflow loops read a `ROUTES` variable built one marked line at a time
+  (`ROUTES="$ROUTES /services/" # scaffold: services`), because a `for path in a b c` loop is one line and a line marker
+  would take all of it. Paths now carry their trailing slash (rule 19).
+- `lighthouserc.json` takes no comments, so the scaffold prunes it instead: a URL goes when every page file that could build
+  it (`src/pages/x.astro`, `src/pages/x/index.astro`) is deleted by the same run. A URL with no page file (`/404.html`, a
+  `[slug]` page) is never touched. The edit is line-exact, fixes the new last entry's comma, and refuses to write a file that
+  no longer parses. First cut checked existence after `--write` had already deleted the pages and dropped nothing; the pass
+  now counts this run's deletions as present.
+- The journal link sits in a `<Fragment>` holding a `{/* scaffold: services */}` block. Written inline, prettier pulled the
+  opener onto the "In the meantime," line, and removal would have taken that text with it. Rendered text is identical
+  (whitespace only; `scripts/.parity/journal.html` re-captured).
+
+**Verification.** Starter: parity 12/12 after the re-capture. Then `npm run scaffold -- --remove services,process,testimonials --write`:
+`lighthouserc.json` lost `/services/` and `/process/` and parses, both workflow loops and the journal link lost their lines,
+and no `/services/` or `/process/` reference was left in the four files; `typegen`, `check`, `build`, `test:unit` and
+`check:links` all exit 0. Discarded.
+
+**Porting.** `scaffold.mjs` is PORTABLE and two sites carry it. first-baptist-auburn runs `sync-check` against the live
+starter `main` in CI, so it takes the new copy in the marked-file order (site branch pushed without a PR, starter merged,
+then the site PR). fbcm only self-checks in CI, so it shows DRIFT on a local `sync-check` until resynced and never goes red.
+presacademy, reid-design-site, mas-monograms, nixoncreativestudio and stonesteps-50k do not carry the file. A site that has
+already trimmed itself gains nothing from the new markers; a fresh fork gets all of it.
+
+**Status, 2026-10-17.** Starter: `yes` with this PR.
+
+## Card 101: the preview says "no document" inside the layout, so Presentation connects (2026-10-17)
+
+**Origin:** first-baptist-auburn's fork, 2026-10-17. On a fresh dataset with no documents, the Studio's Presentation tool
+showed "Unable to connect" on every page. `src/pages/preview/[...slug].astro` answered a missing document with a bare
+text `new Response('No document found ...', { status: 404 })`. That body has no `<VisualEditing>` island, so the
+Studio never got its handshake and the editor never saw the message telling them what to do. Seeding fixed Auburn; this
+card makes the route fail gracefully. Vault gotcha: `presentation-unable-to-connect-on-an-empty-dataset`.
+
+**Canonical:** `src/pages/preview/[...slug].astro` (per-site, NOT PORTABLE: each site's copy carries its own path map and
+page shapes, so port the pattern, not the file).
+
+**What changed.** A missing document now renders through `PreviewLayout` with an empty stand-in doc
+(`_id` = the singleton type, or `missing-page` for a custom page) and a note: "No document found for ... yet. Create it in
+the Studio, then reopen the preview." The status stays 404 (`Astro.response.status`) and `Cache-Control: no-store` is set
+before the fetch, as before. The bespoke-page and empty-builder notes are suppressed while `missing`. Because
+`/preview/live` signals on any change to a non-`page` document, creating a missing singleton refreshes the frame into the
+real page; a new custom page still needs the preview reopened. Nothing else in the refresh loop (cards 29-29d) is touched;
+the overlay's refetch reads the response text whatever its status.
+
+**Porting to a site.** Find the `if (!doc) return new Response(...)` in the site's preview route and apply the same three
+moves: keep the fetch result as `fetched`, set `Astro.response.status = 404` and fall back to a stand-in doc, and render the
+note inside the layout. Sites with the bare response on 2026-10-17: presacademy, reid-design-site, mas-monograms, fbcm,
+first-baptist-auburn. stonesteps-50k phrases it differently; check before porting. Also: `docs/bootstrap/NEW-PROJECT.md`
+Step 6 now says to seed before the first Presentation check.
+
+**Status, 2026-10-17.** Starter: `yes` with this PR.
+
+## Card 102: native scrolling replaces Lenis in the starter (2026-10-17)
+
+**Origin:** fbcm, `feat/print-motion`, 2026-09-24 (reid-design-site followed on 2026-09-30, nixoncreativestudio in
+`1d580e1` on its unmerged `redesign-2026` branch). Nathan decided on 2026-10-17 that the starter drops it too; this settles
+the "Lenis (a design call)" paragraph of Card 87. **Canonical:** `src/layouts/BaseLayout.astro` (the press listener),
+`src/styles/globals.css` ("Native scrolling" block), `tests/native-scroll.spec.ts`, `docs/agent/animation.md`. The layout and
+stylesheet are per-site, not `PORTABLE`; port the pattern.
+
+**What Lenis did and what replaced it.**
+
+| Lenis job                                                                                       | Now                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wheel glide                                                                                     | Dropped. The wheel is the browser's own.                                                                                                                                                                              |
+| Forward navigation lands at the top (an `after-swap` `lenis.scrollTo(0, { immediate, force })`) | Astro's router: `scrollTo({ top: 0, behavior: 'instant' })` inside the swap. The reset only existed because Lenis momentum overrode the router.                                                                       |
+| Back/Forward restores the position (the reset skipped `traverse`)                               | Astro's router restores the saved `scrollX`/`scrollY` on a traverse.                                                                                                                                                  |
+| Anchor and control glide (`window.lenis.scrollTo`)                                              | `html[data-smooth-scroll] { scroll-behavior: smooth }` under `prefers-reduced-motion: no-preference`; the hero cue and the case-study TOC call `scrollTo` / `scrollIntoView` with `'smooth'` (`'auto'` under reduce). |
+| Sticky-header clearance (Lenis honoured `scroll-mt-*`)                                          | Native scrolling honours `scroll-mt-*` too (`scroll-mt-24` on headings and sections).                                                                                                                                 |
+
+**Why the attribute is set on the first press, not at load.** With smooth scrolling on from the first paint, Chrome GLIDES
+its own scroll restoration on a reload (fbcm measured 0 to 600px over 400 ms), which is visible and leaves scroll-driven UI
+unseeded. BaseLayout's script sets `data-smooth-scroll` on the first `pointerdown` or `keydown`; every anchor click and
+scroll control follows a press. The router's swap copies the incoming document's `<html>` attributes onto the live one, which
+removes the attribute before the router places the page, so its placement is never animated either.
+
+**Files (starter).** `src/layouts/BaseLayout.astro` (Lenis block replaced by the press listener), `src/layouts/PreviewLayout.astro`
+(comment), `src/components/Hero.astro` (cue uses `scrollTo` only), `src/components/CaseStudyTOC.tsx` (`scrollIntoView` only),
+`src/styles/globals.css`, `package.json` and `package-lock.json` (`npm uninstall lenis`), CLAUDE.md rule 5 (rewritten,
+number kept), `OPERATIONS.md`, `DESIGN.md`, `.claude/rules/foundation-files.md`, `docs/agent/{animation,accessibility,components,performance,polish-layer,stack-and-config}.md`,
+`docs/claude/topic-index.md`, `docs/bootstrap/NEW-PROJECT.md`, and the new `tests/native-scroll.spec.ts`.
+
+**Applying it to a fork.**
+
+1. `npm uninstall lenis` (never edit the lockfile by hand; CLAUDE.md rule 8).
+2. In `BaseLayout.astro` delete the `startLenis` script and add the press listener (`pointerdown` and `keydown`, capture and
+   passive, setting `data-smooth-scroll` on `<html>`).
+3. In `globals.css` add the `@media (prefers-reduced-motion: no-preference)` `html[data-smooth-scroll]` block and drop the
+   "Lenis init must also check this flag" comment.
+4. Replace every `window.lenis` caller with `scrollTo` / `scrollIntoView` and an explicit `behavior`. Any code that must place
+   the page exactly (a correction loop, a fragment landing) uses `behavior: 'instant'`, and a Playwright setup that sets
+   a scroll position does the same.
+5. Add `tests/native-scroll.spec.ts` (it asserts no `lenis` global, the attribute arrives on a press and not before, the
+   router resets to the top at `astro:after-swap` and Back restores). Rewrite the site's rule 5 and `animation.md`.
+6. Grep for `lenis` in `src`, `tests`, `docs` and the layouts; check each page that scrolls (anchors under the sticky header).
+
+**Status, 2026-10-17.** Starter: `yes` with this PR. fbcm (not a matrix column), reid-design-site: done. nixoncreativestudio: done on
+its unmerged `redesign-2026` branch, still listed in its `main` (`staged`). mas-monograms and stonesteps-50k never had it
+(`n/a`). presacademy and 2ndpreschicago still ship it (`no`). first-baptist-auburn (forked from the starter with Lenis;
+no matrix column) is next. wcp is archived.
