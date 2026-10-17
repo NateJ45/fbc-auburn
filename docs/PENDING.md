@@ -160,6 +160,8 @@ edit in Site settings > Church facts, then a publish.
 
 ### 1d. Studio kit: the parts not built yet
 
+(Since 2026-10-17 the kit files are the starter's PORTABLE copies, PORTS.md card 106: build the rest starter first.)
+
 **Blocker: mixed; queued work plus three things only a person can supply.** The kit's first part landed
 2026-10-17 (`docs/agent/studio-kit.md`): Home, Site Guide, Checkup, the staff view, Trash, the note after Publish
 and the tour, checked signed in at `/studio` in light and dark. Still to do:

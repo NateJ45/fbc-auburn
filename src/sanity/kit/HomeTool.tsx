@@ -1,8 +1,9 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care (the words are safe to edit)
 // =============================================================================
 // Home: the Studio's landing page (Studio kit, 2026-10-17)
 // =============================================================================
-// The Sanity version of the WordPress staff Home on the other church sites.
+// The Sanity version of the WordPress staff Home on the family's WordPress sites.
 // It is the first tool in the top bar, so the Studio opens here. Cards, in the
 // order an editor needs them:
 //

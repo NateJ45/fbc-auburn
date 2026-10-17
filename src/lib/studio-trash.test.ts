@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Trash (src/lib/studio-trash.ts): what goes in, and that it comes back exactly
 // where it was, published and unpublished copies separately.
 

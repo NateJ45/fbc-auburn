@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care (the words are safe to edit)
 // =============================================================================
 // Checkup: "What needs attention", as pure rules (Studio kit, 2026-10-17)
@@ -147,7 +148,7 @@ export function pathString(segments: string[]): string {
 // -----------------------------------------------------------------------------
 
 export interface GenericRuleOptions {
-  /** Image fields that never need words (a logo beside the church's name, a favicon). */
+  /** Image fields that never need words (a logo beside the site's name, a favicon). */
   altExemptFields?: string[];
   /** Document types that are pages with SEO fields (seoTitle / seoDescription). */
   seoTypes?: string[];
@@ -318,7 +319,7 @@ export function hasUnconfirmedFlag(value: unknown): boolean {
 /**
  * Text still marked as waiting for someone to confirm it ("to be confirmed",
  * "[confirm]"), or a `confirmed` box left unticked, on the document or on any
- * object inside it (`churchAddress.confirmed`, `phoneConfirmed`, a service
+ * object inside it (`address.confirmed`, `phoneConfirmed`, a service
  * time's `confirmed`; PORTS.md card 66). Generic, but opt-in: a site that
  * seeds placeholder copy turns it on.
  */
@@ -395,7 +396,7 @@ export function countBySeverity(results: CheckResult[]): Record<Severity, number
 export function defaultNameOf(typeTitle: (type: string) => string) {
   return (doc: Doc): string => {
     // A singleton (its id is its type, "aboutPage") is named by its type: its
-    // SEO title reads "About us | Church name", which is not what it is called.
+    // SEO title reads "About us | Site name", which is not what it is called.
     if (publishedIdOf(doc._id) === doc._type) return typeTitle(doc._type);
     for (const key of [
       'title',

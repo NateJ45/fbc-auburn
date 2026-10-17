@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-17: the Studio kit is now the starter's PORTABLE copy; /build-info.json shows the commit._
+
+**Decision.** The kit went back to ncs-astro-sanity-starter as PORTS.md card 106, and this site swapped its copies
+for the marked ones (the nine `src/sanity/kit/` files, `src/lib/studio-{kit,checkup,trash}.ts` and tests,
+`src/pages/build-info.json.ts`, `docs/agent/studio-kit.md`), so `npm run sync-check` keeps them in step.
+`src/sanity/kit.config.ts` stays this site's own file, and its comments carry the church-specific notes the kit doc
+used to. The deployed `/build-info.json` always said `"commit": null`: the route read `GITHUB_SHA` inside the
+workerd prerender, which cannot see it. `astro.config.mjs` now reads the SHA in Node and passes it as the Vite
+define `__NCS_BUILD_COMMIT__`.
+
 _2026-10-17: the background path stays off the words; the built-in contact form is the visit form._
 
 **Decision.** The faint background stones (motion layer) sit above the section grounds so they show on the tinted

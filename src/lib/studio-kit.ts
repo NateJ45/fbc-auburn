@@ -1,20 +1,20 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care
 // =============================================================================
 // Studio kit: the pure half (staff view, links, "is it live?", this week)
 // =============================================================================
 // Added 2026-10-17 with the Studio kit (src/sanity/kit/). Kept free of React and
 // Sanity imports so bare-Node unit tests (src/lib/studio-kit.test.ts) can check
-// every rule here. Generic on purpose: nothing in this file names a church, a
+// every rule here. Generic on purpose: nothing in this file names a site, a
 // document type or a person. The site-specific half is src/sanity/kit.config.ts.
 //
-// The kit is meant to go back to ncs-astro-sanity-starter (with a port card);
-// until it does, this copy is the reference.
+// Canonical in ncs-astro-sanity-starter (PORTS.md card 106).
 // =============================================================================
 
 // -----------------------------------------------------------------------------
 // The staff view
 // -----------------------------------------------------------------------------
-// Like the WordPress staff admin on the other church sites: a LISTED set of
+// Like the WordPress staff admin on the family's WordPress sites: a LISTED set of
 // accounts (Sanity user ids or emails) sees a plain Studio (fewer tools, no permanent delete), whatever
 // their Sanity role. With no list, Sanity's own non-administrator roles count
 // as staff. Anyone can switch for this browser tab: staff to "the full
@@ -72,7 +72,7 @@ export function readOverride(storage: Pick<Storage, 'getItem'> | null | undefine
   }
 }
 
-/** First name for the welcome line ("Jacob Wysong" -> "Jacob"). */
+/** First name for the welcome line ("Sam Rivera" -> "Sam"). */
 export function firstName(name: string | undefined | null): string {
   const first = (name ?? '').trim().split(/\s+/)[0];
   return first || 'there';

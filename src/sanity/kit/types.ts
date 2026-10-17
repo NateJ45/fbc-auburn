@@ -1,9 +1,10 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care
 // =============================================================================
 // Studio kit: the shape of a site's kit.config.ts
 // =============================================================================
 // Everything site-specific lives in ONE file per site, src/sanity/kit.config.ts,
-// typed by KitConfig below. The kit itself (this folder) names no church, no
+// typed by KitConfig below. The kit itself (this folder) names no site, no
 // person and no document type, so it can go back to the starter unchanged.
 // =============================================================================
 
@@ -44,7 +45,7 @@ export interface KitGuide {
 }
 
 export interface KitConfig {
-  /** The site's name as the editor says it ("the church website"). */
+  /** The site's name as the editor says it ("the website"). */
   siteName: string;
 
   /** Who the editor asks for help, and how. */

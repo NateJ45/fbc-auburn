@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care (the words are safe to edit)
 // =============================================================================
 // Checkup: "What needs attention", a top-bar tool (Studio kit, 2026-10-17)

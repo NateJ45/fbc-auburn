@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Studio kit: the pure rules behind the staff view, links, "Is it live?" and
 // "This week" (src/lib/studio-kit.ts).
 
@@ -56,7 +57,7 @@ describe('staff view', () => {
   });
 
   it('greets by first name, or kindly with none', () => {
-    assert.equal(firstName('Jacob Wysong'), 'Jacob');
+    assert.equal(firstName('Sam Rivera'), 'Sam');
     assert.equal(firstName('  '), 'there');
     assert.equal(firstName(undefined), 'there');
   });
