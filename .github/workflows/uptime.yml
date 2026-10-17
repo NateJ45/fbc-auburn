@@ -52,8 +52,8 @@ jobs:
         #
         # Route choice follows card 7: four DIFFERENT data paths, not four
         # variations of the homepage. / is the home singleton rendered through
-        # the page builder, /services/ is a page doc plus the service
-        # collection, /faq/ is a collection grouped by category, and /privacy/
+        # the page builder, /about/ is a page doc (services was removed at fork
+        # time), /faq/ is a collection grouped by category, and /privacy/
         # renders from a hardcoded fallback when its Sanity doc is absent, so
         # it fails only if the deploy itself is broken. If Sanity goes down,
         # /privacy/ still answers and the diff in the log says where the
@@ -65,7 +65,7 @@ jobs:
           fi
           base="${SITE_URL%/}"
           fail=0
-          for path in "/" "/services/" "/faq/" "/privacy/"; do
+          for path in "/" "/about/" "/faq/" "/privacy/"; do
             code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 25 "${base}${path}")
             echo "${code}  ${base}${path}"
             if [ "$code" != "200" ]; then fail=1; fi

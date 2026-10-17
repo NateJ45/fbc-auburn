@@ -9,8 +9,6 @@
       "url": [
         "http://localhost:4173/",
         "http://localhost:4173/about/",
-        "http://localhost:4173/services/",
-        "http://localhost:4173/process/",
         "http://localhost:4173/faq/",
         "http://localhost:4173/contact/",
         "http://localhost:4173/journal/",
