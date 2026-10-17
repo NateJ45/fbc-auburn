@@ -8,6 +8,7 @@
 // https://search.google.com/test/rich-results
 
 import { site } from '@/data/site';
+import { churchJsonLd, resolveChurchFacts, type RawChurchFacts } from '@/lib/church-facts';
 
 // ---------- Types (loose — Sanity provides the actual document shapes) ----
 
@@ -17,10 +18,9 @@ interface SocialLink {
   label?: string;
 }
 
-interface SiteSettings {
+interface SiteSettings extends RawChurchFacts {
   title?: string;
   email?: string;
-  phone?: string;
   serviceAreas?: string[];
   socialInstagram?: string;
   socialFacebook?: string;
@@ -107,7 +107,10 @@ export function localBusinessSchema(settings: SiteSettings | null | undefined): 
     schema.areaServed = areas.map((city) => ({ '@type': 'City', name: city }));
   }
 
-  if (s.phone) schema.telephone = s.phone;
+  // Church facts (src/lib/church-facts.ts): the full street address, the phone
+  // and the service times, each ONLY once the church has confirmed it, so search
+  // engines are never told a provisional fact. Replaces the city-only address.
+  Object.assign(schema, churchJsonLd(resolveChurchFacts(s)));
   return JSON.stringify(schema);
 }
 

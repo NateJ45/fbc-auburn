@@ -1,0 +1,52 @@
+---
+// Safe to edit by hand
+// The small inline "To confirm" tag the mockups put beside a fact the church
+// has not confirmed yet (service times, the address, the founding year). The
+// inline cousin of Provisional.astro (PORTS.md card 66), which is a block.
+//
+// DRIVEN BY DATA. Pass the fact's `confirmed` flag; the tag renders nothing
+// once it is true, so a caller never writes the conditional and the tag
+// disappears on its own the day someone ticks the box in Site settings.
+//
+// Colours: dark red on a pale red in light mode (about 9:1), pale on deep in
+// dark mode; both well over 4.5:1 at this small size.
+
+interface Props {
+  /** The fact's `confirmed` flag. Anything other than true shows the tag. */
+  confirmed?: boolean | null;
+  /** The tag's words. */
+  label?: string;
+  class?: string;
+}
+
+const { confirmed, label = 'To confirm', class: className = '' } = Astro.props;
+---
+
+{confirmed !== true && (
+  <span class:list={['not-confirmed', className]} data-not-confirmed>
+    {label}
+  </span>
+)}
+
+<style>
+  .not-confirmed {
+    display: inline-block;
+    margin-inline-start: 0.35em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    background: #fce3da;
+    color: #7a2a14;
+    font-family: var(--font-sans, 'Familjen Grotesk', sans-serif);
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  :global(.dark) .not-confirmed {
+    background: #4a1d10;
+    color: #fcd9cc;
+  }
+</style>
