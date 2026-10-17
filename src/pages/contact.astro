@@ -13,7 +13,7 @@ import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import ContactForm from '@/components/ContactForm';
 import CopyEmailButton from '@/components/CopyEmailButton';
 import CalendlyInline from '@/components/CalendlyInline';
-import ServiceAreaMap from '@/components/ServiceAreaMap.astro';
+import ChurchAddress from '@/components/church/ChurchAddress.astro';
 import { Mail, Phone } from 'lucide-react';
 import PostInquiryRoadmap from '@/components/PostInquiryRoadmap.astro';
 
@@ -212,8 +212,9 @@ const schemas = [
       )}
 
       <div>
-        <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Studio location</p>
-        <ServiceAreaMap height={280} lat={siteSettings?.geoLat} lng={siteSettings?.geoLng} />
+        {/* FBC Auburn: the church address and directions (Site settings > Church facts) in place of the starter map. */}
+        <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Find us</p>
+        <ChurchAddress />
       </div>
     </aside>
   </section>
