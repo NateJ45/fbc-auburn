@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care (the words live in kit.config.ts)
 // =============================================================================
 // First-run tour (Studio kit, 2026-10-17)

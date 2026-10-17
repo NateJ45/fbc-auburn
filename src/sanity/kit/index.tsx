@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care
 // =============================================================================
 // ncsStudioKit(): the WordPress staff admin, rebuilt for Sanity (2026-10-17)

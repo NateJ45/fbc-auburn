@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care
 // =============================================================================
 // Move to Trash / Bring it back / Delete forever (Studio kit, 2026-10-17)
