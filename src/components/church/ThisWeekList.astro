@@ -1,0 +1,121 @@
+---
+// Safe to edit by hand
+// The "This week at Auburn" dated list from the Home mockup: the next seven
+// days of regular gatherings (Site settings > Church facts > Service times,
+// merged one row per day) and Church Trac calendar events (the iCal feed in
+// Site settings, read at build time), soonest first. Unconfirmed service
+// times carry the "To confirm" tag; calendar events are the church's own.
+//
+// Only the list: the section around it (heading, band) is the page's.
+// Empty-safe: no feed, or a feed that fails, shows the service times alone,
+// and the "Full calendar" row appears only when a Church Trac feed is set
+// (its public page is derived from the feed address).
+//
+// Layout: the mockup's three columns (when, what, time) from 640px up; on a
+// phone each row stacks, so nothing is squeezed at 320px.
+
+import NotConfirmed from './NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { thisWeek } from '@/lib/church-facts';
+import { churchDataNow, loadChurchEvents } from '@/lib/church-feeds';
+
+interface Props {
+  /** The build moment; tests pass a fixed one. */
+  now?: Date;
+  /** Most rows to show. */
+  limit?: number;
+  class?: string;
+}
+
+const { now = churchDataNow(), limit = 8, class: className = '' } = Astro.props;
+const facts = await getChurchFacts();
+const events = await loadChurchEvents(facts);
+const rows = thisWeek(facts, events, now).slice(0, limit);
+---
+
+<ul class:list={['week-list', className]} data-this-week>
+  {rows.map((r) => (
+    <li class="week-list__row" data-source={r.source}>
+      <span class="week-list__when">
+        {r.when}
+        <time class="week-list__date" datetime={r.date}>
+          {r.dateLabel}
+        </time>
+      </span>
+      <span class="week-list__what">{r.what}</span>
+      <span class="week-list__time">
+        {r.time}
+        {r.where && <span class="week-list__where">, {r.where}</span>}
+        <NotConfirmed confirmed={r.confirmed} />
+      </span>
+    </li>
+  ))}
+  {facts.calendarPageUrl && (
+    <li class="week-list__row week-list__row--more">
+      <span class="week-list__when">Coming up</span>
+      <span class="week-list__what">Events from the church calendar</span>
+      <span class="week-list__time">
+        <a href={facts.calendarPageUrl} rel="noopener" target="_blank" class="week-list__link">
+          Full calendar<span class="sr-only"> (opens Church Trac in a new tab)</span>
+        </a>
+      </span>
+    </li>
+  )}
+</ul>
+
+<style>
+  .week-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+  .week-list__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (min-width: 640px) {
+    .week-list__row {
+      grid-template-columns: 9rem minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: baseline;
+      padding: 1.1rem 0;
+    }
+  }
+  .week-list__when {
+    font-weight: 600;
+    color: var(--heading-solid, var(--foreground));
+  }
+  .week-list__date {
+    display: block;
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+  .week-list__what {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    line-height: 1.3;
+    color: var(--foreground);
+  }
+  .week-list__time {
+    color: var(--muted-foreground);
+  }
+  .week-list__link {
+    font-weight: 600;
+    color: var(--foreground);
+    text-decoration: none;
+    border-bottom: 2px solid currentColor;
+    padding-bottom: 2px;
+  }
+  .week-list__link:hover {
+    border-bottom-width: 3px;
+  }
+  .week-list__link:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+</style>

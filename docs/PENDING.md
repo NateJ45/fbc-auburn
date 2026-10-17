@@ -137,7 +137,28 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
 - Photos: every arch shows the mark or a soft fill until the photo session.
 
 Service times, the 1959 founding and Hebrews 13:8 are still unconfirmed with the church; copy
-marks them "to be confirmed".
+marks them "to be confirmed". Since 2026-10-17 the facts themselves live in Site settings > Church
+facts with `confirmed` flags, and the drop-in components in `src/components/church/` draw them with
+the "To confirm" tag (`docs/agent/church-data.md`). Use those components when building the This
+week list, the Watch band and Plan your visit. The prose in `src/data/defaultSections.ts` and in
+Sanity page copy still types the times as words; when a section is rebuilt, put `ThisSunday` or
+`ServiceTimes` there instead of a sentence with a time in it.
+
+### 1d. Church data waiting on the church
+
+**Blocker: answers from the church, after signing.** All empty-safe today; each lights up with one
+edit in Site settings > Church facts, then a publish.
+
+- Tick `confirmed` on the address, each service time and the founding year once the church
+  confirms them (the tags disappear and the confirmed address joins the JSON-LD).
+- The church phone (Identity & contact > Phone) and `phoneConfirmed`; there is none on file.
+- The YouTube channel id, if the church streams there (the Watch band shows its fallback until
+  then). If the public feed proves flaky, port First Baptist Muncie's Data API reader
+  (`youtube-feed-api.ts`, needs a key).
+- The Church Trac calendar's iCal link (Calendar > Share), which fills This week with events and
+  adds the "Full calendar" link.
+- Set Identity > business type to Church when the Studio kit allows it; the JSON-LD still says
+  `LocalBusiness` with the starter's `priceRange`.
 
 ## Known gaps, deliberately open
 

@@ -454,6 +454,27 @@ export type SiteSettings = {
     showBudgetCalculator?: boolean;
   };
   satisfactionGuarantee?: string;
+  churchAddress?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+    confirmed?: boolean;
+  };
+  serviceTimes?: Array<{
+    label?: string;
+    day?: 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
+    time?: string;
+    note?: string;
+    confirmed?: boolean;
+    _type: 'serviceTime';
+    _key: string;
+  }>;
+  phoneConfirmed?: boolean;
+  foundedYear?: number;
+  foundedConfirmed?: boolean;
+  youtubeChannelId?: string;
+  churchTracIcalUrl?: string;
 };
 
 export type HomePageReference = {

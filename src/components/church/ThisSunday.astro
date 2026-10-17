@@ -1,0 +1,66 @@
+---
+// Safe to edit by hand
+// The "This Sunday" line: "This Sunday, October 25 · Sunday School 9:45 am ·
+// Worship 11:00 am", with a "To confirm" tag while any Sunday time is
+// unconfirmed. For the Home hero, the Watch band and Plan your visit.
+//
+// Everything is derived at build time from Site settings > Church facts >
+// Service times (CLAUDE.md rule 15); nothing here is typed. The site rebuilds
+// every morning and on Sunday afternoon (deploy.yml), so the date moves on by
+// itself. On a Sunday it reads "Today" until 90 minutes after the last service
+// starts (church-facts.ts SUNDAY_GRACE_MINUTES).
+//
+// Renders nothing when no Sunday gathering is set.
+
+import NotConfirmed from './NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { thisSunday } from '@/lib/church-facts';
+import { churchDataNow } from '@/lib/church-feeds';
+
+interface Props {
+  /** The build moment; tests pass a fixed one. */
+  now?: Date;
+  class?: string;
+}
+
+const { now = churchDataNow(), class: className = '' } = Astro.props;
+const sunday = thisSunday(await getChurchFacts(), now);
+---
+
+{sunday && (
+  <p class:list={['this-sunday', className]} data-this-sunday>
+    <span class="this-sunday__date">
+      {sunday.isToday ? 'Today' : 'This Sunday'},{' '}
+      <time datetime={sunday.date}>{sunday.dateLabel.replace(/^Sunday, /, '')}</time>
+    </span>
+    {sunday.services.map((s) => (
+      <span class="this-sunday__item">
+        <span aria-hidden="true" class="this-sunday__sep">
+          ·
+        </span>{' '}
+        {s.label} {s.timeLabel}
+      </span>
+    ))}
+    <NotConfirmed confirmed={sunday.confirmed} />
+  </p>
+)}
+
+<style>
+  .this-sunday {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.4em;
+    row-gap: 0.15em;
+    margin: 0;
+    color: var(--foreground);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .this-sunday__date {
+    font-weight: 600;
+  }
+  .this-sunday__sep {
+    color: var(--muted-foreground);
+  }
+</style>

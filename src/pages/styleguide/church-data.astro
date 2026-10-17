@@ -1,0 +1,73 @@
+---
+// Safe to edit by hand
+//
+// THE CHURCH DATA WALL: every drop-in from src/components/church/ on one page,
+// so they can be checked (and shot) in light and dark at any width before a
+// page section uses them. Usage notes: docs/agent/church-data.md.
+//
+// Live data, not fixed data: it reads Site settings and the feeds like any
+// page, so it shows what the site would show today. Build with
+// CHURCH_DATA_FIXTURE=1 CHURCH_DATA_NOW=2026-10-21T16:00:00Z to see the
+// fixture video and calendar events. noindex, filtered from the sitemap
+// (astro.config.mjs matches '/styleguide'), and 'styleguide' is a reserved slug.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ThisSunday from '@/components/church/ThisSunday.astro';
+import ThisWeekList from '@/components/church/ThisWeekList.astro';
+import LastSunday from '@/components/church/LastSunday.astro';
+import SundayWeather from '@/components/church/SundayWeather.astro';
+import ServiceTimes from '@/components/church/ServiceTimes.astro';
+import ChurchAddress from '@/components/church/ChurchAddress.astro';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import { site } from '@/data/site';
+---
+
+<BaseLayout
+  title={`Church data wall | ${site.name}`}
+  description="The church data components on one page. Not for visitors."
+  noindex
+>
+  <div class="mx-auto max-w-5xl space-y-14 px-4 py-12 sm:px-6">
+    <section data-fx="this-sunday">
+      <h2 class="mb-4 text-2xl">ThisSunday</h2>
+      <ThisSunday />
+    </section>
+
+    <section data-fx="this-week">
+      <h2 class="mb-4 text-2xl">ThisWeekList</h2>
+      <ThisWeekList />
+    </section>
+
+    <section data-fx="last-sunday" class="max-w-xl">
+      <h2 class="mb-4 text-2xl">LastSunday</h2>
+      <LastSunday>
+        <p slot="fallback" data-fx="last-sunday-fallback">
+          No channel yet: this is the fallback slot the Watch band fills.
+        </p>
+      </LastSunday>
+    </section>
+
+    <section data-fx="facts" class="grid gap-10 sm:grid-cols-2">
+      <div>
+        <h2 class="mb-4 text-2xl">ServiceTimes</h2>
+        <ServiceTimes />
+      </div>
+      <div>
+        <h2 class="mb-4 text-2xl">ChurchAddress</h2>
+        <ChurchAddress />
+        <h2 class="mt-8 mb-4 text-2xl">SundayWeather</h2>
+        <p class="text-sm text-muted-foreground">
+          Hidden until the forecast loads (Wednesday to Sunday noon), and only when off screen.
+        </p>
+        <SundayWeather />
+      </div>
+    </section>
+
+    <section data-fx="not-confirmed">
+      <h2 class="mb-4 text-2xl">NotConfirmed</h2>
+      <p>
+        Founded in 1959 <NotConfirmed confirmed={false} />
+      </p>
+    </section>
+  </div>
+</BaseLayout>

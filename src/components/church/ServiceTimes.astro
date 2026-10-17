@@ -1,0 +1,57 @@
+---
+// Safe to edit by hand
+// The regular gatherings as fact rows, the Plan your visit "When" block from
+// the mockup: "9:45 am / Sunday School for all ages", "6:00 pm Wednesday /
+// Bible study and prayer", each with its "To confirm" tag until confirmed.
+// Read from Site settings > Church facts > Service times; nothing typed here.
+// A day other than Sunday is named after the time.
+
+import NotConfirmed from './NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+const { serviceTimes } = await getChurchFacts();
+const dayName = (d: string) => d[0].toUpperCase() + d.slice(1);
+---
+
+<dl class:list={['service-times', className]} data-service-times>
+  {serviceTimes.map((s) => (
+    <div class="service-times__row">
+      <dt class="service-times__time">
+        {s.timeLabel}
+        {s.dayIndex !== 0 && ` ${dayName(s.day)}`}
+      </dt>
+      <dd class="service-times__what">
+        {s.label}
+        {s.note && `, ${s.note}`}
+        <NotConfirmed confirmed={s.confirmed} />
+      </dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .service-times {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+  }
+  .service-times__row {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .service-times__time {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    line-height: 1.25;
+    color: var(--heading-solid, var(--foreground));
+  }
+  .service-times__what {
+    margin: 0;
+    color: var(--foreground);
+  }
+</style>
