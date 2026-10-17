@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction A: Front porch (photo-led) | First Baptist Church of Auburn</title>
+<!-- Fonts: Young Serif (display), Familjen Grotesk (text). Throwaway mockup, not site code. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Young+Serif&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #171A26; --muted: #4A4F5E; --ground: #FFFFFF; --soft: #F3F6F9;
+    --deep: #235E93; --green: #2C5B3A; --red: #C4401F; --gold: #E8A93A; --sky: #96C3EA;
+    --line: #DDE3EA; --on-dark: #FFFFFF;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #F3F6F9; --muted: #B4B8C4; --ground: #171A26; --soft: #20283A;
+      --deep: #96C3EA; --line: #2E3850; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font: 400 1.125rem/1.6 'Familjen Grotesk', system-ui, sans-serif; }
+  a { color: var(--deep); }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .wrap { width: min(1200px, 100% - 2.5rem); margin-inline: auto; }
+  h1, h2, h3 { font-family: 'Young Serif', Georgia, serif; font-weight: 400; line-height: 1.1; margin: 0; }
+
+  /* Photo placeholders: each says which photograph belongs there (photo session assumed). */
+  .photo { position: relative; background:
+      linear-gradient(160deg, #3E6F57 0%, #2B4E63 55%, #1D2F44 100%); color: #fff; overflow: hidden; }
+  .photo::after { content: attr(data-photo); position: absolute; left: .9rem; bottom: .8rem; right: .9rem;
+    font: 500 .78rem/1.35 'Familjen Grotesk', sans-serif; letter-spacing: .02em;
+    background: rgba(0,0,0,.45); padding: .45rem .6rem; border-radius: 6px; width: fit-content; max-width: calc(100% - 1.8rem); }
+  .photo.warm { background: linear-gradient(150deg, #8C6A44 0%, #6F4E36 50%, #3B2C25 100%); }
+  .photo.light { background: linear-gradient(170deg, #9DB7C9 0%, #6E8FA6 60%, #4D6B80 100%); }
+
+  /* Header: transparent bar laid over the hero photo, menu opens as an overlay. */
+  .hero { min-height: min(92vh, 860px); display: grid; grid-template-rows: auto 1fr auto; }
+  .hero > .photo { position: absolute; inset: 0; }
+  .hero { position: relative; isolation: isolate; color: #fff; }
+  .hero > .photo::before { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,14,22,.55) 0%, rgba(10,14,22,.05) 35%, rgba(10,14,22,.15) 55%, rgba(10,14,22,.78) 100%); }
+  .hero > .photo { z-index: 0; } .hero > *:not(.photo) { position: relative; z-index: 2; }
+  .hero > .photo::after { z-index: 1; bottom: auto; top: 5.2rem; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding-block: 1.1rem; }
+  .bar img { height: 46px; width: auto; display: block; }
+  .bar nav { display: flex; gap: 1.6rem; align-items: center; }
+  .bar nav a { color: #fff; text-decoration: none; font-weight: 500; font-size: 1rem; }
+  .bar nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .menu-btn { font: 600 1rem 'Familjen Grotesk', sans-serif; color: #fff; background: transparent;
+    border: 1.5px solid rgba(255,255,255,.7); border-radius: 999px; padding: .5rem 1.1rem; min-height: 44px; }
+  .hero-copy { align-self: end; padding-bottom: clamp(2rem, 6vw, 4.5rem); max-width: 46rem; }
+  .eyebrow { font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; opacity: .92; }
+  .hero h1 { font-size: clamp(2.6rem, 1.2rem + 5.2vw, 5.6rem); margin: .6rem 0 1rem; text-wrap: balance; }
+  .hero p { font-size: clamp(1.1rem, 1rem + .4vw, 1.3rem); max-width: 34rem; margin: 0 0 1.6rem; }
+  .btn { display: inline-flex; align-items: center; min-height: 48px; padding: .7rem 1.4rem; border-radius: 10px;
+    font-weight: 600; text-decoration: none; }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-ghost { color: #fff; border: 1.5px solid rgba(255,255,255,.8); margin-left: .6rem; }
+
+  /* Sunday strip: facts in one row, right under the photo. */
+  .sunday { background: var(--soft); border-bottom: 1px solid var(--line); }
+  .sunday .wrap { display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 2rem; align-items: center; padding-block: 1.6rem; }
+  .sunday img { width: 72px; height: 72px; }
+  .fact b { display: block; font-family: 'Young Serif', serif; font-weight: 400; font-size: 1.5rem; }
+  .fact span { color: var(--muted); font-size: 1rem; }
+  .confirm { display: inline-block; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: #7A2A14; background: #FCE3DA; border-radius: 4px; padding: .1rem .4rem; vertical-align: middle; }
+
+  /* Photo stories: alternating split, photo bleeds to the page edge. */
+  .story { display: grid; grid-template-columns: 1.15fr 1fr; min-height: 520px; }
+  .story.flip { grid-template-columns: 1fr 1.15fr; }
+  .story.flip .photo { order: 2; }
+  .story .text { padding: clamp(2rem, 6vw, 5rem); align-self: center; max-width: 38rem; }
+  .story h2 { font-size: clamp(2rem, 1.3rem + 2.4vw, 3.2rem); color: var(--deep); margin-bottom: 1rem; }
+  .story p { margin: 0 0 1rem; color: var(--ink); }
+  .link { font-weight: 600; text-decoration: none; border-bottom: 2px solid currentColor; padding-bottom: 2px; }
+
+  /* Watch band: the one dark section. */
+  .watch { background: #1D2F44; color: #fff; padding-block: clamp(3rem, 8vw, 6rem); }
+  .watch .wrap { display: grid; grid-template-columns: 1fr 1.3fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  .watch h2 { font-size: clamp(2rem, 1.3rem + 2.4vw, 3.2rem); }
+  .watch .photo { aspect-ratio: 16 / 9; border-radius: 10px; }
+  .watch a { color: var(--sky); }
+  .play { position: absolute; inset: 0; margin: auto; width: 76px; height: 76px; border-radius: 50%;
+    background: rgba(255,255,255,.92); display: grid; place-items: center; z-index: 1; }
+  .play::before { content: ''; border-left: 22px solid #1D2F44; border-top: 13px solid transparent; border-bottom: 13px solid transparent; margin-left: 6px; }
+
+  /* This week: a short dated list. */
+  .week { padding-block: clamp(3rem, 8vw, 5.5rem); }
+  .week h2 { font-size: clamp(1.9rem, 1.3rem + 2vw, 2.8rem); margin-bottom: 1.5rem; }
+  .week ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .week li { display: grid; grid-template-columns: 7rem 1fr auto; gap: 1.5rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .week .when { font-weight: 600; color: var(--deep); }
+  .week .what { font-family: 'Young Serif', serif; font-size: 1.3rem; }
+  .week .where { color: var(--muted); font-size: 1rem; }
+
+  footer { background: var(--soft); padding-block: 3rem 2rem; border-top: 1px solid var(--line); }
+  .foot { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 2rem; }
+  .foot img { width: 120px; height: auto; }
+  .foot h3 { font-size: 1.15rem; margin-bottom: .6rem; }
+  .foot ul { list-style: none; padding: 0; margin: 0; line-height: 2; }
+  .meta { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--line); font-size: .95rem; color: var(--muted); }
+  .meta strong { color: var(--ink); }
+
+  @media (max-width: 860px) {
+    .bar nav a { display: none; }
+    .sunday .wrap { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .sunday img { grid-column: 1 / -1; width: 56px; height: 56px; }
+    .story, .story.flip { grid-template-columns: 1fr; min-height: 0; }
+    .story .photo, .story.flip .photo { order: 0; aspect-ratio: 4 / 3; }
+    .watch .wrap, .foot { grid-template-columns: 1fr; }
+    .week li { grid-template-columns: 1fr; gap: .2rem; }
+  }
+  @media (max-width: 480px) {
+    .bar img { height: 38px; }
+    .btn-ghost { margin: .7rem 0 0; }
+    .sunday .wrap { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="photo" role="img" aria-label="Placeholder for the hero photograph" data-photo="PHOTO (session): the front doors open on a Sunday morning, a greeter on the step, low sun from the east. Full bleed, landscape and a 4:5 crop for phones."></div>
+  <div class="wrap bar">
+    <a href="#"><img src="assets/fbc-auburn-horizontal-white.svg" alt="First Baptist Church of Auburn, home"></a>
+    <nav aria-label="Main">
+      <a href="#">Plan your visit</a><a href="#">Watch</a><a href="#">Events</a><a href="#">Give</a>
+      <button class="menu-btn" type="button" aria-haspopup="dialog">Menu</button>
+    </nav>
+  </div>
+  <div class="wrap hero-copy">
+    <div class="eyebrow">Auburn, Ross Township, Ohio</div>
+    <h1>A small church with the door open.</h1>
+    <p>We are a Southern Baptist family on Hamilton-Scipio Road. Come as you are this Sunday; someone will meet you at the door.</p>
+    <a class="btn btn-red" href="#">Plan your visit</a><a class="btn btn-ghost" href="#">Watch a message</a>
+  </div>
+</header>
+
+<main>
+  <section class="sunday" aria-label="Sunday times">
+    <div class="wrap">
+      <img src="assets/fbc-auburn-icon-full-color.svg" alt="">
+      <div class="fact"><b>9:45 am</b><span>Sunday School, all ages <span class="confirm">To confirm</span></span></div>
+      <div class="fact"><b>11:00 am</b><span>Sunday worship <span class="confirm">To confirm</span></span></div>
+      <div class="fact"><b>4241 Hamilton-Scipio Rd</b><span><a href="#">Directions and parking</a></span></div>
+    </div>
+  </section>
+
+  <section class="story">
+    <div class="photo warm" role="img" aria-label="Placeholder photograph" data-photo="PHOTO (session): coffee and conversation in the fellowship hall before the service, real members, faces turned to each other."></div>
+    <div class="text">
+      <h2>What a Sunday is like</h2>
+      <p>Come as you are and sit wherever you like. We sing, we pray, and we open the Bible together. <span class="confirm">Draft</span></p>
+      <p>What happens for children, and how long the service runs, goes here once the church confirms it.</p>
+      <a class="link" href="#">Your first visit</a>
+    </div>
+  </section>
+
+  <section class="story flip">
+    <div class="photo light" role="img" aria-label="Placeholder photograph" data-photo="PHOTO (session): the pastor outside by the church sign, relaxed, looking at the camera. Portrait crop."></div>
+    <div class="text">
+      <h2>Meet our pastor</h2>
+      <p>A short welcome in the pastor's own words goes here: who he is, why he loves this church, and what he hopes a first-time guest will find. Two or three sentences, written with him.</p>
+      <a class="link" href="#">Pastor and leadership</a>
+    </div>
+  </section>
+
+  <section class="watch">
+    <div class="wrap">
+      <div>
+        <h2>Missed a Sunday?</h2>
+        <p>Every message is streamed live on Facebook and TikTok, and the latest one is always here.</p>
+        <p><a class="link" href="#">All messages</a></p>
+      </div>
+      <div class="photo" role="img" aria-label="Placeholder for the latest message video" data-photo="VIDEO: the latest message, embedded from the church's video page."><span class="play" aria-hidden="true"></span></div>
+    </div>
+  </section>
+
+  <section class="week wrap">
+    <h2>This week at Auburn</h2>
+    <ul>
+      <li><span class="when">Sunday</span><span class="what">Sunday School and worship</span><span class="where">Times to confirm</span></li>
+      <li><span class="when">Wednesday</span><span class="what">Midweek Bible study and prayer</span><span class="where">6:00 pm <span class="confirm">To confirm</span></span></li>
+      <li><span class="when">Each month</span><span class="what">Events from the church calendar</span><span class="where">Filled from the Studio</span></li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><h3>First Baptist Church of Auburn</h3><p>4241 Hamilton-Scipio Road<br>Hamilton, Ohio</p></div>
+      <div><h3>Visit</h3><ul><li><a href="#">Plan your visit</a></li><li><a href="#">What we believe</a></li><li><a href="#">Ministries</a></li></ul></div>
+      <div><h3>Connect</h3><ul><li><a href="#">Prayer requests</a></li><li><a href="#">Give</a></li><li><a href="#">Facebook</a> and <a href="#">TikTok</a></li></ul></div>
+    </div>
+    <div class="meta">
+      <p><strong>Direction A, Front porch (image-led).</strong> <strong>Bet:</strong> a visitor decides from faces and a building they recognise, so real photographs do the welcoming.</p>
+      <p><strong>Rejects:</strong> stone headings on the homepage (the mark in the Sunday strip is the one stone moment), card grids, text-only heroes.</p>
+      <p><strong>Costs:</strong> needs the optional photo session; without it every block is empty. Text over photos needs a scrim and careful crops.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

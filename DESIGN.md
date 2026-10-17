@@ -1,104 +1,99 @@
 ---
-name: NCS Astro + Sanity Starter (neutral defaults)
-description: PLACEHOLDER design system. The neutral Slate, Ink and Paper defaults the starter ships; a fork replaces all of it.
+name: First Baptist Church of Auburn
+description: A warm, steady church site built from the stone-mosaic brand, with one stone moment per page and one colour everywhere else.
 colors:
-  slate: '#586577'
-  slate-dark: '#434E5C'
-  ink: '#2A2D31'
-  ink-dark: '#1E2024'
-  paper: '#FBFBFA'
-  paper-soft: '#F3F4F2'
-  divider: '#E6E7E5'
-  muted-text: '#5F6469'
-  mist: '#AAB0B8'
-  sage: '#9DB0A6'
-  dark-ground: '#17191C'
-  dark-card: '#202327'
-  dark-primary: '#8A96A6'
+  green: '#2C5B3A'
+  deep-sky: '#235E93'
+  water: '#3B83AA'
+  red: '#C4401F'
+  gold: '#E8A93A'
+  sky: '#96C3EA'
+  ink: '#171A26'
+  white: '#FFFFFF'
+  ground: '#FFFFFF'
+  ground-soft: '#F3F6F9'
+  ink-muted: '#4A4F5E'
+  dark-ground: '#171A26'
+  dark-ground-raised: '#20283A'
+  dark-text: '#F3F6F9'
+  dark-muted: '#B4B8C4'
+  dark-red: '#E5735A'
+  dark-green: '#8FC7A0'
 typography:
+  stone:
+    fontFamily: "'Auburn Stone', 'Young Serif', serif"
+    fontSize: 'clamp(2.5rem, 1.2rem + 5vw, 5.5rem)'
+    lineHeight: 1.02
   display:
-    fontFamily: 'Libre Baskerville, Georgia, Times New Roman, serif'
-    fontSize: 'clamp(2.5rem, 6vw, 5rem)'
+    fontFamily: "'Young Serif', Georgia, serif"
+    fontWeight: 400
   body:
-    fontFamily: 'Inter Variable, system-ui, sans-serif'
+    fontFamily: "'Familjen Grotesk', system-ui, sans-serif"
+    fontSize: '1.125rem'
+    lineHeight: 1.6
 rounded:
-  base: '0.5rem'
-spacing:
-  xs: 'clamp(0.25rem, 0.5vw, 0.5rem)'
-  s: 'clamp(0.5rem, 1vw, 1rem)'
-  m: 'clamp(1rem, 2vw, 1.5rem)'
-  l: 'clamp(2rem, 4vw, 3rem)'
-  section-md: 'clamp(3rem, 6vw, 5rem)'
-  section-lg: 'clamp(4rem, 8vw, 7rem)'
-components:
-  button-primary:
-    backgroundColor: '{colors.slate-dark}'
-    textColor: '#FFFFFF'
-    rounded: '{rounded.base}'
-    height: '44px'
+  md: '10px'
 ---
 
-# Design System: NCS Starter (placeholder)
+## Overview
 
-> **PLACEHOLDER, NOT A DESIGN.** This file documents the neutral defaults the starter ships so that agents on a fresh fork know what to replace. It is not a client's identity and must not be copied into one. A fork rewrites this file from its own tokens (`brand/brand.config.json`, then `npm run apply-brand`, then `src/styles/globals.css`) and removes this banner. The CSS wins if this file and the code disagree. Audience and tone placeholders are in `PRODUCT.md`.
+Status 2026-10-17: the brand is settled; the homepage direction is not yet picked. Three
+directions are in `docs/design-directions/2026-10-17-fbc-auburn/` (photo-led, illustration-led,
+type-led). When Nathan picks one, its archetype, density, imagery rule and rejects are written
+here and in that folder's `## Decision` entry.
 
-## 1. Overview
+North star: a small church that looks like itself. The stone mark is the most distinctive thing
+the church owns, so the site is a calm, mostly one-colour frame for it. Clear Sunday facts first,
+generous white space, honest about size. Must not look like the First Baptist Church Muncie site
+(cream paper and ink, titling caps, indigo and gold bands).
 
-**Creative North Star: [PLACEHOLDER].** The starter has no creative north star; a fork must name its own. What ships is a quiet, neutral surface so that nothing here is mistaken for a decision.
+## Colors
 
-- **Light and dark both ship.** A three-state toggle (light, dark, system) is persisted to `localStorage["theme"]`, and CLAUDE.md rule 3 says to build and check in both. (A fork may retire dark mode, as First Baptist Muncie did, but that is a project decision.)
-- **Polish layer defaults.** A repeating 2px brand-colour stripe is the starter's signature (header, drawer, footer, cards, closing panel); a soft card lift on hover; a faint paper grain (`body::before`, 4% opacity, 6% in dark); a warm radial tint on alternating bands (`.surface-warm`, driven by `--tint-rgb`).
-- **Page builder owns the rhythm.** `SectionRenderer` alternates paper and soft-paper surfaces automatically; blocks carry no colour field (rule 9).
-- **One grammar per page** (rule 17): one heading system, one left edge, one button family.
-- TODO(Nathan): decide whether `PORTS.md` should carry a card for "forks rewrite PRODUCT.md and DESIGN.md", so existing client repos know the shape. Not added here (scope was the two files and a CLAUDE.md pointer).
+- Seven brand colours, each with a role. **Deep sky** is the everyday one colour (links, buttons,
+  H2s, the avatar ground). **Green** is the second structural colour. **Red** is reserved for the
+  cross and at most one call to action per page. **Gold** and **sky** are accents only (stepping
+  stones, highlights, fills behind ink text), never text on white. **Water** is text on white only
+  at 24 px and up. **Ink** is body text.
+- Ground is white with a cool soft tint (`ground-soft`) for alternating sections; no cream.
+- Measured contrast on white: ink 17.3, green 7.9, deep sky 6.8, red 5.1, water 4.2 (large only),
+  gold 2.1 and sky 1.9 (never text). White text on deep sky 6.8, on green 7.9, on red 5.1. Ink on
+  gold 8.4 and on sky 9.3.
+- Dark mode: ink ground (`dark-ground`), raised panels `dark-ground-raised`, sky for links and H2s,
+  lighter red and green for the stone tones, gold allowed as text on ink.
 
-## 2. Colors
+## Typography
 
-Neutral Slate, Ink and Paper, declared in the `@theme` block of `src/styles/globals.css` and mirrored in `brand.config.json`. Reference by utility (`bg-primary`, `text-foreground`, `border-border`), never by hex in components.
+- **Young Serif** for display and H3 and below where a serif heading is wanted; one weight (400).
+- **Familjen Grotesk** for body, UI, labels and the tracked caps of the place line ("FIRST BAPTIST
+  CHURCH OF").
+- **Auburn Stone** for stone headings only, 40 px and up: the page H1 in mosaic (letters cycle
+  green, deep sky, red, water; gold left out on light) or an H2 in one colour. Real text, so it
+  wraps and is searchable; falls back to Young Serif with identical metrics.
+- Body 18 px minimum, line length 60 to 72 characters.
 
-- **Primary (Slate)** `#586577`; **Slate Dark** `#434E5C` is the button ground and link colour (it clears AA on small labels where plain Slate does not).
-- **Ink** `#2A2D31` for headings and body, **Ink Dark** `#1E2024` for the dark panel.
-- **Paper** `#FBFBFA` page, **Paper Soft** `#F3F4F2` alternating band, divider `#E6E7E5`, muted text `#5F6469`.
-- **Secondary** `#AAB0B8` and **tertiary** `#9DB0A6` are decorative, used sparingly.
-- **Dark theme:** ground `#17191C`, card `#202327`, primary lifted to `#8A96A6`, borders `oklch(1 0 0 / 12%)`.
-- `--tint-rgb` (88, 101, 119 in light, 138, 150, 166 in dark) feeds the polish-layer overlays; update it with the primary.
-- Every token must clear WCAG AA on every surface it appears on (4.5:1 body, 3:1 large text and UI). `src/lib/theme-tokens.test.ts` is the gate; fix the token, not the assertion.
-- [PLACEHOLDER: the project's palette, with role, hex and measured contrast for each.]
+## Elevation
 
-## 3. Typography
+Flat. Sections separate by ground tint and space, not shadows. One soft shadow at most for a
+floating element (a sticky "Plan your visit" bar on mobile).
 
-- **Display:** Libre Baskerville (400 and 700), a serif; fallback Georgia. **Body and UI:** Inter Variable. Mono is the system stack, and a script slot (`--font-script`) exists but is off by default.
-- **Scale:** `--text-h1` clamp(2.5rem, 6vw, 5rem), h2 clamp(2rem, 4vw, 3rem), h3 clamp(1.5rem, 2.5vw, 2rem), h4 clamp(1.25rem, 2vw, 1.5rem), h5 clamp(1.125rem, 1.5vw, 1.25rem), h6 1rem. Eyebrows are uppercase with `--tracking-eyebrow` 0.18em; hero headlines use `--leading-headline-tight` 1.05.
-- `apply-brand` does not install font packages: `npm install @fontsource/...` first (rule 12), then run `npm run build` (rule 13).
-- [PLACEHOLDER: the project's faces, weights, and where each is used.]
+## Components
 
-## 4. Elevation
+- Logo: horizontal lockup in the header (small mark under 48 px), Auburn-led lockup where the place
+  name should lead (footer, a sign-like hero).
+- Stone icons for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
+  praying hands, giving hand); one size per page, never mixed with line icons.
+- Buttons: one family, 10 px radius, deep sky solid and deep sky outline; red only for the single
+  most important action on a page.
+- Sunday block: times, address, parking and "what to expect" in one component, reused on Home and
+  Plan Your Visit.
 
-Soft and light by default: marketing cards rest on a low-opacity shadow that deepens on hover (`.card-lift`, a 2px rise), and surfaces otherwise separate by the paper and soft-paper cadence and by the 2px brand stripe. Radius base is `0.5rem` (`--radius`, with `sm` to `4xl` derived from it). [PLACEHOLDER: the project's elevation philosophy.]
+## Do's and Don'ts
 
-## 5. Components
-
-- **Buttons (`CtaLink.astro`).** Two looks, `primary` (filled, Slate Dark ground, white label) and `secondary` (outlined), plus an `onDark` toggle for dark surfaces (a `class` override does not work, because Tailwind v4 utility order lets the link colour win). Generous padding, uppercase tracking, 44px minimum tap target. Note: the file's header comment still says "bronze" from the Reid Design fork; the live colours are Slate. Forks usually replace both variants with one family (rule 17).
-- **Header, footer, mobile drawer.** Server-rendered desktop nav (rule 4), a brand stripe, theme toggle, `MobileNav` drawer.
-- **Touch targets.** Every link, button and form control is at least 44 by 44px at phone width (scan: `scripts/measure-tap-targets.mjs`). Footer column links and form controls carry real `min-h-[44px]`; standalone underlined links use the invisible `.hit-44` area so nothing visible moves (PORTS.md cards 82 and 83).
-- **Hero.** `Hero.astro` with `HeroBackground.astro` for image heroes and an entry stagger (`.hero-entry-stagger`).
-- **Sections.** The page-builder blocks under `src/components/sections/` render through `SectionRenderer.astro`; cards (service, journal, testimonial, project) share the stripe and card lift.
-- [PLACEHOLDER: the project's own component vocabulary and signature objects.]
-
-## 6. Do's and Don'ts
-
-Motion defaults: interaction easing `cubic-bezier(0.16, 1, 0.3, 1)` at 440ms; `[data-reveal]` scroll reveals, a grid stagger, a hero entry stagger and an image curtain exist as opt-ins; Lenis handles smooth scroll and the navigation scroll reset (rule 5); reduced motion zeroes all of it. Each fork decides which of these to keep: Stone Steps and FBCM both pruned reveals.
-
-**Do**
-
-- Replace this file, `PRODUCT.md`, `docs/brand/voice.md` and the neutral palette and fonts before a fork ships.
-- Measure every new colour pair in both themes before using it.
-- Use utilities backed by the tokens; never hardcode hex in components.
-- Run the fork-residue check (rule 11, PORTS.md card 44).
-
-**Don't**
-
-- Don't ship the starter's Slate, Libre Baskerville and Inter as a client's identity.
-- Don't add a colour or surface field to a block.
-- Don't copy another client's design language into a fork.
-- Don't write an em-dash in public copy.
+- Do keep one stone moment per page: the mosaic H1 or the full-colour mark, not both large.
+- Do make every layout work with no photographs, and better with one.
+- Do mark unconfirmed facts (service times, the verse) until the church confirms them.
+- Don't put mosaic colour on H2s, borders, dividers or backgrounds.
+- Don't set Auburn Stone below 40 px.
+- Don't use gold or sky as text on white.
+- Don't use stock photography, crowd shots or anything that makes the church look bigger than it is.
+- Don't reuse the Muncie site's paper-and-ink ground, titling masthead or indigo bands.

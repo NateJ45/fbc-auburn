@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction C: The noticeboard (type-led) | First Baptist Church of Auburn</title>
+<!-- Fonts: Auburn Stone (local) for the one word "Auburn", Young Serif for headings AND the pastor's
+     letter, Familjen Grotesk in tracked caps for labels and the index. Throwaway mockup, not site code. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
+<style>
+  @font-face { font-family: 'Auburn Stone'; src: url('assets/auburn-stone.woff2') format('woff2'); font-display: swap; }
+  :root {
+    --ink: #171A26; --muted: #4A4F5E; --ground: #FFFFFF; --rule: #171A26; --hair: #D5DBE3;
+    --accent: #235E93; --photo-a: #A9BFCF; --photo-b: #5E7F96;
+    --s0: #2C5B3A; --s1: #235E93; --s2: #C4401F; --s3: #3B83AA;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #F3F6F9; --muted: #B4B8C4; --ground: #171A26; --rule: #F3F6F9; --hair: #2E3850;
+      --accent: #96C3EA; --photo-a: #3C5266; --photo-b: #22303F;
+      --s0: #96C3EA; --s1: #E8A93A; --s2: #E5735A; --s3: #8FC7A0; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font: 400 1.0625rem/1.55 'Familjen Grotesk', system-ui, sans-serif; }
+  a { color: var(--ink); }
+  a:focus-visible { outline: 3px solid #E8A93A; outline-offset: 3px; }
+  .page { width: min(1240px, 100% - 2.5rem); margin: 0 auto; }
+  .caps { font-weight: 600; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; }
+  .s0 { color: var(--s0); } .s1 { color: var(--s1); } .s2 { color: var(--s2); } .s3 { color: var(--s3); }
+  .confirm { display: inline-block; font: 700 .68rem/1.4 'Familjen Grotesk', sans-serif; letter-spacing: .06em; text-transform: uppercase;
+    color: #7A2A14; background: #FCE3DA; border-radius: 3px; padding: .05rem .35rem; vertical-align: middle; }
+
+  /* No nav bar: a thin masthead line, then the name is the hero and the site index sits inside it. */
+  .mast { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 2px solid var(--rule); }
+  .mast img { width: 34px; height: 34px; display: block; }
+  .mast .caps { align-self: center; }
+  .top { display: grid; grid-template-columns: 7fr 5fr; gap: 0 clamp(1.5rem, 4vw, 3.5rem); padding-top: clamp(1.5rem, 4vw, 3rem); }
+  .name .caps { font-size: clamp(.8rem, .6rem + .8vw, 1.25rem); letter-spacing: .22em; }
+  .name h1 { margin: .2rem 0 0; font-family: 'Auburn Stone', 'Young Serif', serif; font-weight: 400;
+    font-size: clamp(5rem, 1rem + 15vw, 13.5rem); line-height: .9; letter-spacing: -.02em; }
+  .name p { font-family: 'Young Serif', serif; font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); line-height: 1.3; margin: 1.2rem 0 0; max-width: 32rem; }
+  .arch { position: relative; aspect-ratio: 4 / 5; border-radius: 999px 999px 0 0; overflow: hidden;
+    background: linear-gradient(175deg, var(--photo-a), var(--photo-b)); align-self: end; }
+  .arch span { position: absolute; left: 1rem; right: 1rem; bottom: 1rem; background: rgba(0,0,0,.55); color: #fff;
+    font-size: .78rem; line-height: 1.35; padding: .45rem .6rem; border-radius: 5px; }
+
+  .index { grid-column: 1 / -1; margin-top: clamp(1.5rem, 4vw, 2.5rem); border-top: 2px solid var(--rule);
+    display: grid; grid-template-columns: repeat(4, 1fr); }
+  .index a { display: flex; gap: .7rem; align-items: baseline; padding: .8rem .2rem; border-bottom: 1px solid var(--hair);
+    text-decoration: none; font-weight: 600; font-size: 1.05rem; min-height: 48px; }
+  .index a:hover { color: var(--accent); }
+  .index small { font-weight: 500; color: var(--muted); font-size: .8rem; min-width: 1.5rem; font-variant-numeric: tabular-nums; }
+
+  /* Sundays: a large typographic timetable, no icons, no cards. */
+  .row { display: grid; grid-template-columns: 3fr 9fr; gap: clamp(1rem, 4vw, 3.5rem); padding: clamp(2.5rem, 6vw, 4rem) 0;
+    border-bottom: 2px solid var(--rule); }
+  .row > h2 { font-family: 'Young Serif', serif; font-weight: 400; font-size: clamp(1.7rem, 1.2rem + 1.6vw, 2.4rem); line-height: 1.1; margin: 0; }
+  .timetable { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .timetable div { border-top: 1px solid var(--hair); padding-top: .8rem; }
+  .timetable b { display: block; font-family: 'Young Serif', serif; font-weight: 400; font-size: clamp(2.2rem, 1.4rem + 2.4vw, 3.4rem); line-height: 1; margin: .4rem 0 .5rem; }
+  .where { margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: .5rem 2rem; font-size: 1.05rem; }
+  .where a { color: var(--accent); font-weight: 600; }
+
+  /* The pastor's letter: set in the serif, narrow, like a printed note. */
+  .letter { font-family: 'Young Serif', serif; font-size: clamp(1.15rem, 1rem + .4vw, 1.3rem); line-height: 1.6; max-width: 36rem; }
+  .letter p { margin: 0 0 1rem; }
+  .sig { font-family: 'Familjen Grotesk', sans-serif; font-size: 1rem; color: var(--muted); }
+
+  /* This week: a dense dated list in two columns. */
+  .week { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2.5rem; }
+  .week article { display: grid; grid-template-columns: 5.5rem 1fr; gap: 1rem; padding: .9rem 0; border-bottom: 1px solid var(--hair); }
+  .week time { font-weight: 700; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); padding-top: .2rem; }
+  .week h3 { font-family: 'Young Serif', serif; font-weight: 400; font-size: 1.2rem; margin: 0 0 .15rem; }
+  .week p { margin: 0; color: var(--muted); font-size: .98rem; }
+  .links { display: flex; flex-wrap: wrap; gap: .6rem 1.8rem; margin-top: 1.4rem; font-weight: 600; }
+  .links a { color: var(--accent); }
+
+  footer { padding: 2rem 0 2.5rem; font-size: .95rem; }
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+  .meta { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px dashed var(--hair); color: var(--muted); }
+  .meta strong { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .top { grid-template-columns: 1fr; }
+    .arch { order: 2; aspect-ratio: 16 / 10; border-radius: 999px 999px 0 0 / 70% 70% 0 0; margin-top: 1.8rem; }
+    .index { order: 3; grid-template-columns: repeat(2, 1fr); }
+    .row { grid-template-columns: 1fr; }
+    .week { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .timetable { grid-template-columns: 1fr; gap: .8rem; }
+    .mast .caps:last-child { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="mast">
+    <img src="assets/fbc-auburn-small-mark-full-color.svg" alt="First Baptist Church of Auburn">
+    <span class="caps">Hamilton-Scipio Road, Ross Township</span>
+    <span class="caps">Hamilton, Ohio</span>
+  </header>
+
+  <section class="top" aria-labelledby="name">
+    <div class="name">
+      <div class="caps">First Baptist Church of</div>
+      <h1 id="name" aria-label="Auburn"><span aria-hidden="true"><span class="s0">A</span><span class="s1">u</span><span class="s2">b</span><span class="s3">u</span><span class="s0">r</span><span class="s1">n</span></span></h1>
+      <p>A small Southern Baptist church in the hamlet of Auburn. Come as you are this Sunday.</p>
+    </div>
+    <div class="arch" role="img" aria-label="Placeholder for the one homepage photograph"><span>PHOTO (one, can be taken by a member): the church building from the road, arched crop. The only photograph on the page.</span></div>
+    <nav class="index" aria-label="Site index">
+      <a href="#"><small>01</small>Plan your visit</a><a href="#"><small>02</small>About us</a><a href="#"><small>03</small>What we believe</a><a href="#"><small>04</small>Pastor and leadership</a>
+      <a href="#"><small>05</small>Ministries</a><a href="#"><small>06</small>Watch</a><a href="#"><small>07</small>Events</a><a href="#"><small>08</small>Give</a>
+      <a href="#"><small>09</small>Prayer requests</a><a href="#"><small>10</small>Contact</a>
+    </nav>
+  </section>
+
+  <main>
+    <section class="row" aria-labelledby="sundays">
+      <h2 id="sundays">Sundays and Wednesdays</h2>
+      <div>
+        <div class="timetable">
+          <div><span class="caps">Sunday</span><b>9:45</b>Sunday School, all ages <span class="confirm">To confirm</span></div>
+          <div><span class="caps">Sunday</span><b>11:00</b>Worship <span class="confirm">To confirm</span></div>
+          <div><span class="caps">Wednesday</span><b>6:00</b>Bible study and prayer <span class="confirm">To confirm</span></div>
+        </div>
+        <div class="where"><span>4241 Hamilton-Scipio Road, Hamilton, Ohio</span><a href="#">Directions</a><a href="#">What to expect</a></div>
+      </div>
+    </section>
+
+    <section class="row" aria-labelledby="welcome">
+      <h2 id="welcome">A word from our pastor</h2>
+      <div class="letter">
+        <p>This space holds a short, plain welcome in the pastor's own voice, written with him: who we are, that you do not need to dress up or know the songs, and that we would be glad to see you.</p>
+        <p>Two or three short paragraphs at most. It reads like a note pinned to the church door.</p>
+        <div class="sig">Senior Pastor, First Baptist Church of Auburn</div>
+      </div>
+    </section>
+
+    <section class="row" aria-labelledby="week">
+      <h2 id="week">This week</h2>
+      <div>
+        <div class="week">
+          <article><time>Sun</time><div><h3>Sunday School and worship</h3><p>Times above, to confirm</p></div></article>
+          <article><time>Sun</time><div><h3>The latest message</h3><p>Streamed live on Facebook and TikTok</p></div></article>
+          <article><time>Wed</time><div><h3>Bible study and prayer</h3><p>Midweek, to confirm</p></div></article>
+          <article><time>Soon</time><div><h3>Events from the calendar</h3><p>Filled from the Studio</p></div></article>
+        </div>
+        <div class="links"><a href="#">Watch</a><a href="#">All events</a><a href="#">Send a prayer request</a><a href="#">Give</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="foot"><span>First Baptist Church of Auburn, 4241 Hamilton-Scipio Road, Hamilton, Ohio</span><span><a href="#">Facebook</a> &nbsp; <a href="#">TikTok</a></span></div>
+    <div class="meta">
+      <p><strong>Direction C, The noticeboard (poster / typographic).</strong> <strong>Bet:</strong> the place name is the church's best asset; a visitor wants every fact on one screen, set like a well-made noticeboard, with one honest photo of the building.</p>
+      <p><strong>Rejects:</strong> a navigation bar (the index lives in the hero), icons, buttons, coloured section bands, more than one photograph.</p>
+      <p><strong>Costs:</strong> dense and text-heavy on a phone; relies on good copy in the pastor's voice; the index must be kept in step with the page list by hand.</p>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

@@ -103,6 +103,17 @@ domain and their mail.
 
 ---
 
+### 1c. Pick a homepage direction, then reskin
+
+**Blocker: Nathan picks one of the three directions (or a hybrid).**
+
+Brief (`PRODUCT.md`, `DESIGN.md`), references (`docs/references/`) and three static homepage
+directions (`docs/design-directions/2026-10-17-fbc-auburn/`, open `index.html`) were done on
+2026-10-17. Next: record the pick as a dated `## Decision` entry in that README, update
+`DESIGN.md` Overview and Do's and Don'ts, then run the reskin skill. The stone heading kit
+(Auburn Stone webfont and `StoneHeading.astro`) comes in with the reskin. Service times shown in
+the mockups are still unconfirmed with the church.
+
 ## Known gaps, deliberately open
 
 ### 2. `npm run parity compare` is not a CI step
