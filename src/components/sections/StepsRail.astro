@@ -1,0 +1,123 @@
+---
+// Safe to edit by hand
+// Page-builder block: the stepping-stone rail (stepsRailSection). Numbered steps, each beside a
+// big stone icon, with three of the mark's gold stepping stones laid in each gap; the path ends in
+// the church mark, which builds itself stone by stone (MarkBuild), then a closing line and buttons.
+//
+// Everything here is server-rendered: the stones, the mark and every word are in the HTML, so the
+// block reads the same without JS. Motion (src/styles/motion.css, src/scripts/motion.ts): each
+// stone lands as it scrolls in, in order down the page; reduced motion shows it all at rest.
+// Design source: the studio mockups' index.html ".rail" and motion.js part 1 (2026-10-17).
+import SectionHeading from '@/components/SectionHeading.astro';
+import CtaLink from '@/components/CtaLink.astro';
+import MarkBuild from '@/components/motion/MarkBuild.astro';
+import { stoneSrcs, stoneIconSrc } from '@/components/motion/stones';
+import { surfaceClass } from '@/lib/surfaces';
+import { withTrailingSlash } from '@/lib/href';
+import type { ProjectedStepsRailSection } from '@/lib/pageBuilder.types';
+
+type Props = Omit<ProjectedStepsRailSection, '_type' | '_key'> & {
+  surface?: 'background' | 'muted';
+  headingId: string;
+};
+
+const {
+  heading,
+  intro,
+  steps = [],
+  endHeading,
+  primaryCta,
+  secondaryCta,
+  surface = 'background',
+  headingId,
+} = Astro.props as Props;
+
+const stones = await stoneSrcs();
+const rows = await Promise.all(
+  steps.filter((s) => s?.title).map(async (s) => ({ ...s, iconSrc: await stoneIconSrc(s.icon) })),
+);
+const isExternal = (href: string) => /^https?:\/\//.test(href);
+---
+
+<section
+  class:list={[surfaceClass(surface), 'steps-rail']}
+  aria-labelledby={heading ? headingId : undefined}
+  data-no-bgpath
+  data-bgpath-page
+  data-stones={stones.join(',')}
+>
+  <div class="mx-auto max-w-content px-m py-section-lg">
+    {heading && (
+      <SectionHeading
+        headline={heading}
+        subhead={intro}
+        headingId={headingId}
+        align="center"
+        class="mx-auto steps-rail__intro"
+      />
+    )}
+
+    <ol class="rail" role="list">
+      {rows.map((step, n) => (
+        <>
+          <li class="rail__step">
+            <span class="rail__stone reveal">
+              {step.iconSrc && <img src={step.iconSrc} alt="" width="80" height="80" />}
+            </span>
+            <div class="rail__body">
+              <p class="rail__n">Step {n + 1}</p>
+              <h3 class="rail__title">{step.title}</h3>
+              {step.body && <p class="rail__text">{step.body}</p>}
+              {step.times && step.times.length > 0 && (
+                <dl class="rail__times">
+                  {step.times.map((t) => (
+                    <div>
+                      <dt>{t.time}</dt>
+                      <dd>{t.label}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {step.linkLabel && step.linkHref && (
+                <a
+                  class="rail__link"
+                  href={withTrailingSlash(step.linkHref)}
+                  target={isExternal(step.linkHref) ? '_blank' : undefined}
+                  rel={isExternal(step.linkHref) ? 'noopener noreferrer' : undefined}
+                >
+                  {step.linkLabel}
+                  {isExternal(step.linkHref) && <span class="sr-only"> (opens in a new tab)</span>}
+                </a>
+              )}
+            </div>
+          </li>
+          {n < rows.length - 1 && (
+            <li class="rail__gap" aria-hidden="true" role="presentation">
+              {[0, 1, 2].map((k) => (
+                <img
+                  class="rail__pebble reveal"
+                  src={stones[(n + k) % 3]}
+                  alt=""
+                  width="62"
+                  height="28"
+                  style={`--d:${k * 140}ms;--k:${k};--x:${k % 2 ? 9 : -9}px;--r:${k % 2 ? 3 : -3}deg`}
+                />
+              ))}
+            </li>
+          )}
+        </>
+      ))}
+    </ol>
+
+    <div class="rail-end">
+      <MarkBuild class="rail-end__mark" />
+      {endHeading && <p class="rail-end__line font-display auburn-h2">{endHeading}</p>}
+      {(primaryCta?.label || secondaryCta?.label) && (
+        <div class="rail-end__ctas">
+          {primaryCta?.label && <CtaLink cta={primaryCta} variant="primary" />}
+          {secondaryCta?.label && <CtaLink cta={secondaryCta} variant="secondary" />}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

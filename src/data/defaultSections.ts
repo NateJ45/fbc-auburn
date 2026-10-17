@@ -5,7 +5,8 @@
 //
 // IMPORTANT: only use blocks that render fully from INLINE data:
 //   heroSection, richTextSection, imageTextSection (no image), statSection,
-//   ctaBandSection, quoteSection, spacerSection.
+//   ctaBandSection, quoteSection, spacerSection, and FBC Auburn's stepsRailSection and
+//   walkSection.
 // Collection-dependent rich sections (servicesGridSection, testimonialsSection,
 // processSection, valuesSection) are NOT used here — they'd render empty without
 // Sanity collections and would defeat the purpose of a no-data safety net.
@@ -41,25 +42,76 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
     subhead:
       'A small church with the door open. We are a Southern Baptist family on Hamilton-Scipio Road in Ross Township. Come as you are this Sunday, and someone will meet you at the door.',
     size: 'tall',
-    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
+    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
     secondaryCta: { _type: 'ctaBlock', label: 'About the church', href: '/about/' },
   },
+  // The stepping-stone rail (StepsRail.astro): renders fully from inline data, stone icons by name.
   {
-    _type: 'richTextSection',
-    _key: 'default-home-sunday',
+    _type: 'stepsRailSection',
+    _key: 'default-home-rail',
     heading: 'A Sunday with us, one step at a time',
-    width: 'narrow',
-    align: 'center',
-    body: [
-      para(
-        'default-home-sunday-p1',
-        'Never been to church, or not for a while? Here is what to expect. Park in the lot beside the building at 4241 Hamilton-Scipio Road and come to the front doors. A greeter will meet you there, and there is coffee in the fellowship hall.',
-      ),
-      para(
-        'default-home-sunday-p2',
-        'Sunday School for all ages is at 9:45 am and worship is at 11:00 am, with Bible study and prayer on Wednesdays at 6:00 pm (times to be confirmed). Worship lasts about an hour. Sit wherever you like; nobody will single you out.',
-      ),
+    intro: 'Never been to church, or not for a while? Here is exactly what to expect.',
+    steps: [
+      {
+        _type: 'railStep',
+        _key: 'default-rail-1',
+        icon: 'map-pin',
+        title: 'Find us in Auburn',
+        body: '4241 Hamilton-Scipio Road, Hamilton. Park in the lot beside the building and come to the front doors.',
+        linkLabel: 'Walk in with us, from the car to your seat',
+        linkHref: '/plan-your-visit/#walk',
+      },
+      {
+        _type: 'railStep',
+        _key: 'default-rail-2',
+        icon: 'clock',
+        title: 'Come at a time that suits you',
+        body: 'Times to be confirmed.',
+        times: [
+          {
+            _type: 'railTime',
+            _key: 'default-rail-t1',
+            time: '9:45 am',
+            label: 'Sunday School for all ages',
+          },
+          { _type: 'railTime', _key: 'default-rail-t2', time: '11:00 am', label: 'Sunday worship' },
+          {
+            _type: 'railTime',
+            _key: 'default-rail-t3',
+            time: '6:00 pm',
+            label: 'Wednesday Bible study and prayer',
+          },
+        ],
+      },
+      {
+        _type: 'railStep',
+        _key: 'default-rail-3',
+        icon: 'coffee',
+        title: 'Someone will say hello',
+        body: 'A greeter will meet you at the door, and there is coffee in the fellowship hall. Sit wherever you like; nobody will single you out.',
+      },
+      {
+        _type: 'railStep',
+        _key: 'default-rail-4',
+        icon: 'bible',
+        title: 'We sing, pray and open the Bible',
+        body: 'Worship lasts about an hour. Children are welcome in the service, and there is a checked-in room for little ones (to be confirmed).',
+        linkLabel: 'Your first visit',
+        linkHref: '/plan-your-visit/',
+      },
+      {
+        _type: 'railStep',
+        _key: 'default-rail-5',
+        icon: 'praying-hands',
+        title: 'Let us pray for you',
+        body: 'Send a prayer request any time, and we will pray for you by name.',
+        linkLabel: 'Send a prayer request',
+        linkHref: '/contact/',
+      },
     ],
+    endHeading: 'The path leads here. We would love to meet you this Sunday.',
+    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
+    secondaryCta: { _type: 'ctaBlock', label: 'Ask a question', href: '/contact/' },
   },
   {
     _type: 'imageTextSection',
@@ -120,7 +172,90 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
     _key: 'default-home-cta',
     headline: 'We would love to meet you this Sunday.',
     subhead: 'Tell us you are coming, or ask anything at all.',
-    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
+    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
+  },
+];
+
+// Plan your visit (FBC Auburn, 2026-10-17). A Studio page (page document, slug plan-your-visit)
+// owns this address; [slug].astro renders these sections only when no such page exists (a fresh
+// clone, or a project with no Sanity), so the built-in "Plan your visit" buttons never 404.
+export const PLAN_VISIT_SLUG = 'plan-your-visit';
+export const DEFAULT_PLAN_VISIT_TITLE = 'Plan your visit';
+export const DEFAULT_PLAN_VISIT_SECTIONS: PageBuilderBlock[] = [
+  {
+    _type: 'heroSection',
+    _key: 'default-pyv-hero',
+    eyebrow: 'Your first Sunday',
+    headline: 'Plan your visit',
+    subhead:
+      'Everything you might wonder about before you come, so you can walk in feeling at home.',
+    size: 'short',
+  },
+  {
+    _type: 'walkSection',
+    _key: 'default-pyv-walk',
+    heading: 'Walk in with us',
+    intro:
+      'From your parking space to your seat, here is your first Sunday morning, one stone at a time.',
+    stops: [
+      {
+        _type: 'walkStop',
+        _key: 'default-stop-1',
+        time: '10:40',
+        title: 'Park in the lot',
+        body: 'Turn in from Hamilton-Scipio Road. The spaces nearest the front doors are kept for guests (to be confirmed).',
+      },
+      {
+        _type: 'walkStop',
+        _key: 'default-stop-2',
+        time: '10:45',
+        title: 'Someone meets you at the door',
+        body: 'A greeter will be at the front doors to say hello, answer any question and show you around.',
+      },
+      {
+        _type: 'walkStop',
+        _key: 'default-stop-3',
+        time: '10:48',
+        title: 'Coffee in the fellowship hall',
+        body: 'Grab a coffee and a seat. Nobody will put you on the spot.',
+      },
+      {
+        _type: 'walkStop',
+        _key: 'default-stop-4',
+        time: '10:52',
+        title: 'Kids check in, if you like',
+        body: "Little ones can stay in the children's room with trained, background-checked volunteers. Children are always welcome in the service too (to be confirmed).",
+      },
+      {
+        _type: 'walkStop',
+        _key: 'default-stop-5',
+        time: '11:00',
+        title: 'Worship in the sanctuary',
+        body: 'Sit wherever you like. We sing, pray and open the Bible together for about an hour.',
+      },
+    ],
+    endHeading: 'You made it. We would love to see you.',
+    endBody: 'Let us know you are coming and we will look out for you at the door.',
+    endLinkLabel: 'Tell us you are coming',
+    endLinkHref: '/contact/?visit=sunday-11',
+  },
+  {
+    _type: 'richTextSection',
+    _key: 'default-pyv-here',
+    heading: 'Getting here',
+    width: 'narrow',
+    body: [
+      para(
+        'default-pyv-here-p1',
+        '4241 Hamilton-Scipio Road, Hamilton, Ohio, in the hamlet of Auburn, Ross Township. Parking is free in the church lot next to the building (to be confirmed).',
+      ),
+    ],
+  },
+  {
+    _type: 'ctaBandSection',
+    _key: 'default-pyv-cta',
+    headline: 'Let us know you are coming, and we will look out for you.',
+    cta: { _type: 'ctaBlock', label: 'Tell us you are visiting', href: '/contact/' },
   },
 ];
 
@@ -153,7 +288,7 @@ export const DEFAULT_ABOUT_SECTIONS: PageBuilderBlock[] = [
     _key: 'default-about-cta',
     headline: 'Come and see.',
     subhead: 'Sunday worship is at 11:00 am (to be confirmed). Someone will meet you at the door.',
-    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
+    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
   },
 ];
 // scaffold:end

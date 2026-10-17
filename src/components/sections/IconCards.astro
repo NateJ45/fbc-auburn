@@ -35,7 +35,7 @@ const { eyebrow, heading, intro, cards = [], surface = 'background', headingId }
     <ul class="icon-cards" role="list">
       {cards.map((card) => (
         <li class="icon-card">
-          <StoneIcon name={card.icon} size={96} class="icon-card__icon" />
+          <StoneIcon name={card.icon} size={96} class="icon-card__icon reveal" />
           <h3 class="icon-card__title">{card.title}</h3>
           {card.body && <p class="icon-card__body">{card.body}</p>}
           {card.note && <p class="icon-card__note">{card.note}</p>}

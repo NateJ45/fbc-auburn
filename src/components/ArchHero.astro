@@ -76,7 +76,7 @@ const mark = hasImage ? null : await getImage({ src: markLight });
   <div class="arch-hero__inner mx-auto max-w-content px-m">
     <div class="arch-hero__copy">
       {!masthead && icon && (
-        <StoneIcon name={icon} size={112} loading="eager" class="arch-hero__icon" />
+        <StoneIcon name={icon} size={112} loading="eager" class="arch-hero__icon reveal" />
       )}
       {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
       <StoneHeading text={headline} id={headingId} />

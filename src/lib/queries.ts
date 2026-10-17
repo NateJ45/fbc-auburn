@@ -82,6 +82,11 @@ export function sectionsProjection(field = 'pageBuilder'): string {
       }
     },
     // scaffold:end
+    _type == "stepsRailSection" => {
+      ...,
+      primaryCta${CTA_PROJECTION},
+      secondaryCta${CTA_PROJECTION}
+    },
     _type == "logoStripSection" => {
       ...,
       logos[]${IMAGE_PROJECTION}

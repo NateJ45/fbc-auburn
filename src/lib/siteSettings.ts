@@ -122,7 +122,8 @@ export function fallbackNavItems(visible: SectionVisibility): NavItem[] {
 export const FALLBACK_HEADER_CTA: HeaderCta = {
   show: true,
   label: 'Plan your visit',
-  href: '/contact/',
+  // The Studio page "Plan your visit" (a page document, slug plan-your-visit), 2026-10-17.
+  href: '/plan-your-visit/',
 };
 
 /** Trim a Sanity string; treat blank/whitespace-only/missing as "unset". */

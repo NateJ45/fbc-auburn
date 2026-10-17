@@ -13,6 +13,21 @@ FAQ and dynamic list). In Sanity: What we believe, Leadership and Ministries pag
 the pastor's to write), and Home's "Find your place" became icon cards plus the Watch and This week blocks. Verified:
 typegen, check, test:unit, Home at 375 and 1280 with the church-data fixture, no sideways scroll at 320.
 
+_2026-10-17: the stone path and its motion, and Plan your visit with "Walk in with us"._
+
+**Decision.** Ported the studio mockups' v3 motion pass. Two new content blocks in `auburnMotionSections.ts`:
+`stepsRailSection` (numbered steps with a stone-icon picker, gold stones laid between them, ending in the mark
+building itself) replaces Home's "A Sunday with us" text, and `walkSection` (Walk in with us: a stone-mosaic plan
+pinned beside the stops, the route laid leg by leg, ending on /contact/?visit=sunday-11) carries the new Plan your visit
+page (`page-plan-your-visit`). The plan is computed at build time (`src/lib/walk-plan.ts`, placeholder geometry
+until the church shares a building plan, unit-tested), so it reads without JS. `imageTextSection` gained `art`
+(photo, the mark, or the baptism drawing, each with its motion); About now has "The story in our mark". Motion is
+CSS scroll-driven animation (`animation-timeline: view()`) with an IntersectionObserver fallback, all behind
+`html.motion`, which an inline head script sets only when reduced motion is not asked for. Transforms and opacity
+only, the cross never moves. Every built-in "Plan your visit" button now goes to /plan-your-visit/. With no Studio page of that slug (a fresh clone, or CI, which builds without a Sanity project), `[slug].astro` still builds the address from `DEFAULT_PLAN_VISIT_SECTIONS`, and the Home default now carries the rail. Also fixed: the Contact roadmap step numbers drew at 80% of the link colour (4.07:1 on the card, an axe failure); they use the full link colour now. Verified: typegen,
+check, test:unit, build, format, Playwright suite (106); light and dark at 375 and 1280 with motion on and off, no sideways
+scroll at 320, the walk's state at three stops in Chromium and WebKit.
+
 _2026-10-17: the Studio kit, first part (Home, Site Guide, Checkup, staff view, Trash, tour)._
 
 **Decision.** The editor gets a plain Studio: it opens on **Home** (welcome, This week, Is it live?, Site health,
