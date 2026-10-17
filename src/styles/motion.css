@@ -373,12 +373,6 @@ html.motion .baptism-motion #ripples {
 .bgstone.in {
   opacity: 0.45;
 }
-.dark .bgpath {
-  mix-blend-mode: screen;
-}
-.dark .bgstone.in {
-  opacity: 0.12;
-}
 
 /* ======================================================================================
    Small touches: three tiny stones under the current page in the header nav.
@@ -396,7 +390,7 @@ html.motion .baptism-motion #ripples {
 
 /* ======================================================================================
    Walk in with us (WalkSection.astro, walkSection): the plan stays pinned beside the stops
-   while the page scrolls normally. Tile colours are the plan's own, light and dark.
+   while the page scrolls normally. Tile colours are the plan's own (the site is light only).
    ====================================================================================== */
 .walk {
   --plan-ground: #f3f6f9;
@@ -410,19 +404,6 @@ html.motion .baptism-motion #ripples {
   --label: #4a4f5e;
   --tag-bg: #171a26;
   --tag-fg: #ffffff;
-}
-.dark .walk {
-  --plan-ground: #1c2333;
-  --t-lawn: #26402f;
-  --t-lot: #2c3547;
-  --t-road: #384357;
-  --t-sanct: #22405f;
-  --t-hall: #4a3c25;
-  --t-kids: #234132;
-  --t-door: #e5735a;
-  --label: #c9cdd8;
-  --tag-bg: #f3f6f9;
-  --tag-fg: #171a26;
 }
 .walk-grid {
   display: grid;
