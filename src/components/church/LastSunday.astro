@@ -1,0 +1,183 @@
+---
+// Safe to edit by hand
+// The Watch band's replay: the newest message from the church's YouTube
+// channel (Site settings > Church facts > YouTube channel ID), read at build
+// time from the public channel feed (src/lib/church-feeds.ts). Labelled "Last
+// Sunday" when it is last Sunday's, otherwise "Latest message".
+//
+// LIGHT ON PURPOSE (Lighthouse). No YouTube script or iframe loads with the
+// page: it is a thumbnail link to the video. A press swaps in the
+// privacy-enhanced (youtube-nocookie) player, autoplaying; without JavaScript
+// the link simply opens YouTube. The thumbnail is lazy, sized and decoded
+// off the main thread, and the box reserves its 16:9 space, so no shift.
+//
+// FALLBACK. No channel id yet, or the feed failed: the `fallback` slot
+// renders instead (the Watch band passes its own words, say a Facebook link),
+// or nothing at all when no slot is given. The build never fails on YouTube.
+
+import { getChurchFacts } from '@/lib/church-data';
+import { loadLatestVideo } from '@/lib/church-feeds';
+import { channelUrl } from '@/lib/church-video';
+import { monthDay } from '@/lib/church-facts';
+
+interface Props {
+  /** Show the "All messages on YouTube" link under the title. */
+  showChannelLink?: boolean;
+  class?: string;
+}
+
+const { showChannelLink = true, class: className = '' } = Astro.props;
+const facts = await getChurchFacts();
+const video = await loadLatestVideo(facts);
+const hasFallback = Astro.slots.has('fallback');
+---
+
+{video ? (
+  <figure class:list={['last-sunday', className]} data-last-sunday>
+    <div class="last-sunday__frame">
+      <a
+        class="last-sunday__play"
+        href={video.watchUrl}
+        data-embed={video.embedUrl}
+        data-title={video.title}
+        aria-label={`Play: ${video.title}`}
+      >
+        <img
+          src={video.thumbnailUrl}
+          alt=""
+          width="480"
+          height="360"
+          loading="lazy"
+          decoding="async"
+          referrerpolicy="no-referrer"
+        />
+        <span class="last-sunday__button" aria-hidden="true" />
+      </a>
+    </div>
+    <figcaption class="last-sunday__caption">
+      <span class="last-sunday__label">
+        {video.label} · <time datetime={video.date}>{monthDay(video.date)}</time>
+      </span>
+      <span class="last-sunday__title">{video.title}</span>
+      {showChannelLink && facts.youtubeChannelId && (
+        <a class="last-sunday__channel" href={channelUrl(facts.youtubeChannelId)} rel="noopener">
+          All messages on YouTube
+        </a>
+      )}
+    </figcaption>
+  </figure>
+) : (
+  hasFallback && <slot name="fallback" />
+)}
+
+<script>
+  // One delegated listener for every replay on the page, surviving view
+  // transitions. A plain click becomes the embedded player; a modified click
+  // (new tab, new window) keeps the browser's own behaviour.
+  document.addEventListener('click', (event) => {
+    const link = (event.target as Element | null)?.closest<HTMLAnchorElement>(
+      'a.last-sunday__play[data-embed]',
+    );
+    if (!link || event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const frame = document.createElement('iframe');
+    frame.src = link.dataset.embed ?? '';
+    frame.title = link.dataset.title ?? 'Video';
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    frame.className = 'last-sunday__iframe';
+    link.replaceWith(frame);
+    frame.focus();
+  });
+</script>
+
+<style>
+  .last-sunday {
+    margin: 0;
+  }
+  .last-sunday__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius, 12px);
+    background: var(--auburn-deep, #235e93);
+  }
+  .last-sunday__play {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .last-sunday__play:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: -3px;
+  }
+  .last-sunday__play img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .last-sunday__button {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.92);
+    display: grid;
+    place-items: center;
+    transition: transform 0.2s ease;
+  }
+  .last-sunday__button::before {
+    content: '';
+    margin-left: 6px;
+    border-left: 22px solid #1d2f44;
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+  }
+  .last-sunday__play:hover .last-sunday__button {
+    transform: scale(1.06);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .last-sunday__button {
+      transition: none;
+    }
+  }
+  :global(.last-sunday__iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .last-sunday__caption {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 0.9rem;
+  }
+  .last-sunday__label {
+    font-weight: 600;
+    color: var(--heading-solid, var(--foreground));
+  }
+  .last-sunday__title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1.3;
+    color: var(--foreground);
+  }
+  .last-sunday__channel {
+    justify-self: start;
+    margin-top: 0.35rem;
+    font-weight: 600;
+    color: var(--foreground);
+    text-decoration: none;
+    border-bottom: 2px solid currentColor;
+    padding-bottom: 2px;
+  }
+  .last-sunday__channel:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+</style>
