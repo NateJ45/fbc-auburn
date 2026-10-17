@@ -94,9 +94,9 @@ const IS_DEV =
   (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development');
 
 export default defineConfig({
-  name: 'my-studio',
+  name: 'fbc-auburn',
   // Short title shown in the browser tab when editing. Update per project.
-  title: 'My Studio',
+  title: 'First Baptist Auburn',
 
   projectId:
     envVal('SANITY_STUDIO_PROJECT_ID', 'PUBLIC_SANITY_PROJECT_ID') || 'placeholder-project-id',
