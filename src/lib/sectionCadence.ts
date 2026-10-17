@@ -47,6 +47,9 @@ export const CONTENT_TYPES = new Set([
   'storySection', // scaffold: about
   'serviceAreaSection',
   'guaranteeSection',
+  // FBC Auburn stone-path blocks (auburnMotionSections.ts)
+  'stepsRailSection',
+  'walkSection',
 ]);
 
 export interface SectionBlock {

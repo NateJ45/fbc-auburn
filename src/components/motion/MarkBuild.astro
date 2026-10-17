@@ -1,0 +1,16 @@
+---
+// Safe to edit by hand
+// The church mark, inlined as its separate stones (src/assets/brand/mark-layered.svg, split by
+// the mockups' tools/parts.cjs; regrouping only, the drawing is the Figma master's). With motion
+// on it builds itself in story order as it scrolls in (ring, water, steps, the cross from its
+// foot up, the heart last), then its three wave bands drift a few pixels apart with the scroll.
+// The cross never moves. Motion: src/styles/motion.css ("Mark build"); at rest it is the mark.
+import markSvg from '@/assets/brand/mark-layered.svg?raw';
+
+interface Props {
+  class?: string;
+}
+const { class: extraClass = '' } = Astro.props as Props;
+---
+
+<div class:list={['mark-build-wrap', extraClass]} set:html={markSvg} />

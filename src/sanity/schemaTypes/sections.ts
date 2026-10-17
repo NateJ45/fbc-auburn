@@ -26,6 +26,7 @@ import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { columnsField, headingAccentField, hideWhenRich, richTwin } from './_appearanceFields';
 import { sideOptions } from '../../lib/layout-variants';
+import { auburnSectionSchemas } from './auburnMotionSections';
 
 // Shared image field with required alt text (accessibility + SEO).
 const imageWithAlt = (name = 'image', title = 'Image') =>
@@ -191,7 +192,28 @@ export const imageTextSection = defineType({
   type: 'object',
   icon: ImageIcon,
   fields: [
-    imageWithAlt('image', 'Image'),
+    // FBC Auburn (2026-10-17): the picture can be one of the church's own drawings instead of a
+    // photo, each with its scroll motion (src/styles/motion.css). Logic-driving, so 'art' is in
+    // NON_STEGA_FIELDS (src/lib/cms-preview.ts, rule 8b).
+    defineField({
+      name: 'art',
+      title: 'Picture',
+      type: 'string',
+      initialValue: 'photo',
+      options: {
+        list: [
+          { title: 'A photo (a soft arch until there is one)', value: 'photo' },
+          { title: 'The church mark, building itself stone by stone', value: 'mark' },
+          { title: 'The baptism drawing', value: 'baptism' },
+        ],
+        layout: 'radio',
+      },
+    }),
+    {
+      ...imageWithAlt('image', 'Image'),
+      hidden: ({ parent }: { parent?: { art?: string } }) =>
+        Boolean(parent?.art && parent.art !== 'photo'),
+    },
     defineField({
       name: 'imageSide',
       title: 'Which side is the image on?',
@@ -576,6 +598,8 @@ export const pageSectionSchemas = [
   spacerSection,
   logoStripSection,
   embedSection,
+  // FBC Auburn: the stepping-stone rail and the Walk in with us plan (auburnMotionSections.ts)
+  ...auburnSectionSchemas,
 ];
 
 // The list a pageBuilder array uses for `of`. Single source of truth so every
@@ -605,6 +629,11 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
       name: 'basics',
       title: 'Basics',
       of: ['heroSection', 'richTextSection', 'imageTextSection', 'spacerSection'],
+    },
+    {
+      name: 'visit',
+      title: 'Your first visit',
+      of: ['stepsRailSection', 'walkSection'],
     },
     {
       name: 'proof',

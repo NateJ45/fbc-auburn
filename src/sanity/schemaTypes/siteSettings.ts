@@ -195,7 +195,7 @@ export const siteSettings = defineType({
 
     // The button at the right of the header (and at the top of the phone menu).
     // Everything is optional: an empty label keeps the built-in
-    // "Plan your visit" pointing at Contact, and turning it off removes the
+    // "Plan your visit" pointing at the Plan your visit page, and turning it off removes the
     // button everywhere.
     defineField({
       name: 'headerCta',
@@ -223,7 +223,7 @@ export const siteSettings = defineType({
           name: 'link',
           title: 'Where the button goes',
           type: 'navLink',
-          description: 'Leave blank to keep pointing at the Contact page.',
+          description: 'Leave blank to keep pointing at the Plan your visit page.',
         }),
       ],
       preview: {

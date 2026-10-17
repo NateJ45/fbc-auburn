@@ -1,5 +1,20 @@
 # Change history
 
+_2026-10-17: the stone path and its motion, and Plan your visit with "Walk in with us"._
+
+**Decision.** Ported the studio mockups' v3 motion pass. Two new content blocks in `auburnMotionSections.ts`:
+`stepsRailSection` (numbered steps with a stone-icon picker, gold stones laid between them, ending in the mark
+building itself) replaces Home's "A Sunday with us" text, and `walkSection` (Walk in with us: a stone-mosaic plan
+pinned beside the stops, the route laid leg by leg, ending on /contact/?visit=sunday-11) carries the new Plan your visit
+page (`page-plan-your-visit`). The plan is computed at build time (`src/lib/walk-plan.ts`, placeholder geometry
+until the church shares a building plan, unit-tested), so it reads without JS. `imageTextSection` gained `art`
+(photo, the mark, or the baptism drawing, each with its motion); About now has "The story in our mark". Motion is
+CSS scroll-driven animation (`animation-timeline: view()`) with an IntersectionObserver fallback, all behind
+`html.motion`, which an inline head script sets only when reduced motion is not asked for. Transforms and opacity
+only, the cross never moves. Every built-in "Plan your visit" button now goes to /plan-your-visit/. Verified: typegen,
+check, test:unit, build, format, Playwright suite; light and dark at 375 and 1280 with motion on and off, no sideways
+scroll at 320, the walk's state at three stops in Chromium and WebKit.
+
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
 
 **Decision.** `brand.config.json` carries the church's palette (deep sky everyday colour, ink text, white and

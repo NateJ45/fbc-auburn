@@ -336,6 +336,57 @@ export interface ProjectedDynamicListSection {
 // Discriminated union
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// FBC Auburn stone-path blocks (src/sanity/schemaTypes/auburnMotionSections.ts)
+// ---------------------------------------------------------------------------
+
+/** One step on the stepping-stone rail. */
+export interface ProjectedRailStep {
+  _key: string;
+  _type?: 'railStep';
+  /** A stone icon name (STONE_ICONS); picks src/assets/brand/stone-icon-<name>.svg. */
+  icon?: string;
+  title?: string;
+  body?: string;
+  times?: { _key: string; time?: string; label?: string }[];
+  linkLabel?: string;
+  linkHref?: string;
+}
+
+/** stepsRailSection: numbered steps down a stone path, ending in the mark. CONTENT block. */
+export interface ProjectedStepsRailSection {
+  _type: 'stepsRailSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  steps?: ProjectedRailStep[];
+  endHeading?: string;
+  primaryCta?: ProjectedCtaBlock | null;
+  secondaryCta?: ProjectedCtaBlock | null;
+}
+
+/** One stop on the Walk in with us plan. */
+export interface ProjectedWalkStop {
+  _key: string;
+  _type?: 'walkStop';
+  time?: string;
+  title?: string;
+  body?: string;
+}
+
+/** walkSection: Walk in with us, the stop-by-stop visit beside the plan. CONTENT block. */
+export interface ProjectedWalkSection {
+  _type: 'walkSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  stops?: ProjectedWalkStop[];
+  endHeading?: string;
+  endBody?: string;
+  endLinkLabel?: string;
+  endLinkHref?: string;
+}
+
 export type PageBuilderBlock =
   | ProjectedHeroSection
   | ProjectedRichTextSection
@@ -356,4 +407,7 @@ export type PageBuilderBlock =
   | ProjectedTeamSection
   | ProjectedEmbedSection
   // Church-reverse-port
-  | ProjectedDynamicListSection;
+  | ProjectedDynamicListSection
+  // FBC Auburn stone-path blocks
+  | ProjectedStepsRailSection
+  | ProjectedWalkSection;

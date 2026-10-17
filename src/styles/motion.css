@@ -1,0 +1,611 @@
+/* Safe to edit by hand.
+   FBC Auburn: the stone path and its motion (2026-10-17), ported from the studio mockups' v3
+   pass (site.css "v3 path and motion" and "Walk in with us", motion.js, walk.js).
+
+   Nathan's motion rules, which every rule below keeps:
+   - motion follows the scroll and never takes it over (no scroll-jacking, no pinning the page);
+   - transforms and opacity only;
+   - one moving moment per page;
+   - the cross never rotates or tilts;
+   - reduced motion shows everything at rest.
+
+   How it switches on. An inline script in BaseLayout's <head> adds `html.motion` unless the
+   visitor asks for reduced motion (or the address carries ?still). EVERY hidden starting state
+   below is scoped to `html.motion`, so with no JS, or reduced motion, the page is simply the
+   finished picture. Where the browser supports scroll-driven animations
+   (`animation-timeline: view()`), the reveals and drifts are pure CSS tied to the scroll; where it
+   does not, src/scripts/motion.ts adds `.in` with an IntersectionObserver and feeds `--drift` and
+   `--turn` from a passive scroll listener. Same picture either way. */
+
+/* ======================================================================================
+   Reveal: a stone or icon lands once as it scrolls in.
+   Opt in with class="reveal"; --x, --y, --r, --s place it at rest, --d (observer) and --k
+   (scroll timeline) stagger a group.
+   ====================================================================================== */
+.reveal {
+  transform: translate(var(--x, 0), var(--y, 0px)) rotate(var(--r, 0deg)) scale(var(--s, 1));
+}
+html.motion .reveal {
+  transition:
+    opacity 0.6s ease-out var(--d, 0ms),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms);
+}
+html.motion .reveal:not(.in) {
+  opacity: 0;
+  transform: translate(var(--x, 0), calc(var(--y, 0px) + 14px)) rotate(var(--r, 0deg))
+    scale(var(--s, 1));
+}
+@keyframes stone-land {
+  from {
+    opacity: 0;
+    transform: translate(var(--x, 0), calc(var(--y, 0px) + 14px)) rotate(var(--r, 0deg))
+      scale(var(--s, 1));
+  }
+  to {
+    opacity: 1;
+    transform: translate(var(--x, 0), var(--y, 0px)) rotate(var(--r, 0deg)) scale(var(--s, 1));
+  }
+}
+@supports (animation-timeline: view()) {
+  html.motion .reveal,
+  html.motion .reveal:not(.in) {
+    opacity: 1;
+    transition: none;
+    animation: stone-land linear both;
+    animation-timeline: view();
+    animation-range: entry calc(15% + var(--k, 0) * 12%) entry calc(75% + var(--k, 0) * 8%);
+  }
+}
+
+/* ======================================================================================
+   The stepping-stone rail (StepsRail.astro, stepsRailSection)
+   ====================================================================================== */
+.steps-rail__intro {
+  max-width: 40rem;
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+.rail {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 820px;
+}
+.rail__step {
+  display: grid;
+  grid-template-columns: 98px minmax(0, 1fr);
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  align-items: start;
+}
+.rail__stone {
+  width: 98px;
+  height: 98px;
+  border-radius: 50%;
+  background: var(--background);
+  display: grid;
+  place-items: center;
+}
+.rail__stone img {
+  width: 80px;
+  height: 80px;
+}
+.rail__n {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.rail__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem);
+  line-height: 1.15;
+  color: var(--heading-solid);
+  margin: 0.2rem 0 0.5rem;
+}
+.rail__text {
+  color: var(--muted-foreground);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+  max-width: 34rem;
+}
+.rail__times {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.35rem 1rem;
+  margin: 0.4rem 0 0.6rem;
+  font-size: 1.05rem;
+}
+.rail__times div {
+  display: contents;
+}
+.rail__times dt {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.rail__times dd {
+  color: var(--muted-foreground);
+  margin: 0;
+}
+.rail__link {
+  display: inline-block;
+  color: var(--link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding-block: 0.4rem;
+}
+.rail__link:hover {
+  text-decoration-thickness: 2px;
+}
+/* The gap between two steps: three of the mark's gold stones, zigzagging down the path. */
+.rail__gap {
+  display: grid;
+  grid-template-columns: 98px;
+  justify-items: center;
+  gap: 8px;
+  padding-block: clamp(0.9rem, 2.4vw, 1.6rem);
+}
+.rail__pebble {
+  width: 62px;
+  height: auto;
+}
+.rail-end {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+}
+.rail-end__mark {
+  width: clamp(200px, 26vw, 300px);
+}
+.rail-end__line {
+  font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.6rem);
+  line-height: 1.2;
+  max-width: 36rem;
+  margin: 1.6rem 0 1rem;
+  text-wrap: balance;
+}
+.rail-end__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+}
+@media (max-width: 560px) {
+  .rail__step {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+  .rail__stone {
+    width: 70px;
+    height: 70px;
+  }
+  .rail__stone img {
+    width: 58px;
+    height: 58px;
+  }
+  .rail__gap {
+    grid-template-columns: 70px;
+  }
+  .rail__pebble {
+    width: 46px;
+  }
+}
+
+/* ======================================================================================
+   The drawings: the mark (MarkBuild.astro) and baptism (BaptismGraphic.astro)
+   ====================================================================================== */
+.mark-build-wrap svg,
+.baptism-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* In a text-and-picture band (ImageText art = mark or baptism) */
+.auburn-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.auburn-art__mark {
+  width: min(360px, 80%);
+}
+.auburn-art__baptism {
+  width: min(520px, 100%);
+}
+
+/* The mark builds itself, stone by stone, in story order (ring, water, steps, cross, heart). */
+.mark-build path {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+html.motion .mark-build path {
+  transition:
+    opacity 0.5s ease-out calc(var(--i) * 55ms),
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i) * 55ms);
+}
+html.motion .mark-build:not(.in) path {
+  opacity: 0;
+  transform: translateY(18px) scale(0.92);
+}
+/* ...then the three wave bands drift a few pixels apart as the page scrolls. */
+html.motion .mark-build.in [data-wave='sky'] {
+  transform: translateX(calc(var(--drift, 0) * 16px));
+}
+html.motion .mark-build.in [data-wave='water'] {
+  transform: translateX(calc(var(--drift, 0) * -11px));
+}
+html.motion .mark-build.in [data-wave='deep'] {
+  transform: translateX(calc(var(--drift, 0) * 7px));
+}
+
+/* Baptism: the outer ring turns, the ripples swell from where the cross meets the water.
+   #cross is never given a transform. */
+.baptism-motion #ring {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+}
+.baptism-motion #ripples {
+  transform-box: view-box;
+  transform-origin: 55% 72%;
+}
+html.motion .baptism-motion #ring {
+  transform: rotate(calc(var(--turn, 0) * -14deg));
+}
+html.motion .baptism-motion #ripples {
+  transform: scale(calc(1 + var(--turn, 0) * -0.035));
+}
+
+@keyframes mark-stone {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes drift-sky {
+  from {
+    transform: translateX(16px);
+  }
+  to {
+    transform: translateX(-16px);
+  }
+}
+@keyframes drift-water {
+  from {
+    transform: translateX(-11px);
+  }
+  to {
+    transform: translateX(11px);
+  }
+}
+@keyframes drift-deep {
+  from {
+    transform: translateX(7px);
+  }
+  to {
+    transform: translateX(-7px);
+  }
+}
+@keyframes ring-turn {
+  from {
+    transform: rotate(-14deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+@keyframes ripple-swell {
+  from {
+    transform: scale(0.965);
+  }
+  to {
+    transform: scale(1.035);
+  }
+}
+/* Scroll-driven: the same picture, tied to the scroll position instead of a timer. */
+@supports (animation-timeline: view()) {
+  html.motion .mark-build {
+    view-timeline: --mark block;
+  }
+  html.motion .mark-build path,
+  html.motion .mark-build:not(.in) path {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: mark-stone linear both;
+    animation-timeline: --mark;
+    animation-range: cover calc(var(--i) * 0.8%) cover calc(16% + var(--i) * 0.8%);
+  }
+  html.motion .mark-build [data-wave='sky'],
+  html.motion .mark-build [data-wave='water'],
+  html.motion .mark-build [data-wave='deep'] {
+    animation: drift-sky linear both;
+    animation-timeline: --mark;
+    animation-range: cover 0% cover 100%;
+  }
+  html.motion .mark-build [data-wave='water'] {
+    animation-name: drift-water;
+  }
+  html.motion .mark-build [data-wave='deep'] {
+    animation-name: drift-deep;
+  }
+  html.motion .baptism-motion {
+    view-timeline: --baptism block;
+  }
+  html.motion .baptism-motion #ring,
+  html.motion .baptism-motion #ripples {
+    animation: ring-turn linear both;
+    animation-timeline: --baptism;
+    animation-range: cover 0% cover 100%;
+  }
+  html.motion .baptism-motion #ripples {
+    animation-name: ripple-swell;
+  }
+}
+
+/* ======================================================================================
+   Background path: faint gold stones on a long S-curve, laid just ahead of the reader.
+   Drawn by src/scripts/motion.ts on pages that carry a rail or a walk (data-bgpath-page);
+   it skips the sections that have their own path (data-no-bgpath) and the hero.
+   ====================================================================================== */
+[data-bgpath] {
+  position: relative;
+}
+.bgpath {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: multiply;
+}
+.bgstone {
+  opacity: 0;
+  transition: opacity 0.9s ease-out;
+}
+.bgstone.in {
+  opacity: 0.45;
+}
+.dark .bgpath {
+  mix-blend-mode: screen;
+}
+.dark .bgstone.in {
+  opacity: 0.12;
+}
+
+/* ======================================================================================
+   Small touches: three tiny stones under the current page in the header nav.
+   ====================================================================================== */
+.site-nav a.nav-underline[aria-current='page']::after {
+  width: 40px;
+  height: 8px;
+  bottom: -12px;
+  background-color: transparent;
+  background:
+    url('../assets/brand/stone-c.svg') 0 0 / 12px 8px no-repeat,
+    url('../assets/brand/stone-a.svg') 14px 0 / 12px 8px no-repeat,
+    url('../assets/brand/stone-b.svg') 28px 0 / 12px 8px no-repeat;
+}
+
+/* ======================================================================================
+   Walk in with us (WalkSection.astro, walkSection): the plan stays pinned beside the stops
+   while the page scrolls normally. Tile colours are the plan's own, light and dark.
+   ====================================================================================== */
+.walk {
+  --plan-ground: #f3f6f9;
+  --t-lawn: #cfe3d3;
+  --t-lot: #dce2ea;
+  --t-road: #c4ccd7;
+  --t-sanct: #cfe1f2;
+  --t-hall: #f5e3c3;
+  --t-kids: #d6ead9;
+  --t-door: #c4401f;
+  --label: #4a4f5e;
+  --tag-bg: #171a26;
+  --tag-fg: #ffffff;
+}
+.dark .walk {
+  --plan-ground: #1c2333;
+  --t-lawn: #26402f;
+  --t-lot: #2c3547;
+  --t-road: #384357;
+  --t-sanct: #22405f;
+  --t-hall: #4a3c25;
+  --t-kids: #234132;
+  --t-door: #e5735a;
+  --label: #c9cdd8;
+  --tag-bg: #f3f6f9;
+  --tag-fg: #171a26;
+}
+.walk-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+.walk-stage {
+  grid-column: 2;
+  grid-row: 1;
+  position: sticky;
+  top: 7vh;
+  height: 86vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.walk-steps {
+  grid-column: 1;
+  grid-row: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.walk-steps li {
+  min-height: 68vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 1.4rem;
+  border-left: 4px solid transparent;
+  transition:
+    border-color 0.4s,
+    opacity 0.4s;
+}
+.walk-steps__t {
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: 0.04em;
+}
+.walk-steps h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem);
+  line-height: 1.15;
+  color: var(--heading-solid);
+  margin: 0.2rem 0 0.6rem;
+}
+.walk-steps p:not(.walk-steps__t) {
+  color: var(--muted-foreground);
+  font-size: 1.15rem;
+  line-height: 1.6;
+  max-width: 30rem;
+}
+.walk-steps li.walk-end {
+  min-height: 60vh;
+}
+html.motion .walk-steps li {
+  opacity: 0.45;
+}
+html.motion .walk-steps li.active {
+  opacity: 1;
+  border-left-color: var(--auburn-gold);
+}
+.walk-plan {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  background: var(--plan-ground);
+  border-radius: 22px;
+}
+.walk-plan .room rect {
+  fill: var(--t-lot);
+}
+.walk-plan .r-lawn rect {
+  fill: var(--t-lawn);
+}
+.walk-plan .r-road rect {
+  fill: var(--t-road);
+}
+.walk-plan .r-sanct rect {
+  fill: var(--t-sanct);
+}
+.walk-plan .r-hall rect {
+  fill: var(--t-hall);
+}
+.walk-plan .r-kids rect {
+  fill: var(--t-kids);
+}
+.walk-plan .r-door rect {
+  fill: var(--t-door);
+}
+.walk-plan .room-label {
+  font: 600 15px var(--font-body);
+  fill: var(--label);
+  paint-order: stroke;
+  stroke: var(--plan-ground);
+  stroke-width: 4px;
+  text-anchor: middle;
+  letter-spacing: 0.04em;
+}
+.walk-plan .stop-ring {
+  fill: var(--background);
+  stroke: var(--border);
+  stroke-width: 2;
+}
+.walk-plan .tag rect {
+  fill: var(--tag-bg);
+}
+.walk-plan .tag text {
+  font: 600 15px var(--font-body);
+  fill: var(--tag-fg);
+  text-anchor: middle;
+}
+/* At rest (no JS or reduced motion) the whole route and every stop are shown; the small tags
+   would collide, so the numbered list carries the words. */
+.walk-plan .tag {
+  display: none;
+}
+/* With motion: the route is laid leg by leg and the current stop shows its tag. */
+html.motion .walk-plan .tag {
+  display: inline;
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+html.motion .walk-plan .stop.here .tag {
+  opacity: 1;
+}
+html.motion .walk-plan .pstone {
+  transition: opacity 0.35s ease-out calc(var(--n) * 45ms);
+}
+html.motion .walk-plan .pstone:not(.in) {
+  opacity: 0;
+}
+html.motion .walk-plan .stop {
+  transition: opacity 0.4s;
+}
+html.motion .walk-plan .stop:not(.on) {
+  opacity: 0.35;
+}
+html.motion .walk-plan .stop.here .stop-ring {
+  stroke: var(--auburn-gold);
+  stroke-width: 4;
+}
+/* Phones: the plan pins to the top of the screen and the stops scroll underneath it. */
+@media (max-width: 860px) {
+  .walk-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .walk-stage {
+    grid-column: 1;
+    grid-row: 1;
+    top: 0;
+    height: auto;
+    padding: 0.6rem 0;
+    background: inherit;
+    z-index: 4;
+  }
+  .walk.bg-muted .walk-stage {
+    background: var(--muted);
+  }
+  .walk.bg-background .walk-stage {
+    background: var(--background);
+  }
+  .walk-plan {
+    max-height: 44vh;
+    width: auto;
+    max-width: 100%;
+  }
+  .walk-steps {
+    grid-row: 2;
+  }
+  .walk-steps li {
+    min-height: 52vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .mark-build path,
+  .bgstone,
+  .walk-steps li {
+    transition: none !important;
+    animation: none !important;
+  }
+}

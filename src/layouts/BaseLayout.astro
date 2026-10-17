@@ -30,6 +30,7 @@ import '@/styles/globals.css';
 import '@/styles/starwind.css';
 // FBC Auburn brand layer (stone headings, arched hero, buttons). Last, so it wins a tie.
 import '@/styles/auburn.css';
+import '@/styles/motion.css';
 
 interface Props {
   title: string;
@@ -254,6 +255,26 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
       })();
     </script>
 
+    {/* FBC Auburn motion switch (src/styles/motion.css). Adds html.motion before first paint
+        unless the visitor asks for reduced motion or the address carries ?still, so no hidden
+        starting state ever applies without it, and the page is fully readable with no JS. The
+        View Transitions swap resets <html>'s className, so it is applied again after each swap. */}
+    <script is:inline>
+      (function () {
+        function applyMotion() {
+          var still =
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+            /[?&]still(=|&|$)/.test(location.search);
+          document.documentElement.classList.toggle('motion', !still);
+        }
+        applyMotion();
+        if (!window.__motionBootstrapBound) {
+          window.__motionBootstrapBound = true;
+          document.addEventListener('astro:after-swap', applyMotion);
+        }
+      })();
+    </script>
+
     {/*
       Analytics: the Cloudflare beacon and GA4, each conditional on its own
       environment variable and each a silent no-op when that variable is unset.
@@ -297,6 +318,11 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     <main id="main" class="flex-1">
       <slot />
     </main>
+
+    {/* The stone path's motion: reveals, the background path, the Walk in with us plan. */}
+    <script>
+      import '@/scripts/motion';
+    </script>
 
     <Footer siteSettings={siteSettings} />
 

@@ -34,8 +34,18 @@ const stones =
 <div class:list={['mx-auto max-w-content px-m py-m text-center', extraClass]} aria-hidden="true">
   {variant === 'ornament' && (
     <span class="stone-divider">
-      {stones.map((s) => (
-        <img src={s.src} alt="" width="56" height="28" loading="lazy" decoding="async" />
+      {/* Each stone lands in turn as the divider scrolls in (.reveal, src/styles/motion.css). */}
+      {stones.map((s, k) => (
+        <img
+          class="reveal"
+          src={s.src}
+          alt=""
+          width="56"
+          height="28"
+          loading="lazy"
+          decoding="async"
+          style={`--d:${k * 90}ms;--k:${k}`}
+        />
       ))}
     </span>
   )}

@@ -41,7 +41,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
     subhead:
       'A small church with the door open. We are a Southern Baptist family on Hamilton-Scipio Road in Ross Township. Come as you are this Sunday, and someone will meet you at the door.',
     size: 'tall',
-    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
+    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
     secondaryCta: { _type: 'ctaBlock', label: 'About the church', href: '/about/' },
   },
   {
@@ -91,7 +91,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
     _key: 'default-home-cta',
     headline: 'We would love to meet you this Sunday.',
     subhead: 'Tell us you are coming, or ask anything at all.',
-    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
+    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
   },
 ];
 
@@ -124,7 +124,7 @@ export const DEFAULT_ABOUT_SECTIONS: PageBuilderBlock[] = [
     _key: 'default-about-cta',
     headline: 'Come and see.',
     subhead: 'Sunday worship is at 11:00 am (to be confirmed). Someone will meet you at the door.',
-    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
+    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
   },
 ];
 // scaffold:end

@@ -28,6 +28,8 @@ import LogoStrip from '@/components/sections/LogoStrip.astro';
 import TeamGrid from '@/components/sections/TeamGrid.astro';
 import EmbedSection from '@/components/sections/EmbedSection.astro';
 import DynamicList from '@/components/sections/DynamicList.astro';
+import StepsRail from '@/components/sections/StepsRail.astro';
+import WalkSection from '@/components/sections/WalkSection.astro';
 import { classifySections } from '@/lib/sectionCadence';
 import type { PageBuilderBlock } from '@/lib/pageBuilder.types';
 import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
@@ -122,6 +124,7 @@ const wrapAttrs = (key: string | undefined) =>
         />
       ) : s._type === 'imageTextSection' ? (
         <ImageText
+          art={s.art}
           image={s.image}
           imageSide={s.imageSide}
           eyebrow={s.eyebrow}
@@ -243,6 +246,29 @@ const wrapAttrs = (key: string | undefined) =>
           cta={s.cta}
           columns={s.columns}
           limit={s.limit}
+          headingId={headingId}
+        />
+      ) : s._type === 'stepsRailSection' ? (
+        <StepsRail
+          heading={s.heading}
+          intro={s.intro}
+          steps={s.steps ?? []}
+          endHeading={s.endHeading}
+          primaryCta={s.primaryCta}
+          secondaryCta={s.secondaryCta}
+          surface={surface ?? 'background'}
+          headingId={headingId}
+        />
+      ) : s._type === 'walkSection' ? (
+        <WalkSection
+          heading={s.heading}
+          intro={s.intro}
+          stops={s.stops ?? []}
+          endHeading={s.endHeading}
+          endBody={s.endBody}
+          endLinkLabel={s.endLinkLabel}
+          endLinkHref={s.endLinkHref}
+          surface={surface ?? 'background'}
           headingId={headingId}
         />
       ) : (

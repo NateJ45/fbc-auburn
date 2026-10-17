@@ -274,11 +274,14 @@ h6 {
   width: clamp(40px, 4.5vw, 56px);
   height: auto;
 }
+/* Placed with the .reveal custom properties (motion.css), so the stones land where they rest. */
 .stone-divider img:nth-child(2) {
-  transform: translateY(-6px) rotate(-6deg);
+  --y: -6px;
+  --r: -6deg;
 }
 .stone-divider img:nth-child(3) {
-  transform: translateY(-12px) rotate(4deg);
+  --y: -12px;
+  --r: 4deg;
 }
 
 /* Phones: an inner page's arch with no photo yet stays short, so the page's content is not pushed
