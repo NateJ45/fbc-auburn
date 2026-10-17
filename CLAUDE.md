@@ -10,7 +10,7 @@ Always-loaded rules for this repo, the website for First Baptist Church of Aubur
 
 Companion tactical runbook: `OPERATIONS.md`. Setup followed the starter's `docs/bootstrap/NEW-PROJECT.md`; `docs/bootstrap/setup-checklist.md` is its sign-off. `PORTS.md` is a copy of the starter's registry of shared improvements (see Ports below).
 
-Design context: `PRODUCT.md` and `DESIGN.md` at the repo root are still the starter's neutral PLACEHOLDERS. The design brief, references and design directions rewrite both before the reskin (see Design flow and rule 11).
+Design context: `PRODUCT.md` (brief Part A) and `DESIGN.md` (brand tokens and rules) were written from the settled brand on 2026-10-17. References are in `docs/references/`; three homepage directions are in `docs/design-directions/2026-10-17-fbc-auburn/`, awaiting a pick before the reskin (see Design flow).
 
 ## What this is
 

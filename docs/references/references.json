@@ -1,0 +1,8 @@
+[
+  { "url": "https://hppres.org/", "like": "Serif headline on a plain ground carries the hero; the one photo sits in an arched crop beside it, so a single picture is enough. Service times sit in a quiet tinted strip right under the hero.", "avoid": "Photo-heavy lower sections; Auburn cannot fill them." },
+  { "url": "https://www.stpaulsknightsbridge.org/", "like": "Service times set as a plain typographic list with generous space, no cards or icons. Calm, document-like pacing.", "avoid": "Muted gold-on-cream palette and the cookie overlay over the hero." },
+  { "url": "https://www.capitolhillbaptist.org/", "like": "Text-first homepage: the Sunday facts are written out in full sentences high on the page. Honest about size; nothing is staged.", "avoid": "Small body type and long unbroken paragraphs; low contrast between sections." },
+  { "url": "https://www.trinitygracechurch.com/", "like": "Uses artwork (a stained-glass image) in place of photography for the teaching series, with very large serif type over it. Art as the image works without a photo shoot.", "avoid": "A dense row of small event thumbnails near the top." },
+  { "url": "https://firstpresevanston.org/", "like": "A cross built from squares in the identity, the closest relative to the stone mark; a bold coloured welcome block that does not depend on a good photo.", "avoid": "Many competing bands, colours and buttons on one page; too many entry points." },
+  { "url": "https://citychurchsf.org/", "like": "Photo-led direction done well: one full-bleed street photograph, minimal chrome, the name and one line laid over it. The model for a direction that assumes a photo session.", "avoid": "Only works with professional photography; text over a busy photo needs a heavy scrim." }
+]

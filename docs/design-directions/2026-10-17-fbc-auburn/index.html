@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design directions | First Baptist Church of Auburn</title>
+<!-- Comparison page for the three directions. Fonts: Familjen Grotesk, Young Serif. -->
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;600&family=Young+Serif&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #171A26; --muted: #4A4F5E; --ground: #FFFFFF; --soft: #F3F6F9; --line: #DDE3EA; --accent: #235E93; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #F3F6F9; --muted: #B4B8C4; --ground: #171A26; --soft: #20283A; --line: #2E3850; --accent: #96C3EA; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font: 400 1rem/1.55 'Familjen Grotesk', system-ui, sans-serif; }
+  main { width: min(1280px, 100% - 2rem); margin: 0 auto; padding: 2rem 0 4rem; }
+  h1, h2 { font-family: 'Young Serif', Georgia, serif; font-weight: 400; margin: 0 0 .5rem; }
+  h1 { font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem); }
+  a { color: var(--accent); }
+  .card { border-top: 2px solid var(--ink); padding: 1.5rem 0 2.5rem; }
+  .card p { margin: .3rem 0; max-width: 60rem; }
+  .shots { display: grid; grid-template-columns: 1fr 1.6fr 2.4fr; gap: 1rem; align-items: start; margin-top: 1rem; }
+  .shots figure { margin: 0; background: var(--soft); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .shots img { display: block; width: 100%; height: 520px; object-fit: cover; object-position: top; }
+  figcaption { font-size: .85rem; padding: .4rem .6rem; color: var(--muted); }
+  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } .shots img { height: 360px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Homepage directions, First Baptist Church of Auburn</h1>
+  <p>Three ways to cope with few photographs. Light shots shown; dark shots sit beside them in <code>shots/</code>. Details in README.md.</p>
+
+  <section class="card">
+    <h2>A. Front porch (image-led)</h2>
+    <p><strong>Bet:</strong> real photographs of faces and the building do the welcoming.</p>
+    <p><strong>Rejects:</strong> stone headings on the homepage, card grids, text-only heroes.</p>
+    <p><strong>Costs:</strong> needs the optional photo session; empty without it.</p>
+    <p><a href="direction-a.html">Open direction A</a></p>
+    <div class="shots">
+      <figure><img src="shots/direction-a-390.png" alt="Direction A at 390 px"><figcaption>390</figcaption></figure>
+      <figure><img src="shots/direction-a-768.png" alt="Direction A at 768 px"><figcaption>768</figcaption></figure>
+      <figure><img src="shots/direction-a-1280.png" alt="Direction A at 1280 px"><figcaption>1280</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>B. Stepping stones (story / scroll chapters)</h2>
+    <p><strong>Bet:</strong> walk a first-timer through a Sunday step by step; the stone art carries the page with no photographs.</p>
+    <p><strong>Rejects:</strong> homepage photographs, a top nav bar on phones, events and news feeds.</p>
+    <p><strong>Costs:</strong> the most colour of the three; says little beyond Sunday.</p>
+    <p><a href="direction-b.html">Open direction B</a></p>
+    <div class="shots">
+      <figure><img src="shots/direction-b-390.png" alt="Direction B at 390 px"><figcaption>390</figcaption></figure>
+      <figure><img src="shots/direction-b-768.png" alt="Direction B at 768 px"><figcaption>768</figcaption></figure>
+      <figure><img src="shots/direction-b-1280.png" alt="Direction B at 1280 px"><figcaption>1280</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>C. The noticeboard (poster / typographic)</h2>
+    <p><strong>Bet:</strong> the place name leads; every fact on one screen with one honest photo of the building.</p>
+    <p><strong>Rejects:</strong> a nav bar, icons, buttons, colour bands, more than one photograph.</p>
+    <p><strong>Costs:</strong> dense on a phone; depends on real copy in the pastor's voice.</p>
+    <p><a href="direction-c.html">Open direction C</a></p>
+    <div class="shots">
+      <figure><img src="shots/direction-c-390.png" alt="Direction C at 390 px"><figcaption>390</figcaption></figure>
+      <figure><img src="shots/direction-c-768.png" alt="Direction C at 768 px"><figcaption>768</figcaption></figure>
+      <figure><img src="shots/direction-c-1280.png" alt="Direction C at 1280 px"><figcaption>1280</figcaption></figure>
+    </div>
+  </section>
+</main>
+</body>
+</html>
