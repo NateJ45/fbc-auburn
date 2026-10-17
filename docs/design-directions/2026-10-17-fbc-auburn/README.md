@@ -11,10 +11,10 @@ Not picked yet. Waiting for Nathan.
 
 ## Archetype assignment
 
-| Direction | Name           | Archetype              | How it copes with few photos                                   |
-| --------- | -------------- | ---------------------- | -------------------------------------------------------------- |
-| A         | Front porch    | Image-led / cinematic  | Assumes the optional photo session; five photo slots           |
-| B         | Stepping stones | Story / scroll chapter | No photographs; the stone art and icons carry the page         |
+| Direction | Name            | Archetype              | How it copes with few photos                                         |
+| --------- | --------------- | ---------------------- | -------------------------------------------------------------------- |
+| A         | Front porch     | Image-led / cinematic  | Assumes the optional photo session; five photo slots                 |
+| B         | Stepping stones | Story / scroll chapter | No photographs; the stone art and icons carry the page               |
 | C         | The noticeboard | Poster / typographic   | One photo of the building (a member can take it); type does the rest |
 
 ## Forced divergence
@@ -22,16 +22,16 @@ Not picked yet. Waiting for Nathan.
 The brand fixes the families (Young Serif, Familjen Grotesk, Auburn Stone), so the type row differs
 by which family leads and how each is used, not by swapping families.
 
-| Axis              | A: Front porch                                                  | B: Stepping stones                                                | C: The noticeboard                                                   |
-| ----------------- | --------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Layout structure  | Full-bleed bands, alternating photo/text halves that touch the page edge | One centred column with a stepping-stone rail down the left      | Ruled 12-column grid: 3-column labels beside 9-column content        |
-| Nav pattern       | Transparent bar over the photo, overlay "Menu" button           | Centred Auburn-led lockup, links in a row; bottom bar on phones   | No nav bar: a numbered site index sits inside the hero               |
-| Hero structure    | Full-bleed photograph, headline and two buttons laid over it    | Split: mosaic stone H1 beside the baptism artwork                 | Type-only masthead ("Auburn" huge) with one arched photo             |
-| Type pairing      | Young Serif display, Familjen body; no stone type               | Auburn Stone mosaic H1, Young Serif H2s, Familjen body            | Auburn Stone for one word, Young Serif for the letter body, Familjen tracked caps for labels |
-| Density           | Medium: about 180 words a screen, 6 sections                    | Airy: about 90 words a screen, 7 short steps                      | Dense: about 260 words a screen, 4 ruled rows                        |
-| Imagery treatment | Full-bleed photography (session)                                | Illustration: stone icons, baptism graphic, no photos             | Type-as-image plus one arched photograph                             |
-| Colour role       | Dark photo ground, red for the single main action, deep sky one colour | White ground with several accents (icon colours), gold rail     | Ink on white with one accent (deep sky); rules, no colour bands      |
-| Stone moment      | The full-colour mark in the Sunday strip                        | The mosaic H1 "Sundays at Auburn"                                 | The mosaic H1 "Auburn"                                               |
+| Axis              | A: Front porch                                                           | B: Stepping stones                                              | C: The noticeboard                                                                           |
+| ----------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Layout structure  | Full-bleed bands, alternating photo/text halves that touch the page edge | One centred column with a stepping-stone rail down the left     | Ruled 12-column grid: 3-column labels beside 9-column content                                |
+| Nav pattern       | Transparent bar over the photo, overlay "Menu" button                    | Centred Auburn-led lockup, links in a row; bottom bar on phones | No nav bar: a numbered site index sits inside the hero                                       |
+| Hero structure    | Full-bleed photograph, headline and two buttons laid over it             | Split: mosaic stone H1 beside the baptism artwork               | Type-only masthead ("Auburn" huge) with one arched photo                                     |
+| Type pairing      | Young Serif display, Familjen body; no stone type                        | Auburn Stone mosaic H1, Young Serif H2s, Familjen body          | Auburn Stone for one word, Young Serif for the letter body, Familjen tracked caps for labels |
+| Density           | Medium: about 180 words a screen, 6 sections                             | Airy: about 90 words a screen, 7 short steps                    | Dense: about 260 words a screen, 4 ruled rows                                                |
+| Imagery treatment | Full-bleed photography (session)                                         | Illustration: stone icons, baptism graphic, no photos           | Type-as-image plus one arched photograph                                                     |
+| Colour role       | Dark photo ground, red for the single main action, deep sky one colour   | White ground with several accents (icon colours), gold rail     | Ink on white with one accent (deep sky); rules, no colour bands                              |
+| Stone moment      | The full-colour mark in the Sunday strip                                 | The mosaic H1 "Sundays at Auburn"                               | The mosaic H1 "Auburn"                                                                       |
 
 ## Direction A: Front porch (image-led)
 

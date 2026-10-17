@@ -55,22 +55,22 @@ brand
 
 Captured with `npm run references`; screenshots and notes in `docs/references/README.md`.
 
-| Reference                    | What we like                                                                  |
-| ---------------------------- | ----------------------------------------------------------------------------- |
-| hppres.org                   | Serif headline carries the hero; one photo in an arched crop is enough        |
-| stpaulsknightsbridge.org     | Service times as a calm typographic list, no cards                           |
-| capitolhillbaptist.org       | The Sunday facts written out in sentences, high on the page                   |
-| trinitygracechurch.com       | Artwork stands in for photography, with very large serif type                 |
-| firstpresevanston.org        | A cross built from squares, the closest relative to the stone mark            |
-| citychurchsf.org             | The photo-led model: one full-bleed photograph, minimal chrome                |
+| Reference                | What we like                                                           |
+| ------------------------ | ---------------------------------------------------------------------- |
+| hppres.org               | Serif headline carries the hero; one photo in an arched crop is enough |
+| stpaulsknightsbridge.org | Service times as a calm typographic list, no cards                     |
+| capitolhillbaptist.org   | The Sunday facts written out in sentences, high on the page            |
+| trinitygracechurch.com   | Artwork stands in for photography, with very large serif type          |
+| firstpresevanston.org    | A cross built from squares, the closest relative to the stone mark     |
+| citychurchsf.org         | The photo-led model: one full-bleed photograph, minimal chrome         |
 
 ## Anti-references (what this must not feel like)
 
-| Anti-reference                      | What we avoid and why                                                         |
-| ----------------------------------- | ----------------------------------------------------------------------------- |
-| Megachurch template sites           | Stage-lighting hero video, crowd shots, "experience" language; looks bigger than the church is |
-| Stock-photo church sites            | Smiling stock families and coffee cups; the church has to look like itself    |
-| Mosaic-everything church brands     | Multicolour tiles on every heading, icon and border; the mark loses its weight |
+| Anti-reference                  | What we avoid and why                                                                          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Megachurch template sites       | Stage-lighting hero video, crowd shots, "experience" language; looks bigger than the church is |
+| Stock-photo church sites        | Smiling stock families and coffee cups; the church has to look like itself                     |
+| Mosaic-everything church brands | Multicolour tiles on every heading, icon and border; the mark loses its weight                 |
 
 - **Must NOT look like First Baptist Church Muncie** (the last site from this starter): no cream
   paper-and-ink ground, no titling-caps serif masthead, no indigo and gold bands, no building drawn
