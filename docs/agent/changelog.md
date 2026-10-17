@@ -8,7 +8,9 @@ bands, which also put them on top of text: on a phone they crossed paragraphs an
 list item, link, button or form field, so the path runs through the gutters and the gaps between blocks. Measured on
 the built Home: stones over text went from 17 (1280) and 24 (375) to none touching words. With no questions written in
 the Studio, the Contact form now asks the visit questions (`DEFAULT_VISIT_QUESTIONS` in `contact.astro`) instead of the
-starter's interior-design questionnaire, so a fresh build or CI matches the live site.
+starter's interior-design questionnaire, so a fresh build or CI matches the live site. Follow-up: a ResizeObserver on
+the page body lays the path again when late content (the replay thumbnail, the This week rows) changes its height, so a
+stone placed before that content arrived cannot end up on a heading.
 
 _2026-10-17: Contact shows the church's address; content clean-up._
 
