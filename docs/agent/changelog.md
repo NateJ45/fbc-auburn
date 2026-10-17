@@ -13,7 +13,7 @@ Muncie; the weather is a browser fetch from api.weather.gov after load (grid ILN
 early-morning frost or fog clause ("Widespread Frost then Sunny" reads "sunny"). `deploy.yml` rebuilds every morning and
 Sunday afternoon so dates, replay and events move on their own. Seven drop-in components in `src/components/church/`,
 shown on `/styleguide/church-data/`; usage in `docs/agent/church-data.md`. Verified: typegen, check, test:unit, build,
-format:check; the wall in light and dark at 375 and 1280, no sideways scroll at 320, the play swap, the live forecast,
+format:check; the wall at 375 and 1280 (light; the site is light only), no sideways scroll at 320, the play swap, the live forecast,
 the fixture and the no-feed states.
 
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._

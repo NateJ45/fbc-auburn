@@ -8,8 +8,8 @@
 // once it is true, so a caller never writes the conditional and the tag
 // disappears on its own the day someone ticks the box in Site settings.
 //
-// Colours: dark red on a pale red in light mode (about 9:1), pale on deep in
-// dark mode; both well over 4.5:1 at this small size.
+// Colours: dark red on a pale red, about 9:1, well over 4.5:1 at this small
+// size. The site is light only (fbc-auburn#18), so there is no dark variant.
 
 interface Props {
   /** The fact's `confirmed` flag. Anything other than true shows the tag. */
@@ -44,9 +44,5 @@ const { confirmed, label = 'To confirm', class: className = '' } = Astro.props;
     text-transform: uppercase;
     vertical-align: middle;
     white-space: nowrap;
-  }
-  :global(.dark) .not-confirmed {
-    background: #4a1d10;
-    color: #fcd9cc;
   }
 </style>
