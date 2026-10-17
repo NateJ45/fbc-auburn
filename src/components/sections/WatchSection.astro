@@ -1,0 +1,70 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn): the Watch band from the mockups. Light, words on the left, the
+// latest message from the church's YouTube channel on the right (LastSunday, which plays in place).
+// With no channel set or the feed down, the editor's "no video yet" line stands in.
+import CtaLink from '@/components/CtaLink.astro';
+import LastSunday from '@/components/church/LastSunday.astro';
+import { surfaceClass } from '@/lib/surfaces';
+import type { ProjectedCtaBlock } from '@/lib/pageBuilder.types';
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  link?: ProjectedCtaBlock | null;
+  fallback?: string;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const {
+  eyebrow,
+  heading = 'Missed a Sunday?',
+  body,
+  link,
+  fallback,
+  surface = 'background',
+  headingId,
+} = Astro.props;
+---
+
+<section class:list={[surfaceClass(surface), 'watch-band']} aria-labelledby={headingId}>
+  <div class="split mx-auto max-w-content items-center px-m py-section-lg" data-reveal>
+    <div>
+      {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
+      <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
+        {heading}
+      </h2>
+      {body && <p class="mt-m max-w-xl text-lg leading-relaxed text-muted-foreground">{body}</p>}
+      {link?.label && (
+        <div class="mt-l">
+          <CtaLink cta={link} variant="secondary" />
+        </div>
+      )}
+    </div>
+    <div>
+      <LastSunday>
+        {fallback && (
+          <p slot="fallback" class="watch-band__fallback">
+            {fallback}
+          </p>
+        )}
+      </LastSunday>
+    </div>
+  </div>
+</section>
+
+<style>
+  .watch-band {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .watch-band__fallback {
+    border: 2px dashed var(--border);
+    border-radius: 18px;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    color: var(--muted-foreground);
+    font-size: 1.1rem;
+    line-height: 1.55;
+  }
+</style>

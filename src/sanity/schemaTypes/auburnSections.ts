@@ -3,6 +3,8 @@
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { ThLargeIcon } from '@sanity/icons/ThLarge';
+import { CalendarIcon } from '@sanity/icons/Calendar';
+import { PlayIcon } from '@sanity/icons/Play';
 import { STONE_ICONS } from '../../lib/stone-icons';
 
 /** A stone-icon picker. Always named `icon` (on NON_STEGA_FIELDS, so the preview keeps it clean). */
@@ -68,5 +70,68 @@ export const iconCardsSection = defineType({
       title: title || 'Cards with stone icons',
       subtitle: `Cards${Array.isArray(cards) ? ` (${cards.length})` : ''}`,
     }),
+  },
+});
+
+// ── This week ────────────────────────────────────────────────────────────────
+// The next seven days from Site settings (service times) and the Church Trac calendar, drawn by
+// src/components/church/ThisWeekList.astro. Nothing to type but the heading: the rows derive.
+export const thisWeekSection = defineType({
+  name: 'thisWeekSection',
+  title: 'This week (times and calendar)',
+  type: 'object',
+  icon: CalendarIcon,
+  fields: [
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      initialValue: 'This week at Auburn',
+    }),
+    defineField({
+      name: 'intro',
+      title: 'Intro line (optional)',
+      type: 'text',
+      rows: 2,
+      description:
+        'The list itself comes from the service times in Site settings and the Church Trac calendar.',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'This week', subtitle: 'This week' }),
+  },
+});
+
+// ── Watch ────────────────────────────────────────────────────────────────────
+// Words beside the latest message from the church's YouTube channel (src/components/church/
+// LastSunday.astro). With no channel set, or the feed down, the "no video yet" line shows instead.
+export const watchSection = defineType({
+  name: 'watchSection',
+  title: 'Watch (latest message)',
+  type: 'object',
+  icon: PlayIcon,
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      initialValue: 'Missed a Sunday?',
+    }),
+    defineField({ name: 'body', title: 'A sentence or two', type: 'text', rows: 3 }),
+    defineField({ name: 'link', title: 'Link (optional)', type: 'ctaBlock' }),
+    defineField({
+      name: 'fallback',
+      title: 'When there is no video yet',
+      type: 'string',
+      description:
+        'Shown in place of the video until the YouTube channel is set in Site settings, or if it cannot be reached.',
+      initialValue: 'Messages will appear here once the church channel is connected.',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading' },
+    prepare: ({ title }) => ({ title: title || 'Watch', subtitle: 'Latest message' }),
   },
 });

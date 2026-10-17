@@ -93,6 +93,10 @@ export function sectionsProjection(field = 'pageBuilder'): string {
         link${CTA_PROJECTION}
       }
     },
+    _type == "watchSection" => {
+      ...,
+      link${CTA_PROJECTION}
+    },
     _type == "teamSection" => {
       ...,
       members[]{

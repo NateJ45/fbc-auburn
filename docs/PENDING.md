@@ -110,14 +110,15 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
 `src/data/defaultSections.ts`). The design source is the studio's static mockups (8 pages and a
 404). Still to build, roughly in this order:
 
-- New blocks: the stepping-stone rail ("A Sunday with us", five steps with stone icons and the
-  stones between them, ending in the mark), icon cards ("Find your place", borderless with large
-  stone icons), the "This week" dated list, the Watch band (light, video embed), the Plan your visit
-  timeline. Each needs a schema, typegen, a SectionRenderer branch and Studio previews.
-- A stone-icon picker on the hero for inner pages (the big icon above the H1); a logic-driving
-  dropdown, so it goes into `NON_STEGA_FIELDS` (rule 8b).
-- Pages as Studio pages: Plan your visit, What we believe, Leadership, Ministries, Watch. Until
-  Plan your visit exists, every "Plan your visit" button goes to Contact.
+- Done 2026-10-17 (second pass): "Cards with stone icons" (`iconCardsSection`), "This week"
+  (`thisWeekSection`, wraps `ThisWeekList`) and "Watch" (`watchSection`, wraps `LastSunday`) blocks,
+  in `src/sanity/schemaTypes/auburnSections.ts`; a stone-icon picker on the hero (`icon`, already on
+  `NON_STEGA_FIELDS`; the list is `src/lib/stone-icons.ts`); Studio pages What we believe,
+  Leadership and Ministries in Sanity; Home uses the cards, Watch and This week blocks. Studio
+  pages now also accept the team grid, FAQ and dynamic list blocks.
+- Still open: the stepping-stone rail and the Plan your visit page and timeline belong to the
+  motion session; a Watch page (hero, Watch block, how to watch live); the deacons' team grid
+  once names and permissions exist.
 - The menu: Plan your visit, Watch, Events and Give (both ChurchTrac links out), plus the
   full-screen Menu overlay; footer columns as in the mockups.
 - The contact form still asks the starter's interior-design questions (project type, budget,

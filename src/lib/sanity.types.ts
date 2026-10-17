@@ -90,6 +90,12 @@ export type SectionPreset = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
       } & FounderSection)
     | ({
         _key: string;
@@ -715,6 +721,21 @@ export type FounderSection = {
   cta?: CtaBlock;
 };
 
+export type WatchSection = {
+  _type: 'watchSection';
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  link?: CtaBlock;
+  fallback?: string;
+};
+
+export type ThisWeekSection = {
+  _type: 'thisWeekSection';
+  heading?: string;
+  intro?: string;
+};
+
 export type IconCardsSection = {
   _type: 'iconCardsSection';
   eyebrow?: string;
@@ -1055,6 +1076,12 @@ export type Page = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
     | ({
         _key: string;
       } & FaqSection)
@@ -1463,6 +1490,12 @@ export type AboutPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
       } & StorySection)
     | ({
         _key: string;
@@ -1619,6 +1652,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
     | ({
         _key: string;
       } & FounderSection)
@@ -1881,6 +1920,8 @@ export type AllSanitySchemaTypes =
   | ServiceAreaSection
   | StorySection
   | FounderSection
+  | WatchSection
+  | ThisWeekSection
   | IconCardsSection
   | EmbedSection
   | LogoStripSection

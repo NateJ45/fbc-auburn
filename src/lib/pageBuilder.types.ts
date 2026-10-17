@@ -339,6 +339,7 @@ export interface ProjectedDynamicListSection {
 /** iconCardsSection (FBC Auburn): cards with a stone icon, title, text, note and link. Content block. */
 export interface ProjectedIconCard {
   _key?: string;
+  _type?: 'iconCard';
   icon?: string;
   title?: string;
   body?: string;
@@ -352,6 +353,24 @@ export interface ProjectedIconCardsSection {
   heading?: string;
   intro?: string;
   cards?: ProjectedIconCard[];
+}
+
+/** thisWeekSection (FBC Auburn): the next seven days, derived. Content block. */
+export interface ProjectedThisWeekSection {
+  _type: 'thisWeekSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+}
+/** watchSection (FBC Auburn): words beside the latest YouTube message. Content block. */
+export interface ProjectedWatchSection {
+  _type: 'watchSection';
+  _key: string;
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  link?: ProjectedCtaBlock | null;
+  fallback?: string;
 }
 
 export type PageBuilderBlock =
@@ -376,4 +395,6 @@ export type PageBuilderBlock =
   // Church-reverse-port
   | ProjectedDynamicListSection
   // FBC Auburn
-  | ProjectedIconCardsSection;
+  | ProjectedIconCardsSection
+  | ProjectedThisWeekSection
+  | ProjectedWatchSection;

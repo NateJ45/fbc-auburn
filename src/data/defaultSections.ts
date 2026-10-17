@@ -75,16 +75,45 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
     imageSide: 'right',
   },
   {
-    _type: 'richTextSection',
+    _type: 'iconCardsSection',
     _key: 'default-home-belong',
     heading: 'Find your place',
-    width: 'narrow',
-    body: [
-      para(
-        'default-home-belong-p1',
-        'Small enough to know your name, with something through the week for every age: Sunday School and a safe, checked-in room for children during worship; Bible study and prayer on Wednesday evenings; and meals, workdays and the ordinary life of a church family.',
-      ),
+    intro: 'Small enough to know your name, with something through the week for every age.',
+    cards: [
+      {
+        _type: 'iconCard',
+        _key: 'default-home-belong-kids',
+        icon: 'blocks',
+        title: 'Kids',
+        body: 'Sunday School and a safe, checked-in room during worship.',
+      },
+      {
+        _type: 'iconCard',
+        _key: 'default-home-belong-bible',
+        icon: 'bible',
+        title: 'Bible study and prayer',
+        body: 'Wednesday evenings, an open table for questions and prayer.',
+      },
+      {
+        _type: 'iconCard',
+        _key: 'default-home-belong-fellowship',
+        icon: 'coffee',
+        title: 'Fellowship',
+        body: 'Meals, workdays and the ordinary life of a church family.',
+      },
     ],
+  },
+  {
+    _type: 'watchSection',
+    _key: 'default-home-watch',
+    heading: 'Missed a Sunday?',
+    body: 'Every message is streamed live on Facebook, and the latest one is always here.',
+    fallback: 'Messages will appear here once the church channel is connected.',
+  },
+  {
+    _type: 'thisWeekSection',
+    _key: 'default-home-week',
+    heading: 'This week at Auburn',
   },
   {
     _type: 'ctaBandSection',

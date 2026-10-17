@@ -49,6 +49,8 @@ export const CONTENT_TYPES = new Set([
   'guaranteeSection',
   // FBC Auburn
   'iconCardsSection',
+  'thisWeekSection',
+  'watchSection',
 ]);
 
 export interface SectionBlock {

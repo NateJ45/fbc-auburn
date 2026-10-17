@@ -26,7 +26,7 @@ import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { columnsField, headingAccentField, hideWhenRich, richTwin } from './_appearanceFields';
 import { sideOptions } from '../../lib/layout-variants';
-import { iconCardsSection, stoneIconField } from './auburnSections';
+import { iconCardsSection, stoneIconField, thisWeekSection, watchSection } from './auburnSections';
 
 // Shared image field with required alt text (accessibility + SEO).
 const imageWithAlt = (name = 'image', title = 'Image') =>
@@ -583,6 +583,8 @@ export const pageSectionSchemas = [
   logoStripSection,
   embedSection,
   iconCardsSection, // FBC Auburn
+  thisWeekSection, // FBC Auburn
+  watchSection, // FBC Auburn
 ];
 
 // The list a pageBuilder array uses for `of`. Single source of truth so every
@@ -633,7 +635,7 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
     {
       name: 'media',
       title: 'Media',
-      of: ['gallerySection', 'videoSection', 'embedSection'],
+      of: ['watchSection', 'gallerySection', 'videoSection', 'embedSection'],
     },
     {
       name: 'business',
@@ -642,6 +644,7 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'storySection', // scaffold: about
         'founderSection', // scaffold: about
         'teamSection',
+        'thisWeekSection',
         'serviceAreaSection',
         'dynamicListSection',
         'ctaBandSection',
