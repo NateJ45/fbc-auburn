@@ -1,12 +1,22 @@
 # Change history
 
+_2026-10-17: text fonts preloaded (Lighthouse CLS)._
+
+**Decision.** Lighthouse CI measured CLS 0.106 on Home against the 0.1 budget: on a cold phone load the hero
+was drawn in Georgia and Arial, then rewrapped when Young Serif (about 14% wider than Georgia) and Familjen
+Grotesk arrived. Their Latin faces now live at fixed paths in `public/fonts/` (OFL texts beside them), declared
+in `src/styles/auburn.css` after the @fontsource faces so they win, and preloaded in `BaseLayout.astro` like
+Auburn Stone. Other scripts still load from @fontsource. Measured on a throttled 412px load: CLS 0.039 to
+0.002, and only the three preloaded font files are fetched. The `.dark` heading colours went back into
+`auburn.css` (labelled test-only) because the shared a11y-dark suite still forces dark mode.
+
 _2026-10-17: light only._
 
 **Decision.** Nathan dropped dark mode for this site. The header and phone-menu theme toggles are gone
 (`ThemeToggle.tsx` deleted), and the theme bootstrap in `BaseLayout.astro` now defaults to light and ignores
 `prefers-color-scheme`. A stored `dark` still applies, only so the shared dark test suites (`a11y-dark`, the dark
 half of `contrast` and `visual`, which seed that key) keep running unchanged; no visitor can store it. The `.dark`
-tokens in `globals.css` stay for the same reason; the dark mosaic colours in `auburn.css` were removed. CLAUDE.md
+tokens in `globals.css` and the dark heading colours in `auburn.css` stay for the same reason. CLAUDE.md
 rule 3 and the visual-verification doc now say light only. The phone menu's button uses the Auburn button style.
 
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
