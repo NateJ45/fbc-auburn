@@ -1,13 +1,14 @@
 // Safe to edit by hand
-// FBC Auburn colours and display font for the generated share images (og-default.png and the
-// per-page cards). scripts/lib/render-og.mjs is a PORTABLE copy of the starter's renderer, so
-// the brand goes in through its `theme` option from here instead of edited into its DEFAULTS
-// (an edit there reports DRIFT in sync-check). Keep in step with brand/brand.config.json.
+// The brand colours and display font for the generated share images (og-default.png and the
+// per-page cards). scripts/lib/render-og.mjs is PORTABLE, so a fork's brand goes in through its
+// `theme` option from here, never edited into render-og's DEFAULTS (that reports DRIFT in
+// sync-check). `npm run apply-brand` rewrites the values below from brand/brand.config.json by
+// regex: keep the two-space indent and single quotes, or a rebrand fails on this file.
 export const OG_THEME = {
-  bg: '#FFFFFF', // white ground
-  primary: '#235E93', // deep sky
-  primaryDark: '#1B4A75',
-  accent: '#171A26', // ink
-  taupe: '#2C5B3A', // green
+  bg: '#FFFFFF', // --background (light)
+  primary: '#235E93', // --color-primary
+  primaryDark: '#1B4A75', // --color-primary-dark
+  accent: '#171A26', // --color-accent
+  taupe: '#2C5B3A', // --color-secondary
   fontDisplay: 'Young Serif, Georgia, serif',
 };

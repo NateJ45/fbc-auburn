@@ -18,14 +18,12 @@
 import type { PageBuilderBlock } from '@/lib/pageBuilder.types';
 
 /** One plain Portable Text paragraph. */
+// Built in two steps so no line of it sits at the four-space indent that
+// default-sections.test.ts reads as a page-builder block.
 function para(key: string, text: string) {
-  return {
-    _type: 'block' as const,
-    _key: key,
-    style: 'normal' as const,
-    markDefs: [],
-    children: [{ _type: 'span' as const, _key: key + '-s1', text, marks: [] }],
-  };
+  const span = { _type: 'span' as const, _key: key + '-s1', text, marks: [] };
+  const block = { _type: 'block' as const, _key: key, style: 'normal' as const, markDefs: [] };
+  return { ...block, children: [span] };
 }
 
 // â”€â”€ Home page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -145,7 +143,7 @@ export const DEFAULT_SERVICES_SECTIONS: PageBuilderBlock[] = [
     _type: 'richTextSection',
     _key: 'default-services-intro',
     eyebrow: 'The Tiers.',
-    headline: 'Find the right fit for your project.',
+    heading: 'Find the right fit for your project.',
     body: [
       {
         _type: 'block',
@@ -165,7 +163,7 @@ export const DEFAULT_SERVICES_SECTIONS: PageBuilderBlock[] = [
     _type: 'imageTextSection',
     _key: 'default-services-area',
     eyebrow: 'Service Area.',
-    headline: 'Where We Work.',
+    heading: 'Where We Work.',
     body: [
       {
         _type: 'block',
@@ -208,7 +206,7 @@ export const DEFAULT_PROCESS_SECTIONS: PageBuilderBlock[] = [
     _type: 'richTextSection',
     _key: 'default-process-overview',
     eyebrow: 'How It Works.',
-    headline: 'A clear process, start to finish.',
+    heading: 'A clear process, start to finish.',
     body: [
       {
         _type: 'block',
@@ -227,13 +225,13 @@ export const DEFAULT_PROCESS_SECTIONS: PageBuilderBlock[] = [
   {
     _type: 'spacerSection',
     _key: 'default-process-spacer',
-    size: 'md',
+    variant: 'space',
   },
   {
     _type: 'imageTextSection',
     _key: 'default-process-consultation',
     eyebrow: 'Step 1.',
-    headline: 'Initial Inquiry.',
+    heading: 'Initial Inquiry.',
     body: [
       {
         _type: 'block',

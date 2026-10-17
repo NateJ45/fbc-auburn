@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-17: starter card 104 taken in full._
+
+**Decision.** `scripts/apply-brand.mjs` is the starter's card-104 copy: it writes the brand into `scripts/og-theme.mjs`
+and never touches the PORTABLE `scripts/lib/render-og.mjs`, so a rebrand no longer reports DRIFT. `og-theme.mjs` now
+has the starter's shape with Auburn's values. `src/lib/default-sections.test.ts` (new) checks every field in the
+built-in defaults against the block schema; it found four more `headline` fields and a spacer `size` (now `heading`
+and `variant: 'space'`) in the services and process defaults. `PORTS.md` refreshed from the starter. Verified:
+`apply-brand --check` (og-theme "no changes"), sync-check 0 drifted, check, test:unit (640 + 53), format:check.
+
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
 
 **Decision.** `brand.config.json` carries the church's palette (deep sky everyday colour, ink text, white and
