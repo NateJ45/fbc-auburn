@@ -19,24 +19,17 @@
 // client:only="react" is still the escape hatch. VisualEditingOverlay in
 // PreviewLayout.astro uses it for that kind of reason.
 //
-// Layout (top to bottom inside the sheet):
-//   1. Brand accent stripe (4px Warm Bronze) + "Menu" eyebrow
-//   2. Primary CTA — Plan your visit
-//   3. Tagline in display serif italic
-//   4. Nav links — flat items are single rows; dropdown groups are a heading
-//      row with indented sub-items underneath (always expanded on mobile,
-//      no accordion needed — full-height drawers have plenty of room)
-//   5. Spacer pushes the rest to the bottom
-//   6. Email link with Mail icon
-//   7. Social icons row (Instagram, Facebook); no theme toggle (FBC Auburn is light only)
-//   8. Logo centered at the bottom of the panel
+// Layout (FBC Auburn, 2026-10-17): a full-screen night panel, as in the mockups. Left: every
+// menu link in large serif type (dropdown groups as a small heading over their links). Right: the
+// main button, the tagline, email and phone, socials, the white logo. The trigger is a "Menu" pill
+// shown at every width; on a wide screen the header also shows the first four links.
 //
 // Data: tagline, email, social URLs all come from Sanity siteSettings via
 // the Header, with sensible defaults so the menu renders cleanly before
 // content is wired up.
 
 import { useState } from 'react';
-import { Menu, Mail, Phone, ChevronRight } from 'lucide-react';
+import { Menu, Mail, Phone } from 'lucide-react';
 import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { telHref } from '@/lib/phone';
@@ -92,7 +85,7 @@ const DEFAULT_CTA = { show: true, label: 'Plan your visit', href: '/contact/' };
 export default function MobileNav({
   links,
   siteSettings,
-  logoLightUrl,
+  // logoLightUrl is still passed by Header.astro; the night menu uses the white logo only.
   logoDarkUrl,
   cta = DEFAULT_CTA,
 }: Props) {
@@ -107,169 +100,99 @@ export default function MobileNav({
   const close = () => setOpen(false);
 
   return (
-    <div className="site-header__menu absolute top-1/2 right-m -translate-y-1/2 lg:hidden">
+    <div className="site-header__menu">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <button
-            type="button"
-            aria-label="Open menu"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
-          >
-            <Menu size={22} />
+          <button type="button" aria-label="Open the menu" className="menu-pill">
+            <Menu size={18} aria-hidden="true" />
+            <span>Menu</span>
           </button>
         </SheetTrigger>
-        <SheetContent
-          side="right"
-          className="flex w-[min(380px,90vw)] flex-col gap-0 overflow-y-auto border-t-4 border-t-primary bg-background p-0 sm:max-w-none"
-        >
-          {/* Eyebrow header. */}
-          <SheetHeader className="pt-xl px-l pb-m">
-            <SheetTitle className="font-body text-xs font-normal tracking-eyebrow text-foreground/80 uppercase">
-              Menu
-            </SheetTitle>
+        {/* FBC Auburn: the full-screen night menu from the mockups (src/styles/auburn.css,
+            .auburn-menu). Every page in the menu, large; the header shows only the first four. */}
+        <SheetContent side="right" className="auburn-menu">
+          <SheetHeader className="auburn-menu__head">
+            <SheetTitle className="auburn-menu__eyebrow">Menu</SheetTitle>
           </SheetHeader>
 
-          {/* Primary CTA — main conversion action surfaced before the nav list. */}
-          {cta.show && (
-            <div className="px-l pb-l">
-              <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary w-full">
-                {cta.label}
-              </a>
-            </div>
-          )}
+          <div className="auburn-menu__grid">
+            <nav aria-label="All pages">
+              <ul className="auburn-menu__main">
+                {links.map((item) =>
+                  item.kind === 'flat' ? (
+                    <li key={item.href}>
+                      <a href={item.href} onClick={close}>
+                        {item.label}
+                      </a>
+                    </li>
+                  ) : (
+                    <li key={item.label}>
+                      <p className="auburn-menu__group">{item.label}</p>
+                      <ul className="auburn-menu__sub">
+                        {item.items.map((sub) => (
+                          <li key={sub.href}>
+                            <a href={sub.href} onClick={close}>
+                              {sub.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ),
+                )}
+              </ul>
+            </nav>
 
-          {/* Tagline in display serif for editorial feel. */}
-          <p className="px-l pb-l font-display text-h4 leading-snug text-foreground/85 italic">
-            {tagline}
-          </p>
-
-          {/* Primary nav — flat items + group headers with indented sub-items. */}
-          <nav className="border-t border-border-soft py-s" aria-label="Primary mobile">
-            {links.map((item) => {
-              if (item.kind === 'flat') {
-                return (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={close}
-                    className="flex items-center px-l py-s font-display text-lg text-foreground transition-colors hover:bg-muted hover:text-link"
-                  >
-                    {item.label}
-                  </a>
-                );
-              }
-
-              // Dropdown group — always expanded in the drawer (no accordion
-              // needed; the drawer has scroll and the groups are small).
-              return (
-                <div key={item.label}>
-                  {/* Group heading — visually distinct from flat items. Not
-                      a link itself; the sub-items carry the real hrefs. */}
-                  <p className="px-l pt-m pb-xs text-xs tracking-eyebrow text-foreground/80 uppercase">
-                    {item.label}
-                  </p>
-                  {item.items.map((sub) => (
-                    <a
-                      key={sub.href}
-                      href={sub.href}
-                      onClick={close}
-                      className="flex items-center gap-xs py-xs pr-l pl-[calc(theme(spacing.l)+0.5rem)] font-body text-base text-foreground transition-colors hover:bg-muted hover:text-link"
-                    >
-                      <ChevronRight
-                        size={12}
-                        className="shrink-0 text-foreground/40"
-                        aria-hidden="true"
-                      />
-                      {sub.label}
+            <div className="auburn-menu__side">
+              {cta.show && (
+                <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary">
+                  {cta.label}
+                </a>
+              )}
+              <p className="auburn-menu__tagline">{tagline}</p>
+              {(email || phone) && (
+                <div className="auburn-menu__contact">
+                  {email && (
+                    <a href={`mailto:${email}`}>
+                      <Mail size={16} aria-hidden="true" />
+                      {email}
                     </a>
-                  ))}
+                  )}
+                  {phone && (
+                    <a href={telHref(phone)}>
+                      <Phone size={16} aria-hidden="true" />
+                      {phone}
+                    </a>
+                  )}
                 </div>
-              );
-            })}
-          </nav>
-
-          {/* Spacer pushes the contact + logo block to the bottom. */}
-          <div className="flex-1" />
-
-          {/* Contact + socials + theme. */}
-          <div className="border-t border-border-soft px-l pt-m pb-s">
-            <p className="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-              Get in touch
-            </p>
-            {email && (
-              <a
-                href={`mailto:${email}`}
-                className="inline-flex items-center gap-s text-sm text-link hover:underline"
-              >
-                <Mail size={16} aria-hidden="true" />
-                {email}
-              </a>
-            )}
-            {phone && (
-              <a
-                href={telHref(phone)}
-                className="mt-s flex items-center gap-s text-sm text-link hover:underline"
-              >
-                <Phone size={16} aria-hidden="true" />
-                {phone}
-              </a>
-            )}
-
-            <div className="mt-m flex items-center gap-s">
-              {ig && (
-                <a
-                  href={ig}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
-                >
-                  <IconBrandInstagram size={20} stroke={1.5} />
-                </a>
               )}
-              {fb && (
-                <a
-                  href={fb}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-soft text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
-                >
-                  <IconBrandFacebook size={20} stroke={1.5} />
-                </a>
+              {(ig || fb) && (
+                <div className="auburn-menu__social">
+                  {ig && (
+                    <a href={ig} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                      <IconBrandInstagram size={20} stroke={1.5} />
+                    </a>
+                  )}
+                  {fb && (
+                    <a href={fb} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                      <IconBrandFacebook size={20} stroke={1.5} />
+                    </a>
+                  )}
+                </div>
               )}
-            </div>
-          </div>
-
-          {/* Logo at the bottom — brand-anchored close to the sheet's foot.
-              URLs come from Astro's image pipeline via Header.astro's
-              getImage() calls, so this is a WebP file with the same hash
-              as the desktop header logo (free cache hit). */}
-          {logoLightUrl && (
-            <div className="flex justify-center border-t border-border-soft px-l py-l">
-              <img
-                src={logoLightUrl}
-                alt="Studio Starter"
-                width={280}
-                height={60}
-                className="block h-10 w-auto dark:hidden"
-                loading="lazy"
-                decoding="async"
-              />
               {logoDarkUrl && (
                 <img
                   src={logoDarkUrl}
-                  alt=""
-                  aria-hidden="true"
+                  alt="First Baptist Church of Auburn"
                   width={280}
-                  height={60}
-                  className="hidden h-10 w-auto dark:block"
+                  height={100}
+                  className="auburn-menu__logo"
                   loading="lazy"
                   decoding="async"
                 />
               )}
             </div>
-          )}
+          </div>
         </SheetContent>
       </Sheet>
     </div>

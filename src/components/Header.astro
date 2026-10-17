@@ -344,7 +344,8 @@ function isGroupActive(items: { href: string }[]) {
         navigation close; the nav is fully functional without it. */}
     <div class="site-header__nav hidden items-center gap-l lg:flex">
       <nav class="site-nav flex items-center gap-l" aria-label="Primary">
-        {NAV_ITEMS.map((item) =>
+        {/* FBC Auburn: the header shows the first four menu links; the Menu button shows all. */}
+        {NAV_ITEMS.slice(0, 4).map((item) =>
           item.kind === 'flat' ? (
             <a
               href={item.href}
