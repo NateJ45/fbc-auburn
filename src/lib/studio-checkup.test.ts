@@ -137,11 +137,24 @@ describe('unconfirmed facts', () => {
       },
       { _id: 'b', _type: 'event', title: 'Picnic', confirmed: false },
       { _id: 'c', _type: 'event', title: 'Fine', confirmed: true },
+      { _id: 'd', _type: 'x', title: 'Address', churchAddress: { street: '1', confirmed: true } },
     ];
     const [hit] = run(docs, r);
     assert.equal(hit.id, 'unconfirmed-facts');
     assert.match(hit.label, /^2 pages /);
     assert.match(hit.detail, /Times and Picnic/);
+  });
+
+  it('finds unticked boxes nested in objects and arrays, and *Confirmed flags', () => {
+    const r = [unconfirmedRule()];
+    const one = (doc: Doc) => run([doc], r).length;
+    assert.equal(one({ _id: 's', _type: 'siteSettings', churchAddress: { confirmed: false } }), 1);
+    assert.equal(one({ _id: 's', _type: 'siteSettings', phoneConfirmed: false }), 1);
+    assert.equal(
+      one({ _id: 's', _type: 'siteSettings', serviceTimes: [{ _key: 'a', confirmed: false }] }),
+      1,
+    );
+    assert.equal(one({ _id: 's', _type: 'siteSettings', phoneConfirmed: true }), 0);
   });
 });
 

@@ -54,7 +54,7 @@ so the folder can go back to `ncs-astro-sanity-starter` unchanged (see "Going ba
 Generic (`genericRules()`): pictures with no description (skipping `altExemptFields` such as the logo), pages with no
 Google description (`seoTypes`, unless hidden from search), links to anything unpublished or gone, changes waiting
 more than 14 days, recent unpublished changes, the Trash, and the last publish. Opt-in: `unconfirmedRule()` (text
-containing "to be confirmed" or `[confirm]`, or a `confirmed: false` box, PORTS.md card 66). This site adds
+containing "to be confirmed" or `[confirm]`, or any `confirmed` or `...Confirmed` box left unticked at any depth, such as Site settings' church facts; PORTS.md card 66). This site adds
 `expiredNotices`. A rule is `{ id, run(ctx) }` returning one finding or null; a rule that throws is skipped.
 
 ## Rules that bite

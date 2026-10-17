@@ -141,6 +141,14 @@ const NON_STEGA_FIELDS = new Set([
   // and this template adds no surface or accent COLOUR enum at all (see
   // src/lib/surfaces.ts for why).
   'headingAccent',
+  // Church facts on Site settings, 2026-10-17 (src/sanity/schemaTypes/
+  // churchFacts.ts). `day` is a dropdown the "This Sunday" line branches on;
+  // `time` is parsed as HH:MM; the channel id and the calendar feed are put
+  // into fetch URLs. An encoded value would break all four in the preview.
+  'day',
+  'time',
+  'youtubeChannelId',
+  'churchTracIcalUrl',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

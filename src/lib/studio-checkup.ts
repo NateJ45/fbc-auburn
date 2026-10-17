@@ -304,10 +304,23 @@ export function genericRules(opts: GenericRuleOptions = {}): CheckupRule[] {
   ];
 }
 
+/** Is any `confirmed` / `...Confirmed` box anywhere in this value unticked? */
+export function hasUnconfirmedFlag(value: unknown): boolean {
+  let found = false;
+  walk(value, (obj) => {
+    for (const [k, v] of Object.entries(obj)) {
+      if (v === false && (k === 'confirmed' || k.endsWith('Confirmed'))) found = true;
+    }
+  });
+  return found;
+}
+
 /**
  * Text still marked as waiting for someone to confirm it ("to be confirmed",
- * "[confirm]"), or a document whose `confirmed` box is unticked (PORTS.md
- * card 66). Generic, but opt-in: a site that seeds placeholder copy turns it on.
+ * "[confirm]"), or a `confirmed` box left unticked, on the document or on any
+ * object inside it (`churchAddress.confirmed`, `phoneConfirmed`, a service
+ * time's `confirmed`; PORTS.md card 66). Generic, but opt-in: a site that
+ * seeds placeholder copy turns it on.
  */
 export function unconfirmedRule(
   pattern: RegExp = /\bto be confirmed\b|\[confirm\]/i,
@@ -317,7 +330,7 @@ export function unconfirmedRule(
     id: 'unconfirmed-facts',
     run: ({ published, nameOf }) => {
       const hits = published.filter(
-        (d) => d.confirmed === false || strings(d).some((s) => pattern.test(s)),
+        (d) => hasUnconfirmedFlag(d) || strings(d).some((s) => pattern.test(s)),
       );
       if (!hits.length) return null;
       return {

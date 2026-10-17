@@ -11,9 +11,25 @@ Releases link. `/build-info.json` records each build's time for "Is it live?". E
 `src/sanity/kit/` and `src/lib/studio-{kit,checkup,trash}.ts`; the church's settings are one file,
 `src/sanity/kit.config.ts`. Two desk fixes came with it: singleton items carry their document id as their pane id
 (intent links opened a blank pane before), and every `media.*` type stays out of the desk root (a "Media Folder"
-list had leaked in). Verified: typegen, check, lint, test:unit (666 + 53), build, format; signed in at `/studio` on
+list had leaked in). Verified: typegen, check, lint, test:unit (698 + 53 with main merged), build, format; signed in at `/studio` on
 `astro dev`, light and dark, staff and full view, a Trash round trip on a throwaway item (moved, restored, deleted),
 console clean. Not built yet: PENDING 1d.
+
+_2026-10-17: church data, held once and derived everywhere._
+
+**Decision.** The church's facts live in Site settings, group "Church facts" (address, service times, phone flag,
+founding year, YouTube channel id, Church Trac iCal feed), each provisional fact with a `confirmed` flag; the values from
+the church's Facebook page were written to the dataset unconfirmed (backup first). `src/lib/church-facts.ts` derives the
+"This Sunday" line, the "This week" rows (service times merged per day plus calendar events, deduplicated), the map
+link and the public calendar link; unconfirmed facts show the inline "To confirm" tag (`NotConfirmed.astro`) and stay out
+of the JSON-LD. Build-time feeds (`church-feeds.ts`): the YouTube channel feed for the replay and the Church Trac iCal,
+both skipped with no setting and null on any failure. The iCal parser and the weather line are ported from First Baptist
+Muncie; the weather is a browser fetch from api.weather.gov after load (grid ILN 28,51), and it now skips an
+early-morning frost or fog clause ("Widespread Frost then Sunny" reads "sunny"). `deploy.yml` rebuilds every morning and
+Sunday afternoon so dates, replay and events move on their own. Seven drop-in components in `src/components/church/`,
+shown on `/styleguide/church-data/`; usage in `docs/agent/church-data.md`. Verified: typegen, check, test:unit, build,
+format:check; the wall at 375 and 1280 (light; the site is light only), no sideways scroll at 320, the play swap, the live forecast,
+the fixture and the no-feed states.
 
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
 
@@ -29,7 +45,10 @@ here: the default richText and imageText blocks named their heading `headline` (
 the headings never rendered), CtaLink ignored a default button's `href` (every default button went to /contact/), and
 the layout gate failed any fork that picks a layout (it now checks the config names real values and that
 `src/data/layout.ts` matches). Verified: check, test:unit (639 + 53), build, light and dark at 375 and 1280, no sideways
-scroll at 320. The rest of the mockups is queued in PENDING 1c.
+scroll at 320. The rest of the mockups is queued in PENDING 1c. Share-image colours come from
+`scripts/og-theme.mjs` through render-og's `theme` option: apply-brand writes them into the PORTABLE
+`scripts/lib/render-og.mjs`, which sync-check reports as DRIFT, so that file was put back to the starter's copy
+(re-check it after any apply-brand run until the starter fixes apply-brand).
 
 _2026-10-17: Sanity phase 2, `@sanity/ui` 4 and `@sanity/icons` 5 (PORTS card 103)._
 
