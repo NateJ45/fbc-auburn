@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-17: the background path stays off the words; the built-in contact form is the visit form._
+
+**Decision.** The faint background stones (motion layer) sit above the section grounds so they show on the tinted
+bands, which also put them on top of text: on a phone they crossed paragraphs and the "About the church" button.
+`layPath()` in `src/scripts/motion.ts` now leaves out any stone whose box (plus 10px) touches a heading, paragraph,
+list item, link, button or form field, so the path runs through the gutters and the gaps between blocks. Measured on
+the built Home: stones over text went from 17 (1280) and 24 (375) to none touching words. With no questions written in
+the Studio, the Contact form now asks the visit questions (`DEFAULT_VISIT_QUESTIONS` in `contact.astro`) instead of the
+starter's interior-design questionnaire, so a fresh build or CI matches the live site.
+
 _2026-10-17: Contact shows the church's address; content clean-up._
 
 **Decision.** The Contact sidebar's "Studio location" map is replaced by `ChurchAddress` ("Find us": the address from
