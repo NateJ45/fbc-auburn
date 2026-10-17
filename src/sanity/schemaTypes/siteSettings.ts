@@ -5,6 +5,7 @@ import { defineType, defineField, defineArrayMember } from 'sanity';
 import { LinkIcon } from '@sanity/icons/Link';
 import { ChevronDownIcon } from '@sanity/icons/ChevronDown';
 import { ListIcon } from '@sanity/icons/List';
+import { churchFactsFields } from './churchFacts';
 
 export const siteSettings = defineType({
   name: 'siteSettings',
@@ -13,6 +14,7 @@ export const siteSettings = defineType({
   // Configuration, not prose — don't surface in Canvas's AI-assisted writing UI.
   options: { canvasApp: { exclude: true } },
   groups: [
+    { name: 'church', title: 'Church facts' },
     { name: 'identity', title: 'Identity & contact' },
     { name: 'navigation', title: 'Navigation (menus)' },
     { name: 'visibility', title: 'Section visibility' },
@@ -694,6 +696,8 @@ export const siteSettings = defineType({
       description:
         'In-scope satisfaction guarantee shown near CTAs on the Services and Contact pages. Leave blank to hide.',
     }),
+    // Church facts (address, service times, YouTube, calendar): ./churchFacts.ts.
+    ...churchFactsFields,
   ],
   preview: {
     prepare: () => ({ title: 'Site Settings' }),

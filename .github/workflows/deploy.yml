@@ -51,6 +51,17 @@ on:
   repository_dispatch:
     types: [sanity-publish]
   workflow_dispatch:
+  # FBC Auburn, 2026-10-17: the church data is derived AT BUILD TIME from the
+  # clock and two outside feeds (the "This Sunday" date and "This week" rows,
+  # the YouTube replay, the Church Trac calendar; docs/agent/church-data.md),
+  # so the site rebuilds on a clock too. Every morning (10:00 UTC, 6 am in
+  # Hamilton in summer, 5 am in winter) moves the dates and picks up calendar
+  # edits; Sunday 18:00 UTC (2 pm / 1 pm) moves "This Sunday" on to next week
+  # and catches the morning's livestream replay. GitHub may start a scheduled
+  # run some minutes late, which is harmless here.
+  schedule:
+    - cron: '0 10 * * *'
+    - cron: '0 18 * * 0'
 
 # Deploys queue rather than cancelling each other. cancel-in-progress would
 # abort a run mid `wrangler deploy`, and three spare minutes is a much better

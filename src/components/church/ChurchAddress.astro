@@ -1,0 +1,57 @@
+---
+// Safe to edit by hand
+// The church's address from Site settings > Church facts, as an <address>
+// with a "Get directions" link (a Google Maps search built from the same
+// fields) and the "To confirm" tag until confirmed. For the footer, Contact
+// and Plan your visit. Renders nothing when no address is set.
+
+import NotConfirmed from './NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+
+interface Props {
+  /** Show the "Get directions" link. */
+  directions?: boolean;
+  class?: string;
+}
+
+const { directions = true, class: className = '' } = Astro.props;
+const { address } = await getChurchFacts();
+---
+
+{address && (
+  <address class:list={['church-address', className]} data-church-address>
+    {address.lines.map((line, i) => (
+      <span class="church-address__line">
+        {line}
+        {i === address.lines.length - 1 && <NotConfirmed confirmed={address.confirmed} />}
+      </span>
+    ))}
+    {directions && (
+      <a class="church-address__map" href={address.mapsUrl} rel="noopener" target="_blank">
+        Get directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
+      </a>
+    )}
+  </address>
+)}
+
+<style>
+  .church-address {
+    display: grid;
+    gap: 0.1rem;
+    font-style: normal;
+    color: var(--foreground);
+  }
+  .church-address__map {
+    justify-self: start;
+    margin-top: 0.5rem;
+    font-weight: 600;
+    color: var(--foreground);
+    text-decoration: none;
+    border-bottom: 2px solid currentColor;
+    padding-bottom: 2px;
+  }
+  .church-address__map:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+</style>
