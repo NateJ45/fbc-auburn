@@ -11,8 +11,8 @@ until the church shares a building plan, unit-tested), so it reads without JS. `
 (photo, the mark, or the baptism drawing, each with its motion); About now has "The story in our mark". Motion is
 CSS scroll-driven animation (`animation-timeline: view()`) with an IntersectionObserver fallback, all behind
 `html.motion`, which an inline head script sets only when reduced motion is not asked for. Transforms and opacity
-only, the cross never moves. Every built-in "Plan your visit" button now goes to /plan-your-visit/. Verified: typegen,
-check, test:unit, build, format, Playwright suite; light and dark at 375 and 1280 with motion on and off, no sideways
+only, the cross never moves. Every built-in "Plan your visit" button now goes to /plan-your-visit/. Also fixed: the Contact roadmap step numbers drew at 80% of the link colour (4.07:1 on the card, an axe failure); they use the full link colour now. Verified: typegen,
+check, test:unit, build, format, Playwright suite (106); light and dark at 375 and 1280 with motion on and off, no sideways
 scroll at 320, the walk's state at three stops in Chromium and WebKit.
 
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
