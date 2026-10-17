@@ -160,6 +160,26 @@ edit in Site settings > Church facts, then a publish.
 - Set Identity > business type to Church when the Studio kit allows it; the JSON-LD still says
   `LocalBusiness` with the starter's `priceRange`.
 
+### 1d. Studio kit: the parts not built yet
+
+**Blocker: mixed; queued work plus three things only a person can supply.** The kit's first part landed
+2026-10-17 (`docs/agent/studio-kit.md`): Home, Site Guide, Checkup, the staff view, Trash, the note after Publish
+and the tour, checked signed in at `/studio` in light and dark. Still to do:
+
+- **The editor's Sanity user id in `kitConfig.staff`** once he has accepted the invitation. Until then the staff
+  view goes by role, and he is an administrator, so he would see the full Studio.
+- **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its
+  email button.
+- **The Worker half**: `src/lib/studio-auth.ts` and `/api/studio/*` (visitors from GA4 with a service-account key,
+  the Ask form through Cloudflare Email Sending once the church's domain is on Cloudflare, deploy status from GitHub,
+  an external link check, the monthly report with its cron). The spike's findings are in the kit doc.
+- **The live publish checklist** (a document inspector, plus "Publish anyway" for blocking items).
+- **Tutorial videos**, recorded at the end of the site build once the Studio stops changing.
+- **Guide recipes in the church's own jobs** (sermons, events, the bulletin) as those features land; the guides
+  are still the starter's generic set.
+- **The signed-in Studio at 375px**: the Home grid drops to one column by design, but the desktop browser used for
+  the check could not be narrowed.
+
 ## Known gaps, deliberately open
 
 ### 2. `npm run parity compare` is not a CI step

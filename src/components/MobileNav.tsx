@@ -28,7 +28,7 @@
 //      no accordion needed — full-height drawers have plenty of room)
 //   5. Spacer pushes the rest to the bottom
 //   6. Email link with Mail icon
-//   7. Social icons row (Instagram, Facebook) + ThemeToggle on the right
+//   7. Social icons row (Instagram, Facebook); no theme toggle (FBC Auburn is light only)
 //   8. Logo centered at the bottom of the panel
 //
 // Data: tagline, email, social URLs all come from Sanity siteSettings via
@@ -39,7 +39,6 @@ import { useState } from 'react';
 import { Menu, Mail, Phone, ChevronRight } from 'lucide-react';
 import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import ThemeToggle from './ThemeToggle';
 import { telHref } from '@/lib/phone';
 
 // ---- Types ------------------------------------------------------------------
@@ -99,7 +98,7 @@ export default function MobileNav({
 }: Props) {
   const [open, setOpen] = useState(false);
 
-  const tagline = siteSettings?.tagline ?? 'Your tagline goes here.';
+  const tagline = siteSettings?.tagline ?? 'A small church with the door open.';
   const email = siteSettings?.email;
   const phone = siteSettings?.phone;
   const ig = siteSettings?.socialInstagram;
@@ -133,11 +132,7 @@ export default function MobileNav({
           {/* Primary CTA — main conversion action surfaced before the nav list. */}
           {cta.show && (
             <div className="px-l pb-l">
-              <a
-                href={cta.href}
-                onClick={close}
-                className="block w-full rounded-md bg-primary-dark px-m py-m text-center text-xs font-semibold tracking-eyebrow text-white uppercase transition-colors hover:bg-accent-dark"
-              >
+              <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary w-full">
                 {cta.label}
               </a>
             </div>
@@ -243,9 +238,6 @@ export default function MobileNav({
                   <IconBrandFacebook size={20} stroke={1.5} />
                 </a>
               )}
-              <div className="ml-auto">
-                <ThemeToggle />
-              </div>
             </div>
           </div>
 

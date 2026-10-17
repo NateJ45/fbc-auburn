@@ -169,6 +169,9 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     <link rel="manifest" href="/site.webmanifest" />
     {/* Auburn Stone sets every page's H1 (StoneHeading), so it is preloaded: a static path in public/fonts. */}
     <link rel="preload" href="/fonts/auburn-stone.woff2" as="font" type="font/woff2" crossorigin />
+    {/* The text fonts' Latin faces (fixed paths, src/styles/auburn.css), preloaded so the hero does not rewrap on load. */}
+    <link rel="preload" href="/fonts/young-serif-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/familjen-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
     {/* Note: Cormorant Garamond is loaded via @fontsource @import in globals.css.
         Vite hashes the woff2 filename at build time so a static preload here
         would 404. If hero h1 LCP needs faster fonts, switch to font-display: optional
@@ -215,11 +218,12 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
         function applyTheme() {
           let dark = false;
           try {
-            const stored = localStorage.getItem(key) ?? 'system';
-            dark =
-              stored === 'dark' ||
-              (stored === 'system' &&
-                window.matchMedia('(prefers-color-scheme: dark)').matches);
+            // FBC Auburn is light only (decided 2026-10-17): there is no theme toggle and the
+            // system setting is ignored. A stored 'dark' still applies so the shared dark-mode
+            // test suites (a11y-dark, contrast, visual), which seed this key, keep running;
+            // no visitor can set it.
+            const stored = localStorage.getItem(key) ?? 'light';
+            dark = stored === 'dark';
             document.documentElement.classList.toggle('dark', dark);
             document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
           } catch (_) { /* localStorage unavailable, default light */ }

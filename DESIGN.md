@@ -62,8 +62,8 @@ generous white space, honest about size. Must not look like the First Baptist Ch
 - Measured contrast on white: ink 17.3, green 7.9, deep sky 6.8, red 5.1, water 4.2 (large only),
   gold 2.1 and sky 1.9 (never text). White text on deep sky 6.8, on green 7.9, on red 5.1. Ink on
   gold 8.4 and on sky 9.3.
-- Dark mode: ink ground (`dark-ground`), raised panels `dark-ground-raised`, sky for links and H2s,
-  lighter red and green for the stone tones, gold allowed as text on ink.
+- Light only (decided 2026-10-17): the site has no dark mode. The `dark-*` values above are kept as
+  the palette for a dark band or a printed piece on ink, not a site theme.
 
 ## Typography
 

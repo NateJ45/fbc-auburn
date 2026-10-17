@@ -15,6 +15,21 @@ only, the cross never moves. Every built-in "Plan your visit" button now goes to
 check, test:unit, build, format, Playwright suite (106); light and dark at 375 and 1280 with motion on and off, no sideways
 scroll at 320, the walk's state at three stops in Chromium and WebKit.
 
+_2026-10-17: the Studio kit, first part (Home, Site Guide, Checkup, staff view, Trash, tour)._
+
+**Decision.** The editor gets a plain Studio: it opens on **Home** (welcome, This week, Is it live?, Site health,
+Recent edits, Visitors placeholder, Ask), with **Site Guide** (search and print over the existing guides) and
+**Checkup** (pure rules, one fetch) in the top bar, and Structure and Presentation renamed **Content** and **Live
+preview**. A listed set of accounts, or with no list every non-administrator, sees the **staff view**: only those
+five tools, no Delete (everyday lists get **Move to Trash**, restorable from a Trash list), no Drafts menu or
+Releases link. `/build-info.json` records each build's time for "Is it live?". Everything generic sits in
+`src/sanity/kit/` and `src/lib/studio-{kit,checkup,trash}.ts`; the church's settings are one file,
+`src/sanity/kit.config.ts`. Two desk fixes came with it: singleton items carry their document id as their pane id
+(intent links opened a blank pane before), and every `media.*` type stays out of the desk root (a "Media Folder"
+list had leaked in). Verified: typegen, check, lint, test:unit (698 + 53 with main merged), build, format; signed in at `/studio` on
+`astro dev`, light and dark, staff and full view, a Trash round trip on a throwaway item (moved, restored, deleted),
+console clean. Not built yet: PENDING 1d.
+
 _2026-10-17: the starter's card 104 fixes, taken back (PORTS cards 104 and 105)._
 
 **Decision.** apply-brand now writes the share-image brand into `scripts/og-theme.mjs` and never touches the PORTABLE
@@ -40,6 +55,25 @@ Sunday afternoon so dates, replay and events move on their own. Seven drop-in co
 shown on `/styleguide/church-data/`; usage in `docs/agent/church-data.md`. Verified: typegen, check, test:unit, build,
 format:check; the wall at 375 and 1280 (light; the site is light only), no sideways scroll at 320, the play swap, the live forecast,
 the fixture and the no-feed states.
+
+_2026-10-17: text fonts preloaded (Lighthouse CLS)._
+
+**Decision.** Lighthouse CI measured CLS 0.106 on Home against the 0.1 budget: on a cold phone load the hero
+was drawn in Georgia and Arial, then rewrapped when Young Serif (about 14% wider than Georgia) and Familjen
+Grotesk arrived. Their Latin faces now live at fixed paths in `public/fonts/` (OFL texts beside them), declared
+in `src/styles/auburn.css` after the @fontsource faces so they win, and preloaded in `BaseLayout.astro` like
+Auburn Stone. Other scripts still load from @fontsource. Measured on a throttled 412px load: CLS 0.039 to
+0.002, and only the three preloaded font files are fetched. The `.dark` heading colours went back into
+`auburn.css` (labelled test-only) because the shared a11y-dark suite still forces dark mode.
+
+_2026-10-17: light only._
+
+**Decision.** Nathan dropped dark mode for this site. The header and phone-menu theme toggles are gone
+(`ThemeToggle.tsx` deleted), and the theme bootstrap in `BaseLayout.astro` now defaults to light and ignores
+`prefers-color-scheme`. A stored `dark` still applies, only so the shared dark test suites (`a11y-dark`, the dark
+half of `contrast` and `visual`, which seed that key) keep running unchanged; no visitor can store it. The `.dark`
+tokens in `globals.css` and the dark heading colours in `auburn.css` stay for the same reason. CLAUDE.md
+rule 3 and the visual-verification doc now say light only. The phone menu's button uses the Auburn button style.
 
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
 
