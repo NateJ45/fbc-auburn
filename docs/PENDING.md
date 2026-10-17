@@ -116,14 +116,12 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   `NON_STEGA_FIELDS`; the list is `src/lib/stone-icons.ts`); Studio pages What we believe,
   Leadership and Ministries in Sanity; Home uses the cards, Watch and This week blocks. Studio
   pages now also accept the team grid, FAQ and dynamic list blocks.
-- Still open: the stepping-stone rail and the Plan your visit page and timeline belong to the
-  motion session; a Watch page (hero, Watch block, how to watch live); the deacons' team grid
-  once names and permissions exist.
-- The menu: Plan your visit, Watch, Events and Give (both ChurchTrac links out), plus the
-  full-screen Menu overlay; footer columns as in the mockups.
-- The contact form still asks the starter's interior-design questions (project type, budget,
-  timeline, location). Replace them with a visit form ("I am visiting on...", a question, a prayer
-  request) and the `?visit=sunday-11` pre-fill from the mockups.
+- Also done (same day): Watch page; the Menu (a full-screen panel at every width, the header shows
+  the first four links) and the footer columns in Site settings; the contact form is a visit form
+  (editor-written questions in the Contact page; `?visit=sunday-11` pre-fills it).
+- Still open: Events and Give in the menu once the church's Church Trac links exist; the deacons'
+  team grid once names and permissions exist; the stepping-stone rail and Plan your visit belong to
+  the motion session.
 - Motion and the "Walk in with us" walk-through: separate step (`motion.js`, `walk.js`).
 - Photos: every arch shows the mark or a soft fill until the photo session.
 
