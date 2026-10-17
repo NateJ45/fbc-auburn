@@ -44,7 +44,12 @@ mosaic "Auburn") beside an arched photo; inner pages lead with a big stone icon 
 beside an arched photo. Density airy. Imagery: arched photos (`ArchHero.astro`, the
 text-and-picture band); with no photo yet the arch holds the stone mark or a soft sky fill, never
 a grey box. In the code: `src/styles/auburn.css` (the brand layer), `StoneHeading.astro`,
-`ArchHero.astro`; the three stepping stones are the section divider.
+`ArchHero.astro`; the three stepping stones are the section divider on inner pages.
+
+Update 2026-10-17, the bold home pass: Home carries a full-height ribbon of stones in the four
+mark colours (`StoneRibbon.astro`, `src/scripts/ribbon.ts`) on a plain white page with no tinted
+bands or dividers, a large red intro line in the hero, and photos (stock stand-ins until the photo
+session). Decision: `docs/design-directions/2026-10-17-fbc-auburn/README.md`.
 
 North star: a small church that looks like itself. The stone mark is the most distinctive thing
 the church owns, so the site is a calm, mostly one-colour frame for it. Clear Sunday facts first,
@@ -58,7 +63,8 @@ generous white space, honest about size. Must not look like the First Baptist Ch
   cross and at most one call to action per page. **Gold** and **sky** are accents only (stepping
   stones, highlights, fills behind ink text), never text on white. **Water** is text on white only
   at 24 px and up. **Ink** is body text.
-- Ground is white with a cool soft tint (`ground-soft`) for alternating sections; no cream.
+- Ground is white with a cool soft tint (`ground-soft`) for alternating sections; no cream. Home
+  is plain white: the ribbon and the photos carry its colour.
 - Measured contrast on white: ink 17.3, green 7.9, deep sky 6.8, red 5.1, water 4.2 (large only),
   gold 2.1 and sky 1.9 (never text). White text on deep sky 6.8, on green 7.9, on red 5.1. Ink on
   gold 8.4 and on sky 9.3.

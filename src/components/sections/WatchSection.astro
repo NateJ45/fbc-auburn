@@ -2,11 +2,15 @@
 // Safe to edit by hand
 // Page-builder block (FBC Auburn): the Watch band from the mockups. Light, words on the left, the
 // latest message from the church's YouTube channel on the right (LastSunday, which plays in place).
-// With no channel set or the feed down, the editor's "no video yet" line stands in.
+// With no channel set or the feed down, the editor's "no video yet" line stands in. When the block
+// has a poster picture, that line becomes a dark video card instead (the Gemini comp's "Watch the
+// latest sermon"): the picture, a play button and the link, so the band never shows an empty box.
 import CtaLink from '@/components/CtaLink.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
+import SanityImage from '@/components/SanityImage.astro';
 import { surfaceClass } from '@/lib/surfaces';
-import type { ProjectedCtaBlock } from '@/lib/pageBuilder.types';
+import { ctaHref } from '@/lib/cta-href';
+import type { ProjectedCtaBlock, SanityImageObject } from '@/lib/pageBuilder.types';
 
 interface Props {
   eyebrow?: string;
@@ -14,6 +18,7 @@ interface Props {
   body?: string;
   link?: ProjectedCtaBlock | null;
   fallback?: string;
+  poster?: SanityImageObject | null;
   surface?: 'background' | 'muted';
   headingId: string;
 }
@@ -23,9 +28,12 @@ const {
   body,
   link,
   fallback,
+  poster,
   surface = 'background',
   headingId,
 } = Astro.props;
+const posterHref = poster?.asset && link ? ctaHref(link, '/watch/') : null;
+const newTab = link?.linkType === 'external' || !!link?.openInNewTab;
 ---
 
 <section class:list={[surfaceClass(surface), 'watch-band']} aria-labelledby={headingId}>
@@ -44,10 +52,37 @@ const {
     </div>
     <div>
       <LastSunday>
-        {fallback && (
-          <p slot="fallback" class="watch-band__fallback">
-            {fallback}
-          </p>
+        {posterHref ? (
+          <a
+            slot="fallback"
+            class="watch-card"
+            href={posterHref}
+            target={newTab ? '_blank' : undefined}
+            rel={newTab ? 'noopener noreferrer' : undefined}
+          >
+            <SanityImage
+              source={poster}
+              width={760}
+              height={428}
+              alt=""
+              sizes="(min-width: 54rem) 45vw, 100vw"
+              quality={65}
+              class="watch-card__img"
+            />
+            <span class="watch-card__shade" aria-hidden="true"></span>
+            <span class="watch-card__play" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26">
+                <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
+              </svg>
+            </span>
+            <span class="watch-card__label">Watch the latest message</span>
+          </a>
+        ) : (
+          fallback && (
+            <p slot="fallback" class="watch-band__fallback">
+              {fallback}
+            </p>
+          )
         )}
       </LastSunday>
     </div>
@@ -66,5 +101,74 @@ const {
     color: var(--muted-foreground);
     font-size: 1.1rem;
     line-height: 1.55;
+  }
+  .watch-card {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #1d2f44;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 18px 40px -22px rgb(29 47 68 / 0.55);
+  }
+  .watch-card :global(.watch-card__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .watch-card__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(15 25 38 / 0.35), rgb(15 25 38 / 0.7));
+  }
+  .watch-card__play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 4.25rem;
+    height: 4.25rem;
+    margin: -2.6rem 0 0 -2.125rem;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--auburn-red);
+    transition: transform 0.3s ease;
+  }
+  .watch-card__play svg {
+    margin-left: 3px;
+  }
+  .watch-card__label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1.1rem;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+  .watch-card:hover .watch-card__play,
+  .watch-card:focus-visible .watch-card__play {
+    transform: scale(1.08);
+  }
+  .watch-card:hover :global(.watch-card__img) {
+    transform: scale(1.03);
+  }
+  .watch-card:focus-visible {
+    outline: 3px solid var(--auburn-gold);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .watch-card :global(.watch-card__img),
+    .watch-card__play {
+      transition: none;
+    }
   }
 </style>

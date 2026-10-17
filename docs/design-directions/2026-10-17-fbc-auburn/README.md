@@ -7,6 +7,23 @@ Nothing here is site code; `brand/brand.config.json` and `src/**` are untouched.
 
 ## Decision
 
+2026-10-17 (later the same day): Nathan picked **"A, made bolder from the Gemini comp"** after
+comparing the first reskin with a Gemini homepage comp. The first pass used the stone path timidly
+(small scattered stones, a faint background path), had no photos, and alternated pale tinted bands,
+so Home read as a starter in new colours. Home now leads with one big idea, used with confidence:
+a full-height ribbon of stones in red, gold, green and sky (`StoneRibbon.astro`,
+`src/scripts/ribbon.ts`) that runs down a gutter and sweeps across between sections on wide screens
+and becomes a slim left rail on phones. The page is plain white (no tinted bands, no stone dividers),
+the hero intro is set large in red ("Come as you are.") with the derived This Sunday line, photos
+fill the hero arch, a text-and-picture band and the "Find your place" cards (stock stand-ins until
+the photo session), the Watch band shows a dark video card instead of an empty box, and Home is cut
+to six blocks (hero, A place to belong, Plan your visit, Watch, Find your place, This week).
+
+Carry forward: the ribbon is Home's signature; inner pages keep the first pass for now. Copy the
+comp's composition, not its details: its lettering (a heavy sans) and its logo are not ours, and its
+people are generated. Rejected: the comp's second ribbon on the right of the hero (one ribbon is
+enough), a heavy sans headline in place of Auburn Stone.
+
 2026-10-17: Nathan picked **A (Front porch) blended with B and C**. A's photo slots (arched now,
 not full bleed) on B's airy white with B's prominent stone icons and stepping-stone rail, and C's
 huge colour "Auburn" masthead on Home. The full 8-page design was then drawn as static mockups

@@ -5,7 +5,8 @@
 //
 //   size="tall"   Home masthead: the eyebrow reads "First Baptist Church of" and the headline,
 //                 "Auburn", is set huge as a colour mosaic in Auburn Stone. The subhead's first
-//                 sentence becomes the large serif intro line and the rest sits under it.
+//                 sentence becomes the large serif intro line (red, the Gemini comp's "Come as you
+//                 are.") and the rest sits under it, then the derived "This Sunday" line.
 //   size="short"  Inner pages: eyebrow, the page title as a mosaic H1, subhead.
 //
 // The right column is an arched photo (Sanity "Background image"). With no photo yet (the photo
@@ -16,6 +17,7 @@ import SanityImage from '@/components/SanityImage.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import StoneHeading from '@/components/StoneHeading.astro';
 import StoneIcon from '@/components/StoneIcon.astro';
+import ThisSunday from '@/components/church/ThisSunday.astro';
 import markLight from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 import type { ComponentProps } from 'astro/types';
@@ -82,6 +84,7 @@ const mark = hasImage ? null : await getImage({ src: markLight });
       <StoneHeading text={headline} id={headingId} />
       {intro && <p class="arch-hero__intro">{intro}</p>}
       {rest && <p class="arch-hero__sub">{rest}</p>}
+      {masthead && <ThisSunday class="arch-hero__sunday" />}
       {(primaryCta || secondaryCta) && (
         <div class="arch-hero__ctas">
           {primaryCta && <CtaLink cta={primaryCta} variant="primary" />}

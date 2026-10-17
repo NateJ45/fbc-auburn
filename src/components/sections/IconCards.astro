@@ -3,8 +3,11 @@
 // Page-builder block (FBC Auburn): cards with stone icons. Borderless and airy, the large stone
 // icon is the hero of each card (DESIGN.md, Direction B's icons). Three across on a wide screen,
 // two on a tablet, one on a phone. A content block: the surface comes from the cadence.
+// A card with a photo (the bold home pass, 2026-10-17) shows a rounded photo in place of the icon,
+// like the Kids / Youth / Adults cards in the Gemini comp.
 import CtaLink from '@/components/CtaLink.astro';
 import StoneIcon from '@/components/StoneIcon.astro';
+import SanityImage from '@/components/SanityImage.astro';
 import { surfaceClass } from '@/lib/surfaces';
 import type { ProjectedIconCard } from '@/lib/pageBuilder.types';
 
@@ -34,8 +37,20 @@ const { eyebrow, heading, intro, cards = [], surface = 'background', headingId }
     )}
     <ul class="icon-cards" role="list">
       {cards.map((card) => (
-        <li class="icon-card">
-          <StoneIcon name={card.icon} size={96} class="icon-card__icon reveal" />
+        <li class:list={['icon-card', card.image?.asset && 'icon-card--photo']}>
+          {card.image?.asset ? (
+            <div class="icon-card__photo">
+              <SanityImage
+                source={card.image}
+                width={640}
+                height={440}
+                sizes="(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw"
+                quality={70}
+              />
+            </div>
+          ) : (
+            <StoneIcon name={card.icon} size={96} class="icon-card__icon reveal" />
+          )}
           <h3 class="icon-card__title">{card.title}</h3>
           {card.body && <p class="icon-card__body">{card.body}</p>}
           {card.note && <p class="icon-card__note">{card.note}</p>}
@@ -83,6 +98,18 @@ const { eyebrow, heading, intro, cards = [], surface = 'background', headingId }
     width: clamp(76px, 7vw, 96px);
     height: auto;
     margin-bottom: 1.1rem;
+  }
+  .icon-card__photo {
+    aspect-ratio: 16 / 11;
+    overflow: hidden;
+    border-radius: 14px;
+    margin-bottom: 1.1rem;
+    background: var(--muted);
+  }
+  .icon-card__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .icon-card__title {
     font-size: 1.6rem;
