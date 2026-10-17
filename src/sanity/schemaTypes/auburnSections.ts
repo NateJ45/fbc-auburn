@@ -20,6 +20,7 @@ export const stoneIconField = (title = 'Stone icon (optional)', description?: st
 // ── Cards with stone icons ───────────────────────────────────────────────────
 // A heading, an intro line, then cards: icon, title, a few sentences, a small note (a time, a Bible
 // reference) and an optional link. Ministries, What we believe, "Find your place" on Home.
+// A card with a photo shows the photo in place of the icon (the bold home pass, 2026-10-17).
 // A content block: SectionRenderer gives it the alternating surface.
 export const iconCardsSection = defineType({
   name: 'iconCardsSection',
@@ -42,6 +43,14 @@ export const iconCardsSection = defineType({
           fields: [
             stoneIconField(),
             defineField({
+              name: 'image',
+              title: 'Photo (optional)',
+              type: 'image',
+              options: { hotspot: true },
+              description: 'With a photo the card shows the photo instead of the stone icon.',
+              fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+            }),
+            defineField({
               name: 'title',
               title: 'Title',
               type: 'string',
@@ -57,8 +66,8 @@ export const iconCardsSection = defineType({
             defineField({ name: 'link', title: 'Link (optional)', type: 'ctaBlock' }),
           ],
           preview: {
-            select: { title: 'title', subtitle: 'note' },
-            prepare: ({ title, subtitle }) => ({ title: title || 'Card', subtitle }),
+            select: { title: 'title', subtitle: 'note', media: 'image' },
+            prepare: ({ title, subtitle, media }) => ({ title: title || 'Card', subtitle, media }),
           },
         }),
       ],
@@ -121,6 +130,15 @@ export const watchSection = defineType({
     }),
     defineField({ name: 'body', title: 'A sentence or two', type: 'text', rows: 3 }),
     defineField({ name: 'link', title: 'Link (optional)', type: 'ctaBlock' }),
+    defineField({
+      name: 'poster',
+      title: 'Picture for the video card (optional)',
+      type: 'image',
+      options: { hotspot: true },
+      description:
+        'Until the YouTube channel is connected, this picture stands in for the video, with a play button that goes to the link above.',
+      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+    }),
     defineField({
       name: 'fallback',
       title: 'When there is no video yet',

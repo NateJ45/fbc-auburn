@@ -1,0 +1,83 @@
+---
+// Safe to edit by hand
+// StoneRibbon: the full-height ribbon of stones on Home (the bold home pass, 2026-10-17, after
+// the Gemini comp; decision in docs/design-directions/2026-10-17-fbc-auburn/README.md).
+//
+// Put it FIRST inside <main> on a page. It marks the page as a ribbon page, and the styles below
+// (scoped with main:has(> [data-stone-ribbon])) then:
+//   - narrow the content column on wide screens, so both gutters have room for the ribbon;
+//   - give the page a plain white ground (no alternating tinted bands, no stone dividers), so the
+//     colour comes from the ribbon and the photos;
+//   - on phones, pad the page's left edge for the slim rail.
+// src/scripts/ribbon.ts draws the stones once the page has laid out.
+---
+
+<div class="stone-ribbon" data-stone-ribbon aria-hidden="true"></div>
+
+<script>
+  import '@/scripts/ribbon';
+</script>
+
+<style is:global>
+  main:has(> [data-stone-ribbon]) {
+    position: relative;
+    isolation: isolate;
+    background: #fff;
+  }
+  @media (min-width: 64rem) {
+    main:has(> [data-stone-ribbon]) {
+      /* Room for a ribbon in each gutter, whatever the window width. */
+      --container-content: min(66rem, calc(100vw - 14rem));
+    }
+  }
+  @media (max-width: 63.99rem) {
+    main:has(> [data-stone-ribbon]) {
+      padding-left: 2.1rem;
+    }
+  }
+
+  .stone-ribbon {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .stone-ribbon svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  /* White ground: the sections sit over the ribbon with no fill of their own. */
+  main:has(> [data-stone-ribbon]) > section {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    /* Bands draw their own rules (the Watch band, the hero); on a ribbon page the ribbon is the
+       only line, so they go. */
+    border-block-width: 0 !important;
+  }
+  main:has(> [data-stone-ribbon]) > div:has(> .stone-divider),
+  main:has(> [data-stone-ribbon]) > div:has(.stone-divider) {
+    display: none;
+  }
+
+  /* Stones land as they scroll in (motion on only; see src/styles/motion.css). */
+  .rstone {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  html.motion .rstone {
+    transition:
+      opacity 0.45s ease-out,
+      transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  html.motion .rstone:not(.in) {
+    opacity: 0;
+    transform: translateY(10px) scale(0.5);
+  }
+  html.motion [data-instant] .rstone {
+    transition: none;
+  }
+</style>

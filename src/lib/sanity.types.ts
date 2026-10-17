@@ -22,6 +22,15 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: 'sanity.imageAsset';
 };
 
+export type IconCardImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "iconCard.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type Photo = {
   asset?: SanityImageAssetReference;
   media?: unknown; // Unable to locate the referenced type "photo.media" in schema
@@ -782,6 +791,14 @@ export type WatchSection = {
   heading?: string;
   body?: string;
   link?: CtaBlock;
+  poster?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
   fallback?: string;
 };
 
@@ -806,6 +823,7 @@ export type IconCardsSection = {
       | 'blocks'
       | 'music'
       | 'giving-hand';
+    image?: IconCardImage;
     title?: string;
     body?: string;
     note?: string;
@@ -1977,6 +1995,7 @@ export type Geopoint = {
 
 export type AllSanitySchemaTypes =
   | SanityImageAssetReference
+  | IconCardImage
   | Photo
   | Redirect
   | SectionPreset

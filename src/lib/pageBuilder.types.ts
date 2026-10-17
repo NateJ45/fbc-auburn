@@ -341,6 +341,8 @@ export interface ProjectedIconCard {
   _key?: string;
   _type?: 'iconCard';
   icon?: string;
+  /** With a photo the card shows it instead of the stone icon. */
+  image?: SanityImageObject | null;
   title?: string;
   body?: string;
   note?: string;
@@ -370,6 +372,7 @@ export interface ProjectedWatchSection {
   heading?: string;
   body?: string;
   link?: ProjectedCtaBlock | null;
+  poster?: SanityImageObject | null;
   fallback?: string;
 }
 

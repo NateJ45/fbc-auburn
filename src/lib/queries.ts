@@ -95,11 +95,13 @@ export function sectionsProjection(field = 'pageBuilder'): string {
       ...,
       cards[]{
         ...,
+        image${IMAGE_PROJECTION},
         link${CTA_PROJECTION}
       }
     },
     _type == "watchSection" => {
       ...,
+      poster${IMAGE_PROJECTION},
       link${CTA_PROJECTION}
     },
     _type == "teamSection" => {

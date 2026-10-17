@@ -1,5 +1,18 @@
 # Change history
 
+_2026-10-17: the bold home pass: a full-height stone ribbon, a white page, photos._
+
+**Decision.** Home looked weaker than a Gemini comp of the same brief: the stone path was timid, there were no photos,
+and the page alternated pale bands. `StoneRibbon.astro` (first in `<main>`) narrows the content column on wide
+screens, whitens the page and hides the stone dividers; `src/scripts/ribbon.ts` lays two lanes of brick-like stones
+along one path, crossing between sections only in the measured gap between the last words of one section and the
+first of the next, and a left rail under 64rem. Measured on the built Home: no stone touches a heading, paragraph,
+link, button or image at 320, 375, 768, 1024 or 1440, and no sideways scroll. `iconCard` gained an optional photo,
+`watchSection` an optional poster (a dark video card linking to the Watch page until YouTube is connected), and the
+masthead hero shows `ThisSunday`. CtaLink's href resolver moved to `src/lib/cta-href.ts` so the poster links the
+same way. The data change (six stock photos, Home's new block order) is `scripts/content/home-bold-pass.mjs`. The
+blank sections seen while jumping down the old Home were the 600ms `[data-reveal]` fade caught mid-way, not a bug.
+
 _2026-10-17: the Studio kit is now the starter's PORTABLE copy; /build-info.json shows the commit._
 
 **Decision.** The kit went back to ncs-astro-sanity-starter as PORTS.md card 106, and this site swapped its copies
