@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-17: light only._
+
+**Decision.** Nathan dropped dark mode for this site. The header and phone-menu theme toggles are gone
+(`ThemeToggle.tsx` deleted), and the theme bootstrap in `BaseLayout.astro` now defaults to light and ignores
+`prefers-color-scheme`. A stored `dark` still applies, only so the shared dark test suites (`a11y-dark`, the dark
+half of `contrast` and `visual`, which seed that key) keep running unchanged; no visitor can store it. The `.dark`
+tokens in `globals.css` stay for the same reason; the dark mosaic colours in `auburn.css` were removed. CLAUDE.md
+rule 3 and the visual-verification doc now say light only. The phone menu's button uses the Auburn button style.
+
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
 
 **Decision.** `brand.config.json` carries the church's palette (deep sky everyday colour, ink text, white and

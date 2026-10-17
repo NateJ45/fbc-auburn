@@ -214,11 +214,12 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
         function applyTheme() {
           let dark = false;
           try {
-            const stored = localStorage.getItem(key) ?? 'system';
-            dark =
-              stored === 'dark' ||
-              (stored === 'system' &&
-                window.matchMedia('(prefers-color-scheme: dark)').matches);
+            // FBC Auburn is light only (decided 2026-10-17): there is no theme toggle and the
+            // system setting is ignored. A stored 'dark' still applies so the shared dark-mode
+            // test suites (a11y-dark, contrast, visual), which seed this key, keep running;
+            // no visitor can set it.
+            const stored = localStorage.getItem(key) ?? 'light';
+            dark = stored === 'dark';
             document.documentElement.classList.toggle('dark', dark);
             document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
           } catch (_) { /* localStorage unavailable, default light */ }

@@ -28,14 +28,6 @@
   --mosaic-3: #3b83aa;
   --heading-solid: #235e93;
 }
-.dark {
-  /* Dark: light green, sky, light red, gold (all above 7:1 on the dark ground). */
-  --mosaic-0: #8fc7a0;
-  --mosaic-1: #96c3ea;
-  --mosaic-2: #e5735a;
-  --mosaic-3: #e8a93a;
-  --heading-solid: #96c3ea;
-}
 
 /* Young Serif ships one weight; asking for 500 would make the browser fake a bold. */
 h1,
@@ -244,7 +236,7 @@ h6 {
     aspect-ratio: 4 / 4.2;
   }
 }
-/* Section H2s in the everyday colour, deep sky (light sky in dark mode). */
+/* Section H2s in the everyday colour, deep sky. */
 .auburn-h2 {
   color: var(--heading-solid);
 }

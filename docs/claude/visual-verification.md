@@ -8,7 +8,7 @@ Every UI change is verified visually before being reported done. The build that 
 
 For any change touching components, layouts, styles, or copy that affects layout:
 
-1. **Both themes.** Light AND dark. Toggle in the running site via the header `ThemeToggle`, or use Chrome DevTools' "Emulate CSS prefers-color-scheme" while testing system mode. Light is primary, but dark must read as the brand, not as broken.
+1. **Light only.** FBC Auburn has one theme (rule 3, decided 2026-10-17): no toggle, the system dark setting is ignored. Verify in light; a dark screenshot is not needed.
 2. **Both viewports.** Mobile (~375px wide) and desktop (~1280px wide). Most visitors arrive on mobile. Never ship desktop-only.
 3. **Interactive states.** Hover, focus (keyboard Tab), active. Test with mouse AND keyboard.
 4. **Adjacent regressions.** Look at the sections immediately before and after the change. Cascading styles wreck neighbors more often than expected.
@@ -19,7 +19,7 @@ Use the Playwright MCP for screenshot-and-compare loops:
 
 1. `npm run dev` (or hit the deployed URL for deployed changes)
 2. Open the page via Playwright MCP at both viewports
-3. Take screenshots, light and dark
+3. Take screenshots (light)
 4. Compare against the intent (spec, mockup, or prior screenshot)
 5. If something's off, fix and re-screenshot. Don't ship a change you haven't seen rendered.
 
