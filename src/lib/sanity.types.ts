@@ -87,6 +87,12 @@ export type SectionPreset = {
       } & EmbedSection)
     | ({
         _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
       } & FounderSection)
     | ({
         _key: string;
@@ -712,6 +718,55 @@ export type FounderSection = {
   cta?: CtaBlock;
 };
 
+export type WalkSection = {
+  _type: 'walkSection';
+  heading?: string;
+  intro?: string;
+  stops?: Array<{
+    time?: string;
+    title?: string;
+    body?: string;
+    _type: 'walkStop';
+    _key: string;
+  }>;
+  endHeading?: string;
+  endBody?: string;
+  endLinkLabel?: string;
+  endLinkHref?: string;
+};
+
+export type StepsRailSection = {
+  _type: 'stepsRailSection';
+  heading?: string;
+  intro?: string;
+  steps?: Array<{
+    icon?:
+      | 'map-pin'
+      | 'clock'
+      | 'coffee'
+      | 'bible'
+      | 'praying-hands'
+      | 'giving-hand'
+      | 'music'
+      | 'blocks';
+    title?: string;
+    body?: string;
+    times?: Array<{
+      time?: string;
+      label?: string;
+      _type: 'railTime';
+      _key: string;
+    }>;
+    linkLabel?: string;
+    linkHref?: string;
+    _type: 'railStep';
+    _key: string;
+  }>;
+  endHeading?: string;
+  primaryCta?: CtaBlock;
+  secondaryCta?: CtaBlock;
+};
+
 export type EmbedSection = {
   _type: 'embedSection';
   eyebrow?: string;
@@ -819,6 +874,7 @@ export type GallerySection = {
 
 export type ImageTextSection = {
   _type: 'imageTextSection';
+  art?: 'photo' | 'mark' | 'baptism';
   image?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -1023,6 +1079,12 @@ export type Page = {
     | ({
         _key: string;
       } & EmbedSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
   >;
   addToMainNav?: boolean;
   navGroup?: 'top' | 'services' | 'resources';
@@ -1419,6 +1481,12 @@ export type AboutPage = {
       } & EmbedSection)
     | ({
         _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
       } & StorySection)
     | ({
         _key: string;
@@ -1572,6 +1640,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & EmbedSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
     | ({
         _key: string;
       } & FounderSection)
@@ -1849,6 +1923,8 @@ export type AllSanitySchemaTypes =
   | ServiceAreaSection
   | StorySection
   | FounderSection
+  | WalkSection
+  | StepsRailSection
   | EmbedSection
   | LogoStripSection
   | SpacerSection

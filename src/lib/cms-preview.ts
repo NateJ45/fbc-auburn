@@ -94,6 +94,9 @@ const NON_STEGA_FIELDS = new Set([
   // businessInfo.ts, testimonial.ts, faqItem.ts, page.ts, studioGuide.ts,
   // studioPlaybook.ts).
   'align',
+  // FBC Auburn, 2026-10-17: imageTextSection's picture choice (photo, mark or baptism). The
+  // stone-icon picker on stepsRailSection's steps is named 'icon', listed below.
+  'art',
   'businessModel',
   'businessType',
   'category',

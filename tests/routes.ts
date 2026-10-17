@@ -25,6 +25,8 @@ export const routes: string[] = [
   '/contact/',
   '/journal/', // scaffold: journal
   '/privacy/',
+  // A Studio page (page document, slug plan-your-visit) carrying the Walk in with us block.
+  '/plan-your-visit/',
 ];
 
 /**

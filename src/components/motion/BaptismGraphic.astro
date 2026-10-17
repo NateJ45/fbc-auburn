@@ -1,0 +1,15 @@
+---
+// Safe to edit by hand
+// The baptism drawing (src/assets/brand/baptism-layered.svg: a stone cross reaching down into
+// rippling water inside a ring of stones), inlined so its layers can move. With motion on, the
+// green outer ring turns about 14 degrees across the scroll and the ripples swell from where the
+// cross meets the water. THE CROSS NEVER MOVES (Nathan's rule). Motion: src/styles/motion.css.
+import baptismSvg from '@/assets/brand/baptism-layered.svg?raw';
+
+interface Props {
+  class?: string;
+}
+const { class: extraClass = '' } = Astro.props as Props;
+---
+
+<div class:list={['baptism-wrap', extraClass]} set:html={baptismSvg} />

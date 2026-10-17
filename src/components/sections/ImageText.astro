@@ -4,8 +4,12 @@
 import SanityImage from '@/components/SanityImage.astro';
 import PortableText from '@/components/PortableText';
 import CtaLink from '@/components/CtaLink.astro';
+import MarkBuild from '@/components/motion/MarkBuild.astro';
+import BaptismGraphic from '@/components/motion/BaptismGraphic.astro';
 
 interface Props {
+  /** FBC Auburn: a photo, or one of the church's drawings with its scroll motion. */
+  art?: 'photo' | 'mark' | 'baptism';
   image?: any;
   imageSide?: 'left' | 'right';
   eyebrow?: string;
@@ -17,6 +21,7 @@ interface Props {
 }
 
 const {
+  art = 'photo',
   image,
   imageSide = 'left',
   eyebrow,
@@ -46,7 +51,15 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
     data-reveal
   >
     <div class:list={[imageFirst ? 'lg:order-1' : 'lg:order-2']}>
-      {image?.asset ? (
+      {art === 'mark' ? (
+        <div class="auburn-art">
+          <MarkBuild class="auburn-art__mark" />
+        </div>
+      ) : art === 'baptism' ? (
+        <div class="auburn-art">
+          <BaptismGraphic class="auburn-art__baptism" />
+        </div>
+      ) : image?.asset ? (
         <SanityImage
           source={image}
           width={800}

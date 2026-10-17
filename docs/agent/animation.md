@@ -119,4 +119,36 @@ The shared logic lives in `src/lib/heading-accent.ts` (`splitHeadingAccent(headi
 
 ---
 
+## The stone path (FBC Auburn, 2026-10-17)
+
+Ported from the studio mockups' v3 motion pass (`motion.js`, `walk.js`). Files: `src/styles/motion.css`,
+`src/scripts/motion.ts` (imported once by BaseLayout, re-run on `astro:page-load`), `src/components/motion/`
+(`MarkBuild`, `BaptismGraphic`, `stones.ts`), `src/components/sections/StepsRail.astro` and
+`WalkSection.astro`, `src/lib/walk-plan.ts`.
+
+Nathan's rules, which every piece keeps: motion follows the scroll and never takes it over; transforms and opacity
+only; one moving moment per page; the cross never rotates or tilts; reduced motion shows everything at rest.
+
+- **The switch.** An inline script in BaseLayout's `<head>` adds `html.motion` unless the visitor prefers reduced
+  motion or the address carries `?still`, and again after each View Transitions swap (the swap resets the class).
+  Every hidden starting state is scoped to `html.motion`, so with no JS the page is the finished picture.
+- **Reveals** (`class="reveal"`, placed with `--x --y --r --s`, staggered with `--d` and `--k`): pure CSS with
+  `animation-timeline: view()` where supported (Chrome, Edge, Safari 26), an IntersectionObserver adding `.in`
+  elsewhere. Used by the rail's icons and stones and the stone dividers; the icon cards and page icons can opt in with
+  the same class.
+- **The rail** (`stepsRailSection`): three gold stones in each gap, then the mark building itself in story order.
+- **The mark build** (`MarkBuild.astro`, the inlined `mark-layered.svg`): stones land in order on a named view
+  timeline, then the three wave bands drift a few pixels apart across the scroll. In a text-and-picture band, pick
+  "The church mark" under Picture (`imageTextSection.art = mark`); About uses it for "The story in our mark".
+- **Baptism** (`BaptismGraphic.astro`, `art = baptism`): the green ring turns about 14 degrees across the scroll
+  and the ripples swell; `#cross` is never transformed.
+- **Background path**: on a page with a rail or a walk, faint stones on an S-curve behind `<main>`, laid just ahead
+  of the reader; it skips the hero and any `[data-no-bgpath]` section. Script only (it needs layout).
+- **Walk in with us** (`walkSection`): the plan is drawn at BUILD time from `walk-plan.ts` (placeholder geometry:
+  ROOMS, STOPS, ROUTE), pinned with `position: sticky` beside the stops; an IntersectionObserver on the middle tenth of
+  the screen lights the route up to the current stop. Without motion the whole route is shown and the tags are hidden.
+- **Nav**: three tiny stones under the current page's link replace the underline.
+
+---
+
 Cross-reference: `polish-layer.md` covers the non-animation visual layer (brand stripe, card-lift, surface-warm, reading-progress, sticky-header, paper-grain, print stylesheet).

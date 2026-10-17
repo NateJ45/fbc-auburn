@@ -1,0 +1,139 @@
+---
+// Safe to edit by hand
+// Page-builder block: "Walk in with us" (walkSection), the Plan your visit standout. A stone-mosaic
+// plan of the lot and building stays pinned beside the stops while they scroll past; gold stepping
+// stones lay the route leg by leg and each stop lights up with its tag. It ends on a button that
+// opens Contact with the visit filled in (/contact/?visit=sunday-11).
+//
+// The ordered list of stops is the real content. The plan is drawn here at BUILD time from
+// src/lib/walk-plan.ts (PLACEHOLDER geometry until the church shares a building plan), so without
+// JS, or with reduced motion, the finished route is simply shown beside the list.
+// src/scripts/motion.ts only decides which stop is in the middle of the screen.
+// Design source: the studio mockups' plan-your-visit.html and walk.js (2026-10-17).
+import SectionHeading from '@/components/SectionHeading.astro';
+import CtaLink from '@/components/CtaLink.astro';
+import { stoneSrcs, stoneIconSrc } from '@/components/motion/stones';
+import { buildWalkPlan, VIEWBOX } from '@/lib/walk-plan';
+import { surfaceClass } from '@/lib/surfaces';
+import type { ProjectedWalkSection } from '@/lib/pageBuilder.types';
+
+type Props = Omit<ProjectedWalkSection, '_type' | '_key'> & {
+  surface?: 'background' | 'muted';
+  headingId: string;
+};
+
+const {
+  heading,
+  intro,
+  stops = [],
+  endHeading,
+  endBody,
+  endLinkLabel,
+  endLinkHref,
+  surface = 'background',
+  headingId,
+} = Astro.props as Props;
+
+const list = stops.filter((s) => s?.title);
+const plan = buildWalkPlan(list.length);
+const stones = await stoneSrcs();
+const icons = await Promise.all(plan.stops.map((s) => stoneIconSrc(s.icon)));
+const endStop = list.length + 1;
+---
+
+<section
+  class:list={[surfaceClass(surface), 'walk']}
+  id="walk"
+  aria-labelledby={heading ? headingId : undefined}
+  data-no-bgpath
+  data-bgpath-page
+  data-stones={stones.join(',')}
+>
+  <div class="mx-auto max-w-content px-m py-section-lg">
+    {heading && (
+      <SectionHeading
+        headline={heading}
+        subhead={intro}
+        headingId={headingId}
+        align="center"
+        class="mx-auto steps-rail__intro"
+      />
+    )}
+
+    <div class="walk-grid" data-walk>
+      <div class="walk-stage" aria-hidden="true">
+        <svg
+          class="walk-plan"
+          viewBox={`0 0 ${VIEWBOX.w} ${VIEWBOX.h}`}
+          role="presentation"
+          focusable="false"
+        >
+          {plan.rooms.map((room) => (
+            <g class={`room r-${room.kind}`}>
+              {room.tiles.map((t) => (
+                <rect x={t.x} y={t.y} width={t.w} height={t.h} rx="5" />
+              ))}
+            </g>
+          ))}
+          {plan.rooms.map(
+            (room) =>
+              room.label && (
+                <text class="room-label" x={room.label.x} y={room.label.y}>
+                  {room.label.text}
+                </text>
+              ),
+          )}
+          <g class="walk-path">
+            {plan.stones.map((s) => (
+              <image
+                class="pstone"
+                href={stones[s.shape]}
+                width="26"
+                height="13"
+                x="-13"
+                y="-6.5"
+                transform={s.transform}
+                data-leg={s.leg}
+                style={`--n:${s.n}`}
+              />
+            ))}
+          </g>
+          {plan.stops.map((s, i) => (
+            <g class="stop" data-stop={s.n} transform={`translate(${s.x} ${s.y})`}>
+              <circle class="stop-ring" r="26" />
+              {icons[i] && <image href={icons[i]} width="34" height="34" x="-17" y="-17" />}
+              <g class="tag" transform={`translate(0 ${s.tagY})`}>
+                <rect x={-s.tagW / 2} y="-15" width={s.tagW} height="30" rx="15" />
+                <text y="5">{s.tag}</text>
+              </g>
+            </g>
+          ))}
+        </svg>
+      </div>
+
+      <ol class="walk-steps" role="list">
+        {list.map((stop, i) => (
+          <li data-stop={i + 1}>
+            {stop.time && <p class="walk-steps__t">{stop.time}</p>}
+            <h3>{stop.title}</h3>
+            {stop.body && <p>{stop.body}</p>}
+          </li>
+        ))}
+        {endHeading && (
+          <li data-stop={endStop} class="walk-end">
+            <h3>{endHeading}</h3>
+            {endBody && <p>{endBody}</p>}
+            {endLinkLabel && (
+              <div class="mt-l">
+                <CtaLink
+                  cta={{ label: endLinkLabel, href: endLinkHref || '/contact/?visit=sunday-11' }}
+                  variant="primary"
+                />
+              </div>
+            )}
+          </li>
+        )}
+      </ol>
+    </div>
+  </div>
+</section>

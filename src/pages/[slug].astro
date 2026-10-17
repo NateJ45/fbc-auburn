@@ -14,6 +14,11 @@ import SectionRenderer from '@/components/SectionRenderer.astro';
 import { getPage, getAllPageSlugs, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
+import {
+  PLAN_VISIT_SLUG,
+  DEFAULT_PLAN_VISIT_TITLE,
+  DEFAULT_PLAN_VISIT_SECTIONS,
+} from '@/data/defaultSections';
 
 export async function getStaticPaths() {
   // Defined inside getStaticPaths, and it has to be: CLAUDE.md rule 10. Astro
@@ -40,11 +45,22 @@ export async function getStaticPaths() {
     '_astro',
   ]);
   const slugs = await getAllPageSlugs();
-  return slugs.filter((slug) => !RESERVED.has(slug)).map((slug) => ({ params: { slug } }));
+  // FBC Auburn: Plan your visit is a Studio page, but the built-in "Plan your visit" buttons
+  // point at it, so the address is always built. With no such page in Sanity (a fresh clone, or
+  // no project), the page below renders DEFAULT_PLAN_VISIT_SECTIONS. The literal lives here for
+  // the same isolated-scope reason as RESERVED (rule 10).
+  const all = slugs.includes('plan-your-visit') ? slugs : [...slugs, 'plan-your-visit'];
+  return all.filter((slug) => !RESERVED.has(slug)).map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
-const [pageDoc, siteSettings] = await Promise.all([getPage(slug as string), getSiteSettings()]);
+const [fetchedDoc, siteSettings] = await Promise.all([getPage(slug as string), getSiteSettings()]);
+// Plan your visit with no Studio page yet: the built-in sections (see getStaticPaths).
+const pageDoc =
+  fetchedDoc ??
+  (slug === PLAN_VISIT_SLUG
+    ? { title: DEFAULT_PLAN_VISIT_TITLE, pageBuilder: DEFAULT_PLAN_VISIT_SECTIONS }
+    : null);
 
 // getStaticPaths listed this slug, so an empty answer here is a failed read,
 // not a missing page. A production build stops rather than publish the page as
