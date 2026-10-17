@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-17: the starter's card 104 fixes, taken back (PORTS cards 104 and 105)._
+
+**Decision.** apply-brand now writes the share-image brand into `scripts/og-theme.mjs` and never touches the PORTABLE
+`scripts/lib/render-og.mjs`, so a rerun no longer reports DRIFT (the re-check noted in "the reskin, first pass" is no
+longer needed). `src/lib/default-sections.test.ts` checks every default block field against the schema and fails on
+em-dashes or mis-encoded characters in default copy; it found the leftover services and process defaults still naming
+their heading `headline`, the process spacer's `size` and a mis-encoded em-dash, all fixed. Card 105 (a text hero keeps
+its buttons) is not taken: the split hero renders as ArchHero here, and the text hero is left as it is until the
+interior heroes are designed.
+
 _2026-10-17: the reskin, first pass (direction A blended with B and C)._
 
 **Decision.** `brand.config.json` carries the church's palette (deep sky everyday colour, ink text, white and
