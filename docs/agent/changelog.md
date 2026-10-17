@@ -13,6 +13,31 @@ FAQ and dynamic list). In Sanity: What we believe, Leadership and Ministries pag
 the pastor's to write), and Home's "Find your place" became icon cards plus the Watch and This week blocks. Verified:
 typegen, check, test:unit, Home at 375 and 1280 with the church-data fixture, no sideways scroll at 320.
 
+_2026-10-17: the Studio kit, first part (Home, Site Guide, Checkup, staff view, Trash, tour)._
+
+**Decision.** The editor gets a plain Studio: it opens on **Home** (welcome, This week, Is it live?, Site health,
+Recent edits, Visitors placeholder, Ask), with **Site Guide** (search and print over the existing guides) and
+**Checkup** (pure rules, one fetch) in the top bar, and Structure and Presentation renamed **Content** and **Live
+preview**. A listed set of accounts, or with no list every non-administrator, sees the **staff view**: only those
+five tools, no Delete (everyday lists get **Move to Trash**, restorable from a Trash list), no Drafts menu or
+Releases link. `/build-info.json` records each build's time for "Is it live?". Everything generic sits in
+`src/sanity/kit/` and `src/lib/studio-{kit,checkup,trash}.ts`; the church's settings are one file,
+`src/sanity/kit.config.ts`. Two desk fixes came with it: singleton items carry their document id as their pane id
+(intent links opened a blank pane before), and every `media.*` type stays out of the desk root (a "Media Folder"
+list had leaked in). Verified: typegen, check, lint, test:unit (698 + 53 with main merged), build, format; signed in at `/studio` on
+`astro dev`, light and dark, staff and full view, a Trash round trip on a throwaway item (moved, restored, deleted),
+console clean. Not built yet: PENDING 1d.
+
+_2026-10-17: the starter's card 104 fixes, taken back (PORTS cards 104 and 105)._
+
+**Decision.** apply-brand now writes the share-image brand into `scripts/og-theme.mjs` and never touches the PORTABLE
+`scripts/lib/render-og.mjs`, so a rerun no longer reports DRIFT (the re-check noted in "the reskin, first pass" is no
+longer needed). `src/lib/default-sections.test.ts` checks every default block field against the schema and fails on
+em-dashes or mis-encoded characters in default copy; it found the leftover services and process defaults still naming
+their heading `headline`, the process spacer's `size` and a mis-encoded em-dash, all fixed. Card 105 (a text hero keeps
+its buttons) is not taken: the split hero renders as ArchHero here, and the text hero is left as it is until the
+interior heroes are designed.
+
 _2026-10-17: church data, held once and derived everywhere._
 
 **Decision.** The church's facts live in Site settings, group "Church facts" (address, service times, phone flag,

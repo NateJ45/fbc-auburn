@@ -7,12 +7,12 @@
 //   heroSection, richTextSection, imageTextSection (no image), statSection,
 //   ctaBandSection, quoteSection, spacerSection.
 // Collection-dependent rich sections (servicesGridSection, testimonialsSection,
-// processSection, valuesSection) are NOT used here â€” they'd render empty without
+// processSection, valuesSection) are NOT used here — they'd render empty without
 // Sanity collections and would defeat the purpose of a no-data safety net.
 //
 // Each block carries a _key for parity with Sanity-seeded pageBuilder arrays.
 // The seed script (scripts/seed-core.mjs) imports from this file so these
-// arrays are the single source of truth â€” a fresh clone renders the same copy
+// arrays are the single source of truth — a fresh clone renders the same copy
 // that a seeded project receives as its first content.
 
 import type { PageBuilderBlock } from '@/lib/pageBuilder.types';
@@ -28,7 +28,7 @@ function para(key: string, text: string) {
   };
 }
 
-// â”€â”€ Home page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Home page ────────────────────────────────────────────────────────────────
 
 export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
   {
@@ -124,7 +124,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
   },
 ];
 
-// â”€â”€ About page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── About page ───────────────────────────────────────────────────────────────
 
 // scaffold: about
 export const DEFAULT_ABOUT_SECTIONS: PageBuilderBlock[] = [
@@ -158,7 +158,7 @@ export const DEFAULT_ABOUT_SECTIONS: PageBuilderBlock[] = [
 ];
 // scaffold:end
 
-// â”€â”€ Services page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Services page ─────────────────────────────────────────────────────────────
 
 export const DEFAULT_SERVICES_SECTIONS: PageBuilderBlock[] = [
   {
@@ -174,7 +174,7 @@ export const DEFAULT_SERVICES_SECTIONS: PageBuilderBlock[] = [
     _type: 'richTextSection',
     _key: 'default-services-intro',
     eyebrow: 'The Tiers.',
-    headline: 'Find the right fit for your project.',
+    heading: 'Find the right fit for your project.',
     body: [
       {
         _type: 'block',
@@ -194,7 +194,7 @@ export const DEFAULT_SERVICES_SECTIONS: PageBuilderBlock[] = [
     _type: 'imageTextSection',
     _key: 'default-services-area',
     eyebrow: 'Service Area.',
-    headline: 'Where We Work.',
+    heading: 'Where We Work.',
     body: [
       {
         _type: 'block',
@@ -222,7 +222,7 @@ export const DEFAULT_SERVICES_SECTIONS: PageBuilderBlock[] = [
   },
 ];
 
-// â”€â”€ Process page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Process page ──────────────────────────────────────────────────────────────
 
 export const DEFAULT_PROCESS_SECTIONS: PageBuilderBlock[] = [
   {
@@ -237,7 +237,7 @@ export const DEFAULT_PROCESS_SECTIONS: PageBuilderBlock[] = [
     _type: 'richTextSection',
     _key: 'default-process-overview',
     eyebrow: 'How It Works.',
-    headline: 'A clear process, start to finish.',
+    heading: 'A clear process, start to finish.',
     body: [
       {
         _type: 'block',
@@ -247,7 +247,7 @@ export const DEFAULT_PROCESS_SECTIONS: PageBuilderBlock[] = [
           {
             _type: 'span',
             _key: 'default-process-overview-p1-s1',
-            text: 'Add your process steps in Sanity Studio under Process Steps. Once seeded, this page will display your full step-by-step workflow in detailed cards. No guesswork, no surprises â€” you will always know exactly where things stand.',
+            text: 'Add your process steps in Sanity Studio under Process Steps. Once seeded, this page will display your full step-by-step workflow in detailed cards. No guesswork, no surprises: you will always know exactly where things stand.',
           },
         ],
       },
@@ -256,13 +256,12 @@ export const DEFAULT_PROCESS_SECTIONS: PageBuilderBlock[] = [
   {
     _type: 'spacerSection',
     _key: 'default-process-spacer',
-    size: 'md',
   },
   {
     _type: 'imageTextSection',
     _key: 'default-process-consultation',
     eyebrow: 'Step 1.',
-    headline: 'Initial Inquiry.',
+    heading: 'Initial Inquiry.',
     body: [
       {
         _type: 'block',

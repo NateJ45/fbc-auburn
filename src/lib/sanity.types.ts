@@ -1763,6 +1763,21 @@ export type HomePage = {
   };
 };
 
+export type TrashedItem = {
+  _id: string;
+  _type: 'trashedItem';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  kind?: string;
+  deletedAt?: string;
+  wasPublished?: boolean;
+  originalType?: string;
+  originalId?: string;
+  payload?: string;
+};
+
 export type MediaFolderReference = {
   _ref: string;
   _type: 'reference';
@@ -1946,6 +1961,7 @@ export type AllSanitySchemaTypes =
   | FaqPage
   | AboutPage
   | HomePage
+  | TrashedItem
   | MediaFolderReference
   | MediaFolder
   | MediaTag
