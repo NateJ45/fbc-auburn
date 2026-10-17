@@ -14,7 +14,7 @@ Design context: `PRODUCT.md` (brief Part A) and `DESIGN.md` (brand tokens and ru
 
 ## What this is
 
-The church's site on **Astro 7 + Sanity v6 + Cloudflare Workers**, forked from `ncs-astro-sanity-starter` on 2026-10-17 (starter `main` at `f1ae0d3`). Sanity project `wdpzvn6m`, dataset `production` (public, so no personal data in it), Studio embedded at `/studio`. Worker `fbc-auburn`, pre-launch address https://fbc-auburn.nathanjnixon86.workers.dev (the church's own domain is not chosen yet; `src/data/site.ts` and `astro.config.mjs` `site:` move to it at cutover). **Page-builder-first**: pages render through `SectionRenderer` from Sanity `pageBuilder` arrays, and any Studio page gets a `/[slug]` route. Capabilities kept from the starter: `about`, `faq`, `journal`; `services`, `process`, `philosophy` and `testimonials` were removed with `npm run scaffold` at fork time. Full overview and stack notes: `docs/claude/overview.md`.
+The church's site on **Astro 7 + Sanity v6 + Cloudflare Workers**, forked from `ncs-astro-sanity-starter` on 2026-10-17 (starter `main` at `f1ae0d3`). Sanity project `wdpzvn6m`, dataset `production` (public, so no personal data in it), Studio embedded at `/studio` and made plain for the editor by the Studio kit (`src/sanity/kit/`, settings in `src/sanity/kit.config.ts`; `docs/agent/studio-kit.md`). Worker `fbc-auburn`, pre-launch address https://fbc-auburn.nathanjnixon86.workers.dev (the church's own domain is not chosen yet; `src/data/site.ts` and `astro.config.mjs` `site:` move to it at cutover). **Page-builder-first**: pages render through `SectionRenderer` from Sanity `pageBuilder` arrays, and any Studio page gets a `/[slug]` route. Capabilities kept from the starter: `about`, `faq`, `journal`; `services`, `process`, `philosophy` and `testimonials` were removed with `npm run scaffold` at fork time. Full overview and stack notes: `docs/claude/overview.md`.
 
 The must-knows:
 
@@ -124,6 +124,6 @@ Reference (`docs/claude/`, read when the task needs it):
 - `safe-to-edit.md`: files safe to edit by hand, script accent opt-in.
 - `visual-verification.md`: the screenshot loop.
 - `communication-style.md`: style rules and site copy voice.
-- `topic-index.md`: index of the `docs/agent/` deep-dives (stack, theme, components, SEO, performance, Sanity, deployment).
+- `topic-index.md`: index of the `docs/agent/` deep-dives (stack, theme, components, SEO, performance, Sanity, deployment, the Studio kit).
 
 See `OPERATIONS.md` for the tactical playbook (deploy, patch content, run audits, common gotchas).
