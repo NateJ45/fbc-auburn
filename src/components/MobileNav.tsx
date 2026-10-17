@@ -21,7 +21,7 @@
 //
 // Layout (top to bottom inside the sheet):
 //   1. Brand accent stripe (4px Warm Bronze) + "Menu" eyebrow
-//   2. Primary CTA — Book a consultation
+//   2. Primary CTA — Plan your visit
 //   3. Tagline in display serif italic
 //   4. Nav links — flat items are single rows; dropdown groups are a heading
 //      row with indented sub-items underneath (always expanded on mobile,
@@ -86,7 +86,7 @@ interface Props {
 }
 
 /** Built-in drawer button, matching the header's own default. */
-const DEFAULT_CTA = { show: true, label: 'Book a consultation', href: '/contact/' };
+const DEFAULT_CTA = { show: true, label: 'Plan your visit', href: '/contact/' };
 
 // ---- Component --------------------------------------------------------------
 

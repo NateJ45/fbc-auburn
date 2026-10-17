@@ -7,7 +7,20 @@ Nothing here is site code; `brand/brand.config.json` and `src/**` are untouched.
 
 ## Decision
 
-Not picked yet. Waiting for Nathan.
+2026-10-17: Nathan picked **A (Front porch) blended with B and C**. A's photo slots (arched now,
+not full bleed) on B's airy white with B's prominent stone icons and stepping-stone rail, and C's
+huge colour "Auburn" masthead on Home. The full 8-page design was then drawn as static mockups
+outside this repo; DESIGN.md records the result.
+
+Carry forward: palette from DESIGN.md (deep sky everyday colour, red for the one main button,
+gold and sky as accents only), Young Serif + Familjen Grotesk, Auburn Stone for every page H1
+(mosaic) and large H2s, radius 10px, layout header inline, hero split (rendered as the arched hero),
+density airy, cards soft. Light header with the full-colour lockup; inner pages lead with a big
+stone icon and a mosaic H1 beside an arched photo; borderless cards with large icons; Watch is
+light, not a dark band; one red button per page.
+
+Rejected: A's dark full-bleed photo heroes (too heavy without real photographs), C's poster
+noticeboard as a whole-page system, cream paper (the Muncie look).
 
 ## Archetype assignment
 

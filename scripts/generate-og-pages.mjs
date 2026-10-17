@@ -16,6 +16,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createClient } from '@sanity/client';
 import { renderOg } from './lib/render-og.mjs';
+import { OG_THEME } from './og-theme.mjs';
 import { loadEnv } from './lib/loadEnv.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -52,11 +53,16 @@ const outDir = resolve(root, 'public/og');
 // override without touching source; falls back to the value in src/data/site.ts
 // (hard-coded here to avoid a TypeScript import from a plain .mjs script).
 // Update this default when you replace the starter identity in src/data/site.ts.
-const WORDMARK = env.SITE_NAME ?? 'Studio Starter';
+const WORDMARK = env.SITE_NAME ?? 'First Baptist Church of Auburn';
 
 let count = 0;
 async function render(slug, tagline) {
-  await renderOg({ wordmark: WORDMARK, tagline, outPath: resolve(outDir, `${slug}.png`) });
+  await renderOg({
+    wordmark: WORDMARK,
+    tagline,
+    outPath: resolve(outDir, `${slug}.png`),
+    theme: OG_THEME,
+  });
   count += 1;
   const t = String(tagline);
   console.log(`  ${slug}.png — ${t.slice(0, 60)}${t.length > 60 ? '…' : ''}`);

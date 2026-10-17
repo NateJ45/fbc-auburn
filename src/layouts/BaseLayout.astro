@@ -28,6 +28,8 @@ import '@/styles/globals.css';
 // Imported AFTER globals.css so the brand :root declarations in globals.css win
 // the cascade over starwind.css's fallback :root defaults.
 import '@/styles/starwind.css';
+// FBC Auburn brand layer (stone headings, arched hero, buttons). Last, so it wins a tie.
+import '@/styles/auburn.css';
 
 interface Props {
   title: string;
@@ -151,8 +153,8 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
         apply-brand did not touch them, so every fork painted its phone browser
         chrome in a palette it had otherwise replaced, and the values did not
         even match the starter's own brand.config.json. */}
-    <meta name="theme-color" content="#FBFBFA" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#17191C" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141823" media="(prefers-color-scheme: dark)" />
 
     {/* THE ICON SET, all rendered from public/favicon.svg by `npm run favicon`.
         The SVG is what modern browsers take; the .ico answers the bare
@@ -164,6 +166,8 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    {/* Auburn Stone sets every page's H1 (StoneHeading), so it is preloaded: a static path in public/fonts. */}
+    <link rel="preload" href="/fonts/auburn-stone.woff2" as="font" type="font/woff2" crossorigin />
     {/* Note: Cormorant Garamond is loaded via @fontsource @import in globals.css.
         Vite hashes the woff2 filename at build time so a static preload here
         would 404. If hero h1 LCP needs faster fonts, switch to font-display: optional

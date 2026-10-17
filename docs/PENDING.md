@@ -99,16 +99,35 @@ domain and their mail.
 
 ---
 
-### 1c. Pick a homepage direction, then reskin
+### 1c. Finish the reskin: the rest of the mockups
 
-**Blocker: Nathan picks one of the three directions (or a hybrid).**
+**Blocker: none; queued work.** The pick is recorded (A blended with B and C). The first pass
+(2026-10-17) brought in the palette, Young Serif + Familjen Grotesk, Auburn Stone and
+`StoneHeading.astro`, the logo and favicons, the arched hero (`ArchHero.astro`, Home masthead
+and inner pages), red sentence-case buttons, the light closing band with the mark, stone
+dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, Journal and the
+404 (in Sanity and in
+`src/data/defaultSections.ts`). The design source is the studio's static mockups (8 pages and a
+404). Still to build, roughly in this order:
 
-Brief (`PRODUCT.md`, `DESIGN.md`), references (`docs/references/`) and three static homepage
-directions (`docs/design-directions/2026-10-17-fbc-auburn/`, open `index.html`) were done on
-2026-10-17. Next: record the pick as a dated `## Decision` entry in that README, update
-`DESIGN.md` Overview and Do's and Don'ts, then run the reskin skill. The stone heading kit
-(Auburn Stone webfont and `StoneHeading.astro`) comes in with the reskin. Service times shown in
-the mockups are still unconfirmed with the church.
+- New blocks: the stepping-stone rail ("A Sunday with us", five steps with stone icons and the
+  stones between them, ending in the mark), icon cards ("Find your place", borderless with large
+  stone icons), the "This week" dated list, the Watch band (light, video embed), the Plan your visit
+  timeline. Each needs a schema, typegen, a SectionRenderer branch and Studio previews.
+- A stone-icon picker on the hero for inner pages (the big icon above the H1); a logic-driving
+  dropdown, so it goes into `NON_STEGA_FIELDS` (rule 8b).
+- Pages as Studio pages: Plan your visit, What we believe, Leadership, Ministries, Watch. Until
+  Plan your visit exists, every "Plan your visit" button goes to Contact.
+- The menu: Plan your visit, Watch, Events and Give (both ChurchTrac links out), plus the
+  full-screen Menu overlay; footer columns as in the mockups.
+- The contact form still asks the starter's interior-design questions (project type, budget,
+  timeline, location). Replace them with a visit form ("I am visiting on...", a question, a prayer
+  request) and the `?visit=sunday-11` pre-fill from the mockups.
+- Motion and the "Walk in with us" walk-through: separate step (`motion.js`, `walk.js`).
+- Photos: every arch shows the mark or a soft fill until the photo session.
+
+Service times, the 1959 founding and Hebrews 13:8 are still unconfirmed with the church; copy
+marks them "to be confirmed".
 
 ## Known gaps, deliberately open
 

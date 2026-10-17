@@ -2,8 +2,8 @@
 // Safe to edit by hand
 // The full-bleed call-to-action section that closes every interior page (and the home page).
 // Charcoal Dark panel with editorial headline, optional subhead, and a Bronze CTA pill.
-// This is intentionally the only section on the page that uses the dark brand panel:
-// it punctuates the read and pushes toward booking a consultation.
+// FBC Auburn: with no background photo it is the light close from the mockups (soft ground, the
+// stone mark above the headline, red button); with a photo it keeps the dark scrimmed panel.
 //
 // scriptAccent: optional single word/phrase from the headline to render in handwritten
 // the script accent font via the `.font-script` utility. Inherits the heading color (text-bg) so
@@ -16,6 +16,8 @@ import { splitHeadingAccent } from '@/lib/heading-accent';
 import { hasInlineRich } from '@/lib/inline-rich';
 import InlineRich from '@/components/InlineRich.astro';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
+import { getImage } from 'astro:assets';
+import markLight from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 
 interface CtaBlock {
   label?: string;
@@ -69,12 +71,12 @@ interface Props {
 
 const {
   eyebrow,
-  headline = 'Ready to Love Your Space?',
-  subhead = "Let's start with a conversation.",
+  headline = 'We would love to meet you this Sunday.',
+  subhead = 'Tell us you are coming, or ask anything at all.',
   cta,
   secondaryCta,
   headingId = 'final-cta',
-  fallbackCtaLabel = 'Book a Consultation',
+  fallbackCtaLabel = 'Plan your visit',
   scriptAccent,
   headingAccent,
   subheadRich,
@@ -101,10 +103,15 @@ const colour = scriptFound
   : splitHeadingAccent(headline, headingAccent);
 
 const richSubhead = hasInlineRich(subheadRich);
+const mark = hasBackground ? null : await getImage({ src: markLight });
 ---
 
 <section
-  class:list={['bg-accent-dark text-bg', hasBackground && 'relative overflow-hidden']}
+  class:list={[
+    hasBackground
+      ? 'bg-accent-dark text-bg relative overflow-hidden'
+      : 'final-cta--light bg-muted text-foreground',
+  ]}
   aria-labelledby={headingId}
 >
   {/* Optional background photo + fixed charcoal scrim. Rendered only when an
@@ -130,7 +137,7 @@ const richSubhead = hasInlineRich(subheadRich);
       site header, mobile menu, footer, and every marketing card. Softens the
       transition from the previous (usually light) section into this dark
       panel and ties the close-of-page back into the brand vocabulary. */}
-  <div class:list={['h-0.5 bg-primary', hasBackground && 'relative z-10']} aria-hidden="true"></div>
+  {hasBackground && <div class="relative z-10 h-0.5 bg-primary" aria-hidden="true"></div>}
 
   <div
     class:list={[
@@ -138,12 +145,40 @@ const richSubhead = hasInlineRich(subheadRich);
       hasBackground && 'relative z-10',
     ]}
   >
-    {eyebrow && <p class="text-xs tracking-[0.22em] text-bg/75 uppercase">{eyebrow}</p>}
+    {mark && (
+      <img
+        src={mark.src}
+        alt=""
+        width="160"
+        height="160"
+        loading="lazy"
+        decoding="async"
+        class="final-cta__mark mx-auto"
+      />
+    )}
+    {eyebrow && (
+      <p
+        class:list={[
+          'text-xs tracking-[0.22em] uppercase',
+          hasBackground ? 'text-bg/75' : 'text-link',
+        ]}
+      >
+        {eyebrow}
+      </p>
+    )}
     {/* Cream hairline accent beneath the eyebrow that matches SectionHeading's
         inverse-tone treatment so headings carry the same editorial signature
         on both light and dark surfaces. */}
-    {eyebrow && <div class="mx-auto mt-s mb-m h-px w-12 bg-bg/40" aria-hidden="true" />}
-    <h2 id={headingId} class="font-display text-h1 leading-tight text-bg">
+    {eyebrow && hasBackground && (
+      <div class="mx-auto mt-s mb-m h-px w-12 bg-bg/40" aria-hidden="true" />
+    )}
+    <h2
+      id={headingId}
+      class:list={[
+        'font-display leading-tight',
+        hasBackground ? 'text-h1 text-bg' : 'final-cta__h2',
+      ]}
+    >
       {scriptFound ? (
         <>
           {scriptBefore}
@@ -161,7 +196,12 @@ const richSubhead = hasInlineRich(subheadRich);
       )}
     </h2>
     {(subhead || richSubhead) && (
-      <p class="mx-auto mt-m max-w-2xl text-lg text-bg/85">
+      <p
+        class:list={[
+          'mx-auto mt-m max-w-2xl text-lg',
+          hasBackground ? 'text-bg/85' : 'text-muted-foreground',
+        ]}
+      >
         {richSubhead ? <InlineRich value={subheadRich} /> : subhead}
       </p>
     )}
@@ -169,11 +209,11 @@ const richSubhead = hasInlineRich(subheadRich);
       <CtaLink
         cta={cta}
         variant="primary"
-        onDark
+        onDark={hasBackground}
         fallbackHref="/contact/"
         fallbackLabel={fallbackCtaLabel}
       />
-      {secondaryCta && <CtaLink cta={secondaryCta} variant="secondary" onDark />}
+      {secondaryCta && <CtaLink cta={secondaryCta} variant="secondary" onDark={hasBackground} />}
     </div>
   </div>
 </section>

@@ -6,7 +6,7 @@
 // transitions don't need this, color change is enough.
 //
 // Three variants:
-//   - `ornament` (default): small bronze ✺ glyph, generous vertical space
+//   - `ornament` (default): FBC Auburn's three gold stepping stones from the mark
 //   - `line`:               hairline rule with bronze accent dot in the middle
 //   - `dots`:               three bronze dots, looser and quieter
 //
@@ -20,11 +20,24 @@ interface Props {
 }
 
 const { variant = 'ornament', class: extraClass = '' } = Astro.props as Props;
+
+import { getImage } from 'astro:assets';
+import stoneA from '@/assets/brand/stone-a.svg';
+import stoneB from '@/assets/brand/stone-b.svg';
+import stoneC from '@/assets/brand/stone-c.svg';
+const stones =
+  variant === 'ornament'
+    ? await Promise.all([stoneC, stoneA, stoneB].map((src) => getImage({ src })))
+    : [];
 ---
 
 <div class:list={['mx-auto max-w-content px-m py-m text-center', extraClass]} aria-hidden="true">
   {variant === 'ornament' && (
-    <span class="font-display text-2xl tracking-[0.6em] text-link select-none">✺</span>
+    <span class="stone-divider">
+      {stones.map((s) => (
+        <img src={s.src} alt="" width="56" height="28" loading="lazy" decoding="async" />
+      ))}
+    </span>
   )}
 
   {variant === 'line' && (

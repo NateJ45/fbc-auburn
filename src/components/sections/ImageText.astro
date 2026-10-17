@@ -52,10 +52,10 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
           width={800}
           sizes="(min-width: 1024px) 45vw, 100vw"
           quality={75}
-          class="h-auto w-full rounded-md"
+          class="auburn-arch h-auto w-full object-cover"
         />
       ) : (
-        <div class="aspect-[4/5] rounded-md bg-muted" aria-hidden="true" />
+        <div class="auburn-arch auburn-arch--empty" aria-hidden="true" />
       )}
     </div>
 
@@ -64,7 +64,7 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
         <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>
       )}
       {heading && (
-        <h2 id={headingId} class="font-display text-h2 text-foreground">
+        <h2 id={headingId} class="font-display text-h2 auburn-h2">
           {heading}
         </h2>
       )}

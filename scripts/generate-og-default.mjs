@@ -5,14 +5,16 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderOg, closeRenderer } from './lib/render-og.mjs';
+import { OG_THEME } from './og-theme.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 
 const result = await renderOg({
-  wordmark: 'Studio Starter',
-  tagline: ['Your tagline goes here.'],
+  wordmark: 'First Baptist Church of Auburn',
+  tagline: ['A small church with the door open.'],
   outPath: resolve(root, 'public/og-default.png'),
+  theme: OG_THEME,
 });
 
 // Not optional: the renderer holds one chromium open for the whole run and

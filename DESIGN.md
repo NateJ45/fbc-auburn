@@ -37,10 +37,14 @@ rounded:
 
 ## Overview
 
-Status 2026-10-17: the brand is settled; the homepage direction is not yet picked. Three
-directions are in `docs/design-directions/2026-10-17-fbc-auburn/` (photo-led, illustration-led,
-type-led). When Nathan picks one, its archetype, density, imagery rule and rejects are written
-here and in that folder's `## Decision` entry.
+Status 2026-10-17: direction picked, A blended with B and C (`docs/design-directions/2026-10-17-fbc-auburn/`,
+`## Decision`). Archetype: image-led, but airy and white, with the stone art carrying the page until
+the photo session. Home opens with the masthead ("First Baptist Church of" over a huge colour
+mosaic "Auburn") beside an arched photo; inner pages lead with a big stone icon and a mosaic H1
+beside an arched photo. Density airy. Imagery: arched photos (`ArchHero.astro`, the
+text-and-picture band); with no photo yet the arch holds the stone mark or a soft sky fill, never
+a grey box. In the code: `src/styles/auburn.css` (the brand layer), `StoneHeading.astro`,
+`ArchHero.astro`; the three stepping stones are the section divider.
 
 North star: a small church that looks like itself. The stone mark is the most distinctive thing
 the church owns, so the site is a calm, mostly one-colour frame for it. Clear Sunday facts first,

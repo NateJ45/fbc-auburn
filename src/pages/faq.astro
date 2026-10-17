@@ -26,10 +26,10 @@ const [page, siteSettings] = await Promise.all([getFaqPage(), getSiteSettings()]
 const title = page?.seoTitle ?? `Frequently Asked Questions · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Pricing, process, logistics, and service area — everything visitors ask before reaching out.';
+  'What to wear, where to park, what happens on a Sunday: the questions people ask before a first visit.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'Common Questions.';
-const heroHeadline = page?.heroHeadline ?? 'Everything You Want to Know.';
+const heroEyebrow = page?.heroEyebrow ?? 'Before you visit';
+const heroHeadline = page?.heroHeadline ?? 'Questions';
 const heroSubhead = page?.heroSubhead ?? '';
 
 const categoryOrder = page?.categoryOrder ?? [];
