@@ -228,7 +228,7 @@ const latestProjects = allProjects.slice(0, 3);
         {/* STUDIO */}
         <nav aria-labelledby="footer-studio">
           <p id="footer-studio" class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-            Studio
+            Our church
           </p>
           <ul class="list-none p-0 text-sm">
             {/* scaffold: about */}
@@ -267,7 +267,7 @@ const latestProjects = allProjects.slice(0, 3);
         {/* WORK */}
         <nav aria-labelledby="footer-work">
           <p id="footer-work" class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-            Work
+            Read
           </p>
           <ul class="list-none p-0 text-sm">
             {visible.portfolio && (
@@ -325,54 +325,56 @@ const latestProjects = allProjects.slice(0, 3);
           </ul>
         </nav>
 
-        {/* FREE TOOLS & GUIDES */}
-        <nav aria-labelledby="footer-tools">
-          <p id="footer-tools" class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-            Free tools &amp; guides
-          </p>
-          <ul class="list-none p-0 text-sm">
-            {visible.styleQuiz && (
-              <li>
-                <a
-                  href="/quiz/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
-                >
-                  Style Quiz
-                </a>
-              </li>
-            )}
-            {visible.budgetCalculator && (
-              <li>
-                <a
-                  href="/calculator/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
-                >
-                  Cost Calculator
-                </a>
-              </li>
-            )}
-            {visible.guides && (
-              <li>
-                <a
-                  href="/guides/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
-                >
-                  Guides
-                </a>
-              </li>
-            )}
-            {visible.resources && (
-              <li>
-                <a
-                  href="/resources/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
-                >
-                  Resources
-                </a>
-              </li>
-            )}
-          </ul>
-        </nav>
+        {/* FREE TOOLS & GUIDES: only when one of its modules is switched on (FBC Auburn has none). */}
+        {(visible.styleQuiz || visible.budgetCalculator || visible.guides || visible.resources) && (
+          <nav aria-labelledby="footer-tools">
+            <p id="footer-tools" class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
+              Free tools &amp; guides
+            </p>
+            <ul class="list-none p-0 text-sm">
+              {visible.styleQuiz && (
+                <li>
+                  <a
+                    href="/quiz/"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  >
+                    Style Quiz
+                  </a>
+                </li>
+              )}
+              {visible.budgetCalculator && (
+                <li>
+                  <a
+                    href="/calculator/"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  >
+                    Cost Calculator
+                  </a>
+                </li>
+              )}
+              {visible.guides && (
+                <li>
+                  <a
+                    href="/guides/"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  >
+                    Guides
+                  </a>
+                </li>
+              )}
+              {visible.resources && (
+                <li>
+                  <a
+                    href="/resources/"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  >
+                    Resources
+                  </a>
+                </li>
+              )}
+            </ul>
+          </nav>
+        )}
       </>
     )}
 

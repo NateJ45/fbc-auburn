@@ -15,8 +15,18 @@
 // arrays are the single source of truth â€” a fresh clone renders the same copy
 // that a seeded project receives as its first content.
 
-import { site } from './site';
 import type { PageBuilderBlock } from '@/lib/pageBuilder.types';
+
+/** One plain Portable Text paragraph. */
+function para(key: string, text: string) {
+  return {
+    _type: 'block' as const,
+    _key: key,
+    style: 'normal' as const,
+    markDefs: [],
+    children: [{ _type: 'span' as const, _key: key + '-s1', text, marks: [] }],
+  };
+}
 
 // â”€â”€ Home page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -24,98 +34,64 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
   {
     _type: 'heroSection',
     _key: 'default-home-hero',
-    eyebrow: 'Your City, Your State.',
-    headline: 'Design That Feels Like Home.',
+    // The masthead: "First Baptist Church of" over a huge colour mosaic "Auburn" (ArchHero.astro).
+    // The subhead's first sentence becomes the large intro line.
+    eyebrow: 'First Baptist Church of',
+    headline: 'Auburn',
     subhead:
-      'We help people create spaces that work as hard as they do â€” and feel good to come home to.',
+      'A small church with the door open. We are a Southern Baptist family on Hamilton-Scipio Road in Ross Township. Come as you are this Sunday, and someone will meet you at the door.',
     size: 'tall',
-    primaryCta: { _type: 'ctaBlock', label: 'Start a Conversation', href: '/contact/' },
-    secondaryCta: { _type: 'ctaBlock', label: 'See Our Work', href: '/portfolio/' },
+    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
+    secondaryCta: { _type: 'ctaBlock', label: 'About the church', href: '/about/' },
   },
   {
     _type: 'richTextSection',
-    _key: 'default-home-intro',
-    eyebrow: 'Meet the Founder.',
-    headline: 'Good design starts with a real conversation.',
+    _key: 'default-home-sunday',
+    heading: 'A Sunday with us, one step at a time',
+    width: 'narrow',
+    align: 'center',
     body: [
-      {
-        _type: 'block',
-        _key: 'default-home-intro-p1',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            _key: 'default-home-intro-p1-s1',
-            text: `Welcome to ${site.name}. Every project starts the same way: a conversation about how you actually use your space, not just how you want it to look. Add your founder intro in Sanity Studio under the Home Page document.`,
-          },
-        ],
-      },
-    ],
-    cta: { _type: 'ctaBlock', label: 'Learn More About the Studio', href: '/about/' },
-  },
-  {
-    _type: 'statSection',
-    _key: 'default-home-stats',
-    stats: [
-      {
-        _type: 'statItem',
-        _key: 'default-home-stat-1',
-        number: 5,
-        suffix: '+',
-        label: 'Years in Business',
-      },
-      {
-        _type: 'statItem',
-        _key: 'default-home-stat-2',
-        number: 50,
-        suffix: '+',
-        label: 'Projects Completed',
-      },
-      {
-        _type: 'statItem',
-        _key: 'default-home-stat-3',
-        number: 100,
-        suffix: '%',
-        label: 'Client Satisfaction',
-      },
+      para(
+        'default-home-sunday-p1',
+        'Never been to church, or not for a while? Here is what to expect. Park in the lot beside the building at 4241 Hamilton-Scipio Road and come to the front doors. A greeter will meet you there, and there is coffee in the fellowship hall.',
+      ),
+      para(
+        'default-home-sunday-p2',
+        'Sunday School for all ages is at 9:45 am and worship is at 11:00 am, with Bible study and prayer on Wednesdays at 6:00 pm (times to be confirmed). Worship lasts about an hour. Sit wherever you like; nobody will single you out.',
+      ),
     ],
   },
   {
     _type: 'imageTextSection',
-    _key: 'default-home-services-intro',
-    eyebrow: 'The Studio.',
-    headline: 'Design Services for Every Space.',
+    _key: 'default-home-pastor',
+    heading: 'Meet our pastor',
     body: [
-      {
-        _type: 'block',
-        _key: 'default-home-services-intro-p1',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            _key: 'default-home-services-intro-p1-s1',
-            text: 'Whether you need a fresh set of eyes or a full room overhaul, there is a service for you. Once your Sanity Studio is seeded, this section will display your real services.',
-          },
-        ],
-      },
+      para(
+        'default-home-pastor-p1',
+        "A short welcome in Pastor Jacob's own words goes here: why this church, what a first-time guest can expect, and an honest hope for the year ahead. Two or three sentences, written together.",
+      ),
     ],
-    cta: { _type: 'ctaBlock', label: 'See All Services', href: '/services/' },
+    cta: { _type: 'ctaBlock', label: 'About the church', href: '/about/' },
     imageSide: 'right',
   },
   {
-    _type: 'quoteSection',
-    _key: 'default-home-quote',
-    quote:
-      'Working with this studio was the best decision I made for my home. The whole process was clear and the result speaks for itself.',
-    attribution: 'A Happy Client',
+    _type: 'richTextSection',
+    _key: 'default-home-belong',
+    heading: 'Find your place',
+    width: 'narrow',
+    body: [
+      para(
+        'default-home-belong-p1',
+        'Small enough to know your name, with something through the week for every age: Sunday School and a safe, checked-in room for children during worship; Bible study and prayer on Wednesday evenings; and meals, workdays and the ordinary life of a church family.',
+      ),
+    ],
   },
   {
     _type: 'ctaBandSection',
     _key: 'default-home-cta',
-    eyebrow: 'Ready to Begin?',
-    headline: 'Ready to Love Your Space?',
-    subhead: "Let's start with a conversation.",
-    cta: { _type: 'ctaBlock', label: 'Start a Conversation', href: '/contact/' },
+    headline: 'We would love to meet you this Sunday.',
+    subhead: 'Tell us you are coming, or ask anything at all.',
+    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
   },
 ];
 
@@ -126,86 +102,29 @@ export const DEFAULT_ABOUT_SECTIONS: PageBuilderBlock[] = [
   {
     _type: 'heroSection',
     _key: 'default-about-hero',
-    eyebrow: 'The Designer.',
-    headline: 'People Hire People.',
-    subhead: "Here's who you'd be working with.",
+    eyebrow: 'Our church',
+    headline: 'About us',
+    subhead:
+      'A Southern Baptist church in the hamlet of Auburn, Ross Township, since 1959 (to be confirmed).',
     size: 'short',
   },
   {
     _type: 'richTextSection',
     _key: 'default-about-story',
-    eyebrow: 'My Story.',
-    headline: 'Why I Started This Studio.',
+    heading: 'Who we are',
     body: [
-      {
-        _type: 'block',
-        _key: 'default-about-story-p1',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            _key: 'default-about-story-p1-s1',
-            text: `Replace this with your real origin story. Tell visitors what led you to design, what you noticed was missing in your market, and what you set out to do differently. Edit this in Sanity Studio under the About Page document.`,
-          },
-        ],
-      },
+      para(
+        'default-about-story-p1',
+        "The story of the church, in the pastor's words, goes here: how it began, the season it is in now, and who it hopes to welcome. Edit it in the Studio under the About Page document.",
+      ),
     ],
-  },
-  {
-    _type: 'statSection',
-    _key: 'default-about-stats',
-    stats: [
-      {
-        _type: 'statItem',
-        _key: 'default-about-stat-1',
-        number: 5,
-        suffix: '+',
-        label: 'Years in Business',
-      },
-      {
-        _type: 'statItem',
-        _key: 'default-about-stat-2',
-        number: 50,
-        suffix: '+',
-        label: 'Projects Completed',
-      },
-      {
-        _type: 'statItem',
-        _key: 'default-about-stat-3',
-        number: 100,
-        suffix: '%',
-        label: 'Client Satisfaction',
-      },
-    ],
-  },
-  {
-    _type: 'imageTextSection',
-    _key: 'default-about-philosophy',
-    eyebrow: 'How We Work.',
-    headline: 'Principles that guide every project.',
-    body: [
-      {
-        _type: 'block',
-        _key: 'default-about-philosophy-p1',
-        style: 'normal',
-        children: [
-          {
-            _type: 'span',
-            _key: 'default-about-philosophy-p1-s1',
-            text: 'Add your philosophy points in Sanity Studio under Philosophy Points. Once seeded, this will display your numbered values cards.',
-          },
-        ],
-      },
-    ],
-    imageSide: 'left',
   },
   {
     _type: 'ctaBandSection',
     _key: 'default-about-cta',
-    eyebrow: "Let's Work Together.",
-    headline: 'Ready to Start?',
-    subhead: 'Send a message and we will be back in touch within two business days.',
-    cta: { _type: 'ctaBlock', label: 'Get in Touch', href: '/contact/' },
+    headline: 'Come and see.',
+    subhead: 'Sunday worship is at 11:00 am (to be confirmed). Someone will meet you at the door.',
+    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/contact/' },
   },
 ];
 // scaffold:end

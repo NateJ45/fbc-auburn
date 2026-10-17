@@ -27,7 +27,7 @@ export const GET: APIRoute = async (context) => {
 
   return rss({
     title: `${siteSettings?.title ?? site.name} Journal`,
-    description: 'Notes from the studio.',
+    description: 'News and notes from First Baptist Church of Auburn.',
     site: context.site ?? site.url,
     items,
   });

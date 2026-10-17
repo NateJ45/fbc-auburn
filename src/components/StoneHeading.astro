@@ -1,0 +1,60 @@
+---
+// Safe to edit by hand
+// StoneHeading: a page heading set in Auburn Stone (Young Serif split into stones, the church's
+// own heading face; public/fonts/auburn-stone.woff2, OFL, licence beside it).
+//
+// Real text: selectable, searchable, wraps on a phone. It falls back to Young Serif, which has the
+// same advance widths and kerning, so nothing shifts while the font loads.
+//
+//   tone="mosaic"  each letter takes the next brand colour in turn (green, deep sky, red, water;
+//                  gold is left out on white because it fails 3:1). Default for an H1.
+//   tone="solid"   one colour, deep sky (light sky in dark mode). Default for an H2.
+//
+// Keep it to 40px and up; H3 and smaller use plain Young Serif (the display font).
+//
+// Live preview: a Sanity string can carry an invisible stega run (click-to-edit). The mosaic is
+// built from the visible text only and the run is put back after the letters, so the overlay
+// still finds the field and no colour is spent on an invisible character.
+import { splitStega } from '@/lib/preview-stega';
+
+interface Props {
+  text: string;
+  as?: 'h1' | 'h2';
+  tone?: 'mosaic' | 'solid';
+  id?: string;
+  class?: string;
+}
+const {
+  text,
+  as: Tag = 'h1',
+  tone = Tag === 'h1' ? 'mosaic' : 'solid',
+  id,
+  class: cls,
+} = Astro.props;
+const { cleaned, encoded } = splitStega(text ?? '');
+let k = 0;
+const letters = [...cleaned].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k++ % 4 }));
+---
+
+<Tag
+  id={id}
+  class:list={['stone-heading', `stone-${tone}`, cls]}
+  aria-label={tone === 'mosaic' ? cleaned : undefined}
+>
+  {tone === 'mosaic' ? (
+    <>
+      {letters.map(({ c, i }) =>
+        i < 0 ? (
+          ' '
+        ) : (
+          <span aria-hidden="true" class={`s${i}`}>
+            {c}
+          </span>
+        ),
+      )}
+      {encoded}
+    </>
+  ) : (
+    text
+  )}
+</Tag>

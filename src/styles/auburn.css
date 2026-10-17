@@ -1,0 +1,290 @@
+/* Safe to edit by hand.
+   First Baptist Church of Auburn: the brand layer on top of globals.css (imported after it in
+   BaseLayout, so a tie goes to this file). Palette, fonts and radius come from
+   brand/brand.config.json through apply-brand; this file holds what the config cannot say:
+   the Auburn Stone heading face, the mosaic letter colours, the arched hero and the button shape.
+   Design source: DESIGN.md and docs/design-directions/2026-10-17-fbc-auburn/ (A blended with B and C). */
+
+@font-face {
+  font-family: 'Auburn Stone';
+  src: url('/fonts/auburn-stone.woff2') format('woff2');
+  font-display: swap;
+}
+
+:root {
+  /* Brand colours the semantic tokens do not carry. Red is for the cross and the one main
+     button per page; gold and sky are accents only, never text on white. */
+  --auburn-green: #2c5b3a;
+  --auburn-deep: #235e93;
+  --auburn-water: #3b83aa;
+  --auburn-red: #c4401f;
+  --auburn-red-dark: #a8361a;
+  --auburn-gold: #e8a93a;
+  --auburn-sky: #96c3ea;
+  /* Mosaic letters, light: green, deep sky, red, water (gold fails 3:1 on white). */
+  --mosaic-0: #2c5b3a;
+  --mosaic-1: #235e93;
+  --mosaic-2: #c4401f;
+  --mosaic-3: #3b83aa;
+  --heading-solid: #235e93;
+}
+.dark {
+  /* Dark: light green, sky, light red, gold (all above 7:1 on the dark ground). */
+  --mosaic-0: #8fc7a0;
+  --mosaic-1: #96c3ea;
+  --mosaic-2: #e5735a;
+  --mosaic-3: #e8a93a;
+  --heading-solid: #96c3ea;
+}
+
+/* Young Serif ships one weight; asking for 500 would make the browser fake a bold. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 400;
+}
+
+/* ---- Stone headings (StoneHeading.astro) ---- */
+.stone-heading {
+  font-family: 'Auburn Stone', 'Young Serif', serif;
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.stone-solid {
+  color: var(--heading-solid);
+}
+.stone-heading .s0 {
+  color: var(--mosaic-0);
+}
+.stone-heading .s1 {
+  color: var(--mosaic-1);
+}
+.stone-heading .s2 {
+  color: var(--mosaic-2);
+}
+.stone-heading .s3 {
+  color: var(--mosaic-3);
+}
+
+/* ---- Arched hero (ArchHero.astro): words on the left, an arched photo on the right ---- */
+.arch-hero {
+  border-bottom: 1px solid var(--border);
+}
+.arch-hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2.5rem, 6vw, 5rem);
+  align-items: center;
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 7vw, 5.5rem);
+}
+@media (min-width: 54rem) {
+  .arch-hero__inner {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+}
+.arch-hero__copy {
+  container-type: inline-size;
+}
+.arch-hero__eyebrow {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--link);
+}
+/* Home: the church's name huge, in colour, sized to its own column so it never runs into the
+   arch ("Auburn" measures about 3.75em wide). */
+.arch-hero--masthead .arch-hero__eyebrow {
+  font-size: clamp(0.85rem, 0.7rem + 0.5vw, 1.1rem);
+  letter-spacing: 0.2em;
+}
+.arch-hero--masthead h1 {
+  font-size: min(26cqi, 12rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  margin: 0.2rem 0 1.4rem;
+}
+.arch-hero--page h1 {
+  font-size: clamp(3.2rem, 1.5rem + 6vw, 6.4rem);
+  margin: 0.5rem 0 1.1rem;
+}
+.arch-hero__intro {
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 1.1rem + 1.3vw, 2.1rem);
+  line-height: 1.25;
+  margin-bottom: 1rem;
+  max-width: 40rem;
+}
+.arch-hero__sub {
+  color: var(--muted-foreground);
+  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.25rem);
+  line-height: 1.6;
+  max-width: 36rem;
+}
+.arch-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.6rem;
+}
+.arch-hero__arch {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 4.2;
+  max-height: 440px;
+  width: 100%;
+  border-radius: 999px 999px 18px 18px;
+  background: var(--muted);
+}
+@media (min-width: 54rem) {
+  .arch-hero__arch {
+    aspect-ratio: 4 / 5;
+    max-height: 620px;
+  }
+}
+.arch-hero__arch img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* No photo yet (the photo session comes later): the stone mark stands in the arch. */
+.arch-hero__arch--mark {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(
+    180deg,
+    var(--muted) 0%,
+    color-mix(in srgb, var(--auburn-sky) 22%, var(--muted)) 100%
+  );
+}
+.arch-hero__arch--mark img {
+  position: static;
+  width: 62%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ---- Buttons: sentence case, rounded, 48px tall. Red is the one main action. ---- */
+.btn-auburn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+.btn-auburn--primary {
+  background: var(--auburn-red);
+  color: #ffffff;
+}
+.btn-auburn--primary:hover {
+  background: var(--auburn-red-dark);
+}
+.btn-auburn--secondary {
+  color: var(--link);
+  border: 1.5px solid currentColor;
+  background: transparent;
+}
+.btn-auburn--secondary:hover {
+  background: var(--muted);
+}
+.btn-auburn:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* ---- Header: sentence-case nav at a readable size; the button is the red one. ---- */
+.site-header .site-nav a,
+.site-header .site-nav summary {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.site-header .btn-auburn {
+  min-height: 44px;
+  padding: 0.5rem 1.15rem;
+  font-size: 1rem;
+}
+.site-header .btn-auburn--current {
+  background: var(--auburn-red-dark);
+}
+
+/* ---- Arched pictures in the text-and-picture band (ImageText): the same arch as the hero.
+   Until the photo session, an empty slot is a soft sky arch rather than a grey box. ---- */
+.auburn-arch {
+  aspect-ratio: 4 / 5;
+  max-height: 600px;
+  width: 100%;
+  border-radius: 999px 999px 18px 18px;
+}
+.auburn-arch--empty {
+  background: linear-gradient(
+    180deg,
+    var(--muted) 0%,
+    color-mix(in srgb, var(--auburn-sky) 22%, var(--muted)) 100%
+  );
+}
+@media (max-width: 63.99rem) {
+  .auburn-arch {
+    max-height: 420px;
+    aspect-ratio: 4 / 4.2;
+  }
+}
+/* Section H2s in the everyday colour, deep sky (light sky in dark mode). */
+.auburn-h2 {
+  color: var(--heading-solid);
+}
+
+/* ---- The light close (FinalCta without a photo): the mark, then the invitation. ---- */
+.final-cta--light {
+  border-top: 1px solid var(--border);
+}
+.final-cta__mark {
+  width: clamp(120px, 16vw, 180px);
+  height: auto;
+  margin-bottom: 1.6rem;
+}
+.final-cta__h2 {
+  font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.6rem);
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+/* ---- Stone divider (SectionDivider "ornament"): three stepping stones, the last one higher. ---- */
+.stone-divider {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: clamp(10px, 2vw, 18px);
+}
+.stone-divider img {
+  width: clamp(40px, 4.5vw, 56px);
+  height: auto;
+}
+.stone-divider img:nth-child(2) {
+  transform: translateY(-6px) rotate(-6deg);
+}
+.stone-divider img:nth-child(3) {
+  transform: translateY(-12px) rotate(4deg);
+}
+
+/* Phones: an inner page's arch with no photo yet stays short, so the page's content is not pushed
+   a screen down by a placeholder. */
+@media (max-width: 53.99rem) {
+  .arch-hero--page .arch-hero__arch--mark {
+    max-height: 260px;
+  }
+}

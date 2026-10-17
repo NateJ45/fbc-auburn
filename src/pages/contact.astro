@@ -20,10 +20,11 @@ import PostInquiryRoadmap from '@/components/PostInquiryRoadmap.astro';
 const [page, siteSettings] = await Promise.all([getContactPage(), getSiteSettings()]);
 
 const title = page?.seoTitle ?? `Contact ${site.name}`;
-const description = page?.seoDescription ?? 'Start a conversation about your space.';
+const description =
+  page?.seoDescription ?? 'Ask a question, tell us you are visiting, or send a prayer request.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'Request a Consultation.';
-const heroHeadline = page?.heroHeadline ?? 'Start the Conversation.';
+const heroEyebrow = page?.heroEyebrow ?? 'Get in touch';
+const heroHeadline = page?.heroHeadline ?? 'Contact us';
 const heroSubhead = page?.heroSubhead ?? '';
 const formIntroNote = page?.formIntroNote ?? '';
 

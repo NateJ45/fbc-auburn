@@ -11,6 +11,8 @@
 // preloads inline. Don't add layout-shift animations to this section.
 
 import HeroBackground from '@/components/HeroBackground.astro';
+// FBC Auburn: the "split" hero layout renders as the arched hero (ArchHero.astro).
+import ArchHero from '@/components/ArchHero.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import { splitHeadingAccent } from '@/lib/heading-accent';
@@ -241,14 +243,24 @@ const wrapperHeight =
   </script>
 )}
 
-{hasImage ? (
+{heroVariant === 'split' ? (
+  <ArchHero
+    eyebrow={eyebrow}
+    headline={headline}
+    subhead={subhead}
+    image={effectiveImages[0] ?? null}
+    primaryCta={primaryCta}
+    secondaryCta={secondaryCta}
+    headingId={headingId}
+    size={size}
+  />
+) : hasImage ? (
   <section
     class:list={[
       'relative overflow-hidden bg-accent-dark text-bg flex flex-col justify-end',
       wrapperHeight,
     ]}
     aria-labelledby={headingId}
-    data-hero={heroVariant === 'split' ? 'split' : undefined}
   >
     {/* Background: single static image or a cross-fading slideshow (2+ images),
         plus the readability overlays. See HeroBackground.astro. */}

@@ -37,16 +37,14 @@ const [page, entries, categories, siteSettings] = await Promise.all([
 const visible = getSectionVisibility(siteSettings?.sectionVisibility);
 if (!visible.journal) return Astro.redirect('/');
 
-const title = page?.seoTitle ?? 'Journal · Studio Starter';
+const title = page?.seoTitle ?? `News and notes · ${site.name}`;
 const description =
   page?.seoDescription ??
-  'Notes from the studio — project walkthroughs, style thinking, and the occasional opinion.';
+  'News, sermon notes and stories from the church family at First Baptist Church of Auburn.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'The Journal.';
-const heroHeadline = page?.heroHeadline ?? 'Notes from the studio.';
-const heroSubhead =
-  page?.heroSubhead ??
-  'Project walkthroughs, design thinking, and the occasional opinion. Written between projects.';
+const heroEyebrow = page?.heroEyebrow ?? 'From the church';
+const heroHeadline = page?.heroHeadline ?? 'News and notes';
+const heroSubhead = page?.heroSubhead ?? 'News, sermon notes and stories from the church family.';
 
 // Categories with at least one post (filters out empty taxonomies).
 const usedCategories = (categories ?? []).filter((c: any) => (c.postCount ?? 0) > 0);
@@ -122,7 +120,7 @@ const schemas = [
             or
             <a href="/contact/" class="text-link underline underline-offset-2">
               {' '}
-              start a conversation
+              get in touch
             </a>
             .
           </p>

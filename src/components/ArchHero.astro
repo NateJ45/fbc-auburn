@@ -1,0 +1,103 @@
+---
+// Safe to edit by hand
+// ArchHero: the FBC Auburn page hero (Direction A blended with B and C, DESIGN.md).
+// Hero.astro hands over to this whenever the site's hero layout is "split" (brand.config.json).
+//
+//   size="tall"   Home masthead: the eyebrow reads "First Baptist Church of" and the headline,
+//                 "Auburn", is set huge as a colour mosaic in Auburn Stone. The subhead's first
+//                 sentence becomes the large serif intro line and the rest sits under it.
+//   size="short"  Inner pages: eyebrow, the page title as a mosaic H1, subhead.
+//
+// The right column is an arched photo (Sanity "Background image"). With no photo yet (the photo
+// session comes later) the arch shows the church's stone mark instead of an empty box.
+// The arched photo is the LCP element, so it loads eagerly with high priority.
+import { getImage } from 'astro:assets';
+import SanityImage from '@/components/SanityImage.astro';
+import CtaLink from '@/components/CtaLink.astro';
+import StoneHeading from '@/components/StoneHeading.astro';
+import markLight from '@/assets/brand/fbc-auburn-icon-full-color.svg';
+import type { SanityImageObject } from '@/lib/pageBuilder.types';
+import type { ComponentProps } from 'astro/types';
+
+type Cta = ComponentProps<typeof CtaLink>['cta'];
+
+interface Props {
+  eyebrow?: string;
+  headline: string;
+  subhead?: string;
+  image?: SanityImageObject | null;
+  primaryCta?: Cta | null;
+  secondaryCta?: Cta | null;
+  headingId: string;
+  size?: 'tall' | 'short';
+}
+
+const {
+  eyebrow,
+  headline,
+  subhead,
+  image,
+  primaryCta,
+  secondaryCta,
+  headingId,
+  size = 'short',
+} = Astro.props as Props;
+
+const masthead = size === 'tall';
+
+// Masthead only: split the subhead after its first sentence. Derived from the one field, so the
+// editor still writes a single subhead (CLAUDE.md rule 15).
+let intro = '';
+let rest = subhead ?? '';
+if (masthead && subhead) {
+  const m = subhead.match(/^(.+?[.!?])\s+(.+)$/s);
+  if (m) {
+    intro = m[1];
+    rest = m[2];
+  } else {
+    intro = subhead;
+    rest = '';
+  }
+}
+
+const hasImage = !!image?.asset;
+const mark = hasImage ? null : await getImage({ src: markLight });
+---
+
+<section
+  class:list={['arch-hero', masthead ? 'arch-hero--masthead' : 'arch-hero--page']}
+  aria-labelledby={headingId}
+  data-hero="arch"
+>
+  <div class="arch-hero__inner mx-auto max-w-content px-m">
+    <div class="arch-hero__copy">
+      {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
+      <StoneHeading text={headline} id={headingId} />
+      {intro && <p class="arch-hero__intro">{intro}</p>}
+      {rest && <p class="arch-hero__sub">{rest}</p>}
+      {(primaryCta || secondaryCta) && (
+        <div class="arch-hero__ctas">
+          {primaryCta && <CtaLink cta={primaryCta} variant="primary" />}
+          {secondaryCta && <CtaLink cta={secondaryCta} variant="secondary" />}
+        </div>
+      )}
+    </div>
+
+    {hasImage ? (
+      <div class="arch-hero__arch">
+        <SanityImage
+          source={image}
+          width={720}
+          sizes="(min-width: 54rem) 40vw, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          quality={70}
+        />
+      </div>
+    ) : (
+      <div class="arch-hero__arch arch-hero__arch--mark" aria-hidden="true">
+        <img src={mark!.src} alt="" width="400" height="400" loading="eager" decoding="async" />
+      </div>
+    )}
+  </div>
+</section>

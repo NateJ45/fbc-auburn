@@ -195,7 +195,7 @@ export const siteSettings = defineType({
 
     // The button at the right of the header (and at the top of the phone menu).
     // Everything is optional: an empty label keeps the built-in
-    // "Book a consultation" pointing at Contact, and turning it off removes the
+    // "Plan your visit" pointing at Contact, and turning it off removes the
     // button everywhere.
     defineField({
       name: 'headerCta',
@@ -203,7 +203,7 @@ export const siteSettings = defineType({
       type: 'object',
       group: 'navigation',
       description:
-        'The one button at the right of the header. Leave the boxes blank to keep the built-in "Book a consultation" button.',
+        'The one button at the right of the header. Leave the boxes blank to keep the built-in "Plan your visit" button.',
       options: { collapsible: true, collapsed: true },
       fields: [
         defineField({
@@ -217,7 +217,7 @@ export const siteSettings = defineType({
           name: 'label',
           title: 'Button text',
           type: 'string',
-          description: 'Leave blank for "Book a consultation".',
+          description: 'Leave blank for "Plan your visit".',
         }),
         defineField({
           name: 'link',

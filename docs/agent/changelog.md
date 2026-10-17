@@ -1,5 +1,21 @@
 # Change history
 
+_2026-10-17: the reskin, first pass (direction A blended with B and C)._
+
+**Decision.** `brand.config.json` carries the church's palette (deep sky everyday colour, ink text, white and
+cool-soft grounds), Young Serif and Familjen Grotesk, a 10px radius and the layout slots inline / split / airy / soft.
+The split hero renders as `ArchHero.astro`: words on the left, an arched photo on the right (the stone mark until the
+photo session); on Home, `size: tall` makes it the masthead with "Auburn" as a huge colour mosaic. Every H1 is set in
+Auburn Stone through `StoneHeading.astro` (preloaded, OFL licence in `public/fonts/`); the stega run is kept after the
+letters so click-to-edit still works. `src/styles/auburn.css` is the brand layer: buttons (red primary, outline
+secondary), arched pictures, the light closing band with the mark, stone dividers. Church copy went into Home, About,
+Contact and FAQ in Sanity (backup taken first) and into the built-in defaults. Three starter bugs surfaced and were fixed
+here: the default richText and imageText blocks named their heading `headline` (the components read `heading`, so
+the headings never rendered), CtaLink ignored a default button's `href` (every default button went to /contact/), and
+the layout gate failed any fork that picks a layout (it now checks the config names real values and that
+`src/data/layout.ts` matches). Verified: check, test:unit (639 + 53), build, light and dark at 375 and 1280, no sideways
+scroll at 320. The rest of the mockups is queued in PENDING 1c.
+
 _2026-10-17: Sanity phase 2, `@sanity/ui` 4 and `@sanity/icons` 5 (PORTS card 103)._
 
 **Decision.** The site follows the starter off the phase-1 pin (`sanity` 6.9.1, `@sanity/ui` 3.5.4) for `sanity` 6.19.0, `@sanity/ui`

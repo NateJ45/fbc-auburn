@@ -5,7 +5,7 @@
 //   │ ─────────────────────────────────────── eyebrow strip (desktop-only)
 //   │   [site tagline]           email  · IG · FB · theme
 //   ├─────────────────────────────────────── main row
-//   │   [logo]                  [nav]  │  [Book a consultation CTA]
+//   │   [logo]                  [nav]  │  [Plan your visit CTA]
 //   └───────────────────────────────────────
 // On mobile the eyebrow strip is hidden (its info lives in the redesigned
 // MobileNav drawer) and the main row centers the logo with the hamburger
@@ -101,7 +101,7 @@ const mobileNavSettings = siteSettings
 // built-in button. An island's props are serialized into the page, so passing
 // the default every time would rewrite the markup of every page for no change.
 const mobileCtaProps =
-  headerCta.show && headerCta.label === 'Book a consultation' && headerCta.href === '/contact/'
+  headerCta.show && headerCta.label === 'Plan your visit' && headerCta.href === '/contact/'
     ? {}
     : { cta: headerCta };
 
@@ -118,7 +118,7 @@ const mobileCtaProps =
 // browsers don't give us for free: open-on-hover, close-on-outside-click,
 // close-on-Escape, and close-on-navigation. The links work without it.
 //
-// "Contact" is intentionally NOT in the primary nav — the "Book a consultation"
+// "Contact" is intentionally NOT in the primary nav — the "Plan your visit"
 // CTA at the right of the nav row does that job, and the MobileNav drawer also
 // surfaces the CTA at the top.
 //
@@ -416,10 +416,10 @@ function isGroupActive(items: { href: string }[]) {
         <a
           href={headerCta.href}
           class:list={[
-            'press-tactile inline-flex items-center rounded-md px-m py-2 text-xs font-semibold tracking-eyebrow uppercase',
+            'btn-auburn press-tactile',
             isActive(headerCta.href)
-              ? 'bg-accent-dark text-white'
-              : 'bg-primary-dark text-white hover:bg-accent-dark',
+              ? 'btn-auburn--primary btn-auburn--current'
+              : 'btn-auburn--primary',
           ]}
         >
           {headerCta.label}

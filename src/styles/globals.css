@@ -6,9 +6,8 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import '@fontsource/libre-baskerville/400.css';
-@import '@fontsource/libre-baskerville/700.css';
-@import '@fontsource-variable/inter';
+@import '@fontsource/young-serif/400.css';
+@import '@fontsource-variable/familjen-grotesk';
 
 /* Tailwind v4 scans every non-gitignored file for class names. The committed
    parity baselines (scripts/.parity/*.html) and the Markdown docs name hundreds
@@ -28,20 +27,20 @@
 
 @theme {
   /* Brand palette — neutral Slate default. Swap per project. */
-  --color-primary: #586577; /* Slate */
-  --color-primary-dark: #434e5c; /* Slate Dark — body anchor text */
-  --color-accent: #2a2d31; /* Ink — headings + body */
-  --color-accent-dark: #1e2024; /* Ink Dark — dark surfaces */
-  --color-secondary: #aab0b8; /* Cool Gray — borders, eyebrows */
-  --color-tertiary: #9db0a6; /* Muted Sage — sparingly */
-  --color-bg: #fbfbfa; /* Paper — primary surface */
-  --color-bg-soft: #f3f4f2; /* Soft Paper — alternating surface */
-  --color-border-soft: #e6e7e5; /* Faint dividers */
+  --color-primary: #235e93; /* Slate */
+  --color-primary-dark: #1b4a75; /* Slate Dark — body anchor text */
+  --color-accent: #171a26; /* Ink — headings + body */
+  --color-accent-dark: #0f1726; /* Ink Dark — dark surfaces */
+  --color-secondary: #2c5b3a; /* Cool Gray — borders, eyebrows */
+  --color-tertiary: #e8a93a; /* Muted Sage — sparingly */
+  --color-bg: #ffffff; /* Paper — primary surface */
+  --color-bg-soft: #f3f6f9; /* Soft Paper — alternating surface */
+  --color-border-soft: #dde3ea; /* Faint dividers */
   --color-white-pure: #ffffff;
 
   /* Fonts */
-  --font-display: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
-  --font-body: 'Inter Variable', system-ui, -apple-system, sans-serif;
+  --font-display: 'Young Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'Familjen Grotesk Variable', system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Consolas, monospace;
   --font-script: 'Snell Roundhand', 'Apple Chancery', cursive;
 
@@ -208,33 +207,33 @@
 
 :root {
   /* Surfaces */
-  --background: #fbfbfa;
-  --foreground: #2a2d31;
+  --background: #ffffff;
+  --foreground: #171a26;
   --card: #ffffff;
-  --card-foreground: #2a2d31;
+  --card-foreground: #171a26;
   --popover: #ffffff;
-  --popover-foreground: #2a2d31;
+  --popover-foreground: #171a26;
 
   /* Brand */
-  --primary: #586577;
+  --primary: #235e93;
   --primary-foreground: #ffffff;
-  --secondary: #aab0b8;
-  --secondary-foreground: #2a2d31;
+  --secondary: #2c5b3a;
+  --secondary-foreground: #ffffff;
 
   /* Quiet surfaces / muted text */
-  --muted: #f3f4f2;
-  --muted-foreground: #5f6469; /* ~5.6:1 on #FBFBFA — passes AA */
+  --muted: #f3f6f9;
+  --muted-foreground: #4a4f5e; /* ~5.6:1 on #FBFBFA — passes AA */
 
   /* Accent */
-  --accent: #e8e9e7;
-  --accent-foreground: #2a2d31;
+  --accent: #e8eef4;
+  --accent-foreground: #171a26;
 
   /* States */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e6e7e5;
-  --input: #e6e7e5;
-  --ring: #586577;
-  --link: #434e5c; /* ~8:1 on #FBFBFA — passes AA */
+  --border: #dde3ea;
+  --input: #dde3ea;
+  --ring: #235e93;
+  --link: #235e93; /* ~8:1 on #FBFBFA — passes AA */
 
   /* Charts (kept neutral, not used at launch) */
   --chart-1: oklch(0.87 0 0);
@@ -243,25 +242,25 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
 
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 
   /* Sidebar (reserved for Studio-style admin contexts, not used on site) */
-  --sidebar: #fbfbfa;
-  --sidebar-foreground: #2a2d31;
-  --sidebar-primary: #586577;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #171a26;
+  --sidebar-primary: #235e93;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f3f4f2;
-  --sidebar-accent-foreground: #2a2d31;
-  --sidebar-border: #e6e7e5;
-  --sidebar-ring: #586577;
+  --sidebar-accent: #f3f6f9;
+  --sidebar-accent-foreground: #171a26;
+  --sidebar-border: #dde3ea;
+  --sidebar-ring: #235e93;
 
-  --tint-rgb: 88, 101, 119;
+  --tint-rgb: 35, 94, 147;
 
   /* Starwind UI extra semantic tokens — not in shadcn's default set.
        Values are harmonized to the existing neutral palette so the starter
        renders sensibly out of the box. apply-brand rewrites these. */
-  --primary-accent: #434e5c; /* darker shade of --primary for hover states */
-  --secondary-accent: #2a2d31; /* dark ink — active/pressed secondary */
+  --primary-accent: #1b4a75; /* darker shade of --primary for hover states */
+  --secondary-accent: #171a26; /* dark ink — active/pressed secondary */
   --info: #93c5fd; /* soft blue, harmonized with slate primary */
   --info-foreground: #1e3a5f; /* deep blue for text on info surfaces */
   --success: #86efac; /* soft green */
@@ -270,7 +269,7 @@
   --warning-foreground: #713f12; /* deep amber for text on warning surfaces */
   --error: oklch(0.577 0.245 27.325); /* matches --destructive */
   --error-foreground: #ffffff;
-  --outline: #586577; /* matches --ring */
+  --outline: #235e93; /* matches --ring */
 }
 
 /* ---------- Dark mode --------------------------------------------------
@@ -278,29 +277,29 @@
    Slate and Ink hold their identity; surfaces flip to deep cool grays. */
 
 .dark {
-  --background: #17191c;
-  --foreground: #f2f3f2;
-  --card: #202327;
-  --card-foreground: #f2f3f2;
-  --popover: #202327;
-  --popover-foreground: #f2f3f2;
+  --background: #141823;
+  --foreground: #f3f6f9;
+  --card: #1c2333;
+  --card-foreground: #f3f6f9;
+  --popover: #1c2333;
+  --popover-foreground: #f3f6f9;
 
-  --primary: #8a96a6;
-  --primary-foreground: #17191c;
-  --secondary: #5a6068;
-  --secondary-foreground: #f2f3f2;
+  --primary: #96c3ea;
+  --primary-foreground: #141823;
+  --secondary: #8fc7a0;
+  --secondary-foreground: #141823;
 
-  --muted: #202327;
-  --muted-foreground: #aab0b8;
+  --muted: #1c2333;
+  --muted-foreground: #b4b8c4;
 
-  --accent: #2c3036;
-  --accent-foreground: #f2f3f2;
+  --accent: #263049;
+  --accent-foreground: #f3f6f9;
 
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #8a96a6;
-  --link: #8a96a6;
+  --ring: #96c3ea;
+  --link: #96c3ea;
 
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
@@ -308,20 +307,20 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
 
-  --sidebar: #202327;
-  --sidebar-foreground: #f2f3f2;
-  --sidebar-primary: #8a96a6;
-  --sidebar-primary-foreground: #17191c;
-  --sidebar-accent: #2c3036;
-  --sidebar-accent-foreground: #f2f3f2;
+  --sidebar: #1c2333;
+  --sidebar-foreground: #f3f6f9;
+  --sidebar-primary: #96c3ea;
+  --sidebar-primary-foreground: #141823;
+  --sidebar-accent: #263049;
+  --sidebar-accent-foreground: #f3f6f9;
   --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: #8a96a6;
+  --sidebar-ring: #96c3ea;
 
-  --tint-rgb: 138, 150, 166;
+  --tint-rgb: 150, 195, 234;
 
   /* Starwind UI extra semantic tokens — dark mode variants. */
-  --primary-accent: #8a96a6; /* lifted primary for dark hover states */
-  --secondary-accent: #f2f3f2; /* near-white for dark active secondary */
+  --primary-accent: #b9d8f2; /* lifted primary for dark hover states */
+  --secondary-accent: #f3f6f9; /* near-white for dark active secondary */
   --info: #93c5fd; /* same soft blue works on dark surfaces */
   --info-foreground: #1e3a5f;
   --success: #86efac;
@@ -330,7 +329,7 @@
   --warning-foreground: #713f12;
   --error: oklch(0.704 0.191 22.216); /* matches dark --destructive */
   --error-foreground: #ffffff;
-  --outline: #8a96a6; /* matches dark --ring */
+  --outline: #96c3ea; /* matches dark --ring */
 }
 
 /* ---------- Base resets and defaults ---------------------------------- */
@@ -1102,7 +1101,7 @@ body::before {
 
   /* Print-only header + footer injected into every page. */
   body::after {
-    content: 'Studio Starter · example.com';
+    content: 'First Baptist Church of Auburn · fbc-auburn.nathanjnixon86.workers.dev';
     display: block;
     margin-top: 0.5in;
     padding-top: 0.25in;
