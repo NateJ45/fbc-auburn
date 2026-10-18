@@ -54,7 +54,7 @@ const MARK_SVG = `data:image/svg+xml;base64,${b64('src/assets/brand/fbc-auburn-i
 /** The path across the foot of the card, generated once (seeded, so always the same stones). */
 const PATH_H = 210;
 const PATH_SVG = (() => {
-  const stones = stonePath({ width: OG_WIDTH, height: PATH_H, preset: 'og', seed: 11 });
+  const stones = stonePath({ width: OG_WIDTH, height: PATH_H, preset: 'og', seed: 4 });
   const paths = stones.map((s) => `<path d="${s.d}" fill="${s.fill}"/>`).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${OG_WIDTH} ${PATH_H}" width="${OG_WIDTH}" height="${PATH_H}">${paths}</svg>`;
 })();

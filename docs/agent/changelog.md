@@ -6,7 +6,7 @@ _2026-10-18: share images in the church's brand._
 starter's generic card. They are now drawn by `scripts/lib/og-card.mjs`, site-specific: the
 church lockup top left, the page title in Auburn Stone with the mosaic letter colours (deep sky
 alone when it needs three lines), and the stone path rising across the foot from the water to the
-red cross (a new `og` preset in `stone-mosaic.mjs`, seed 11). Home and `og-default.png` carry the
+red cross (a new `og` preset in `stone-mosaic.mjs`, seed 4, with stricter shape limits so no stone is pointy). Home and `og-default.png` carry the
 masthead and the Site settings tagline. Picked from three directions (stone path; deep sky with the
 This Sunday card ground; an arched mosaic window): the path won on brand (it is the site's own H1
 and path) and on long titles, which the arch squeezed to five lines. Titles fit from 120px down to

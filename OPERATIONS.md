@@ -489,7 +489,7 @@ await closeCards(); // once, at the end, or the process never exits
 ```
 
 Titles up to about 70 characters fit (120px down to 64px, three lines at most); em and en dashes
-become colons. The card's stone path is the `og` preset in `scripts/lib/stone-mosaic.mjs`, seed 11.
+become colons. The card's stone path is the `og` preset in `scripts/lib/stone-mosaic.mjs`, seed 4, with stricter stone-shape limits than the site paths so no stone reads as a teardrop.
 
 ## Regenerate logos
 
