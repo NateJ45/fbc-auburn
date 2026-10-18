@@ -1,0 +1,75 @@
+---
+// Safe to edit by hand
+// Board E's "Who we are": a photo mosaic with a green note panel, drawn from a Home "Image + text"
+// block. Eyebrow is the section label, Heading the panel's title, Text the note (Pastor Jacob's
+// welcome, in his own words), "Signed by" its signature, the button a link beside it. Image is
+// the big photo; "Two more photos" sit under the panel. Rounded 20px frames, not stone crops
+// (Nathan rejected those on 2026-10-17).
+//
+// STAND-IN PHOTOS. A photo whose Sanity asset came from Unsplash (asset.source.name) carries a
+// "Stand-in photograph" caption, so it is never mistaken for the church. Upload the church's own
+// photo and the caption goes by itself.
+import SectionLabel from './SectionLabel.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import PortableTextStatic from '@/components/PortableTextStatic.astro';
+import { ctaHref } from '@/lib/cta-href';
+import type { ProjectedImage, ProjectedImageTextSection } from '@/lib/pageBuilder.types';
+
+interface Props {
+  block: ProjectedImageTextSection;
+  marker: number;
+  headingId: string;
+}
+const { block, marker, headingId } = Astro.props;
+const big = block.image?.asset ? block.image : null;
+const small = (block.extraImages ?? []).filter((i) => i?.asset).slice(0, 2);
+const isStandIn = (img: ProjectedImage | null | undefined) =>
+  (img?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
+---
+
+<section class="hb-section" aria-labelledby={block.heading ? headingId : undefined}>
+  <div class="hb-wrap">
+    {block.eyebrow && <SectionLabel text={block.eyebrow} marker={marker} as="p" />}
+    <div class="hb-mosaic">
+      {big && (
+        <figure class="hb-ph hb-ph--big">
+          <SanityImage
+            source={big as never}
+            width={1200}
+            sizes="(max-width: 960px) 100vw, 50vw"
+            quality={70}
+          />
+          {isStandIn(big) && <figcaption>Stand-in photograph</figcaption>}
+        </figure>
+      )}
+      <div class="hb-note">
+        {block.heading && <h2 id={headingId}>{block.heading}</h2>}
+        <div>
+          {block.body && (
+            <div class="hb-note__quote">
+              <PortableTextStatic value={block.body as never} />
+            </div>
+          )}
+          {(block.signedBy || block.cta?.label) && (
+            <p class="hb-note__sign">
+              {block.signedBy}
+              {block.signedBy && block.cta?.label && ' · '}
+              {block.cta?.label && <a href={ctaHref(block.cta, '/about/')}>{block.cta.label}</a>}
+            </p>
+          )}
+        </div>
+      </div>
+      {small.map((img) => (
+        <figure class="hb-ph">
+          <SanityImage
+            source={img as never}
+            width={700}
+            sizes="(max-width: 960px) 50vw, 25vw"
+            quality={70}
+          />
+          {isStandIn(img) && <figcaption>Stand-in photograph</figcaption>}
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

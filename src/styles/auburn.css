@@ -255,17 +255,131 @@ h6 {
 /* ---- Header: sentence-case nav at a readable size; the button is the red one. ---- */
 .site-header .site-nav a,
 .site-header .site-nav summary {
+  white-space: nowrap;
   font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0;
 }
 .site-header .btn-auburn {
+  white-space: nowrap;
   min-height: 44px;
   padding: 0.5rem 1.15rem;
   font-size: 1rem;
 }
 .site-header .btn-auburn--current {
   background: var(--auburn-red-dark);
+}
+
+/* ---- Header, board E (2026-10-17): the lockup at 84px from 1280px (64px below that and once the page
+   scrolls), a compact solid-white bar when scrolled, and on Home at desktop the Sunday note in
+   the logo slot until the hero's own lockup passes under the bar (data-past, set by the script at
+   the end of Header.astro). ---- */
+.site-header__logo {
+  height: 64px;
+  transition: height 0.3s ease;
+}
+.site-header__row {
+  transition: padding 0.3s ease;
+}
+.site-header {
+  transition:
+    transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease;
+}
+/* 84px once the bar has room for it beside the four menu links and the two buttons. */
+@media (min-width: 1280px) {
+  .site-header__logo {
+    height: 84px;
+  }
+}
+.site-header[data-scrolled] {
+  background: #ffffff;
+  box-shadow:
+    0 1px 0 #d9dee6,
+    0 12px 30px -24px rgb(23 26 38 / 0.35);
+}
+.site-header[data-scrolled] .site-header__row {
+  padding-block: 12px;
+}
+.site-header[data-scrolled] .site-header__logo {
+  height: 64px;
+}
+.site-header__brand {
+  display: grid;
+  align-items: center;
+}
+.site-header__brand > * {
+  grid-area: 1 / 1;
+}
+.site-header__note {
+  display: none;
+}
+/* From 1280px: below that the note crowds the four menu links, so the logo shows instead. */
+@media (min-width: 1280px) {
+  .site-header[data-home] .site-header__note {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.35;
+    font-variant-numeric: tabular-nums lining-nums;
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      visibility 0s;
+  }
+  .site-header__note-times {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--heading-solid);
+  }
+  .site-header__note-where {
+    color: var(--muted-foreground);
+  }
+  .site-header__note a {
+    font-weight: 600;
+    color: var(--link);
+    text-underline-offset: 3px;
+  }
+  .site-header[data-home][data-past] .site-header__note {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      visibility 0s linear 0.35s;
+  }
+  .site-header[data-home] .site-header__logo-link {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      visibility 0s linear 0.35s;
+  }
+  .site-header[data-home][data-past] .site-header__logo-link {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      visibility 0s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header__row,
+  .site-header__logo,
+  .site-header__note,
+  .site-header__logo-link {
+    transition: none !important;
+  }
 }
 
 /* ---- Arched pictures in the text-and-picture band (ImageText): the same arch as the hero.
@@ -512,5 +626,86 @@ h6 {
 @media (max-width: 63.99rem) {
   .site-header__row {
     justify-content: flex-start;
+  }
+}
+/* Home (board E) opens on its own hairline under the masthead, so its bar has no stripe and no
+   rule until it scrolls. */
+.site-header[data-home] .site-header__stripe {
+  display: none;
+}
+.site-header[data-home]:not([data-scrolled]) .site-header__row {
+  border-bottom-color: transparent;
+}
+
+/* ---- Footer, board E (2026-10-17): ink, with the brand row on top. The tokens are redefined
+   inside the footer, so every Tailwind class in the link grid reads light on ink. Light only
+   (rule 3): this is the footer's own ground, not a dark theme. ---- */
+.site-footer {
+  --foreground: #f3f6f9;
+  --muted: #171a26;
+  --muted-foreground: #b4b8c4;
+  --border: #2e3446;
+  --border-soft: #2e3446;
+  --link: #ffffff;
+  --primary: #96c3ea;
+  --accent: #232838;
+  background: #171a26;
+  color: #f3f6f9;
+}
+.site-footer a {
+  color: #ffffff;
+}
+.site-footer__board {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  gap: 40px;
+  padding-top: 72px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #2e3446;
+}
+.site-footer__board img {
+  width: 84px;
+  height: auto;
+}
+.site-footer__tagline {
+  max-width: 20rem;
+  margin: 18px 0 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1.15;
+  color: #ffffff;
+}
+.site-footer__head {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #96c3ea;
+}
+.site-footer__body {
+  margin: 0;
+  color: #d6d9e1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.site-footer__body a {
+  text-underline-offset: 3px;
+}
+.site-footer__small {
+  font-size: 14px;
+  color: #b4b8c4;
+}
+@media (max-width: 960px) {
+  .site-footer__board {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding-top: 56px;
+  }
+}
+/* Between 1024px and 1199px the bar is tight with the lockup; close up the menu's gaps a little. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .site-header .site-header__nav,
+  .site-header .site-nav {
+    gap: 1.5rem;
   }
 }

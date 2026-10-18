@@ -117,6 +117,15 @@ export const heroSection = defineType({
       description:
         'One word from the headline to render in the script font. Must match exactly. Leave blank to skip.',
     }),
+    // FBC Auburn Home (board E, 2026-10-17): the big red welcome line under the lockup. On Home
+    // the eyebrow and headline draw the church's name as the lockup, so the welcome is its own field.
+    defineField({
+      name: 'welcome',
+      title: 'Welcome line (Home only)',
+      type: 'string',
+      description: 'The big red line under the church name, for example "Come as you are."',
+      hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
+    }),
     defineField({ name: 'subhead', title: 'Subhead', type: 'text', rows: 2 }),
     imageWithAlt('backgroundImage', 'Background photo (optional)'),
     defineField({ name: 'primaryCta', title: 'Main button', type: 'ctaBlock' }),
@@ -233,6 +242,29 @@ export const imageTextSection = defineType({
     defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     proseBody('body', 'Text'),
+    // FBC Auburn Home (board E, 2026-10-17): "Who we are" is a photo mosaic. The main image is the
+    // big one; these two sit under the text panel. The text reads as a signed note.
+    defineField({
+      name: 'signedBy',
+      title: 'Signed by (Home only)',
+      type: 'string',
+      description: 'Who the text is from, for example "Jacob Wysong, Senior Pastor".',
+      hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
+    }),
+    defineField({
+      name: 'extraImages',
+      title: 'Two more photos (Home only)',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+        },
+      ],
+      validation: (R) => R.max(2),
+      hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
+    }),
     defineField({ name: 'cta', title: 'Button (optional)', type: 'ctaBlock' }),
   ],
   preview: {

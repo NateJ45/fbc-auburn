@@ -1,0 +1,86 @@
+---
+// Safe to edit by hand
+// A board E band on a pale mosaic texture, drawn from a Home "Icon cards" block. HomeBoard picks
+// the variant by position (the board owns the cadence, rule 9; the block has no colour field):
+//
+//   board  the first card block: "Through the week", a three-column white board on the sky tile,
+//          104px stone icons, each card's link after its text.
+//   ways   the next one: "Other ways in", three white link cards on the green tile, 112px icons,
+//          the whole card is the link and lifts on hover.
+//
+// TIMES ARE NEVER TYPED. A card whose title starts with a weekday ("Wednesdays") gets that day's
+// gathering times from Site settings > Church facts appended: "Wednesdays, 6:00 pm". The Studio
+// field description says so.
+import SectionLabel from './SectionLabel.astro';
+import StoneIcon from '@/components/StoneIcon.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { WEEKDAY_NAMES, plain, timesPhrase } from '@/lib/church-facts';
+import { ctaHref } from '@/lib/cta-href';
+import type { ProjectedIconCard, ProjectedIconCardsSection } from '@/lib/pageBuilder.types';
+
+interface Props {
+  block: ProjectedIconCardsSection;
+  variant: 'board' | 'ways';
+  marker: number;
+  headingId: string;
+}
+const { block, variant, marker, headingId } = Astro.props;
+const cards: ProjectedIconCard[] = block.cards ?? [];
+const facts = await getChurchFacts();
+
+function titleWithTime(title: string): string {
+  const first = plain(title).toLowerCase().split(/[\s,]/)[0]?.replace(/s$/, '') ?? '';
+  const dayIndex = WEEKDAY_NAMES.indexOf(first as (typeof WEEKDAY_NAMES)[number]);
+  if (dayIndex < 0) return title;
+  const minutes = facts.serviceTimes.filter((s) => s.dayIndex === dayIndex).map((s) => s.minutes);
+  return minutes.length ? `${title}, ${timesPhrase(minutes)}` : title;
+}
+---
+
+<section
+  class:list={['hb-band', variant === 'board' ? 'hb-band--sky' : 'hb-band--green']}
+  aria-labelledby={block.heading ? headingId : undefined}
+>
+  <div class="hb-wrap">
+    {block.heading && <SectionLabel text={block.heading} marker={marker} id={headingId} />}
+    {variant === 'board' ? (
+      <div class="hb-board">
+        {cards.map((c) => (
+          <div>
+            <StoneIcon name={c.icon} size={104} />
+            {c.title && <h3 class="hb-board__title hb-num">{titleWithTime(c.title)}</h3>}
+            {(c.body || c.link?.label) && (
+              <p class="hb-board__body">
+                {c.body}
+                {c.link?.label && (
+                  <>
+                    {' '}
+                    <a href={ctaHref(c.link)}>{c.link.label}</a>
+                  </>
+                )}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="hb-ways">
+        {cards.map((c) => {
+          const Tag = c.link ? 'a' : 'div';
+          return (
+            <Tag
+              class:list={['hb-way', c.link && 'hb-lift']}
+              href={c.link ? ctaHref(c.link) : undefined}
+            >
+              <StoneIcon name={c.icon} size={112} />
+              <span>
+                {c.title && <strong class="hb-way__title">{c.title}</strong>}
+                {c.body && <span class="hb-way__body">{c.body}</span>}
+              </span>
+            </Tag>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</section>

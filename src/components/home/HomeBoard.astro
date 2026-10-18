@@ -1,0 +1,131 @@
+---
+// Safe to edit by hand
+// Home, "board E" (approved 2026-10-17; docs/design-directions/2026-10-17-fbc-auburn/README.md).
+// Walks the Home document's page layout (Studio > Home > Page layout) and draws each block in the
+// board's grammar. Like SectionRenderer, the board owns the cadence (rule 9: blocks carry no
+// colour field), so reordering in the Studio can never break the rhythm:
+//
+//   Hero (the first)             -> HomeHero: the lockup, the welcome, This Sunday, the stone path
+//   Icon cards (the first)       -> HomeBand "board": Through the week, on the sky tile
+//   Icon cards (any later)       -> HomeBand "ways": Other ways in, on the green tile
+//   Image + text (the first)     -> HomeBelong: Who we are, the photo mosaic
+//   This week + Watch, adjacent  -> HomeWeekWatch: side by side (either alone is fine too)
+//   anything else                -> SectionRenderer, so a section an editor adds still renders
+//
+// Section-label markers follow the path down the page: sky, green, gold, red, then round again.
+//
+// PREVIEW. The Studio preview passes `editDoc`, and each drawn block is wrapped in a real block box
+// carrying its data-sanity attribute (the in-canvas insert / move / remove controls), exactly as
+// SectionRenderer does. The live site never passes it, and the wrapper is then a Fragment.
+import '@/styles/home-board.css';
+import HomeHero from './HomeHero.astro';
+import HomeBand from './HomeBand.astro';
+import HomeBelong from './HomeBelong.astro';
+import HomeWeekWatch from './HomeWeekWatch.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
+import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
+import type {
+  PageBuilderBlock,
+  ProjectedHeroSection,
+  ProjectedIconCardsSection,
+  ProjectedImageTextSection,
+  ProjectedThisWeekSection,
+  ProjectedWatchSection,
+} from '@/lib/pageBuilder.types';
+
+interface Props {
+  sections: unknown[];
+  editDoc?: EditDoc;
+}
+const { sections, editDoc } = Astro.props;
+const blocks = (sections ?? []) as PageBuilderBlock[];
+
+type Row =
+  | { kind: 'hero'; key: string; block: ProjectedHeroSection }
+  | {
+      kind: 'band';
+      key: string;
+      block: ProjectedIconCardsSection;
+      variant: 'board' | 'ways';
+      marker: number;
+    }
+  | { kind: 'belong'; key: string; block: ProjectedImageTextSection; marker: number }
+  | {
+      kind: 'weekWatch';
+      key: string;
+      keys: string[];
+      week: ProjectedThisWeekSection | null;
+      watch: ProjectedWatchSection | null;
+      marker: number;
+    }
+  | { kind: 'other'; key: string; block: PageBuilderBlock };
+
+const rows: Row[] = [];
+let marker = 0;
+let seenHero = false;
+let seenCards = false;
+let seenBelong = false;
+for (let i = 0; i < blocks.length; i++) {
+  const b = blocks[i];
+  const key = (b as { _key?: string })._key ?? `home-${i}`;
+  if (b._type === 'heroSection' && !seenHero) {
+    seenHero = true;
+    rows.push({ kind: 'hero', key, block: b as ProjectedHeroSection });
+  } else if (b._type === 'iconCardsSection') {
+    rows.push({
+      kind: 'band',
+      key,
+      block: b as ProjectedIconCardsSection,
+      variant: seenCards ? 'ways' : 'board',
+      marker: marker++,
+    });
+    seenCards = true;
+  } else if (b._type === 'imageTextSection' && !seenBelong) {
+    seenBelong = true;
+    rows.push({ kind: 'belong', key, block: b as ProjectedImageTextSection, marker: marker++ });
+  } else if (b._type === 'thisWeekSection' || b._type === 'watchSection') {
+    const next = blocks[i + 1];
+    const pairs =
+      next &&
+      next._type !== b._type &&
+      (next._type === 'thisWeekSection' || next._type === 'watchSection');
+    const group = pairs ? [b, next] : [b];
+    if (pairs) i++;
+    rows.push({
+      kind: 'weekWatch',
+      key,
+      keys: group.map((g) => (g as { _key?: string })._key ?? key),
+      week: (group.find((g) => g._type === 'thisWeekSection') as ProjectedThisWeekSection) ?? null,
+      watch: (group.find((g) => g._type === 'watchSection') as ProjectedWatchSection) ?? null,
+      marker: marker++,
+    });
+  } else {
+    rows.push({ kind: 'other', key, block: b });
+  }
+}
+
+const Wrap = editDoc ? 'div' : Fragment;
+const wrapAttrs = (key: string) =>
+  editDoc ? { 'data-sanity': sectionEditAttr(editDoc, key) } : {};
+const hid = (key: string) => `home-${key}`;
+---
+
+<div class="hb">
+  {rows.map((r) =>
+    r.kind === 'other' ? (
+      <SectionRenderer sections={[r.block]} idPrefix={hid(r.key)} {editDoc} />
+    ) : (
+      <Wrap {...wrapAttrs(r.key)}>
+        {r.kind === 'hero' ? (
+          <HomeHero block={r.block} />
+        ) : r.kind === 'band' ? (
+          <HomeBand block={r.block} variant={r.variant} marker={r.marker} headingId={hid(r.key)} />
+        ) : r.kind === 'belong' ? (
+          <HomeBelong block={r.block} marker={r.marker} headingId={hid(r.key)} />
+        ) : (
+          <HomeWeekWatch week={r.week} watch={r.watch} marker={r.marker} headingId={hid(r.key)} />
+        )}
+      </Wrap>
+    ),
+  )}
+</div>

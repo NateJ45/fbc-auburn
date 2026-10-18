@@ -5,8 +5,8 @@
 //
 // IMPORTANT: only use blocks that render fully from INLINE data:
 //   heroSection, richTextSection, imageTextSection (no image), statSection,
-//   ctaBandSection, quoteSection, spacerSection, and FBC Auburn's stepsRailSection and
-//   walkSection.
+//   ctaBandSection, quoteSection, spacerSection, and FBC Auburn's stepsRailSection,
+//   walkSection, iconCardsSection, thisWeekSection and watchSection.
 // Collection-dependent rich sections (servicesGridSection, testimonialsSection,
 // processSection, valuesSection) are NOT used here — they'd render empty without
 // Sanity collections and would defeat the purpose of a no-data safety net.
@@ -32,147 +32,106 @@ function para(key: string, text: string) {
 // ── Home page ────────────────────────────────────────────────────────────────
 
 export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
+  // Board E (2026-10-17), drawn by src/components/home/HomeBoard.astro. Same shape as the live
+  // Home document (scripts/content/home-board-e.mjs) without the photos, and without links to
+  // the Studio-only pages (Watch, Ministries), which a fresh clone does not have. Times are never typed:
+  // the "Wednesdays" card gets its time from Church facts.
   {
     _type: 'heroSection',
     _key: 'default-home-hero',
-    // The masthead: "First Baptist Church of" over a huge colour mosaic "Auburn" (ArchHero.astro).
-    // The subhead's first sentence becomes the large intro line.
+    // The lockup: "First Baptist Church of" over a mosaic "Auburn".
     eyebrow: 'First Baptist Church of',
     headline: 'Auburn',
+    welcome: 'Come as you are.',
     subhead:
-      'A small church with the door open. We are a Southern Baptist family on Hamilton-Scipio Road in Ross Township. Come as you are this Sunday, and someone will meet you at the door.',
-    size: 'tall',
-    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
-    secondaryCta: { _type: 'ctaBlock', label: 'About the church', href: '/about/' },
-  },
-  // The stepping-stone rail (StepsRail.astro): renders fully from inline data, stone icons by name.
-  {
-    _type: 'stepsRailSection',
-    _key: 'default-home-rail',
-    heading: 'A Sunday with us, one step at a time',
-    intro: 'Never been to church, or not for a while? Here is exactly what to expect.',
-    steps: [
-      {
-        _type: 'railStep',
-        _key: 'default-rail-1',
-        icon: 'map-pin',
-        title: 'Find us in Auburn',
-        body: '4241 Hamilton-Scipio Road, Hamilton. Park in the lot beside the building and come to the front doors.',
-        linkLabel: 'Walk in with us, from the car to your seat',
-        linkHref: '/plan-your-visit/#walk',
-      },
-      {
-        _type: 'railStep',
-        _key: 'default-rail-2',
-        icon: 'clock',
-        title: 'Come at a time that suits you',
-        body: 'Times to be confirmed.',
-        times: [
-          {
-            _type: 'railTime',
-            _key: 'default-rail-t1',
-            time: '9:45 am',
-            label: 'Sunday School for all ages',
-          },
-          { _type: 'railTime', _key: 'default-rail-t2', time: '11:00 am', label: 'Sunday worship' },
-          {
-            _type: 'railTime',
-            _key: 'default-rail-t3',
-            time: '6:00 pm',
-            label: 'Wednesday Bible study and prayer',
-          },
-        ],
-      },
-      {
-        _type: 'railStep',
-        _key: 'default-rail-3',
-        icon: 'coffee',
-        title: 'Someone will say hello',
-        body: 'A greeter will meet you at the door, and there is coffee in the fellowship hall. Sit wherever you like; nobody will single you out.',
-      },
-      {
-        _type: 'railStep',
-        _key: 'default-rail-4',
-        icon: 'bible',
-        title: 'We sing, pray and open the Bible',
-        body: 'Worship lasts about an hour. Children are welcome in the service, and there is a checked-in room for little ones (to be confirmed).',
-        linkLabel: 'Your first visit',
-        linkHref: '/plan-your-visit/',
-      },
-      {
-        _type: 'railStep',
-        _key: 'default-rail-5',
-        icon: 'praying-hands',
-        title: 'Let us pray for you',
-        body: 'Send a prayer request any time, and we will pray for you by name.',
-        linkLabel: 'Send a prayer request',
-        linkHref: '/contact/',
-      },
-    ],
-    endHeading: 'The path leads here. We would love to meet you this Sunday.',
-    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
-    secondaryCta: { _type: 'ctaBlock', label: 'Ask a question', href: '/contact/' },
-  },
-  {
-    _type: 'imageTextSection',
-    _key: 'default-home-pastor',
-    heading: 'Meet our pastor',
-    body: [
-      para(
-        'default-home-pastor-p1',
-        "A short welcome in Pastor Jacob's own words goes here: why this church, what a first-time guest can expect, and an honest hope for the year ahead. Two or three sentences, written together.",
-      ),
-    ],
-    cta: { _type: 'ctaBlock', label: 'About the church', href: '/about/' },
-    imageSide: 'right',
+      'We are a small Southern Baptist family in Ross Township. Someone will meet you at the door, and there is coffee in the fellowship hall.',
+    primaryCta: { _type: 'ctaBlock', label: 'Plan your first visit', href: '/plan-your-visit/' },
+    secondaryCta: { _type: 'ctaBlock', label: 'Meet the church', href: '/about/' },
   },
   {
     _type: 'iconCardsSection',
-    _key: 'default-home-belong',
-    heading: 'Find your place',
-    intro: 'Small enough to know your name, with something through the week for every age.',
+    _key: 'default-home-through-week',
+    heading: 'Through the week',
     cards: [
       {
         _type: 'iconCard',
-        _key: 'default-home-belong-kids',
+        _key: 'default-htw-wednesday',
+        icon: 'clock',
+        title: 'Wednesdays',
+        body: 'Bible study and prayer, an open table for questions.',
+      },
+      {
+        _type: 'iconCard',
+        _key: 'default-htw-kids',
         icon: 'blocks',
-        title: 'Kids',
-        body: 'Sunday School and a safe, checked-in room during worship.',
+        title: 'Kids on Sunday',
+        body: 'Welcome in the service, with a checked-in room for little ones.',
       },
       {
         _type: 'iconCard',
-        _key: 'default-home-belong-bible',
-        icon: 'bible',
-        title: 'Bible study and prayer',
-        body: 'Wednesday evenings, an open table for questions and prayer.',
-      },
-      {
-        _type: 'iconCard',
-        _key: 'default-home-belong-fellowship',
-        icon: 'coffee',
-        title: 'Fellowship',
-        body: 'Meals, workdays and the ordinary life of a church family.',
+        _key: 'default-htw-prayer',
+        icon: 'praying-hands',
+        title: 'Any day',
+        body: 'Tell us what is on your heart.',
+        link: { _type: 'ctaBlock', label: 'Send a prayer request', href: '/contact/' },
       },
     ],
   },
   {
-    _type: 'watchSection',
-    _key: 'default-home-watch',
-    heading: 'Missed a Sunday?',
-    body: 'Every message is streamed live on Facebook, and the latest one is always here.',
-    fallback: 'Messages will appear here once the church channel is connected.',
+    _type: 'imageTextSection',
+    _key: 'default-home-belong',
+    eyebrow: 'Who we are',
+    heading: 'A place to belong',
+    body: [
+      para(
+        'default-home-belong-p1',
+        "[Two or three sentences of welcome in Pastor Jacob's own words.]",
+      ),
+    ],
+    signedBy: 'Jacob Wysong, Senior Pastor',
+    cta: { _type: 'ctaBlock', label: 'About the church', href: '/about/' },
   },
   {
     _type: 'thisWeekSection',
     _key: 'default-home-week',
-    heading: 'This week at Auburn',
+    heading: 'This week',
   },
   {
-    _type: 'ctaBandSection',
-    _key: 'default-home-cta',
-    headline: 'We would love to meet you this Sunday.',
-    subhead: 'Tell us you are coming, or ask anything at all.',
-    cta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
+    _type: 'watchSection',
+    _key: 'default-home-watch',
+    heading: 'Last Sunday',
+    body: 'Streamed live on Facebook every Sunday',
+    fallback: 'Messages will appear here once the church channel is connected.',
+  },
+  {
+    _type: 'iconCardsSection',
+    _key: 'default-home-other-ways',
+    heading: 'Other ways in',
+    cards: [
+      {
+        _type: 'iconCard',
+        _key: 'default-how-ministries',
+        icon: 'bible',
+        title: 'Ministries',
+        body: 'Kids, Bible study, fellowship',
+      },
+      {
+        _type: 'iconCard',
+        _key: 'default-how-give',
+        icon: 'giving-hand',
+        title: 'Give',
+        body: 'Ask us how to give while online giving is set up',
+        link: { _type: 'ctaBlock', label: 'Give', href: '/contact/' },
+      },
+      {
+        _type: 'iconCard',
+        _key: 'default-how-ask',
+        icon: 'coffee',
+        title: 'Ask a question',
+        body: 'Anything at all, before you come',
+        link: { _type: 'ctaBlock', label: 'Ask a question', href: '/contact/' },
+      },
+    ],
   },
 ];
 

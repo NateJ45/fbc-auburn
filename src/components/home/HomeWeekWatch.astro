@@ -1,0 +1,146 @@
+---
+// Safe to edit by hand
+// Board E's "This week and last Sunday": the coming week beside the latest message, drawn from the
+// Home "This week" block and the "Watch" block next to it (HomeBoard pairs them; either can be
+// missing and the other then takes the row alone).
+//
+// This week is derived, never typed (rule 15): the next seven days of Site settings > Church facts
+// > Service times plus Church Trac events (thisWeek()), each with the date in big deep-sky
+// numerals. Last Sunday is the YouTube replay (LastSunday) once a channel is set, and until then
+// the Watch block's poster card: its link label as the title, its text underneath, lifting on
+// hover.
+import SectionLabel from './SectionLabel.astro';
+import LastSunday from '@/components/church/LastSunday.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { thisWeek } from '@/lib/church-facts';
+import { churchDataNow, loadChurchEvents } from '@/lib/church-feeds';
+import { ctaHref } from '@/lib/cta-href';
+import type { ProjectedThisWeekSection, ProjectedWatchSection } from '@/lib/pageBuilder.types';
+
+interface Props {
+  week?: ProjectedThisWeekSection | null;
+  watch?: ProjectedWatchSection | null;
+  marker: number;
+  headingId: string;
+  /** The build moment; tests pass a fixed one. */
+  now?: Date;
+}
+const { week, watch, marker, headingId, now = churchDataNow() } = Astro.props;
+
+const facts = await getChurchFacts();
+const rows = week ? thisWeek(facts, await loadChurchEvents(facts), now).slice(0, 4) : [];
+const anyUnconfirmed = rows.some((r) => !r.confirmed);
+const weekHeading = week?.heading || 'This week';
+const watchHeading = watch?.heading || 'Last Sunday';
+const label = [week && weekHeading, watch && watchHeading].filter(Boolean).join(' and ');
+// No link set (the built-in defaults, where the Watch page may not exist): a plain card.
+const watchHref = watch?.link ? ctaHref(watch.link) : undefined;
+const WatchTag = watchHref ? 'a' : 'div';
+---
+
+<section class="hb-section" aria-labelledby={headingId}>
+  <div class="hb-wrap">
+    <SectionLabel text={label} marker={marker} as="p" />
+    <div class="hb-pair">
+      {week && (
+        <div>
+          <h2 id={headingId}>{weekHeading}</h2>
+          {week.intro && <p class="hb-week-foot">{week.intro}</p>}
+          <ul class="hb-week hb-num">
+            {rows.map((r) => (
+              <li>
+                <time class="hb-week__day" datetime={r.date}>
+                  {Number(r.date.slice(8, 10))}
+                </time>
+                <p>
+                  <strong>{r.when}</strong>
+                  <br />
+                  <span class="hb-week__what">
+                    {r.what} · {r.time}
+                    {r.where && `, ${r.where}`}
+                  </span>
+                </p>
+              </li>
+            ))}
+          </ul>
+          {(anyUnconfirmed || facts.calendarPageUrl) && (
+            <p class="hb-week-foot">
+              {anyUnconfirmed && 'Times to confirm. '}
+              {facts.calendarPageUrl && (
+                <a href={facts.calendarPageUrl} rel="noopener" target="_blank">
+                  Full calendar<span class="sr-only"> (opens Church Trac in a new tab)</span>
+                </a>
+              )}
+            </p>
+          )}
+        </div>
+      )}
+      {watch && (
+        <div>
+          <h2 id={week ? undefined : headingId}>{watchHeading}</h2>
+          <LastSunday showChannelLink={false}>
+            <WatchTag
+              slot="fallback"
+              class:list={['hb-watch', watchHref && 'hb-lift']}
+              href={watchHref}
+            >
+              {watch.poster?.asset && (
+                <SanityImage
+                  source={watch.poster as never}
+                  width={900}
+                  sizes="(max-width: 960px) 100vw, 50vw"
+                  alt=""
+                  quality={65}
+                />
+              )}
+              <span class="hb-watch__text">
+                <span class="hb-watch__play" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M8 5.5v13l11-6.5z" fill="#C4401F" />
+                  </svg>
+                </span>
+                <span>
+                  <strong class="hb-watch__title">
+                    {watch.link?.label || 'Watch the message'}
+                  </strong>
+                  {watch.body && <span class="hb-watch__sub">{watch.body}</span>}
+                </span>
+              </span>
+            </WatchTag>
+          </LastSunday>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hb-week {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 2px solid var(--hb-ink);
+  }
+  .hb-week li {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hb-line);
+  }
+  .hb-week p {
+    margin: 0;
+  }
+  .hb-week__day {
+    flex: none;
+    width: 64px;
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1;
+    color: var(--auburn-deep);
+  }
+  .hb-week__what {
+    color: var(--hb-muted);
+  }
+</style>

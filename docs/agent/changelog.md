@@ -1,5 +1,22 @@
 # Change history
 
+_2026-10-17: board E on Home: the lockup hero, the This Sunday card, a generated stone path._
+
+**Decision.** A second design round found the full-height ribbon still weaker than the Gemini comp;
+Nathan picked board E (decision in `docs/design-directions/2026-10-17-fbc-auburn/README.md`).
+`src/components/home/HomeBoard.astro` walks Home's page layout and draws each block in E's grammar (the
+board owns the cadence; unknown blocks fall through to SectionRenderer; the Studio preview uses it too).
+The path, tiles and markers are the design round's generators ported to `scripts/lib/stone-mosaic.mjs`
+and `npm run gen:stones`, byte-identical to the approved art. Schema: `heroSection.welcome`,
+`imageTextSection.signedBy` and `extraImages`, all hidden outside Home. Facts stay derived: the This
+Sunday card, This week, the header's Sunday note, the footer's Sundays and a weekday card title
+("Wednesdays") all read Church facts. `SundayWeather` gained a `reserve` mode so the forecast can
+show inside the card while it is on screen. The header lockup is 84px from 1280px (64px below that and once
+the page scrolls) and the footer is ink, site-wide. `StoneRibbon.astro` and `src/scripts/ribbon.ts` are
+gone. Measured on the dev build at 320, 375, 768, 1024 and 1440: no sideways scroll, no stone painted
+over text; reduced motion and no JS show the path finished. Data: `scripts/content/home-board-e.mjs`
+(backup, dry run, apply, `audit:data` clean).
+
 _2026-10-17: the header logo shows with JavaScript off (starter card 108)._
 
 **Decision.** With JS off the header logo was only its alt text: the theme-aware img ships with no `src` so the

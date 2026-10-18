@@ -7,6 +7,40 @@ Nothing here is site code; `brand/brand.config.json` and `src/**` are untouched.
 
 ## Decision
 
+2026-10-17 (late): Nathan picked **board E, "the path to the door"**, which replaces the full-height
+ribbon on Home. A second design round (four Home directions on a Claude Design canvas) found the
+ribbon still weaker than the comp; he chose C (the noticeboard) with A's This Sunday card, polished
+over several rounds into E. Home is now built by `src/components/home/HomeBoard.astro`
+(styles `src/styles/home-board.css`), top to bottom:
+
+- the hero is the Auburn-wide lockup at hero scale: the full-colour mark beside "FIRST BAPTIST
+  CHURCH OF" over a mosaic "Auburn" (the mark is hidden under 960px, where the header carries it);
+- a lead row: the red "Come as you are.", a paragraph, one red button and a text link, beside the
+  This Sunday card (deep sky on the deep mosaic tile; date, forecast, times, address, all derived);
+- a generated mosaic stone path (Poisson sites, Lloyd-relaxed Voronoi, white grout) in the mark's
+  story order, water, green, gold, red, rising under the Sunday card; phones get a smaller path
+  between the welcome and the card, flipped to land on it. It lays itself stone by stone on load;
+  no JS and reduced motion show it finished;
+- section labels in small caps with a hairline, each led by three stepping stones whose colours
+  follow the path down the page;
+- Through the week (sky mosaic band, a white three-column board), Who we are (a photo mosaic with
+  a green note panel, 20px frames), This week beside Last Sunday, Other ways in (green mosaic band,
+  white link cards that lift);
+- the ink footer (mark, "A small church with the door open.", Sundays, Find us, Follow) and a
+  header whose logo slot shows the Sunday note on Home until the hero lockup scrolls under it.
+
+System: one 20px radius for card-sized surfaces, 10px buttons; red only for the welcome line and the
+one button; dates in deep sky; tabular numerals for times. The path, tiles and markers are generated
+by `npm run gen:stones` (`scripts/gen-stones.mjs`, `scripts/lib/stone-mosaic.mjs`) with the seeds E
+was approved with; the output is committed. Content stays in the Studio (Home's page layout); the
+data change is `scripts/content/home-board-e.mjs`.
+
+Rejected on the way, do not reintroduce: the full-height ribbon (removed with
+`StoneRibbon.astro` and `src/scripts/ribbon.ts`), stone-shaped photo crops, a faint background path
+down the whole page, single gold slab markers, gradient washes. This entry supersedes the
+"ribbon is Home's signature" carry-forward below, and C's noticeboard, rejected as a whole-page
+system in the first round, is now Home's system (inner pages keep the first pass for now).
+
 2026-10-17 (later the same day): Nathan picked **"A, made bolder from the Gemini comp"** after
 comparing the first reskin with a Gemini homepage comp. The first pass used the stone path timidly
 (small scattered stones, a faint background path), had no photos, and alternated pale tinted bands,

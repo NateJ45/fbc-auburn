@@ -970,6 +970,16 @@ export type ImageTextSection = {
     _type: 'block';
     _key: string;
   }>;
+  signedBy?: string;
+  extraImages?: Array<{
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+    _key: string;
+  }>;
   cta?: CtaBlock;
 };
 
@@ -1008,6 +1018,7 @@ export type HeroSection = {
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;
+  welcome?: string;
   subhead?: string;
   backgroundImage?: {
     asset?: SanityImageAssetReference;

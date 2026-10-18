@@ -1,0 +1,113 @@
+---
+// Safe to edit by hand
+// Board E's opening: the church's Auburn-wide lockup at hero scale (the full-colour mark beside
+// "FIRST BAPTIST CHURCH OF" over a mosaic "Auburn"), then the lead row (the red welcome line, a
+// paragraph, one red button and a text link) beside the This Sunday card, then the stone path
+// rising from the left and tucking under the card. On a phone the mark is hidden (the header
+// carries it) and a smaller path sits between the welcome and the card, flipped to land on it.
+//
+// Content: the Home document's hero block (Studio > Home > Page layout > Hero). Eyebrow and
+// Headline draw the lockup, "Welcome line" is the red line, Subhead the paragraph, and the two
+// buttons. The h1 reads "First Baptist Church of Auburn" as one heading.
+//
+// The path lays itself once on load: the inline script below arms it before first paint (only
+// under html.motion), then lays it 350ms later. See StonePath.astro.
+import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
+import SundayCard from './SundayCard.astro';
+import StonePath from './StonePath.astro';
+import { ctaHref } from '@/lib/cta-href';
+import { splitStega } from '@/lib/preview-stega';
+import type { ProjectedHeroSection } from '@/lib/pageBuilder.types';
+
+interface Props {
+  block: ProjectedHeroSection;
+}
+const { block } = Astro.props;
+
+// The mosaic word: each letter takes the next brand colour (green, deep sky, red, water). Built
+// from the visible text only; a preview's invisible stega run is put back after the letters.
+const { cleaned: word, encoded } = splitStega(block.headline || 'Auburn');
+let k = 0;
+const letters = [...word].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k++ % 4 }));
+const name = [splitStega(block.eyebrow ?? '').cleaned, word].filter(Boolean).join(' ');
+const primary = block.primaryCta;
+const secondary = block.secondaryCta;
+---
+
+<section class="hb-hero" aria-labelledby="hb-h1">
+  <div class="hb-wrap">
+    <div class="hb-masthead">
+      <img
+        class="hb-hero-mark"
+        src={markAsset.src}
+        width={markAsset.width}
+        height={markAsset.height}
+        alt=""
+        loading="eager"
+        decoding="async"
+      />
+      <h1 class="hb-h1" id="hb-h1" aria-label={name}>
+        {block.eyebrow && <span class="hb-eyebrow">{block.eyebrow}</span>}{' '}
+        <span class="hb-word">
+          {letters.map(({ c, i }) =>
+            i < 0 ? (
+              ' '
+            ) : (
+              <span aria-hidden="true" class={`s${i}`}>
+                {c}
+              </span>
+            ),
+          )}
+          {encoded}
+        </span>
+      </h1>
+    </div>
+
+    <div class="hb-lead">
+      <div>
+        {block.welcome && <p class="hb-welcome">{block.welcome}</p>}
+        {block.subhead && <p class="hb-intro">{block.subhead}</p>}
+        {(primary?.label || secondary?.label) && (
+          <div class="hb-actions">
+            {primary?.label && (
+              <a
+                class="btn-auburn btn-auburn--primary"
+                href={ctaHref(primary, '/plan-your-visit/')}
+              >
+                {primary.label}
+              </a>
+            )}
+            {secondary?.label && (
+              <a class="hb-textlink" href={ctaHref(secondary, '/about/')}>
+                {secondary.label}
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+      <StonePath variant="phone" />
+      <SundayCard />
+    </div>
+  </div>
+  <StonePath variant="wide" />
+</section>
+
+<script is:inline>
+  // Arm the stone path before first paint, then lay it. Only under
+  // html.motion (set in BaseLayout's head unless reduced motion or ?still), so without JS or
+  // with reduced motion the finished path is what renders.
+  (function () {
+    if (!document.documentElement.classList.contains('motion')) return;
+    var paths = document.querySelectorAll('[data-stone-path]');
+    paths.forEach(function (p) {
+      p.classList.add('is-armed');
+    });
+    // Lay it 350ms after the markup is parsed, as the design does. Not on the window load event:
+    // that waits for every photo, and the path would then lay seconds after the page is up.
+    setTimeout(function () {
+      paths.forEach(function (p) {
+        p.classList.add('is-laid');
+      });
+    }, 350);
+  })();
+</script>

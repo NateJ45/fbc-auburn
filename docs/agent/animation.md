@@ -148,12 +148,14 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   ROOMS, STOPS, ROUTE), pinned with `position: sticky` beside the stops; an IntersectionObserver on the middle tenth of
   the screen lights the route up to the current stop. Without motion the whole route is shown and the tags are hidden.
 - **Nav**: three tiny stones under the current page's link replace the underline.
-- **The stone ribbon** (Home only, 2026-10-17): `StoneRibbon.astro` placed first in `<main>` and
-  `src/scripts/ribbon.ts`. Two lanes of rounded stones in red, gold, green and sky along one path: down a gutter,
-  across the page in the empty gap between two sections (measured from the real words and pictures, so a stone never
-  sits on text), down the other gutter; a slim left rail under 64rem. Stones land as they scroll in (`.rstone` gets
-  `.in`; a redraw on resize does not replay them). Script only; with no JS there is simply no ribbon. A page with
-  the ribbon has no rail or walk, so the background path does not run there.
+- **Home's stone path** (board E, 2026-10-17; replaced the full-height ribbon): `src/components/home/StonePath.astro`
+  inlines the generated mosaic (`stones.generated.ts`, from `npm run gen:stones`), one `<path class="hb-stone">`
+  per stone in path order with `--i`. An inline script in `HomeHero.astro` adds `is-armed` before first paint and
+  `is-laid` 350ms later; `home-board.css` then lands each stone 24ms after the last. The hidden state needs
+  `html.motion` AND `is-armed`, so no JS, `?still` and reduced motion all show the finished path. Home has no rail
+  or walk, so the background path does not run there. Cards that are links lift 4px on hover and focus
+  (`.hb-lift`), not under reduced motion; the header's Sunday-note-to-logo swap is a short fade, off under reduced
+  motion.
 
 ---
 
