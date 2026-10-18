@@ -60,24 +60,51 @@
   height: 100%;
   object-fit: cover;
 }
+/* No picture: series art made of the church's own stones (SermonArt.astro, block polish
+   2026-10-18). A stone tile ground in one of three colours, the gold steps, and the book or title in
+   Auburn Stone, its letters in white, sky and gold like the footer's Auburn. The word is sized in
+   container units, so it fills a small card and a wide player alike. */
 .c-art--blank {
+  container-type: inline-size;
   display: grid;
-  align-content: end;
+  align-content: space-between;
+  justify-items: start;
   gap: 0.4rem;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  background:
-    radial-gradient(120% 90% at 100% 0%, rgb(255 255 255 / 0.08), transparent 60%), #1d2f44;
+  padding: clamp(0.9rem, 2.4vw, 1.5rem);
+  background: #1d2f44 url('/textures/tile-navy.svg') 0 0 / 420px 420px;
   color: #fff;
+}
+.c-art--deep {
+  background: #235e93 url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+}
+.c-art--green {
+  background: #2c5b3a url('/textures/tile-green.svg') 0 0 / 420px 420px;
 }
 .c-art--blank svg {
-  width: 78px;
-  height: 36px;
+  width: clamp(52px, 16cqi, 96px);
+  height: auto;
 }
 .c-art__word {
-  font-family: var(--font-display);
-  font-size: clamp(1.3rem, 1rem + 1.4vw, 1.9rem);
-  line-height: 1.15;
-  color: #fff;
+  max-width: 100%;
+  font-family: 'Auburn Stone', 'Young Serif', serif;
+  font-size: var(--word, 2rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+/* With the play stone in the middle, the word stays small enough to sit under it. */
+.c-art--blank:has(.c-art__play) .c-art__word {
+  font-size: min(var(--word, 2rem), 11cqi);
+}
+.c-art__word .w0 {
+  color: #ffffff;
+}
+.c-art__word .w1 {
+  color: #96c3ea;
+}
+.c-art__word .w2 {
+  color: #e8a93a;
 }
 .c-art__play {
   position: absolute;
@@ -302,6 +329,25 @@ a:focus-visible > .c-art .c-art__play,
   line-height: 1.2;
   color: var(--heading-solid);
 }
+.c-card .c-art {
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.3s ease;
+}
+.c-card > a:hover .c-art,
+.c-card > a:focus-visible .c-art {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 48px -30px rgb(23 26 38 / 0.5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .c-card .c-art {
+    transition: none;
+  }
+  .c-card > a:hover .c-art,
+  .c-card > a:focus-visible .c-art {
+    transform: none;
+  }
+}
 .c-card > a:hover .c-card__title {
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -344,12 +390,14 @@ a:focus-visible > .c-art .c-art__play,
   height: 100%;
   object-fit: cover;
 }
+/* No photo: the initials in Auburn Stone on the pale sky stone ground (block polish). */
 .c-photo--blank {
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--auburn-sky, #8fb8de) 22%, var(--muted));
-  font-family: var(--font-display);
-  font-size: 3rem;
+  background: #e9f2fb url('/textures/tile-sky.svg') 0 0 / 420px 420px;
+  font-family: 'Auburn Stone', 'Young Serif', serif;
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  line-height: 1;
   color: var(--auburn-deep, var(--heading-solid));
 }
 .c-person__name {
@@ -415,12 +463,16 @@ a:focus-visible > .c-art .c-art__play,
   gap: 0.4rem;
   max-width: 40rem;
   margin-bottom: 1.8rem;
-  padding: clamp(1.2rem, 3vw, 1.6rem);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
+  padding: clamp(1.2rem, 3vw, 1.75rem);
+  border: 1px solid var(--border);
+  border-radius: 20px;
   background: var(--background);
+  box-shadow: 0 24px 48px -36px rgb(23 26 38 / 0.45);
 }
 .c-feature__label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -513,4 +565,13 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-facts dd {
   margin: 0;
+}
+
+/* ---- One series: the count beside the series' stone art (no series picture) ---------------- */
+.c-series-head {
+  align-items: end;
+  margin-bottom: clamp(1.8rem, 4vw, 2.8rem);
+}
+.c-series-head > .c-head {
+  margin-bottom: 0;
 }

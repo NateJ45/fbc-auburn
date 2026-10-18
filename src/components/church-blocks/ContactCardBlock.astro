@@ -1,8 +1,9 @@
 ---
 // Safe to edit by hand
-// Contact details: phone, email, address and office hours in one card, every line from Site
-// settings > Church facts (rule 15), each with its "To confirm" tag until confirmed. Lines that are
-// not set are left out; with none at all the block draws nothing.
+// Contact details: phone, email, address and office hours on one hairline board, a column each on
+// a wide screen (block polish, 2026-10-18), every line from Site settings > Church facts (rule 15),
+// each with its "To confirm" tag until confirmed. Lines that are not set are left out; with none at
+// all the block draws nothing.
 import ChurchBand from './ChurchBand.astro';
 import ChurchAddress from '@/components/church/ChurchAddress.astro';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
@@ -17,6 +18,7 @@ interface Props {
 const { block, surface, headingId } = Astro.props;
 const { phone, email, address, officeHours } = await getChurchFacts();
 const any = Boolean(phone || email || address || officeHours.length);
+const count = [phone, email, address, officeHours.length > 0].filter(Boolean).length;
 ---
 
 {any && (
@@ -28,10 +30,10 @@ const any = Boolean(phone || email || address || officeHours.length);
     surface={surface}
     label="Contact details"
   >
-    <div class="cb-card" style="max-width: 36rem">
-      <dl class="cb-contact">
+    <div>
+      <dl class="cb-board cb-contact" data-n={count}>
         {phone && (
-          <div>
+          <div class="cb-board__cell">
             <dt>Phone</dt>
             <dd>
               <a href={phone.tel}>{phone.display}</a>
@@ -40,7 +42,7 @@ const any = Boolean(phone || email || address || officeHours.length);
           </div>
         )}
         {email && (
-          <div>
+          <div class="cb-board__cell">
             <dt>Email</dt>
             <dd>
               <a href={email.href}>{email.display}</a>
@@ -49,7 +51,7 @@ const any = Boolean(phone || email || address || officeHours.length);
           </div>
         )}
         {address && (
-          <div>
+          <div class="cb-board__cell">
             <dt>Address</dt>
             <dd>
               <ChurchAddress />
@@ -57,11 +59,11 @@ const any = Boolean(phone || email || address || officeHours.length);
           </div>
         )}
         {officeHours.length > 0 && (
-          <div>
+          <div class="cb-board__cell">
             <dt>Office hours</dt>
             <dd>
               {officeHours.map((line) => (
-                <span style="display: block">{line}</span>
+                <span class="cb-line">{line}</span>
               ))}
             </dd>
           </div>

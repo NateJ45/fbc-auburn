@@ -3,6 +3,11 @@
 // The frame every church-library block shares (churchSections.ts): the surface the cadence gave
 // it (rule 9), the content column, and the optional heading and intro line on the page's one left
 // edge (rule 17). A block with no heading is named by `label` so its region still has a name.
+//
+// `beside` (block polish, 2026-10-18): for a block whose object is narrow (the service times card,
+// a sign-up panel, a form), the heading and intro take the text track of the shared split and
+// the object sits in the narrow track beside them, so a wide screen is not half empty. Below
+// `lg`, or with no heading or intro, it stacks as before.
 import SectionHeading from '@/components/SectionHeading.astro';
 import { surfaceClass } from '@/lib/surfaces';
 
@@ -14,9 +19,21 @@ interface Props {
   /** The region's name when there is no heading. */
   label?: string;
   type: string;
+  /** Head in the split's text track, the object in the narrow track. */
+  beside?: boolean;
 }
 
-const { heading, intro, headingId, surface = 'background', label, type } = Astro.props;
+const {
+  heading,
+  intro,
+  headingId,
+  surface = 'background',
+  label,
+  type,
+  beside = false,
+} = Astro.props;
+const head = Boolean(heading || intro);
+const split = beside && head;
 ---
 
 <section
@@ -25,13 +42,22 @@ const { heading, intro, headingId, surface = 'background', label, type } = Astro
   aria-labelledby={heading ? headingId : undefined}
   aria-label={!heading ? label : undefined}
 >
-  <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
-    {(heading || intro) && (
+  <div
+    class:list={['mx-auto max-w-content px-m py-section-lg', split && 'split cb-beside']}
+    data-reveal
+  >
+    {head && (
       <div class="cb-head">
         {heading && <SectionHeading headline={heading} headingId={headingId} />}
         {intro && <p class="cb-intro">{intro}</p>}
       </div>
     )}
-    <slot />
+    {split ? (
+      <div class="cb-beside__object">
+        <slot />
+      </div>
+    ) : (
+      <slot />
+    )}
   </div>
 </section>

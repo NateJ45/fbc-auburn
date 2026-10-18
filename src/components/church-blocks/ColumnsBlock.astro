@@ -29,7 +29,7 @@ const Title = block.heading ? 'h3' : 'h2';
   >
     <div class:list={['cb-grid', cols.length >= 3 ? 'cb-grid--3' : 'cb-grid--2']}>
       {cols.map((c) => (
-        <div>
+        <div class="cb-col">
           {c.heading && <Title class="cb-title">{c.heading}</Title>}
           <PortableText value={(c.body ?? []) as PortableTextBlock[]} className="cb-prose" />
         </div>

@@ -26,7 +26,9 @@ import { client, apply, done } from '../lib/sanity-lib.mjs';
 import { SECTION_PATTERNS } from '../../src/sanity/sectionPatterns.ts';
 
 const ids = SECTION_PATTERNS.map((p) => `pattern-${p.id}`);
-const found = await client.fetch('*[_id in $ids]._id', {
+// perspective 'raw': newer API versions read the published view by default, which hides the
+// drafts this script writes, so a rerun would report them as missing.
+const found = await client.withConfig({ perspective: 'raw' }).fetch('*[_id in $ids]._id', {
   ids: [...ids, ...ids.map((id) => `drafts.${id}`)],
 });
 const existing = new Set(found.map((id) => id.replace(/^drafts\./, '')));

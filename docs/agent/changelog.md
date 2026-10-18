@@ -22,6 +22,32 @@ your phone", "The Sunday checklist"; the guides now name Nathan.
 **Not done here.** The two secrets (PENDING 1k) and every signed-in check. The starter carries the PORTABLE half
 (draft PR first, per the marked-file order).
 
+_2026-10-18: the section library brought up to Home's standard (block polish)._
+
+**What changed.** The 21 church sections and the four collection blocks now use Home's own objects,
+so a page built from blocks reads as the same hand-made site. No schema or field changed. Shared:
+section H2s in the everyday deep sky (as the sermon archive's); `ChurchBand` gained `beside`
+(heading in the split's text track, the object in the narrow track) for the countdown, newsletter,
+calendar and form blocks; hand-laid stones in the walk's four shapes (`.cb-stone--0..3`, soft on
+every side). Per block: **service times** on the This Sunday card's deep stone ground, a column per
+day; **timeline** a gold stepping-stone rail with round pebble stones, the year in its own column
+and a photo beside the words at 1024+; **countdown** the number on the deep stone card beside the
+words; **giving** and **contact details** on Home's "Through the week" board with stone icons
+(praying hands, map pin, giving hand); **Bible verse** on a green stone panel with a gold quote, as
+the pastor's welcome on Home; **events** in the sermon rows' grammar; **progress** a path of twenty
+gold brick stones; **accordion** a stone toggle that turns gold when open; **beliefs**, **columns**
+and **link cards** led by one gold step, link cards with Home's lift; **affiliations** an initial on
+a deep stone until a logo is uploaded; **live stream** the play card on the navy stone ground;
+**newsletter** and **calendar** on a pale sky stone panel. Collections: **SermonArt** with no
+picture is now series art (one of three stone grounds picked from the series title, the book in
+Auburn Stone with white, sky and gold letters like the footer's Auburn, sized to its length); series
+cards lift on hover; a person with no photo gets their initials in Auburn Stone on the pale sky
+stones; the bulletin box is led by the gold steps; a series page with no picture shows its stone art
+beside the sermon count. New generated tiles `tile-green.svg`, `tile-navy.svg`, `tile-sky.svg`
+(`npm run gen:stones`, the same Voronoi stones as `tile-deep.svg`). Parity: every built page's HTML
+is unchanged except the shared inline CSS, which lost the 357 bytes of `ServiceTimes.astro`'s
+scoped style now that only `/styleguide/church-data/` uses it. Insert-menu thumbnails re-shot.
+
 _2026-10-18: church page templates and seasonal saved sections._
 
 **What changed.** The "new page" menu grew from five starting points to 39, in seven groups

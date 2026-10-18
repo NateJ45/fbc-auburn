@@ -333,7 +333,8 @@ is new and optional.
 
 ### 1j. Church page templates and seasonal saved sections (opened 2026-10-18)
 
-**Blocker: one dataset write (Nathan or the main session), then the signed-in click-through.**
+**Blocker: the signed-in click-through.** The dataset write is done: the 12 saved sections were
+seeded as drafts on 2026-10-18 (`seed-section-patterns.mjs --apply`; a rerun now reports 0 changes).
 
 39 page templates in seven menu groups (`src/sanity/pageTemplates.ts`, shown as "Group: Title")
 and 12 seasonal saved sections (`src/sanity/sectionPatterns.ts`) landed on

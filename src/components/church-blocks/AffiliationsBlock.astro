@@ -51,11 +51,7 @@ const safe = (url?: string) => (url && /^https?:\/\//.test(url) ? url : undefine
               ) : (
                 <span class="cb-partner__name">{i.name}</span>
               )}
-              {i.note && (
-                <span class="cb-small" style="display: block">
-                  {i.note}
-                </span>
-              )}
+              {i.note && <span class="cb-small cb-block">{i.note}</span>}
             </span>
           </li>
         );

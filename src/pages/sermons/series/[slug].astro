@@ -6,6 +6,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/Hero.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
+import SermonArt from '@/components/collections/SermonArt.astro';
 import SermonRow from '@/components/collections/SermonRow.astro';
 import { getSiteSettings } from '@/lib/queries';
 import { getAllSeries, getAllSermons } from '@/lib/collection-queries';
@@ -70,12 +71,23 @@ const schemas = [
   <BoardRule />
   <section class="bg-background" aria-labelledby="series-list-heading">
     <div class="mx-auto max-w-content px-m py-section-lg">
-      <div class="c-head">
-        <h2 id="series-list-heading" class="font-display text-h2 auburn-h2 leading-tight">
-          {count ? `${count} ${count === 1 ? 'sermon' : 'sermons'}` : 'Sermons'}
-        </h2>
-        {(span || series.book) && (
-          <p class="c-intro">{[span, series.book].filter(Boolean).join(' · ')}</p>
+      {/* With no series picture the page head is plain, so the series' own stone art (its book in
+          Auburn Stone, the same art as its card) sits beside the count on the shared split. */}
+      <div class:list={[!art && 'split c-series-head']}>
+        <div class="c-head">
+          <h2 id="series-list-heading" class="font-display text-h2 auburn-h2 leading-tight">
+            {count ? `${count} ${count === 1 ? 'sermon' : 'sermons'}` : 'Sermons'}
+          </h2>
+          {(span || series.book) && (
+            <p class="c-intro">{[span, series.book].filter(Boolean).join(' · ')}</p>
+          )}
+        </div>
+        {!art && (
+          <SermonArt
+            word={series.book || series.title}
+            seed={series.title}
+            sizes="(min-width: 64rem) 40vw, 100vw"
+          />
         )}
       </div>
       {list.length > 0 ? (

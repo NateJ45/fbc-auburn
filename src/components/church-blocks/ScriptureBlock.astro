@@ -2,6 +2,8 @@
 // Safe to edit by hand
 // Bible verse: the verse set large in the display face, its reference under it as a link to the
 // passage on BibleGateway in the chosen translation (built from the reference, rule 15).
+// On the green stone ground with a gold opening quote, as the pastor's welcome sits on Home's green
+// panel (block polish, 2026-10-18).
 import ChurchBand from './ChurchBand.astro';
 import { bibleGatewayUrl } from '@/lib/church-blocks';
 import type { ProjectedScriptureSection } from '@/lib/churchBlocks.types';
@@ -19,6 +21,9 @@ const href = bibleGatewayUrl(block.reference, block.translation);
 {verse && (
   <ChurchBand type={block._type} headingId={headingId} surface={surface} label="Bible verse">
     <figure class="cb-verse">
+      <span class="cb-verse__mark" aria-hidden="true">
+        “
+      </span>
       <blockquote>
         <p class="cb-verse__text">{verse}</p>
       </blockquote>

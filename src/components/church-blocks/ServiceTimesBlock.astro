@@ -1,9 +1,12 @@
 ---
 // Safe to edit by hand
-// Service times block: every regular gathering from Site settings > Church facts (rule 15), drawn
-// by the same ServiceTimes list Plan your visit uses, in a hairline card.
+// Service times block: every regular gathering from Site settings > Church facts (rule 15), on the
+// This Sunday card's deep stone ground (block polish, 2026-10-18), one column per day on a wide
+// screen, so the card spans the column like the board does. The times are grouped by day, Sunday
+// first, each time in the display numerals Home uses, with the "To confirm" tag beside any time
+// the church has not confirmed.
 import ChurchBand from './ChurchBand.astro';
-import ServiceTimes from '@/components/church/ServiceTimes.astro';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import type { ProjectedServiceTimesSection } from '@/lib/churchBlocks.types';
 
@@ -14,6 +17,15 @@ interface Props {
 }
 const { block, surface, headingId } = Astro.props;
 const { serviceTimes } = await getChurchFacts();
+const dayName = (d: string) => `${d[0].toUpperCase()}${d.slice(1)}s`;
+// One group per weekday, in the order the church's week runs (Sunday first).
+const days = [...new Set(serviceTimes.map((s) => s.dayIndex))].sort((a, b) => a - b);
+const groups = days.map((d) => serviceTimes.filter((s) => s.dayIndex === d));
+// "9:45 am" -> "9:45" and a small "am", so the numerals carry the card.
+const split = (label: string) => {
+  const m = /^(.*?)\s*(am|pm)$/i.exec(label);
+  return m ? { time: m[1], half: m[2] } : { time: label, half: '' };
+};
 ---
 
 {serviceTimes.length > 0 && (
@@ -25,8 +37,30 @@ const { serviceTimes } = await getChurchFacts();
     surface={surface}
     label="Service times"
   >
-    <div class="cb-card" style="max-width: 36rem">
-      <ServiceTimes />
+    <div class="cb-deep cb-times" data-service-times data-n={groups.length}>
+      {groups.map((g) => (
+        <div class="cb-times__day">
+          <p class="cb-times__dayname">{dayName(g[0].day)}</p>
+          <dl class="cb-times__list">
+            {g.map((s) => {
+              const t = split(s.timeLabel);
+              return (
+                <div class="cb-times__row">
+                  <dt class="cb-times__time">
+                    {t.time}
+                    {t.half && <span class="cb-times__half"> {t.half}</span>}
+                  </dt>
+                  <dd>
+                    {s.label}
+                    {s.note && `, ${s.note}`}
+                    <NotConfirmed confirmed={s.confirmed} />
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        </div>
+      ))}
     </div>
   </ChurchBand>
 )}
