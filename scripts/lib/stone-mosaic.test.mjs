@@ -27,6 +27,30 @@ describe('stonePath', () => {
     assert.equal(stones.at(-1).fill, MARK.red);
   });
 
+  it("lays the Studio banner's paths in the mark's colours, water to red, whole stones only (card 118)", () => {
+    for (const [W, H, preset, seed, min] of [
+      [1040, 88, 'banner', 4, 60],
+      [390, 56, 'bannerPhone', 2, 30],
+    ]) {
+      const stones = stonePath({ width: W, height: H, preset, seed });
+      assert.ok(stones.length >= min, `${preset}: only ${stones.length} stones`);
+      for (const s of stones) {
+        assert.ok(MARK_FILLS.has(s.fill), `${preset}: ${s.fill} is not one of the mark's colours`);
+        const pts = [...s.d.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map((m) => [+m[1], +m[2]]);
+        assert.ok(
+          Math.max(...pts.map((p) => p[0])) <= W,
+          `${preset}: a stone runs off the right edge`,
+        );
+        assert.ok(
+          pts.every((p) => p[1] >= 0 && p[1] <= H),
+          `${preset}: a stone is cut top or bottom`,
+        );
+      }
+      assert.ok(PATH_RUNS[0].set.includes(stones[0].fill));
+      assert.equal(stones.at(-1).fill, MARK.red);
+    }
+  });
+
   it('draws only whole stones (none cut by the right edge, where the card is)', () => {
     const W = 1200;
     for (const s of stonePath({ width: W, height: 240, preset: 'wide', seed: 7 })) {

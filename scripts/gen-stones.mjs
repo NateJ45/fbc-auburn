@@ -7,6 +7,8 @@
 //   public/textures/tile-deep.svg             the This Sunday card's stone ground
 //   public/textures/tile-{green,navy,sky}.svg the section library's panels and sermon art
 //                                             (church-blocks.css, collections.css)
+//   public/studio-banner/stone-path*.svg      the stone path along the Studio Home banner's foot
+//                                             (kit.config.ts homeBanner.motif, card 118)
 //
 // Redrawn 2026-10-17 after the Home audit: soft, hand-laid stones between the old pebbles and the
 // mark's dressed stones, in four clear bands of the mark's colours. The wide path is 960x240 and
@@ -24,6 +26,9 @@ export const PATHS = {
   wide: { width: 960, height: 240, preset: 'wide', seed: 7 },
   phone: { width: 390, height: 96, preset: 'phone', seed: 11 },
   sill: { width: 1600, height: 64, preset: 'sill', seed: 5 },
+  // The Studio Home banner's foot (kit.config.ts homeBanner.motif, card 118).
+  banner: { width: 1040, height: 88, preset: 'banner', seed: 4 },
+  bannerPhone: { width: 390, height: 56, preset: 'bannerPhone', seed: 2 },
 };
 
 export const TILES = {
@@ -78,6 +83,14 @@ outputs.set(
     '/** The section marker: three gold steps. viewBox 0 0 78 36. */\n' +
     ts('MARKER', marker),
 );
+const svgOf = ({ width, height }, stones) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">` +
+  stones.map((st) => `<path d="${st.d}" fill="${st.fill}"/>`).join('') +
+  '</svg>\n';
+const banner = stonePath(PATHS.banner);
+const bannerPhone = stonePath(PATHS.bannerPhone);
+outputs.set('public/studio-banner/stone-path.svg', svgOf(PATHS.banner, banner));
+outputs.set('public/studio-banner/stone-path-phone.svg', svgOf(PATHS.bannerPhone, bannerPhone));
 for (const [name, opts] of Object.entries(TILES)) {
   outputs.set(`public/textures/tile-${name}.svg`, mosaicTile(opts));
 }
@@ -98,6 +111,6 @@ for (const [rel, body] of outputs) {
   console.log(`wrote ${rel} (${(body.length / 1024).toFixed(0)} KB)`);
 }
 console.log(
-  `stones: wide ${wide.length}, phone ${phone.length}, sill ${sill.length}; marker ${marker.length}`,
+  `stones: wide ${wide.length}, phone ${phone.length}, sill ${sill.length}, banner ${banner.length}, banner phone ${bannerPhone.length}; marker ${marker.length}`,
 );
 if (check && stale) process.exit(1);

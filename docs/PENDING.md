@@ -347,6 +347,13 @@ H2, H3 and a quote in the site's fonts, the style menu readable, list bullets li
 Known, Sanity's own: on the login screen the small "Sanity" wordmark follows the computer's setting, not the Studio's,
 so with the Studio light on a dark-mode computer it is white on cream. Not fixable without styling Sanity's internals.
 
+### 1n. Home's banner: the signed-in check (opened 2026-10-18)
+
+Starter PORTS.md card 118, branch `feat/studio-home-banner`. Checked so far: unit tests, types, build, and the banner
+in a throwaway page with the real Studio theme, light and dark, 1280 and 375 (mark on its disc, the stone path, the
+name in gold, "Auburn" in Auburn Stone, no sideways scroll). Signed in, check: the banner sits under the navy top bar
+as one colour, the pastor's real first name shows, and View the website opens the live site in a new tab.
+
 ### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
 
 - The signed-in Studio click-through of the new desk (the Start here panes, "Add the usual
