@@ -184,12 +184,14 @@ log in Sanity, then GitHub → Actions for a failed Deploy run. Run the Deploy w
 The webhook lives at manage.sanity.io → API → Webhooks. The GROQ filter is a deny-list:
 
 ```
-!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek"])
+!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek", "previewShare"])
 ```
 
 This filter skips rebuilds triggered by draft saves and internal Sanity asset-management events (tagging an uploaded photo, rotating an image, etc.), which don't affect live HTML. New content types are covered automatically because the filter excludes only the named system types and lets everything else through. The old hand-maintained allow-list approach (explicitly listing every `_type` that should trigger a rebuild) silently dropped new types until a developer remembered to add them. The deny-list is safer: add a new schema type and it triggers rebuilds out of the box.
 
 `studioWeek` (added 2026-10-18, card 111) is the Studio Home checklist's weekly tick document: ticking a box writes it, and without it in the filter every tick would rebuild the website.
+
+`previewShare` (added 2026-10-18, card 117) is the record behind each private preview link: making or stopping a link writes it, and without it in the filter every link would rebuild the website.
 
 If the webhook currently has no filter or uses an allow-list, replace the filter with the deny-list above and save. No other webhook config changes are needed.
 
@@ -343,6 +345,25 @@ then commit both files together. CI fails the build if the committed types are s
 For the complete schema-change sequence, see the "Schema-change procedure" section above.
 
 ---
+
+## Studio workflow tools (PORTS.md card 117)
+
+- **Morning change note** (`.github/workflows/change-note.yml`, ON). Daily at 10:00 UTC (6 AM Eastern in summer,
+  5 AM in winter); uses the `SANITY_AUTH_TOKEN` secret and the `SANITY_PROJECT_ID` and `SITE_URL` variables, all
+  already set. The issue "What changed on <date>" emails whoever watches the repo. Try it by hand with Actions >
+  Morning change note > Run workflow, or locally: `node --experimental-strip-types scripts/change-note.mjs --dry --hours 72`
+  (needs `SANITY_AUTH_TOKEN` in `.env`). Deletions are reported only when they went through the Trash.
+- **Share a preview.** Needs one Worker secret, 32+ random characters:
+  `npx wrangler secret put SHARE_PREVIEW_SECRET` (for example the output of
+  `node -e "console.log(crypto.randomBytes(32).toString('base64url'))"`). Locally, add it to `.dev.vars`. Rotating
+  it stops every link at once. The webhook filter above must include `"previewShare"`.
+- **Messages.** Shows "Forms are not set up yet" until the forms are switched on (see "Forms" below). When they are,
+  apply `migrations/0003_message_status.sql` with the others: `npx wrangler d1 migrations apply fbc-auburn-contact --remote`.
+  Test locally: `npm run build`, uncomment `d1_databases` with any id, then
+  `npx wrangler d1 migrations apply fbc-auburn-contact --local -c dist/server/wrangler.json` and `npm run preview`
+  (do not commit the uncommented binding).
+- **Table views.** Sermons, Downloads and People each have "... as a table" under the normal list. Columns live in
+  `src/sanity/tables.config.ts`.
 
 ## Seed placeholder content
 

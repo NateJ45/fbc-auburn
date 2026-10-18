@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-18: the Studio's safety net (PORTS card 117)._
+
+**What changed.** Four tools modelled on the Theology Matters WordPress admin. A **morning change note**: every day at
+about 6 AM Eastern, `change-note.yml` lists what changed in the Studio in the last 24 hours (who, what, which page,
+Studio and live links) as a GitHub issue "What changed on <date>", which GitHub emails to whoever watches the repo;
+quiet days post nothing. **Share a preview**: a private link to one page's draft that works for 1, 3, 7 or 14 days
+with no login, can be stopped, is noindex, and is signed on the Worker (`SHARE_PREVIEW_SECRET`), never a Sanity
+token. **Messages**: the forms' submissions from D1 with New / Needs a person / Replied / Spam, prayer requests shown
+only as "one arrived", nothing personal in Sanity; it says "Forms are not set up yet" until the forms are on.
+**Table views** of sermons, downloads and people beside the normal lists.
+
 _2026-10-18: the Studio reads as the church's own admin (starter PORTS card 116)._
 
 **What changed.** The Studio now opens light for a new editor (the Appearance menu still switches and remembers), on a
