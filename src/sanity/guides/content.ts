@@ -66,6 +66,8 @@ export const SITE = {
 export const GUIDE_CATEGORIES = [
   'Start here',
   'Pages and words',
+  // FBC Auburn, 2026-10-18: one guide per group of page templates (src/sanity/pageTemplates.ts).
+  'Page templates',
   // FBC Auburn, 2026-10-18 (guides/collections.ts).
   'Sermons, people and downloads',
   'Pictures',
@@ -184,7 +186,7 @@ export const guides: Guide[] = [
         kind: 'steps',
         items: [
           'Open `Pages`, then `Custom pages (build your own)`, then the `+` button.',
-          'Pick a starting point: `Simple page`, `Ministry`, `Event`, `Sermon series` or `Blank page`. The guide on page templates says what each one gives you.',
+          'Pick a starting point. Each one starts with its group, like `Visitors: Plan a visit` or `Blank: Simple page`. The guide on page templates says what each group gives you.',
           'Give it a title. The **web address ending**, the part of the address after the slash, is made from it when you click `Generate`.',
           'Replace the example text, and add or remove sections until it says what you want. Drag them to change the order.',
           'To put it in the menu, open the `Menu placement` tab and turn on `Show in the top menu`. It joins the end of the menu. `Show in the footer` adds it to the last row of footer links.',
@@ -210,40 +212,271 @@ export const guides: Guide[] = [
 
   {
     slug: 'page-templates',
-    category: 'Pages and words',
+    category: 'Page templates',
     title: 'Start a page from a template',
     icon: 'blocks',
-    lead: 'A new page can start with its sections already in place.',
+    lead: 'Every new page can start laid out and filled in, so you are editing rather than starting from nothing.',
     diy: 'self',
     body: [
       {
         kind: 'p',
-        text: 'When you make a new page the Studio asks where to start. A **template** is a page that is already laid out, with example text in every box, so you are filling in rather than starting from nothing.',
+        text: 'When you make a new page the Studio asks where to start. A **template** is a page that is already laid out, with sensible words in every box. The menu has no headings, so each template starts with its group: `Visitors: Plan a visit`, `Ministries: Kids`, `Life events: Baptism` and so on.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Pages`, then `Custom pages (build your own)`, then the `+` button.',
+          'Pick a template. The groups are below, and each has its own short guide.',
+          'Give the page a title, then click `Generate` beside the web address ending.',
+          'Read down the page and replace every line that starts **Example:** with your own words.',
+          'Point each button at the right page (open the button and pick the page under `Internal page`).',
+          'Fill in anything the Studio marks in red, like a countdown date or which form to show. Then publish.',
+        ],
       },
       {
         kind: 'bullets',
         items: [
-          '`Simple page`: a heading and some text. Right for most pages.',
-          '`Ministry`: one ministry, with a few words and a photo, then when it meets, where, and who to ask.',
-          '`Event`: one event, with when, where and what to bring, then what to expect and a way to ask a question.',
-          '`Sermon series`: what the series is about, then the latest message to watch and an invitation to Sunday.',
-          '`Blank page`: no sections at all. Add your own with `+ Add item`.',
+          '**Visitors**: Plan a visit, Next steps, Get in touch.',
+          '**About us**: Beliefs, Our story, Leadership, Pastor, Give, Pastor search.',
+          '**Ministries**: any ministry, Kids, Students, Women, Men, Senior adults, Music, Missions, Mission trip, Sunday School, Serve, Prayer.',
+          '**Life events**: Baptism, Membership class, Weddings, Funerals and memorial services, Facility use.',
+          '**Seasonal**: any event, Vacation Bible School, Easter, Christmas, Homecoming, Revival week, Trunk-or-treat, Thanksgiving meal, Anniversary year.',
+          '**Sermons and news**: a sermon series, and a news page. The main sermon archive is already at /sermons/.',
+          '**Blank**: a simple page with a heading and text, or a page with nothing on it.',
         ],
       },
-      { kind: 'h', text: 'Replace every line that starts "Example:"' },
+      { kind: 'h', text: 'What "Example:" means' },
       {
         kind: 'p',
-        text: 'Every piece of example text starts with the word **Example:**, so it is easy to spot. Type over it with your own words. Any section that still has some shows a small yellow warning beside it, so nothing example-shaped goes live by accident.',
+        text: 'Anything only the church can say (a name, a day, a room, how something is run) starts with **Example:**. Words that are true for any church, like "Children are welcome in the service", are left plain for you to keep or change. A section that still has an Example line shows a small yellow warning, so nothing example-shaped goes live by accident.',
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Service times and the address are never typed on a page.',
+        text: 'Templates use the sections that read them from Site settings, then Church facts, so they are only ever changed in one place.',
       },
       {
         kind: 'callout',
         tone: 'primary',
         title: 'A template is only a starting point.',
-        text: 'Once the page is made it is yours. Add, remove and drag sections exactly as on any other page; the template does not come back and change anything.',
+        text: 'Once the page is made it is yours. Add, remove and drag sections exactly as on any other page; the template never comes back and changes anything.',
       },
       {
         kind: 'seealso',
-        items: ['Add a new page', 'Reuse a section on other pages'],
+        items: [
+          'Add a new page',
+          'Templates for visitors',
+          'Add Easter, Christmas or a snow notice to a page',
+        ],
+      },
+    ],
+  },
+
+  {
+    slug: 'templates-visitors',
+    category: 'Page templates',
+    title: 'Templates for visitors',
+    icon: 'home',
+    lead: 'Plan a visit, Next steps and Get in touch: the pages a newcomer reads first.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'bullets',
+        items: [
+          '`Visitors: Plan a visit` gives the service times, what to expect, the questions people ask, and the map. Write the answers the way you would say them at the door.',
+          '`Visitors: Next steps` walks from following Jesus to baptism, membership and serving, with a card linking to each of those pages.',
+          '`Visitors: Get in touch` shows the phone, email and address from Church facts, a form and the map.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'Get in touch has a form section. Make the form first under `Content`, then `Forms`, then pick it in the section.',
+      },
+      { kind: 'seealso', items: ['Start a page from a template', 'Make a new form'] },
+    ],
+  },
+
+  {
+    slug: 'templates-about',
+    category: 'Page templates',
+    title: 'Templates about the church',
+    icon: 'info',
+    lead: 'Beliefs, Our story, Leadership, Pastor, Give and Pastor search.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'bullets',
+        items: [
+          '`About us: Beliefs` starts with seven beliefs, each with Bible references that link to the verses. The draft wording is in line with the Baptist Faith and Message 2000; rewrite each one in your own words. The link to the full statement is switched on at the bottom of the section.',
+          '`About us: Our story` is a timeline. The years show as "19__" until you type the real ones; add a photo to any moment.',
+          '`About us: Leadership` and `Pastor search` show people from the People list. In each People section, pick the group to show (Staff, Deacons, the search committee).',
+          '`About us: Pastor` is a letter from the pastor, a few facts, and his latest sermon, which changes on its own.',
+          '`About us: Give` shows the ways to give from Church facts, a verse and common questions. No amounts are typed anywhere.',
+        ],
+      },
+      {
+        kind: 'seealso',
+        items: ['Start a page from a template', 'Add someone to the people list'],
+      },
+    ],
+  },
+
+  {
+    slug: 'templates-ministries',
+    category: 'Page templates',
+    title: 'Templates for ministries',
+    icon: 'blocks',
+    lead: 'Kids, Students, Women, Men, Senior adults, Music, Missions, Sunday School, Serve and Prayer.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Each ministry page has the same shape: who it is for, what you do together, when and where, a verse, and the ministry’s upcoming events from the church calendar. The events section only shows calendar events whose name or description mentions its words (like "Kids, Children, VBS"), so name events that way in Church Trac.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '`Ministries: Ministry (any)` is the plain version, for a ministry without its own template.',
+          '`Ministries: Mission trip` has a countdown. Pick the first day of the trip before you publish.',
+          '`Ministries: Serve` and `Ministries: Prayer` each end with a form. Make the form under `Content`, then `Forms`, and pick it in the section. For Prayer, choose `Prayer requests (kept private)` when you make the form.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Check every claim about safety.',
+        text: 'Lines like "every volunteer is background-checked" are Example lines because only you know if they are true. Keep them only if they are.',
+      },
+      {
+        kind: 'seealso',
+        items: ['Start a page from a template', 'Prayer requests: what happens to them'],
+      },
+    ],
+  },
+
+  {
+    slug: 'templates-life-events',
+    category: 'Page templates',
+    title: 'Templates for life events',
+    icon: 'document',
+    lead: 'Baptism, Membership class, Weddings, Funerals and Facility use.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'bullets',
+        items: [
+          '`Life events: Baptism` uses the church’s baptism drawing beside what baptism means, then a verse and common questions.',
+          '`Life events: Membership class` shows the steps to joining and when the next class meets.',
+          '`Life events: Weddings` and `Funerals and memorial services` answer the first questions people ask and end with the church’s contact details.',
+          '`Life events: Facility use` lists the spaces, the questions to ask first, and a downloads list for the policy. Add the policy under `Downloads` with the kind set to `Policy`.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'For a page remembering one member, use the `Memorial for a member` saved section instead, and only with the family’s blessing.',
+      },
+      {
+        kind: 'seealso',
+        items: ['Start a page from a template', 'Add Easter, Christmas or a snow notice to a page'],
+      },
+    ],
+  },
+
+  {
+    slug: 'templates-seasonal',
+    category: 'Page templates',
+    title: 'Templates for the church year',
+    icon: 'clock',
+    lead: 'VBS, Easter, Christmas, Homecoming, Revival, Trunk-or-treat, Thanksgiving and an anniversary year.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Each seasonal template makes a whole page for one occasion. Most start with a **countdown** that changes on its own: days to go, then "happening now", then a thank-you.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Make the page from the template, like `Seasonal: Easter`.',
+          'Open the countdown and pick the `First day` (and the `Last day` for something that runs all week, like VBS or revival).',
+          'Replace the Example lines with this year’s times and details.',
+          'For VBS, make a sign-up form under `Content`, then `Forms`, and pick it in the form section.',
+          'Publish. Next year, change the dates and the details and publish again: the page is ready to reuse.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: '_Only want an Easter band on the home page, not a whole page? Use the saved sections in the next guide._',
+      },
+      {
+        kind: 'seealso',
+        items: ['Add Easter, Christmas or a snow notice to a page', 'Count down to VBS'],
+      },
+    ],
+  },
+
+  {
+    slug: 'templates-sermons-news',
+    category: 'Page templates',
+    title: 'Templates for sermons and news',
+    icon: 'play',
+    lead: 'A page for one sermon series, and a news page.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'bullets',
+        items: [
+          '`Sermons and news: Sermon series` introduces a series, shows the latest message and the other series. Sermons themselves are added under `Sermons`.',
+          '`Sermons and news: News` shows the latest news posts, upcoming events, the newsletter downloads and the email sign-up.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'The full sermon archive is already at /sermons/ and the news archive at /journal/, so these are for a page of your own, like a ministry’s news or a series you want to point people to.',
+      },
+      { kind: 'seealso', items: ['Start a page from a template', 'Start a new sermon series'] },
+    ],
+  },
+
+  {
+    slug: 'seasonal-patterns',
+    category: 'Page templates',
+    title: 'Add Easter, Christmas or a snow notice to a page',
+    icon: 'copy',
+    lead: 'Ready-made groups of sections to drop into a page that already exists.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Under `Pages`, then `Saved sections`, there is a ready-made set for the church year: Easter services, Christmas services, Homecoming Sunday, Revival week, Trunk-or-treat and fall festival, Thanksgiving meal, Building fund, Anniversary year, Snow Sunday closing notice, the Lottie Moon and Annie Armstrong mission offerings, and Memorial for a member.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open the page you want it on, like the home page.',
+          'Scroll to the bottom of its sections and click `Insert a saved section`.',
+          'Pick the one you want and click `Add a copy`. It goes at the bottom; drag it where you want it.',
+          'Replace every Example line, pick any date the Studio asks for, then publish.',
+          'When the season is over, remove the sections from the page. The saved section stays for next year.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Use "Add a copy", not "Add synced", for these.',
+        text: 'The ready-made ones are kept as drafts with Example text in them, so a synced copy cannot show them. A copy is yours to fill in.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Building fund** and the mission offerings have a progress bar. Type the goal and the amount raised so far, and update the amount each week.',
+          '**Snow Sunday closing notice** shows only between the dates you set. Drag it to the top of the page.',
+        ],
+      },
+      {
+        kind: 'seealso',
+        items: ['Reuse a section on other pages', 'Put up a notice for a snow Sunday'],
       },
     ],
   },
@@ -507,7 +740,7 @@ export const guides: Guide[] = [
     slug: 'contact-give-live',
     category: 'Housekeeping',
     title: 'Phone, email, giving and the live stream',
-    icon: '📞',
+    icon: 'info',
     lead: 'Fill one box and the link appears everywhere it belongs.',
     diy: 'self',
     body: [
@@ -868,6 +1101,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
     'edit-a-page',
     'section-library',
     'page-templates',
+    'seasonal-patterns',
     'reuse-sections',
     'rename-a-page',
     'seo-fields',
@@ -875,7 +1109,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   form: ['make-a-form', 'prayer-requests'],
   homePage: ['home-page', 'after-sunday', 'images-and-alt', 'seo-fields'],
   siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
-  sectionPreset: ['reuse-sections', 'synced-sections'],
+  sectionPreset: ['seasonal-patterns', 'reuse-sections', 'synced-sections'],
   // The collections (guides/collections.ts, 2026-10-18).
   sermon: ['add-sermon', 'sermon-series'],
   sermonSeries: ['sermon-series', 'add-sermon'],
