@@ -1,0 +1,55 @@
+---
+// Safe to edit by hand
+// One person on the people list: a square photo with the 14px corner (or their initials on a
+// soft sky ground), the name, the role, a few sentences, and the email or the place they serve
+// only when the Studio says so (the GROQ leaves them out otherwise; src/lib/collection-arms.ts).
+import '@/styles/collections.css';
+import SanityImage from '@/components/SanityImage.astro';
+import type { PersonDoc } from '@/lib/sermons';
+import type { SanityImageObject } from '@/lib/pageBuilder.types';
+
+interface Props {
+  person: PersonDoc;
+  showBio?: boolean;
+  as?: 'h3' | 'h4';
+}
+const { person: p, showBio = true, as: Name = 'h3' } = Astro.props;
+const photo = (p.photo as SanityImageObject | null)?.asset ? (p.photo as SanityImageObject) : null;
+const initials = (p.name ?? '')
+  .replace(/^(pastor|rev\.?|dr\.?|mr\.?|mrs\.?|ms\.?|brother|sister)\s+/i, '')
+  .split(/\s+/)
+  .filter(Boolean)
+  .map((w: string) => w[0]?.toUpperCase())
+  .slice(0, 2)
+  .join('');
+---
+
+<li class="c-person">
+  {photo ? (
+    <div class="c-photo">
+      <SanityImage
+        source={photo}
+        width={480}
+        height={480}
+        sizes="(min-width: 64rem) 20vw, (min-width: 40rem) 40vw, 90vw"
+        alt={photo.alt || (p.name ?? '')}
+        quality={75}
+      />
+    </div>
+  ) : (
+    <div class="c-photo c-photo--blank" aria-hidden="true">
+      {initials}
+    </div>
+  )}
+  <Name class="c-person__name">{p.name}</Name>
+  {p.role && <p class="c-person__role">{p.role}</p>}
+  {showBio && p.bio && <p class="c-person__bio">{p.bio}</p>}
+  {p.location && <p class="c-person__line">Serving in {p.location}</p>}
+  {p.email && (
+    <p class="c-person__line">
+      <a class="c-link" href={`mailto:${p.email}`}>
+        {p.email}
+      </a>
+    </p>
+  )}
+</li>

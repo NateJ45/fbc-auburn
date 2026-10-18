@@ -7,6 +7,8 @@
 // Run `npm run typegen` after schema changes to regenerate src/lib/sanity.types.ts.
 
 import { sanityFetch } from './sanity';
+// The sermon, people and downloads blocks (FBC Auburn, 2026-10-18).
+import { COLLECTION_SECTION_ARMS, LATEST_SERMON_FIELD } from './collection-arms';
 
 // Common Portable Text + image projection shorthand
 export const IMAGE_PROJECTION = `{
@@ -104,7 +106,9 @@ const SECTION_ARMS = `
     _type == "watchSection" => {
       ...,
       poster${IMAGE_PROJECTION},
-      link${CTA_PROJECTION}
+      link${CTA_PROJECTION},
+      // The newest sermon names the card (src/lib/sermons.ts, watchSermon).
+      ${LATEST_SERMON_FIELD}
     },
     _type == "teamSection" => {
       ...,
@@ -150,7 +154,8 @@ const SECTION_ARMS = `
         // source nothing serves any more: the component renders nothing.
         []
       )
-    }`;
+    },
+    ${COLLECTION_SECTION_ARMS}`;
 
 // Synced sections (the authoring kit, PORTS.md card 109). The block holds only
 // a reference to a saved section; resolve it here into `sections`, run through

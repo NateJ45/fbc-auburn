@@ -1,0 +1,64 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-18): "Sermon series grid". The newest series first,
+// ordered by each series' first sermon (derived, rule 15), three across on a wide screen like the
+// stone-icon cards. A content block: the surface comes from the cadence.
+import '@/styles/collections.css';
+import SeriesCard from '@/components/collections/SeriesCard.astro';
+import { surfaceClass } from '@/lib/surfaces';
+import { sortSeries, type SeriesDoc } from '@/lib/sermons';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  limit?: number;
+  series?: SeriesDoc[];
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const {
+  heading = 'Sermon series',
+  intro,
+  limit = 6,
+  series = [],
+  surface = 'background',
+  headingId,
+} = Astro.props;
+const list = sortSeries((series ?? []).filter((s) => s?.title && s?.slug)).slice(
+  0,
+  Math.max(1, Math.min(24, limit ?? 6)),
+);
+---
+
+<section class={surfaceClass(surface)} aria-labelledby={headingId}>
+  <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
+    <div class="c-head">
+      <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
+        {heading}
+      </h2>
+      {intro && <p class="c-intro">{intro}</p>}
+    </div>
+    {list.length > 0 ? (
+      <>
+        <ul class="c-grid" role="list">
+          {list.map((s) => (
+            <SeriesCard series={s} />
+          ))}
+        </ul>
+        <p class="c-more">
+          <a class="c-link" href="/sermons/">
+            Every sermon
+          </a>
+        </p>
+      </>
+    ) : (
+      <p class="c-empty">
+        Sermon series will show here once the first one is added. In the meantime,{' '}
+        <a class="c-link" href="/watch/">
+          watch Sunday's service
+        </a>
+        .
+      </p>
+    )}
+  </div>
+</section>

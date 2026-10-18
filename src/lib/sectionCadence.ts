@@ -54,6 +54,11 @@ export const CONTENT_TYPES = new Set([
   // FBC Auburn stone-path blocks (auburnMotionSections.ts)
   'stepsRailSection',
   'walkSection',
+  // FBC Auburn collection-fed blocks (collectionSections.ts, 2026-10-18)
+  'latestSermonSection',
+  'sermonSeriesSection',
+  'peopleSection',
+  'downloadsSection',
 ]);
 
 export interface SectionBlock {

@@ -1,0 +1,90 @@
+---
+// Safe to edit by hand
+// /bulletin/: "This week's bulletin" (FBC Auburn, 2026-10-18). One address that never changes, for
+// the menu, the Facebook page or a QR code on the printed bulletin: it always shows the newest
+// current Bulletin from the Downloads list (newestBulletin in src/lib/sermons.ts), with the few
+// before it underneath. Nothing to switch over each week: upload the new one and publish.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
+import DownloadRow from '@/components/collections/DownloadRow.astro';
+import '@/styles/collections.css';
+import { getSiteSettings } from '@/lib/queries';
+import { getBulletins } from '@/lib/collection-queries';
+import { churchDataNow } from '@/lib/church-feeds';
+import { currentDownloads, fileLabel, longDate, newestBulletin } from '@/lib/sermons';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+
+const [bulletins, siteSettings] = await Promise.all([getBulletins(), getSiteSettings()]);
+const now = churchDataNow();
+const bulletin = newestBulletin(bulletins, now);
+const earlier = currentDownloads(
+  bulletins.filter((b) => b._id !== bulletin?._id),
+  now,
+  'bulletin',
+  5,
+);
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: "This week's bulletin", url: `${site.url}/bulletin/` },
+  ]),
+];
+---
+
+<BaseLayout
+  title="This week's bulletin"
+  description={`The newest Sunday bulletin from ${site.name}: the order of service, the week's news and the dates to keep.`}
+  {schemas}
+  {siteSettings}
+>
+  <Hero
+    eyebrow="Sunday bulletin"
+    headline="This week's bulletin"
+    subhead="The order of service, this week's news and the dates to keep."
+    headingId="bulletin-heading"
+    size="short"
+  />
+  <BoardRule />
+  <section class="bg-background" aria-label="The bulletin">
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      {bulletin ? (
+        <div class="c-feature">
+          <p class="c-feature__label">{longDate(bulletin.date)}</p>
+          <p class="c-feature__title">{bulletin.title}</p>
+          {bulletin.note && <p class="c-meta">{bulletin.note}</p>}
+          <a
+            class="btn-auburn btn-auburn--secondary press-tactile"
+            href={bulletin.file?.url}
+            target="_blank"
+            rel="noopener"
+          >
+            Open the bulletin
+            {fileLabel(bulletin.file) && ` (${fileLabel(bulletin.file)})`}
+          </a>
+        </div>
+      ) : (
+        <p class="c-empty">
+          This week's bulletin is not up yet. Check back on Sunday morning, or{' '}
+          <a class="c-link" href="/contact/">
+            ask the church office
+          </a>
+          .
+        </p>
+      )}
+      {earlier.length > 0 && (
+        <>
+          <h2 class="font-display text-h2 auburn-h2 leading-tight mt-section-md mb-m">
+            Earlier bulletins
+          </h2>
+          <ul class="c-files" role="list">
+            {earlier.map((d) => (
+              <DownloadRow item={d} />
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  </section>
+</BaseLayout>

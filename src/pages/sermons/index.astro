@@ -1,0 +1,268 @@
+---
+// Safe to edit by hand
+// /sermons/: the sermon archive (FBC Auburn, 2026-10-18). The page head from the Sermons page in
+// the Studio, then the newest sermon, then every sermon newest first with three filters (series,
+// preacher, book of the Bible) and "Show more", then the series, then the podcast, then any extra
+// sections the editor added.
+//
+// THE FILTERS. Every sermon is in the HTML (the list is small: a sermon a week is about fifty a
+// year), so without JavaScript the whole archive reads top to bottom. The script below only hides
+// rows: it shows twelve, filters on the data- attributes SermonRow writes, keeps the choice in the
+// address (?series=mark&book=Mark) so a filtered list can be shared, and says how many match.
+// The filter values are worked out from the sermons themselves (src/lib/sermons.ts).
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
+import LatestSermon from '@/components/sections/LatestSermon.astro';
+import SermonSeriesGrid from '@/components/sections/SermonSeriesGrid.astro';
+import SermonRow from '@/components/collections/SermonRow.astro';
+import '@/styles/collections.css';
+import { getSiteSettings } from '@/lib/queries';
+import { getAllSeries, getAllSermons, getSermonsPage } from '@/lib/collection-queries';
+import { sermonFilters, sortSermons } from '@/lib/sermons';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+
+const [page, sermons, series, siteSettings] = await Promise.all([
+  getSermonsPage(),
+  getAllSermons(),
+  getAllSeries(),
+  getSiteSettings(),
+]);
+
+const list = sortSermons(sermons.filter((s) => s.title && s.slug));
+const filters = sermonFilters(list);
+const usedSeries = series.filter((s) => (s.count ?? 0) > 0);
+const hasAudio = list.some((s) => s.audio?.url);
+const PAGE = 12;
+
+const title = page?.seoTitle || 'Sermons';
+const description =
+  page?.seoDescription ||
+  `Sermons from ${site.name} in Hamilton, Ohio: watch, listen or read the passage, by series, preacher or book of the Bible.`;
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Sermons', url: `${site.url}/sermons/` },
+  ]),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+  <Hero
+    eyebrow={page?.heroEyebrow ?? 'Sunday by Sunday'}
+    headline={page?.heroHeadline || 'Sermons'}
+    subhead={page?.heroSubhead ?? 'Catch up on a Sunday you missed, or listen again.'}
+    headingId="sermons-hero-heading"
+    size="short"
+  />
+
+  <BoardRule />
+  <LatestSermon
+    heading="Latest sermon"
+    sermon={list[0] ?? null}
+    bibleVersion={page?.bibleVersion}
+    headingId="sermons-latest-heading"
+  />
+
+  {list.length > 1 && (
+    <>
+      <BoardRule />
+      <section class="bg-background" aria-labelledby="sermons-all-heading">
+        <div class="mx-auto max-w-content px-m py-section-lg">
+          <div class="c-head">
+            <h2 id="sermons-all-heading" class="font-display text-h2 auburn-h2 leading-tight">
+              Every sermon
+            </h2>
+          </div>
+          <form class="c-filters" data-sermon-filters hidden aria-label="Filter the sermons">
+            {filters.series.length > 0 && (
+              <label>
+                Series
+                <select name="series">
+                  <option value="">All series</option>
+                  {filters.series.map((o) => (
+                    <option value={o.value}>{o.title}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {filters.preachers.length > 1 && (
+              <label>
+                Preacher
+                <select name="preacher">
+                  <option value="">Everyone</option>
+                  {filters.preachers.map((p) => (
+                    <option value={p}>{p}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {filters.books.length > 0 && (
+              <label>
+                Book of the Bible
+                <select name="book">
+                  <option value="">All books</option>
+                  {filters.books.map((b) => (
+                    <option value={b}>{b}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+            <button type="reset" class="c-filters__clear" hidden>
+              Clear
+            </button>
+          </form>
+          <p class="c-count" data-sermon-count aria-live="polite" hidden />
+          <ul class="c-rows" role="list" data-sermon-list data-page={PAGE}>
+            {list.map((s) => (
+              <SermonRow sermon={s} />
+            ))}
+          </ul>
+          <p class="c-empty" data-sermon-none hidden>
+            No sermons match those choices.{' '}
+            <button type="button" class="c-filters__clear" data-sermon-reset>
+              Show every sermon
+            </button>
+          </p>
+          <div class="c-more" data-sermon-more hidden>
+            <button type="button" class="btn-auburn btn-auburn--secondary press-tactile">
+              Show more sermons
+            </button>
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+
+  {usedSeries.length > 0 && (
+    <>
+      <BoardRule />
+      <SermonSeriesGrid
+        heading="Sermon series"
+        series={usedSeries}
+        limit={24}
+        headingId="sermons-series-heading"
+      />
+    </>
+  )}
+
+  {hasAudio && (
+    <>
+      <BoardRule />
+      <section class="bg-background" aria-labelledby="sermons-podcast-heading">
+        <div class="mx-auto max-w-content px-m py-section-lg">
+          <div class="c-head">
+            <h2 id="sermons-podcast-heading" class="font-display text-h2 auburn-h2 leading-tight">
+              Listen on the go
+            </h2>
+            <p class="c-intro">
+              Sermons with a recording are also a podcast, so they come to your phone each week.
+            </p>
+          </div>
+          <div class="c-actions">
+            {page?.applePodcastsUrl && (
+              <a
+                class="btn-auburn btn-auburn--secondary press-tactile"
+                href={page.applePodcastsUrl}
+                target="_blank"
+                rel="noopener"
+              >
+                Apple Podcasts<span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            )}
+            {page?.spotifyUrl && (
+              <a
+                class="btn-auburn btn-auburn--secondary press-tactile"
+                href={page.spotifyUrl}
+                target="_blank"
+                rel="noopener"
+              >
+                Spotify<span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            )}
+          </div>
+          <p class="c-meta mt-m">
+            Another podcast app? Add this address to it:{' '}
+            <a class="c-link" href="/sermons/podcast.xml">
+              {`${site.url}/sermons/podcast.xml`}
+            </a>
+          </p>
+        </div>
+      </section>
+    </>
+  )}
+
+  <SectionRenderer sections={page?.additionalSections ?? []} idPrefix="sermons-extra" />
+</BaseLayout>
+
+<script>
+  // The /sermons/ filters and "Show more". See the note at the top of this file.
+  const list = document.querySelector<HTMLElement>('[data-sermon-list]');
+  const form = document.querySelector<HTMLFormElement>('[data-sermon-filters]');
+  if (list && form) {
+    const rows = [...list.querySelectorAll<HTMLElement>('[data-sermon]')];
+    const count = document.querySelector<HTMLElement>('[data-sermon-count]')!;
+    const none = document.querySelector<HTMLElement>('[data-sermon-none]')!;
+    const more = document.querySelector<HTMLElement>('[data-sermon-more]')!;
+    const clear = form.querySelector<HTMLButtonElement>('button[type="reset"]')!;
+    const page = Number(list.dataset.page) || 12;
+    const keys = ['series', 'preacher', 'book'] as const;
+    let shown = page;
+
+    const read = () =>
+      Object.fromEntries(
+        keys.map((k) => [k, (form.elements.namedItem(k) as HTMLSelectElement | null)?.value ?? '']),
+      ) as Record<(typeof keys)[number], string>;
+
+    const draw = () => {
+      const want = read();
+      const match = rows.filter((r) => keys.every((k) => !want[k] || r.dataset[k] === want[k]));
+      rows.forEach((r) => (r.hidden = true));
+      match.slice(0, shown).forEach((r) => (r.hidden = false));
+      const filtered = keys.some((k) => want[k]);
+      clear.hidden = !filtered;
+      none.hidden = match.length > 0;
+      more.hidden = match.length <= shown;
+      count.hidden = false;
+      count.textContent = filtered
+        ? `${match.length} ${match.length === 1 ? 'sermon matches' : 'sermons match'}.`
+        : `Showing ${Math.min(shown, match.length)} of ${match.length} sermons.`;
+      const url = new URL(window.location.href);
+      keys.forEach((k) =>
+        want[k] ? url.searchParams.set(k, want[k]) : url.searchParams.delete(k),
+      );
+      history.replaceState(null, '', url);
+    };
+
+    // Start from the address, so a shared filtered link opens filtered.
+    const params = new URLSearchParams(window.location.search);
+    keys.forEach((k) => {
+      const select = form.elements.namedItem(k) as HTMLSelectElement | null;
+      const v = params.get(k);
+      if (select && v && [...select.options].some((o) => o.value === v)) select.value = v;
+    });
+    form.hidden = false;
+    form.addEventListener('change', () => {
+      shown = page;
+      draw();
+    });
+    form.addEventListener('reset', () =>
+      setTimeout(() => {
+        shown = page;
+        draw();
+      }),
+    );
+    document.querySelector('[data-sermon-reset]')?.addEventListener('click', () => form.reset());
+    more.querySelector('button')?.addEventListener('click', () => {
+      const firstNew = shown;
+      shown += page;
+      draw();
+      // Move focus to the first newly shown sermon, so keyboard users land on it.
+      const visible = rows.filter((r) => !r.hidden);
+      visible[firstNew]?.querySelector('a')?.focus();
+    });
+    draw();
+  }
+</script>

@@ -28,6 +28,7 @@ export const SINGLETON_LIVE_PATHS: Record<string, string> = {
   contactPage: '/contact/',
   journalPage: '/journal/', // scaffold: journal
   privacyPage: '/privacy/',
+  sermonsPage: '/sermons/',
   notFoundPage: '/404',
 };
 

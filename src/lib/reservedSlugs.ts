@@ -33,6 +33,9 @@ export const RESERVED_SLUGS = new Set([
   'privacy',
   // The Give page (src/pages/give.astro), 2026-10-18.
   'give',
+  // The sermon archive and the newest-bulletin shortcut (2026-10-18).
+  'sermons',
+  'bulletin',
   // The fixed-data wall the visual-regression suite shoots (PORTS.md card 37).
   // noindex and out of the sitemap, but a real built route, so a custom page
   // must not be able to shadow it.

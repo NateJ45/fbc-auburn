@@ -21,7 +21,8 @@ import type { PageRules } from '../lib/page-guardrails';
 import { AddDocumentIcon } from '@sanity/icons/AddDocument';
 import { ClockIcon } from '@sanity/icons/Clock';
 import { MenuIcon } from '@sanity/icons/Menu';
-import { PlayIcon } from '@sanity/icons/Play';
+import { MicrophoneIcon } from '@sanity/icons/Microphone';
+import { collectionRules } from './collectionCheckup';
 import { runPageCheck } from './actions/checkPage';
 import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
 
@@ -39,6 +40,7 @@ const SEO_TYPES = [
   'journalPage',
   'privacyPage',
   'page',
+  'sermonsPage',
 ];
 
 /** Site rule: a notice still switched on after its end date. */
@@ -96,10 +98,33 @@ export const kitConfig: KitConfig = {
     faqCategory: 'Question group',
     journalEntry: 'Post',
     journalCategory: 'Post category',
+    sermon: 'Sermon',
+    sermonSeries: 'Sermon series',
+    person: 'Person',
+    personGroup: 'People group',
+    download: 'Download',
   },
 
   weekStartsOn: 1,
   thisWeek: [
+    // The collections (2026-10-18). The week starts on Monday, so "this week" for Sunday's
+    // sermon and bulletin reaches back to the Saturday before it.
+    {
+      id: 'sermon',
+      title: "Add Sunday's sermon",
+      detail: 'The title, the passage and the video link. The home page names it for a week.',
+      query: `count(*[_type == "sermon" && ${PUBLISHED} && dateTime(date + "T00:00:00Z") >= dateTime($weekStart) - 60*60*24*2])`,
+      target: { create: 'sermon' },
+      targetLabel: 'Add the sermon',
+    },
+    {
+      id: 'bulletin',
+      title: "Put up this week's bulletin",
+      detail: 'Upload the PDF under Downloads. It shows at /bulletin/ straight away.',
+      query: `count(*[_type == "download" && category == "bulletin" && ${PUBLISHED} && dateTime(date + "T00:00:00Z") >= dateTime($weekStart) - 60*60*24*2])`,
+      target: { create: 'download' },
+      targetLabel: 'Upload the bulletin',
+    },
     {
       id: 'news',
       title: "Post this week's news",
@@ -123,12 +148,25 @@ export const kitConfig: KitConfig = {
     rules: [
       ...genericRules({
         seoTypes: SEO_TYPES,
-        altExemptFields: ['logo', 'favicon', 'icon', 'logoImage', 'seoImage'],
+        // photo: a person's photo falls back to their name; picture: a sermon's picture is
+        // decorative beside its title; podcastArtwork: Apple never reads a description.
+        altExemptFields: [
+          'logo',
+          'favicon',
+          'icon',
+          'logoImage',
+          'seoImage',
+          'photo',
+          'picture',
+          'podcastArtwork',
+        ],
       }),
       // Seeded copy marks unconfirmed facts "to be confirmed" (service times,
       // the founding year, the verse), so the pastor can see what is left.
       unconfirmedRule(),
       expiredNotices,
+      // Sermons with nothing to watch or hear, people without a photo (2026-10-18).
+      ...collectionRules,
     ],
     ignoreTypes: ['sectionPreset', 'studioGuide', 'redirect'],
   },
@@ -142,14 +180,18 @@ export const kitConfig: KitConfig = {
   },
 
   // Home's big buttons (card 110): the pastor's most common jobs, as intent
-  // links. Keep it to four. FBC Auburn (2026-10-18): Sunday's message, the
+  // links. Keep it to four. FBC Auburn (2026-10-18): Sunday's sermon, the
   // service times, a new page and the menus.
   quickActions: [
+    // 2026-10-18: a sermon in the archive replaced "Name last Sunday's message" (the Watch
+    // section's hand-typed entry, which still works). The date fills in as the Sunday just gone
+    // and the preacher as the pastor (sermons.ts initialValue).
     {
-      title: "Name last Sunday's message",
-      detail: 'Home, then the Watch section: the title, the passage and the video link.',
-      target: { doc: 'homePage', field: 'pageBuilder' },
-      icon: PlayIcon,
+      title: "Add Sunday's sermon",
+      detail:
+        'The title, the passage and the video link. The date and preacher fill themselves in.',
+      target: { create: 'sermon' },
+      icon: MicrophoneIcon,
     },
     {
       title: 'Change the service times',

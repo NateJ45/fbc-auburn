@@ -1,0 +1,88 @@
+---
+// Safe to edit by hand
+// One sermon's player. LIGHT ON PURPOSE (Lighthouse), like LastSunday: a YouTube video is its
+// thumbnail and a play button, and only a press swaps in the privacy-enhanced (youtube-nocookie)
+// player; without JavaScript the link opens YouTube. A Facebook video cannot be played on another
+// site without Facebook's own script, so it is the sermon's picture with "Watch on Facebook". With
+// no video at all the frame is left out. An uploaded recording plays in the browser's own audio
+// player underneath (preload="none", so nothing downloads until it is pressed).
+import '@/styles/collections.css';
+import SermonArt from './SermonArt.astro';
+import PlayMark from './PlayMark.astro';
+import { sermonVideo, type SermonDoc } from '@/lib/sermons';
+
+interface Props {
+  sermon: SermonDoc;
+}
+const { sermon: s } = Astro.props;
+const video = sermonVideo(s.videoUrl);
+const where = video?.kind === 'facebook' ? 'Facebook' : 'YouTube';
+---
+
+<div class="c-player">
+  {video?.kind === 'youtube' ? (
+    <div class="c-player__frame">
+      <a
+        href={video.watchUrl}
+        data-sermon-embed={video.embedUrl}
+        data-title={s.title ?? 'Sermon'}
+        aria-label={`Play the video: ${s.title}`}
+      >
+        <img
+          src={video.thumbnailUrl}
+          alt=""
+          width="480"
+          height="360"
+          decoding="async"
+          referrerpolicy="no-referrer"
+        />
+        <PlayMark />
+      </a>
+    </div>
+  ) : video ? (
+    <div class="c-player__frame">
+      <a href={video.watchUrl} target="_blank" rel="noopener noreferrer">
+        <SermonArt sermon={s} width={1100} sizes="(min-width: 60rem) 56rem, 100vw" />
+        <PlayMark />
+        <span class="c-player__out">
+          Watch on {where}
+          <span class="sr-only"> (opens in a new tab)</span>
+        </span>
+      </a>
+    </div>
+  ) : null}
+  {s.audio?.url && (
+    <div class="c-audio">
+      <p class="c-audio__label" id={`audio-${s._id}`}>
+        Listen
+      </p>
+      <audio controls preload="none" aria-labelledby={`audio-${s._id}`}>
+        <source src={s.audio.url} type={s.audio.mimeType ?? 'audio/mpeg'} />
+        <a class="c-link" href={s.audio.url}>
+          Download the recording
+        </a>
+      </audio>
+    </div>
+  )}
+</div>
+
+<script>
+  // A plain press on the thumbnail becomes the embedded player; a modified click (new tab) keeps
+  // the browser's own behaviour. One delegated listener for the page.
+  document.addEventListener('click', (event) => {
+    const link = (event.target as Element | null)?.closest<HTMLAnchorElement>(
+      'a[data-sermon-embed]',
+    );
+    if (!link || event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const frame = document.createElement('iframe');
+    frame.src = link.dataset.sermonEmbed ?? '';
+    frame.title = link.dataset.title ?? 'Sermon video';
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    link.replaceWith(frame);
+    frame.focus();
+  });
+</script>

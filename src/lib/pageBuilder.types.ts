@@ -33,6 +33,7 @@ import type {
   // FaqSection, LogoStripSection, TeamSection, EmbedSection — not imported from
   // sanity.types yet; their projected types are fully defined below.
 } from './sanity.types';
+import type { DownloadDoc, PersonDoc, SeriesDoc, SermonDoc } from './sermons';
 
 // ---------------------------------------------------------------------------
 // Shared projected shapes
@@ -380,6 +381,52 @@ export interface ProjectedWatchSection {
   fallback?: string;
   /** Last Sunday's message, typed after Sunday; shown for 8 days after its date. */
   lastMessage?: { title?: string; passage?: string; date?: string; videoUrl?: string } | null;
+  /** The newest sermon (collection-arms.ts), which names the card first when it is fresh. */
+  latestSermon?: SermonDoc | null;
+}
+
+// ---------------------------------------------------------------------------
+// FBC Auburn collection-fed blocks (src/sanity/schemaTypes/collectionSections.ts, 2026-10-18).
+// The rows are projected in src/lib/collection-arms.ts. All four are CONTENT blocks.
+// ---------------------------------------------------------------------------
+
+export interface ProjectedLatestSermonSection {
+  _type: 'latestSermonSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  mode?: 'newest' | 'pick';
+  sermon?: SermonDoc | null;
+  bibleVersion?: string | null;
+}
+export interface ProjectedSermonSeriesSection {
+  _type: 'sermonSeriesSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  limit?: number;
+  series?: SeriesDoc[] | null;
+}
+export interface ProjectedPeopleSection {
+  _type: 'peopleSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  mode?: 'group' | 'hand';
+  showBios?: boolean;
+  items?: (PersonDoc | null)[] | null;
+}
+export interface ProjectedDownloadsSection {
+  _type: 'downloadsSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+  category?: string;
+  limit?: number;
+  showDates?: boolean;
+  featureBulletin?: boolean;
+  items?: DownloadDoc[] | null;
+  bulletins?: DownloadDoc[] | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -464,4 +511,9 @@ export type PageBuilderBlock =
   | ProjectedWatchSection
   // FBC Auburn stone-path blocks
   | ProjectedStepsRailSection
-  | ProjectedWalkSection;
+  | ProjectedWalkSection
+  // FBC Auburn collection-fed blocks
+  | ProjectedLatestSermonSection
+  | ProjectedSermonSeriesSection
+  | ProjectedPeopleSection
+  | ProjectedDownloadsSection;

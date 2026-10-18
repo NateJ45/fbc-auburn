@@ -38,15 +38,6 @@ export type LastMessage = {
   videoUrl?: string;
 };
 
-export type Photo = {
-  asset?: SanityImageAssetReference;
-  media?: unknown; // Unable to locate the referenced type "photo.media" in schema
-  hotspot?: SanityImageHotspot;
-  crop?: SanityImageCrop;
-  alt?: string;
-  _type: 'image';
-};
-
 export type Redirect = {
   _id: string;
   _type: 'redirect';
@@ -57,6 +48,31 @@ export type Redirect = {
   to?: string;
   permanent?: boolean;
   note?: string;
+};
+
+export type SanityFileAssetReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset';
+};
+
+export type Download = {
+  _id: string;
+  _type: 'download';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  category?: 'bulletin' | 'newsletter' | 'form' | 'policy' | 'other';
+  date?: string;
+  file?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
+  note?: string;
+  expires?: string;
 };
 
 export type JournalCategory = {
@@ -450,6 +466,20 @@ export type JournalEntryReference = {
   [internalGroqTypeReferenceTo]?: 'journalEntry';
 };
 
+export type SermonsPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sermonsPage';
+};
+
+export type SermonReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sermon';
+};
+
 export type PageReference = {
   _ref: string;
   _type: 'reference';
@@ -468,6 +498,8 @@ export type CtaBlock = {
     | ContactPageReference
     | JournalPageReference
     | JournalEntryReference
+    | SermonsPageReference
+    | SermonReference
     | PageReference;
   externalUrl?: string;
   emailAddress?: string;
@@ -493,6 +525,7 @@ export type NavLink = {
     | ContactPageReference
     | JournalPageReference
     | PrivacyPageReference
+    | SermonsPageReference
     | PageReference;
   externalUrl?: string;
   href?: string;
@@ -545,7 +578,14 @@ export type TeamSection = {
   members?: Array<{
     name?: string;
     role?: string;
-    photo?: Photo;
+    photo?: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: 'image';
+    };
     bio?: string;
     socialLinks?: Array<{
       label?: string;
@@ -742,15 +782,81 @@ export type SectionPreset = {
       } & WalkSection)
     | ({
         _key: string;
-      } & FaqSection)
+      } & LatestSermonSection)
     | ({
         _key: string;
-      } & TeamSection)
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
+      } & FaqSection)
     | ({
         _key: string;
       } & DynamicListSection)
   >;
   note?: string;
+};
+
+export type DownloadsSection = {
+  _type: 'downloadsSection';
+  heading?: string;
+  intro?: string;
+  category?: 'all' | 'bulletin' | 'newsletter' | 'form' | 'policy' | 'other';
+  limit?: number;
+  showDates?: boolean;
+  featureBulletin?: boolean;
+};
+
+export type PersonGroupReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'personGroup';
+};
+
+export type PersonReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'person';
+};
+
+export type PeopleSection = {
+  _type: 'peopleSection';
+  heading?: string;
+  intro?: string;
+  mode?: 'group' | 'hand';
+  groups?: Array<
+    {
+      _key: string;
+    } & PersonGroupReference
+  >;
+  people?: Array<
+    {
+      _key: string;
+    } & PersonReference
+  >;
+  showBios?: boolean;
+};
+
+export type SermonSeriesSection = {
+  _type: 'sermonSeriesSection';
+  heading?: string;
+  intro?: string;
+  limit?: number;
+};
+
+export type LatestSermonSection = {
+  _type: 'latestSermonSection';
+  heading?: string;
+  intro?: string;
+  mode?: 'newest' | 'pick';
+  sermon?: SermonReference;
 };
 
 export type WalkSection = {
@@ -1165,6 +1271,18 @@ export type PrivacyPage = {
       } & WalkSection)
     | ({
         _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -1225,13 +1343,22 @@ export type Page = {
       } & WalkSection)
     | ({
         _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
     | ({
         _key: string;
       } & FaqSection)
-    | ({
-        _key: string;
-      } & TeamSection)
     | ({
         _key: string;
       } & DynamicListSection)
@@ -1254,6 +1381,267 @@ export type Page = {
   };
   hideFromSearch?: boolean;
   publishAt?: string;
+};
+
+export type SermonSeriesReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sermonSeries';
+};
+
+export type Sermon = {
+  _id: string;
+  _type: 'sermon';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  date?: string;
+  service?: 'sunday-morning' | 'sunday-evening' | 'wednesday';
+  passage?: string;
+  preacher?: PersonReference;
+  guestPreacher?: string;
+  series?: SermonSeriesReference;
+  summary?: string;
+  slug?: Slug;
+  videoUrl?: string;
+  audio?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
+  notes?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+};
+
+export type SermonSeries = {
+  _id: string;
+  _type: 'sermonSeries';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  art?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  book?:
+    | 'Genesis'
+    | 'Exodus'
+    | 'Leviticus'
+    | 'Numbers'
+    | 'Deuteronomy'
+    | 'Joshua'
+    | 'Judges'
+    | 'Ruth'
+    | '1 Samuel'
+    | '2 Samuel'
+    | '1 Kings'
+    | '2 Kings'
+    | '1 Chronicles'
+    | '2 Chronicles'
+    | 'Ezra'
+    | 'Nehemiah'
+    | 'Esther'
+    | 'Job'
+    | 'Psalms'
+    | 'Proverbs'
+    | 'Ecclesiastes'
+    | 'Song of Solomon'
+    | 'Isaiah'
+    | 'Jeremiah'
+    | 'Lamentations'
+    | 'Ezekiel'
+    | 'Daniel'
+    | 'Hosea'
+    | 'Joel'
+    | 'Amos'
+    | 'Obadiah'
+    | 'Jonah'
+    | 'Micah'
+    | 'Nahum'
+    | 'Habakkuk'
+    | 'Zephaniah'
+    | 'Haggai'
+    | 'Zechariah'
+    | 'Malachi'
+    | 'Matthew'
+    | 'Mark'
+    | 'Luke'
+    | 'John'
+    | 'Acts'
+    | 'Romans'
+    | '1 Corinthians'
+    | '2 Corinthians'
+    | 'Galatians'
+    | 'Ephesians'
+    | 'Philippians'
+    | 'Colossians'
+    | '1 Thessalonians'
+    | '2 Thessalonians'
+    | '1 Timothy'
+    | '2 Timothy'
+    | 'Titus'
+    | 'Philemon'
+    | 'Hebrews'
+    | 'James'
+    | '1 Peter'
+    | '2 Peter'
+    | '1 John'
+    | '2 John'
+    | '3 John'
+    | 'Jude'
+    | 'Revelation';
+  description?: string;
+};
+
+export type Person = {
+  _id: string;
+  _type: 'person';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  role?: string;
+  group?: PersonGroupReference;
+  photo?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  bio?: string;
+  email?: string;
+  showEmail?: boolean;
+  location?: string;
+  keepLocationPrivate?: boolean;
+  order?: number;
+};
+
+export type PersonGroup = {
+  _id: string;
+  _type: 'personGroup';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  order?: number;
+};
+
+export type SermonsPage = {
+  _id: string;
+  _type: 'sermonsPage';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroSubhead?: string;
+  bibleVersion?: 'KJV' | 'NKJV' | 'ESV' | 'CSB' | 'NASB' | 'NIV';
+  podcastTitle?: string;
+  podcastDescription?: string;
+  podcastCategory?: 'Christianity' | 'Religion' | 'Spirituality';
+  podcastArtwork?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  applePodcastsUrl?: string;
+  spotifyUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  additionalSections?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
+  >;
 };
 
 export type JournalCategoryReference = {
@@ -1476,6 +1864,18 @@ export type JournalPage = {
       } & WalkSection)
     | ({
         _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -1594,6 +1994,18 @@ export type ContactPage = {
       } & WalkSection)
     | ({
         _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -1689,6 +2101,18 @@ export type FaqPage = {
       } & WalkSection)
     | ({
         _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -1747,13 +2171,22 @@ export type AboutPage = {
       } & WalkSection)
     | ({
         _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
     | ({
         _key: string;
       } & FaqSection)
-    | ({
-        _key: string;
-      } & TeamSection)
     | ({
         _key: string;
       } & DynamicListSection)
@@ -1914,13 +2347,22 @@ export type HomePage = {
       } & WalkSection)
     | ({
         _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
     | ({
         _key: string;
       } & FaqSection)
-    | ({
-        _key: string;
-      } & TeamSection)
     | ({
         _key: string;
       } & DynamicListSection)
@@ -2159,8 +2601,9 @@ export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | IconCardImage
   | LastMessage
-  | Photo
   | Redirect
+  | SanityFileAssetReference
+  | Download
   | JournalCategory
   | Slug
   | FaqCategoryReference
@@ -2179,6 +2622,8 @@ export type AllSanitySchemaTypes =
   | ContactPageReference
   | JournalPageReference
   | JournalEntryReference
+  | SermonsPageReference
+  | SermonReference
   | PageReference
   | CtaBlock
   | PrivacyPageReference
@@ -2194,6 +2639,12 @@ export type AllSanitySchemaTypes =
   | SectionPresetReference
   | SyncedSection
   | SectionPreset
+  | DownloadsSection
+  | PersonGroupReference
+  | PersonReference
+  | PeopleSection
+  | SermonSeriesSection
+  | LatestSermonSection
   | WalkSection
   | StepsRailSection
   | WatchSection
@@ -2213,6 +2664,12 @@ export type AllSanitySchemaTypes =
   | FormQuestion
   | PrivacyPage
   | Page
+  | SermonSeriesReference
+  | Sermon
+  | SermonSeries
+  | Person
+  | PersonGroup
+  | SermonsPage
   | JournalCategoryReference
   | JournalEntry
   | JournalPage

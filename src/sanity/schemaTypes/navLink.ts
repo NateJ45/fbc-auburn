@@ -61,6 +61,8 @@ export const navLink = defineType({
         { type: 'contactPage' },
         { type: 'journalPage' }, // scaffold: journal
         { type: 'privacyPage' },
+        // The sermon archive's list page (/sermons/), 2026-10-18.
+        { type: 'sermonsPage' },
         // Pages built by the editor (slug-based route /[slug]).
         { type: 'page' },
       ],

@@ -32,6 +32,11 @@ import EmbedSection from '@/components/sections/EmbedSection.astro';
 import DynamicList from '@/components/sections/DynamicList.astro';
 import StepsRail from '@/components/sections/StepsRail.astro';
 import WalkSection from '@/components/sections/WalkSection.astro';
+// FBC Auburn collection-fed blocks (2026-10-18)
+import LatestSermon from '@/components/sections/LatestSermon.astro';
+import SermonSeriesGrid from '@/components/sections/SermonSeriesGrid.astro';
+import PeopleSection from '@/components/sections/PeopleSection.astro';
+import DownloadsList from '@/components/sections/DownloadsList.astro';
 import SectionDivider from '@/components/SectionDivider.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import { classifySections } from '@/lib/sectionCadence';
@@ -292,6 +297,7 @@ const editKeyOf = (block: unknown) => {
           link={s.link}
           poster={s.poster}
           fallback={s.fallback}
+          latestSermon={s.latestSermon}
           surface={surface ?? 'background'}
           headingId={headingId}
         />
@@ -347,6 +353,47 @@ const editKeyOf = (block: unknown) => {
           endBody={s.endBody}
           endLinkLabel={s.endLinkLabel}
           endLinkHref={s.endLinkHref}
+          surface={surface ?? 'background'}
+          headingId={headingId}
+        />
+      ) : s._type === 'latestSermonSection' ? (
+        <LatestSermon
+          heading={s.heading}
+          intro={s.intro}
+          sermon={s.sermon}
+          bibleVersion={s.bibleVersion}
+          surface={surface ?? 'background'}
+          headingId={headingId}
+        />
+      ) : s._type === 'sermonSeriesSection' ? (
+        <SermonSeriesGrid
+          heading={s.heading}
+          intro={s.intro}
+          limit={s.limit}
+          series={s.series ?? []}
+          surface={surface ?? 'background'}
+          headingId={headingId}
+        />
+      ) : s._type === 'peopleSection' ? (
+        <PeopleSection
+          heading={s.heading}
+          intro={s.intro}
+          mode={s.mode}
+          items={s.items ?? []}
+          showBios={s.showBios ?? true}
+          surface={surface ?? 'background'}
+          headingId={headingId}
+        />
+      ) : s._type === 'downloadsSection' ? (
+        <DownloadsList
+          heading={s.heading}
+          intro={s.intro}
+          category={s.category}
+          limit={s.limit}
+          showDates={s.showDates ?? true}
+          featureBulletin={s.featureBulletin ?? false}
+          items={s.items ?? []}
+          bulletins={s.bulletins}
           surface={surface ?? 'background'}
           headingId={headingId}
         />

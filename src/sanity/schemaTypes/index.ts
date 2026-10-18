@@ -24,6 +24,10 @@ import { redirect } from './redirect';
 import { sectionPreset } from './sectionPreset';
 import { siteSettings } from './siteSettings';
 import { studioGuide } from './studioGuide';
+// FBC Auburn collections (2026-10-18): sermons, people, downloads.
+import { sermonSchemas } from './sermons';
+import { peopleSchemas } from './people';
+import { download } from './downloads';
 
 export const schemaTypes = [
   // Object types (embedded) first so they're defined before docs that reference them
@@ -58,6 +62,11 @@ export const schemaTypes = [
   faqItem, // scaffold: faq
   journalCategory, // scaffold: journal
   journalEntry, // scaffold: journal
+  // FBC Auburn: the sermon archive (sermon, sermonSeries, the sermonsPage singleton), the
+  // people list (person, personGroup) and the downloads shelf.
+  ...sermonSchemas,
+  ...peopleSchemas,
+  download,
   // Custom pages built from the section library (multi-instance, not a singleton)
   page,
   // One saved section, kept for reuse on other pages. Not content: nothing

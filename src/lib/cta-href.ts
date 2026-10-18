@@ -22,6 +22,7 @@ const TYPE_TO_PATH: Record<string, string> = {
   faqPage: '/faq/',
   contactPage: '/contact/',
   journalPage: '/journal/', // scaffold: journal
+  sermonsPage: '/sermons/',
 };
 
 function resolveHref(c: CtaTarget | null | undefined, fallbackHref: string): string {
@@ -38,6 +39,10 @@ function resolveHref(c: CtaTarget | null | undefined, fallbackHref: string): str
         return `/journal/${c.internalLink.slug}`;
       }
       // scaffold:end
+      // One sermon (2026-10-18): /sermons/<slug>/.
+      if (t === 'sermon' && c.internalLink?.slug) {
+        return `/sermons/${c.internalLink.slug}/`;
+      }
       // Custom pages (type 'page') route via /[slug].astro.
       if (t === 'page' && c.internalLink?.slug) {
         return `/${c.internalLink.slug}`;

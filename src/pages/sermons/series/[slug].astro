@@ -1,0 +1,97 @@
+---
+// Safe to edit by hand
+// /sermons/series/<slug>/: one sermon series (FBC Auburn, 2026-10-18). The page head with the
+// series picture beside it, then its sermons in the order they were preached (part one first),
+// with when it ran and how many, both worked out from the sermons (rule 15).
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
+import SermonRow from '@/components/collections/SermonRow.astro';
+import '@/styles/collections.css';
+import { getSiteSettings } from '@/lib/queries';
+import { getAllSeries, getAllSermons } from '@/lib/collection-queries';
+import { seriesSpan, sortSermons } from '@/lib/sermons';
+import { breadcrumbSchema } from '@/lib/schemas';
+import type { SanityImageObject } from '@/lib/pageBuilder.types';
+import { site } from '@/data/site';
+
+export async function getStaticPaths() {
+  const series = await getAllSeries();
+  return series.filter((s) => s.slug && s.title).map((s) => ({ params: { slug: s.slug! } }));
+}
+
+const { slug } = Astro.params;
+const [allSeries, sermons, siteSettings] = await Promise.all([
+  getAllSeries(),
+  getAllSermons(),
+  getSiteSettings(),
+]);
+const series = allSeries.find((x) => x.slug === slug);
+if (!series) throw new Error(`[sermons] series "${slug}" was listed but is missing`);
+
+// Oldest first inside a series: it reads like chapters.
+const list = sortSermons(sermons.filter((s) => s.series?._id === series._id)).reverse();
+const span = seriesSpan(series.firstDate, series.lastDate);
+const count = list.length;
+const art = (series.art as SanityImageObject | null)?.asset
+  ? (series.art as SanityImageObject)
+  : null;
+
+const title = `${series.title} (sermon series)`;
+const description =
+  series.description ||
+  `A sermon series at ${site.name}${series.book ? ` through ${series.book}` : ''}.`;
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Sermons', url: `${site.url}/sermons/` },
+    { name: series.title ?? 'Series', url: `${site.url}/sermons/series/${slug}/` },
+  ]),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={art ?? undefined}>
+  <Hero
+    eyebrow="Sermon series"
+    headline={series.title ?? 'Sermon series'}
+    subhead={series.description ?? undefined}
+    backgroundImage={art}
+    headingId="series-heading"
+    size="short"
+    quiet
+  />
+
+  <BoardRule />
+  <section class="bg-background" aria-labelledby="series-list-heading">
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <div class="c-head">
+        <h2 id="series-list-heading" class="font-display text-h2 auburn-h2 leading-tight">
+          {count ? `${count} ${count === 1 ? 'sermon' : 'sermons'}` : 'Sermons'}
+        </h2>
+        {(span || series.book) && (
+          <p class="c-intro">{[span, series.book].filter(Boolean).join(' · ')}</p>
+        )}
+      </div>
+      {list.length > 0 ? (
+        <ul class="c-rows" role="list">
+          {list.map((s) => (
+            <SermonRow sermon={s} hideSeries />
+          ))}
+        </ul>
+      ) : (
+        <p class="c-empty">
+          The first sermon in this series is coming soon. Until then, you can{' '}
+          <a class="c-link" href="/watch/">
+            watch Sunday's service
+          </a>
+          .
+        </p>
+      )}
+      <p class="c-more">
+        <a class="c-link" href="/sermons/">
+          Every sermon
+        </a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
