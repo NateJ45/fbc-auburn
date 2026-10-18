@@ -449,6 +449,8 @@ export type SiteSettings = {
     _type: 'formRecipient';
     _key: string;
   }>;
+  headCode?: string;
+  bodyEndCode?: string;
 };
 
 export type HomePageReference = {
@@ -1338,6 +1340,7 @@ export type EmbedSection = {
   subhead?: string;
   embedUrl?: string;
   embedCode?: string;
+  runsOnPage?: boolean;
   heightHint?: 'short' | 'medium' | 'tall';
 };
 

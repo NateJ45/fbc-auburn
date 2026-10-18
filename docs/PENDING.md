@@ -373,6 +373,14 @@ keep their place. Signed in, check: the white "First Baptist / Church of Auburn"
 the navy bar (gone on a phone), the user menu's "Invite someone from church to edit" and "Manage who can edit", and
 Presentation opening a page.
 
+### 1q. Card 121 (custom code): the signed-in Studio checks (opened 2026-10-18)
+
+Unit-tested (`custom-code.test.ts`, the two Checkup rules in `studio-checkup.test.ts`), proved in Playwright
+(`tests/custom-code.spec.ts`: the boxed probe cannot read `parent.document`, the page's localStorage or cookies; the
+on-page probe can), and seen under `wrangler dev` with the site fonts loading in the box, light and dark, 375 and 1280. Not yet seen signed in: the monospace code box and its count, the warning under it, the switch appearing only
+once there is code, Site settings' "Code on every page" tab, both Checkup findings opening the right field, and the
+boxed frame in Presentation.
+
 ### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
 
 - The signed-in Studio click-through of the new desk (the Start here panes, "Add the usual
