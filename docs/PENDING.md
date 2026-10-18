@@ -181,8 +181,9 @@ so ticking a box does not rebuild the website.
 
 ### 1k. Two secrets for "the Studio remembers" (opened 2026-10-18)
 
-**Blocker: Nathan. Two secrets, nothing else.** PORTS.md card 111 (branch `feat/studio-remembers`) is built and
-safe without them: each feature skips quietly until its secret exists.
+**Both secrets are set (2026-10-18).** `/api/studio/deploy-status/` answers `configured: true, state: ok`, and a
+manual run of "Publish scheduled drafts" passed its gate and reported "nothing scheduled is due". What is left here
+is the signed-in checks below. The two secrets, for reference:
 
 1. **`SANITY_API_WRITE_TOKEN`**, a GitHub Actions repo secret: a Sanity token with the **Editor** role (sanity.io/manage,
    project `wdpzvn6m`, API, Tokens). Turns on scheduled publishing ("Publish automatically at"), which now runs every
