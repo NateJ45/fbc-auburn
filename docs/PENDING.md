@@ -169,15 +169,15 @@ week list, the Watch band and Plan your visit. The prose in `src/data/defaultSec
 Sanity page copy still types the times as words; when a section is rebuilt, put `ThisSunday` or
 `ServiceTimes` there instead of a sentence with a time in it.
 
-### 1e. The publish webhook, and the pastor's Studio login
+### 1e. The pastor's Studio login (the publish webhook is done)
 
-**Blocker: Nathan (a GitHub token and a Sanity invite).** Until the webhook exists, a publish in
-the Studio only goes live at the next scheduled build (daily 10:00 UTC, Sunday 18:00 UTC), though
-the Studio tells editors "a few minutes". Steps: OPERATIONS.md, "Sanity publish → GitHub → live".
-Then invite Pastor Jacob to the Sanity project (Editor role), and once he accepts, add his user id
+**The webhook is live (2026-10-18):** a publish starts a Deploy run within seconds, tested end to end
+(two publishes, two green `repository_dispatch` runs, the page live at the next build).
+
+**Blocker: Nathan (a Sanity invite).** Invite Pastor Jacob to the Sanity project (Editor role), and once he accepts, add his user id
 to `staff` in `src/sanity/kit.config.ts` so he gets the staff view (no permanent delete).
-When you make the webhook, use the filter in OPERATIONS.md: it now also skips `studioWeek` (the Home
-checklist's weekly tick document, card 111), or every tick would rebuild the website.
+The webhook's filter (OPERATIONS.md) skips `studioWeek`, the Home checklist's weekly tick document (card 111),
+so ticking a box does not rebuild the website.
 
 ### 1k. Two secrets for "the Studio remembers" (opened 2026-10-18)
 
