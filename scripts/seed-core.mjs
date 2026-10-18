@@ -1043,30 +1043,10 @@ docs.push({
   ],
 });
 
-// ── 20. studioNotes (singleton) ──────────────────────────────────────────
-// Fields: businessSummary, idealClient, voiceSummary, wordsToAvoid
-
-docs.push({
-  _id: 'studioNotes',
-  _type: 'studioNotes',
-  businessSummary:
-    'Studio Starter is a placeholder business description. Replace this with a clear, plain-English description of this business: what it does, where it works, and what makes its approach different.',
-  idealClient:
-    'Replace this with a description of your ideal client. Be specific. The more clearly you can picture who you are writing for, the easier it is to write copy that speaks to them.',
-  voiceSummary:
-    'Replace this with a description of your voice. Plain-spoken and warm? Confident and direct? A little irreverent? Pick a lane and describe it in a sentence or two so anyone writing for the site stays consistent.',
-  wordsToAvoid: [
-    'transformative',
-    'curated',
-    'elevated',
-    'tailored',
-    'seamless',
-    'bespoke',
-    'meticulous',
-    'leverage',
-    'robust',
-  ],
-});
+// ── 20. studioNotes (singleton) ─ retired ─────────────────────────────────
+// FBC Auburn (2026-10-18): the "Business Notes (Start Here)" type is gone (it
+// held "who you are / ideal client / voice" for a business). The one live
+// document was retired with scripts/content/retire-studio-notes.mjs.
 
 // ── 21. studioPlaybook (singleton) ───────────────────────────────────────
 // Fields: title, intro, guides [{title, summary, sections [{heading, tone,

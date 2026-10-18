@@ -207,7 +207,7 @@ export default defineConfig({
   // Singleton enforcement: hide these from the global "+" create menu so editors
   // can't make duplicates. Reusable content types stay available.
   document: {
-    // Custom at-a-glance status badges (Featured / Needs a photo / Add SEO)
+    // Custom at-a-glance status badges (Featured / Needs a photo / Add search text)
     // rendered next to the publish status. Keep Sanity's built-in badges and
     // append ours.
     badges: (prev) => [...prev, ...documentBadges],
@@ -288,5 +288,4 @@ const SINGLETON_TYPES = new Set<string>([
   'notFoundPage',
   'privacyPage',
   'studioGuide',
-  'studioNotes',
 ]);

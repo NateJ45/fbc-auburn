@@ -24,7 +24,6 @@ import { redirect } from './redirect';
 import { sectionPreset } from './sectionPreset';
 import { siteSettings } from './siteSettings';
 import { studioGuide } from './studioGuide';
-import { studioNotes } from './studioNotes';
 
 export const schemaTypes = [
   // Object types (embedded) first so they're defined before docs that reference them
@@ -41,7 +40,7 @@ export const schemaTypes = [
 
   // Singletons
   siteSettings,
-  businessInfo, // Content-side singleton: service areas, travel fees, availability, geo
+  businessInfo, // Starter business details; not in the desk, no document (queries.ts reads it)
   homePage,
   aboutPage, // scaffold: about
   faqPage, // scaffold: faq
@@ -49,9 +48,9 @@ export const schemaTypes = [
   journalPage, // scaffold: journal
   notFoundPage,
   privacyPage,
-  // Start Here editable singletons
+  // The starter's old "Start Here" handbook. Not shown in the desk (the Site
+  // Guide replaced it), but kept registered because a document of it exists.
   studioGuide,
-  studioNotes,
 
   // Reusable content collections
   announcement, // site-wide banner collection (enabled + date-windowed)

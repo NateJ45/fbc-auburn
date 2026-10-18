@@ -1,5 +1,5 @@
 // scaffold-file: faq
-// FAQ category document. Lets editors define FAQ groupings as real content
+// Question group document (shown to editors as "Question group"). Lets editors define FAQ groupings as real content
 // instead of hardcoded string options. Each faqItem can reference a category
 // here via categoryRef; the frontend coalesces categoryRef->title with the
 // legacy category string so both old and new data render correctly.
@@ -9,23 +9,23 @@ import { defineType, defineField } from 'sanity';
 
 export const faqCategory = defineType({
   name: 'faqCategory',
-  title: 'FAQ Category',
+  title: 'Question group',
   type: 'document',
   fields: [
     defineField({
       name: 'title',
-      title: 'Category title',
+      title: 'Group heading',
       type: 'string',
       description:
-        'The group heading shown above FAQ items on the FAQ page. Example: "Pricing & Cost".',
+        'The heading shown above this group of questions on the Questions page. Example: "Your first Sunday".',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
-      title: 'Slug (optional)',
+      title: 'Web address ending (optional)',
       type: 'slug',
       description:
-        'URL-friendly identifier. Optional — used if you ever need to deep-link to a category.',
+        'Optional. Only needed if you ever want to link straight to this group. Press Generate to make one from the heading.',
       options: { source: 'title', maxLength: 96 },
     }),
     defineField({
@@ -33,7 +33,7 @@ export const faqCategory = defineType({
       title: 'Display order',
       type: 'number',
       description:
-        'Lower numbers appear first in the FAQ category list. Leave blank to sort alphabetically.',
+        'Lower numbers appear first on the Questions page. Leave blank to sort alphabetically.',
     }),
   ],
   preview: {

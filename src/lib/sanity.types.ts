@@ -144,18 +144,6 @@ export type Announcement = {
   enabled?: boolean;
 };
 
-export type StudioNotes = {
-  _id: string;
-  _type: 'studioNotes';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  businessSummary?: string;
-  idealClient?: string;
-  voiceSummary?: string;
-  wordsToAvoid?: Array<string>;
-};
-
 export type StudioGuide = {
   _id: string;
   _type: 'studioGuide';
@@ -332,16 +320,7 @@ export type SiteSettings = {
   socialInstagram?: string;
   socialFacebook?: string;
   socialLinks?: Array<{
-    platform?:
-      | 'Instagram'
-      | 'Facebook'
-      | 'LinkedIn'
-      | 'Pinterest'
-      | 'YouTube'
-      | 'TikTok'
-      | 'X'
-      | 'Houzz'
-      | 'Other';
+    platform?: 'Instagram' | 'Facebook' | 'LinkedIn' | 'YouTube' | 'TikTok' | 'X' | 'Other';
     url?: string;
     label?: string;
     _type: 'socialLink';
@@ -539,7 +518,7 @@ export type DynamicListSection = {
     _key: string;
   }>;
   columns?: 2 | 3;
-  source?: 'journal' | 'services' | 'testimonials' | 'faqs';
+  source?: 'journal' | 'faqs';
   limit?: number;
   cta?: CtaBlock;
 };
@@ -745,9 +724,6 @@ export type SectionPreset = {
       } & SpacerSection)
     | ({
         _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
       } & EmbedSection)
     | ({
         _key: string;
@@ -764,18 +740,6 @@ export type SectionPreset = {
     | ({
         _key: string;
       } & WalkSection)
-    | ({
-        _key: string;
-      } & FounderSection)
-    | ({
-        _key: string;
-      } & StorySection)
-    | ({
-        _key: string;
-      } & ServiceAreaSection)
-    | ({
-        _key: string;
-      } & GuaranteeSection)
     | ({
         _key: string;
       } & FaqSection)
@@ -1183,9 +1147,6 @@ export type PrivacyPage = {
       } & SpacerSection)
     | ({
         _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
       } & EmbedSection)
     | ({
         _key: string;
@@ -1244,9 +1205,6 @@ export type Page = {
     | ({
         _key: string;
       } & SpacerSection)
-    | ({
-        _key: string;
-      } & LogoStripSection)
     | ({
         _key: string;
       } & EmbedSection)
@@ -1342,20 +1300,12 @@ export type JournalEntry = {
         }>;
         style?: 'normal' | 'lead' | 'h2' | 'h3' | 'h4' | 'blockquote';
         listItem?: 'bullet' | 'number';
-        markDefs?: Array<
-          | {
-              href?: string;
-              openInNewTab?: boolean;
-              _type: 'link';
-              _key: string;
-            }
-          | {
-              vendor?: string;
-              url?: string;
-              _type: 'sourcedFrom';
-              _key: string;
-            }
-        >;
+        markDefs?: Array<{
+          href?: string;
+          openInNewTab?: boolean;
+          _type: 'link';
+          _key: string;
+        }>;
         level?: number;
         _type: 'block';
         _key: string;
@@ -1375,44 +1325,6 @@ export type JournalEntry = {
         quote?: string;
         attribution?: string;
         _type: 'pullQuote';
-        _key: string;
-      }
-    | {
-        beforeImage?: {
-          asset?: SanityImageAssetReference;
-          media?: unknown;
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          alt?: string;
-          _type: 'image';
-        };
-        afterImage?: {
-          asset?: SanityImageAssetReference;
-          media?: unknown;
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          alt?: string;
-          _type: 'image';
-        };
-        caption?: string;
-        _type: 'beforeAfter';
-        _key: string;
-      }
-    | {
-        image?: {
-          asset?: SanityImageAssetReference;
-          media?: unknown;
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          alt?: string;
-          _type: 'image';
-        };
-        itemName?: string;
-        vendor?: string;
-        price?: string;
-        url?: string;
-        notes?: string;
-        _type: 'sourceCard';
         _key: string;
       }
     | {
@@ -1546,9 +1458,6 @@ export type JournalPage = {
       } & SpacerSection)
     | ({
         _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
       } & EmbedSection)
     | ({
         _key: string;
@@ -1667,9 +1576,6 @@ export type ContactPage = {
       } & SpacerSection)
     | ({
         _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
       } & EmbedSection)
     | ({
         _key: string;
@@ -1765,9 +1671,6 @@ export type FaqPage = {
       } & SpacerSection)
     | ({
         _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
       } & EmbedSection)
     | ({
         _key: string;
@@ -1826,9 +1729,6 @@ export type AboutPage = {
       } & SpacerSection)
     | ({
         _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
       } & EmbedSection)
     | ({
         _key: string;
@@ -1848,9 +1748,6 @@ export type AboutPage = {
     | ({
         _key: string;
       } & SyncedSection)
-    | ({
-        _key: string;
-      } & StorySection)
     | ({
         _key: string;
       } & FaqSection)
@@ -1999,9 +1896,6 @@ export type HomePage = {
       } & SpacerSection)
     | ({
         _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
       } & EmbedSection)
     | ({
         _key: string;
@@ -2021,9 +1915,6 @@ export type HomePage = {
     | ({
         _key: string;
       } & SyncedSection)
-    | ({
-        _key: string;
-      } & FounderSection)
     | ({
         _key: string;
       } & FaqSection)
@@ -2276,7 +2167,6 @@ export type AllSanitySchemaTypes =
   | FaqItem
   | FaqCategory
   | Announcement
-  | StudioNotes
   | StudioGuide
   | NotFoundPage
   | SanityImageCrop

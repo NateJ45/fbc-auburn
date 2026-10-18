@@ -1,6 +1,6 @@
 // scaffold-file: faq
-// FAQ page singleton. Questions auto-populate from faqItem collection,
-// grouped by category in the order specified by categoryOrder.
+// FAQ page singleton (editors see it as "Questions"). Questions auto-populate
+// from the faqItem collection, grouped by question group.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { additionalSectionsField } from './sections';
@@ -8,15 +8,15 @@ import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 
 export const faqPage = defineType({
   name: 'faqPage',
-  title: 'FAQ Page',
+  title: 'Questions page',
   type: 'document',
-  // Marketing copy is locked and structural — edit fields directly in Studio, not Canvas.
+  // Locked and structural: edit fields directly in Studio, not Canvas.
   options: { canvasApp: { exclude: true } },
   groups: [
-    { name: 'seo', title: 'SEO' },
-    { name: 'hero', title: 'Hero' },
-    { name: 'list', title: 'Category order' },
-    { name: 'final', title: 'Final CTA' },
+    { name: 'seo', title: 'Google and sharing' },
+    { name: 'hero', title: 'Opening banner' },
+    { name: 'list', title: 'Order of the groups' },
+    { name: 'final', title: 'Closing invitation' },
     { name: 'extra', title: 'Extra sections' },
   ],
   fields: [
@@ -26,7 +26,7 @@ export const faqPage = defineType({
       type: 'string',
       group: 'seo',
       description:
-        'Browser tab and Google result title. Aim for 50 to 60 characters. Front-load the location or service.',
+        'Browser tab and Google result title. Aim for 50 to 60 characters. Start with the church name or Hamilton.',
       validation: (Rule) =>
         Rule.max(60).warning(
           'Titles longer than about 60 characters get cut off in Google search results.',
@@ -51,39 +51,39 @@ export const faqPage = defineType({
       type: 'image',
       group: 'seo',
       description:
-        'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site Settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
+        'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
 
     defineField({
       name: 'heroEyebrow',
-      title: 'Hero eyebrow',
+      title: 'Small line above the heading',
       type: 'string',
       group: 'hero',
-      initialValue: 'Common Questions.',
+      initialValue: 'Before you visit',
     }),
     defineField({
       name: 'heroHeadline',
-      title: 'Hero headline',
+      title: 'Heading',
       type: 'string',
       group: 'hero',
-      initialValue: 'Everything You Want to Know.',
+      initialValue: 'Questions',
     }),
     defineField({
       name: 'heroSubhead',
-      title: 'Hero subhead',
+      title: 'Line under the heading',
       type: 'text',
       rows: 2,
       group: 'hero',
     }),
     defineField({
       name: 'heroImage',
-      title: 'Hero background image',
+      title: 'Banner photo',
       type: 'image',
       group: 'hero',
       description:
-        'Full-bleed photo behind the hero text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
+        'Full-width photo behind the banner text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
       options: { hotspot: true },
       fields: [
         defineField({
@@ -105,37 +105,31 @@ export const faqPage = defineType({
 
     defineField({
       name: 'categoryOrder',
-      title: 'Category order',
+      title: 'Order of the question groups',
       type: 'array',
       group: 'list',
-      description: 'Drag to reorder. Must match the option values on faqItem.category.',
+      description:
+        'Drag to reorder. Each line must match a Question group heading exactly, such as "Your first Sunday".',
       of: [defineArrayMember({ type: 'string' })],
-      initialValue: [
-        'Pricing & Cost',
-        'The Process',
-        'Logistics',
-        'Service Area',
-        'Getting Started',
-      ],
     }),
 
     defineField({
       name: 'finalCtaEyebrow',
-      title: 'Final CTA eyebrow',
+      title: 'Closing invitation: small line above the heading',
       type: 'string',
       group: 'final',
-      initialValue: 'Not Finding Your Answer?',
+      initialValue: 'Still wondering?',
     }),
     defineField({
       name: 'finalCtaHeadline',
-      title: 'Final CTA headline',
+      title: 'Closing invitation: heading',
       type: 'string',
       group: 'final',
       initialValue: 'Just ask.',
     }),
     defineField({
       name: 'finalCtaScriptAccent',
-      title: 'Final CTA heading script accent (optional)',
+      title: 'Closing invitation: script accent word (optional)',
       type: 'string',
       group: 'final',
       description:
@@ -143,20 +137,20 @@ export const faqPage = defineType({
     }),
     defineField({
       name: 'finalCtaSubhead',
-      title: 'Final CTA subhead',
+      title: 'Closing invitation: line under the heading',
       type: 'text',
       rows: 2,
       group: 'final',
     }),
     defineField({
       name: 'finalCta',
-      title: 'Final CTA button (primary)',
+      title: 'Closing invitation: button',
       type: 'ctaBlock',
       group: 'final',
     }),
     defineField({
       name: 'finalCtaBackgroundImage',
-      title: 'Final CTA background image (optional)',
+      title: 'Closing invitation: background photo (optional)',
       type: 'image',
       group: 'final',
       options: { hotspot: true },
@@ -165,11 +159,10 @@ export const faqPage = defineType({
     }),
     defineField({
       name: 'secondaryCta',
-      title: 'Secondary CTA (optional)',
+      title: 'Closing invitation: second button (optional)',
       type: 'ctaBlock',
       group: 'final',
-      description:
-        'Optional second button next to the primary CTA. Use for "see process" / "browse portfolio" style secondary actions.',
+      description: 'Optional second button beside the main one, for example "Plan your visit".',
     }),
 
     defineField({
@@ -185,5 +178,5 @@ export const faqPage = defineType({
     // The authoring kit (card 109): Insert a saved section, plus gentle warnings.
     defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
   ],
-  preview: { prepare: () => ({ title: 'FAQ Page' }) },
+  preview: { prepare: () => ({ title: 'Questions page' }) },
 });

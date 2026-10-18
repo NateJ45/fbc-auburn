@@ -1,10 +1,11 @@
 // scaffold-file: journal
-// Journal/blog post. Designed to handle every kind of post the founder might write:
-// project walkthroughs, style guides, behind-the-scenes, source roundups,
-// process explainers, opinion pieces, announcements. The body field accepts
-// rich Portable Text plus seven custom inline blocks (pullQuote, beforeAfter,
-// sourceCard, tipCallout, imageGallery, divider, videoEmbed) that the
-// JournalPortableText renderer styles to brand.
+// A News and notes post (the code name is "journal"): church news, sermon
+// notes, stories, event write-ups. The body field accepts rich Portable Text
+// plus five custom blocks (pullQuote, tipCallout, imageGallery, divider,
+// videoEmbed) that the JournalPortableText renderer styles to brand.
+// FBC Auburn (2026-10-18): the starter's beforeAfter and sourceCard blocks and
+// the "Sourced from" annotation (interior-design leftovers) were removed from
+// the schema; no post used them. The renderer still knows them, harmlessly.
 //
 // Editor experience: groups split fields into Meta / Content / SEO / Related so
 // the form isn't a wall. The body field is the only one the editor touches for the
@@ -14,12 +15,12 @@ import { defineType, defineField, defineArrayMember } from 'sanity';
 
 export const journalEntry = defineType({
   name: 'journalEntry',
-  title: 'Journal Entry',
+  title: 'Post',
   type: 'document',
   groups: [
-    { name: 'meta', title: 'Meta' },
+    { name: 'meta', title: 'About this post' },
     { name: 'content', title: 'Content' },
-    { name: 'seo', title: 'SEO' },
+    { name: 'seo', title: 'Google and sharing' },
     { name: 'related', title: 'Related' },
   ],
   fields: [
@@ -41,10 +42,10 @@ export const journalEntry = defineType({
     }),
     defineField({
       name: 'slug',
-      title: 'Slug',
+      title: 'Web address ending',
       type: 'slug',
       description:
-        'URL-friendly version (auto-generated from title). The post lives at /journal/{slug}.',
+        "The end of the post's web address, made from the title when you press Generate. The post lives at /journal/ followed by this. Set it before you publish, and leave it alone afterwards.",
       options: { source: 'title', maxLength: 96 },
       group: 'meta',
       validation: (Rule) => Rule.required(),
@@ -54,13 +55,13 @@ export const journalEntry = defineType({
       title: 'Excerpt',
       type: 'text',
       description:
-        'One or two sentences that show on the journal index card AND the SEO description. ~160 characters reads well in Google.',
+        "One or two sentences shown on the post's card in News and notes, and in Google. About 160 characters reads well.",
       rows: 3,
       group: 'meta',
       options: {
         canvasApp: {
           purpose:
-            'One or two sentences shown on the journal card AND as the SEO description (~160 chars). Voice: warm, plain-spoken, slightly informal. Specific beats generic.',
+            'One or two sentences shown on the post card and in Google (about 160 characters). Voice: warm, plain-spoken, slightly informal. Specific beats generic.',
         },
       },
       validation: (Rule) => Rule.required().max(220),
@@ -69,8 +70,7 @@ export const journalEntry = defineType({
       name: 'coverImage',
       title: 'Cover image',
       type: 'image',
-      description:
-        'The hero/cover image. Shows large at the top of the post and as the card thumbnail on the journal index.',
+      description: 'Shows large at the top of the post and as the card picture in News and notes.',
       group: 'meta',
       options: { hotspot: true },
       fields: [
@@ -84,7 +84,7 @@ export const journalEntry = defineType({
           name: 'caption',
           title: 'Caption (optional)',
           type: 'string',
-          description: 'Italic line under the cover image. Sourcing or location detail works well.',
+          description: 'Italic line under the cover image, such as where or when it was taken.',
         }),
       ],
     }),
@@ -101,16 +101,16 @@ export const journalEntry = defineType({
       name: 'author',
       title: 'Author',
       type: 'string',
-      description: 'Byline. Defaults to the founder. Change if a guest writes a post.',
+      description:
+        'Who wrote it, shown under the title. Example: "Pastor Jacob". Leave blank for no byline.',
       group: 'meta',
-      initialValue: 'Your Name',
     }),
     defineField({
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
       description:
-        'When the post goes live. Set to a future date to schedule (Sanity still publishes the doc, but you can use this for sorting).',
+        'The date shown on the post, and the order posts are listed in. It does not hold a post back: Publish still makes it public straight away.',
       group: 'meta',
       initialValue: () => new Date().toISOString(),
       validation: (Rule) => Rule.required(),
@@ -120,15 +120,14 @@ export const journalEntry = defineType({
       title: 'Updated at',
       type: 'datetime',
       description:
-        'Optional. Set this when you significantly revise a post so the BlogPosting JSON-LD shows the right date for SEO.',
+        'Optional. Set this when you make a big change to a post, so Google sees the new date.',
       group: 'meta',
     }),
     defineField({
       name: 'featured',
       title: 'Featured (pin to top)',
       type: 'boolean',
-      description:
-        'If checked, this post appears first on the journal index regardless of publish date.',
+      description: 'If checked, this post appears first in News and notes whatever its date.',
       group: 'meta',
       initialValue: false,
     }),
@@ -139,12 +138,12 @@ export const journalEntry = defineType({
       title: 'Body',
       type: 'array',
       description:
-        'The post itself. Use headings to break it up; the seven custom blocks (pull quote, before/after, source card, tip, gallery, divider, video) appear in the "insert" menu.',
+        'The post itself. Use headings to break it up; the extra blocks (pull quote, tip, gallery, divider, video) are in the "insert" menu.',
       group: 'content',
       options: {
         canvasApp: {
           purpose:
-            "Long-form blog post body. Voice: warm, plain-spoken, slightly informal — like a knowledgeable friend, not a brochure. Show specific thinking. Stop when done; don't tack on summary sentences. Be specific over general.",
+            "Church news post body. Voice: warm, plain-spoken, slightly informal, like a friend from church, not a brochure. Stop when done; don't tack on summary sentences. Be specific over general.",
         },
       },
       validation: (Rule) => Rule.required().min(1),
@@ -186,23 +185,6 @@ export const journalEntry = defineType({
                   },
                 ],
               },
-              {
-                // Inline "Sourced from" annotation — italic small-caps treatment
-                // for vendor mentions in prose. Pair with sourceCard block when
-                // the item deserves a full card with image + price.
-                name: 'sourcedFrom',
-                type: 'object',
-                title: 'Sourced from',
-                fields: [
-                  {
-                    name: 'vendor',
-                    type: 'string',
-                    title: 'Vendor / source name',
-                    validation: (R) => R.required(),
-                  },
-                  { name: 'url', type: 'url', title: 'Vendor URL (optional)' },
-                ],
-              },
             ],
           },
         }),
@@ -240,7 +222,7 @@ export const journalEntry = defineType({
           preview: { select: { title: 'caption', subtitle: 'alt', media: 'asset' } },
         }),
 
-        // Pull quote — the dramatic editorial pull quote
+        // Pull quote: a line pulled out large
         defineArrayMember({
           type: 'object',
           name: 'pullQuote',
@@ -258,7 +240,7 @@ export const journalEntry = defineType({
               title: 'Attribution',
               type: 'string',
               description:
-                'Optional. Who said it. Skip for editorial pull-quotes you wrote yourself.',
+                'Optional. Who said it, or the Bible reference. Skip for a line from the post itself.',
             }),
           ],
           preview: {
@@ -269,114 +251,12 @@ export const journalEntry = defineType({
                   ? quote.slice(0, 60) + '…'
                   : quote
                 : '(empty quote)',
-              subtitle: attribution || '— pull quote',
+              subtitle: attribution || 'Pull quote',
             }),
           },
         }),
 
-        // Before/After pair — for project posts
-        defineArrayMember({
-          type: 'object',
-          name: 'beforeAfter',
-          title: 'Before / After',
-          fields: [
-            defineField({
-              name: 'beforeImage',
-              title: 'Before',
-              type: 'image',
-              options: { hotspot: true },
-              fields: [
-                defineField({
-                  name: 'alt',
-                  title: 'Alt text',
-                  type: 'string',
-                  validation: (R) => R.required(),
-                }),
-              ],
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'afterImage',
-              title: 'After',
-              type: 'image',
-              options: { hotspot: true },
-              fields: [
-                defineField({
-                  name: 'alt',
-                  title: 'Alt text',
-                  type: 'string',
-                  validation: (R) => R.required(),
-                }),
-              ],
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'caption',
-              title: 'Caption',
-              type: 'string',
-              description: 'Optional. Brief note on what changed.',
-            }),
-          ],
-          preview: {
-            select: { caption: 'caption', media: 'afterImage' },
-            prepare: ({ caption, media }) => ({ title: caption ?? 'Before / After', media }),
-          },
-        }),
-
-        // Source card — vendor/source roundup item
-        defineArrayMember({
-          type: 'object',
-          name: 'sourceCard',
-          title: 'Source card',
-          description:
-            'For "where I got it" / vendor mentions. Renders as a small card with image, name, vendor, price, and link.',
-          fields: [
-            defineField({
-              name: 'image',
-              title: 'Image',
-              type: 'image',
-              options: { hotspot: true },
-              fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
-            }),
-            defineField({
-              name: 'itemName',
-              title: 'Item name',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'vendor',
-              title: 'Vendor',
-              type: 'string',
-              description: 'Where it came from. Example: "Schoolhouse" or "Local vintage find".',
-            }),
-            defineField({
-              name: 'price',
-              title: 'Price (display)',
-              type: 'string',
-              description:
-                'How the price shows. Examples: "$340", "Around $80 at the time", "Vintage, varies".',
-            }),
-            defineField({
-              name: 'url',
-              title: 'URL',
-              type: 'url',
-              description: 'Optional. Link to the product or vendor.',
-            }),
-            defineField({
-              name: 'notes',
-              title: 'Notes',
-              type: 'text',
-              rows: 2,
-              description: 'Optional. Why you picked it, alternatives, etc.',
-            }),
-          ],
-          preview: {
-            select: { title: 'itemName', subtitle: 'vendor', media: 'image' },
-          },
-        }),
-
-        // Tip callout — a labeled aside ("Designer's note:", "Worth knowing:", etc.)
+        // Tip callout: a labeled aside ("Worth knowing", "Please note", etc.)
         defineArrayMember({
           type: 'object',
           name: 'tipCallout',
@@ -387,7 +267,7 @@ export const journalEntry = defineType({
               title: 'Label',
               type: 'string',
               description:
-                'Short eyebrow on the callout. Examples: "Worth knowing", "Pro tip", "Common mistake".',
+                'Short label on the callout. Examples: "Worth knowing", "Please note", "Bring with you".',
               initialValue: 'Worth knowing',
               validation: (Rule) => Rule.required().max(40),
             }),
@@ -521,7 +401,7 @@ export const journalEntry = defineType({
               initialValue: 'ornament',
             }),
           ],
-          preview: { prepare: () => ({ title: '— Divider —' }) },
+          preview: { prepare: () => ({ title: 'Divider' }) },
         }),
 
         // Video embed (YouTube/Vimeo URL)
@@ -557,12 +437,12 @@ export const journalEntry = defineType({
       title: 'SEO title',
       type: 'string',
       description:
-        'Browser tab and Google result title. Aim for 50 to 60 characters. Optional — defaults to the post title.',
+        'Browser tab and Google result title. Aim for 50 to 60 characters. Optional: leave blank to use the post title.',
       group: 'seo',
       options: {
         canvasApp: {
           purpose:
-            'Optional override for the HTML <title> tag. 50-60 chars. Front-load the keyword (location or topic). No marketing puffery.',
+            'Optional override for the HTML <title> tag. 50-60 chars. Start with the topic. No marketing puffery.',
         },
       },
       validation: (Rule) =>
@@ -576,7 +456,7 @@ export const journalEntry = defineType({
       type: 'text',
       rows: 3,
       description:
-        'The sentence under the title in Google results. Aim for 150 to 160 characters. Optional — defaults to the excerpt.',
+        'The sentence under the title in Google results. Aim for 150 to 160 characters. Optional: leave blank to use the excerpt.',
       group: 'seo',
       options: {
         canvasApp: {
@@ -596,7 +476,7 @@ export const journalEntry = defineType({
       title: 'Related posts',
       type: 'array',
       description:
-        'Optional. Up to three other journal posts to surface at the bottom of this one. If empty, the site auto-picks the most recent posts in the same category.',
+        'Optional. Up to three other posts to show at the bottom of this one. If empty, the site picks the newest posts in the same category.',
       of: [defineArrayMember({ type: 'reference', to: [{ type: 'journalEntry' }] })],
       validation: (Rule) => Rule.max(3),
       group: 'related',

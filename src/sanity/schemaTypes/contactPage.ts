@@ -1,5 +1,9 @@
-// Contact page singleton. Email, social links, service area come from siteSettings.
-// Form field options (project types) are wired in the Astro component, not Sanity.
+// Contact page singleton. Email and social links come from siteSettings.
+// The form asks the church's own questions ("Your own questions", formFields).
+// FBC Auburn (2026-10-18): the starter's business-form fields (project type,
+// location, budget, timeline, lead source) and the booking-link fields are
+// HIDDEN, not deleted: some hold old placeholder data, and formFields replaces
+// that part of the form anyway (src/lib/custom-form-fields.ts).
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { additionalSectionsField } from './sections';
@@ -7,15 +11,14 @@ import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 
 export const contactPage = defineType({
   name: 'contactPage',
-  title: 'Contact Page',
+  title: 'Contact page',
   type: 'document',
-  // Marketing copy is locked and structural — edit fields directly in Studio, not Canvas.
+  // Locked and structural: edit fields directly in Studio, not Canvas.
   options: { canvasApp: { exclude: true } },
   groups: [
-    { name: 'seo', title: 'SEO' },
-    { name: 'hero', title: 'Hero' },
-    { name: 'form', title: 'Form intro + expectations' },
-    { name: 'scheduling', title: 'Scheduling' },
+    { name: 'seo', title: 'Google and sharing' },
+    { name: 'hero', title: 'Opening banner' },
+    { name: 'form', title: 'The form' },
     { name: 'extra', title: 'Extra sections' },
   ],
   fields: [
@@ -25,7 +28,7 @@ export const contactPage = defineType({
       type: 'string',
       group: 'seo',
       description:
-        'Browser tab and Google result title. Aim for 50 to 60 characters. Front-load the location or service.',
+        'Browser tab and Google result title. Aim for 50 to 60 characters. Start with the church name or Hamilton.',
       validation: (Rule) =>
         Rule.max(60).warning(
           'Titles longer than about 60 characters get cut off in Google search results.',
@@ -50,39 +53,39 @@ export const contactPage = defineType({
       type: 'image',
       group: 'seo',
       description:
-        'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site Settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
+        'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
 
     defineField({
       name: 'heroEyebrow',
-      title: 'Hero eyebrow',
+      title: 'Small line above the heading',
       type: 'string',
       group: 'hero',
-      initialValue: 'Request a Consultation.',
+      initialValue: 'Get in touch',
     }),
     defineField({
       name: 'heroHeadline',
-      title: 'Hero headline',
+      title: 'Heading',
       type: 'string',
       group: 'hero',
-      initialValue: 'Start the Conversation.',
+      initialValue: 'Contact us',
     }),
     defineField({
       name: 'heroSubhead',
-      title: 'Hero subhead',
+      title: 'Line under the heading',
       type: 'text',
       rows: 2,
       group: 'hero',
     }),
     defineField({
       name: 'heroImage',
-      title: 'Hero background image',
+      title: 'Banner photo',
       type: 'image',
       group: 'hero',
       description:
-        'Full-bleed photo behind the hero text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
+        'Full-width photo behind the banner text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
       options: { hotspot: true },
       fields: [
         defineField({
@@ -104,17 +107,20 @@ export const contactPage = defineType({
 
     defineField({
       name: 'formIntroNote',
-      title: 'Form intro note',
+      title: 'Note above the form',
       type: 'text',
       rows: 3,
       group: 'form',
-      description: 'Pre-submit expectation note shown above the form.',
+      description: 'A line or two above the form, such as how soon someone will reply.',
     }),
     defineField({
       name: 'formProjectTypeOptions',
       title: 'Project type dropdown options',
       type: 'array',
       group: 'form',
+      // FBC Auburn (2026-10-18): a business-form leftover. Hidden, not deleted:
+      // the page's own questions ("Your own questions") replace it on the form.
+      hidden: true,
       description:
         'The options shown in the "Project type" dropdown on the contact form. Order matters. Examples: "Single room", "Whole home", "Builder/realtor partnership".',
       of: [defineArrayMember({ type: 'string' })],
@@ -124,6 +130,9 @@ export const contactPage = defineType({
       title: 'Location dropdown options',
       type: 'array',
       group: 'form',
+      // FBC Auburn (2026-10-18): a business-form leftover. Hidden, not deleted:
+      // the page's own questions ("Your own questions") replace it on the form.
+      hidden: true,
       description:
         'Cities shown in the "Location" dropdown. List in priority order. Leave blank to use the built-in defaults.',
       of: [defineArrayMember({ type: 'string' })],
@@ -133,8 +142,10 @@ export const contactPage = defineType({
       title: 'Budget dropdown options',
       type: 'array',
       group: 'form',
-      description:
-        'Budget brackets shown on the form. The wording matters — keep the "Not sure yet" option so the form stays approachable. Leave blank and the form falls back to labelled placeholders, which is a prompt to fill this in rather than a usable default.',
+      // FBC Auburn (2026-10-18): a business-form leftover. Hidden, not deleted:
+      // the page's own questions ("Your own questions") replace it on the form.
+      hidden: true,
+      description: 'Brackets for the built-in form. Not used on this site.',
       of: [defineArrayMember({ type: 'string' })],
     }),
     defineField({
@@ -142,8 +153,10 @@ export const contactPage = defineType({
       title: 'Timeline dropdown options',
       type: 'array',
       group: 'form',
-      description:
-        'Timeline buckets shown on the form. Leave blank to use the built-in defaults (ASAP, 1–3 months, 3–6 months, 6+ months, Flexible).',
+      // FBC Auburn (2026-10-18): a business-form leftover. Hidden, not deleted:
+      // the page's own questions ("Your own questions") replace it on the form.
+      hidden: true,
+      description: 'Choices for the built-in form. Not used on this site.',
       of: [defineArrayMember({ type: 'string' })],
     }),
     defineField({
@@ -151,13 +164,16 @@ export const contactPage = defineType({
       title: '"How did you hear about us?" dropdown options',
       type: 'array',
       group: 'form',
+      // FBC Auburn (2026-10-18): a business-form leftover. Hidden, not deleted:
+      // the page's own questions ("Your own questions") replace it on the form.
+      hidden: true,
       description:
         'Optional lead-source dropdown options. Useful for understanding where good leads come from over time. Leave blank to use the built-in defaults (Google, Instagram, Facebook, referrals, journal, Other), and replace those with the channels this business is actually findable on.',
       of: [defineArrayMember({ type: 'string' })],
     }),
     // Editor-defined questions. Leave this empty and the contact form is
     // exactly the built-in one. Add a question and YOUR questions replace the
-    // studio-specific middle of the form (location, project type, budget,
+    // starter's middle of the form (location, project type, budget,
     // timeline, message, source). The standard name, email, and phone boxes
     // always stay at the top, so a reply address is guaranteed either way.
     // Shaping and caps: src/lib/custom-form-fields.ts.
@@ -167,30 +183,30 @@ export const contactPage = defineType({
       type: 'array',
       group: 'form',
       description:
-        'Optional. Write your own questions and they replace the built-in project questions. The name, email, and phone boxes always come first. Maximum 12 questions.',
+        'The questions on the form, in order. The name, email, and phone boxes always come first. Maximum 12 questions.',
       of: [defineArrayMember({ type: 'formQuestion' })],
       validation: (Rule) => Rule.max(12),
     }),
     defineField({
       name: 'whatToExpectEyebrow',
-      title: '"What to expect" eyebrow',
+      title: '"What happens next": small line above the heading',
       type: 'string',
       group: 'form',
-      initialValue: 'What to Expect.',
+      initialValue: 'What happens next',
     }),
     defineField({
       name: 'whatToExpectHeadline',
-      title: '"What to expect" headline',
+      title: '"What happens next": heading',
       type: 'string',
       group: 'form',
-      initialValue: 'When you submit this form...',
+      initialValue: 'When you send this',
     }),
     defineField({
       name: 'whatToExpectContent',
-      title: '"What to expect" content',
+      title: '"What happens next": words',
       type: 'array',
       group: 'form',
-      description: 'The "no automated sequence" copy.',
+      description: 'A few sentences on who reads the message and when they reply.',
       of: [
         defineArrayMember({
           type: 'block',
@@ -207,11 +223,11 @@ export const contactPage = defineType({
     }),
     defineField({
       name: 'postInquiryRoadmap',
-      title: 'Post-inquiry roadmap',
+      title: 'What happens after you get in touch',
       type: 'array',
       group: 'form',
       description:
-        'Numbered "what happens after you reach out" steps — the scannable version of the What to Expect content. Each step shows as a numbered item on the Contact page.',
+        'Optional numbered steps. When there are any, they show instead of the "What happens next" words above.',
       of: [
         defineArrayMember({
           type: 'object',
@@ -222,7 +238,7 @@ export const contactPage = defineType({
               title: 'Step title',
               type: 'string',
               description:
-                'Short heading for this step. Example: "We review your inquiry within 48 hours."',
+                'Short heading for this step. Example: "The pastor reads every message."',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
@@ -237,8 +253,7 @@ export const contactPage = defineType({
               name: 'timeEstimate',
               title: 'Time estimate (optional)',
               type: 'string',
-              description:
-                'How long this step typically takes. Example: "Within 48 hours" or "1–2 weeks".',
+              description: 'How long this step usually takes. Example: "Within two days".',
             }),
           ],
           preview: {
@@ -254,23 +269,23 @@ export const contactPage = defineType({
 
     defineField({
       name: 'schedulingLink',
-      title: 'Scheduling link (Calendly)',
+      title: 'Booking link',
       type: 'url',
-      group: 'scheduling',
+      // FBC Auburn (2026-10-18): a business booking-call leftover; hidden, never set.
+      hidden: true,
     }),
     defineField({
       name: 'schedulingLinkLabel',
-      title: 'Scheduling link label',
+      title: 'Booking link label',
       type: 'string',
-      group: 'scheduling',
-      initialValue: 'Schedule a 20-minute discovery call.',
+      hidden: true,
     }),
     defineField({
       name: 'availabilityNote',
       title: 'Availability note override',
       type: 'string',
-      group: 'scheduling',
-      description: 'Optional override of siteSettings.availabilityStatus. Usually leave blank.',
+      hidden: true,
+      description: 'Optional override of the availability line. Usually leave blank.',
     }),
 
     defineField({
@@ -286,5 +301,5 @@ export const contactPage = defineType({
     // The authoring kit (card 109): Insert a saved section, plus gentle warnings.
     defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
   ],
-  preview: { prepare: () => ({ title: 'Contact Page' }) },
+  preview: { prepare: () => ({ title: 'Contact page' }) },
 });

@@ -1,6 +1,6 @@
 // scaffold-file: faq
-// Individual FAQ. Grouped by category on the FAQ page and selectively
-// included on the Process page via `alsoShowOnProcessPage`.
+// One question and answer. Grouped by question group on the Questions page.
+// (`alsoShowOnProcessPage` is hidden: this site has no Process page.)
 // U8: categoryRef (reference to faqCategory document) replaces the legacy
 // hardcoded category string. The frontend coalesces categoryRef->title with
 // the legacy category string so existing data renders without migration.
@@ -9,7 +9,7 @@ import { defineType, defineField, defineArrayMember } from 'sanity';
 
 export const faqItem = defineType({
   name: 'faqItem',
-  title: 'FAQ Item',
+  title: 'Question',
   type: 'document',
   fields: [
     defineField({
@@ -20,7 +20,7 @@ export const faqItem = defineType({
       options: {
         canvasApp: {
           purpose:
-            'The question as a visitor would actually ask it — plain English, not jargon. Example: "How much does a full room design cost?" not "What is the pricing structure for full-room design services?"',
+            'The question as a visitor would actually ask it, in plain words. Example: "Where do I park on Sunday?" not "What parking provision is available for worship services?"',
         },
       },
       validation: (Rule) => Rule.required(),
@@ -33,7 +33,7 @@ export const faqItem = defineType({
       options: {
         canvasApp: {
           purpose:
-            "Plain-English answer. Voice: warm, slightly informal, confident about money. Lead with the direct answer; expand if needed. Stop when done — don't pad. Banned: transformative, curated, elevated, tailored, investment in your space.",
+            "Plain-English answer. Voice: warm, welcoming, slightly informal, as if the pastor were answering at the door. Lead with the direct answer; expand if needed. Stop when done, don't pad.",
         },
       },
       of: [
@@ -84,6 +84,7 @@ export const faqItem = defineType({
       description: 'Legacy hardcoded category. Use categoryRef for new items.',
       options: {
         list: [
+          // The starter's old fixed groups. Hidden and read-only; never shown.
           { title: 'Pricing & Cost', value: 'Pricing & Cost' },
           { title: 'The Process', value: 'The Process' },
           { title: 'Logistics', value: 'Logistics' },
@@ -98,23 +99,25 @@ export const faqItem = defineType({
     // only carry the legacy category string still display correctly via coalesce.
     defineField({
       name: 'categoryRef',
-      title: 'Category',
+      title: 'Question group',
       type: 'reference',
       to: [{ type: 'faqCategory' }],
       description:
-        'Which group this question belongs in. Pick from the FAQ Categories list. If left blank, the legacy category value is used instead.',
+        'Which group this question belongs in, such as "Your first Sunday". Pick from the Question groups list.',
     }),
     defineField({
       name: 'displayOrder',
       title: 'Display order',
       type: 'number',
-      description: 'Lower numbers show first within the category.',
+      description: 'Lower numbers show first within the group.',
       validation: (Rule) => Rule.required().integer().min(0),
     }),
     defineField({
       name: 'alsoShowOnProcessPage',
       title: 'Also show on Process page',
       type: 'boolean',
+      // This site has no Process page (removed at fork time).
+      hidden: true,
       description:
         'If checked, this question also appears in the FAQ block at the bottom of the Process page.',
       initialValue: false,
@@ -134,7 +137,7 @@ export const faqItem = defineType({
   },
   orderings: [
     {
-      title: 'Category, then order',
+      title: 'Group, then order',
       name: 'categoryOrder',
       by: [
         { field: 'category', direction: 'asc' },

@@ -75,7 +75,11 @@ const GROUPS: { label: string; swatches: Swatch[] }[] = [
   {
     label: 'Accents and lines',
     swatches: [
-      { role: 'Secondary', token: '--color-secondary', note: 'Borders, dividers, eyebrow labels.' },
+      {
+        role: 'Secondary',
+        token: '--color-secondary',
+        note: 'Borders, dividers, the small labels above headings.',
+      },
       { role: 'Tertiary', token: '--color-tertiary', note: 'A quiet accent, used sparingly.' },
       { role: 'Faint lines', token: '--color-border-soft', note: 'Hairline dividers.' },
     ],
@@ -134,11 +138,11 @@ export default function BrandKit() {
       <Stack gap={5} style={{ maxWidth: 720, margin: '0 auto' }}>
         <Stack gap={3}>
           <Text size={3} weight="semibold">
-            Brand colours and type
+            Brand colors and type
           </Text>
           <Text size={2} muted style={{ lineHeight: 1.6 }}>
             For anything made away from the website: a flyer, a social post, a printed sign. These
-            are read straight from the project&rsquo;s brand file, so they always match the site.
+            are read straight from the website&rsquo;s own settings, so they always match the site.
           </Text>
         </Stack>
 
@@ -186,10 +190,12 @@ export default function BrandKit() {
             <Text size={1} weight="semibold">
               Changing any of this
             </Text>
+            {/* FBC Auburn (2026-10-18): editors cannot run commands, so this
+                says who to ask. The developer route is brand/brand.config.json
+                plus `npm run apply-brand` (docs/claude/build-and-scripts.md). */}
             <Text size={1} style={{ lineHeight: 1.5 }}>
-              Edit <code>brand/brand.config.json</code> and run <code>npm run apply-brand</code>.
-              That rewrites the site&rsquo;s stylesheet, its identity constants, the Studio theme
-              and the sharing image, and this panel follows automatically.
+              The colors and fonts are part of the website&rsquo;s design, so they are not changed
+              here. Ask Nathan if they need to change; this page follows automatically.
             </Text>
           </Stack>
         </Card>

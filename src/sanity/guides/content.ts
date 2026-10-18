@@ -1,5 +1,5 @@
 // =============================================================================
-// Help & Guide content — plain-language walkthroughs for the site's owner
+// Site Guide content — plain-language walkthroughs for the site's owner
 // =============================================================================
 // PORTS.md card 41. This is DATA, not code: each guide is a list of typed
 // blocks, rendered read-only by GuideView and grouped in the desk by category.
@@ -28,6 +28,10 @@
 //     so a step can be skimmed for its clickable part.
 //   - _underscores_ for a light aside.
 //   - No em-dashes. Commas, or "and".
+//   - `icon` is a NAME from GUIDE_ICONS in components/GuideView.tsx (an
+//     @sanity/icons icon), never an emoji. FBC Auburn, 2026-10-18.
+//   - Call things what the Studio calls them: "web address ending", not slug;
+//     "Site settings"; "Live preview" (the tool's own name); US spelling.
 //   - Define any jargon in plain words the first time it appears.
 //   - src/lib/studio-guides.test.ts enforces the structural half of this.
 // =============================================================================
@@ -80,7 +84,7 @@ export const guides: Guide[] = [
     slug: 'start-here',
     category: 'Start here',
     title: 'Start here: how this all works',
-    icon: '👋',
+    icon: 'info',
     lead: 'Two minutes that make everything else make sense.',
     diy: 'self',
     body: [
@@ -112,6 +116,16 @@ export const guides: Guide[] = [
         title: 'Give it a couple of minutes.',
         text: 'The website does not change the instant you publish. It is built in advance for speed, so it has to rebuild in the background. Publish, go and do something else, then refresh the page you changed.',
       },
+      { kind: 'h', text: 'Where things are' },
+      {
+        kind: 'bullets',
+        items: [
+          '`Home` (the top bar) shows what to do this week and whether your last change is on the website.',
+          '`Content` is where everything is edited. Its first item, `Our church at a glance`, shows the service times, address and contact details the website uses, with anything still to confirm marked.',
+          '`Live preview` shows the real pages with your changes in place.',
+          '`Site Guide`, where you are now, has the step-by-step help. `Help for this page` brings the right part of it up beside whatever you are editing.',
+        ],
+      },
       { kind: 'seealso', items: ['Change the words on a page'] },
     ],
   },
@@ -120,20 +134,20 @@ export const guides: Guide[] = [
     slug: 'edit-a-page',
     category: 'Pages and words',
     title: 'Change the words on a page',
-    icon: '📄',
+    icon: 'document',
     lead: 'Every page is a stack of blocks. You edit the blocks.',
     diy: 'self',
     body: [
       { kind: 'h', text: 'How a page is built' },
       {
         kind: 'p',
-        text: 'A page is a stack of **sections**, one on top of the other. You edit what is inside a section. You do not have to think about colours or spacing: the design decides those from where the section sits on the page, which is why the site stays consistent no matter who edits it.',
+        text: 'A page is a stack of **sections**, one on top of the other. You edit what is inside a section. You do not have to think about colors or spacing: the design decides those from where the section sits on the page, which is why the site stays consistent no matter who edits it.',
       },
       { kind: 'h', text: 'Seeing it as you type' },
       {
         kind: 'steps',
         items: [
-          'Click `Presentation` in the bar at the top of the Studio.',
+          'Click `Live preview` in the bar at the top of the Studio.',
           'Pick the page on the left. The real page appears beside it.',
           'Click any words on the page to jump to the box that holds them.',
           'Type. The page updates as you go.',
@@ -144,7 +158,7 @@ export const guides: Guide[] = [
         kind: 'callout',
         tone: 'primary',
         title: 'The preview shows your draft.',
-        text: 'What you see in Presentation is your unpublished draft, not the live site. That is the point: you see the change before anyone else does.',
+        text: 'What you see in Live preview is your unpublished draft, not the live site. That is the point: you see the change before anyone else does.',
       },
       { kind: 'h', text: 'Adding something to Contact, Questions, News and notes or Privacy' },
       {
@@ -158,7 +172,7 @@ export const guides: Guide[] = [
     slug: 'add-a-page',
     category: 'Pages and words',
     title: 'Add a new page',
-    icon: '➕',
+    icon: 'add',
     lead: 'And the one thing to get right before you publish it.',
     diy: 'self',
     body: [
@@ -167,7 +181,7 @@ export const guides: Guide[] = [
         items: [
           'Open `Pages`, then `Custom pages (build your own)`, then the `+` button.',
           'Pick a starting point: `Simple page`, `Ministry`, `Event`, `Sermon series` or `Blank page`. The guide on page templates says what each one gives you.',
-          'Give it a title. The **slug**, which is the part of the web address after the slash, is made from it when you click `Generate`.',
+          'Give it a title. The **web address ending**, the part of the address after the slash, is made from it when you click `Generate`.',
           'Replace the example text, and add or remove sections until it says what you want. Drag them to change the order.',
           'To put it in the menu, open the `Menu placement` tab and turn on `Show in the top menu`. It joins the end of the menu. `Show in the footer` adds it to the last row of footer links.',
           'Publish.',
@@ -176,12 +190,12 @@ export const guides: Guide[] = [
       {
         kind: 'callout',
         tone: 'caution',
-        title: 'Think about the slug before you publish, not after.',
-        text: 'The slug becomes the page address. Changing it later breaks every link anyone has saved or shared. If you do have to change one, see the guide on renaming.',
+        title: 'Think about the web address before you publish, not after.',
+        text: 'The web address ending becomes the page address. Changing it later breaks every link anyone has saved or shared. If you do have to change one, see the guide on renaming.',
       },
       {
         kind: 'p',
-        text: '_Some slugs are reserved because a built-in page already uses them. The Studio will tell you if you pick one._',
+        text: '_Some addresses are reserved because a built-in page already uses them. The Studio will tell you if you pick one._',
       },
       {
         kind: 'seealso',
@@ -194,7 +208,7 @@ export const guides: Guide[] = [
     slug: 'page-templates',
     category: 'Pages and words',
     title: 'Start a page from a template',
-    icon: '🧩',
+    icon: 'blocks',
     lead: 'A new page can start with its sections already in place.',
     diy: 'self',
     body: [
@@ -234,7 +248,7 @@ export const guides: Guide[] = [
     slug: 'reuse-sections',
     category: 'Pages and words',
     title: 'Reuse a section on other pages',
-    icon: '♻️',
+    icon: 'copy',
     lead: 'Build a section once, then drop it onto any page as a copy.',
     diy: 'self',
     body: [
@@ -248,7 +262,7 @@ export const guides: Guide[] = [
         items: [
           'Open the page that has the section you like.',
           'Open the menu next to `Publish` and choose `Save a section as preset...`.',
-          'Pick the section, give it a name you will recognise, and save.',
+          'Pick the section, give it a name you will recognize, and save.',
           'To keep several sections together, open the saved section under `Saved sections` and add more sections to it with `+ Add item`. Then publish it.',
         ],
       },
@@ -279,7 +293,7 @@ export const guides: Guide[] = [
     slug: 'synced-sections',
     category: 'Pages and words',
     title: 'Keep a section the same on every page',
-    icon: '🔗',
+    icon: 'sync',
     lead: 'Edit it once and every page that uses it changes.',
     diy: 'self',
     body: [
@@ -320,7 +334,7 @@ export const guides: Guide[] = [
     slug: 'rename-a-page',
     category: 'Pages and words',
     title: 'Rename a page without breaking links',
-    icon: '↪️',
+    icon: 'arrow',
     lead: 'Anyone who saved the old address should still arrive.',
     diy: 'self',
     body: [
@@ -331,7 +345,7 @@ export const guides: Guide[] = [
       {
         kind: 'steps',
         items: [
-          'Change the slug on the page and publish.',
+          'Change the web address ending on the page and publish.',
           'That is it. The Studio notices the address changed and files the redirect for you. You can see it under `Pages`, `Redirects (old links)`.',
           'For an address that never existed here (a link printed on an old flyer, say), add a redirect by hand: the old address in `From`, the page in `To`, then publish.',
         ],
@@ -349,7 +363,7 @@ export const guides: Guide[] = [
     slug: 'images-and-alt',
     category: 'Pictures',
     title: 'Add or change a picture',
-    icon: '📷',
+    icon: 'image',
     lead: 'And write the one line that describes it.',
     diy: 'self',
     body: [
@@ -380,22 +394,22 @@ export const guides: Guide[] = [
     slug: 'menus-and-footer',
     category: 'Housekeeping',
     title: 'Change the menu or the footer',
-    icon: '🧭',
+    icon: 'menu',
     lead: 'The links across the top and along the bottom.',
     diy: 'self',
     body: [
       {
         kind: 'path',
-        items: ['Site Settings'],
+        items: ['Site settings'],
         link: { doc: 'siteSettings' },
       },
       {
         kind: 'p',
-        text: 'Open the `Navigation (menus)` tab. `Top menu links` is the full menu, the one that opens from the `Menu` button; the bar across the top of the website shows the **first four** of them, so put the most important first. A `Dropdown` groups several pages under one heading. `Header button` is the `Plan your visit` button. `Footer link columns` are the rows of links in the footer. Pick pages from the list rather than typing addresses, so a renamed page never breaks a link. Drag rows to reorder them, and use the `...` menu on a row to remove one.',
+        text: 'Open the `Menus` tab. `Top menu links` is the full menu, the one that opens from the `Menu` button; the bar across the top of the website shows the **first four** of them, so put the most important first. A `Dropdown` groups several pages under one heading. `Header button` is the `Plan your visit` button. `Footer link columns` are the rows of links in the footer. Pick pages from the list rather than typing addresses, so a renamed page never breaks a link. Drag rows to reorder them, and use the `...` menu on a row to remove one.',
       },
       {
         kind: 'p',
-        text: "The footer's own words (the line under the big heading, the second button and the line in the bottom bar) are on the `Social & footer` tab. Leave one empty and the website uses its built-in wording.",
+        text: "The footer's own words (the line under the big heading, the second button and the line in the bottom bar) are on the `Social and footer` tab. Leave one empty and the website uses its built-in wording.",
       },
       {
         kind: 'callout',
@@ -410,7 +424,7 @@ export const guides: Guide[] = [
     slug: 'home-page',
     category: 'Pages and words',
     title: 'Rearrange the home page',
-    icon: '🏠',
+    icon: 'home',
     lead: 'Move, add or remove the sections on the front page.',
     diy: 'self',
     body: [
@@ -431,7 +445,7 @@ export const guides: Guide[] = [
       {
         kind: 'bullets',
         items: [
-          'The **Hero** is the welcome at the top, with the This Sunday card. Keep it first.',
+          'The **Opening banner** is the welcome at the top, with the This Sunday card. Keep it first.',
           'The first **Stepping-stone steps** section is drawn as "Your first Sunday", the numbered walk. Steps marked as a Sunday gathering show their time by themselves.',
           'The first **Image + text** section is "Who we are": the photos and your signed welcome.',
           '**This week** and **Watch** sit side by side when they are next to each other.',
@@ -456,13 +470,13 @@ export const guides: Guide[] = [
     slug: 'church-facts',
     category: 'Housekeeping',
     title: 'Change the service times or the address',
-    icon: '🕘',
+    icon: 'clock',
     lead: 'Typed once, shown everywhere.',
     diy: 'self',
     body: [
       {
         kind: 'path',
-        items: ['Site Settings', 'Church facts'],
+        items: ['Site settings', 'Church facts'],
         link: { doc: 'siteSettings' },
       },
       {
@@ -472,7 +486,7 @@ export const guides: Guide[] = [
       {
         kind: 'steps',
         items: [
-          'Open `Site Settings`, then the `Church facts` tab.',
+          'Open `Site settings`, then the `Church facts` tab.',
           'Change a time in `Service times`. Type it the 24-hour way: `09:45`, `11:00`, `18:00` for 6 pm.',
           'Tick `Confirmed by the church` once it is right. Until then the website shows a small "To confirm" tag beside it and keeps it away from Google.',
           'Publish.',
@@ -515,7 +529,7 @@ export const guides: Guide[] = [
     slug: 'after-sunday',
     category: 'Pages and words',
     title: 'After Sunday: name the message',
-    icon: '🎙️',
+    icon: 'play',
     lead: 'Thirty seconds that make the home page feel current.',
     diy: 'self',
     body: [
@@ -543,14 +557,14 @@ export const guides: Guide[] = [
   {
     slug: 'seo-fields',
     category: 'Housekeeping',
-    title: 'What the SEO boxes do',
-    icon: '🔍',
+    title: 'What the Google and sharing boxes do',
+    icon: 'search',
     lead: 'The title and description Google shows.',
     diy: 'self',
     body: [
       {
         kind: 'p',
-        text: 'Each page has an **SEO title** and **SEO description**. They are not shown on the page itself. They are what appears in a search result and in the little card when somebody shares the link.',
+        text: 'Each page has a `Google and sharing` tab with an **SEO title** and **SEO description**. They are not shown on the page itself. They are what appears in a search result and in the little card when somebody shares the link.',
       },
       {
         kind: 'bullets',
@@ -573,7 +587,7 @@ export const guides: Guide[] = [
     slug: 'housekeeping',
     category: 'Housekeeping',
     title: 'The occasional tidy-up',
-    icon: '🧹',
+    icon: 'check',
     lead: 'Worth ten minutes once or twice a year.',
     diy: 'self',
     body: [
@@ -581,7 +595,7 @@ export const guides: Guide[] = [
         kind: 'bullets',
         items: [
           'Look for **unpublished drafts**: somebody started an edit and did not finish, and nothing is live until it is published.',
-          'Read the pages you have not touched in a year. Prices, names and opening hours go stale quietly.',
+          'Read the pages you have not touched in a year. Names, times and events go stale quietly.',
           'Check the links that leave your site still work. Other people move their pages without telling you.',
           'Look at the site on a phone. Most of your visitors are on one.',
         ],
@@ -607,7 +621,7 @@ guides.push(
     slug: 'website-status',
     category: 'Start here',
     title: 'The line under the top bar',
-    icon: '🕒',
+    icon: 'activity',
     lead: 'A quiet answer to "is my change on the website yet?", wherever you are in the Studio.',
     diy: 'self',
     body: [
@@ -641,7 +655,7 @@ guides.push(
     slug: 'help-panel',
     category: 'Start here',
     title: 'Help for this page',
-    icon: '💡',
+    icon: 'bulb',
     lead: 'Help beside whatever you are editing, without leaving it.',
     diy: 'self',
     body: [
@@ -677,6 +691,5 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   homePage: ['home-page', 'after-sunday', 'images-and-alt', 'seo-fields'],
   siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
   sectionPreset: ['reuse-sections', 'synced-sections'],
-  businessInfo: ['menus-and-footer'],
   redirect: ['rename-a-page'],
 };

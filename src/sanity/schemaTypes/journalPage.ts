@@ -1,6 +1,6 @@
 // scaffold-file: journal
-// Journal index page singleton. Drives the hero copy and final-CTA section on
-// /journal. The posts grid itself is auto-populated from journalEntry documents.
+// News and notes index page singleton (the code name is "journal"). Drives the
+// banner copy and closing invitation on /journal. The posts grid itself is auto-populated from journalEntry documents.
 
 import { defineType, defineField } from 'sanity';
 import { additionalSectionsField } from './sections';
@@ -8,14 +8,14 @@ import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 
 export const journalPage = defineType({
   name: 'journalPage',
-  title: 'Journal Page',
+  title: 'News and notes page',
   type: 'document',
-  // Page singleton (hero + final CTA only) — structural, not free-form drafting.
+  // Page singleton (banner + closing invitation only): structural, not free-form drafting.
   options: { canvasApp: { exclude: true } },
   groups: [
-    { name: 'seo', title: 'SEO' },
-    { name: 'hero', title: 'Hero' },
-    { name: 'final', title: 'Final CTA' },
+    { name: 'seo', title: 'Google and sharing' },
+    { name: 'hero', title: 'Opening banner' },
+    { name: 'final', title: 'Closing invitation' },
     { name: 'extra', title: 'Extra sections' },
   ],
   fields: [
@@ -25,7 +25,7 @@ export const journalPage = defineType({
       type: 'string',
       group: 'seo',
       description:
-        'Browser tab and Google result title. Aim for 50 to 60 characters. Front-load the location or service.',
+        'Browser tab and Google result title. Aim for 50 to 60 characters. Start with the church name or Hamilton.',
       validation: (Rule) =>
         Rule.max(60).warning(
           'Titles longer than about 60 characters get cut off in Google search results.',
@@ -50,41 +50,40 @@ export const journalPage = defineType({
       type: 'image',
       group: 'seo',
       description:
-        'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site Settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
+        'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
 
     defineField({
       name: 'heroEyebrow',
-      title: 'Hero eyebrow',
+      title: 'Small line above the heading',
       type: 'string',
       group: 'hero',
-      initialValue: 'The Journal.',
+      initialValue: 'From the church',
     }),
     defineField({
       name: 'heroHeadline',
-      title: 'Hero headline',
+      title: 'Heading',
       type: 'string',
       group: 'hero',
-      initialValue: 'Notes from the studio.',
+      initialValue: 'News and notes',
     }),
     defineField({
       name: 'heroSubhead',
-      title: 'Hero subhead',
+      title: 'Line under the heading',
       type: 'text',
       rows: 2,
       group: 'hero',
-      initialValue:
-        'Project walkthroughs, design thinking, and the occasional opinion. Written between projects.',
+      initialValue: 'News, sermon notes and stories from the church family.',
     }),
     defineField({
       name: 'heroImage',
-      title: 'Hero background image',
+      title: 'Banner photo',
       type: 'image',
       group: 'hero',
       description:
-        'Full-bleed photo behind the hero text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
+        'Full-width photo behind the banner text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
       options: { hotspot: true },
       fields: [
         defineField({
@@ -105,23 +104,23 @@ export const journalPage = defineType({
     }),
     defineField({
       name: 'stickyCtaLabel',
-      title: 'Sticky CTA label (post detail pages)',
+      title: 'Floating button label (on each post)',
       type: 'string',
       group: 'hero',
       description:
-        'Short label for the floating sticky CTA chip that appears on every journal post detail page after the visitor scrolls 50%. Example: "Got a question?". Leave blank to hide the chip on journal posts.',
+        'Short label for the small floating button that appears on every post once a visitor is halfway down. Example: "Got a question?". Leave blank to hide it.',
     }),
 
     defineField({
       name: 'finalCtaHeadline',
-      title: 'Final CTA headline',
+      title: 'Closing invitation: heading',
       type: 'string',
       group: 'final',
-      initialValue: 'Got a project of your own?',
+      initialValue: 'Come and see us on a Sunday',
     }),
     defineField({
       name: 'finalCtaScriptAccent',
-      title: 'Final CTA heading script accent (optional)',
+      title: 'Closing invitation: script accent word (optional)',
       type: 'string',
       group: 'final',
       description:
@@ -129,15 +128,20 @@ export const journalPage = defineType({
     }),
     defineField({
       name: 'finalCtaSubhead',
-      title: 'Final CTA subhead',
+      title: 'Closing invitation: line under the heading',
       type: 'text',
       rows: 2,
       group: 'final',
     }),
-    defineField({ name: 'finalCta', title: 'Final CTA button', type: 'ctaBlock', group: 'final' }),
+    defineField({
+      name: 'finalCta',
+      title: 'Closing invitation: button',
+      type: 'ctaBlock',
+      group: 'final',
+    }),
     defineField({
       name: 'finalCtaBackgroundImage',
-      title: 'Final CTA background image (optional)',
+      title: 'Closing invitation: background photo (optional)',
       type: 'image',
       group: 'final',
       options: { hotspot: true },
@@ -149,5 +153,5 @@ export const journalPage = defineType({
     // The authoring kit (card 109): Insert a saved section, plus gentle warnings.
     defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
   ],
-  preview: { prepare: () => ({ title: 'Journal Page' }) },
+  preview: { prepare: () => ({ title: 'News and notes page' }) },
 });

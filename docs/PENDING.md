@@ -63,7 +63,7 @@ carry a verified-in-anger note rather than an installed-and-gated one.
 2026-10-17 moved this site onto the family's phase-2 Sanity set (`sanity` 6.19.0, `@sanity/ui`
 4.4.9, `@sanity/icons` 5.2.3, `@sanity/client` 8.9.0, `@sanity/visual-editing` 6.1.3; the starter's PORTS.md
 card 103). The signed-in Studio was checked in a browser against this site's own project the same day: on
-`astro dev` the desk, Help & Guide, Start Here (overview and brand kit) and a page document; on the built site
+`astro dev` the desk, the help and overview panels and a page document; on the built site
 under `wrangler dev`, Presentation with the preview iframe, `/preview/live` connected, stega present and the
 overlay box drawing. All with a clean console. What is still unverified is an in-canvas control (the text
 popover or the heading accent picker) writing a change back, because that leaves a draft in the church's
@@ -228,6 +228,20 @@ and the tour, checked signed in at `/studio` in light and dark. Still to do:
 - **The signed-in Studio at 375px**: the Home grid drops to one column by design, but the desktop browser used for
   the check could not be narrowed.
 
+### 1g. The church-speaking Studio: the signed-in click-through (opened 2026-10-18)
+
+**Blocker: needs a signed-in Sanity session.** The 2026-10-18 Studio wording pass (changelog) passed
+typegen, check, build, the unit tests and parity, and the Studio login screen loads with a clean
+console, but nobody has opened the signed-in desk yet. Check: Content opens on "Our church at a
+glance" (service times, address, "To confirm" flags) and "Brand colors and fonts"; there is no "Help
+& Guide", "Start Here" or "Business info"; Pages lists Questions, News and notes (the list page) and
+Page not found; Content lists Question groups, Questions and Notices; the "+ Add item" menu has no
+founder, story, service area, guarantee or logo strip block, and its groups read "Voices and numbers"
+and "About the church"; the Site Guide shows icons, not emoji; Site settings has no Reviews tab, and
+"Parts of the site" shows only News and notes. Also still open: the `studioGuide` document (the
+starter's old handbook, full of business text) is unshown but still in the dataset; retire it the same
+way as `studioNotes` if nobody wants it, and the starter-side leftovers listed in the changelog entry.
+
 ### 1f. Authoring kit and branded Studio: the signed-in click-through (opened 2026-10-18)
 
 **Blocker: the pastor's Sanity login (1e), then about 20 minutes with him or Nathan signed in.** PORTS.md cards
@@ -339,7 +353,7 @@ If the numbers differ, find out which root moved before editing anything, and re
 
 `npm run lint` is a CI step now (2026-09-06) and exits clean, but it still prints seven
 `@typescript-eslint/no-unused-vars` warnings: unused imports in `Footer.astro`,
-`BusinessOverview.tsx`, the journal index and a couple of others, plus one unused
+`richSections.ts`, `structure.ts`, the journal index and a couple of others, plus one unused
 `SHOW_THRESHOLD` in `BaseLayout.astro`. Warnings do not fail the run. Triage them in a
 slop sweep (card 16); each is either a dead import to delete or a binding that was meant
 to be used and is not, which is the more interesting kind.

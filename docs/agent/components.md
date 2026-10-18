@@ -97,17 +97,17 @@ The Portable Text renderer (`JournalPortableText.tsx`) detects image orientation
 
 - `StickyCTAChip.tsx` -- bottom-floating brand pill that appears past 50% scroll on long pages. Simple threshold-based visibility with a 2% hysteresis band. Positioning: always `bottom-[5.5rem]` (above the BackToTop button at `bottom-6`). Labels are Sanity-editable via the page singleton's `stickyCtaLabel` field; empty string hides the chip.
 - `SectionDivider.astro` -- brand ornament between sections that share a background color (variants: `ornament` (default) / `line` / `dots`).
-- `JournalPortableText.tsx` -- journal body renderer with custom block types (pullQuote, beforeAfter, sourceCard, tipCallout, imageGallery, divider, videoEmbed) + a `sourcedFrom` annotation mark for inline vendor mentions. Adds the `.prose-drop-cap` float cap to the first paragraph and renders blockquotes as `.prose-blockquote`.
+- `JournalPortableText.tsx` -- journal body renderer with custom block types (pullQuote, tipCallout, imageGallery, divider, videoEmbed). It still knows the starter's beforeAfter, sourceCard and `sourcedFrom`, which the schema no longer offers (2026-10-18; no post used them). Adds the `.prose-drop-cap` float cap to the first paragraph and renders blockquotes as `.prose-blockquote`.
 - `FaqAccordion.tsx` -- shadcn Accordion wrapper. **Note:** `src/components/ui/accordion.tsx` is customized -- the original `h-(--radix-accordion-content-height)` lock on the inner content div was removed (caused a big empty-space bug after expand), and the trigger no longer carries `text-sm font-medium` so consumer typography wins the cascade. If you reinstall via `npx shadcn add` it will revert; reapply both changes.
 - `ThemeToggle.tsx`, `BackToTop.tsx`, `SanityImage.astro`, `CtaLink.astro`.
 
 **Sanity Studio components (in `src/sanity/components/`):**
 
-- `StudioGuide.tsx` -- Panel 1 of the "Start Here" handbook. Fetches content from the `studioGuide` singleton and renders the guide title, intro, site map, how-tos, and tips. Editor-driven: update the handbook text directly in Studio without a code change.
-- `BusinessOverview.tsx` -- Panel 2. Fetches live business facts from Sanity via `useClient` plus the three static sections from the `studioNotes` singleton (business summary, ideal client, voice summary + words to avoid).
-- `BrandKit.tsx` -- Panel 3. Displays the brand color palette (hex values) and font names. **Hardcoded on purpose:** colors and fonts mirror the real `globals.css` tokens. Putting them in Sanity would create a second source of truth that can drift from the live site.
+- `ChurchOverview.tsx` -- "Our church at a glance", the first item in Content. Reads the Church facts on Site settings live (service times, address, contact, whether YouTube and the Church Trac calendar are connected) and flags anything not yet confirmed. Read-only; a link opens Site settings.
+- `BrandKit.tsx` -- "Brand colors and fonts", second in Content. Displays the brand palette (hex values) and font names, read from `brand/brand.config.json` so it cannot drift from the site. It tells editors to ask Nathan rather than to run a command.
+- `GuideView.tsx` -- renders one guide from `src/sanity/guides/content.ts` for the Site Guide tool and "Help for this page". A guide's `icon` is a name from `GUIDE_ICONS` (an `@sanity/icons` icon), never an emoji.
 
-These panels are wired in `src/sanity/structure.ts` under a "Start Here" parent list item, below the repo-data **Help & Guide** handbook (PORTS.md card 41). The `studioGuide` and `studioNotes` singletons each have two views: a rendered component view and an Edit form view. All use plain text fields throughout (no Portable Text) to avoid a Studio renderer dependency, and all are excluded from Canvas.
+Help has ONE home (2026-10-18): the Site Guide tool in the top bar (and "Help for this page"). The desk's old "Help & Guide" list and the starter's "Start Here" panels (`StudioGuide.tsx`, `BusinessOverview.tsx`) are gone. The `studioGuide` type stays registered, unshown, because a document of it still exists; `studioNotes` was removed and its one document retired (`scripts/content/retire-studio-notes.mjs`).
 
 The desktop nav dropdowns live directly in `Header.astro` as SSR'd `<details>` (see `docs/agent/page-architecture.md`), not as a React island.
 

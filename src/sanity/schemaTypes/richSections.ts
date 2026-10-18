@@ -8,6 +8,11 @@
 // equal the general SECTION_TYPES plus the rich types that belong on that page.
 // Register only via richSectionSchemas in studio/schemaTypes/index.ts.
 //
+// FBC Auburn (2026-10-18): founderSection, storySection, serviceAreaSection
+// and guaranteeSection are business-starter blocks. They stay REGISTERED (so a
+// document holding one would still open; none does, checked 2026-10-18) but
+// are offered in no builder and no insert-menu group. See RETIRED_RICH below.
+//
 // SectionRenderer (src/components/SectionRenderer.astro) maps every _type here
 // to a component in src/components/sections/.
 //
@@ -104,10 +109,14 @@ export const founderSection = defineType({
   icon: UserIcon,
   fields: [
     imageWithAlt('portrait', 'Portrait photo'),
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
     }),
@@ -135,10 +144,14 @@ export const storySection = defineType({
   type: 'object',
   icon: DocumentTextIcon,
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
     }),
@@ -148,7 +161,7 @@ export const storySection = defineType({
       name: 'attribution',
       title: 'Attribution line (optional)',
       type: 'string',
-      description: 'Example: "Your Name, Founder"',
+      description: 'Example: "Pastor Jacob"',
     }),
     defineField({
       name: 'credentialLine',
@@ -184,10 +197,14 @@ export const serviceAreaSection = defineType({
   type: 'object',
   icon: PinIcon,
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
     }),
@@ -230,13 +247,13 @@ export const guaranteeSection = defineType({
       type: 'text',
       rows: 2,
       description:
-        'The guarantee or trust statement. Leave blank to use the default text from Site Settings.',
+        'The guarantee or trust statement. Leave blank to use the default text from Site settings.',
     }),
   ],
   preview: {
     select: { title: 'text' },
     prepare: ({ title }) => ({
-      title: title ? `"${String(title).slice(0, 60)}"` : 'Guarantee (from Site Settings)',
+      title: title ? `"${String(title).slice(0, 60)}"` : 'Guarantee (from Site settings)',
       subtitle: 'Guarantee / trust statement',
     }),
   },
@@ -253,26 +270,30 @@ export const guaranteeSection = defineType({
 // duplicate FAQPage markup on the same domain. The accordion renders without it.
 export const faqSection = defineType({
   name: 'faqSection',
-  title: 'FAQ accordion (inline)',
+  title: 'Questions (open and close)',
   type: 'object',
   icon: HelpCircleIcon,
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
     }),
     headingAccentField(),
     defineField({
       name: 'subhead',
-      title: 'Subhead (optional)',
+      title: 'Line under the heading (optional)',
       type: 'text',
       rows: 2,
       hidden: hideWhenRich('subheadRich'),
     }),
-    richTwin('subheadRich', 'Subhead'),
+    richTwin('subheadRich', 'Line under the heading'),
     defineField({
       name: 'items',
       title: 'Questions to show',
@@ -286,8 +307,8 @@ export const faqSection = defineType({
   preview: {
     select: { title: 'headline', items: 'items' },
     prepare: ({ title, items }) => ({
-      title: title || 'FAQ accordion',
-      subtitle: `FAQ${Array.isArray(items) ? ` (${items.length} items)` : ''}`,
+      title: title || 'Questions',
+      subtitle: `Questions${Array.isArray(items) ? ` (${items.length})` : ''}`,
     }),
   },
 });
@@ -302,28 +323,32 @@ export const faqSection = defineType({
 // SELF_CONTAINED — manages its own bg-background surface.
 export const teamSection = defineType({
   name: 'teamSection',
-  title: 'Team grid',
+  title: 'Staff and leaders',
   type: 'object',
   icon: UsersIcon,
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
     }),
     defineField({
       name: 'subhead',
-      title: 'Subhead (optional)',
+      title: 'Line under the heading (optional)',
       type: 'text',
       rows: 2,
       hidden: hideWhenRich('subheadRich'),
     }),
-    richTwin('subheadRich', 'Subhead'),
+    richTwin('subheadRich', 'Line under the heading'),
     defineField({
       name: 'members',
-      title: 'Team members',
+      title: 'People',
       type: 'array',
       validation: (R) => R.min(1).max(12),
       of: [
@@ -353,7 +378,7 @@ export const teamSection = defineType({
                       name: 'label',
                       title: 'Label',
                       type: 'string',
-                      description: 'Examples: LinkedIn, Instagram, Website.',
+                      description: 'Examples: Facebook, Instagram, Website.',
                       validation: (R) => R.required(),
                     }),
                     defineField({
@@ -371,7 +396,7 @@ export const teamSection = defineType({
           preview: {
             select: { title: 'name', subtitle: 'role', media: 'photo' },
             prepare: ({ title, subtitle, media }) => ({
-              title: title || 'Team member',
+              title: title || 'Person',
               subtitle: subtitle || '',
               media,
             }),
@@ -383,8 +408,8 @@ export const teamSection = defineType({
   preview: {
     select: { title: 'headline', members: 'members' },
     prepare: ({ title, members }) => ({
-      title: title || 'Team grid',
-      subtitle: `Team${Array.isArray(members) ? ` (${members.length})` : ''}`,
+      title: title || 'Staff and leaders',
+      subtitle: `Staff and leaders${Array.isArray(members) ? ` (${members.length})` : ''}`,
     }),
   },
 });
@@ -396,10 +421,9 @@ export const teamSection = defineType({
 // without touching code.
 //
 // Supported sources and what they surface:
-//   journal      - Latest journal entries (newest first, up to `limit`).
-//   services     - All services (ordered by orderRank). Good for a compact
-//                  "what we do" overview block on a secondary page.
-//   testimonials - Recent testimonials (newest first). Renders as a card row.
+//   journal      - Latest News and notes posts (newest first, up to `limit`).
+//   (services and testimonials were starter sources for types this site does
+//   not have; FBC Auburn dropped them from the choices on 2026-10-18.)
 //   faqs         - FAQ items ordered by displayOrder. Renders as a mini
 //                  accordion (no duplicate FAQPage JSON-LD — the /faq page owns
 //                  that schema; this block deliberately omits it).
@@ -412,27 +436,31 @@ export const teamSection = defineType({
 // The section renders the pre-fetched array; no client-side fetching occurs.
 export const dynamicListSection = defineType({
   name: 'dynamicListSection',
-  title: 'Auto list (latest content)',
+  title: 'Latest posts or questions',
   type: 'object',
   icon: SyncIcon,
   description:
-    'Pulls the latest items from a collection automatically. Stays fresh on every rebuild without manual curation.',
+    'Shows the newest News and notes posts, or a few questions, by itself. Stays up to date without you touching it.',
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
     }),
     defineField({
       name: 'subhead',
-      title: 'Subhead (optional)',
+      title: 'Line under the heading (optional)',
       type: 'text',
       rows: 2,
       hidden: hideWhenRich('subheadRich'),
     }),
-    richTwin('subheadRich', 'Subhead'),
+    richTwin('subheadRich', 'Line under the heading'),
     columnsField('dynamicListSection'),
     defineField({
       name: 'source',
@@ -440,10 +468,8 @@ export const dynamicListSection = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Journal (latest posts)', value: 'journal' },
-          { title: 'Services (all services)', value: 'services' },
-          { title: 'Testimonials (latest)', value: 'testimonials' },
-          { title: 'FAQs (by display order)', value: 'faqs' },
+          { title: 'News and notes (latest posts)', value: 'journal' },
+          { title: 'Questions (in their display order)', value: 'faqs' },
         ],
         layout: 'radio',
       },
@@ -463,8 +489,8 @@ export const dynamicListSection = defineType({
   preview: {
     select: { title: 'headline', source: 'source', limit: 'limit' },
     prepare: ({ title, source, limit }) => ({
-      title: title || 'Auto list',
-      subtitle: `Auto list: ${source ?? ''}${limit ? ` (up to ${limit})` : ''}`,
+      title: title || 'Latest posts or questions',
+      subtitle: `${source === 'faqs' ? 'Questions' : 'Latest posts'}${limit ? ` (up to ${limit})` : ''}`,
     }),
   },
 });
@@ -481,7 +507,22 @@ export const richSectionSchemas = [
   dynamicListSection,
 ];
 
-export const RICH_SECTION_TYPES = richSectionSchemas.map((s) => ({ type: s.name }));
+/**
+ * Registered but offered nowhere (FBC Auburn, 2026-10-18): business-starter
+ * blocks. Keeping them registered means old data could still open; leaving them
+ * out of every list below is what takes them off the insert menu.
+ */
+const RETIRED_RICH = new Set([
+  'founderSection',
+  'storySection',
+  'serviceAreaSection',
+  'guaranteeSection',
+]);
+
+/** The rich blocks a saved section may hold (everything still on offer). */
+export const RICH_SECTION_TYPES = richSectionSchemas
+  .filter((s) => !RETIRED_RICH.has(s.name))
+  .map((s) => ({ type: s.name }));
 
 // Per-page curated lists. Each is SECTION_TYPES (11 general) plus the rich
 // types that make sense on that page. Editors only see relevant blocks.
@@ -494,7 +535,6 @@ export const RICH_SECTION_TYPES = richSectionSchemas.map((s) => ({ type: s.name 
 //   dynamicListSection -> HOME, ABOUT (auto-pull latest content; generic small-biz sources)
 export const HOME_SECTION_TYPES = [
   ...SECTION_TYPES,
-  { type: 'founderSection' }, // scaffold: about
   { type: 'faqSection' }, // scaffold: faq
   { type: 'teamSection' },
   { type: 'dynamicListSection' },
@@ -510,20 +550,8 @@ export const PAGE_SECTION_TYPES = [
 
 export const ABOUT_SECTION_TYPES = [
   ...SECTION_TYPES,
-  { type: 'storySection' }, // scaffold: about
   { type: 'faqSection' }, // scaffold: faq
   { type: 'teamSection' },
   { type: 'dynamicListSection' },
 ];
-
-export const SERVICES_SECTION_TYPES = [
-  ...SECTION_TYPES,
-  { type: 'serviceAreaSection' },
-  { type: 'guaranteeSection' },
-  { type: 'faqSection' }, // scaffold: faq
-];
-
-export const PROCESS_SECTION_TYPES = [
-  ...SECTION_TYPES,
-  { type: 'faqSection' }, // scaffold: faq
-];
+// (SERVICES_ and PROCESS_SECTION_TYPES went with those pages: nothing used them.)
