@@ -27,13 +27,13 @@ import { formatDate } from '@/lib/format-date';
 
 const [page, siteSettings] = await Promise.all([getPrivacyPage(), getSiteSettings()]);
 
-const title = page?.seoTitle ?? `Privacy Policy · ${site.name}`;
+const title = page?.seoTitle ?? 'Privacy policy';
 const description =
   page?.seoDescription ??
-  'How we handle the information you share when you reach out or subscribe.';
+  'What the ' + site.name + ' website collects, why, and what it never does with it.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'Transparency first.';
-const heroHeadline = page?.heroHeadline ?? 'Privacy Policy';
+const heroEyebrow = page?.heroEyebrow ?? 'Your privacy';
+const heroHeadline = page?.heroHeadline ?? 'Privacy policy';
 const heroSubhead = page?.heroSubhead ?? '';
 
 // Format the lastUpdated date from Sanity or fall back to a static string.
@@ -45,9 +45,6 @@ const schemas = [
     { name: 'Privacy Policy', url: `${site.url}/privacy/` },
   ]),
 ];
-
-// Contact email for the fallback copy
-const contactEmail = siteSettings?.email ?? `hello@${site.domain}`;
 
 // Whether to use Sanity body content
 const hasSanityBody = Boolean(page?.body);
@@ -79,42 +76,18 @@ const hasSanityBody = Boolean(page?.body);
       {hasSanityBody ? (
         <PortableTextStatic value={page!.body} className="prose-friendly" />
       ) : (
+        /* The church's policy, kept in step with scripts/content/visitor-audit.mjs, which wrote the
+           same words into the Studio (visitor audit, 2026-10-18). Measurement still branches on what
+           this build really ships (analytics-config), so the page never claims what is not true. */
         <div class="space-y-l leading-relaxed text-foreground">
           <p class="text-foreground/80">
-            This is the privacy policy for {site.name}. The goal here is to be straightforward about
-            what information is collected and why.
+            This page explains what the {site.name} website collects and why. The short version:
+            very little, and none of it is sold, shared for advertising or used to follow you around
+            the web.
           </p>
 
           <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">What gets collected</h2>
-            <p class="text-foreground/80">
-              When you fill out the contact form on this site, you share your name, email address,
-              and whatever details you include in your message. That information is used only to
-              respond to you and to help plan your project. Nothing else.
-            </p>
-            <p class="mt-s text-foreground/80">
-              If you subscribe to the newsletter, your email address goes to the email marketing
-              provider so occasional studio updates, room ideas, and project previews can reach you.
-              It is not shared with anyone else.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">What doesn't happen</h2>
-            <ul class="list-disc space-y-1 pl-l text-foreground/80">
-              <li>Your information is never sold.</li>
-              <li>There is no ad targeting on this site.</li>
-            </ul>
-          </div>
-
-          {/*
-              Measurement, described from the build's real configuration rather
-              than asserted. Each branch says what that tool actually does,
-              including the cookie, because Google's own terms require a policy
-              that discloses the use of Analytics and of cookies.
-            */}
-          <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">How traffic is measured</h2>
+            <h2 class="mb-s font-display text-h3 text-foreground">Counting visits</h2>
             {!hasGa && !hasCfAnalytics && (
               <p class="text-foreground/80">
                 This site runs no analytics at all. Visits are not counted, and nothing is stored on
@@ -123,55 +96,56 @@ const hasSanityBody = Boolean(page?.body);
             )}
             {hasCfAnalytics && (
               <p class="text-foreground/80">
-                Page visits are counted with Cloudflare Web Analytics, which sets no cookies and
-                does not identify individual visitors.
+                We count page visits with Cloudflare Web Analytics. It sets no cookies, does not
+                identify you and does not track you from one site to another.
               </p>
             )}
             {hasGa && (
               <p class="mt-s text-foreground/80">
-                {/* "also" only reads right when the cookieless paragraph above it rendered. */}
                 Page visits are {hasCfAnalytics ? 'also ' : ''}measured with Google Analytics, which
-                does set cookies on your device (named <code>_ga</code> and <code>_ga_</code>{' '}
-                followed by a stream id) so returning visits are recognised as the same session. It
-                records which pages are opened, roughly where in the world the visit came from, and
-                what kind of device was used. It is not used for advertising, and the data is not
-                sold or shared beyond Google's own processing. You can block these cookies in your
-                browser settings, or with any tracker-blocking extension, and the site will work
-                exactly the same.
+                sets cookies (named <code>_ga</code> and <code>_ga_</code> followed by a stream id)
+                so returning visits are recognised. It is not used for advertising. You can block
+                these cookies in your browser and the site works the same.
               </p>
             )}
           </div>
 
           <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">
-              Unsubscribing from the newsletter
-            </h2>
+            <h2 class="mb-s font-display text-h3 text-foreground">When you write to us</h2>
             <p class="text-foreground/80">
-              Every email includes an unsubscribe link at the bottom. Click it and you're off the
-              list right away. If you run into any trouble, email directly and it'll be handled
-              promptly.
+              The contact form asks for your name, your email address and your message. Your message
+              is kept in the website's own database, hosted by Cloudflare, and a copy is emailed to
+              the church so someone can reply. We use it only to answer you, and we never sell it or
+              pass it on. If you would like a message you sent deleted,{' '}
+              <a href="/contact/" class="text-link underline underline-offset-2">
+                ask us
+              </a>{' '}
+              and we will remove it.
             </p>
           </div>
 
           <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">Questions or data requests</h2>
+            <h2 class="mb-s font-display text-h3 text-foreground">Calendar, videos and Facebook</h2>
             <p class="text-foreground/80">
-              If you have questions about how your information is handled, or want your data
-              removed, reach out at{' '}
-              <a
-                href={`mailto:${contactEmail}`}
-                class="text-link underline underline-offset-2 transition-colors hover:text-primary"
-              >
-                {contactEmail}
-              </a>
-              . You'll hear back within a few business days.
+              The events calendar comes from Church Trac, the system the church uses to keep its
+              calendar. Sermon videos come from YouTube. The page shows the video's picture from
+              YouTube's image server, and the player itself only loads when you press play, in
+              YouTube's privacy-enhanced mode. Links to the church's Facebook page take you to
+              Facebook. Once you play a video or visit Facebook, that company's own privacy policy
+              applies.
             </p>
           </div>
 
-          <p class="border-t border-border-soft pt-l text-xs text-foreground/80">
-            This policy was last reviewed in May 2026 and will be updated if anything meaningful
-            changes about how this site handles your data.
-          </p>
+          <div>
+            <h2 class="mb-s font-display text-h3 text-foreground">Questions</h2>
+            <p class="text-foreground/80">
+              If anything here is unclear, or you want to know what we hold about you,{' '}
+              <a href="/contact/" class="text-link underline underline-offset-2">
+                send us a message
+              </a>
+              .
+            </p>
+          </div>
         </div>
       )}
     </div>

@@ -5,12 +5,15 @@
 // With no channel set or the feed down, the editor's "no video yet" line stands in. When the block
 // has a poster picture, that line becomes a dark video card instead (the Gemini comp's "Watch the
 // latest sermon"): the picture, a play button and the link, so the band never shows an empty box.
+// Under the words, the live stream and the church's Facebook page (visitor audit, 2026-10-18), both
+// from Site settings through Church facts and each hidden until it is filled in.
 import CtaLink from '@/components/CtaLink.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import { surfaceClass } from '@/lib/surfaces';
 import { ctaHref } from '@/lib/cta-href';
 import type { ProjectedCtaBlock, SanityImageObject } from '@/lib/pageBuilder.types';
+import { getChurchFacts } from '@/lib/church-data';
 
 interface Props {
   eyebrow?: string;
@@ -34,6 +37,9 @@ const {
 } = Astro.props;
 const posterHref = poster?.asset && link ? ctaHref(link, '/watch/') : null;
 const newTab = link?.linkType === 'external' || !!link?.openInNewTab;
+const { liveUrl, facebookUrl } = await getChurchFacts();
+// The Facebook page only gets its own line when the live link goes somewhere else.
+const facebookLine = facebookUrl && facebookUrl !== liveUrl ? facebookUrl : null;
 ---
 
 <section class:list={[surfaceClass(surface), 'watch-band']} aria-labelledby={headingId}>
@@ -44,10 +50,34 @@ const newTab = link?.linkType === 'external' || !!link?.openInNewTab;
         {heading}
       </h2>
       {body && <p class="mt-m max-w-xl text-lg leading-relaxed text-muted-foreground">{body}</p>}
-      {link?.label && (
-        <div class="mt-l">
-          <CtaLink cta={link} variant="secondary" />
+      {(link?.label || liveUrl) && (
+        <div class="watch-band__actions mt-l">
+          {liveUrl && (
+            <a
+              class="btn-auburn btn-auburn--primary press-tactile"
+              href={liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Watch live on Sunday<span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          )}
+          {link?.label && <CtaLink cta={link} variant="secondary" />}
         </div>
+      )}
+      {facebookLine && (
+        <p class="mt-m text-muted-foreground">
+          News and photos are on{' '}
+          <a
+            class="text-link underline underline-offset-2"
+            href={facebookLine}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            the church's Facebook page<span class="sr-only"> (opens in a new tab)</span>
+          </a>
+          .
+        </p>
       )}
     </div>
     <div>
@@ -93,6 +123,11 @@ const newTab = link?.linkType === 'external' || !!link?.openInNewTab;
   .watch-band {
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+  }
+  .watch-band__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
   }
   .watch-band__fallback {
     border: 2px dashed var(--border);

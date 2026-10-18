@@ -55,5 +55,7 @@ const proseClass = ['text-foreground/85 text-lg leading-relaxed', heading ? 'mt-
       />
     )}
     {body && <PortableText value={body} className={proseClass} />}
+    {/* Anything the renderer adds under the words (the church map card, SectionRenderer). */}
+    <slot />
   </div>
 </section>

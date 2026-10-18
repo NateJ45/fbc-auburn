@@ -249,9 +249,12 @@ export const SITE_SETTINGS_PROJECTION = `{
     showFooterSocials,
     // Church facts (src/sanity/schemaTypes/churchFacts.ts), resolved by
     // src/lib/church-facts.ts. Read them from there, never off this object.
-    churchAddress{ street, city, state, zip, findUs, confirmed },
+    churchAddress{ street, city, state, zip, findUs, lat, lng, confirmed },
     serviceTimes[]{ _key, label, day, time, note, confirmed },
     phoneConfirmed,
+    emailConfirmed,
+    givingUrl,
+    liveStreamUrl,
     foundedYear,
     foundedConfirmed,
     youtubeChannelId,

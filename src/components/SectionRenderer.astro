@@ -38,6 +38,9 @@ import { classifySections } from '@/lib/sectionCadence';
 import { expandSyncedSections } from '@/lib/authoring';
 import type { PageBuilderBlock } from '@/lib/pageBuilder.types';
 import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
+import ChurchMap from '@/components/church/ChurchMap.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { plain } from '@/lib/church-facts';
 
 interface Props {
   sections?: unknown[];
@@ -73,6 +76,20 @@ const rows = classifySections<PageBuilderBlock>(
 // marker is the same three gold steps from the mark (Home audit, 2026-10-17).
 // One stone moment per page (PRODUCT.md): a page that draws the mark or the baptism picture
 // further down gets a plain title rather than the mosaic one.
+// The map card goes under the rich-text band that gives the church's street address (Plan your
+// visit's "Getting here"), so it follows those words if an editor moves or retitles the band
+// (visitor audit, 2026-10-18). Matched on the street from Church facts, stega stripped.
+const mapStreet = plain((await getChurchFacts()).address?.street).toLowerCase();
+const givesAddress = (block: unknown): boolean => {
+  const body = (block as { body?: unknown }).body;
+  if (!mapStreet || !Array.isArray(body)) return false;
+  const text = body
+    .flatMap((b) =>
+      ((b as { children?: { text?: string }[] })?.children ?? []).map((c) => c?.text ?? ''),
+    )
+    .join(' ');
+  return plain(text).toLowerCase().includes(mapStreet);
+};
 const quietTitle = (sections as PageBuilderBlock[]).some(
   (b) =>
     b?._type === 'imageTextSection' &&
@@ -154,7 +171,9 @@ const editKeyOf = (block: unknown) => {
           align={s.align}
           surface={surface ?? 'background'}
           headingId={headingId}
-        />
+        >
+          {givesAddress(s) && <ChurchMap />}
+        </RichTextSection>
       ) : s._type === 'imageTextSection' ? (
         <ImageText
           art={s.art}

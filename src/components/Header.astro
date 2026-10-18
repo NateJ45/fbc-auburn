@@ -92,20 +92,23 @@ const logoSrcset = logo
 // so an untouched site is unchanged. Turning one off is expressed by handing
 // the markup an empty value rather than a new flag, which keeps the existing
 // `{email && ...}` guards as the single place that decides.
-const email = chrome.showEmail ? (siteSettings?.email ?? '') : '';
-const phone = siteSettings?.phone ?? '';
+// Phone, email and the Facebook page come through Church facts (src/lib/church-facts.ts), the
+// same values the footer and Contact show (visitor audit, 2026-10-18).
+const allFacts = await getChurchFacts();
+const email = chrome.showEmail ? (allFacts.email?.display ?? '') : '';
+const phone = allFacts.phone?.display ?? '';
 const ig = chrome.showSocials ? (siteSettings?.socialInstagram ?? '') : '';
-const fb = chrome.showSocials ? (siteSettings?.socialFacebook ?? '') : '';
+const fb = chrome.showSocials ? (allFacts.facebookUrl ?? '') : '';
 
 // Subset of siteSettings the mobile menu needs. Pass as a plain object so the
 // React island doesn't try to serialize the whole Sanity document graph.
 const mobileNavSettings = siteSettings
   ? {
       tagline: siteSettings.tagline,
-      email: chrome.showEmail ? siteSettings.email : undefined,
-      phone: siteSettings.phone,
+      email: email || undefined,
+      phone: phone || undefined,
       socialInstagram: chrome.showSocials ? siteSettings.socialInstagram : undefined,
-      socialFacebook: chrome.showSocials ? siteSettings.socialFacebook : undefined,
+      socialFacebook: fb || undefined,
     }
   : null;
 
@@ -155,8 +158,8 @@ const pathname = Astro.url.pathname;
 const isHome = pathname === '/';
 // Home's Sunday note (board E), derived from Church facts; never typed. The menu carries the same
 // facts on every page (Home audit research, 2026-10-17: people open the menu to find times).
-const allFacts = await getChurchFacts();
 const noteFacts = isHome ? allFacts : null;
+const notePhone = isHome ? allFacts.phone : null;
 const sundayMinutes = (noteFacts?.serviceTimes ?? [])
   .filter((t) => t.dayIndex === 0)
   .map((t) => t.minutes);
@@ -324,8 +327,13 @@ function isGroupActive(items: { href: string }[]) {
             <span class="site-header__note-where">
               {/* No Directions link here: the This Sunday card just below carries it (Home critic,
                   2026-10-17: three Directions links before the walk). */}
-              {noteAddress.street}, {noteAddress.city}
+              {noteAddress.oneLine}
             </span>
+          )}
+          {notePhone && (
+            <a class="site-header__note-phone" href={notePhone.tel}>
+              {notePhone.display}
+            </a>
           )}
         </p>
       )}

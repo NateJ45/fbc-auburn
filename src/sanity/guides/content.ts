@@ -500,6 +500,32 @@ export const guides: Guide[] = [
   },
 
   {
+    slug: 'contact-give-live',
+    category: 'Housekeeping',
+    title: 'Phone, email, giving and the live stream',
+    icon: '📞',
+    lead: 'Fill one box and the link appears everywhere it belongs.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Site Settings', 'Church facts'],
+        link: { doc: 'siteSettings' },
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Phone and email** are typed under `Identity & contact`. They show in the menu, the footer and on Contact. Tick `Confirmed by the church` for each under `Church facts` once it is right; until then they carry a "To confirm" tag and are kept away from Google.',
+          '**Online giving link**: paste the giving page address and every Give link goes straight there. Leave it empty and Give opens the site’s own page about giving on Sunday or by mail.',
+          '**Live stream link**: where people watch on Sunday. It shows on Watch and in the footer, and the home page’s "Live now" card goes there during worship. Empty uses the Facebook link.',
+          '**Facebook**: add it under `Social & footer`, `Social links`, platform Facebook.',
+        ],
+      },
+      { kind: 'p', text: 'Publish, and the links appear on the next update of the site.' },
+    ],
+  },
+
+  {
     slug: 'after-sunday',
     category: 'Pages and words',
     title: 'After Sunday: name the message',
@@ -663,7 +689,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   // FBC Auburn: the church's own guides first where they fit.
   page: ['edit-a-page', 'page-templates', 'reuse-sections', 'rename-a-page', 'seo-fields'],
   homePage: ['home-page', 'after-sunday', 'images-and-alt', 'seo-fields'],
-  siteSettings: ['church-facts', 'menus-and-footer', 'website-status'],
+  siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
   sectionPreset: ['reuse-sections', 'synced-sections'],
   redirect: ['rename-a-page'],
 };

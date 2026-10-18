@@ -1,5 +1,24 @@
 # Change history
 
+_2026-10-18: the visitor audit fixes._
+
+**What changed.** From a live audit of the pre-launch site. Church facts gained `emailConfirmed`,
+`givingUrl`, `liveStreamUrl` and an optional map pin (`churchAddress.lat`/`lng`), and the resolver
+(`src/lib/church-facts.ts`) now hands out the phone, email, Facebook page, live link and giving link,
+so the header, menu, footer, Contact and Watch read one source; all hide when empty and carry the
+"To confirm" tag until confirmed. The JSON-LD adds the logo, the map pin and the email, confirmed
+only. A new `/give/` page (in person, by mail, online) takes the menu's Give link, and every menu
+link to it swaps to `givingUrl` once set (`src/lib/give.ts`). Plan your visit names Sunday School
+before worship (derived, `earlierSundayLine`) and shows a drawn map card with Google and Apple Maps
+links under "Getting here" (`ChurchMap.astro`, no embed, nothing loads until clicked). Every title
+uses "|"; `npm run og:pages` now draws a card for every Studio page plus /give/ and 404 (the four
+`/[slug]` pages had 404ing OG images) and imports `closeRenderer`, which it called but never
+imported. Focus rings are solid `--ring` everywhere (light `#96c3ea` in the footer and the night
+menu), the desktop nav links are 32px tall, the 320px header no longer crowds the Menu pill, the
+page-head title fits at 320px, Ministries' card titles are h2 when the band has no heading, and the
+address reads "Hamilton, OH 45013" everywhere. Data (`scripts/content/visitor-audit.mjs`): the
+church's privacy policy and the menu's Give link to /give/.
+
 _2026-10-18: the Studio speaks church._
 
 **What changed.** An audit of the Studio found about forty business-starter leftovers an editor could

@@ -35,6 +35,7 @@ import {
   IconBrandTiktok,
   IconBrandX,
   IconLink,
+  IconPlayerPlay,
 } from '@tabler/icons-react';
 import { Mail, Phone } from 'lucide-react';
 import CopyEmailButton from '@/components/CopyEmailButton';
@@ -44,7 +45,6 @@ import { mergePageSwitches } from '@/lib/page-switches';
 // The brand row shows the mark (board E, 2026-10-17); the lockup lives in the header.
 import { getSectionVisibility } from '@/lib/sectionVisibility';
 import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings';
-import { telHref } from '@/lib/phone';
 import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 import { getChurchFacts } from '@/lib/church-data';
 import { ctaHref, type CtaTarget } from '@/lib/cta-href';
@@ -103,8 +103,6 @@ const chrome = resolveSiteSettings(siteSettings);
 const visible = getSectionVisibility(siteSettings?.sectionVisibility);
 
 const brandName = siteSettings?.title ?? site.name;
-const email = siteSettings?.email ?? '';
-const phone = siteSettings?.phone ?? '';
 
 // Social links: prefer the new socialLinks array; fall back to the legacy
 // socialInstagram / socialFacebook fields so existing datasets keep working.
@@ -173,6 +171,13 @@ const footerFacts = await getChurchFacts();
 const footerSundays = footerFacts.serviceTimes.filter((t) => t.dayIndex === 0);
 const footerSundaysConfirmed = footerSundays.every((t) => t.confirmed);
 const footerAddress = footerFacts.address;
+// Phone, email, the Facebook page and the live stream link, all from Church facts and each null
+// until filled in (visitor audit, 2026-10-18).
+const { phone, email, facebookUrl, liveUrl } = footerFacts;
+// The Facebook page gets a words link unless the social buttons below already show it.
+const facebookText =
+  facebookUrl && !socialLinksToRender.some((l) => l.platform === 'Facebook') ? facebookUrl : null;
+const hasTouch = !!(email || phone || liveUrl || facebookText || socialLinksToRender.length > 0);
 // The closing invitation (Home audit research, 2026-10-17): the footer's first row is the last
 // thing on every page, so it ends with the two next steps a stranger can take. The visit button
 // goes where the header's button goes, so a build without Sanity never links to a missing page.
@@ -184,9 +189,6 @@ const footerAbout = siteSettings?.footerAbout || 'A Southern Baptist church in R
 const secondaryCta = siteSettings?.footerSecondaryCta?.label
   ? { label: siteSettings.footerSecondaryCta.label, href: ctaHref(siteSettings.footerSecondaryCta) }
   : { label: 'Ask a question', href: '/contact/' };
-// The state written out ("Ohio"), from Church facts, not typed.
-const STATES: Record<string, string> = { OH: 'Ohio' };
-const footerState = footerAddress ? (STATES[footerAddress.state] ?? footerAddress.state) : '';
 // The This Sunday panel and its calendar link, from the same facts as Home's card.
 const sunday = thisSunday(footerFacts, churchDataNow());
 const hasCalendar =
@@ -260,7 +262,7 @@ const hasCalendar =
             <p>
               {footerAddress.street}
               <br />
-              {[footerAddress.city, footerState].filter(Boolean).join(', ')}
+              {footerAddress.lines[1]}
             </p>
             {footerAddress.findUs && <p class="sf-sunday__findus">{footerAddress.findUs}</p>}
             <p class="sf-sunday__links">
@@ -517,24 +519,52 @@ const hasCalendar =
       </nav>
     ) : null}
 
-    {/* GET IN TOUCH: email, phone, socials. Skipped when there is none of them. */}
-    {(email || phone || socialLinksToRender.length > 0) && (
+    {/* GET IN TOUCH: email, phone, the live stream, Facebook, socials. Skipped when there is none. */}
+    {hasTouch && (
       <div>
         <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Get in touch</p>
         <div class="space-y-1 text-sm">
           {email && (
             <p>
-              <CopyEmailButton client:visible email={email} variant="link" />
+              <CopyEmailButton client:visible email={email.display} variant="link" />
+              <NotConfirmed confirmed={email.confirmed} />
             </p>
           )}
           {phone && (
             <p>
               <a
-                href={telHref(phone)}
+                href={phone.tel}
                 class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
               >
                 <Phone size={14} aria-hidden="true" />
-                {phone}
+                {phone.display}
+              </a>
+              <NotConfirmed confirmed={phone.confirmed} />
+            </p>
+          )}
+          {liveUrl && (
+            <p>
+              <a
+                href={liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+              >
+                <IconPlayerPlay size={14} stroke={1.75} aria-hidden="true" />
+                Watch live on Sunday<span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            </p>
+          )}
+          {facebookText && (
+            <p>
+              <a
+                href={facebookText}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+              >
+                <IconBrandFacebook size={14} stroke={1.75} aria-hidden="true" />
+                Facebook<span class="sr-only"> (opens in a new tab)</span>
               </a>
             </p>
           )}

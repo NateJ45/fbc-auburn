@@ -2,7 +2,8 @@
 // The church's facts, resolved ONCE from Site settings (group "Church facts",
 // src/sanity/schemaTypes/churchFacts.ts) into the shapes the site draws, and
 // everything worked out from them: the "This Sunday" line, the "This week at
-// Auburn" rows, the map link, the public calendar link (CLAUDE.md rule 15).
+// Auburn" rows, the map links, the public calendar link, and the phone, email,
+// Facebook, live stream and giving links the chrome and pages show (CLAUDE.md rule 15).
 //
 // Pure: no fetch, no clock (callers pass `now`), no Sanity client, so every
 // decision is unit-tested in church-facts.test.ts. Components read facts from
@@ -63,14 +64,23 @@ export interface RawChurchFacts {
   title?: string | null;
   phone?: string | null;
   phoneConfirmed?: boolean | null;
+  email?: string | null;
+  emailConfirmed?: boolean | null;
   churchAddress?: {
     street?: string | null;
     city?: string | null;
     state?: string | null;
     zip?: string | null;
     findUs?: string | null;
+    lat?: number | null;
+    lng?: number | null;
     confirmed?: boolean | null;
   } | null;
+  /** Site settings > Social & footer. The Facebook entry is the church's page. */
+  socialLinks?: ({ platform?: string | null; url?: string | null } | null)[] | null;
+  socialFacebook?: string | null;
+  givingUrl?: string | null;
+  liveStreamUrl?: string | null;
   serviceTimes?: (RawServiceTime | null)[] | null;
   foundedYear?: number | null;
   foundedConfirmed?: boolean | null;
@@ -105,6 +115,10 @@ export interface ChurchAddress {
   oneLine: string;
   /** Google Maps search for the address. */
   mapsUrl: string;
+  /** Apple Maps search for the same address. */
+  appleMapsUrl: string;
+  /** The map pin, when both halves are set. */
+  geo: { lat: number; lng: number } | null;
   /** Jacob's own "how to find us" line, or "" (Home audit, 2026-10-17). */
   findUs: string;
   confirmed: boolean;
@@ -114,6 +128,13 @@ export interface ChurchFacts {
   address: ChurchAddress | null;
   serviceTimes: ServiceTime[];
   phone: { display: string; tel: string; confirmed: boolean } | null;
+  email: { display: string; href: string; confirmed: boolean } | null;
+  /** The church's Facebook page (Social links), or null. */
+  facebookUrl: string | null;
+  /** Where Sunday is watched live: the Live stream link, else the Facebook page, else null. */
+  liveUrl: string | null;
+  /** Online giving (Church facts > Online giving link), or null: Give stays on the site. */
+  givingUrl: string | null;
   founded: { year: number; confirmed: boolean } | null;
   /** UC... channel id, or null: no Watch replay is fetched. */
   youtubeChannelId: string | null;
@@ -262,6 +283,24 @@ export function calendarPageFor(icalUrl: string | null): string | null {
   }
 }
 
+/** An https address, cleaned of stega, or null. */
+export function httpsUrl(value?: string | null): string | null {
+  const v = plain(value);
+  if (!v) return null;
+  try {
+    const u = new URL(v);
+    return u.protocol === 'https:' ? u.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
+/** The church's Facebook page: the Facebook row in Social links, else the legacy field. */
+function facebookFrom(s: RawChurchFacts): string | null {
+  const row = (s.socialLinks ?? []).find((l) => plain(l?.platform) === 'Facebook' && l?.url);
+  return httpsUrl(row?.url) ?? httpsUrl(s.socialFacebook);
+}
+
 /** Digits for a tel: link, with the US country code. */
 function telHref(display: string): string | null {
   const digits = display.replace(/\D/g, '');
@@ -304,6 +343,8 @@ function resolveAddress(raw: RawChurchFacts['churchAddress']): ChurchAddress | n
   const lines = [street, second];
   const oneLine = lines.join(', ');
   const query = [street, city, state, zip].map(plain).filter(Boolean).join(', ');
+  const lat = typeof raw?.lat === 'number' && Math.abs(raw.lat) <= 90 ? raw.lat : null;
+  const lng = typeof raw?.lng === 'number' && Math.abs(raw.lng) <= 180 ? raw.lng : null;
   return {
     street,
     city,
@@ -312,6 +353,8 @@ function resolveAddress(raw: RawChurchFacts['churchAddress']): ChurchAddress | n
     lines,
     oneLine,
     mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+    appleMapsUrl: `https://maps.apple.com/?q=${encodeURIComponent(query)}`,
+    geo: lat !== null && lng !== null ? { lat, lng } : null,
     findUs: raw?.findUs?.trim() ?? '',
     confirmed: raw?.confirmed === true,
   };
@@ -326,11 +369,20 @@ export function resolveChurchFacts(raw?: RawChurchFacts | null): ChurchFacts {
   const year = typeof s.foundedYear === 'number' ? s.foundedYear : null;
   const channel = plain(s.youtubeChannelId);
   const ical = plain(s.churchTracIcalUrl);
+  const email = s.email?.trim() ?? '';
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(plain(email));
+  const facebookUrl = facebookFrom(s);
 
   return {
     address: resolveAddress(hasAddress ? s.churchAddress : FALLBACK_FACTS.churchAddress),
     serviceTimes: times.length > 0 ? times : resolveServiceTimes(FALLBACK_FACTS.serviceTimes),
     phone: phone && tel ? { display: phone, tel, confirmed: s.phoneConfirmed === true } : null,
+    email: emailOk
+      ? { display: email, href: `mailto:${plain(email)}`, confirmed: s.emailConfirmed === true }
+      : null,
+    facebookUrl,
+    liveUrl: httpsUrl(s.liveStreamUrl) ?? facebookUrl,
+    givingUrl: httpsUrl(s.givingUrl),
     founded:
       year !== null
         ? { year, confirmed: s.foundedConfirmed === true }
@@ -378,6 +430,28 @@ export function thisSunday(facts: Pick<ChurchFacts, 'serviceTimes'>, now: Date):
     isToday: date === today,
     services,
     confirmed: services.every((s) => s.confirmed),
+  };
+}
+
+/**
+ * The Sunday gatherings before worship as one line, for pages that walk a visitor through
+ * worship only (Plan your visit): "Sunday School for all ages meets at 9:45 am, before worship
+ * at 11:00 am." Worship is the last Sunday gathering. Null with fewer than two on a Sunday.
+ */
+export function earlierSundayLine(
+  facts: Pick<ChurchFacts, 'serviceTimes'>,
+): { text: string; confirmed: boolean } | null {
+  const sunday = facts.serviceTimes.filter((s) => s.dayIndex === 0);
+  if (sunday.length < 2) return null;
+  const last = sunday[sunday.length - 1];
+  const earlier = sunday.slice(0, -1);
+  const what = andList(earlier.map((s) => s.label));
+  const verb = earlier.length === 1 ? 'meets' : 'meet';
+  // "Worship" reads mid-sentence as "worship"; a label with more capitals ("Sunday School") keeps them.
+  const lastLabel = /^[A-Z][a-z]*$/.test(last.label) ? last.label.toLowerCase() : last.label;
+  return {
+    text: `${what} ${verb} at ${timesPhrase(earlier.map((s) => s.minutes))}, before ${lastLabel} at ${last.timeLabel}.`,
+    confirmed: sunday.every((s) => s.confirmed),
   };
 }
 
@@ -489,7 +563,8 @@ export function thisWeek(
  * (schema convention, PORTS.md card 66). Empty until the church confirms.
  */
 export function churchJsonLd(
-  facts: Pick<ChurchFacts, 'address' | 'phone'> & Partial<Pick<ChurchFacts, 'serviceTimes'>>,
+  facts: Pick<ChurchFacts, 'address' | 'phone'> &
+    Partial<Pick<ChurchFacts, 'serviceTimes' | 'email'>>,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   const a = facts.address;
@@ -502,8 +577,13 @@ export function churchJsonLd(
       ...(a.zip ? { postalCode: plain(a.zip) } : {}),
       addressCountry: 'US',
     };
+    // The pin belongs to the address, so it is told only with a confirmed address.
+    if (a.geo) {
+      out.geo = { '@type': 'GeoCoordinates', latitude: a.geo.lat, longitude: a.geo.lng };
+    }
   }
   if (facts.phone?.confirmed) out.telephone = plain(facts.phone.display);
+  if (facts.email?.confirmed) out.email = plain(facts.email.display);
   // Weekly gatherings as schema.org Events with a weekly Schedule (Home audit research,
   // 2026-10-17). Google gives no rich result for recurring services, but search and answer
   // engines read a clean what and when. Confirmed times only, like everything else here.

@@ -405,6 +405,15 @@ html.motion .baptism-motion #ripples {
   --tag-bg: #171a26;
   --tag-fg: #ffffff;
 }
+/* The gatherings before worship, under the intro (WalkSection.astro, derived from Church facts). */
+.walk-earlier {
+  max-width: 40rem;
+  margin: 1rem 0 0;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  font-weight: 600;
+  color: var(--foreground);
+}
 .walk-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);

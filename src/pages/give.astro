@@ -1,0 +1,152 @@
+---
+// Safe to edit by hand
+// The Give page (visitor audit, 2026-10-18). The menu's Give link comes here until the church sets
+// up online giving; once Site settings > Church facts > Online giving link is filled in, every Give
+// link in the menus goes straight to that page instead (src/lib/give.ts), and
+// this page leads with a "Give online" button for anyone who lands here from elsewhere.
+//
+// Everything practical is derived from Church facts (rule 15): the Sunday times the offering is
+// taken at, and the mailing address for a check. Nothing here is typed twice. The words are fixed
+// fallback copy in the church's voice; there is no Studio document for this page yet.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import { getSiteSettings } from '@/lib/queries';
+import { getChurchFacts } from '@/lib/church-data';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { site } from '@/data/site';
+
+const [siteSettings, facts] = await Promise.all([getSiteSettings(), getChurchFacts()]);
+const worship = facts.serviceTimes.filter((s) => s.dayIndex === 0).at(-1) ?? null;
+const address = facts.address;
+const givingUrl = facts.givingUrl;
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Give', url: `${site.url}/give/` },
+  ]),
+];
+---
+
+<BaseLayout
+  title="Give"
+  description={`How to give to ${site.name}: in the offering on Sunday, by mail, or online.`}
+  {schemas}
+  {siteSettings}
+>
+  <Hero
+    eyebrow="Giving"
+    headline="Give"
+    subhead="Giving is part of worship here. Every gift supports the ministry in Auburn and the work of Southern Baptist churches around the world. Nobody is expected to give on a first visit."
+    headingId="give-hero-heading"
+    size="short"
+    icon="giving-hand"
+    primaryCta={
+      givingUrl
+        ? {
+            label: 'Give online',
+            linkType: 'external',
+            externalUrl: givingUrl,
+            openInNewTab: true,
+          }
+        : null
+    }
+  />
+  <BoardRule />
+
+  <section class="mx-auto max-w-content px-m py-section-lg" aria-labelledby="give-ways">
+    <SectionHeading headline="Ways to give" headingId="give-ways" />
+    <div class="give-ways">
+      <div class="give-way">
+        <h3 class="give-way__title">On a Sunday</h3>
+        <p>
+          The offering is taken during{' '}
+          {worship ? (
+            <>
+              {worship.label.toLowerCase()} at {worship.timeLabel}
+              <NotConfirmed confirmed={worship.confirmed} />
+            </>
+          ) : (
+            'Sunday worship'
+          )}
+          . Cash or a check in the plate is fine.
+        </p>
+      </div>
+
+      {address && (
+        <div class="give-way">
+          <h3 class="give-way__title">By mail</h3>
+          <p>Make a check out to {site.name} and mail it to:</p>
+          <address class="give-way__address">
+            {site.name}
+            <br />
+            {address.lines[0]}
+            <br />
+            {address.lines[1]}
+            <NotConfirmed confirmed={address.confirmed} />
+          </address>
+        </div>
+      )}
+
+      <div class="give-way">
+        <h3 class="give-way__title">Online</h3>
+        {givingUrl ? (
+          <p>
+            <a href={givingUrl} target="_blank" rel="noopener noreferrer">
+              Give online<span class="sr-only"> (opens in a new tab)</span>
+            </a>{' '}
+            through the church's secure giving page.
+          </p>
+        ) : (
+          <p>
+            Online giving is being set up. Until then, give on a Sunday or by mail, or{' '}
+            <a href="/contact/">ask us</a> about another way.
+          </p>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .give-ways {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  @media (min-width: 48rem) {
+    .give-ways {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .give-way {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--background);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--foreground);
+  }
+  .give-way__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: var(--heading-solid);
+  }
+  .give-way__address {
+    margin-top: 0.5rem;
+    font-style: normal;
+    font-weight: 600;
+  }
+  .give-way a {
+    font-weight: 600;
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

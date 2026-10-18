@@ -15,7 +15,7 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createClient } from '@sanity/client';
-import { renderOg } from './lib/render-og.mjs';
+import { renderOg, closeRenderer } from './lib/render-og.mjs';
 import { OG_THEME } from './og-theme.mjs';
 import { loadEnv } from './lib/loadEnv.mjs';
 
@@ -56,7 +56,20 @@ const outDir = resolve(root, 'public/og');
 const WORDMARK = env.SITE_NAME ?? 'First Baptist Church of Auburn';
 
 let count = 0;
-async function render(slug, tagline) {
+// The card already carries the name as its wordmark, so a title written as "About us | First
+// Baptist Church of Auburn" drops its brand half (either separator) before it is drawn.
+const brandTail = (t) => {
+  const s = String(t);
+  for (const sep of [' | ', ' — ', ' – ', ' - ']) {
+    if (s.toLowerCase().endsWith(`${sep}${WORDMARK}`.toLowerCase())) {
+      return s.slice(0, -(sep.length + WORDMARK.length)) || s;
+    }
+  }
+  return s;
+};
+
+async function render(slug, rawTagline) {
+  const tagline = brandTail(rawTagline);
   await renderOg({
     wordmark: WORDMARK,
     tagline,
@@ -76,12 +89,18 @@ async function render(slug, tagline) {
 const SINGLETONS = [
   { type: 'homePage', slug: 'home', defaultTitle: 'Welcome' },
   { type: 'aboutPage', slug: 'about', defaultTitle: 'About us' },
-  { type: 'servicesPage', slug: 'services', defaultTitle: 'Services' },
   { type: 'faqPage', slug: 'faq', defaultTitle: 'Frequently asked questions' },
   { type: 'contactPage', slug: 'contact', defaultTitle: 'Get in touch' },
   { type: 'journalPage', slug: 'journal', defaultTitle: 'Journal' },
   { type: 'privacyPage', slug: 'privacy', defaultTitle: 'Privacy policy' },
 ];
+
+// Code-only routes with no Studio document: a fixed card title (visitor audit, 2026-10-18).
+const STATIC_ROUTES = [
+  { slug: 'give', title: 'Give' },
+  { slug: '404', title: 'Page not found' },
+];
+for (const r of STATIC_ROUTES) await render(r.slug, r.title);
 
 for (const page of SINGLETONS) {
   const doc = await client
@@ -98,6 +117,15 @@ for (const page of SINGLETONS) {
 // journalEntry: slug (slug type, value at slug.current), seoTitle and title (both string).
 
 const COLLECTIONS = [
+  // Studio pages (the page builder's /[slug] routes: Plan your visit, Leadership, Ministries,
+  // Watch, What we believe and any page added later). No prefix: /leadership/ -> leadership.png.
+  // Archived pages are not built, so they get no card. (Visitor audit, 2026-10-18: these four
+  // routes pointed at OG images that did not exist.)
+  {
+    prefix: '',
+    query: `*[_type=="page" && defined(slug.current) && archived != true]{ "slug": slug.current, seoTitle, title }`,
+    pick: (d) => d.seoTitle || d.title,
+  },
   {
     prefix: 'journal',
     query: `*[_type=="journalEntry" && defined(slug.current)]{ "slug": slug.current, seoTitle, title }`,
@@ -110,7 +138,7 @@ for (const col of COLLECTIONS) {
   for (const d of docs) {
     const tagline = col.pick(d);
     if (!d.slug || !tagline) continue;
-    await render(`${col.prefix}-${d.slug}`, tagline);
+    await render(col.prefix ? `${col.prefix}-${d.slug}` : d.slug, tagline);
   }
 }
 

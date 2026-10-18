@@ -185,6 +185,19 @@ edit in Site settings > Church facts, then a publish.
 - Tick `confirmed` on the address, each service time and the founding year once the church
   confirms them (the tags disappear and the confirmed address joins the JSON-LD).
 - The church phone (Identity & contact > Phone) and `phoneConfirmed`; there is none on file.
+- The church email (Identity & contact > Public email) and `emailConfirmed`; none on file, so no
+  mailto: shows anywhere yet.
+- The Facebook page (Social & footer > Social links, platform Facebook) and, if it differs, the
+  Church facts `liveStreamUrl`. Until one is set, /watch/ and the footer have no live link and the
+  Home "Live now" card still goes to /watch/ (visitor audit, 2026-10-18).
+- `givingUrl` once online giving exists (Church Trac); until then Give opens /give/.
+- Optional `churchAddress.lat` / `lng` for the JSON-LD map pin.
+- The contact form's transport: the privacy policy (2026-10-18) describes the intended setup, the
+  message kept in the site's D1 database and emailed to the church, but `wrangler.jsonc` binds
+  neither `CONTACT_DB` nor `EMAIL` yet. Wire both before launch, or reword the policy.
+- The Home "Other ways in" Give card still links to Contact: a `ctaBlock` has no typed-path link
+  type, so it cannot point at /give/ without a Give page document. Repoint it in the Studio once
+  `givingUrl` is set (external link), or add a Give page document.
 - The YouTube channel id, if the church streams there (the Watch band shows its fallback until
   then). If the public feed proves flaky, port First Baptist Muncie's Data API reader
   (`youtube-feed-api.ts`, needs a key).

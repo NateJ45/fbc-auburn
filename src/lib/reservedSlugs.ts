@@ -31,6 +31,8 @@ export const RESERVED_SLUGS = new Set([
   'journal', // scaffold: journal
   'contact',
   'privacy',
+  // The Give page (src/pages/give.astro), 2026-10-18.
+  'give',
   // The fixed-data wall the visual-regression suite shoots (PORTS.md card 37).
   // noindex and out of the sitemap, but a real built route, so a custom page
   // must not be able to shadow it.

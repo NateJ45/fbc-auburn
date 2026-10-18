@@ -137,6 +137,7 @@ const WatchTag = watchHref ? 'a' : 'div';
               slot="fallback"
               class:list={['hb-watch', watchHref && 'hb-lift']}
               href={watchHref}
+              data-live-href={watchHref && facts.liveUrl ? facts.liveUrl : undefined}
             >
               {watch.poster?.asset && (
                 <SanityImage
@@ -260,5 +261,13 @@ const WatchTag = watchHref ? 'a' : 'div';
     const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
     const minutes = Number(get('hour')) * 60 + Number(get('minute'));
     tag.hidden = !(get('weekday') === 'Sun' && minutes >= start && minutes <= start + 80);
+    // While it is live, the card goes straight to the stream (Church facts > Live stream link, or
+    // the Facebook page) instead of the Watch page (visitor audit, 2026-10-18).
+    const card = tag.closest<HTMLAnchorElement>('a[data-live-href]');
+    if (card && !tag.hidden) {
+      card.href = card.dataset.liveHref ?? card.href;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+    }
   }
 </script>

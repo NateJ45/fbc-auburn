@@ -154,6 +154,9 @@ const NON_STEGA_FIELDS = new Set([
   'time',
   'youtubeChannelId',
   'churchTracIcalUrl',
+  // 2026-10-18 (visitor audit): links that become hrefs and an empty-or-not switch.
+  'givingUrl',
+  'liveStreamUrl',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

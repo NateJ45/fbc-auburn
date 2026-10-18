@@ -20,6 +20,10 @@ interface Props {
   headingId: string;
 }
 const { eyebrow, heading, intro, cards = [], surface = 'background', headingId } = Astro.props;
+// The card titles sit one level under the band's heading; a band with no heading (Ministries'
+// first band, straight under the page title) has its titles at h2, so the outline never skips a
+// level (visitor audit, 2026-10-18).
+const CardTitle = heading ? 'h3' : 'h2';
 ---
 
 <section class={surfaceClass(surface)} aria-labelledby={heading ? headingId : undefined}>
@@ -51,7 +55,7 @@ const { eyebrow, heading, intro, cards = [], surface = 'background', headingId }
           ) : (
             <StoneIcon name={card.icon} size={96} class="icon-card__icon reveal" />
           )}
-          <h3 class="icon-card__title">{card.title}</h3>
+          <CardTitle class="icon-card__title">{card.title}</CardTitle>
           {card.body && <p class="icon-card__body">{card.body}</p>}
           {card.note && <p class="icon-card__note">{card.note}</p>}
           {card.link?.label && (

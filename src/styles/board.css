@@ -82,7 +82,9 @@ main:has(.board-head) :where(.max-w-content.px-m, .max-w-content.px-l) {
 .board-head .stone-heading,
 .board-head__title {
   margin: 0;
-  font-size: clamp(56px, 8.4vw, 128px);
+  /* 56px from 375px up as before; below that it follows the width (15vw, 48px at 320px), so a
+     long one-word title like "Leadership" no longer pokes past the edge (visitor audit, 2026-10-18). */
+  font-size: clamp(min(56px, 15vw), 8.4vw, 128px);
   line-height: 0.95;
   letter-spacing: -0.02em;
 }

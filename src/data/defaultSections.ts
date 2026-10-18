@@ -135,8 +135,8 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
         _key: 'default-how-give',
         icon: 'giving-hand',
         title: 'Give',
-        body: 'Ask us how to give while online giving is set up',
-        link: { _type: 'ctaBlock', label: 'Give', href: '/contact/' },
+        body: 'In the offering on Sunday, by mail, or online once it is set up',
+        link: { _type: 'ctaBlock', label: 'Give', href: '/give/' },
       },
       {
         _type: 'iconCard',
