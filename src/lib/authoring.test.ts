@@ -58,6 +58,7 @@ function declaredTypes(file: string): string[] {
 const AUBURN_TYPES = [
   ...declaredTypes('auburnSections.ts'),
   ...declaredTypes('auburnMotionSections.ts'),
+  ...declaredTypes('churchSections.ts'),
 ];
 
 describe('freshKeys', () => {

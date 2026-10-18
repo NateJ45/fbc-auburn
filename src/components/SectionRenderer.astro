@@ -41,6 +41,9 @@ import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
 import ChurchMap from '@/components/church/ChurchMap.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { plain } from '@/lib/church-facts';
+// FBC Auburn's church section library (churchSections.ts): one branch, one dispatcher.
+import ChurchBlock from '@/components/church-blocks/ChurchBlock.astro';
+import { isChurchBlock } from '@/lib/churchBlocks.types';
 
 interface Props {
   sections?: unknown[];
@@ -95,7 +98,8 @@ const quietTitle = (sections as PageBuilderBlock[]).some(
     b?._type === 'imageTextSection' &&
     ((b as { art?: string }).art === 'mark' || (b as { art?: string }).art === 'baptism'),
 );
-const UNRULED = new Set(['heroSection', 'spacerSection']);
+// A dated notice is a strip between bands, so it takes no rule of its own (church library).
+const UNRULED = new Set(['heroSection', 'spacerSection', 'noticeSection']);
 const ruled = rows.map(({ block }) => !UNRULED.has(block._type));
 
 // A real element in preview, nothing at all on the live site. The wrapper must
@@ -350,6 +354,8 @@ const editKeyOf = (block: unknown) => {
           surface={surface ?? 'background'}
           headingId={headingId}
         />
+      ) : isChurchBlock(s) ? (
+        <ChurchBlock block={s} surface={surface ?? 'background'} headingId={headingId} />
       ) : (
         // Unknown block type: render nothing, log in dev.
         import.meta.env.DEV &&

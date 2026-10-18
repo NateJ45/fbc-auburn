@@ -1,0 +1,53 @@
+---
+// Safe to edit by hand
+// Notice band: a short message that shows only between its start and end dates (both included,
+// church calendar). The window is checked at build time, and the site rebuilds every morning at
+// about 6 am Eastern (deploy.yml), so a notice appears and goes on its own. A small script also
+// hides it in the visitor's browser once its last day has passed, so a page cached from yesterday
+// never shows a notice that has ended. "Urgent" says what the notice is (weather, a cancellation);
+// the look follows from that here, not from a colour field (rule 9).
+import CtaLink from '@/components/CtaLink.astro';
+import { churchDataNow } from '@/lib/church-feeds';
+import { churchToday, inDateWindow, isoDay } from '@/lib/church-blocks';
+import { plain } from '@/lib/church-facts';
+import type { ProjectedNoticeSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedNoticeSection;
+  /** The build moment; tests pass a fixed one. */
+  now?: Date;
+}
+const { block, now = churchDataNow() } = Astro.props;
+const message = block.message?.trim();
+const showing = Boolean(message) && inDateWindow(block.startDate, block.endDate, churchToday(now));
+const urgent = plain(block.urgency) === 'urgent';
+const end = isoDay(block.endDate);
+---
+
+{showing && (
+  <aside
+    class:list={['cb-notice', urgent && 'cb-notice--urgent']}
+    aria-label={urgent ? 'Urgent notice' : 'Notice'}
+    data-church-block="noticeSection"
+    data-cb-notice-end={end || undefined}
+  >
+    <div class="cb-notice__inner mx-auto max-w-content px-m">
+      <span class="cb-notice__tag">{urgent ? 'Urgent' : 'Notice'}</span>
+      <p class="cb-notice__message">{message}</p>
+      {block.link?.label && <CtaLink cta={block.link} variant="secondary" />}
+    </div>
+  </aside>
+)}
+
+<script>
+  // Hide a notice whose last day has passed on the church's clock (Eastern).
+  const today = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+  for (const el of document.querySelectorAll<HTMLElement>('[data-cb-notice-end]')) {
+    if (today > (el.dataset.cbNoticeEnd ?? '9999')) el.hidden = true;
+  }
+</script>

@@ -25,6 +25,12 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SectionRenderer from '@/components/SectionRenderer.astro';
 import { site } from '@/data/site';
+import { FIXTURE_FORMS } from '@/lib/church-form-fixtures';
+import { churchDataNow } from '@/lib/church-feeds';
+import { addDays, churchNow } from '@/lib/church-facts';
+
+/** A church day `n` days from the build (negative: before it). */
+const SOON = (n: number) => addDays(churchNow(churchDataNow()).date, n);
 
 const image = (alt = 'Fixture image') => ({
   _type: 'image',
@@ -330,6 +336,234 @@ const SECTIONS: Record<string, unknown>[] = [
       },
     ],
   },
+  // ── The church section library (churchSections.ts, 2026-10-18) ──
+  // Facts-fed blocks (service times, map, giving, contact details, events, calendar buttons,
+  // live stream) read Church facts, so what they show here follows Site settings. Dates are
+  // relative to the build, so the notice is always showing and the countdown always counting.
+  { _type: 'serviceTimesSection', _key: 'cb-times', heading: 'When we meet' },
+  {
+    _type: 'mapSection',
+    _key: 'cb-map',
+    heading: 'Find us',
+    note: 'Park in the side lot and come in through the glass doors.',
+  },
+  {
+    _type: 'beliefsSection',
+    _key: 'cb-beliefs',
+    heading: 'What we believe',
+    translation: 'CSB',
+    linkFaithAndMessage: true,
+    beliefs: [
+      {
+        _key: 'b1',
+        _type: 'belief',
+        title: 'The Bible',
+        text: 'A short paragraph in the church’s own words.',
+        references: '2 Timothy 3:16; Psalm 119:105',
+      },
+      {
+        _key: 'b2',
+        _type: 'belief',
+        title: 'Salvation',
+        text: 'A short paragraph in the church’s own words.',
+        references: 'John 3:16; Ephesians 2:8-9',
+      },
+    ],
+  },
+  {
+    _type: 'timelineSection',
+    _key: 'cb-timeline',
+    heading: 'Our story',
+    entries: [
+      { _key: 't1', _type: 'timelineEntry', year: '1959', title: 'The first service' },
+      {
+        _key: 't2',
+        _type: 'timelineEntry',
+        year: '1970s',
+        title: 'A new building',
+        text: 'A sentence or two about what happened.',
+        image: image('The building'),
+      },
+      { _key: 't3', _type: 'timelineEntry', year: '2026', title: 'A new website' },
+    ],
+  },
+  {
+    _type: 'accordionSection',
+    _key: 'cb-accordion',
+    heading: 'Good to know',
+    items: [
+      {
+        _key: 'a1',
+        _type: 'accordionItem',
+        question: 'What should I wear?',
+        answer: [para('aa1', 'Whatever you are comfortable in.')],
+      },
+      {
+        _key: 'a2',
+        _type: 'accordionItem',
+        question: 'Is there anything for children?',
+        answer: [para('aa2', 'Yes, a class for every age.')],
+      },
+    ],
+  },
+  {
+    _type: 'tabsSection',
+    _key: 'cb-tabs',
+    heading: 'Something for everyone',
+    tabs: [
+      {
+        _key: 'tb1',
+        _type: 'tabPanel',
+        label: 'Kids',
+        body: [para('tb1p', 'What happens for children.')],
+      },
+      {
+        _key: 'tb2',
+        _type: 'tabPanel',
+        label: 'Students',
+        body: [para('tb2p', 'What happens for students.')],
+      },
+      {
+        _key: 'tb3',
+        _type: 'tabPanel',
+        label: 'Adults',
+        body: [para('tb3p', 'What happens for adults.')],
+      },
+    ],
+  },
+  {
+    _type: 'scriptureSection',
+    _key: 'cb-verse',
+    verse: 'God is our refuge and strength, a helper who is always found in times of trouble.',
+    reference: 'Psalm 46:1',
+    translation: 'CSB',
+  },
+  {
+    _type: 'noticeSection',
+    _key: 'cb-notice',
+    message: 'No services this Sunday because of the snow. Stay safe and warm.',
+    urgency: 'urgent',
+    endDate: SOON(60),
+  },
+  {
+    _type: 'countdownSection',
+    _key: 'cb-countdown',
+    eventName: 'Vacation Bible School',
+    startDate: SOON(24),
+    endDate: SOON(28),
+    intro: 'Five mornings of songs, stories and games for children.',
+    duringText: 'It is happening now. Come join us!',
+    afterText: 'Thank you to everyone who came!',
+    link: cta('Sign up'),
+  },
+  {
+    _type: 'givingSection',
+    _key: 'cb-giving',
+    heading: 'Ways to give',
+    textToGive: 'Text GIVE to 555-555-0100',
+  },
+  {
+    _type: 'livestreamSection',
+    _key: 'cb-live',
+    heading: 'Watch live',
+    videoUrl: 'https://www.youtube.com/watch?v=aaaaaaaaaaa',
+  },
+  {
+    _type: 'eventsSection',
+    _key: 'cb-events',
+    heading: 'Coming up',
+    count: 4,
+    showSubscribe: true,
+    emptyText: 'Nothing else is on the calendar just now.',
+  },
+  {
+    _type: 'newsletterSection',
+    _key: 'cb-newsletter',
+    heading: 'Stay in touch',
+    signupUrl: 'https://example.com/newsletter',
+  },
+  { _type: 'calendarSubscribeSection', _key: 'cb-subscribe', heading: 'Never miss a Sunday' },
+  {
+    _type: 'progressSection',
+    _key: 'cb-progress',
+    heading: 'Building fund',
+    goal: 50000,
+    raised: 18250,
+    asOf: SOON(-3),
+  },
+  {
+    _type: 'affiliationsSection',
+    _key: 'cb-affiliations',
+    heading: 'Part of a wider family',
+    items: [
+      {
+        _key: 'af1',
+        _type: 'affiliation',
+        name: 'Southern Baptist Convention',
+        url: 'https://www.sbc.net/',
+      },
+      {
+        _key: 'af2',
+        _type: 'affiliation',
+        name: 'State Convention of Baptists in Ohio',
+        url: 'https://scbo.org/',
+      },
+    ],
+  },
+  {
+    _type: 'buttonRowSection',
+    _key: 'cb-buttons',
+    heading: 'Quick links',
+    layout: 'cards',
+    links: [
+      {
+        _key: 'bl1',
+        _type: 'quickLink',
+        link: cta('Plan your visit'),
+        note: 'What a Sunday looks like',
+      },
+      {
+        _key: 'bl2',
+        _type: 'quickLink',
+        link: cta('Ministries'),
+        note: 'Kids, students and adults',
+      },
+      { _key: 'bl3', _type: 'quickLink', link: cta('Give'), note: 'Ways to give' },
+    ],
+  },
+  { _type: 'contactCardSection', _key: 'cb-contact', heading: 'Get in touch' },
+  {
+    _type: 'columnsSection',
+    _key: 'cb-columns',
+    heading: 'Text in columns',
+    textColumns: [
+      {
+        _key: 'c1',
+        _type: 'textColumn',
+        heading: 'Sundays',
+        body: [para('c1p', 'A few sentences in the first column.')],
+      },
+      {
+        _key: 'c2',
+        _type: 'textColumn',
+        heading: 'Wednesdays',
+        body: [para('c2p', 'A few sentences in the second column.')],
+      },
+      {
+        _key: 'c3',
+        _type: 'textColumn',
+        heading: 'Through the year',
+        body: [para('c3p', 'A few sentences in the third column.')],
+      },
+    ],
+  },
+  {
+    _type: 'photoSection',
+    _key: 'cb-photo',
+    image: image('The congregation outside after worship'),
+    caption: 'A caption under the photo.',
+  },
+  { _type: 'formSection', _key: 'cb-form', form: FIXTURE_FORMS['fixture-signup'] },
 ];
 ---
 

@@ -1,0 +1,98 @@
+---
+// Safe to edit by hand
+// Tabs: two to five labeled panels. Without JavaScript every panel shows in turn under its own
+// heading; the script turns them into a real tab list (arrow keys, Home and End move between tabs,
+// the WAI-ARIA tabs pattern) and hides the panels' headings visually (the tab names them).
+import ChurchBand from './ChurchBand.astro';
+import PortableText from '@/components/PortableText';
+import type { ProjectedTabsSection } from '@/lib/churchBlocks.types';
+import type { PortableTextBlock } from '@portabletext/types';
+
+interface Props {
+  block: ProjectedTabsSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const tabs = (block.tabs ?? []).filter((t) => t?.label);
+const Title = block.heading ? 'h3' : 'h2';
+const id = (i: number) => `${headingId}-tab-${i}`;
+---
+
+{tabs.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Tabs"
+  >
+    <div class="cb-tabs" data-cb-tabs>
+      <div class="cb-tablist" role="tablist" aria-label={block.heading || 'Tabs'}>
+        {tabs.map((t, i) => (
+          <button
+            type="button"
+            class="cb-tab"
+            role="tab"
+            id={`${id(i)}-button`}
+            aria-controls={id(i)}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      {tabs.map((t, i) => (
+        <div class="cb-panel" id={id(i)} data-cb-panel>
+          <Title class="cb-title cb-panel__title">{t.label}</Title>
+          <PortableText value={(t.body ?? []) as PortableTextBlock[]} className="cb-prose" />
+        </div>
+      ))}
+    </div>
+  </ChurchBand>
+)}
+
+<script>
+  // Progressive: the panels are all readable before this runs.
+  for (const root of document.querySelectorAll<HTMLElement>('[data-cb-tabs]')) {
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-cb-panel]')];
+    root.classList.add('cb-tabs--js');
+    panels.forEach((p, i) => {
+      p.setAttribute('role', 'tabpanel');
+      p.setAttribute('aria-labelledby', buttons[i]?.id ?? '');
+      p.tabIndex = 0;
+    });
+    const select = (n: number, focus = false) => {
+      buttons.forEach((b, i) => {
+        const on = i === n;
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+        b.tabIndex = on ? 0 : -1;
+        panels[i].hidden = !on;
+      });
+      if (focus) buttons[n]?.focus();
+    };
+    buttons.forEach((b, i) => {
+      b.addEventListener('click', () => select(i));
+      b.addEventListener('keydown', (e) => {
+        const last = buttons.length - 1;
+        const next =
+          e.key === 'ArrowRight'
+            ? (i + 1) % buttons.length
+            : e.key === 'ArrowLeft'
+              ? (i - 1 + buttons.length) % buttons.length
+              : e.key === 'Home'
+                ? 0
+                : e.key === 'End'
+                  ? last
+                  : null;
+        if (next === null) return;
+        e.preventDefault();
+        select(next, true);
+      });
+    });
+    select(0);
+  }
+</script>

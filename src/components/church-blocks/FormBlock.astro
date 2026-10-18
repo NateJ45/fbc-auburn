@@ -1,0 +1,338 @@
+---
+// Safe to edit by hand
+// The Form block: draws one of the church's forms (a `form` document, src/sanity/schemaTypes/
+// form.ts) and posts it to the site's own /api/form/ (src/pages/api/form.ts), which checks the
+// answers against the form's own questions, stores them in the Worker's D1 database and emails the
+// form's recipient. Nothing a visitor types ever goes to Sanity.
+//
+// Before showing the form, the script asks /api/form/ whether forms can be delivered yet. Until
+// the database or email is connected (OPERATIONS.md, "Forms"), or with no Worker at all, it shows
+// a friendly "please email us instead" note with the church's own email and phone, so nobody types
+// a prayer request into a form that cannot send it.
+//
+// Spam: a hidden honeypot box and a timing check (shared with the Contact form), and Cloudflare
+// Turnstile when PUBLIC_TURNSTILE_SITE_KEY is set at build and TURNSTILE_SECRET in the Worker.
+import ChurchBand from './ChurchBand.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { normalizeForm } from '@/lib/church-form';
+import type { ProjectedFormSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedFormSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const form = normalizeForm(block.form);
+const { email, phone } = await getChurchFacts();
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+const fid = (s: string) => `${headingId}-${s}`;
+const who = form?.recipientName || 'the church office';
+---
+
+{form && (
+  <ChurchBand
+    type={block._type}
+    heading={form.title}
+    intro={form.intro}
+    headingId={headingId}
+    surface={surface}
+    label={form.title}
+  >
+    <div class="cb-form-wrap" data-cb-form-wrap>
+      {form.mode === 'prayer' && (
+        <p class="cb-form-note" style="max-width: 40rem; margin-bottom: 1.25rem">
+          Your request goes to {who} by email. It is never shown on the website, and the website
+          keeps no copy once it has been sent.
+        </p>
+      )}
+      <form
+        class="cb-form"
+        action="/api/form/"
+        method="post"
+        novalidate
+        data-cb-form
+        data-form-id={form.id}
+        data-success={form.successMessage}
+      >
+        <div class="cb-hp" aria-hidden="true">
+          <label>
+            Company (leave this empty)
+            <input type="text" name="company" tabindex="-1" autocomplete="off" />
+          </label>
+        </div>
+        {form.askForContact && form.allowAnonymous && (
+          <label class="cb-check">
+            <input type="checkbox" name="anonymous" data-cb-anonymous />
+            Send this without my name (we will not be able to reply)
+          </label>
+        )}
+        {form.askForContact && (
+          <>
+            <div class="cb-field" data-cb-contact>
+              <label for={fid('name')}>Your name</label>
+              <input
+                id={fid('name')}
+                type="text"
+                name="name"
+                autocomplete="name"
+                required
+                aria-describedby={fid('name-error')}
+              />
+              <p class="cb-error" id={fid('name-error')} data-error-for="name" hidden />
+            </div>
+            <div class="cb-field" data-cb-contact>
+              <label for={fid('email')}>Your email</label>
+              <input
+                id={fid('email')}
+                type="email"
+                name="email"
+                autocomplete="email"
+                required
+                aria-describedby={fid('email-error')}
+              />
+              <p class="cb-error" id={fid('email-error')} data-error-for="email" hidden />
+            </div>
+          </>
+        )}
+        {form.questions.map((q, i) => {
+          const id = fid(`q${i}`);
+          const err = `${id}-error`;
+          const label = q.required || /optional/i.test(q.label) ? q.label : `${q.label} (optional)`;
+          return q.kind === 'checkbox' ? (
+            <div class="cb-field" data-q={i}>
+              <label class="cb-check">
+                <input
+                  type="checkbox"
+                  name={`q${i}`}
+                  required={q.required}
+                  aria-describedby={err}
+                />
+                {q.label}
+              </label>
+              <p class="cb-error" id={err} data-error-for={`q${i}`} hidden />
+            </div>
+          ) : (
+            <div class="cb-field" data-q={i}>
+              <label for={id}>{label}</label>
+              {q.kind === 'textarea' ? (
+                <textarea
+                  id={id}
+                  name={`q${i}`}
+                  rows={5}
+                  maxlength={2000}
+                  required={q.required}
+                  aria-describedby={err}
+                />
+              ) : q.kind === 'select' ? (
+                <select id={id} name={`q${i}`} required={q.required} aria-describedby={err}>
+                  <option value="">Choose one</option>
+                  {q.options.map((o) => (
+                    <option value={o}>{o}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  id={id}
+                  name={`q${i}`}
+                  type={q.kind === 'email' ? 'email' : q.kind === 'phone' ? 'tel' : 'text'}
+                  autocomplete={q.kind === 'email' ? 'email' : q.kind === 'phone' ? 'tel' : 'off'}
+                  maxlength={2000}
+                  required={q.required}
+                  aria-describedby={err}
+                />
+              )}
+              <p class="cb-error" id={err} data-error-for={`q${i}`} hidden />
+            </div>
+          );
+        })}
+        {siteKey && <div class="cf-turnstile" data-sitekey={siteKey} />}
+        <p class="cb-error" role="alert" data-form-error hidden />
+        <button type="submit" class="btn-auburn btn-auburn--primary press-tactile">
+          {form.submitLabel}
+        </button>
+      </form>
+      <p class="cb-form-done" role="status" tabindex="-1" data-cb-done hidden>
+        {form.successMessage}
+      </p>
+      <div class="cb-form-note" data-cb-unavailable hidden style="max-width: 40rem">
+        <p>
+          This form is not switched on yet, so please get in touch directly
+          {email || phone ? ':' : '.'}
+        </p>
+        {email && (
+          <p style="margin-top: 0.5rem">
+            Email{' '}
+            <a class="cb-link" href={email.href}>
+              {email.display}
+            </a>
+          </p>
+        )}
+        {phone && (
+          <p style="margin-top: 0.25rem">
+            Call{' '}
+            <a class="cb-link" href={phone.tel}>
+              {phone.display}
+            </a>
+          </p>
+        )}
+        {!email && !phone && (
+          <p style="margin-top: 0.5rem">
+            Use the{' '}
+            <a class="cb-link" href="/contact/">
+              contact page
+            </a>
+            , or speak to us on a Sunday.
+          </p>
+        )}
+      </div>
+      <noscript>
+        <p class="cb-form-note" style="max-width: 40rem">
+          This form needs JavaScript to send. You can also{' '}
+          <a class="cb-link" href="/contact/">
+            contact us
+          </a>{' '}
+          directly.
+        </p>
+      </noscript>
+    </div>
+  </ChurchBand>
+)}
+
+{siteKey && form && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+)}
+
+<script>
+  type Answer = string | boolean;
+
+  const show = (el: Element | null, on: boolean) => {
+    if (el instanceof HTMLElement) el.hidden = !on;
+  };
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-cb-form]')) {
+    const wrap = form.closest<HTMLElement>('[data-cb-form-wrap]');
+    const done = wrap?.querySelector<HTMLElement>('[data-cb-done]') ?? null;
+    const unavailable = wrap?.querySelector<HTMLElement>('[data-cb-unavailable]') ?? null;
+    const formError = form.querySelector<HTMLElement>('[data-form-error]');
+    const id = form.dataset.formId ?? '';
+    const renderedAt = Date.now();
+
+    const switchToFallback = () => {
+      show(form, false);
+      show(unavailable, true);
+    };
+
+    // Can forms be delivered yet? No Worker, no database and no email all mean "not yet".
+    fetch(`/api/form/?id=${encodeURIComponent(id)}`, { headers: { Accept: 'application/json' } })
+      .then((r) => (r.ok ? r.json() : { ready: false }))
+      .then((s: { ready?: boolean }) => {
+        if (!s.ready) switchToFallback();
+      })
+      .catch(switchToFallback);
+
+    // "Send without my name" hides the name and email boxes.
+    const anon = form.querySelector<HTMLInputElement>('[data-cb-anonymous]');
+    anon?.addEventListener('change', () => {
+      for (const box of form.querySelectorAll<HTMLElement>('[data-cb-contact]')) {
+        box.hidden = anon.checked;
+        const input = box.querySelector('input');
+        if (input) input.required = !anon.checked;
+      }
+    });
+
+    const clearErrors = () => {
+      for (const p of form.querySelectorAll<HTMLElement>('[data-error-for]')) {
+        p.hidden = true;
+        p.textContent = '';
+        p.closest('.cb-field')?.removeAttribute('data-invalid');
+      }
+      show(formError, false);
+    };
+
+    const showErrors = (errors: Record<string, string>) => {
+      let first: HTMLElement | null = null;
+      for (const [key, message] of Object.entries(errors)) {
+        const p = form.querySelector<HTMLElement>(`[data-error-for="${key}"]`);
+        if (!p) {
+          if (formError) {
+            formError.textContent = message;
+            formError.hidden = false;
+          }
+          continue;
+        }
+        p.textContent = message;
+        p.hidden = false;
+        const field = p.closest<HTMLElement>('.cb-field');
+        field?.setAttribute('data-invalid', '');
+        first ??= field?.querySelector<HTMLElement>('input, select, textarea') ?? null;
+      }
+      first?.focus();
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+      const data = new FormData(form);
+      const questions = [...form.querySelectorAll<HTMLElement>('[data-q]')];
+      const answers: Answer[] = questions.map((q) => {
+        const i = q.dataset.q;
+        const box = q.querySelector<HTMLInputElement>('input[type="checkbox"]');
+        return box ? box.checked : String(data.get(`q${i}`) ?? '');
+      });
+
+      // The browser's own check first, worded the same way the server words it.
+      const local: Record<string, string> = {};
+      for (const el of form.querySelectorAll<HTMLInputElement>('input, select, textarea')) {
+        if (el.closest('[hidden]') || el.name === 'company' || el.checkValidity()) continue;
+        const key = el.name;
+        if (el.type === 'checkbox') local[key] = 'Please tick this box to go on.';
+        else if (el.validity.typeMismatch && el.type === 'email')
+          local[key] = 'That email address does not look right.';
+        else if (key === 'name') local[key] = 'Please tell us your name.';
+        else if (key === 'email') local[key] = 'Please give us an email address so we can reply.';
+        else local[key] = 'Please answer this question.';
+      }
+      if (Object.keys(local).length) return showErrors(local);
+
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (button) button.disabled = true;
+      try {
+        const res = await fetch('/api/form/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            formId: id,
+            name: data.get('name') ?? '',
+            email: data.get('email') ?? '',
+            anonymous: anon?.checked === true,
+            answers,
+            company: data.get('company') ?? '',
+            renderedAt,
+            turnstileToken: data.get('cf-turnstile-response') ?? null,
+          }),
+        });
+        const body = (await res.json().catch(() => ({}))) as {
+          ok?: boolean;
+          unavailable?: boolean;
+          error?: string;
+          errors?: Record<string, string>;
+        };
+        if (res.ok && body.ok) {
+          form.reset();
+          show(form, false);
+          show(done, true);
+          done?.focus();
+          return;
+        }
+        if (body.unavailable || res.status === 404 || res.status === 405) return switchToFallback();
+        if (body.errors) return showErrors(body.errors);
+        showErrors({ form: body.error ?? 'Sorry, that did not send. Please try again.' });
+      } catch {
+        switchToFallback();
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  }
+</script>

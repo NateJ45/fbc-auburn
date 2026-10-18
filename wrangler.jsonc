@@ -82,6 +82,10 @@
   // exactly what a contact form notifying the site owner is.
   // "send_email": [{ "name": "EMAIL" }],
   //
+  // The form builder (/api/form/, src/pages/api/form.ts) uses the SAME two bindings plus the
+  // FORM_RECIPIENTS secret (JSON of recipient key to address); migrations/0002 adds its table.
+  // OPERATIONS.md "Forms" has the FBC Auburn steps.
+  //
   // Optional, both as secrets: TURNSTILE_SECRET (plus PUBLIC_TURNSTILE_SITE_KEY
   // in .env) and WEB3FORMS_KEY, the fallback for a site with no email binding.
 

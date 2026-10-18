@@ -157,6 +157,20 @@ const NON_STEGA_FIELDS = new Set([
   // 2026-10-18 (visitor audit): links that become hrefs and an empty-or-not switch.
   'givingUrl',
   'liveStreamUrl',
+  // 2026-10-18, the church section library (churchSections.ts) and the form builder (form.ts).
+  // Dropdowns the blocks branch on, dates and keywords compared at build time, and links that
+  // become hrefs or player addresses. church-blocks.ts ALSO strips each one with plain(), because
+  // that code runs on the live site too, where this list does not exist.
+  'urgency',
+  'translation',
+  'mode',
+  'recipient',
+  'startDate',
+  'endDate',
+  'asOf',
+  'keywords',
+  'videoUrl',
+  'signupUrl',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

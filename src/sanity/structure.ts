@@ -40,6 +40,7 @@ import { BookIcon } from '@sanity/icons/Book';
 import { LockIcon } from '@sanity/icons/Lock';
 import { ColorWheelIcon } from '@sanity/icons/ColorWheel';
 import { ArrowRightIcon } from '@sanity/icons/ArrowRight';
+import { ClipboardIcon } from '@sanity/icons/Clipboard';
 import ChurchOverview from './components/ChurchOverview';
 import BrandKit from './components/BrandKit';
 import { TrashIcon } from '@sanity/icons/Trash';
@@ -79,6 +80,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'page', // custom pages, placed explicitly under "Pages"
   'sectionPreset', // saved sections, placed explicitly under "Pages"
   'redirect', // placed explicitly under "Pages" -> Redirects
+  'form', // the form builder, placed explicitly under Content -> Forms
   TRASH_TYPE, // the Studio kit's Trash, placed explicitly at the bottom
   // sanity-plugin-media registers this tag type; keep it out of the desk root
   // (the "Media" tool in the top sidebar is where tags belong).
@@ -219,6 +221,12 @@ const fullDesk = (S: StructureBuilder) =>
               // The active announcement is picked at build time; a rebuild is required
               // for the banner to appear or disappear on the live site.
               S.documentTypeListItem('announcement').title('Notices').icon(BellIcon),
+
+              S.divider(),
+
+              // The form builder (schemaTypes/form.ts): forms the church writes, shown on a
+              // page with the Form section. Answers are emailed, never stored here.
+              S.documentTypeListItem('form').title('Forms').icon(ClipboardIcon),
             ]),
         ),
 
