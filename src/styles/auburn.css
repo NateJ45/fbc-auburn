@@ -488,6 +488,50 @@ h6 {
   margin-bottom: 1.2rem;
 }
 
+/* ---- Desktop nav row (2026-10-18): three gold steps from the mark grow in under a link on hover
+   and focus, and stay under the page you are on. Replaces the starter's thin rule and the earlier
+   three-stone current marker (motion.css). ---- */
+.site-header .site-nav a.nav-underline::after,
+.site-header .site-nav a.nav-underline[aria-current='page']::after {
+  left: 50%;
+  bottom: -14px;
+  width: 34px;
+  height: 11px;
+  background: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 34 11%27%3E%3Crect x=%270%27 y=%275.5%27 width=%2710%27 height=%275%27 rx=%272.2%27 fill=%27%23E8A93A%27/%3E%3Crect x=%2712%27 y=%272.8%27 width=%279.5%27 height=%274.8%27 rx=%272.2%27 fill=%27%23E8A93A%27/%3E%3Crect x=%2723.5%27 y=%270%27 width=%279%27 height=%274.6%27 rx=%272.2%27 fill=%27%23E8A93A%27/%3E%3C/svg%3E')
+    center / 34px 11px no-repeat;
+  opacity: 0;
+  transform: translateX(-50%) scale(0.3);
+  transform-origin: 50% 100%;
+  transition:
+    transform 0.32s cubic-bezier(0.3, 1.4, 0.5, 1),
+    opacity 0.2s ease;
+}
+.site-header .site-nav a.nav-underline:hover::after,
+.site-header .site-nav a.nav-underline:focus-visible::after,
+.site-header .site-nav a.nav-underline[aria-current='page']::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.site-header .site-nav a.nav-underline:hover {
+  color: var(--auburn-deep);
+}
+/* The Menu pill's stones shift a little on hover, as if being laid. */
+.menu-pill__stones rect {
+  transition: transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.menu-pill:hover .menu-pill__stones rect:nth-child(2) {
+  transform: translateX(3px);
+}
+.menu-pill:hover .menu-pill__stones rect:nth-child(3) {
+  transform: translateX(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-pill__stones rect,
+  .site-header .site-nav a.nav-underline::after {
+    transition: none;
+  }
+}
+
 /* ---- The Menu button and the full-screen night menu (MobileNav.tsx) ---- */
 .menu-pill {
   display: inline-flex;
@@ -527,12 +571,14 @@ h6 {
   }
 }
 .auburn-menu {
-  --menu-night: #1d2f44;
+  --menu-night: #1b2a3d;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: none;
   inset: 0;
   border: 0;
-  padding: clamp(1.25rem, 4vw, 3rem);
+  padding: clamp(1.25rem, 4vw, 3rem) clamp(1.25rem, 5vw, 4rem) 0;
   background: var(--menu-night);
   color: #ffffff;
   overflow-y: auto;
@@ -566,16 +612,199 @@ h6 {
   text-transform: uppercase;
   color: #96c3ea;
 }
-/* When and where, first in the menu (Home audit research, 2026-10-17). */
-.auburn-menu__sunday {
+.auburn-menu__grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-content: start;
+  width: min(1240px, 100%);
+  margin-inline: auto;
+  padding-block: clamp(1.25rem, 3vw, 2.5rem);
+}
+@media (min-width: 54rem) {
+  .auburn-menu__grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* The links: numbered in gold; on hover or focus the number becomes a stone in the story's next
+   colour and the word steps right. The page you are on keeps its stone. */
+.auburn-menu__main,
+.auburn-menu__sub {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.auburn-menu__main a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.12em 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.3rem + 2vw, 3rem);
+  line-height: 1.12;
+  color: #ffffff;
+  text-decoration: none;
+}
+.auburn-menu__num {
+  flex: none;
+  width: 2.2rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: #e8a93a;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.auburn-menu__stone {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1.5rem;
+  height: 1.2rem;
+  margin-top: -0.6rem;
+  border-radius: 46% 54% 42% 58% / 56% 44% 56% 44%;
+  transform: scale(0) rotate(-20deg);
+  transition: transform 0.32s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.auburn-menu__stone--0 {
+  background: #96c3ea;
+}
+.auburn-menu__stone--1 {
+  background: #4f9a63;
+  border-radius: 54% 46% 56% 44% / 46% 54% 44% 56%;
+}
+.auburn-menu__stone--2 {
+  background: #e8a93a;
+  border-radius: 48% 52% 42% 58% / 56% 48% 52% 44%;
+}
+.auburn-menu__stone--3 {
+  background: #e0583a;
+  border-radius: 56% 44% 52% 48% / 44% 56% 46% 54%;
+}
+.auburn-menu__label {
+  transition:
+    transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1),
+    color 0.2s ease;
+}
+.auburn-menu__main a:hover .auburn-menu__num,
+.auburn-menu__main a:focus-visible .auburn-menu__num,
+.auburn-menu__main a[aria-current='page'] .auburn-menu__num {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.auburn-menu__main a:hover .auburn-menu__stone,
+.auburn-menu__main a:focus-visible .auburn-menu__stone,
+.auburn-menu__main a[aria-current='page'] .auburn-menu__stone {
+  transform: none;
+}
+.auburn-menu__main a:hover .auburn-menu__label,
+.auburn-menu__main a:focus-visible .auburn-menu__label {
+  transform: translateX(0.35rem);
+}
+.auburn-menu__main a[aria-current='page'] .auburn-menu__label {
+  color: #dbeaf8;
+}
+.auburn-menu a:focus-visible {
+  outline: 3px solid #e8a93a;
+  outline-offset: 3px;
+}
+.auburn-menu__group {
+  margin: 1rem 0 0;
+  padding-left: calc(2.2rem + 0.9rem);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #96c3ea;
+}
+.auburn-menu__sub a {
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.2rem);
+}
+
+/* The side: the This Sunday card, then the tagline, contact and the white logo. */
+.auburn-menu__side {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
-  width: min(1200px, 100%);
-  margin: 18px auto 0;
-  padding-bottom: 22px;
-  border-bottom: 1px solid rgb(255 255 255 / 0.16);
+  gap: 1.4rem;
+}
+.auburn-menu__card {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding: 1.6rem 1.7rem 1.5rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 20px;
+  background: #243650;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.auburn-menu__card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: linear-gradient(
+    90deg,
+    #96c3ea 0 25%,
+    #2c5b3a 25% 50%,
+    #e8a93a 50% 75%,
+    #c4401f 75% 100%
+  );
+}
+.auburn-menu__card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.auburn-menu__card-eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #96c3ea;
+}
+.auburn-menu__tag {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #fbe9e4;
+  color: #8f2c14;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.auburn-menu__card-date {
+  margin: 0.3rem 0 0.9rem;
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  line-height: 1.05;
+}
+.auburn-menu__card-times {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+.auburn-menu__card-times > div {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.auburn-menu__card-times dt {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.auburn-menu__card-times dd {
+  margin: 0;
+  color: #d6d9e1;
 }
 .auburn-menu__times {
   margin: 0;
@@ -583,10 +812,11 @@ h6 {
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #ffffff;
 }
 .auburn-menu__where {
-  margin: 0 0 12px;
+  margin: 1rem 0 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgb(255 255 255 / 0.14);
   color: #d6d9e1;
 }
 .auburn-menu__where a {
@@ -594,66 +824,8 @@ h6 {
   font-weight: 600;
   text-underline-offset: 3px;
 }
-.auburn-menu__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(2rem, 6vw, 5rem);
-  width: min(1200px, 100%);
-  margin-inline: auto;
-  padding-block: clamp(1rem, 4vw, 3rem);
-}
-@media (min-width: 54rem) {
-  .auburn-menu__grid {
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  }
-}
-.auburn-menu__main {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.auburn-menu__main > li > a {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 1.2rem + 2.4vw, 3rem);
-  line-height: 1.5;
-  color: #ffffff;
-  text-decoration: none;
-}
-.auburn-menu__main a:hover,
-.auburn-menu__main a:focus-visible {
-  color: #96c3ea;
-}
-.auburn-menu a:focus-visible {
-  outline: 3px solid #e8a93a;
-  outline-offset: 3px;
-}
-.auburn-menu__group {
-  margin-top: 1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #96c3ea;
-}
-.auburn-menu__sub {
-  list-style: none;
-  padding: 0;
-  margin: 0.3rem 0 0.6rem;
-}
-.auburn-menu__sub a {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  line-height: 1.6;
-  color: #ffffff;
-  text-decoration: none;
-}
-.auburn-menu__side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.2rem;
-}
 .auburn-menu__tagline {
+  margin: 0;
   text-wrap: balance;
   font-family: var(--font-display);
   font-size: 1.5rem;
@@ -685,9 +857,76 @@ h6 {
   color: #ffffff;
 }
 .auburn-menu__logo {
-  width: 220px;
+  width: 200px;
   height: auto;
-  margin-top: 0.8rem;
+  margin-top: 0.4rem;
+  opacity: 0.9;
+}
+
+/* The sill along the bottom of the panel, edge to edge. */
+.auburn-menu__sill {
+  flex: none;
+  height: 64px;
+  margin: 1.5rem calc(-1 * clamp(1.25rem, 5vw, 4rem)) 0;
+  overflow: hidden;
+}
+.auburn-menu__sill svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Coming alive: when the panel opens, the links rise in one after another, the card follows and
+   the sill lays itself. CSS only, keyed on the panel's data-state; nothing moves under reduced
+   motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .auburn-menu[data-state='open'] .auburn-menu__main > li,
+  .auburn-menu[data-state='open'] .auburn-menu__side > * {
+    animation: menu-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(90ms + var(--i, 0) * 45ms);
+  }
+  .auburn-menu[data-state='open'] .auburn-menu__side > * {
+    animation-delay: 220ms;
+  }
+  .auburn-menu[data-state='open'] .auburn-menu__side > * + * {
+    animation-delay: 300ms;
+  }
+  .auburn-menu[data-state='open'] .auburn-menu__sill path {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: sill-lay 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(260ms + var(--i) * 5ms);
+  }
+}
+@keyframes menu-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Phones: the This Sunday card first (people open the menu to find the times), then the links,
+   then the rest of the side column. */
+@media (max-width: 53.99rem) {
+  .auburn-menu__side {
+    display: contents;
+  }
+  .auburn-menu__card {
+    order: -1;
+  }
+  .auburn-menu__grid {
+    gap: 1.6rem;
+  }
+  .auburn-menu__tagline,
+  .auburn-menu__contact,
+  .auburn-menu__social,
+  .auburn-menu__logo {
+    order: 1;
+  }
 }
 /* Phones: logo on the left and the Menu pill on the right, as in the mockups (the starter centres it). */
 @media (max-width: 63.99rem) {
@@ -706,7 +945,7 @@ h6 {
   border-bottom-color: transparent;
 }
 
-/* ---- Footer, board E (2026-10-17): ink, with the brand row on top. The tokens are redefined
+/* ---- Footer: ink. The tokens are redefined
    inside the footer, so every Tailwind class in the link grid reads light on ink. Light only
    (rule 3): this is the footer's own ground, not a dark theme. ---- */
 .site-footer {
@@ -724,71 +963,312 @@ h6 {
 .site-footer a {
   color: #ffffff;
 }
-.site-footer__board {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
-  gap: 40px;
-  padding-top: 72px;
-  padding-bottom: 40px;
-  border-bottom: 1px solid #2e3446;
+/* ---- Footer (2026-10-18): a doorstep. The sill across the top edge, the closing invitation beside
+   a live This Sunday panel, a directory of big serif links, the mosaic signature running off the
+   bottom, a slim bottom bar. Footer.astro has the map of it. ---- */
+.site-footer {
+  position: relative;
 }
-.site-footer__board img {
-  width: 84px;
+/* The sill straddles the top edge, half over the section above: the step up to the door. */
+.sill {
+  position: relative;
+  z-index: 2;
+  height: 64px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sill svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.site-footer__sill {
+  margin-top: -32px;
+}
+html.motion .sill.is-armed:not(.is-laid) path {
+  opacity: 0;
+}
+html.motion .sill.is-laid path {
+  animation: sill-lay 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i) * 6ms);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes sill-lay {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sill path {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+.sf-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(40px, 6vw, 96px);
+  align-items: center;
+  padding-top: clamp(56px, 7vw, 96px);
+  padding-bottom: clamp(48px, 6vw, 80px);
+}
+.sf-invite__mark {
+  width: 72px;
   height: auto;
 }
-.site-footer__tagline {
-  max-width: 20rem;
-  margin: 18px 0 0;
+.sf-invite__tagline {
+  max-width: 13ch;
+  margin: 22px 0 18px;
   font-family: var(--font-display);
-  font-size: 30px;
-  line-height: 1.15;
+  font-size: clamp(44px, 5.4vw, 80px);
+  line-height: 1;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
   color: #ffffff;
 }
-.site-footer__invite {
-  max-width: 22rem;
-  margin: 14px 0 0;
+.sf-invite__line {
+  max-width: 28rem;
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.55;
   color: #d6d9e1;
 }
-.site-footer__actions {
+.sf-invite__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 28px;
 }
-.site-footer__head {
-  margin: 0 0 8px;
+
+/* The This Sunday panel: a lighter ink card, its top edge in the story's four colours. */
+.sf-sunday {
+  position: relative;
+  overflow: hidden;
+  padding: 30px 32px 26px;
+  border: 1px solid #2e3446;
+  border-radius: 20px;
+  background: #1f2537;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.sf-sunday::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: linear-gradient(
+    90deg,
+    #96c3ea 0 25%,
+    #2c5b3a 25% 50%,
+    #e8a93a 50% 75%,
+    #c4401f 75% 100%
+  );
+}
+.sf-sunday__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sf-sunday__eyebrow {
+  margin: 0;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #96c3ea;
 }
-.site-footer__body {
-  margin: 0;
-  color: #d6d9e1;
-  font-variant-numeric: tabular-nums lining-nums;
+.sf-sunday__date {
+  margin: 6px 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 3vw, 42px);
+  line-height: 1.05;
+  color: #ffffff;
 }
-.site-footer__body a {
+.sf-sunday__times {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+.sf-sunday__times > div {
+  display: grid;
+  grid-template-columns: 5.2rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
+}
+.sf-sunday__times dt {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  color: #ffffff;
+}
+.sf-sunday__times dd {
+  margin: 0;
+  font-size: 17px;
+  color: #d6d9e1;
+}
+.sf-sunday__where {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #2e3446;
+  color: #d6d9e1;
+}
+.sf-sunday__where p {
+  margin: 0;
+}
+.sf-sunday__findus {
+  margin-top: 8px !important;
+  font-size: 15px;
+  color: #b4b8c4;
+}
+.sf-sunday__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  margin-top: 10px !important;
+}
+.sf-sunday__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 600;
   text-underline-offset: 3px;
 }
-.site-footer__small {
+
+/* The directory: each column is one row, its label then its links in big serif type, so two short
+   columns fill the width instead of leaving half of it empty. The starter's column markup is
+   unchanged; only its layout is. */
+.site-footer__links {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 18px;
+  padding-top: 36px;
+  padding-bottom: 40px;
+  border-top: 1px solid #2e3446;
+}
+.site-footer__links > nav,
+.site-footer__links > div {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px 24px;
+}
+.site-footer__links > nav > p,
+.site-footer__links > div > p:first-child {
+  margin: 0;
+  color: #96c3ea !important;
+  font-weight: 700;
+}
+.site-footer__links > nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 30px;
+  margin: 0;
+}
+.site-footer__links > nav ul a {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 1.7vw, 26px);
+  color: #ffffff !important;
+  text-decoration: none;
+  background: linear-gradient(#e8a93a, #e8a93a) 0 100% / 0 2px no-repeat;
+  transition: background-size 0.25s ease;
+}
+.site-footer__links > nav ul a:hover {
+  background-size: 100% 2px;
+}
+
+/* The signature: the name in mosaic letters, full width, running off the bottom edge. */
+.sf-signature {
+  overflow: hidden;
+  height: 0.6em;
+  font-family: 'Auburn Stone', 'Young Serif', serif;
+  /* Six letters at about 0.6em each: 26vw keeps the whole word on screen at every width. */
+  font-size: min(26vw, 500px);
+  line-height: 0.82;
+  text-align: center;
+  user-select: none;
+}
+.sf-signature__word {
+  letter-spacing: -0.035em;
+  transform: translateY(0.06em);
+}
+.sf-signature .s0 {
+  color: #96c3ea;
+}
+.sf-signature .s1 {
+  color: #e8a93a;
+}
+.sf-signature .s2 {
+  color: #c4401f;
+}
+.sf-signature .s3 {
+  color: #3b83aa;
+}
+
+.sf-bottom {
+  position: relative;
+  border-top: 1px solid #2e3446;
+  background: #12141e;
   font-size: 14px;
   color: #b4b8c4;
 }
-/* The link grid shares the brand row's columns, so every column edge lines up. */
-.site-footer__links {
-  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
-  column-gap: 40px;
+.sf-bottom__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 24px;
+  padding-block: 14px;
 }
+.sf-bottom__inner p {
+  margin: 0;
+}
+.sf-bottom__dot {
+  margin: 0 8px;
+}
+.sf-bottom__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
+.sf-bottom__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #d6d9e1 !important;
+  text-underline-offset: 3px;
+}
+
 @media (max-width: 960px) {
-  .site-footer__links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 20px;
-  }
-  .site-footer__board {
+  .sf-top {
     grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-    padding-top: 56px;
+    align-items: start;
+  }
+  .site-footer__links > nav,
+  .site-footer__links > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .site-footer__links > nav ul {
+    gap: 0 22px;
+  }
+  .sf-bottom__about {
+    display: block;
+  }
+  .sf-bottom__dot {
+    display: none;
+  }
+}
+@media (max-width: 420px) {
+  .sf-sunday {
+    padding: 26px 22px 20px;
+  }
+  .sf-invite__actions .btn-auburn {
+    flex: 1 1 auto;
   }
 }
 /* Between 1024px and 1199px the bar is tight with the lockup; close up the menu's gaps a little. */

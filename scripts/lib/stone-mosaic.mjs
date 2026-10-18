@@ -187,6 +187,19 @@ export const PATH_PRESETS = {
     r: [7, 9],
     grout: 2.2,
   },
+  // The sill: a long, gently wavy band of small stones, the doorstep along the top of the footer
+  // and the bottom of the menu (2026-10-18).
+  sill: {
+    curve: [
+      [-0.01, 0.56],
+      [0.33, 0.36],
+      [0.66, 0.66],
+      [1.0, 0.48],
+    ],
+    half: [21, 21],
+    r: [10, 11],
+    grout: 2.6,
+  },
 };
 
 /** Four clear bands, the mark's story: the water, the green ring, the gold steps, the red cross. */

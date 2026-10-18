@@ -1,5 +1,22 @@
 # Change history
 
+_2026-10-18: the footer and the menus rebuilt to feel alive._
+
+**Decision.** Recorded in `docs/design-directions/2026-10-17-fbc-auburn/README.md`. Footer
+(`Footer.astro`, CSS in `src/styles/auburn.css`): a sill of the mark's stones across the top edge
+(`Sill.astro`, from the new `sill` preset in `scripts/lib/stone-mosaic.mjs`, `SILL` in
+`stones.generated.ts`; it lays itself once in view), the closing invitation at display size
+beside a live This Sunday panel (date, times, address, Directions, calendar link), the Sanity
+footer columns as a directory of big serif links, a full-width mosaic "Auburn" signature running
+off the bottom, and a bottom bar with a Back to top link. The floating back-to-top button is
+gone (`BaseLayout.astro`). Menu (`MobileNav.tsx`): numbered links rise in one after another; the
+number turns into a stone in the story's next colour on hover and focus, and the current page
+keeps its stone (`aria-current`); a This Sunday card with the visit button (first on phones);
+the sill laying itself along the bottom; the Menu pill's icon is three stones. Desktop nav: three
+gold steps grow in under a link on hover and stay under the current page. Motion is CSS only and
+off under reduced motion. Measured at 320, 390, 1280, 1440: no sideways scroll; the menu's sill
+shows on a 1440x900 and 1280x800 screen; Tab and Escape behave.
+
 _2026-10-17: Home after the church-site research: Your first Sunday, the phone Sunday bar._
 
 **Decision.** Four research passes over about 100 church sites (first screen, first visit,

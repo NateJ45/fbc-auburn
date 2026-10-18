@@ -963,7 +963,7 @@ html.motion .hb-path.is-laid .hb-stone {
 
 /* ---- The phone Sunday bar (Home audit research, 2026-10-17) ------------------------------------
    Docks to the bottom once the This Sunday card has scrolled away (script in HomeHero.astro). It
-   replaces the back-to-top button on Home phones. White, with a thin edge in the mark's colours. */
+   sits where the back-to-top button used to. White, with a thin edge in the mark's colours. */
 .hb-sundaybar {
   display: none;
 }
@@ -1010,9 +1010,6 @@ html.motion .hb-path.is-laid .hb-stone {
     padding: 8px 16px;
     font-size: 15px;
     white-space: nowrap;
-  }
-  body:has(.hb-sundaybar) button[aria-label='Back to top'] {
-    display: none;
   }
   /* Room under the footer's last line for the bar, should it ever overlap. */
   body:has(.hb-sundaybar:not([hidden])) .site-footer {

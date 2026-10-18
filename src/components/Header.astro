@@ -28,7 +28,8 @@ import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
 import MobileNav from './MobileNav';
 import { ChevronDown } from 'lucide-react';
 import { getChurchFacts } from '@/lib/church-data';
-import { timesPhrase } from '@/lib/church-facts';
+import { thisSunday, timesPhrase } from '@/lib/church-facts';
+import { churchDataNow } from '@/lib/church-feeds';
 import logoLightAsset from '@/assets/logo-light.svg';
 import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 import logoDarkAsset from '@/assets/logo-dark.svg';
@@ -159,11 +160,20 @@ const sundayMinutes = (noteFacts?.serviceTimes ?? [])
 const sundayNote = sundayMinutes.length ? `Sundays ${timesPhrase(sundayMinutes)}` : '';
 const noteAddress = noteFacts?.address ?? null;
 const menuMinutes = allFacts.serviceTimes.filter((t) => t.dayIndex === 0).map((t) => t.minutes);
+// The menu's This Sunday card (2026-10-18): the same facts as Home's card, derived, never typed.
+const menuThisSunday = thisSunday(allFacts, churchDataNow());
 const menuSunday = menuMinutes.length
   ? {
       times: `Sundays ${timesPhrase(menuMinutes)}`,
       street: allFacts.address?.street,
       mapsUrl: allFacts.address?.mapsUrl,
+      title: menuThisSunday?.isToday ? 'Today' : 'This Sunday',
+      date: menuThisSunday?.dateLabel.replace(/^Sunday, /, '') ?? '',
+      services: (menuThisSunday?.services ?? []).map((s) => ({
+        time: s.timeLabel.replace(/ am$/, ''),
+        label: s.label,
+      })),
+      confirmed: menuThisSunday?.confirmed ?? true,
     }
   : undefined;
 function isActive(href: string) {
@@ -511,6 +521,7 @@ function isGroupActive(items: { href: string }[]) {
       logoLightUrl={logoLightWebpMobile.src}
       logoDarkUrl={logoDarkWebpMobile.src}
       sunday={menuSunday}
+      current={pathname}
       {...mobileCtaProps}
     />
   </div>
