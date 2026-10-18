@@ -191,7 +191,7 @@ This filter skips rebuilds triggered by draft saves and internal Sanity asset-ma
 
 `studioWeek` (added 2026-10-18, card 111) is the Studio Home checklist's weekly tick document: ticking a box writes it, and without it in the filter every tick would rebuild the website.
 
-`previewShare` (added 2026-10-18, card 114) is the record behind each private preview link: making or stopping a link writes it, and without it in the filter every link would rebuild the website.
+`previewShare` (added 2026-10-18, card 117) is the record behind each private preview link: making or stopping a link writes it, and without it in the filter every link would rebuild the website.
 
 If the webhook currently has no filter or uses an allow-list, replace the filter with the deny-list above and save. No other webhook config changes are needed.
 
@@ -313,7 +313,7 @@ For the complete schema-change sequence, see the "Schema-change procedure" secti
 
 ---
 
-## Studio workflow tools (PORTS.md card 114)
+## Studio workflow tools (PORTS.md card 117)
 
 - **Morning change note** (`.github/workflows/change-note.yml`, ON). Daily at 10:00 UTC (6 AM Eastern in summer,
   5 AM in winter); uses the `SANITY_AUTH_TOKEN` secret and the `SANITY_PROJECT_ID` and `SITE_URL` variables, all

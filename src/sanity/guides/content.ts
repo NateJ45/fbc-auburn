@@ -1180,7 +1180,7 @@ guides.push(
 // The sermon, people and downloads guides (FBC Auburn, 2026-10-18).
 guides.push(...collectionGuides);
 
-// ── Workflow tools (PORTS.md card 114) ───────────────────────────────────────
+// ── Workflow tools (PORTS.md card 117) ───────────────────────────────────────
 // Appended like the kit helpers above, so a site rewriting its guides keeps them.
 guides.push(
   {

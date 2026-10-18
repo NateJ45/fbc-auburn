@@ -188,7 +188,7 @@ export default defineConfig({
     // Trash instead of Delete, the note after Publish and the first-run tour.
     // KEEP IT LAST: its tools reducer has to see every other plugin's tools.
     // See docs/agent/studio-kit.md.
-    // Share a preview, Messages, the previewShare type (PORTS.md card 114).
+    // Share a preview, Messages, the previewShare type (PORTS.md card 117).
     // Before the kit, so the kit's tool order and staff view place "messages".
     // shareTypes: the types whose own page /preview renders.
     ncsWorkflowTools({

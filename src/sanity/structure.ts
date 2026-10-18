@@ -106,7 +106,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'media.tag',
   // The Studio kit's weekly tick document (card 111): Home's bookkeeping, never edited here.
   WEEK_TYPE,
-  // Private preview link records (card 114): managed from "Share a preview" only.
+  // Private preview link records (card 117): managed from "Share a preview" only.
   'previewShare',
   // processStep is placed explicitly under Content → Process Steps
 ]);
@@ -324,7 +324,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                     .title('Sermons, newest first')
                     .defaultOrdering([{ field: 'date', direction: 'desc' }]),
               }),
-              // The same list as a sortable table (card 114, tables.config.ts).
+              // The same list as a sortable table (card 117, tables.config.ts).
               ...TABLES.filter((c) => c.type === 'sermon').map((c) => tableListItem(S, c)),
               emptyAwareList(S, context, {
                 id: 'sermonSeries',
@@ -367,7 +367,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                       { field: 'name', direction: 'asc' },
                     ]),
               }),
-              // The same list as a sortable table (card 114, tables.config.ts).
+              // The same list as a sortable table (card 117, tables.config.ts).
               ...TABLES.filter((c) => c.type === 'person').map((c) => tableListItem(S, c)),
               emptyAwareList(S, context, {
                 id: 'personGroup',
@@ -409,7 +409,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                     .title('All downloads, newest first')
                     .defaultOrdering([{ field: 'date', direction: 'desc' }]),
               }),
-              // The same list as a sortable table (card 114, tables.config.ts).
+              // The same list as a sortable table (card 117, tables.config.ts).
               ...TABLES.filter((c) => c.type === 'download').map((c) => tableListItem(S, c)),
               S.listItem()
                 .id('bulletins')
