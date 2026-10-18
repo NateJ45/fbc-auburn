@@ -354,6 +354,16 @@ in a throwaway page with the real Studio theme, light and dark, 1280 and 375 (ma
 name in gold, "Auburn" in Auburn Stone, no sideways scroll). Signed in, check: the banner sits under the navy top bar
 as one colour, the pastor's real first name shows, and View the website opens the live site in a new tab.
 
+### 1o. The Studio's edges: the signed-in check (opened 2026-10-18)
+
+Starter PORTS.md card 120, branch `feat/studio-edges`. Checked signed out under `astro dev` and `wrangler dev`: the
+tab says "First Baptist Church of Auburn" with the church's icon from the first byte, the splash (mark, name in Young
+Serif, the stone path) shows on the paper or the dark ground before the Studio loads, light and dark, 1280 and 375,
+throttled; the sign-in card reads "Sign in to update the church website"; `#/structure` and `#/presentation` links
+keep their place. Signed in, check: the white "First Baptist / Church of Auburn" wordmark beside the square icon in
+the navy bar (gone on a phone), the user menu's "Invite someone from church to edit" and "Manage who can edit", and
+Presentation opening a page.
+
 ### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
 
 - The signed-in Studio click-through of the new desk (the Start here panes, "Add the usual
