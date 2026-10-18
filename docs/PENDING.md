@@ -296,6 +296,17 @@ signed in to it yet. Signed in, in light and dark, check and screenshot:
 - Primary buttons, links, focus rings and the selected desk row are navy; Publish is still green.
 - Read the console on every screen. Close this item when it is clean.
 
+### 1l. The Studio look: the signed-in check (opened 2026-10-18)
+
+Starter PORTS.md card 116, branch `feat/studio-branded-look`. Checked so far: the colour gate, types, build, and the
+`/studio` login screen in light (with the computer set to dark) and dark at 1280 and 390, Young Serif and Familjen
+Grotesk loaded; the top bar and the editor typography were checked in a throwaway page that renders the same themes,
+not in the signed-in Studio. Signed in, in light and dark, check: the top bar in navy (tool tabs, search, the user
+menu and its Appearance switch, the status line under it); a News post body and a rich text section showing body,
+H2, H3 and a quote in the site's fonts, the style menu readable, list bullets lined up; Publish green and readable.
+Known, Sanity's own: on the login screen the small "Sanity" wordmark follows the computer's setting, not the Studio's,
+so with the Studio light on a dark-mode computer it is white on cream. Not fixable without styling Sanity's internals.
+
 ### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
 
 - The signed-in Studio click-through of the new desk (the Start here panes, "Add the usual

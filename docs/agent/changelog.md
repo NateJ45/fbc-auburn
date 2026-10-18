@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-18: the Studio reads as the church's own admin (starter PORTS card 116)._
+
+**What changed.** The Studio now opens light for a new editor (the Appearance menu still switches and remembers), on a
+warm paper, with the top bar in the church's deep sky navy (#1B4A75) in light and dark, and it really loads Young Serif
+and Familjen Grotesk (`src/sanity/studioFonts.css`) instead of falling back to system fonts. Headings stay at Young
+Serif's one weight. Body text, H2, H3 and quotes in rich text fields are edited in the site's fonts at a reading size.
+Publish and the other solid status buttons are one step deeper in light mode, so their labels read at AA. The colour
+gate checks every tone in both appearances, on the Studio and the top bar. No new packages. The paper is derived from
+the site's white; `studio.paper` in brand.config.json can set it (for example the cool `#F3F6F9` ground-soft) if the
+cream reads too far from the site.
+
 _2026-10-18: links in text accept addresses on this site._
 
 **What changed.** The link in the privacy policy, question answers and News posts used Sanity's default URL check, which only accepts full https addresses, so the privacy policy's own link to /contact/ (written by visitor-audit.mjs) blocked Publish with "Not a valid URL". Those four link fields now accept a page on this site (/contact/), https, http, mailto: and tel:, and say so in the field help. Found by Nathan in the Studio.
