@@ -1,24 +1,43 @@
 // Foundation, edit with care
-// Generates public/og-default.png — the fallback OG image used when a page
-// doesn't have its own /og/<slug>.png yet. Run via `npm run og`.
+// Generates public/og-default.png, the fallback share image for any route without its own
+// /og/<slug>.png. Run via `npm run og`. Drawn by scripts/lib/og-card.mjs (the Auburn card, home
+// layout: the masthead and the Site settings tagline). The tagline is read from Sanity when a
+// project is configured, else from brand/brand.config.json. Writes only when the bytes change.
 
+import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderOg, closeRenderer } from './lib/render-og.mjs';
-import { OG_THEME } from './og-theme.mjs';
+import { createClient } from '@sanity/client';
+import { renderCard, closeCards } from './lib/og-card.mjs';
+import { loadEnv } from './lib/loadEnv.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
+const env = loadEnv(root);
+const brand = JSON.parse(readFileSync(resolve(root, 'brand/brand.config.json'), 'utf8'));
 
-const result = await renderOg({
-  wordmark: 'First Baptist Church of Auburn',
-  tagline: ['A small church with the door open.'],
+let tagline = brand.tagline;
+if (env.PUBLIC_SANITY_PROJECT_ID) {
+  const client = createClient({
+    projectId: env.PUBLIC_SANITY_PROJECT_ID,
+    dataset: env.PUBLIC_SANITY_DATASET ?? 'production',
+    apiVersion: env.PUBLIC_SANITY_API_VERSION ?? '2026-05-01',
+    useCdn: true,
+    perspective: 'published',
+  });
+  const settings = await client.fetch(`*[_type == "siteSettings"][0]{ tagline }`).catch(() => null);
+  tagline = settings?.tagline || tagline;
+}
+
+const result = await renderCard({
+  title: tagline,
+  home: true,
   outPath: resolve(root, 'public/og-default.png'),
-  theme: OG_THEME,
 });
 
-// Not optional: the renderer holds one chromium open for the whole run and
-// the process cannot exit until it is closed. See render-og.mjs.
-await closeRenderer();
+// Not optional: the shared browser keeps the process alive until it is closed.
+await closeCards();
 
-console.log(`OG default written: ${result.outPath} (${result.width}x${result.height})`);
+console.log(
+  `OG default ${result.changed ? 'written' : 'unchanged'}: ${result.outPath} (${(result.bytes / 1024).toFixed(0)} KB)`,
+);

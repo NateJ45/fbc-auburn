@@ -116,6 +116,29 @@ function realSides(poly) {
   return lens.filter((l) => l > per / 8).length;
 }
 
+/**
+ * The sharpest corner between a stone's sides once its tiny edges (under a sixteenth of the perimeter) are left out,
+ * skipping the tiny edges between them. Softening turns two corners joined by a tiny edge into
+ * one point, so a wedge can pass minAngle and still read as a pointy pebble; this catches it.
+ */
+function realCorner(poly) {
+  const edges = poly.map((p, i) => {
+    const q = poly[(i + 1) % poly.length];
+    return [q[0] - p[0], q[1] - p[1]];
+  });
+  const per = edges.reduce((a, e) => a + Math.hypot(e[0], e[1]), 0);
+  const long = edges.filter((e) => Math.hypot(e[0], e[1]) > per / 16);
+  let min = 180;
+  for (let i = 0; i < long.length; i++) {
+    const a = long[i];
+    const b = long[(i + 1) % long.length];
+    const cos = (a[0] * b[0] + a[1] * b[1]) / (Math.hypot(...a) * Math.hypot(...b));
+    const turn = (Math.acos(Math.max(-1, Math.min(1, cos))) * 180) / Math.PI;
+    min = Math.min(min, 180 - turn);
+  }
+  return min;
+}
+
 /** Farthest corner over nearest side, both measured from the centroid c ([x, y, ...]). */
 function pointiness(poly, c) {
   let far = 0;
@@ -199,6 +222,25 @@ export const PATH_PRESETS = {
     half: [21, 21],
     r: [10, 11],
     grout: 2.6,
+  },
+  // The share card's path (scripts/lib/og-card.mjs, 2026-10-18): a low, gently rising band across
+  // the foot of a 1200x630 card, stones big enough to read in a 300px-wide thumbnail.
+  og: {
+    curve: [
+      [-0.03, 0.66],
+      [0.3, 0.86],
+      [0.62, 0.26],
+      [1.03, 0.32],
+    ],
+    half: [32, 38],
+    r: [15, 18],
+    grout: 3.6,
+    // Stricter than the site paths' 75 degrees and 1.85: at this size a stone that passes those
+    // can still read as a teardrop hanging off the band (2026-10-18 review). minRealCorner also
+    // catches the wedge whose point is two corners joined by a tiny edge (see realCorner).
+    minCorner: 88,
+    maxPoint: 1.6,
+    minRealCorner: 80,
   },
 };
 
@@ -352,7 +394,13 @@ export function stonePath({ width: W, height: H, preset, seed }) {
     // centre as its nearest side (a square is 1.41, a teardrop 2.2 and up) is left out, as is one
     // with a corner under 75 degrees. They sit mostly on the edges, so the path goes in and out
     // there instead of ending in points.
-    if (minAngle(poly) < 75 || pointiness(poly, c) > 1.85 || realSides(poly) < 4) continue;
+    // A preset can tighten both limits (`minCorner`, `maxPoint`); the share card's does.
+    const minCorner = P.minCorner ?? 75;
+    const maxPoint = P.maxPoint ?? 1.85;
+    if (minAngle(poly) < minCorner || pointiness(poly, c) > maxPoint || realSides(poly) < 4) {
+      continue;
+    }
+    if (P.minRealCorner && realCorner(poly) < P.minRealCorner) continue;
     stones.push({ f: s.f, d: toD(soften(poly)), fill: colourAt(s.f) });
   }
   stones.sort((a, b) => a.f - b.f);
