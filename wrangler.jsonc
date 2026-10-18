@@ -97,6 +97,13 @@
   // a fine-grained GitHub token on NateJ45/fbc-auburn only, "Actions: Read and
   // write" and nothing else (OPERATIONS.md, "When an update does not go
   // through"). Until it exists the Studio keeps its old build-time check.
+  //
+  // Home's Visitors card (PORTS.md card 115, src/pages/api/studio/visitors.ts):
+  // add "CF_ACCOUNT_ID" and "CF_WEB_ANALYTICS_SITE_TAG" (32 hex each, not
+  // secret; the site tag is NOT the beacon token) to the vars below, and set
+  //   npx wrangler secret put CF_ANALYTICS_TOKEN
+  // (a Cloudflare API token with Account Analytics: Read only). Until all three
+  // exist the card says "not set up yet". Steps: OPERATIONS.md, "Visitor numbers".
   "vars": { "GITHUB_REPO": "NateJ45/fbc-auburn" },
 
   "main": "@astrojs/cloudflare/entrypoints/server",

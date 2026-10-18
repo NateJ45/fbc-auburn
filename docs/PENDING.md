@@ -206,6 +206,28 @@ Alt text is now required on every content photo (2026-10-18). Existing published
 live, but the next edit to their document will not publish until the description is filled in; the Checkup's "pictures
 with no description" lists them.
 
+### 1l. Visitor numbers on Home, and the Home dashboard signed in (opened 2026-10-18)
+
+**Blocker: Nathan, about fifteen minutes in the Cloudflare dashboard.** PORTS.md card 115 gave Home a Visitors card
+reading Cloudflare Web Analytics through `/api/studio/visitors/` (signed-in Studio members only). It says "Not set up
+yet" until all of this is done, in order (full steps: OPERATIONS.md, "Visitor numbers"):
+
+1. Turn on Web Analytics for `fbc-auburn.nathanjnixon86.workers.dev` (Analytics & Logs, Web Analytics, Add a site,
+   manual JS snippet) and set its beacon token as the repo variable `PUBLIC_CF_ANALYTICS_TOKEN`. Nothing is counted
+   until the next deploy after that. Redo this at cutover for the church's own domain.
+2. Note the site tag (the address bar on that site's Web Analytics page ends `siteTag~in=<32 characters>`) and the
+   account id (`npx wrangler whoami`); add both to `wrangler.jsonc` `vars` as `CF_WEB_ANALYTICS_SITE_TAG` and
+   `CF_ACCOUNT_ID`.
+3. Create a Cloudflare API token, Custom, one permission: **Account, Account Analytics, Read**, on this account only.
+   `npx wrangler secret put CF_ANALYTICS_TOKEN`, paste, and keep a copy in 1Password.
+4. Deploy and look at Home: compare "visits in the last 7 days" with the Web Analytics dashboard. The GraphQL field
+   names came from the dashboard's own query and have not met a real token yet; if the card says "could not load",
+   `npx wrangler tail` shows Cloudflare's answer.
+
+Also still to see signed in, light and dark, 375 and 1280: the dated greeting and the "Need help?" line; Coming up with
+a real scheduled draft (and its empty sentence); the Fix-it list (each Edit opens the right field); Your pages (every
+link opens the right form or list, and Give opens the online giving link); and a guide with a `video` once one exists.
+
 ### 1d. Church data waiting on the church
 
 **Blocker: answers from the church, after signing.** All empty-safe today; each lights up with one
@@ -247,11 +269,13 @@ and the tour, checked signed in at `/studio` in light and dark. Still to do:
   view goes by role, and he is an administrator, so he would see the full Studio.
 - **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its
   email button.
-- **The rest of the Worker half**: `/api/studio/*` for visitors from GA4 with a service-account key, the Ask form
-  through Cloudflare Email Sending once the church's domain is on Cloudflare, an external link check, and the monthly
-  report with its cron. `src/lib/studio-auth.ts` and deploy status landed with card 111 (item 1k).
+- **The rest of the Worker half**: the Ask form through Cloudflare Email Sending once the church's domain is on
+  Cloudflare, an external link check, and the monthly report with its cron. `src/lib/studio-auth.ts` and deploy status
+  landed with card 111 (item 1k); visitors (Cloudflare Web Analytics, not GA4) with card 115 (item 1l).
 - **The live publish checklist** (a document inspector, plus "Publish anyway" for blocking items).
-- **Tutorial videos**, recorded at the end of the site build once the Studio stops changing.
+- **Tutorial videos**, recorded at the end of the site build once the Studio stops changing. The slot is built (card
+  115): add `video: '/guides/<slug>.mp4'` (a file in `public/guides/`) or a YouTube/Vimeo link to a guide in
+  `src/sanity/guides/content.ts`, and it shows under "Watch how it is done" on Home and in the Site Guide.
 - **Guide recipes in the church's own jobs** (sermons, events, the bulletin) as those features land; the guides
   are still the starter's generic set.
 - **The signed-in Studio at 375px**: checked 2026-10-18 at 390px in a frame (Home and Quick update fit, no sideways
