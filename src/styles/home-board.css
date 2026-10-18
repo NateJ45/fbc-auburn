@@ -275,8 +275,8 @@
 }
 
 /* ---- The stone path ------------------------------------------------------------------------ */
-/* Desktop: drawn at its own size (1200x240, never scaled, so the stones keep the mark's
-   proportions) with its right edge on the This Sunday card's left side, so the last gold step
+/* Desktop: drawn at its own size (960x240, never scaled, so the stones keep the mark's
+   proportions) with its right edge on the This Sunday card's left side, so the red end
    meets the card. The card is the right 5/12 of the lead row after a 64px gap, so its width is
    (100% - 64px) * 5/12. The path runs out past the left edge (the hero clips it) and fades in.
    The welcome column keeps room under its buttons so the path never meets text. */
@@ -289,11 +289,11 @@
   right: calc((100% - 64px) * 5 / 12 - 16px);
   bottom: -76px;
   display: block;
-  width: 1200px;
+  width: 960px;
   max-width: none;
   height: 240px;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%);
-  mask-image: linear-gradient(to right, transparent, #000 14%);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%);
+  mask-image: linear-gradient(to right, transparent, #000 6%);
 }
 .hb-path-phone {
   display: none;

@@ -16,7 +16,7 @@ describe('stonePath', () => {
     assert.deepEqual(stonePath(opts), stonePath(opts));
   });
 
-  it("lays a path of a sensible size, in the mark's colours only, water first and gold last", () => {
+  it("lays a path of a sensible size, in the mark's colours only, water first and red last", () => {
     const stones = stonePath({ width: 390, height: 96, preset: 'phone', seed: 11 });
     assert.ok(stones.length >= 20 && stones.length <= 80, `got ${stones.length}`);
     for (const s of stones) {
@@ -24,7 +24,7 @@ describe('stonePath', () => {
       assert.ok(MARK_FILLS.has(s.fill), `${s.fill} is not one of the mark's six colours`);
     }
     assert.ok(PATH_RUNS[0].set.includes(stones[0].fill));
-    assert.equal(stones.at(-1).fill, MARK.gold);
+    assert.equal(stones.at(-1).fill, MARK.red);
   });
 
   it('draws only whole stones (none cut by the right edge, where the card is)', () => {

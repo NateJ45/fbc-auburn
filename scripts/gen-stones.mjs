@@ -4,11 +4,11 @@
 // build never runs the generators.
 //
 //   src/components/home/stones.generated.ts   the wide and phone stone paths, the section marker
-//   public/textures/tile-deep.svg             the This Sunday card's soft-stone ground
+//   public/textures/tile-deep.svg             the This Sunday card's stone ground
 //
 // Redrawn 2026-10-17 after the Home audit: soft, hand-laid stones between the old pebbles and the
-// mark's dressed stones, in the mark's six colours, gold at the end. The wide path is 1200x240 and
-// its right edge meets the This Sunday card; the phone path is a short 390x96 strip under the
+// mark's dressed stones, in four clear bands of the mark's colours. The wide path is 960x240 and
+// its red end meets the This Sunday card; the phone path is a short 390x96 strip under the
 // card. `--check` regenerates in memory and exits 1 if a committed file differs, without writing.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,7 +19,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const check = process.argv.includes('--check');
 
 export const PATHS = {
-  wide: { width: 1200, height: 240, preset: 'wide', seed: 7 },
+  wide: { width: 960, height: 240, preset: 'wide', seed: 7 },
   phone: { width: 390, height: 96, preset: 'phone', seed: 11 },
 };
 

@@ -2,19 +2,20 @@
 // The FBC Auburn stone generators, as pure functions (no file access), so the build script
 // (scripts/gen-stones.mjs) and the tests (stone-mosaic.test.mjs) share one copy.
 //
-// History: board E (2026-10-17) drew round pebbles in 13 colours; the Home audit the same day
-// found they did not match the logo's dressed stones; a squared, coursed redraw lost the warmth.
-// This is the middle ground Nathan asked for: the same random, hand-laid Voronoi stones (edges
-// going in and out, every stone a different size and shape) but only SOFTENED at the corners, not
-// rounded into blobs, so they sit between the pebbles and the mark's stones. Colours are the
-// mark's six, nothing else.
+// History (all 2026-10-17): board E drew random round pebbles in 13 colours; the Home audit found
+// they did not match the logo's dressed stones; a squared, coursed redraw and then a full brick
+// path went too far from the warmth; random soft stones still made pointy "guitar pick" cells.
+// This is the pick: Voronoi stones seeded on a jittered, staggered grid, so every stone is four
+// to six sided and a different size, with flatter sides and softened corners; edges that go in
+// and out; the mark's six colours only, in four clear bands (its story: the water, the green ring,
+// the gold steps, the red cross).
 //
-// - stonePath(): a stone path along a cubic curve. Poisson-disc sites of varied size in a band
-//   around the curve, Lloyd-relaxed Voronoi cells inset for one even white grout, corners
-//   softened. Coloured in the mark's story order: the water, the ring, the gold steps; the gold
-//   end meets the This Sunday card (the door). Only whole stones: none is cut by the canvas edge.
-//   Stones come back in path order so a page can lay them one by one.
-// - mosaicTile(): a seamless texture tile of the same soft stones in varied sizes (the card).
+// - stonePath(): the path along a cubic curve. Grid sites in rows along the curve (each row its
+//   own spacing, width and offset), one Lloyd pass, cells inset for one even white grout, corners
+//   softened. The red end meets the This Sunday card (the door). Only whole stones: none is cut
+//   by the canvas edge, and none is a wedge. Stones come back in path order so a page can lay
+//   them one by one.
+// - mosaicTile(): a seamless tile of the same stones in varied sizes (the card's ground).
 // - stoneMarkers(): the section marker, three gold steps lifted from the mark.
 //
 // Everything is seeded (an LCG), so the same inputs always give byte-identical output.
@@ -73,7 +74,7 @@ const toD = (p) => 'M' + p.map((v) => f1(v[0]) + ' ' + f1(v[1])).join('L') + 'Z'
  * Soften a cell's corners without rounding it into a blob: cut each corner a little (k of each
  * edge), then one Chaikin pass. Long straight sides stay straight, as on a dressed stone.
  */
-function soften(poly, k = 0.22) {
+function soften(poly, k = 0.18) {
   const cut = [];
   for (let i = 0; i < poly.length; i++) {
     const p = poly[i];
@@ -82,6 +83,53 @@ function soften(poly, k = 0.22) {
     cut.push([p[0] + (1 - k) * (q[0] - p[0]), p[1] + (1 - k) * (q[1] - p[1])]);
   }
   return chaikinPass(cut);
+}
+
+/** The sharpest corner of a convex polygon, in degrees. A wedge-shaped Voronoi cell (the
+ * "pointy pebble") has one under about 70. */
+function minAngle(poly) {
+  let min = 180;
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[(i - 1 + poly.length) % poly.length];
+    const b = poly[i];
+    const c = poly[(i + 1) % poly.length];
+    const v1 = [a[0] - b[0], a[1] - b[1]];
+    const v2 = [c[0] - b[0], c[1] - b[1]];
+    const l = Math.hypot(...v1) * Math.hypot(...v2);
+    if (l < 1e-6) continue;
+    const cos = Math.max(-1, Math.min(1, (v1[0] * v2[0] + v1[1] * v2[1]) / l));
+    min = Math.min(min, (Math.acos(cos) * 180) / Math.PI);
+  }
+  return min;
+}
+
+/**
+ * How many sides a stone really has: sides longer than an eighth of its perimeter. A rounded
+ * triangle (the "guitar pick") has three, however many tiny clipped edges it carries.
+ */
+function realSides(poly) {
+  const lens = poly.map((p, i) => {
+    const q = poly[(i + 1) % poly.length];
+    return Math.hypot(q[0] - p[0], q[1] - p[1]);
+  });
+  const per = lens.reduce((a, b) => a + b, 0);
+  return lens.filter((l) => l > per / 8).length;
+}
+
+/** Farthest corner over nearest side, both measured from the centroid c ([x, y, ...]). */
+function pointiness(poly, c) {
+  let far = 0;
+  let near = Infinity;
+  for (let i = 0; i < poly.length; i++) {
+    const p = poly[i];
+    const q = poly[(i + 1) % poly.length];
+    far = Math.max(far, Math.hypot(p[0] - c[0], p[1] - c[1]));
+    const ex = q[0] - p[0];
+    const ey = q[1] - p[1];
+    const el = Math.hypot(ex, ey);
+    if (el > 1e-6) near = Math.min(near, Math.abs(ex * (c[1] - p[1]) - ey * (c[0] - p[0])) / el);
+  }
+  return near > 0 ? far / near : Infinity;
 }
 
 /**
@@ -124,10 +172,9 @@ export const PATH_PRESETS = {
       [0.6, 0.14],
       [1.0, 0.44],
     ],
-    half: [34, 42], // half the band's width, near end to the card end
-    r: [15, 24], // typical stone radius
+    half: [40, 54], // half the band's width, near end to the card end
+    r: [11, 17], // typical stone radius
     grout: 3.2,
-    tries: 140000,
   },
   phone: {
     curve: [
@@ -136,23 +183,23 @@ export const PATH_PRESETS = {
       [0.62, 0.1],
       [1.0, 0.42],
     ],
-    half: [17, 22],
-    r: [10, 13],
+    half: [18, 24],
+    r: [7, 9],
     grout: 2.2,
-    tries: 40000,
   },
 };
 
-/** The story along the path, start to end: the water, the ring, the gold steps. */
+/** Four clear bands, the mark's story: the water, the green ring, the gold steps, the red cross. */
 export const PATH_RUNS = [
   { at: 0.0, set: [MARK.water, MARK.sky, MARK.water, MARK.deep] },
-  { at: 0.42, set: [MARK.green, MARK.green, MARK.deep] },
-  { at: 0.8, set: [MARK.gold] },
+  { at: 0.27, set: [MARK.green] },
+  { at: 0.52, set: [MARK.gold] },
+  { at: 0.77, set: [MARK.red] },
 ];
 
 /**
  * @param {{ width: number, height: number, preset: 'wide' | 'phone', seed: number }} opts
- * @returns {{ d: string, fill: string }[]} stones in path order (the water first, gold last)
+ * @returns {{ d: string, fill: string }[]} stones in path order (the water first, red last)
  */
 export function stonePath({ width: W, height: H, preset, seed }) {
   const rnd = lcg(seed);
@@ -177,47 +224,54 @@ export function stonePath({ width: W, height: H, preset, seed }) {
     if (i) len += Math.hypot(p[0] - curve[i - 1].p[0], p[1] - curve[i - 1].p[1]);
     curve.push({ p, s: len });
   }
-  const nearest = (x, y) => {
-    let best = Infinity;
-    let bi = 0;
-    for (let i = 0; i < curve.length; i += 2) {
-      const d = (curve[i].p[0] - x) ** 2 + (curve[i].p[1] - y) ** 2;
-      if (d < best) {
-        best = d;
-        bi = i;
-      }
-    }
-    return { d: Math.sqrt(best), f: curve[bi].s / len };
-  };
   const lerp = ([a, b], f) => a + (b - a) * f;
   const halfAt = (f) => lerp(P.half, f);
 
-  // Poisson-disc dart throwing with a varied radius per stone (0.7 to 1.3 of the local size), so
-  // no two stones are quite the same size.
+  // Sites on a jittered, staggered grid laid along the path (not random darts): rows of varied
+  // spacing, every other row offset by half a stone, every site nudged. Voronoi cells of such a
+  // grid are four, five and six sided stones of varied size; random darts also made thin
+  // three-sided cells, the "guitar picks". Two rings of outside sites keep the edge cells whole;
+  // each row's own width makes the edge go in and out.
+  const frame = (s) => {
+    let i = 1;
+    while (i < curve.length - 1 && curve[i].s < s) i++;
+    const a = curve[i - 1];
+    const b = curve[i];
+    const t = b.s > a.s ? (s - a.s) / (b.s - a.s) : 0;
+    const dx = b.p[0] - a.p[0];
+    const dy = b.p[1] - a.p[1];
+    const l = Math.hypot(dx, dy) || 1;
+    return { x: a.p[0] + dx * t, y: a.p[1] + dy * t, nx: -dy / l, ny: dx / l };
+  };
   const sites = [];
-  for (let k = 0; k < P.tries; k++) {
-    const x = rnd() * W;
-    const y = rnd() * H;
-    const n = nearest(x, y);
-    const r = lerp(P.r, n.f) * (0.7 + rnd() * 0.6);
-    if (n.d > halfAt(n.f) + r * 2.2) continue; // a margin of outside sites for a clean edge
-    let ok = true;
-    for (const s of sites) {
-      const rr = (r + s.r) * 0.8;
-      if ((s.x - x) ** 2 + (s.y - y) ** 2 < rr * rr) {
-        ok = false;
-        break;
-      }
+  let row = 0;
+  for (let s = 0; s < len; row++) {
+    const f = s / len;
+    const r = lerp(P.r, f);
+    const across = 2 * r * (0.85 + rnd() * 0.4); // this row's stone width
+    const edge = halfAt(f) * (0.84 + rnd() * 0.26); // this row's half width: ragged edges
+    const offset = (row % 2) * 0.5 + (rnd() - 0.5) * 0.2;
+    for (let k = -Math.ceil(edge / across) - 2; k <= Math.ceil(edge / across) + 2; k++) {
+      const w = (k + offset) * across + (rnd() - 0.5) * r * 0.6;
+      const ds = (rnd() - 0.5) * r * 0.6;
+      const fs = frame(Math.max(0, Math.min(len, s + ds)));
+      sites.push({
+        x: fs.x + fs.nx * w,
+        y: fs.y + fs.ny * w,
+        r: r * (0.85 + rnd() * 0.3),
+        f: (s + ds) / len,
+        inside: Math.abs(w) < edge,
+      });
     }
-    if (ok) sites.push({ x, y, r, f: n.f, inside: n.d < halfAt(n.f) });
+    s += 2 * r * (0.8 + rnd() * 0.4); // this row's depth along the path
   }
 
   const colourAt = (f) => {
     let i = 0;
     while (i < PATH_RUNS.length - 1 && f >= PATH_RUNS[i + 1].at) i++;
-    // Blend into the next run over the last 0.06 of this one.
+    // A short blend into the next band (the last 0.035 of this one), so the bands stay clear.
     const next = PATH_RUNS[i + 1];
-    if (next && f > next.at - 0.06 && rnd() < (f - (next.at - 0.06)) / 0.06) i++;
+    if (next && f > next.at - 0.035 && rnd() < (f - (next.at - 0.035)) / 0.035) i++;
     const set = PATH_RUNS[i].set;
     return set[Math.floor(rnd() * set.length)];
   };
@@ -256,8 +310,8 @@ export function stonePath({ width: W, height: H, preset, seed }) {
     return a ? [cx / (3 * a), cy / (3 * a), Math.abs(a) / 2] : null;
   };
 
-  // Two Lloyd passes: the grout evens out, the stones keep some irregularity.
-  for (let it = 0; it < 2; it++) {
+  // One Lloyd pass evens the grout; the grid already keeps the stones from going thin.
+  for (let it = 0; it < 1; it++) {
     const moves = sites.map((st) => {
       if (!st.inside) return null;
       const c = cellOf(st, 0);
@@ -281,6 +335,11 @@ export function stonePath({ width: W, height: H, preset, seed }) {
     if (!c || c[2] > Math.PI * (s.r * 2.2) ** 2) continue; // an open cell on the band edge
     // Only whole stones: none sliced by the canvas edge (the card side above all).
     if (poly.some(([x, y]) => x > W - 1 || y < 1 || y > H - 1)) continue;
+    // No wedges or teardrops: a stone whose farthest corner is more than twice as far from its
+    // centre as its nearest side (a square is 1.41, a teardrop 2.2 and up) is left out, as is one
+    // with a corner under 75 degrees. They sit mostly on the edges, so the path goes in and out
+    // there instead of ending in points.
+    if (minAngle(poly) < 75 || pointiness(poly, c) > 1.85 || realSides(poly) < 4) continue;
     stones.push({ f: s.f, d: toD(soften(poly)), fill: colourAt(s.f) });
   }
   stones.sort((a, b) => a.f - b.f);
@@ -298,24 +357,17 @@ export function stonePath({ width: W, height: H, preset, seed }) {
 export function mosaicTile({ size: T, grout, fills, seed }) {
   const rnd = lcg(seed);
   const R = T / 8; // typical stone spacing
+  // A jittered, staggered grid (as the path uses), so no cell comes out three-sided. The counts
+  // divide the tile exactly and the row count is even, so the grid wraps without a seam.
+  const cols = Math.round(T / (1.1 * R));
+  const rows = 2 * Math.round(T / (2 * 0.95 * R));
   let sites = [];
-  for (let k = 0; k < 20000; k++) {
-    const x = rnd() * T;
-    const y = rnd() * T;
-    const r = R * (0.65 + rnd() * 0.8); // every stone its own size
-    let ok = true;
-    for (const s of sites) {
-      let dx = Math.abs(s.x - x);
-      let dy = Math.abs(s.y - y);
-      dx = Math.min(dx, T - dx);
-      dy = Math.min(dy, T - dy);
-      const rr = (r + s.r) / 2;
-      if (dx * dx + dy * dy < rr * rr) {
-        ok = false;
-        break;
-      }
+  for (let rw = 0; rw < rows; rw++) {
+    for (let c = 0; c < cols; c++) {
+      const x = ((c + (rw % 2) * 0.5) * T) / cols + (rnd() - 0.5) * R * 0.85;
+      const y = (rw * T) / rows + (rnd() - 0.5) * R * 0.7;
+      sites.push({ x: ((x % T) + T) % T, y: ((y % T) + T) % T, r: R });
     }
-    if (ok) sites.push({ x, y, r });
   }
   const copies = () => {
     const all = [];
@@ -342,8 +394,8 @@ export function mosaicTile({ size: T, grout, fills, seed }) {
     }
     return poly;
   };
-  // One Lloyd pass only: enough to even the grout, not enough to make the stones uniform.
-  {
+  // One Lloyd pass evens the grout; the jitter keeps every stone its own size.
+  for (let it = 0; it < 1; it++) {
     const all = copies();
     sites = sites.map((s) => {
       const p = cell(s, all, 0);

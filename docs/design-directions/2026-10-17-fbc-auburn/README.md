@@ -10,14 +10,18 @@ Nothing here is site code; `brand/brand.config.json` and `src/**` are untouched.
 2026-10-17 (night): **board E refined after a Home audit** (nine reviewers, one per section plus
 the motif and the whole page). The motif stays and becomes one system:
 
-- the stones are a middle ground between the board's round pebbles and the mark's dressed stones
-  (Nathan tried a squared, coursed path and judged it lost the warmth): the same random Voronoi
-  stones, every one a different size, with flatter sides and softened corners, in the mark's six
-  colours only (it was 13), even grout, and no red "cross" end;
-- the path runs in from the left under the buttons and ends in gold at the This Sunday card's
+- the stones sit between the board's round pebbles and the logo's bricks: Voronoi stones seeded on
+  a jittered, staggered grid along the path, so they come out four to six sided, every one a
+  different size, with flatter sides and softened corners, and never as three-sided "guitar
+  picks"; each row has its own width, so the edges go in and out. Nathan judged a squared,
+  coursed path and a full brick path too far, and random pebbles too pointy. The mark's six
+  colours only (it was 13), in four clear bands, the mark's story: water, the green ring, the
+  gold steps, the red cross;
+- the path runs in from the left under the buttons and its red end meets the This Sunday card's
   left side, whole stones only, so the card is the door; it lays when it comes into view; phones
   get a short strip under the card instead of the diagonal;
-- the card's ground is the same soft stones in varied sizes; no map pin on it (mosaic on mosaic);
+- the card's ground is the same stones in four close blues, sizes varied; no map pin on it
+  (mosaic on mosaic);
 - the sky and green bands are flat tints (the pebble texture read as wallpaper);
 - one section marker everywhere: three gold steps from the mark;
 - the masthead is a little smaller and carries the place ("Hamilton-Scipio Road · Hamilton,
