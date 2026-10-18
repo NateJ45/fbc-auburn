@@ -4,7 +4,8 @@
 // "FIRST BAPTIST CHURCH OF" over a mosaic "Auburn"), then the lead row (the red welcome line, a
 // paragraph, one red button and a text link) beside the This Sunday card, then the stone path
 // rising from the left and tucking under the card. On a phone the mark is hidden (the header
-// carries it) and a smaller path sits between the welcome and the card, flipped to land on it.
+// carries it), the card comes straight after the welcome and its buttons (so the time and place
+// are on the first screen), and a smaller path follows the card.
 //
 // Content: the Home document's hero block (Studio > Home > Page layout > Hero). Eyebrow and
 // Headline draw the lockup, "Welcome line" is the red line, Subhead the paragraph, and the two
@@ -14,6 +15,7 @@
 // under html.motion), then lays it 350ms later. See StonePath.astro.
 import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 import SundayCard from './SundayCard.astro';
+import SundayFacts from './SundayFacts.astro';
 import StonePath from './StonePath.astro';
 import { ctaHref } from '@/lib/cta-href';
 import { splitStega } from '@/lib/preview-stega';
@@ -66,6 +68,7 @@ const secondary = block.secondaryCta;
     <div class="hb-lead">
       <div>
         {block.welcome && <p class="hb-welcome">{block.welcome}</p>}
+        <SundayFacts />
         {block.subhead && <p class="hb-intro">{block.subhead}</p>}
         {(primary?.label || secondary?.label) && (
           <div class="hb-actions">
@@ -85,8 +88,8 @@ const secondary = block.secondaryCta;
           </div>
         )}
       </div>
-      <StonePath variant="phone" />
       <SundayCard />
+      <StonePath variant="phone" />
     </div>
   </div>
   <StonePath variant="wide" />

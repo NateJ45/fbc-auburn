@@ -92,10 +92,10 @@ Custom `page` documents expose `SECTION_TYPES` (the eleven general blocks only).
 
 1. Classifies each block as **self-contained** (`heroSection`, `ctaBandSection`, `statSection`, `spacerSection`, `logoStripSection`, `embedSection`, `founderSection`, `servicesGridSection`, `testimonialsSection`, `valuesSection`, `processSection`, `faqSection`, `teamSection`) or **content** (the rest).
 2. Assigns alternating `surface` / `surface-muted` classes to content blocks in sequence, skipping self-contained blocks in the count.
-3. Inserts `SectionDivider.astro` between adjacent content blocks of differing surfaces automatically.
+3. FBC Auburn (board E, 2026-10-17): opens every section after the hero with `BoardRule.astro` (three stepping stones and a hairline, marker colours following the path down the page) instead of a `SectionDivider` between surfaces, and passes `quiet` to the hero when the page draws the mark or the baptism picture, so there is one stone moment per page. On the inner pages `src/styles/board.css` turns the tinted surfaces white.
 4. Delegates rendering to individual section components in `src/components/sections/`.
 
-The cadence logic is in `src/lib/sectionCadence.ts` (unit-tested). Blocks have no color field and never call `SectionDivider` directly. This means an editor can reorder sections in Studio without ever producing a background collision or a missing divider.
+The cadence logic is in `src/lib/sectionCadence.ts` (unit-tested). Blocks have no color field and never call `SectionDivider` or `BoardRule` directly. This means an editor can reorder sections in Studio without ever producing a background collision or a missing divider.
 
 ### `additionalSectionsField`
 

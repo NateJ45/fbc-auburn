@@ -1,0 +1,78 @@
+---
+// Safe to edit by hand
+// Board E's page head for the inner pages (About, Plan your visit, What we believe, Ministries,
+// Watch, Contact and the rest), replacing the first pass's arched hero on 2026-10-17. White
+// ground, the masthead's hairline, the eyebrow as a section label led by stepping stones, the
+// title, the subhead and the buttons, all on the one left edge. No arch and no second copy of the
+// mark under the header's logo.
+//
+// One stone moment per page (PRODUCT.md): the title is the mosaic (StoneHeading) unless the page
+// already carries the mark or the baptism drawing further down, in which case `quiet` sets it in
+// plain Young Serif. SectionRenderer works that out from the page's blocks.
+//
+// A page photo (Sanity "Background image") sits beside the words in a 20px frame, on the split's
+// narrow track; a stone icon, when chosen, takes that place instead of a photo.
+import '@/styles/board.css';
+import SanityImage from '@/components/SanityImage.astro';
+import CtaLink from '@/components/CtaLink.astro';
+import StoneHeading from '@/components/StoneHeading.astro';
+import StoneIcon from '@/components/StoneIcon.astro';
+import SectionLabel from './SectionLabel.astro';
+import type { SanityImageObject } from '@/lib/pageBuilder.types';
+import type { ComponentProps } from 'astro/types';
+
+type Cta = ComponentProps<typeof CtaLink>['cta'];
+
+interface Props {
+  eyebrow?: string;
+  headline: string;
+  subhead?: string;
+  image?: SanityImageObject | null;
+  primaryCta?: Cta | null;
+  secondaryCta?: Cta | null;
+  headingId: string;
+  icon?: string | null;
+  /** The page has its own stone moment further down: set the title plain. */
+  quiet?: boolean;
+}
+const { eyebrow, headline, subhead, image, primaryCta, secondaryCta, headingId, icon, quiet } =
+  Astro.props as Props;
+const hasImage = !!image?.asset;
+const side = hasImage || !!icon;
+---
+
+<section class="board-head" aria-labelledby={headingId} data-hero="board">
+  <div class:list={['board-head__inner', side && 'board-head__inner--side']}>
+    <div class="board-head__copy">
+      {eyebrow && <SectionLabel text={eyebrow} marker={0} as="p" />}
+      {quiet ? (
+        <h1 id={headingId} class="board-head__title">
+          {headline}
+        </h1>
+      ) : (
+        <StoneHeading text={headline} id={headingId} />
+      )}
+      {subhead && <p class="board-head__sub">{subhead}</p>}
+      {(primaryCta || secondaryCta) && (
+        <div class="board-head__ctas">
+          {primaryCta && <CtaLink cta={primaryCta} variant="primary" />}
+          {secondaryCta && <CtaLink cta={secondaryCta} variant="secondary" />}
+        </div>
+      )}
+    </div>
+    {hasImage ? (
+      <div class="board-head__photo">
+        <SanityImage
+          source={image}
+          width={720}
+          sizes="(min-width: 60rem) 36vw, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          quality={70}
+        />
+      </div>
+    ) : (
+      icon && <StoneIcon name={icon} size={160} loading="eager" class="board-head__icon" />
+    )}
+  </div>
+</section>

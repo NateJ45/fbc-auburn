@@ -252,7 +252,8 @@ h6 {
   outline-offset: 3px;
 }
 
-/* ---- Header: sentence-case nav at a readable size; the button is the red one. ---- */
+/* ---- Header: sentence-case nav at a readable size; the button is the outline one, so the page's
+   own red button is the only red in view. ---- */
 .site-header .site-nav a,
 .site-header .site-nav summary {
   white-space: nowrap;
@@ -267,7 +268,7 @@ h6 {
   font-size: 1rem;
 }
 .site-header .btn-auburn--current {
-  background: var(--auburn-red-dark);
+  background: var(--muted);
 }
 
 /* ---- Header, board E (2026-10-17): the lockup at 84px from 1280px (64px below that and once the page
@@ -628,12 +629,12 @@ h6 {
     justify-content: flex-start;
   }
 }
-/* Home (board E) opens on its own hairline under the masthead, so its bar has no stripe and no
-   rule until it scrolls. */
-.site-header[data-home] .site-header__stripe {
+/* Board E pages open on their own hairline under the header (Home's masthead, the inner pages'
+   BoardPageHead), so the bar has no stripe and no rule until it scrolls. */
+.site-header .site-header__stripe {
   display: none;
 }
-.site-header[data-home]:not([data-scrolled]) .site-header__row {
+.site-header:not([data-scrolled]) .site-header__row {
   border-bottom-color: transparent;
 }
 
@@ -707,5 +708,14 @@ h6 {
   .site-header .site-header__nav,
   .site-header .site-nav {
     gap: 1.5rem;
+  }
+}
+
+/* ---- One gutter (2026-10-17): below 960px the header row, the footer and the board pages all sit
+   20px in, so the logo, every heading and the footer columns share one left edge. ---- */
+@media (max-width: 960px) {
+  .site-header .px-l,
+  .site-footer .px-l {
+    padding-inline: 20px;
   }
 }

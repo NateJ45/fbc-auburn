@@ -17,6 +17,7 @@
   --hb-body: #343846;
   --hb-muted: #4a4f5e;
   --hb-line: #d9dee6;
+  --hb-label-color: var(--auburn-deep);
   --hb-gutter: var(--spacing-l);
   /* Light in every case (rule 3); pinned so a forced dark theme cannot turn links pale here. */
   --link: #235e93;
@@ -52,34 +53,7 @@
   color: var(--hb-ink);
 }
 
-/* ---- Section labels: small caps, a hairline, led by three stepping stones ---------------- */
-.hb-label {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 0 0 28px;
-  font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--auburn-deep);
-}
-.hb-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--hb-line);
-}
-.hb-band .hb-label::after {
-  background: rgb(23 26 38 / 0.14);
-}
-.hb-marker {
-  flex: none;
-  width: 78px;
-  height: 36px;
-}
+/* Section labels (.hb-label, .hb-marker) live in board.css: the inner pages use them too. */
 
 /* ---- Hero: the Auburn-wide lockup ---------------------------------------------------------- */
 .hb-hero {
@@ -109,10 +83,10 @@
   grid-column: 2;
   display: block;
   font-family: var(--font-body);
-  font-size: clamp(15px, 1.75vw, 26px);
+  font-size: clamp(15px, 1.25vw, 18px);
   font-weight: 700;
   line-height: 1.3;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--auburn-deep);
 }
@@ -157,6 +131,10 @@
   letter-spacing: -0.01em;
   color: var(--auburn-red);
 }
+/* The phone fact line (SundayFacts.astro): hidden at desktop, where the header note says it. */
+.hb-facts {
+  display: none;
+}
 .hb-intro {
   max-width: 31rem;
   margin: 0 0 30px;
@@ -167,7 +145,8 @@
 .hb-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  align-items: center;
+  gap: 12px 16px;
 }
 .hb-actions .btn-auburn {
   min-height: 52px;
@@ -177,7 +156,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 52px;
-  padding: 10px 4px;
+  padding: 10px 0;
   font-weight: 600;
   color: var(--link);
   text-decoration: underline;
@@ -237,8 +216,8 @@
 }
 .hb-sunday .sunday-weather .sunday-weather__line {
   margin: 0;
-  font-size: 16px;
-  color: #d4e6f7;
+  font-size: 15px;
+  color: #f1f7fd;
 }
 .hb-sunday__times {
   display: grid;
@@ -504,6 +483,17 @@ html.motion .hb-path.is-laid .hb-stone {
 .hb-note__quote p {
   margin: 0;
 }
+/* A curly open quote over the note: it is the pastor speaking. Silent to screen readers. */
+.hb-note__quote::before {
+  content: '“' / '';
+  display: block;
+  height: 0.5em;
+  margin-bottom: 4px;
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 0.9;
+  color: #cfe3d5;
+}
 .hb-note__sign {
   margin: 0;
   font-size: 15px;
@@ -600,14 +590,38 @@ html.motion .hb-path.is-laid .hb-stone {
   .hb-path-wide {
     display: none;
   }
-  /* Flipped so it lands on the card below. Full bleed past the gutter. */
+  /* The card follows the welcome directly (time and place on the first phone screen); the path
+     comes after it, 24px clear above and below, full bleed past the gutter. */
+  .hb-lead {
+    gap: 28px;
+  }
+  .hb-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: -4px 0 18px;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .hb-facts__times {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--auburn-deep);
+  }
+  .hb-facts__where {
+    color: var(--hb-body);
+  }
+  .hb-facts a {
+    font-weight: 600;
+  }
   .hb-path-phone {
     display: block;
     width: calc(100% + 2 * var(--hb-gutter));
     max-width: none;
     height: auto;
-    margin: -8px calc(-1 * var(--hb-gutter)) -20px;
-    transform: scaleY(-1);
+    margin: -4px calc(-1 * var(--hb-gutter)) 0;
   }
   .hb-masthead {
     grid-template-columns: minmax(0, 1fr);
@@ -628,7 +642,7 @@ html.motion .hb-path.is-laid .hb-stone {
     padding: 48px 0 56px;
   }
   .hb-band--sky {
-    margin-top: 32px;
+    margin-top: 24px;
   }
   .hb-board {
     grid-template-columns: minmax(0, 1fr);

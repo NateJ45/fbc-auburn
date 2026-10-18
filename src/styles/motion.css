@@ -435,9 +435,10 @@ html.motion .baptism-motion #ripples {
   justify-content: center;
   padding-left: 1.4rem;
   border-left: 4px solid transparent;
-  transition:
-    border-color 0.4s,
-    opacity 0.4s;
+  transition: border-color 0.4s;
+}
+.walk-steps h3 {
+  transition: color 0.4s;
 }
 .walk-steps__t {
   font-weight: 600;
@@ -460,8 +461,11 @@ html.motion .baptism-motion #ripples {
 .walk-steps li.walk-end {
   min-height: 60vh;
 }
-html.motion .walk-steps li {
-  opacity: 0.45;
+/* Steps not yet reached are dimmed by colour, not opacity, so every line still passes contrast
+   (2026-10-17: a 0.45 fade measured 2.2:1 on white once nothing sat behind it). The active step
+   takes its heading colour back and the gold edge. */
+html.motion .walk-steps li:not(.active) h3 {
+  color: var(--muted-foreground);
 }
 html.motion .walk-steps li.active {
   opacity: 1;

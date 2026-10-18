@@ -463,10 +463,10 @@ function isGroupActive(items: { href: string }[]) {
         <a
           href={headerCta.href}
           class:list={[
-            'btn-auburn press-tactile',
-            isActive(headerCta.href)
-              ? 'btn-auburn--primary btn-auburn--current'
-              : 'btn-auburn--primary',
+            // Outline, not red (2026-10-17): the page's own main button is the one red button in
+            // view (board E), so the header's stays quiet beside it.
+            'btn-auburn press-tactile btn-auburn--secondary',
+            isActive(headerCta.href) && 'btn-auburn--current',
           ]}
         >
           {headerCta.label}

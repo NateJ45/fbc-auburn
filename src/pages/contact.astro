@@ -9,6 +9,7 @@ import { telHref } from '@/lib/phone';
 import { site } from '@/data/site';
 import { normalizeCustomFields } from '@/lib/custom-form-fields';
 import Hero from '@/components/Hero.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import ContactForm from '@/components/ContactForm';
 import CopyEmailButton from '@/components/CopyEmailButton';
@@ -80,6 +81,8 @@ const schemas = [
     size="short"
     scriptAccent={page?.heroScriptAccent}
   />
+  {/* Board E: the stepping-stone rule under the page head, as SectionRenderer draws it. */}
+  <BoardRule marker={1} />
 
   <section class="mx-auto grid max-w-content grid-cols-1 gap-section-md px-m py-section-lg lg:grid-cols-3">
     {/* Form column */}

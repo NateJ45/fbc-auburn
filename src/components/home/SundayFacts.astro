@@ -1,0 +1,28 @@
+---
+// Safe to edit by hand
+// Board E's phone fact line: "Sundays 9:45 and 11:00 am", then the address and Directions, under
+// the red welcome line. Shown below 960px only (home-board.css), so time and place are on the
+// first phone screen even with the browser's own bars taking height; at desktop the header's
+// Sunday note carries the same facts. Derived from Site settings > Church facts (rule 15), the
+// same way as that note in Header.astro. Renders nothing without a Sunday time.
+import { getChurchFacts } from '@/lib/church-data';
+import { timesPhrase } from '@/lib/church-facts';
+
+const facts = await getChurchFacts();
+const minutes = (facts.serviceTimes ?? []).filter((t) => t.dayIndex === 0).map((t) => t.minutes);
+const address = facts.address ?? null;
+---
+
+{minutes.length > 0 && (
+  <p class="hb-facts hb-num">
+    <span class="hb-facts__times">Sundays {timesPhrase(minutes)}</span>
+    {address && (
+      <span class="hb-facts__where">
+        {address.street} ·{' '}
+        <a href={address.mapsUrl} rel="noopener" target="_blank">
+          Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
+        </a>
+      </span>
+    )}
+  </p>
+)}

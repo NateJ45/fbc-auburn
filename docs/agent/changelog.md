@@ -1,5 +1,24 @@
 # Change history
 
+_2026-10-17: board E corrections on Home, and E's grammar on the inner pages._
+
+**Decision.** Five critics reviewed live board E; these are the code fixes they agreed on. Home: on a phone the
+This Sunday card now follows the welcome and its buttons, and a one-line fact strip under the red welcome
+(`SundayFacts.astro`, derived from Church facts like the header's Sunday note) puts the time and place on
+the first screen even with the browser's bars; the phone path follows the card, 24px clear above and below; "Meet
+the church" sits beside the button (gap 16px, no side padding); the hero eyebrow is quieter (18px, 0.18em);
+the forecast line is 15px and brighter; the Who we are note opens with a curly quote. Site-wide: the header's
+"Plan your visit" is the outline button, so the page's own red button is the only red in view; the header
+stripe and resting hairline are gone on every page (E pages open on their own hairline); below 960px the
+header and footer sit on the same 20px gutter as the page. Inner pages: `ArchHero` hands the short hero to
+`BoardPageHead.astro` (label with stepping stones, title, subhead, buttons, a photo or stone icon beside them;
+no arch, no second mark); `SectionRenderer` opens each section with `BoardRule.astro` instead of the
+gold-stone divider; `src/styles/board.css` (shared with Home's labels) turns the bands white, puts centred
+columns and the closing band on the left edge, drops the closing band's mark (the footer carries it), gives
+pictures E's 20px frame and hides the faint background path. One stone moment per page: the title is the
+mosaic unless the page draws the mark or the baptism picture (About, What we believe). Measured at 320, 375,
+768, 1024 and 1440: no sideways scroll, one left edge per page.
+
 _2026-10-17: board E on Home: the lockup hero, the This Sunday card, a generated stone path._
 
 **Decision.** A second design round found the full-height ribbon still weaker than the Gemini comp;

@@ -146,8 +146,10 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   welcome in Pastor Jacob's own words.]" until he writes it (Studio: Home, Who we are, Text).
 - Waiting on the church: a Give link (the Give card goes to Contact until there is one) and the
   social links for the footer's Follow column (Site settings; the column hides while empty).
-- Inner pages still have the first pass's tinted bands and dividers; whether board E's bands and
-  labels go there too is Nathan's call after seeing Home.
+- Inner pages are on board E's grammar (2026-10-17): white ground, stepping-stone rules, one left
+  edge, no arch. Still open there: the empty picture slots (Serving our neighbours, Bringing
+  children) wait on the photo session, and the faint background path from the motion layer is
+  hidden on these pages (`board.css`); bring it back only if Nathan wants it under the white.
 
 Service times, the 1959 founding and Hebrews 13:8 are still unconfirmed with the church; copy
 marks them "to be confirmed". Since 2026-10-17 the facts themselves live in Site settings > Church
