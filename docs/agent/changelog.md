@@ -1,5 +1,22 @@
 # Change history
 
+_2026-10-18: the authoring kit and a Studio that looks like the church's (PORTS.md cards 109 and 110)._
+
+**What changed.** Ported from the starter, with Auburn's own pieces. New pages start from a template: Simple page,
+Ministry, Event, Sermon series or Blank page (`src/sanity/pageTemplates.ts`), with every placeholder line starting
+"Example:" and a yellow warning on any section that still has one. The "+ Add item" menu opens on pictures of each
+block, shot from `/styleguide/sections/` in Auburn's brand by `npm run thumbnails`, the five church blocks included.
+Saved sections can hold up to twelve sections and go onto a page as a copy or as a synced section that follows the
+saved one (`syncedSection`, resolved in `sectionsProjection()`, expanded in `SectionRenderer` before the cadence); the
+same "Insert a saved section" button sits under the Extra sections on Contact, FAQ, News and notes and Privacy. The
+Studio is named "First Baptist Church of Auburn", shows the stone mark on the login screen, the workspace and the tab,
+and uses the navy primary for buttons, links and focus rings, contrast-guarded by `studio-theme.test.ts`. Home has a
+greeting and four quick actions for the pastor's jobs (last Sunday's message, service times, a new page, the menus),
+a status line sits under the top bar, and "Help for this page" shows the page check and the right Site Guide entries.
+The Site Guide gained Start a page from a template, Reuse a section and Keep a section the same on every page; Add a
+page and Rearrange the home page mention them. `StudioLogo.tsx` is gone (Sanity 6 never drew it). Rendered pages are
+unchanged (parity 16/16 against `main`). The signed-in click-through is `docs/PENDING.md` item 1f.
+
 _2026-10-18: the pastor can run the site without a developer._
 
 **Decision.** Nathan: "Jacob should be able to do as much as he wants without me." An audit of
