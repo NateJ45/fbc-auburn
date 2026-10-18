@@ -75,6 +75,8 @@ interface Props {
    * island props.
    */
   cta?: { show: boolean; label: string; href: string };
+  /** Sunday times and the address, from Church facts, shown first in the menu. */
+  sunday?: { times: string; street?: string; mapsUrl?: string };
 }
 
 /** Built-in drawer button, matching the header's own default. */
@@ -88,6 +90,7 @@ export default function MobileNav({
   // logoLightUrl is still passed by Header.astro; the night menu uses the white logo only.
   logoDarkUrl,
   cta = DEFAULT_CTA,
+  sunday,
 }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -114,6 +117,32 @@ export default function MobileNav({
           <SheetHeader className="auburn-menu__head">
             <SheetTitle className="auburn-menu__eyebrow">Menu</SheetTitle>
           </SheetHeader>
+
+          {/* When and where first, then the visit button in thumb reach (Home audit research,
+              2026-10-17: people open the menu to find the times). */}
+          {sunday && (
+            <div className="auburn-menu__sunday">
+              <p className="auburn-menu__times">{sunday.times}</p>
+              {sunday.street && (
+                <p className="auburn-menu__where">
+                  {sunday.street}
+                  {sunday.mapsUrl && (
+                    <>
+                      {' · '}
+                      <a href={sunday.mapsUrl} rel="noopener" target="_blank">
+                        Directions<span className="sr-only"> (opens Google Maps in a new tab)</span>
+                      </a>
+                    </>
+                  )}
+                </p>
+              )}
+              {cta.show && (
+                <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary">
+                  {cta.label}
+                </a>
+              )}
+            </div>
+          )}
 
           <div className="auburn-menu__grid">
             <nav aria-label="All pages">
@@ -144,7 +173,7 @@ export default function MobileNav({
             </nav>
 
             <div className="auburn-menu__side">
-              {cta.show && (
+              {cta.show && !sunday && (
                 <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary">
                   {cta.label}
                 </a>

@@ -94,6 +94,34 @@ export const stepsRailSection = defineType({
               validation: (R) => R.required().max(80),
             }),
             defineField({ name: 'body', title: 'Text (optional)', type: 'text', rows: 3 }),
+            // Home audit research (2026-10-17): on Home this block is "Your first Sunday". A step
+            // that IS one of the Sunday gatherings takes its time from Site settings > Church
+            // facts, so the time is typed once (rule 15). Logic-driving, so it is in
+            // NON_STEGA_FIELDS (src/lib/cms-preview.ts, rule 8b).
+            defineField({
+              name: 'gathering',
+              title: 'Which Sunday gathering is this? (optional)',
+              description:
+                'Pick one and the step shows its time from Church facts, so you never type it here.',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Not a gathering', value: 'none' },
+                  { title: 'The first Sunday gathering (Sunday School)', value: 'first' },
+                  { title: 'The second Sunday gathering (worship)', value: 'second' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'none',
+            }),
+            defineField({
+              name: 'place',
+              title: 'Where (optional)',
+              description:
+                'A few words, like "Front door" or "Fellowship hall". Shows beside the time.',
+              type: 'string',
+              validation: (R) => R.max(40),
+            }),
             defineField({
               name: 'times',
               title: 'Times (optional)',

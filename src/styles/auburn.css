@@ -247,6 +247,20 @@ h6 {
 .btn-auburn--secondary:hover {
   background: var(--muted);
 }
+/* Nav and text links get the same clear ring as the buttons (it was a 1px half-transparent
+   outline on the desktop nav; Home critic, 2026-10-17). */
+.site-nav a:focus-visible,
+.site-nav summary:focus-visible,
+.hb a:focus-visible,
+.site-footer a:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.site-footer a:focus-visible,
+.site-footer .btn-auburn:focus-visible {
+  outline-color: #96c3ea;
+}
 .btn-auburn:focus-visible {
   outline: 3px solid var(--ring);
   outline-offset: 3px;
@@ -286,6 +300,20 @@ h6 {
   transition:
     transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.3s ease;
+}
+/* Home below 1280px: the round mark alone until the hero lockup passes under the bar. */
+.site-header__mark {
+  display: none;
+  width: auto;
+  height: 56px;
+}
+@media (max-width: 1279px) {
+  .site-header[data-home]:not([data-past]) .site-header__logo {
+    display: none;
+  }
+  .site-header[data-home]:not([data-past]) .site-header__mark {
+    display: block;
+  }
 }
 /* 84px once the bar has room for it beside the four menu links and the two buttons. */
 @media (min-width: 1280px) {
@@ -521,6 +549,15 @@ h6 {
 .auburn-menu__head {
   padding: 0;
 }
+/* The close button is a 44px target (it measured 28px). */
+.auburn-menu [data-slot='sheet-close'],
+.auburn-menu button[aria-label='Close'] {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+}
 .auburn-menu__eyebrow {
   font-family: var(--font-body);
   font-size: 0.85rem;
@@ -528,6 +565,34 @@ h6 {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #96c3ea;
+}
+/* When and where, first in the menu (Home audit research, 2026-10-17). */
+.auburn-menu__sunday {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: min(1200px, 100%);
+  margin: 18px auto 0;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.16);
+}
+.auburn-menu__times {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+.auburn-menu__where {
+  margin: 0 0 12px;
+  color: #d6d9e1;
+}
+.auburn-menu__where a {
+  color: #ffffff;
+  font-weight: 600;
+  text-underline-offset: 3px;
 }
 .auburn-menu__grid {
   display: grid;
@@ -589,6 +654,7 @@ h6 {
   gap: 1.2rem;
 }
 .auburn-menu__tagline {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: 1.5rem;
   line-height: 1.3;
@@ -678,6 +744,17 @@ h6 {
   line-height: 1.15;
   color: #ffffff;
 }
+.site-footer__invite {
+  max-width: 22rem;
+  margin: 14px 0 0;
+  color: #d6d9e1;
+}
+.site-footer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
 .site-footer__head {
   margin: 0 0 8px;
   font-size: 13px;
@@ -698,7 +775,16 @@ h6 {
   font-size: 14px;
   color: #b4b8c4;
 }
+/* The link grid shares the brand row's columns, so every column edge lines up. */
+.site-footer__links {
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  column-gap: 40px;
+}
 @media (max-width: 960px) {
+  .site-footer__links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+  }
   .site-footer__board {
     grid-template-columns: minmax(0, 1fr);
     gap: 28px;

@@ -1,0 +1,89 @@
+---
+// Safe to edit by hand
+// "Your first Sunday" on Home (Home audit research, 2026-10-17): the steps a first-time visitor
+// takes on a Sunday morning, drawn from a Home "Stepping-stone steps" block. HomeBoard draws the
+// first such block here, straight after the hero, so the page answers "what is it like?" before
+// anything else. Modelled on the best visit walk-throughs found (Jasper's First Baptist's
+// timeline, Reynolda's before / during / after): a few short steps, each with a time or place.
+//
+// - Each step is a numbered stone in the path's colours (the water, the green ring, the gold
+//   steps, the red cross), joined by gold stepping-stone dashes: across on desktop, down a rail on
+//   phones. Editors choose words, not layout; the stone icon field is not used here.
+// - A step marked as a Sunday gathering takes its time from Site settings > Church facts (rule
+//   15), so the time is typed once; the This Sunday card above carries the "To confirm" tag.
+// - Everything is in the HTML: no reveal hides text until a script runs.
+import SectionLabel from './SectionLabel.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { ctaHref } from '@/lib/cta-href';
+import type { ProjectedRailStep, ProjectedStepsRailSection } from '@/lib/pageBuilder.types';
+
+interface Props {
+  block: ProjectedStepsRailSection;
+  headingId: string;
+}
+const { block, headingId } = Astro.props;
+const steps: ProjectedRailStep[] = (block.steps ?? []).filter((s: ProjectedRailStep) => s?.title);
+const facts = await getChurchFacts();
+const sunday = facts.serviceTimes.filter((s) => s.dayIndex === 0);
+const gatheringOf = (g?: string) =>
+  g === 'first' ? sunday[0] : g === 'second' ? (sunday[1] ?? null) : null;
+// "9:45" reads cleanly beside a place; an afternoon time keeps its "pm".
+const short = (label: string) => label.replace(/ am$/, '');
+const cta = block.primaryCta?.label ? block.primaryCta : null;
+---
+
+{steps.length > 0 && (
+  <section class="hb-section hb-walk" id="first-sunday" aria-labelledby={headingId}>
+    <div class="hb-wrap">
+      {/* The label names the section; the intro is its display headline, the same pairing as
+          "Who we are" over "A place to belong" (Home critic, 2026-10-17). */}
+      {block.intro ? (
+        <>
+          <SectionLabel text={block.heading || 'Your first Sunday'} as="p" />
+          <h2 class="hb-walk__heading" id={headingId}>
+            {block.intro}
+          </h2>
+        </>
+      ) : (
+        <SectionLabel text={block.heading || 'Your first Sunday'} id={headingId} />
+      )}
+      <ol class="hb-walk__steps" style={`--hb-walk-n: ${Math.min(steps.length, 4)}`}>
+        {steps.map((s, i) => {
+          const g = gatheringOf(s.gathering);
+          const eyebrow = [g && short(g.timeLabel), s.place].filter(Boolean).join(' · ');
+          return (
+            <li class="hb-walk__step">
+              <span class:list={['hb-walk__stone', `hb-walk__stone--${i % 4}`]} aria-hidden="true">
+                {i + 1}
+              </span>
+              <div class="hb-walk__text">
+                {/* Every step keeps the time line, empty or not, so the titles line up. */}
+                <p
+                  class:list={['hb-walk__when hb-num', !eyebrow && 'is-empty']}
+                  aria-hidden={eyebrow ? undefined : 'true'}
+                >
+                  {eyebrow || '\u00a0'}
+                </p>
+                <h3 class="hb-walk__title">{s.title}</h3>
+                {s.body && <p class="hb-walk__body">{s.body}</p>}
+                {s.linkLabel && s.linkHref && (
+                  <a class="hb-walk__link" href={s.linkHref}>
+                    {s.linkLabel}
+                  </a>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+      {cta && (
+        <div class="hb-walk__end">
+          {block.endHeading && <p class="hb-walk__endline">{block.endHeading}</p>}
+          <a class="btn-auburn btn-auburn--primary" href={ctaHref(cta, '/plan-your-visit/')}>
+            {cta.label}
+          </a>
+        </div>
+      )}
+    </div>
+  </section>
+)}

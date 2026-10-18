@@ -101,6 +101,8 @@ const NON_STEGA_FIELDS = new Set([
   'businessType',
   'category',
   'columns',
+  // stepsRailSection steps: which Sunday gathering a step is (its time comes from Church facts).
+  'gathering',
   'heightHint',
   'imageSide',
   'layout',

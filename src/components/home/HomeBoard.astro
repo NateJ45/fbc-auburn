@@ -6,19 +6,21 @@
 // colour field), so reordering in the Studio can never break the rhythm:
 //
 //   Hero (the first)             -> HomeHero: the lockup, the welcome, This Sunday, the stone path
-//   Icon cards (the first)       -> HomeBand "board": Through the week, on the sky tile
-//   Icon cards (any later)       -> HomeBand "ways": Other ways in, on the green tile
+//   Stepping-stone steps (first) -> HomeWalk: Your first Sunday (Home audit research, 2026-10-17)
+//   Icon cards                   -> HomeBand: "board" (Through the week, sky band) before Who we
+//                                   are and This week; "ways" (Other ways in, green) after them
 //   Image + text (the first)     -> HomeBelong: Who we are, the photo mosaic
 //   This week + Watch, adjacent  -> HomeWeekWatch: side by side (either alone is fine too)
 //   anything else                -> SectionRenderer, so a section an editor adds still renders
 //
-// Section-label markers follow the path down the page: sky, green, gold, red, then round again.
+// Every section label leads with the same marker: three gold steps from the mark.
 //
 // PREVIEW. The Studio preview passes `editDoc`, and each drawn block is wrapped in a real block box
 // carrying its data-sanity attribute (the in-canvas insert / move / remove controls), exactly as
 // SectionRenderer does. The live site never passes it, and the wrapper is then a Fragment.
 import '@/styles/home-board.css';
 import HomeHero from './HomeHero.astro';
+import HomeWalk from './HomeWalk.astro';
 import HomeBand from './HomeBand.astro';
 import HomeBelong from './HomeBelong.astro';
 import HomeWeekWatch from './HomeWeekWatch.astro';
@@ -29,6 +31,7 @@ import type {
   ProjectedHeroSection,
   ProjectedIconCardsSection,
   ProjectedImageTextSection,
+  ProjectedStepsRailSection,
   ProjectedThisWeekSection,
   ProjectedWatchSection,
 } from '@/lib/pageBuilder.types';
@@ -42,27 +45,27 @@ const blocks = (sections ?? []) as PageBuilderBlock[];
 
 type Row =
   | { kind: 'hero'; key: string; block: ProjectedHeroSection }
+  | { kind: 'walk'; key: string; block: ProjectedStepsRailSection }
   | {
       kind: 'band';
       key: string;
       block: ProjectedIconCardsSection;
       variant: 'board' | 'ways';
-      marker: number;
     }
-  | { kind: 'belong'; key: string; block: ProjectedImageTextSection; marker: number }
+  | { kind: 'belong'; key: string; block: ProjectedImageTextSection }
   | {
       kind: 'weekWatch';
       key: string;
       keys: string[];
       week: ProjectedThisWeekSection | null;
       watch: ProjectedWatchSection | null;
-      marker: number;
     }
   | { kind: 'other'; key: string; block: PageBuilderBlock };
 
 const rows: Row[] = [];
-let marker = 0;
 let seenHero = false;
+let seenWalk = false;
+let seenMiddle = false; // Who we are or This week drawn: a card band after them is "ways"
 let seenCards = false;
 let seenBelong = false;
 for (let i = 0; i < blocks.length; i++) {
@@ -71,18 +74,21 @@ for (let i = 0; i < blocks.length; i++) {
   if (b._type === 'heroSection' && !seenHero) {
     seenHero = true;
     rows.push({ kind: 'hero', key, block: b as ProjectedHeroSection });
+  } else if ((b as { _type: string })._type === 'stepsRailSection' && !seenWalk) {
+    seenWalk = true;
+    rows.push({ kind: 'walk', key, block: b as unknown as ProjectedStepsRailSection });
   } else if (b._type === 'iconCardsSection') {
     rows.push({
       kind: 'band',
       key,
       block: b as ProjectedIconCardsSection,
-      variant: seenCards ? 'ways' : 'board',
-      marker: marker++,
+      variant: seenCards || seenMiddle ? 'ways' : 'board',
     });
     seenCards = true;
   } else if (b._type === 'imageTextSection' && !seenBelong) {
     seenBelong = true;
-    rows.push({ kind: 'belong', key, block: b as ProjectedImageTextSection, marker: marker++ });
+    seenMiddle = true;
+    rows.push({ kind: 'belong', key, block: b as ProjectedImageTextSection });
   } else if (b._type === 'thisWeekSection' || b._type === 'watchSection') {
     const next = blocks[i + 1];
     const pairs =
@@ -91,13 +97,13 @@ for (let i = 0; i < blocks.length; i++) {
       (next._type === 'thisWeekSection' || next._type === 'watchSection');
     const group = pairs ? [b, next] : [b];
     if (pairs) i++;
+    seenMiddle = true;
     rows.push({
       kind: 'weekWatch',
       key,
       keys: group.map((g) => (g as { _key?: string })._key ?? key),
       week: (group.find((g) => g._type === 'thisWeekSection') as ProjectedThisWeekSection) ?? null,
       watch: (group.find((g) => g._type === 'watchSection') as ProjectedWatchSection) ?? null,
-      marker: marker++,
     });
   } else {
     rows.push({ kind: 'other', key, block: b });
@@ -118,12 +124,14 @@ const hid = (key: string) => `home-${key}`;
       <Wrap {...wrapAttrs(r.key)}>
         {r.kind === 'hero' ? (
           <HomeHero block={r.block} />
+        ) : r.kind === 'walk' ? (
+          <HomeWalk block={r.block} headingId={hid(r.key)} />
         ) : r.kind === 'band' ? (
-          <HomeBand block={r.block} variant={r.variant} marker={r.marker} headingId={hid(r.key)} />
+          <HomeBand block={r.block} variant={r.variant} headingId={hid(r.key)} />
         ) : r.kind === 'belong' ? (
-          <HomeBelong block={r.block} marker={r.marker} headingId={hid(r.key)} />
+          <HomeBelong block={r.block} headingId={hid(r.key)} />
         ) : (
-          <HomeWeekWatch week={r.week} watch={r.watch} marker={r.marker} headingId={hid(r.key)} />
+          <HomeWeekWatch week={r.week} watch={r.watch} headingId={hid(r.key)} />
         )}
       </Wrap>
     ),

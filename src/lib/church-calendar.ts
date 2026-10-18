@@ -75,6 +75,8 @@ export interface Occurrence {
   startMinutes: number | null;
   durationMinutes: number | null;
   allDayDays: number;
+  /** STATUS:CANCELLED in Church Trac; only present when the caller asked for cancelled ones. */
+  cancelled: boolean;
 }
 
 // ── Reading the file ────────────────────────────────────────────────────────
@@ -418,11 +420,20 @@ function* recurrenceDays(ev: CalendarEvent, to: IsoDay): Generator<IsoDay> {
   }
 }
 
-/** Every occurrence between two church days (inclusive), in date and time order. */
-export function occurrences(events: CalendarEvent[], from: IsoDay, to: IsoDay): Occurrence[] {
+/**
+ * Every occurrence between two church days (inclusive), in date and time order. Cancelled events
+ * are left out unless `includeCancelled` (Home's Coming up shows them struck through, so a
+ * visitor sees a cancelled night rather than a puzzling gap; Home audit research, 2026-10-17).
+ */
+export function occurrences(
+  events: CalendarEvent[],
+  from: IsoDay,
+  to: IsoDay,
+  { includeCancelled = false }: { includeCancelled?: boolean } = {},
+): Occurrence[] {
   const out: Occurrence[] = [];
   for (const ev of events) {
-    if (ev.cancelled) continue;
+    if (ev.cancelled && !includeCancelled) continue;
     for (const day of recurrenceDays(ev, to)) {
       // An all-day event spanning several days is still on while it lasts.
       const lastDay = addDays(day, ev.allDayDays - 1);
@@ -436,6 +447,7 @@ export function occurrences(events: CalendarEvent[], from: IsoDay, to: IsoDay): 
         startMinutes: ev.startMinutes,
         durationMinutes: ev.durationMinutes,
         allDayDays: ev.allDayDays,
+        cancelled: ev.cancelled,
       });
     }
   }

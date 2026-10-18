@@ -68,6 +68,7 @@ export interface RawChurchFacts {
     city?: string | null;
     state?: string | null;
     zip?: string | null;
+    findUs?: string | null;
     confirmed?: boolean | null;
   } | null;
   serviceTimes?: (RawServiceTime | null)[] | null;
@@ -104,6 +105,8 @@ export interface ChurchAddress {
   oneLine: string;
   /** Google Maps search for the address. */
   mapsUrl: string;
+  /** Jacob's own "how to find us" line, or "" (Home audit, 2026-10-17). */
+  findUs: string;
   confirmed: boolean;
 }
 
@@ -309,6 +312,7 @@ function resolveAddress(raw: RawChurchFacts['churchAddress']): ChurchAddress | n
     lines,
     oneLine,
     mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+    findUs: raw?.findUs?.trim() ?? '',
     confirmed: raw?.confirmed === true,
   };
 }
@@ -396,6 +400,8 @@ export interface WeekRow {
   /** False when any service time on the row is unconfirmed; calendar events are the church's own. */
   confirmed: boolean;
   source: 'services' | 'calendar';
+  /** A calendar event the church marked cancelled (shown struck through, not hidden). */
+  cancelled: boolean;
 }
 
 /** How many days ahead "This week" looks (today plus six). */
@@ -445,11 +451,14 @@ export function thisWeek(
       where: '',
       confirmed: day.every((s) => s.confirmed),
       source: 'services',
+      cancelled: false,
       start: day[0].minutes,
     });
   }
 
-  for (const o of occurrences(events ?? [], today, addDays(today, WEEK_DAYS - 1))) {
+  for (const o of occurrences(events ?? [], today, addDays(today, WEEK_DAYS - 1), {
+    includeCancelled: true,
+  })) {
     if (o.date === today && o.startMinutes !== null && o.startMinutes <= nowMinutes) continue;
     if (o.startMinutes !== null && serviceSlots.has(`${o.date}|${o.startMinutes}`)) continue;
     items.push({
@@ -462,6 +471,7 @@ export function thisWeek(
       where: o.location,
       confirmed: true,
       source: 'calendar',
+      cancelled: o.cancelled,
       start: o.startMinutes ?? -1,
     });
   }
@@ -479,7 +489,7 @@ export function thisWeek(
  * (schema convention, PORTS.md card 66). Empty until the church confirms.
  */
 export function churchJsonLd(
-  facts: Pick<ChurchFacts, 'address' | 'phone'>,
+  facts: Pick<ChurchFacts, 'address' | 'phone'> & Partial<Pick<ChurchFacts, 'serviceTimes'>>,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   const a = facts.address;
@@ -494,5 +504,90 @@ export function churchJsonLd(
     };
   }
   if (facts.phone?.confirmed) out.telephone = plain(facts.phone.display);
+  // Weekly gatherings as schema.org Events with a weekly Schedule (Home audit research,
+  // 2026-10-17). Google gives no rich result for recurring services, but search and answer
+  // engines read a clean what and when. Confirmed times only, like everything else here.
+  const services = (facts.serviceTimes ?? []).filter((s) => s.confirmed);
+  if (services.length > 0) {
+    const hhmm = (m: number) =>
+      `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+    out.event = services.map((s) => ({
+      '@type': 'Event',
+      name: plain(s.label),
+      eventSchedule: {
+        '@type': 'Schedule',
+        byDay: `https://schema.org/${s.day[0].toUpperCase()}${s.day.slice(1)}`,
+        startTime: hhmm(s.minutes),
+        repeatFrequency: 'P1W',
+        scheduleTimezone: 'America/New_York',
+      },
+    }));
+  }
   return out;
+}
+
+// ── Add Sunday to a calendar ────────────────────────────────────────────────
+
+/**
+ * A calendar file for the Sunday gatherings (Home audit research, 2026-10-17: at a small
+ * church's scale the one calendar action worth having is "add Sunday to my calendar"). One
+ * weekly event per Sunday gathering, starting this Sunday, at the church's address. Built at
+ * build time from the same facts as the This Sunday card, so a time changes in one place.
+ * Returns null while no Sunday time is confirmed: we never put a provisional time in someone's
+ * calendar.
+ */
+export function sundayIcs(
+  facts: Pick<ChurchFacts, 'serviceTimes' | 'address'> & { title?: string },
+  now: Date,
+  siteUrl: string,
+): string | null {
+  const sunday = thisSunday(facts, now);
+  const services = (sunday?.services ?? []).filter((s) => s.confirmed);
+  if (!sunday || services.length === 0) return null;
+  const esc = (v: string) => plain(v).replace(/([,;\\])/g, '\\$1');
+  const ymd = sunday.date.replace(/-/g, '');
+  const at = (m: number) =>
+    `${String(Math.floor(m / 60)).padStart(2, '0')}${String(m % 60).padStart(2, '0')}00`;
+  const name = facts.title ? esc(facts.title) : 'Church';
+  const stamp = `${now.toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`;
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//fbc-auburn//sunday//EN',
+    'CALSCALE:GREGORIAN',
+    // Eastern time, so the event stays at 9:45 local through the clock changes.
+    'BEGIN:VTIMEZONE',
+    'TZID:America/New_York',
+    'BEGIN:DAYLIGHT',
+    'TZOFFSETFROM:-0500',
+    'TZOFFSETTO:-0400',
+    'TZNAME:EDT',
+    'DTSTART:19700308T020000',
+    'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU',
+    'END:DAYLIGHT',
+    'BEGIN:STANDARD',
+    'TZOFFSETFROM:-0400',
+    'TZOFFSETTO:-0500',
+    'TZNAME:EST',
+    'DTSTART:19701101T020000',
+    'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU',
+    'END:STANDARD',
+    'END:VTIMEZONE',
+  ];
+  for (const s of services) {
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:sunday-${s.key}@${siteUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '')}`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART;TZID=America/New_York:${ymd}T${at(s.minutes)}`,
+      'DURATION:PT1H',
+      'RRULE:FREQ=WEEKLY;BYDAY=SU',
+      `SUMMARY:${esc(s.label)}\\, ${name}`,
+      ...(facts.address?.confirmed ? [`LOCATION:${esc(facts.address.oneLine)}`] : []),
+      `URL:${siteUrl}`,
+      'END:VEVENT',
+    );
+  }
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n') + '\r\n';
 }

@@ -251,6 +251,14 @@ export const imageTextSection = defineType({
       description: 'Who the text is from, for example "Jacob Wysong, Senior Pastor".',
       hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
     }),
+    // Home audit (2026-10-17): visitors want to see the pastor; a small round portrait beside the
+    // signature turns the note into a letter from a person. Optional: no photo, no circle.
+    {
+      ...imageWithAlt('signedPhoto', 'Photo of who signed it (Home only)'),
+      description:
+        'A head-and-shoulders photo, square, at least 600px. It shows as a small circle beside the signature.',
+      hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
+    },
     defineField({
       name: 'extraImages',
       title: 'Two more photos (Home only)',

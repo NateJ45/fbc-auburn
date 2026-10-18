@@ -1,6 +1,8 @@
 ---
 // Safe to edit by hand
-// Board E's This Sunday card: deep sky on the deep mosaic tile, beside the welcome on Home.
+// Board E's This Sunday card: deep sky on the soft stone tile, beside the welcome on Home. On
+// desktop the stone path's red end meets its left side: the card is the door. No icon in
+// the address row (a mosaic pin on the mosaic tile lost its red; Home audit 2026-10-17).
 // Every fact is derived at build time from Site settings > Church facts (rule 15): the date
 // (thisSunday(), so it moves on by itself with the daily rebuild), the Sunday gatherings, the
 // address and its map link. The forecast line is SundayWeather in reserve mode (fetched by the
@@ -8,9 +10,9 @@
 //
 // Renders nothing when no Sunday gathering is set.
 import SundayWeather from '@/components/church/SundayWeather.astro';
-import StoneIcon from '@/components/StoneIcon.astro';
 import { getChurchFacts } from '@/lib/church-data';
-import { thisSunday } from '@/lib/church-facts';
+import { sundayIcs, thisSunday } from '@/lib/church-facts';
+import { site } from '@/data/site';
 import { churchDataNow } from '@/lib/church-feeds';
 
 interface Props {
@@ -21,6 +23,8 @@ const { now = churchDataNow() } = Astro.props;
 const facts = await getChurchFacts();
 const sunday = thisSunday(facts, now);
 const address = facts.address;
+// "Add Sundays to my calendar" (/sunday.ics), only once a Sunday time is confirmed.
+const hasCalendar = sundayIcs({ ...facts, title: site.name }, now, site.url) !== null;
 const timesConfirmed = sunday?.confirmed ?? true;
 const addressConfirmed = address?.confirmed ?? true;
 const pill = !timesConfirmed
@@ -57,12 +61,22 @@ const short = (label: string) => label.replace(/ am$/, '');
         </>
       ))}
     </dl>
+    {hasCalendar && (
+      <a class="hb-sunday__cal" href="/sunday.ics" download>
+        Add Sundays to my calendar
+      </a>
+    )}
     {address && (
       <div class="hb-sunday__where">
-        <StoneIcon name="map-pin" size={84} />
         <p>
-          {address.street}, {address.city}
+          {[address.street, address.city, address.state].filter(Boolean).join(', ')}
           <br />
+          {address.findUs && (
+            <>
+              <span class="hb-sunday__findus">{address.findUs}</span>
+              <br />
+            </>
+          )}
           <a href={address.mapsUrl} rel="noopener" target="_blank">
             Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
           </a>

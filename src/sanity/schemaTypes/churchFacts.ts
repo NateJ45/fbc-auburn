@@ -63,6 +63,14 @@ export const churchFactsFields = [
       }),
       defineField({ name: 'zip', title: 'ZIP code', type: 'string' }),
       defineField({
+        name: 'findUs',
+        title: 'How to find us (optional)',
+        type: 'string',
+        description:
+          'One short sentence in your own words for someone driving out: which road, what is nearby, where to park. It shows in the footer under the address. Leave empty to hide it.',
+        validation: (Rule) => Rule.max(140),
+      }),
+      defineField({
         name: 'confirmed',
         title: 'Confirmed by the church',
         type: 'boolean',

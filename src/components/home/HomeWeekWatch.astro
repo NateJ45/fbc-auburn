@@ -13,7 +13,7 @@ import SectionLabel from './SectionLabel.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import { getChurchFacts } from '@/lib/church-data';
-import { thisWeek } from '@/lib/church-facts';
+import { andList, thisWeek, timesPhrase } from '@/lib/church-facts';
 import { churchDataNow, loadChurchEvents } from '@/lib/church-feeds';
 import { ctaHref } from '@/lib/cta-href';
 import type { ProjectedThisWeekSection, ProjectedWatchSection } from '@/lib/pageBuilder.types';
@@ -21,40 +21,92 @@ import type { ProjectedThisWeekSection, ProjectedWatchSection } from '@/lib/page
 interface Props {
   week?: ProjectedThisWeekSection | null;
   watch?: ProjectedWatchSection | null;
-  marker: number;
   headingId: string;
   /** The build moment; tests pass a fixed one. */
   now?: Date;
 }
-const { week, watch, marker, headingId, now = churchDataNow() } = Astro.props;
+const { week, watch, headingId, now = churchDataNow() } = Astro.props;
 
 const facts = await getChurchFacts();
-const rows = week ? thisWeek(facts, await loadChurchEvents(facts), now).slice(0, 4) : [];
-const anyUnconfirmed = rows.some((r) => !r.confirmed);
+// This week (Home audit research, 2026-10-17): the weekly schedule in one line per day (from
+// Church facts, Sunday included so a quiet week still reads as a full week), then the dated
+// things from the church calendar, a cancelled one struck through rather than silently missing,
+// and one honest line when there is nothing extra.
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const weekday = facts.serviceTimes;
+const rhythm = [...new Set(weekday.map((s) => s.dayIndex))].map((d) => {
+  const day = weekday.filter((s) => s.dayIndex === d);
+  return {
+    day: DAYS[d],
+    time: timesPhrase(day.map((s) => s.minutes)),
+    what: andList(day.map((s) => s.label)),
+    confirmed: day.every((s) => s.confirmed),
+  };
+});
+const dated = week
+  ? thisWeek(facts, await loadChurchEvents(facts), now).filter((r) => r.source === 'calendar')
+  : [];
+const MAX_ROWS = 4;
+const rows = dated.slice(0, MAX_ROWS);
+const more = dated.length - rows.length;
+const anyUnconfirmed = rhythm.some((r) => !r.confirmed);
 const weekHeading = week?.heading || 'This week';
 const watchHeading = watch?.heading || 'Last Sunday';
 const label = [week && weekHeading, watch && watchHeading].filter(Boolean).join(' and ');
+// Last Sunday's message (Home audit research, 2026-10-17): while the entry is under 8 days old
+// the card names it (title, passage, date) and links to its video; otherwise it shows the
+// block's own words. Derived from the entry's date at build time (daily rebuilds), never stale.
+const lm = watch?.lastMessage;
+const lmAge = lm?.date
+  ? (now.getTime() - new Date(`${lm.date}T12:00:00Z`).getTime()) / 86400000
+  : 99;
+const fresh = Boolean(lm?.title && lmAge >= 0 && lmAge <= 8);
+const lmDate =
+  fresh && lm?.date
+    ? new Date(`${lm.date}T12:00:00Z`).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'UTC',
+      })
+    : '';
+// The "Live now" window: worship (the last Sunday gathering) from 5 minutes before to 75 after.
+const sundayTimes = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
+const liveStart = sundayTimes.length ? Math.max(...sundayTimes) - 5 : null;
 // No link set (the built-in defaults, where the Watch page may not exist): a plain card.
-const watchHref = watch?.link ? ctaHref(watch.link) : undefined;
+const watchHref =
+  fresh && lm?.videoUrl ? lm.videoUrl : watch?.link ? ctaHref(watch.link) : undefined;
 const WatchTag = watchHref ? 'a' : 'div';
 ---
 
 <section class="hb-section" aria-labelledby={headingId}>
   <div class="hb-wrap">
-    <SectionLabel text={label} marker={marker} as="p" />
+    <SectionLabel text={label} as="p" />
     <div class="hb-pair">
       {week && (
         <div>
           <h2 id={headingId}>{weekHeading}</h2>
           {week.intro && <p class="hb-week-foot">{week.intro}</p>}
-          <ul class="hb-week hb-num">
+          {rhythm.length > 0 && (
+            <ul class="hb-rhythm hb-num">
+              {rhythm.map((r) => (
+                <li>
+                  <strong>Every {r.day}</strong> · {r.time} · {r.what}
+                </li>
+              ))}
+            </ul>
+          )}
+          {rows.length === 0 && (
+            <p class="hb-week-empty">Nothing extra on the calendar this week.</p>
+          )}
+          <ul class="hb-week hb-num" hidden={rows.length === 0}>
             {rows.map((r) => (
-              <li>
+              <li class:list={[r.cancelled && 'is-cancelled']}>
                 <time class="hb-week__day" datetime={r.date}>
                   {Number(r.date.slice(8, 10))}
                 </time>
                 <p>
                   <strong>{r.when}</strong>
+                  {r.cancelled && <span class="hb-week__cancelled">Cancelled</span>}
                   <br />
                   <span class="hb-week__what">
                     {r.what} · {r.time}
@@ -64,9 +116,10 @@ const WatchTag = watchHref ? 'a' : 'div';
               </li>
             ))}
           </ul>
-          {(anyUnconfirmed || facts.calendarPageUrl) && (
+          {(anyUnconfirmed || facts.calendarPageUrl || more > 0) && (
             <p class="hb-week-foot">
               {anyUnconfirmed && 'Times to confirm. '}
+              {more > 0 && `And ${more} more this week. `}
               {facts.calendarPageUrl && (
                 <a href={facts.calendarPageUrl} rel="noopener" target="_blank">
                   Full calendar<span class="sr-only"> (opens Church Trac in a new tab)</span>
@@ -101,10 +154,21 @@ const WatchTag = watchHref ? 'a' : 'div';
                   </svg>
                 </span>
                 <span>
+                  {liveStart !== null && (
+                    <span class="hb-watch__live" data-live-start={liveStart} hidden>
+                      Live now
+                    </span>
+                  )}
                   <strong class="hb-watch__title">
-                    {watch.link?.label || 'Watch the message'}
+                    {fresh ? lm?.title : watch.link?.label || 'Watch the message'}
                   </strong>
-                  {watch.body && <span class="hb-watch__sub">{watch.body}</span>}
+                  {fresh ? (
+                    <span class="hb-watch__sub">
+                      {[lm?.passage, lmDate].filter(Boolean).join(' · ')}
+                    </span>
+                  ) : (
+                    watch.body && <span class="hb-watch__sub">{watch.body}</span>
+                  )}
                 </span>
               </span>
             </WatchTag>
@@ -120,7 +184,7 @@ const WatchTag = watchHref ? 'a' : 'div';
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 2px solid var(--hb-ink);
+    border-top: 0;
   }
   .hb-week li {
     display: flex;
@@ -143,4 +207,58 @@ const WatchTag = watchHref ? 'a' : 'div';
   .hb-week__what {
     color: var(--hb-muted);
   }
+  .hb-rhythm {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+    color: var(--hb-body);
+  }
+  .hb-rhythm ~ .hb-week {
+    border-top: 1px solid var(--hb-line);
+  }
+  .hb-rhythm li {
+    padding: 4px 0;
+  }
+  .hb-rhythm strong {
+    color: var(--hb-ink);
+  }
+  .hb-week-empty {
+    margin: 0 0 12px;
+    color: var(--hb-muted);
+  }
+  /* A cancelled event stays in the list, struck through, so nobody wonders where it went. */
+  .hb-week li.is-cancelled .hb-week__what,
+  .hb-week li.is-cancelled .hb-week__day {
+    text-decoration: line-through;
+    color: var(--hb-muted);
+  }
+  .hb-week__cancelled {
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: #fbe9e4;
+    color: #8f2c14;
+    font-size: 13px;
+    font-weight: 700;
+  }
 </style>
+
+<script>
+  // "Live now" on the watch card during Sunday worship, by the church's own clock (Eastern):
+  // from 5 minutes before the last Sunday gathering to 75 minutes after it starts. The card reads
+  // the same without JS; this only reveals the tag.
+  const tag = document.querySelector<HTMLElement>('[data-live-start]');
+  if (tag) {
+    const start = Number(tag.dataset.liveStart);
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      weekday: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      hourCycle: 'h23',
+    }).formatToParts(new Date());
+    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+    const minutes = Number(get('hour')) * 60 + Number(get('minute'));
+    tag.hidden = !(get('weekday') === 'Sun' && minutes >= start && minutes <= start + 80);
+  }
+</script>

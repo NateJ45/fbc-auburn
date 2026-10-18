@@ -62,13 +62,13 @@ export function localBusinessSchema(settings: SiteSettings | null | undefined): 
   const s = settings ?? {};
   const schema: Record<string, any> = {
     '@context': 'https://schema.org',
-    '@type': s.businessType ?? 'LocalBusiness',
+    // FBC Auburn: a church, not a business (Home audit, 2026-10-17). Empty means Church.
+    '@type': s.businessType ?? 'Church',
     '@id': `${site.url}/#business`,
     name: s.title ?? site.name,
     url: site.url,
     image: `${site.url}${site.assets.ogDefault}`,
     email: s.email ?? undefined,
-    priceRange: '$$',
     // Merge legacy fields + socialLinks urls, deduplicating by url string.
     sameAs: Array.from(
       new Set(
@@ -105,6 +105,11 @@ export function localBusinessSchema(settings: SiteSettings | null | undefined): 
   const areas = (s.serviceAreas ?? []).filter((a) => a && a !== PLACEHOLDER_CITY);
   if (areas.length > 0) {
     schema.areaServed = areas.map((city) => ({ '@type': 'City', name: city }));
+  }
+
+  // A price range only means something for a business that sells; never for a church.
+  if (!['Church', 'PlaceOfWorship', 'NGO', 'EducationalOrganization'].includes(schema['@type'])) {
+    schema.priceRange = '$$';
   }
 
   // Church facts (src/lib/church-facts.ts): the full street address, the phone

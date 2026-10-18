@@ -17,20 +17,24 @@ import type { ProjectedImage, ProjectedImageTextSection } from '@/lib/pageBuilde
 
 interface Props {
   block: ProjectedImageTextSection;
-  marker: number;
   headingId: string;
 }
-const { block, marker, headingId } = Astro.props;
+const { block, headingId } = Astro.props;
 const big = block.image?.asset ? block.image : null;
 const small = (block.extraImages ?? []).filter((i) => i?.asset).slice(0, 2);
+// The signer's portrait (Home audit, 2026-10-17): a small circle beside the signature, so a
+// visitor meets the pastor, not just his words. Optional.
+const portrait = block.signedPhoto?.asset ? block.signedPhoto : null;
+// The grid adapts to how many photos there are (data-big, data-small), so one photo, two, or none
+// still make a whole picture with no empty tiles (home-board.css).
 const isStandIn = (img: ProjectedImage | null | undefined) =>
   (img?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
 ---
 
 <section class="hb-section" aria-labelledby={block.heading ? headingId : undefined}>
   <div class="hb-wrap">
-    {block.eyebrow && <SectionLabel text={block.eyebrow} marker={marker} as="p" />}
-    <div class="hb-mosaic">
+    {block.eyebrow && <SectionLabel text={block.eyebrow} as="p" />}
+    <div class="hb-mosaic" data-big={big ? 'yes' : 'no'} data-small={small.length}>
       {big && (
         <figure class="hb-ph hb-ph--big">
           <SanityImage
@@ -50,12 +54,24 @@ const isStandIn = (img: ProjectedImage | null | undefined) =>
               <PortableTextStatic value={block.body as never} />
             </div>
           )}
-          {(block.signedBy || block.cta?.label) && (
-            <p class="hb-note__sign">
-              {block.signedBy}
-              {block.signedBy && block.cta?.label && ' · '}
-              {block.cta?.label && <a href={ctaHref(block.cta, '/about/')}>{block.cta.label}</a>}
-            </p>
+          {(block.signedBy || block.cta?.label || portrait) && (
+            <div class="hb-note__by">
+              {portrait && (
+                <SanityImage
+                  source={portrait as never}
+                  width={160}
+                  height={160}
+                  sizes="80px"
+                  quality={80}
+                  class="hb-note__face"
+                />
+              )}
+              <p class="hb-note__sign">
+                {block.signedBy}
+                {block.signedBy && block.cta?.label && ' · '}
+                {block.cta?.label && <a href={ctaHref(block.cta, '/about/')}>{block.cta.label}</a>}
+              </p>
+            </div>
           )}
         </div>
       </div>

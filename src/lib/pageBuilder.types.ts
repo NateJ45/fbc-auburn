@@ -125,11 +125,13 @@ export type ProjectedRichTextSection = { _key: string } & _RichTextSection & {
 
 export type ProjectedImageTextSection = { _key: string } & Omit<
   _ImageTextSection,
-  'image' | 'cta' | 'extraImages'
+  'image' | 'cta' | 'extraImages' | 'signedPhoto'
 > & {
     image?: ProjectedImage | null;
     /** Home only (board E): the two smaller photos of the Who we are mosaic. */
     extraImages?: ProjectedImage[] | null;
+    /** Home only: the round portrait beside the signature. */
+    signedPhoto?: ProjectedImage | null;
     cta?: ProjectedCtaBlock | null;
     /** Non-schema alias for imageSide present in some defaultSections entries. */
     imagePosition?: 'left' | 'right';
@@ -376,6 +378,8 @@ export interface ProjectedWatchSection {
   link?: ProjectedCtaBlock | null;
   poster?: SanityImageObject | null;
   fallback?: string;
+  /** Last Sunday's message, typed after Sunday; shown for 8 days after its date. */
+  lastMessage?: { title?: string; passage?: string; date?: string; videoUrl?: string } | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -391,6 +395,10 @@ export interface ProjectedRailStep {
   title?: string;
   body?: string;
   times?: { _key: string; _type?: 'railTime'; time?: string; label?: string }[];
+  /** Which Sunday gathering the step is; its time comes from Church facts. */
+  gathering?: 'none' | 'first' | 'second';
+  /** A few words of place, like "Fellowship hall". */
+  place?: string;
   linkLabel?: string;
   linkHref?: string;
 }

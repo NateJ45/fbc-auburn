@@ -1,5 +1,46 @@
 # Change history
 
+_2026-10-17: Home after the church-site research: Your first Sunday, the phone Sunday bar._
+
+**Decision.** Four research passes over about 100 church sites (first screen, first visit,
+events and watch, closing and craft); recorded in `docs/design-directions/2026-10-17-fbc-auburn/README.md`.
+Home is now hero, Your first Sunday (`HomeWalk.astro`, from a `stepsRailSection`, whose steps
+gained `gathering` and `place`; `gathering` is in NON_STEGA_FIELDS), Who we are, This week beside
+Last Sunday, Other ways in. Through the week is retired (`scripts/content/home-first-sunday.mjs`,
+which also folded the footer's Connect column into Visit). This week shows the weekday rhythm
+from Church facts, dated calendar events (a cancelled one struck through: `occurrences()` takes
+`includeCancelled`, `WeekRow.cancelled`), and an empty-state line. The Watch card names last
+Sunday's message for 8 days from `watchSection.lastMessage` and shows "Live now" during worship;
+its poster is no longer dimmed. Header: the round mark alone on Home below 1280px until the hero
+lockup passes; the menu opens on the Sunday times and address. Phones get a Sunday bar once the
+This Sunday card scrolls away (it replaces back-to-top on Home). The footer's first row is the
+closing invitation (Plan your visit, Ask a question). JSON-LD is a `Church` with weekly service
+schedules; `/sunday.ics`; `churchAddress.findUs`; `SanityImage` aims CSS crops at the hotspot;
+the masthead scales for long words; the photo grid adapts to 0 to 3 photos; the card tile is
+preloaded.
+
+_2026-10-17: Home refined after the audit: one stone system, the path ends at the card._
+
+**Decision.** Recorded in `docs/design-directions/2026-10-17-fbc-auburn/README.md`.
+`scripts/lib/stone-mosaic.mjs` seeds its Voronoi stones on a jittered, staggered grid along the path
+(no random darts, so no three-sided "guitar pick" cells; one Lloyd pass; corners softened, sides
+kept flatter; each row its own width, so the edges go in and out) and colours them in four clear
+bands of the mark's six colours (water, green, gold, red, short blends); the wide path
+is 960x240 at its own size, absolutely placed in the hero's lead row with its right edge on the
+This Sunday card (`home-board.css`), whole stones only, and it lays on scroll into view
+(IntersectionObserver, 350ms fallback). The phone path is a 390x96 strip. `tile-sky.svg` and
+`tile-green.svg` are gone (flat bands); `tile-deep.svg` is the same grid-seeded stones, sizes
+varied, wrapping without a seam.
+`MARKERS` became one `MARKER` (three gold steps) and the `marker` prop is gone from SectionLabel,
+BoardRule and the Home sections. The card's address row has no pin and adds the state. The
+masthead gains the place line from Church facts. `.hb-mosaic` rows are `minmax(250px, auto)` so a
+long welcome grows the panel. New field `imageTextSection.signedPhoto` (Home only) draws a round
+portrait beside the signature. The footer link grid (`.site-footer__links`) shares the brand row's
+columns, with no spacer and no empty Get in touch. Data: `scripts/content/nav-give.mjs` reordered
+the menu (About, Watch, Ministries, Give first; Give goes to Contact until a giving link exists;
+"Plan your visit" left the list because the header button carries it). Measured at 320, 390, 1024,
+1280, 1366 and 1440: no sideways scroll, the path never meets text, a five-sentence welcome fits.
+
 _2026-10-17: board E corrections on Home, and E's grammar on the inner pages._
 
 **Decision.** Five critics reviewed live board E; these are the code fixes they agreed on. Home: on a phone the

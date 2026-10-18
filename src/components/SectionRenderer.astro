@@ -62,8 +62,8 @@ const rows = classifySections<PageBuilderBlock>(sections as PageBuilderBlock[], 
 
 // FBC Auburn, board E on the inner pages (2026-10-17). Every section after the hero opens with a
 // rule of three stepping stones and a hairline (BoardRule), which replaced the gold-stone divider
-// that marked a change of band colour (the ground is white now; src/styles/board.css). Marker
-// colours follow the path down the page: the page head's label is 0, the first rule 1.
+// that marked a change of band colour (the ground is white now; src/styles/board.css). Every
+// marker is the same three gold steps from the mark (Home audit, 2026-10-17).
 // One stone moment per page (PRODUCT.md): a page that draws the mark or the baptism picture
 // further down gets a plain title rather than the mosaic one.
 const quietTitle = (sections as PageBuilderBlock[]).some(
@@ -72,8 +72,7 @@ const quietTitle = (sections as PageBuilderBlock[]).some(
     ((b as { art?: string }).art === 'mark' || (b as { art?: string }).art === 'baptism'),
 );
 const UNRULED = new Set(['heroSection', 'spacerSection']);
-let ruleCount = 0;
-const markers = rows.map(({ block }) => (UNRULED.has(block._type) ? -1 : ++ruleCount));
+const ruled = rows.map(({ block }) => !UNRULED.has(block._type));
 
 // A real element in preview, nothing at all on the live site. The wrapper must
 // NOT be `display: contents`: the overlay outlines the element's rect, and a
@@ -86,7 +85,7 @@ const wrapAttrs = (key: string | undefined) =>
 
 {rows.map(({ block: s, surface, headingId }, rowIndex) => (
   <>
-    {markers[rowIndex] > 0 && <BoardRule marker={markers[rowIndex]} />}
+    {ruled[rowIndex] && <BoardRule />}
 
     <Wrap {...wrapAttrs((s as { _key?: string })._key)}>
       {s._type === 'heroSection' ? (

@@ -35,7 +35,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
   // Board E (2026-10-17), drawn by src/components/home/HomeBoard.astro. Same shape as the live
   // Home document (scripts/content/home-board-e.mjs) without the photos, and without links to
   // the Studio-only pages (Watch, Ministries), which a fresh clone does not have. Times are never typed:
-  // the "Wednesdays" card gets its time from Church facts.
+  // the walk's gathering steps and This week take theirs from Church facts.
   {
     _type: 'heroSection',
     _key: 'default-home-hero',
@@ -48,34 +48,49 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
     primaryCta: { _type: 'ctaBlock', label: 'Plan your first visit', href: '/plan-your-visit/' },
     secondaryCta: { _type: 'ctaBlock', label: 'Meet the church', href: '/about/' },
   },
+  // "Your first Sunday" (Home audit research, 2026-10-17): the steps of a Sunday morning, drawn by
+  // HomeWalk. Gathering steps take their times from Church facts; nothing here types a time. It
+  // replaces "Through the week": Wednesday is in This week, kids are in step 3, prayer is in Ask.
   {
-    _type: 'iconCardsSection',
-    _key: 'default-home-through-week',
-    heading: 'Through the week',
-    cards: [
+    _type: 'stepsRailSection',
+    _key: 'default-home-first-sunday',
+    heading: 'Your first Sunday',
+    intro: 'What a Sunday morning here looks like, one step at a time.',
+    steps: [
       {
-        _type: 'iconCard',
-        _key: 'default-htw-wednesday',
-        icon: 'clock',
-        title: 'Wednesdays',
-        body: 'Bible study and prayer, an open table for questions.',
+        _type: 'railStep',
+        _key: 'default-fs-arrive',
+        icon: 'map-pin',
+        gathering: 'none',
+        title: 'Come to the front door',
+        body: 'Someone will meet you at the door and point you to the coffee in the fellowship hall.',
       },
       {
-        _type: 'iconCard',
-        _key: 'default-htw-kids',
-        icon: 'blocks',
-        title: 'Kids on Sunday',
-        body: 'Welcome in the service, with a checked-in room for little ones.',
+        _type: 'railStep',
+        _key: 'default-fs-school',
+        icon: 'bible',
+        gathering: 'first',
+        title: 'Sunday School for all ages',
+        body: 'A class for every age before worship. Come for this too, or just for worship.',
       },
       {
-        _type: 'iconCard',
-        _key: 'default-htw-prayer',
-        icon: 'praying-hands',
-        title: 'Any day',
-        body: 'Tell us what is on your heart.',
-        link: { _type: 'ctaBlock', label: 'Send a prayer request', href: '/contact/' },
+        _type: 'railStep',
+        _key: 'default-fs-worship',
+        icon: 'music',
+        gathering: 'second',
+        title: 'Worship',
+        body: 'About an hour. Children are welcome in the service, and there is a checked-in room for little ones.',
+      },
+      {
+        _type: 'railStep',
+        _key: 'default-fs-after',
+        icon: 'coffee',
+        gathering: 'none',
+        title: 'Stay and say hello',
+        body: 'We would love to meet you. Questions are always welcome.',
       },
     ],
+    primaryCta: { _type: 'ctaBlock', label: 'Plan your visit', href: '/plan-your-visit/' },
   },
   {
     _type: 'imageTextSection',
@@ -128,7 +143,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
         _key: 'default-how-ask',
         icon: 'coffee',
         title: 'Ask a question',
-        body: 'Anything at all, before you come',
+        body: 'Anything before you come, or something we can pray about',
         link: { _type: 'ctaBlock', label: 'Ask a question', href: '/contact/' },
       },
     ],

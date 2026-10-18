@@ -44,6 +44,7 @@ export function sectionsProjection(field = 'pageBuilder'): string {
     _type == "imageTextSection" => {
       ...,
       image${IMAGE_PROJECTION},
+      signedPhoto${IMAGE_PROJECTION},
       extraImages[]${IMAGE_PROJECTION},
       cta${CTA_PROJECTION}
     },
@@ -225,7 +226,7 @@ export const SITE_SETTINGS_PROJECTION = `{
     showFooterSocials,
     // Church facts (src/sanity/schemaTypes/churchFacts.ts), resolved by
     // src/lib/church-facts.ts. Read them from there, never off this object.
-    churchAddress{ street, city, state, zip, confirmed },
+    churchAddress{ street, city, state, zip, findUs, confirmed },
     serviceTimes[]{ _key, label, day, time, note, confirmed },
     phoneConfirmed,
     foundedYear,

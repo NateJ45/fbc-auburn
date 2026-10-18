@@ -452,6 +452,9 @@ export const siteSettings = defineType({
         'The schema.org business category search engines use to understand what your business does. Pick the closest match. This feeds the structured data (JSON-LD) on every page, which helps Google show your listing correctly in Maps, search cards, and rich results.',
       options: {
         list: [
+          // FBC Auburn (2026-10-17): a church is a schema.org Church (a PlaceOfWorship); empty
+          // means Church too (src/lib/schemas.ts).
+          { title: 'Church', value: 'Church' },
           { title: 'Local Business (generic)', value: 'LocalBusiness' },
           { title: 'Professional Service', value: 'ProfessionalService' },
           { title: 'Home and Construction Business', value: 'HomeAndConstructionBusiness' },

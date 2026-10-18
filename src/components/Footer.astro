@@ -163,6 +163,10 @@ const footerFacts = await getChurchFacts();
 const footerSundays = footerFacts.serviceTimes.filter((t) => t.dayIndex === 0);
 const footerSundaysConfirmed = footerSundays.every((t) => t.confirmed);
 const footerAddress = footerFacts.address;
+// The closing invitation (Home audit research, 2026-10-17): the footer's first row is the last
+// thing on every page, so it ends with the two next steps a stranger can take. The visit button
+// goes where the header's button goes, so a build without Sanity never links to a missing page.
+const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
 ---
 
 <footer class="site-footer bg-muted text-foreground">
@@ -173,6 +177,17 @@ const footerAddress = footerFacts.address;
     <div>
       <img src={markAsset.src} width={84} height={84} alt="" loading="lazy" decoding="async" />
       {siteSettings?.tagline && <p class="site-footer__tagline">{siteSettings.tagline}</p>}
+      <p class="site-footer__invite">Come along on a Sunday, or ask us anything first.</p>
+      <div class="site-footer__actions">
+        {visitCta && (
+          <a class="btn-auburn btn-auburn--primary" href={visitCta.href}>
+            {visitCta.label}
+          </a>
+        )}
+        <a class="btn-auburn btn-auburn--secondary" href="/contact/">
+          Ask a question
+        </a>
+      </div>
     </div>
     {footerSundays.length > 0 && (
       <div>
@@ -196,6 +211,12 @@ const footerAddress = footerFacts.address;
           <br />
           {footerAddress.city}, Ohio
           <br />
+          {footerAddress.findUs && (
+            <>
+              <span class="site-footer__small">{footerAddress.findUs}</span>
+              <br />
+            </>
+          )}
           <a href={footerAddress.mapsUrl} rel="noopener" target="_blank">
             Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
           </a>
@@ -229,12 +250,12 @@ const footerAddress = footerFacts.address;
     </div>
   )}
 
-  {/* Five-column link grid. Single centered column on mobile, five columns
-       at md+ (left-aligned). The fifth column carries contact details.
-       When siteSettings.footerColumns is non-empty, the custom Sanity columns
-       replace the built-in Studio / Work / Free tools columns. The Latest
-       Projects column and Get in touch column always render. */}
-  <div class="mx-auto grid max-w-content grid-cols-1 gap-l px-l pt-l pb-m text-left sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+  {/* Link grid. FBC Auburn (Home audit, 2026-10-17): it takes the brand row's own columns
+       (.site-footer__links in src/styles/auburn.css), so Visit, Belong and Connect line up under
+       the tagline, Sundays and Find us; two columns on phones. When siteSettings.footerColumns is
+       non-empty, the custom Sanity columns replace the built-in ones. Get in touch renders only
+       when there is an email, a phone or a social link to show. */}
+  <div class="site-footer__links mx-auto grid max-w-content gap-l px-l pt-l pb-m text-left">
     {/* --- Editor-managed columns (from Sanity siteSettings.footerColumns) --- */}
     {useCustomFooterColumns ? (
       sanityFooterColumns.map((col, colIdx) => (
@@ -455,54 +476,54 @@ const footerAddress = footerFacts.address;
           </p>
         )}
       </nav>
-    ) : (
-      <div aria-hidden="true" />
-    )}
+    ) : null}
 
-    {/* GET IN TOUCH — email, phone, location, socials. */}
-    <div>
-      <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Get in touch</p>
-      <div class="space-y-1 text-sm">
-        {email && (
-          <p>
-            <CopyEmailButton client:visible email={email} variant="link" />
-          </p>
-        )}
-        {phone && (
-          <p>
-            <a
-              href={telHref(phone)}
-              class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
-            >
-              <Phone size={14} aria-hidden="true" />
-              {phone}
-            </a>
-          </p>
+    {/* GET IN TOUCH: email, phone, socials. Skipped when there is none of them. */}
+    {(email || phone || socialLinksToRender.length > 0) && (
+      <div>
+        <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Get in touch</p>
+        <div class="space-y-1 text-sm">
+          {email && (
+            <p>
+              <CopyEmailButton client:visible email={email} variant="link" />
+            </p>
+          )}
+          {phone && (
+            <p>
+              <a
+                href={telHref(phone)}
+                class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+              >
+                <Phone size={14} aria-hidden="true" />
+                {phone}
+              </a>
+            </p>
+          )}
+        </div>
+        <p class="mt-s text-sm text-foreground/75">{site.name}</p>
+        {socialLinksToRender.length > 0 && (
+          <ul class="mt-m flex list-none justify-start gap-s p-0 text-sm">
+            {socialLinksToRender.map((link) => {
+              const Icon = socialIcon(link.platform);
+              const ariaLabel = link.label ?? link.platform ?? 'Social link';
+              return (
+                <li>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={ariaLabel}
+                    class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
+                  >
+                    <Icon size={20} stroke={1.5} />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         )}
       </div>
-      <p class="mt-s text-sm text-foreground/75">{site.name}</p>
-      {socialLinksToRender.length > 0 && (
-        <ul class="mt-m flex list-none justify-start gap-s p-0 text-sm">
-          {socialLinksToRender.map((link) => {
-            const Icon = socialIcon(link.platform);
-            const ariaLabel = link.label ?? link.platform ?? 'Social link';
-            return (
-              <li>
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={ariaLabel}
-                  class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
-                >
-                  <Icon size={20} stroke={1.5} />
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
+    )}
   </div>
 
   {/* Thin bottom bar — copyright, privacy, optional "Site by..." credit on one
