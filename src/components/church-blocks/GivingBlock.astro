@@ -3,7 +3,10 @@
 // Ways to give, the same three as the Give page, all derived from Church facts (rule 15): in the
 // offering at Sunday worship (its time from Service times), by mail to the church address, and
 // online through the giving link when one is set. The optional text-to-give line sits under them.
+// Drawn as Home's "Through the week" board (block polish, 2026-10-18): one hairline panel, a
+// column per way with its stone icon, so it reads as the church's own and not a row of boxes.
 import ChurchBand from './ChurchBand.astro';
+import StoneIcon from '@/components/StoneIcon.astro';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { streamedService } from '@/lib/church-blocks';
@@ -30,8 +33,9 @@ const Title = block.heading ? 'h3' : 'h2';
   surface={surface}
   label="Ways to give"
 >
-  <ul class="cb-grid cb-grid--3" role="list">
-    <li class="cb-card">
+  <ul class="cb-board" role="list" data-n={address ? 3 : 2}>
+    <li class="cb-board__cell">
+      <StoneIcon name="praying-hands" size={88} />
       <Title class="cb-title">On a Sunday</Title>
       <p>
         The offering is taken during{' '}
@@ -47,10 +51,11 @@ const Title = block.heading ? 'h3' : 'h2';
       </p>
     </li>
     {address && (
-      <li class="cb-card">
+      <li class="cb-board__cell">
+        <StoneIcon name="map-pin" size={88} />
         <Title class="cb-title">By mail</Title>
         <p>Make a check out to {site.name} and mail it to:</p>
-        <address style="margin-top: 0.5rem; font-style: normal; font-weight: 600">
+        <address class="cb-address">
           {site.name}
           <br />
           {address.lines[0]}
@@ -60,12 +65,13 @@ const Title = block.heading ? 'h3' : 'h2';
         </address>
       </li>
     )}
-    <li class="cb-card">
+    <li class="cb-board__cell">
+      <StoneIcon name="giving-hand" size={88} />
       <Title class="cb-title">Online</Title>
       {facts.givingUrl ? (
         <>
           <p>Give through the church’s secure giving page.</p>
-          <div class="cb-actions" style="margin-top: 1rem">
+          <div class="cb-actions">
             <a
               class="btn-auburn btn-auburn--secondary press-tactile"
               href={facts.givingUrl}
@@ -87,9 +93,5 @@ const Title = block.heading ? 'h3' : 'h2';
       )}
     </li>
   </ul>
-  {block.textToGive && (
-    <p class="cb-intro" style="margin-top: 1.5rem">
-      {block.textToGive}
-    </p>
-  )}
+  {block.textToGive && <p class="cb-after">{block.textToGive}</p>}
 </ChurchBand>

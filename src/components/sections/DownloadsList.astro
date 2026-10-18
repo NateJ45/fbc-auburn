@@ -4,8 +4,9 @@
 // every kind), with this week's bulletin in a box of its own on top when the editor asks for it.
 // What is current is worked out at build time (src/lib/sermons.ts): a file past its "take it down
 // after" date drops off on the next morning's rebuild. A content block: the surface comes from the
-// cadence.
+// cadence. The bulletin box is led by the three gold steps, the label every board section carries.
 import DownloadRow from '@/components/collections/DownloadRow.astro';
+import { MARKER } from '@/components/home/stones.generated';
 import { surfaceClass } from '@/lib/surfaces';
 import { churchDataNow } from '@/lib/church-feeds';
 import {
@@ -61,7 +62,14 @@ const list = currentDownloads(
     </div>
     {bulletin && (
       <div class="c-feature">
-        <p class="c-feature__label">This week's bulletin</p>
+        <p class="c-feature__label">
+          <svg viewBox="0 0 78 36" width="52" height="24" aria-hidden="true" focusable="false">
+            {MARKER.map((m) => (
+              <path d={m.d} fill={m.fill} />
+            ))}
+          </svg>
+          This week's bulletin
+        </p>
         <p class="c-feature__title">{bulletin.title}</p>
         <p class="c-meta">
           {[longDate(bulletin.date), fileLabel(bulletin.file)].filter(Boolean).join(' · ')}

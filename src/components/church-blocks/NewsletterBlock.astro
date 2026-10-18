@@ -32,9 +32,10 @@ const signupUrl = /^https:\/\//.test(block.signupUrl ?? '') ? block.signupUrl : 
     headingId={headingId}
     surface={surface}
     label="Newsletter sign-up"
+    beside
   >
     {boxReady && newsletter ? (
-      <div style="max-width: 32rem">
+      <div class="cb-sky">
         <NewsletterSignup
           client:visible
           newsletter={newsletter}
@@ -44,7 +45,7 @@ const signupUrl = /^https:\/\//.test(block.signupUrl ?? '') ? block.signupUrl : 
         />
       </div>
     ) : (
-      <div class="cb-actions" style="margin-top: 0">
+      <div class="cb-sky cb-actions">
         <a
           class="btn-auburn btn-auburn--secondary press-tactile"
           href={signupUrl}

@@ -5,10 +5,12 @@
 // from Service times (rule 15): at build time, then corrected in the visitor's browser by the
 // church's clock, the same window the Home watch card uses.
 //
-// The optional video is click-to-load: a drawn play card until someone presses play, so nothing
+// The optional video is click-to-load: a drawn play card (the navy stone ground with the three gold
+// steps, like a sermon with no picture; block polish 2026-10-18) until someone presses play, so nothing
 // loads from YouTube or Facebook (and nothing tracks a visitor) before they choose to watch. Only
 // those two hosts are ever framed (streamEmbedUrl).
 import ChurchBand from './ChurchBand.astro';
+import { MARKER } from '@/components/home/stones.generated';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { churchDataNow } from '@/lib/church-feeds';
@@ -40,14 +42,14 @@ const show = Boolean(facts.liveUrl || embed);
     label="Live stream"
   >
     <div class:list={[embed && 'split']}>
-      <div class="cb-card" style="align-self: start">
+      <div class="cb-live-words">
         {win && (
           <p class="cb-live" data-cb-live data-start={win.start} data-end={win.end} hidden={!live}>
             Live now
           </p>
         )}
         {service && (
-          <p style="margin-top: 0.75rem">
+          <p class="cb-live-line">
             We stream {service.label.toLowerCase()} live, <strong>{win?.label}</strong>
             <NotConfirmed confirmed={service.confirmed} />.
           </p>
@@ -68,15 +70,29 @@ const show = Boolean(facts.liveUrl || embed);
       {embed && (
         <div class="cb-player" data-cb-player data-src={embed}>
           <button type="button" class="cb-play">
+            <svg
+              class="cb-play__steps"
+              viewBox="0 0 78 36"
+              width="78"
+              height="36"
+              aria-hidden="true"
+              focusable="false"
+            >
+              {MARKER.map((st) => (
+                <path d={st.d} fill={st.fill} />
+              ))}
+            </svg>
             <span class="cb-play__icon" aria-hidden="true">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z" />
               </svg>
             </span>
-            Play the video
-            <span class="cb-small">
-              It loads from {embed.includes('facebook') ? 'Facebook' : 'YouTube'} when you press
-              play.
+            <span class="cb-play__words">
+              <span class="cb-play__label">Play the video</span>
+              <span class="cb-small">
+                It loads from {embed.includes('facebook') ? 'Facebook' : 'YouTube'} when you press
+                play.
+              </span>
             </span>
           </button>
         </div>

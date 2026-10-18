@@ -5,6 +5,8 @@
 //
 //   src/components/home/stones.generated.ts   the wide and phone stone paths, the section marker
 //   public/textures/tile-deep.svg             the This Sunday card's stone ground
+//   public/textures/tile-{green,navy,sky}.svg the section library's panels and sermon art
+//                                             (church-blocks.css, collections.css)
 //
 // Redrawn 2026-10-17 after the Home audit: soft, hand-laid stones between the old pebbles and the
 // mark's dressed stones, in four clear bands of the mark's colours. The wide path is 960x240 and
@@ -31,6 +33,27 @@ export const TILES = {
     grout: '#205890',
     fills: ['#235E93', '#24609A', '#225B8E', '#26639B'],
     seed: 7,
+  },
+  // The sermon and series art with no picture (SermonArt.astro, block polish 2026-10-18): three
+  // grounds for the book name, picked per series. Grout close to the stones, as above.
+  green: {
+    size: 420,
+    grout: '#285236',
+    fills: ['#2C5B3A', '#2E5F3D', '#2A5737', '#306240'],
+    seed: 13,
+  },
+  navy: {
+    size: 420,
+    grout: '#1A2B3F',
+    fills: ['#1D2F44', '#1F3249', '#1B2C40', '#21354C'],
+    seed: 17,
+  },
+  // A pale sky ground: a person with no photo (PersonCard.astro) and the library's quiet panels.
+  sky: {
+    size: 420,
+    grout: '#D3E3F3',
+    fills: ['#E6F0FA', '#E9F2FB', '#E1ECF8', '#EDF4FC'],
+    seed: 19,
   },
 };
 

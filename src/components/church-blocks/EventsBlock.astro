@@ -4,6 +4,8 @@
 // feed This week and Home read) and rebuilt every morning: the next N dated events, optionally only
 // those that mention a keyword. Weekly gatherings are left to Service times. Empty state: the
 // block's own line, which is also what shows until Church facts has a calendar feed.
+// Each event is a row in the sermon archive's grammar (block polish, 2026-10-18): the day in deep
+// sky display numerals over its month, the title in the display face, hairlines between.
 import ChurchBand from './ChurchBand.astro';
 import SubscribeButtons from './SubscribeButtons.astro';
 import { getChurchFacts } from '@/lib/church-data';
@@ -47,8 +49,8 @@ const Title = block.heading ? 'h3' : 'h2';
       {rows.map((r) => (
         <li class="cb-event">
           <span class="cb-event__date" aria-hidden="true">
-            <span class="cb-event__month">{monthShort(r.date)}</span>
             <span class="cb-event__day">{dayOfMonth(r.date)}</span>
+            <span class="cb-event__month">{monthShort(r.date)}</span>
           </span>
           <div>
             <Title class="cb-event__title">{r.title}</Title>
@@ -61,7 +63,7 @@ const Title = block.heading ? 'h3' : 'h2';
       ))}
     </ul>
   ) : (
-    <p class="cb-card">{block.emptyText || 'Nothing else is on the calendar just now.'}</p>
+    <p class="cb-empty">{block.emptyText || 'Nothing else is on the calendar just now.'}</p>
   )}
   {block.showSubscribe !== false && <SubscribeButtons />}
 </ChurchBand>

@@ -1,7 +1,10 @@
 ---
 // Safe to edit by hand
-// History timeline: moments in order down a rail of gold stepping stones, the year in the display
-// face, a photo under a moment that has one.
+// History timeline: moments in order down a rail of gold stepping-stone dashes (the walk's rail on
+// Home), each moment marked by a hand-laid stone in the walk's shapes. On a wide screen the year
+// sits in its own column left of the rail and a moment's photo sits beside its words on the shared
+// split, so the band uses the whole column (block polish, 2026-10-18). On a phone the year moves
+// above the title and the photo under the words.
 import ChurchBand from './ChurchBand.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import type { ProjectedTimelineSection } from '@/lib/churchBlocks.types';
@@ -26,17 +29,20 @@ const Title = block.heading ? 'h3' : 'h2';
     label="History timeline"
   >
     <ol class="cb-timeline" role="list">
-      {entries.map((e) => (
-        <li class="cb-moment">
-          {e.year && <span class="cb-moment__year">{e.year}</span>}
-          {e.title && <Title class="cb-moment__title">{e.title}</Title>}
-          {e.text && <p>{e.text}</p>}
+      {entries.map((e, i) => (
+        <li class:list={['cb-moment', e.image?.asset && 'cb-moment--photo']}>
+          <span class="cb-moment__year">{e.year}</span>
+          <span class:list={['cb-moment__stone', `cb-stone--${i % 4}`]} aria-hidden="true" />
+          <div class="cb-moment__body">
+            {e.title && <Title class="cb-moment__title">{e.title}</Title>}
+            {e.text && <p>{e.text}</p>}
+          </div>
           {e.image?.asset && (
             <div class="cb-moment__photo">
               <SanityImage
                 source={e.image}
                 width={720}
-                sizes="(min-width: 40rem) 26rem, 90vw"
+                sizes="(min-width: 64rem) 32rem, 90vw"
                 quality={72}
               />
             </div>
