@@ -28,7 +28,11 @@ export const iconCardsSection = defineType({
   type: 'object',
   icon: ThLargeIcon,
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({ name: 'heading', title: 'Heading (optional)', type: 'string' }),
     defineField({ name: 'intro', title: 'Intro line (optional)', type: 'text', rows: 2 }),
     defineField({
@@ -123,7 +127,11 @@ export const watchSection = defineType({
   type: 'object',
   icon: PlayIcon,
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({
       name: 'heading',
       title: 'Heading',

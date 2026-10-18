@@ -1,6 +1,11 @@
-// Studio Desk structure. Pins Site Settings at the top, then ALL page singletons
-// (one document each) under "Pages", then the reusable content collections under
-// "Content", then "Journal". Every document type is placed explicitly so nothing
+// Studio Desk structure. "Our church at a glance" and Site settings at the top,
+// then ALL page singletons (one document each) under "Pages", then the reusable
+// content collections under "Content", then "News and notes".
+//
+// Names (FBC Auburn, 2026-10-18): one name per thing, matching the public site.
+// News and notes / Posts (code: journal, journalEntry), Questions / Question
+// groups (faqItem, faqCategory), Notices (announcement), Page not found
+// (notFoundPage), Saved sections (sectionPreset). Every document type is placed explicitly so nothing
 // floats loose at the desk root. The trailing default-list filter is a safety net
 // for any future type that hasn't been placed (and hides sanity-plugin-media's
 // media.tag type, which would otherwise show at the root).
@@ -24,28 +29,18 @@ import { BlockElementIcon } from '@sanity/icons/BlockElement';
 import { CogIcon } from '@sanity/icons/Cog';
 import { HomeIcon } from '@sanity/icons/Home';
 import { UserIcon } from '@sanity/icons/User';
-import { PackageIcon } from '@sanity/icons/Package';
 import { HelpCircleIcon } from '@sanity/icons/HelpCircle';
-import { InfoOutlineIcon } from '@sanity/icons/InfoOutline';
 import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { DocumentTextIcon } from '@sanity/icons/DocumentText';
 import { DocumentsIcon } from '@sanity/icons/Documents';
-import { StarIcon } from '@sanity/icons/Star';
-import { HeartIcon } from '@sanity/icons/Heart';
 import { ThListIcon } from '@sanity/icons/ThList';
 import { EditIcon } from '@sanity/icons/Edit';
 import { TagIcon } from '@sanity/icons/Tag';
 import { BookIcon } from '@sanity/icons/Book';
 import { LockIcon } from '@sanity/icons/Lock';
-import { PinIcon } from '@sanity/icons/Pin';
-import { PresentationIcon } from '@sanity/icons/Presentation';
-import { ThumbsUpIcon } from '@sanity/icons/ThumbsUp';
 import { ColorWheelIcon } from '@sanity/icons/ColorWheel';
 import { ArrowRightIcon } from '@sanity/icons/ArrowRight';
-import { makeGuideView } from './components/GuideView';
-import { guides, GUIDE_CATEGORIES } from './guides/content';
-import StudioGuide from './components/StudioGuide';
-import BusinessOverview from './components/BusinessOverview';
+import ChurchOverview from './components/ChurchOverview';
 import BrandKit from './components/BrandKit';
 import { TrashIcon } from '@sanity/icons/Trash';
 import { staffDesk } from './kit/shared';
@@ -63,16 +58,20 @@ const SINGLETON_TYPES = [
   'journalPage', // scaffold: journal
   'notFoundPage',
   'privacyPage',
+  // Kept registered but not shown: a document exists (see the note in the desk).
   'studioGuide',
-  'studioNotes',
 ] as const;
 
 const ORDERABLE_TYPES = [] as const;
 
 const HIDDEN_FROM_DEFAULT = new Set<string>([
   ...SINGLETON_TYPES,
+  // FBC Auburn (2026-10-18): the starter's business details (service areas,
+  // travel fees). No document exists; the type stays because src/lib/queries.ts
+  // still reads it (and gets nothing). Not shown in the desk.
+  'businessInfo',
   ...ORDERABLE_TYPES,
-  'announcement', // placed explicitly under Content → Announcements
+  'announcement', // placed explicitly under Content → Notices
   'faqItem', // scaffold: faq
   'faqCategory', // scaffold: faq
   'journalEntry', // scaffold: journal
@@ -117,105 +116,39 @@ const fullDesk = (S: StructureBuilder) =>
   S.list()
     .title('Content')
     .items([
-      // HELP & GUIDE — the handbook, first so it is always in reach.
+      // FBC Auburn (2026-10-18): ONE help entry. The guides (PORTS.md card 41,
+      // src/sanity/guides/content.ts) live in the Site Guide tool in the top bar
+      // and in "Help for this page"; the desk's old "Help & Guide" list and the
+      // starter's "Start Here" panels (the studioGuide handbook, full of
+      // business-starter text, and "Your business at a glance") are gone from
+      // here. The studioGuide type stays registered because a document of it
+      // still exists; it is simply not shown.
       //
-      // PORTS.md card 41. The guides are DATA in src/sanity/guides/content.ts,
-      // held in the repo rather than in Sanity, so they cannot be deleted by
-      // the person who most needs them and every fork inherits them with the
-      // code. THE SHIPPED SET IS GENERIC ON PURPOSE and is meant to be
-      // rewritten per project; see that file's header.
-      //
-      // It sits ABOVE "Start Here" rather than replacing it. Start Here is
-      // three editable singletons and works well when a project seeds them,
-      // but a fork that skips `npm run seed` gets four panes that open EMPTY,
-      // which is what happened in stonesteps-50k. A repo-data handbook cannot
-      // do that. A project that wants only one of the two should delete the
-      // other rather than ship both.
+      // First instead: the church's own facts, read live (ChurchOverview.tsx).
       S.listItem()
-        .id('help-and-guide')
-        .title('Help & Guide')
-        .icon(InfoOutlineIcon)
+        .id('church-at-a-glance')
+        .title('Our church at a glance')
+        .icon(HomeIcon)
         .child(
-          S.list()
-            .id('help-and-guide-list')
-            .title('Help & Guide')
-            .items(
-              GUIDE_CATEGORIES.flatMap((category) => {
-                const mine = guides.filter((g) => g.category === category);
-                return mine.length === 0
-                  ? []
-                  : [
-                      S.divider().title(category),
-                      ...mine.map((g) =>
-                        S.listItem()
-                          .id(`guide-${g.slug}`)
-                          .title(g.title)
-                          .icon(() => g.icon)
-                          .child(
-                            S.component(makeGuideView(g.slug) as never)
-                              .id(`guide-view-${g.slug}`)
-                              .title(g.title),
-                          ),
-                      ),
-                    ];
-              }),
-            ),
+          S.component(ChurchOverview).id('church-at-a-glance-view').title('Our church at a glance'),
         ),
-
-      S.divider(),
-
-      // Start Here — three-panel handbook for the editor.
-      // Panel 1: how the Studio works and step-by-step how-tos (static).
-      // Panel 2: live business overview (services + site settings fetched from Sanity).
-      // Panel 3: brand kit — colors + fonts for Canva (static).
       S.listItem()
-        .id('start-here')
-        .title('Start Here')
-        .icon(InfoOutlineIcon)
-        .child(
-          S.list()
-            .title('Start Here')
-            .items([
-              S.listItem()
-                .title('How the website works')
-                .icon(PresentationIcon)
-                .child(
-                  S.document()
-                    .schemaType('studioGuide')
-                    .documentId('studioGuide')
-                    .views([
-                      S.view.component(StudioGuide).title('Guide'),
-                      S.view.form().title('Edit'),
-                    ]),
-                ),
-              S.listItem()
-                .title('Your business at a glance')
-                .icon(ThumbsUpIcon)
-                .child(
-                  S.document()
-                    .schemaType('studioNotes')
-                    .documentId('studioNotes')
-                    .views([
-                      S.view.component(BusinessOverview).title('Overview'),
-                      S.view.form().title('Edit notes'),
-                    ]),
-                ),
-              S.listItem()
-                .title('Brand kit')
-                .icon(ColorWheelIcon)
-                .child(S.component(BrandKit).title('Brand kit')),
-            ]),
-        ),
+        .id('brand-kit')
+        .title('Brand colors and fonts')
+        .icon(ColorWheelIcon)
+        .child(S.component(BrandKit).title('Brand colors and fonts')),
 
       S.divider(),
 
-      // Site Settings — pinned singleton (no preview; not a page)
-      singletonWithPreview(S, 'siteSettings', 'Site Settings', CogIcon),
+      // Site settings: pinned singleton (no preview; not a page)
+      singletonWithPreview(S, 'siteSettings', 'Site settings', CogIcon),
 
       S.divider(),
 
-      // Pages — every page singleton lives here.
+      // Pages — every page singleton lives here. The id is load-bearing
+      // (kit.config.ts links to 'pages;page').
       S.listItem()
+        .id('pages')
         .title('Pages')
         .icon(DocumentTextIcon)
         .child(
@@ -224,14 +157,14 @@ const fullDesk = (S: StructureBuilder) =>
             .items([
               singletonWithPreview(S, 'homePage', 'Home', HomeIcon),
               singletonWithPreview(S, 'aboutPage', 'About', UserIcon), // scaffold: about
-              singletonWithPreview(S, 'faqPage', 'FAQ', HelpCircleIcon), // scaffold: faq
+              singletonWithPreview(S, 'faqPage', 'Questions', HelpCircleIcon), // scaffold: faq
               singletonWithPreview(S, 'contactPage', 'Contact', EnvelopeIcon),
-              singletonWithPreview(S, 'journalPage', 'Journal (index page)', BookIcon), // scaffold: journal
-              singletonWithPreview(S, 'notFoundPage', '404 Page', DocumentTextIcon),
+              singletonWithPreview(S, 'journalPage', 'News and notes (the list page)', BookIcon), // scaffold: journal
+              singletonWithPreview(S, 'notFoundPage', 'Page not found', DocumentTextIcon),
 
               S.divider(),
 
-              singletonWithPreview(S, 'privacyPage', 'Privacy Policy Page', LockIcon),
+              singletonWithPreview(S, 'privacyPage', 'Privacy policy', LockIcon),
 
               S.divider(),
 
@@ -276,14 +209,8 @@ const fullDesk = (S: StructureBuilder) =>
           S.list()
             .title('Content')
             .items([
-              // Business info: service areas, travel fees, availability, geo.
-              // Moved here from Site Settings so Settings is identity + infrastructure only.
-              singletonWithPreview(S, 'businessInfo', 'Business info', PinIcon),
-
-              S.divider(),
-
-              S.documentTypeListItem('faqCategory').title('FAQ Categories').icon(TagIcon), // scaffold: faq
-              S.documentTypeListItem('faqItem').title('FAQ Items').icon(HelpCircleIcon), // scaffold: faq
+              S.documentTypeListItem('faqCategory').title('Question groups').icon(TagIcon), // scaffold: faq
+              S.documentTypeListItem('faqItem').title('Questions').icon(HelpCircleIcon), // scaffold: faq
 
               S.divider(),
 
@@ -291,20 +218,23 @@ const fullDesk = (S: StructureBuilder) =>
               // Each one has a date window (startDate / endDate) and an on/off toggle.
               // The active announcement is picked at build time; a rebuild is required
               // for the banner to appear or disappear on the live site.
-              S.documentTypeListItem('announcement').title('Announcements').icon(BellIcon),
+              S.documentTypeListItem('announcement').title('Notices').icon(BellIcon),
             ]),
         ),
 
       S.divider(),
 
       // scaffold: journal
-      // Journal — its own section so the editor can find posts + categories at a glance
+      // News and notes (code name: journal). Its own section so the editor can
+      // find posts and categories at a glance. The id keeps the old 'journal'
+      // pane path working.
       S.listItem()
-        .title('Journal')
+        .id('journal')
+        .title('News and notes')
         .icon(BookIcon)
         .child(
           S.list()
-            .title('Journal')
+            .title('News and notes')
             .items([
               S.documentTypeListItem('journalEntry').title('Posts').icon(EditIcon),
               S.documentTypeListItem('journalCategory').title('Categories').icon(TagIcon),

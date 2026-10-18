@@ -1,4 +1,4 @@
-// Site-wide singleton. Header, footer, contact info, service areas, travel fees.
+// Site-wide singleton. Header, footer, contact info and the church's facts.
 // One instance only; singleton enforcement happens in sanity.config.ts.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
@@ -9,18 +9,17 @@ import { churchFactsFields } from './churchFacts';
 
 export const siteSettings = defineType({
   name: 'siteSettings',
-  title: 'Site Settings',
+  title: 'Site settings',
   type: 'document',
   // Configuration, not prose — don't surface in Canvas's AI-assisted writing UI.
   options: { canvasApp: { exclude: true } },
   groups: [
     { name: 'church', title: 'Church facts' },
-    { name: 'identity', title: 'Identity & contact' },
-    { name: 'navigation', title: 'Navigation (menus)' },
-    { name: 'visibility', title: 'Section visibility' },
-    { name: 'social', title: 'Social & footer' },
+    { name: 'identity', title: 'Name and contact' },
+    { name: 'navigation', title: 'Menus' },
+    { name: 'visibility', title: 'Parts of the site' },
+    { name: 'social', title: 'Social and footer' },
     { name: 'newsletter', title: 'Newsletter' },
-    { name: 'reviews', title: 'Reviews' },
   ],
   fields: [
     defineField({
@@ -28,7 +27,7 @@ export const siteSettings = defineType({
       title: 'Site title',
       type: 'string',
       description: 'Used in the browser tab and search results.',
-      initialValue: 'Studio Name',
+      initialValue: 'First Baptist Church of Auburn',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -128,7 +127,7 @@ export const siteSettings = defineType({
               name: 'title',
               title: 'Column heading',
               type: 'string',
-              description: 'The small heading above the links, e.g. "Services".',
+              description: 'The small heading above the links, e.g. "Visit".',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
@@ -213,7 +212,7 @@ export const siteSettings = defineType({
       preview: {
         select: { show: 'show', label: 'label' },
         prepare: ({ show, label }) => ({
-          title: label || 'Book a consultation',
+          title: label || 'Plan your visit',
           subtitle: show === false ? 'Hidden' : 'Header button',
         }),
       },
@@ -237,7 +236,7 @@ export const siteSettings = defineType({
       type: 'boolean',
       group: 'navigation',
       description:
-        'The Instagram and Facebook buttons in the header eyebrow strip and at the foot of the phone menu. On unless you turn it off.',
+        'The Instagram and Facebook buttons in the thin strip above the header and at the foot of the phone menu. On unless you turn it off.',
       initialValue: true,
     }),
     defineField({
@@ -277,7 +276,8 @@ export const siteSettings = defineType({
           name: 'alt',
           title: 'Alt text',
           type: 'string',
-          description: 'What the logo says, for screen readers. Example: "Studio Name".',
+          description:
+            'What the logo says, for screen readers. Example: "First Baptist Church of Auburn".',
           validation: (Rule) =>
             Rule.custom((value, ctx: any) =>
               ctx.parent?.asset && !value
@@ -384,17 +384,15 @@ export const siteSettings = defineType({
               name: 'platform',
               title: 'Platform',
               type: 'string',
-              description: 'The social network or directory.',
+              description: 'The social network.',
               options: {
                 list: [
                   { title: 'Instagram', value: 'Instagram' },
                   { title: 'Facebook', value: 'Facebook' },
                   { title: 'LinkedIn', value: 'LinkedIn' },
-                  { title: 'Pinterest', value: 'Pinterest' },
                   { title: 'YouTube', value: 'YouTube' },
                   { title: 'TikTok', value: 'TikTok' },
                   { title: 'X (Twitter)', value: 'X' },
-                  { title: 'Houzz', value: 'Houzz' },
                   { title: 'Other', value: 'Other' },
                 ],
                 layout: 'dropdown',
@@ -428,10 +426,12 @@ export const siteSettings = defineType({
     }),
     defineField({
       name: 'businessType',
-      title: 'Business type',
+      title: 'Kind of organization (for Google)',
       type: 'string',
-      description:
-        'The schema.org business category search engines use to understand what your business does. Pick the closest match. This feeds the structured data (JSON-LD) on every page, which helps Google show your listing correctly in Maps, search cards, and rich results.',
+      // FBC Auburn (2026-10-18): fixed to Church and hidden. An empty value
+      // also means Church (src/lib/schemas.ts), so nothing here needs an edit.
+      hidden: true,
+      description: 'What Google is told this site belongs to. Always Church for this site.',
       options: {
         list: [
           // FBC Auburn (2026-10-17): a church is a schema.org Church (a PlaceOfWorship); empty
@@ -452,7 +452,7 @@ export const siteSettings = defineType({
         ],
         layout: 'dropdown',
       },
-      initialValue: 'LocalBusiness',
+      initialValue: 'Church',
     }),
     defineField({
       name: 'seoImage',
@@ -511,7 +511,7 @@ export const siteSettings = defineType({
       title: 'Newsletter signup',
       type: 'object',
       description:
-        'Connect an email provider (MailerLite, Buttondown, Mailchimp). Paste the embedded-form action URL and list ID; the secret key goes in env as NEWSLETTER_API_KEY.',
+        'The email signup box. Nathan connects it to an email service (MailerLite, Buttondown or Mailchimp) once; after that you only change the words here.',
       fields: [
         defineField({
           name: 'enabled',
@@ -544,7 +544,7 @@ export const siteSettings = defineType({
           name: 'heading',
           title: 'Heading',
           type: 'string',
-          description: 'Headline above the signup form. Example: "Get the free design checklist."',
+          description: 'Headline above the signup form. Example: "News from the church."',
         }),
         defineField({
           name: 'blurb',
@@ -584,15 +584,17 @@ export const siteSettings = defineType({
       name: 'googleBusinessUrl',
       title: 'Google Business Profile URL',
       type: 'url',
+      // FBC Auburn (2026-10-18): no reviews section on a church site; hidden, never set.
+      hidden: true,
       description:
-        'Link to the studio\'s Google Business listing. When set, a "Read more on Google" link appears in the testimonials section.',
+        'Link to the Google Business listing. When set, a "Read more on Google" link appears under quotes.',
     }),
     defineField({
       name: 'reviewsNote',
       title: 'Reviews note',
       type: 'string',
-      description:
-        'Optional small-print line near the reviews section. Example: "Reviews from Google, Facebook, and Houzz."',
+      hidden: true,
+      description: 'Optional small-print line near the reviews section.',
     }),
 
     // ── Section visibility ────────────────────────────────────────────────────
@@ -612,22 +614,26 @@ export const siteSettings = defineType({
     // the two modules still staged in `modules/`.
     defineField({
       name: 'sectionVisibility',
-      title: 'Section visibility',
+      title: 'Parts of the site',
       type: 'object',
       group: 'visibility',
-      description: 'Turn optional sections on or off. An unset toggle counts as ON.',
+      description:
+        'Turn a part of the site on or off. A switch you have never touched counts as on.',
       fields: [
         defineField({
           name: 'showPortfolio',
           title: 'Portfolio',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
         defineField({
           name: 'showJournal',
-          title: 'Journal',
+          title: 'News and notes',
           type: 'boolean',
           initialValue: true,
           description:
@@ -638,6 +644,9 @@ export const siteSettings = defineType({
           title: 'Shop',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
@@ -646,6 +655,9 @@ export const siteSettings = defineType({
           title: 'E-Design',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
@@ -654,6 +666,9 @@ export const siteSettings = defineType({
           title: 'Gift Certificates',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
@@ -662,6 +677,9 @@ export const siteSettings = defineType({
           title: 'Press',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
@@ -670,6 +688,9 @@ export const siteSettings = defineType({
           title: 'Resources hub',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
@@ -678,6 +699,9 @@ export const siteSettings = defineType({
           title: 'Guides',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
@@ -686,6 +710,9 @@ export const siteSettings = defineType({
           title: 'Style Quiz',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
@@ -694,6 +721,9 @@ export const siteSettings = defineType({
           title: 'Budget Calculator',
           type: 'boolean',
           initialValue: true,
+          // Not a part of this church's site; kept so a module brought back
+          // from archive/ still has its switch.
+          hidden: true,
           description:
             'When off, this section disappears from the menu, footer, homepage, and its own page (which redirects home). Your drafts stay safe. Turn it back on when ready.',
         }),
@@ -706,6 +736,8 @@ export const siteSettings = defineType({
       title: 'Satisfaction guarantee line',
       type: 'text',
       rows: 2,
+      // FBC Auburn (2026-10-18): a business leftover; hidden, never set.
+      hidden: true,
       description:
         'In-scope satisfaction guarantee shown near CTAs on the Services and Contact pages. Leave blank to hide.',
     }),
@@ -713,6 +745,6 @@ export const siteSettings = defineType({
     ...churchFactsFields,
   ],
   preview: {
-    prepare: () => ({ title: 'Site Settings' }),
+    prepare: () => ({ title: 'Site settings' }),
   },
 });

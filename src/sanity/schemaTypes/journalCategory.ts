@@ -14,7 +14,7 @@ import { defineType, defineField } from 'sanity';
 
 export const journalCategory = defineType({
   name: 'journalCategory',
-  title: 'Journal Category',
+  title: 'Post category',
   type: 'document',
   // Taxonomy, not content — exclude from Canvas's free-form writing UI.
   options: { canvasApp: { exclude: true } },
@@ -23,14 +23,14 @@ export const journalCategory = defineType({
       name: 'title',
       title: 'Title',
       type: 'string',
-      description: 'Display name. Examples: "Project Stories", "Style Notes".',
+      description: 'Display name. Examples: "Church news", "Sermon notes".',
       validation: (Rule) => Rule.required().max(40),
     }),
     defineField({
       name: 'slug',
-      title: 'Slug',
+      title: 'Web address ending',
       type: 'slug',
-      description: 'Used in URLs and as an HTML id. Auto-generated from title.',
+      description: 'Made from the title when you press Generate. Set it once and leave it.',
       options: { source: 'title', maxLength: 64 },
       validation: (Rule) => Rule.required(),
     }),
@@ -40,7 +40,7 @@ export const journalCategory = defineType({
       type: 'text',
       rows: 2,
       description:
-        'Optional. A one-line description of what this category covers. Surfaces as a tooltip on the chip.',
+        'Optional. One line on what this category covers. Shows when someone points at the category label.',
       validation: (Rule) => Rule.max(160),
     }),
   ],

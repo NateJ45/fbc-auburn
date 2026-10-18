@@ -6,13 +6,13 @@ import { defineType, defineField } from 'sanity';
 
 export const notFoundPage = defineType({
   name: 'notFoundPage',
-  title: '404 Page',
+  title: 'Page not found',
   type: 'document',
   options: { canvasApp: { exclude: true } },
   groups: [
-    { name: 'seo', title: 'SEO' },
-    { name: 'content', title: 'Content' },
-    { name: 'ctas', title: 'CTAs' },
+    { name: 'seo', title: 'Google and sharing' },
+    { name: 'content', title: 'Words and photo' },
+    { name: 'ctas', title: 'Buttons' },
   ],
   fields: [
     defineField({
@@ -22,7 +22,7 @@ export const notFoundPage = defineType({
       group: 'seo',
       initialValue: 'Page not found',
       description:
-        'Browser tab and Google result title. Aim for 50 to 60 characters. Front-load the location or service.',
+        'Browser tab and Google result title. Aim for 50 to 60 characters. Start with the church name or Hamilton.',
       validation: (Rule) =>
         Rule.max(60).warning(
           'Titles longer than about 60 characters get cut off in Google search results.',
@@ -45,21 +45,21 @@ export const notFoundPage = defineType({
 
     defineField({
       name: 'eyebrow',
-      title: 'Eyebrow',
+      title: 'Small line above the heading',
       type: 'string',
       group: 'content',
       initialValue: '404',
     }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       group: 'content',
       initialValue: 'That page wandered off.',
     }),
     defineField({
       name: 'body',
-      title: 'Body copy',
+      title: 'Main text',
       type: 'text',
       rows: 3,
       group: 'content',
@@ -72,7 +72,7 @@ export const notFoundPage = defineType({
       type: 'image',
       group: 'content',
       description:
-        'Image shown to the right of the text (stacks above on mobile). On-brand vignette that grounds the page in the studio identity.',
+        'Shown beside the text (above it on a phone). A warm photo of the church works well.',
       options: { hotspot: true },
       fields: [
         defineField({
@@ -85,56 +85,55 @@ export const notFoundPage = defineType({
           name: 'caption',
           title: 'Caption (optional)',
           type: 'string',
-          initialValue: 'From the studio',
+          initialValue: 'First Baptist Church of Auburn',
         }),
       ],
     }),
 
     defineField({
       name: 'primaryCtaLabel',
-      title: 'Primary CTA label',
+      title: 'First button: text',
       type: 'string',
       group: 'ctas',
       initialValue: 'Back home',
     }),
     defineField({
       name: 'primaryCtaHref',
-      title: 'Primary CTA destination',
+      title: 'First button: where it goes',
       type: 'string',
       group: 'ctas',
       initialValue: '/',
-      description: 'Use a relative URL like "/" or "/contact". External URLs work too.',
+      description: 'A page on this site like "/" or "/contact/". Full web addresses work too.',
     }),
     defineField({
       name: 'secondaryCtaLabel',
-      title: 'Secondary CTA label',
+      title: 'Second button: text',
       type: 'string',
       group: 'ctas',
-      initialValue: 'Browse our services',
+      initialValue: 'Plan your visit',
     }),
     defineField({
       name: 'secondaryCtaHref',
-      title: 'Secondary CTA destination',
+      title: 'Second button: where it goes',
       type: 'string',
       group: 'ctas',
-      // A core route. /portfolio comes from an opt-in module and is not built
-      // unless a project enables it.
-      initialValue: '/',
+      // FBC Auburn (2026-10-18): the Plan your visit page (a Custom page).
+      initialValue: '/plan-your-visit/',
     }),
     defineField({
       name: 'tertiaryCtaLabel',
-      title: 'Tertiary CTA label',
+      title: 'Third button: text',
       type: 'string',
       group: 'ctas',
       initialValue: 'Get in touch',
     }),
     defineField({
       name: 'tertiaryCtaHref',
-      title: 'Tertiary CTA destination',
+      title: 'Third button: where it goes',
       type: 'string',
       group: 'ctas',
       initialValue: '/contact',
     }),
   ],
-  preview: { prepare: () => ({ title: '404 Page' }) },
+  preview: { prepare: () => ({ title: 'Page not found' }) },
 });

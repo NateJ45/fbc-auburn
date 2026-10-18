@@ -32,7 +32,7 @@ export const navLink = defineType({
       name: 'label',
       title: 'Label',
       type: 'string',
-      description: 'What visitors see, e.g. "Services".',
+      description: 'What visitors see, e.g. "Ministries".',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -79,7 +79,7 @@ export const navLink = defineType({
       title: 'Address (typed by hand)',
       type: 'string',
       description:
-        'An older-style address like /services. It still works and it wins over the choices above. Clear it to use the page picker instead.',
+        'An older-style address like /about/. It still works and it wins over the choices above. Clear it to use the page picker instead.',
       // Shown on links that already carry one and on links with no choice made
       // yet; hidden once a link uses the picker.
       hidden: ({ parent }) => Boolean(parent?.linkType) && !parent?.href,

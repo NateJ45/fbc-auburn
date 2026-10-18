@@ -31,7 +31,7 @@ All publicly-visible content lives in Sanity, not in code or markdown files. San
 **Settings and globals:**
 
 - `siteSettings` (singleton) -- email, phone, footer tagline, newsletter settings, section visibility flags, `businessType` (schema.org LocalBusiness subtype; drives the JSON-LD `@type` field -- defaults to `LocalBusiness` if unset), and `socialLinks` (structured array of platform + URL pairs, supersedes legacy flat social-URL fields). Most user-visible identity text comes from here. Phone surfaces site-wide as a tap-to-call link and feeds the LocalBusiness JSON-LD schema.
-- `businessInfo` (singleton) -- service areas, travel fee tiers, availability status, studio city/state, geo coordinates, `businessModel` (`'in-person'` or `'remote'`; controls which location/travel fields show in the Studio), and `additionalLocations` (array for multi-location businesses). Split from `siteSettings` so identity fields stay in one place and operational business facts in another. `getSiteSettings()` merges both documents and returns them under a single flat interface -- no component changes needed.
+- `businessInfo` (singleton) -- service areas, travel fee tiers, availability status, studio city/state, geo coordinates, `businessModel` (`'in-person'` or `'remote'`; controls which location/travel fields show in the Studio), and `additionalLocations` (array for multi-location businesses). Split from `siteSettings` so identity fields stay in one place and operational business facts in another. `getSiteSettings()` merges both documents and returns them under a single flat interface -- no component changes needed. **On this site (2026-10-18) it is not in the desk and no document exists**: a church has no service areas or travel fees, and Church facts on Site settings hold the address.
 
 **Page builder schemas:**
 
@@ -43,7 +43,7 @@ All publicly-visible content lives in Sanity, not in code or markdown files. San
 
 - `homePage`, `aboutPage`, `servicesPage`, `processPage` — each has a `pageBuilder` array field using its page-specific section type list, plus SEO fields. Renders from `src/data/defaultSections.ts` when `pageBuilder` is empty.
 - `faqPage`, `contactPage`, `journalPage` + `journalEntry` + `journalCategory`, `privacyPage`, `notFoundPage` — these pages keep their own structured fields (they are not fully section-driven).
-- `studioGuide`, `studioNotes` — in-Studio editor handbook singletons (protected, Canvas-excluded, plain text throughout). The prose handbook itself lives in `src/sanity/guides/content.ts` as repo data, not as documents.
+- `studioGuide` — the starter's old in-Studio handbook singleton. Registered but not in the desk (a document still exists); the handbook is the Site Guide, from `src/sanity/guides/content.ts`. `studioNotes` was removed on 2026-10-18 and its one document retired with `scripts/content/retire-studio-notes.mjs`.
 
 **Reusable collections:**
 
@@ -181,7 +181,7 @@ Two schema-level controls govern what Canvas sees:
 
 - All page singletons -- marketing copy is structural; edit fields directly in Studio.
 - `siteSettings` -- configuration, not prose.
-- `studioGuide`, `studioNotes` -- Studio handbook content.
+- `studioGuide` -- the starter's old Studio handbook (not shown).
 - `testimonial` -- verbatim quotes; AI must not "improve" them.
 - `philosophyPoint` -- short, locked structural content.
 - `journalCategory` -- taxonomy, not content.

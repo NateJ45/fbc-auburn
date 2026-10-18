@@ -92,7 +92,7 @@ export const sectionPreset = defineType({
       title: 'Note (optional)',
       type: 'text',
       rows: 2,
-      description: 'A reminder for whoever finds this later, e.g. "service pages only".',
+      description: 'A reminder for whoever finds this later, e.g. "ministry pages only".',
     }),
   ],
   preview: {

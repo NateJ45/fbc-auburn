@@ -5,7 +5,7 @@ import { defineType, defineField } from 'sanity';
 
 export const ctaBlock = defineType({
   name: 'ctaBlock',
-  title: 'CTA Block',
+  title: 'Button',
   type: 'object',
   fields: [
     defineField({

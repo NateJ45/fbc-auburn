@@ -1,5 +1,31 @@
 # Change history
 
+_2026-10-18: the Studio speaks church._
+
+**What changed.** An audit of the Studio found about forty business-starter leftovers an editor could
+see; this removes or rewords them. The desk opens on "Our church at a glance" (`ChurchOverview.tsx`,
+read live from Church facts, with "To confirm" flags) and "Brand colors and fonts"; the "Help & Guide"
+list, the "Start Here" panels and "Business info" are gone, so help lives in one place, the Site Guide.
+`studioNotes` (type, panel, seed row) is removed and its one document retired by
+`scripts/content/retire-studio-notes.mjs` (backup, dry run, apply, verify: 0 left). One name per thing,
+as on the public site: News and notes and Posts, Questions and Question groups, Notices, Page not
+found, Saved sections, Site settings. Section words read "Opening banner", "Small line above the
+heading", "Line under the heading", "Closing invitation", "Invitation band", "Staff and leaders". The
+founder, story, service-area, guarantee and logo-strip blocks stay registered but no builder or
+insert-menu group offers them; the groups are "Voices and numbers" and "About the church". Posts lost
+the Before/After and Source card blocks and the "Sourced from" mark (no post existed). Contact hides
+the business dropdowns and booking-link fields (the church's own questions replace them; the old
+placeholder data stays, hidden), and the roadmap is "What happens after you get in touch". Site
+settings: Business type fixed to Church and hidden, the Reviews fields, the satisfaction guarantee and
+every visibility switch but News and notes hidden, Pinterest and Houzz gone from the social list, the
+header button fallback reads "Plan your visit". SEO help says "Start with the church name or
+Hamilton"; the badge reads "Add search text"; guide icons are `@sanity/icons`, not emoji; US
+spelling and no em-dashes in editor text. Rendered pages unchanged (parity 17/17 against `main`).
+**Left in the starter's PORTABLE files** (fix there, then sync): the "Save a section as preset..."
+action label (`saveSectionPreset.tsx`, quoted by `PageBuilderInput.tsx` and `PreviewNavigator.tsx`,
+which must match it) and "colour" in `UndoRedo.tsx`. `privacyPage.ts` still has the old wording
+(owned elsewhere). The signed-in click-through is `docs/PENDING.md` item 1g.
+
 _2026-10-18: the authoring kit and a Studio that looks like the church's (PORTS.md cards 109 and 110)._
 
 **What changed.** Ported from the starter, with Auburn's own pieces. New pages start from a template: Simple page,
