@@ -34,7 +34,9 @@ const anyUnconfirmed = rows.some((r) => !r.confirmed);
 const weekHeading = week?.heading || 'This week';
 const watchHeading = watch?.heading || 'Last Sunday';
 const label = [week && weekHeading, watch && watchHeading].filter(Boolean).join(' and ');
-const watchHref = watch?.link ? ctaHref(watch.link) : '/watch/';
+// No link set (the built-in defaults, where the Watch page may not exist): a plain card.
+const watchHref = watch?.link ? ctaHref(watch.link) : undefined;
+const WatchTag = watchHref ? 'a' : 'div';
 ---
 
 <section class="hb-section" aria-labelledby={headingId}>
@@ -78,7 +80,11 @@ const watchHref = watch?.link ? ctaHref(watch.link) : '/watch/';
         <div>
           <h2 id={week ? undefined : headingId}>{watchHeading}</h2>
           <LastSunday showChannelLink={false}>
-            <a slot="fallback" class="hb-watch hb-lift" href={watchHref}>
+            <WatchTag
+              slot="fallback"
+              class:list={['hb-watch', watchHref && 'hb-lift']}
+              href={watchHref}
+            >
               {watch.poster?.asset && (
                 <SanityImage
                   source={watch.poster as never}
@@ -101,7 +107,7 @@ const watchHref = watch?.link ? ctaHref(watch.link) : '/watch/';
                   {watch.body && <span class="hb-watch__sub">{watch.body}</span>}
                 </span>
               </span>
-            </a>
+            </WatchTag>
           </LastSunday>
         </div>
       )}

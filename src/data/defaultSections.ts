@@ -33,7 +33,8 @@ function para(key: string, text: string) {
 
 export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
   // Board E (2026-10-17), drawn by src/components/home/HomeBoard.astro. Same shape as the live
-  // Home document (scripts/content/home-board-e.mjs) without the photos. Times are never typed:
+  // Home document (scripts/content/home-board-e.mjs) without the photos, and without links to
+  // the Studio-only pages (Watch, Ministries), which a fresh clone does not have. Times are never typed:
   // the "Wednesdays" card gets its time from Church facts.
   {
     _type: 'heroSection',
@@ -100,7 +101,6 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
     _key: 'default-home-watch',
     heading: 'Last Sunday',
     body: 'Streamed live on Facebook every Sunday',
-    link: { _type: 'ctaBlock', label: 'Watch the message', href: '/watch/' },
     fallback: 'Messages will appear here once the church channel is connected.',
   },
   {
@@ -114,7 +114,6 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
         icon: 'bible',
         title: 'Ministries',
         body: 'Kids, Bible study, fellowship',
-        link: { _type: 'ctaBlock', label: 'Ministries', href: '/ministries/' },
       },
       {
         _type: 'iconCard',
