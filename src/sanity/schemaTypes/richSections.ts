@@ -32,27 +32,10 @@ import { UsersIcon } from '@sanity/icons/Users';
 import { HelpCircleIcon } from '@sanity/icons/HelpCircle';
 import { SyncIcon } from '@sanity/icons/Sync';
 import { SECTION_TYPES } from './sections';
+import { imageWithAlt } from './_imageWithAlt';
 import { columnsField, headingAccentField, hideWhenRich, richTwin } from './_appearanceFields';
 
-// ── Shared helpers (mirrors sections.ts helpers — keep in sync if you change
-//    the main helpers, or extract to a shared file in a future refactor) ──────
-
-const imageWithAlt = (name = 'image', title = 'Image') =>
-  defineField({
-    name,
-    title,
-    type: 'image',
-    options: { hotspot: true },
-    fields: [
-      defineField({
-        name: 'alt',
-        title: 'Alt text',
-        type: 'string',
-        description: 'Describe the photo in a few words, for screen readers and search engines.',
-        validation: (R) => R.required(),
-      }),
-    ],
-  });
+// ── Shared helpers (mirrors sections.ts helpers; the image helper is shared) ──
 
 // Prose body identical to sections.ts proseBody
 const proseBody = (name = 'body', title = 'Text') =>
@@ -108,7 +91,7 @@ export const founderSection = defineType({
   type: 'object',
   icon: UserIcon,
   fields: [
-    imageWithAlt('portrait', 'Portrait photo'),
+    imageWithAlt({ name: 'portrait', title: 'Portrait photo' }),
     defineField({
       name: 'eyebrow',
       title: 'Small line above the heading (optional)',
@@ -156,7 +139,7 @@ export const storySection = defineType({
       validation: (R) => R.required(),
     }),
     proseBody('content', 'Story text'),
-    imageWithAlt('portrait', 'Portrait photo (optional)'),
+    imageWithAlt({ name: 'portrait', title: 'Portrait photo (optional)' }),
     defineField({
       name: 'attribution',
       title: 'Attribution line (optional)',
@@ -363,7 +346,7 @@ export const teamSection = defineType({
               validation: (R) => R.required(),
             }),
             defineField({ name: 'role', title: 'Role or title (optional)', type: 'string' }),
-            imageWithAlt('photo', 'Photo (optional)'),
+            imageWithAlt({ name: 'photo', title: 'Photo (optional)' }),
             defineField({ name: 'bio', title: 'Short bio (optional)', type: 'text', rows: 2 }),
             defineField({
               name: 'socialLinks',

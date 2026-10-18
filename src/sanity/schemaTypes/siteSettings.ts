@@ -7,6 +7,7 @@ import { ChevronDownIcon } from '@sanity/icons/ChevronDown';
 import { ListIcon } from '@sanity/icons/List';
 import { churchFactsFields } from './churchFacts';
 import { formSettingsFields } from './form';
+import { imageWithAlt } from './_imageWithAlt';
 
 export const siteSettings = defineType({
   name: 'siteSettings',
@@ -265,29 +266,13 @@ export const siteSettings = defineType({
 
     // An uploaded logo replaces the built-in image logo at the top of every
     // page. Left blank, the template's own logo files keep rendering.
-    defineField({
+    imageWithAlt({
       name: 'logo',
       title: 'Logo (optional)',
-      type: 'image',
       group: 'identity',
       description:
         'A logo image for the top of every page. Leave blank and the site keeps the logo files that ship with the template. When set, this image replaces them and is scaled to the header height, so upload it with any spare space already trimmed off. One image is used in both light and dark mode.',
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          description:
-            'What the logo says, for screen readers. Example: "First Baptist Church of Auburn".',
-          validation: (Rule) =>
-            Rule.custom((value, ctx: any) =>
-              ctx.parent?.asset && !value
-                ? 'Add alt text so screen readers can read the logo'
-                : true,
-            ),
-        }),
-      ],
+      altRequired: false,
     }),
 
     defineField({
@@ -456,14 +441,12 @@ export const siteSettings = defineType({
       },
       initialValue: 'Church',
     }),
-    defineField({
+    imageWithAlt({
       name: 'seoImage',
       title: 'Default social share image',
-      type: 'image',
       description:
         'The image shown when any page of the site is shared on social media or in a text message (the Open Graph image). Use a wide image, about 1200 by 630 pixels. Individual pages can override this in their own SEO section. Leave blank to use the auto-generated branded cards.',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+      altRequired: false,
     }),
     // FBC Auburn (2026-10-18): the footer's own words, so the pastor can change them himself.
     // Each falls back to the built-in wording when left empty.

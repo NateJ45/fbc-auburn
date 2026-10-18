@@ -3,6 +3,7 @@
 // before this singleton existed, so the site looks identical on launch.
 
 import { defineType, defineField } from 'sanity';
+import { imageWithAlt } from './_imageWithAlt';
 
 export const notFoundPage = defineType({
   name: 'notFoundPage',
@@ -66,21 +67,13 @@ export const notFoundPage = defineType({
       initialValue:
         "It happens. Maybe a link is old, maybe the URL has a typo. Either way, here's where to head next.",
     }),
-    defineField({
+    imageWithAlt({
       name: 'heroImage',
       title: 'Photo',
-      type: 'image',
       group: 'content',
       description:
         'Shown beside the text (above it on a phone). A warm photo of the church works well.',
-      options: { hotspot: true },
       fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          validation: (R) => R.required(),
-        }),
         defineField({
           name: 'caption',
           title: 'Caption (optional)',

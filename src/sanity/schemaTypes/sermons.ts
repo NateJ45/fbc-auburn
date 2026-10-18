@@ -25,12 +25,8 @@ import {
 } from '../../lib/sermons';
 import { additionalSectionsField } from './sections';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
-
-const altField = defineField({
-  name: 'alt',
-  title: 'Describe the picture (for people who cannot see it)',
-  type: 'string',
-});
+import { imageWithAlt } from './_imageWithAlt';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 // ── Sermon ───────────────────────────────────────────────────────────────────
 export const sermon = defineType({
@@ -41,6 +37,7 @@ export const sermon = defineType({
   groups: [
     { name: 'main', title: 'The sermon', default: true },
     { name: 'media', title: 'Video, audio and notes' },
+    PUBLISH_AT_GROUP,
   ],
   // A new sermon is dated the Sunday just gone (today on a Sunday) and,
   // when someone on the people list has "Pastor" in their role, preached by him.
@@ -167,16 +164,16 @@ export const sermon = defineType({
       options: { accept: '.pdf,.doc,.docx' },
       description: 'A PDF or Word file people can download from the sermon page.',
     }),
-    // Decorative wherever it shows (the title sits beside it), so it carries no description box
-    // and the Checkup does not ask for one (altExemptFields in kit.config.ts).
-    defineField({
+    // Alt text everywhere (2026-10-18): the picture now carries a required description, and
+    // the Checkup asks for one (it left altExemptFields in kit.config.ts).
+    imageWithAlt({
       name: 'picture',
       title: 'Picture (optional)',
-      type: 'image',
       group: 'media',
-      options: { hotspot: true },
       description: 'A wide picture for this sermon. Leave empty to use the series picture.',
     }),
+    // Free-tier scheduled publishing; see ./_publishAt.ts.
+    publishAtField(),
   ],
   orderings: [
     { title: 'Newest first', name: 'dateDesc', by: [{ field: 'date', direction: 'desc' }] },
@@ -221,14 +218,11 @@ export const sermonSeries = defineType({
       options: { source: 'title', maxLength: 96 },
       validation: (R) => R.required(),
     }),
-    defineField({
+    imageWithAlt({
       name: 'art',
       title: 'Series picture',
-      type: 'image',
-      options: { hotspot: true },
       description:
         'A wide picture, about 1600 by 900. Sermons in the series without their own picture use it.',
-      fields: [altField],
     }),
     defineField({
       name: 'book',
@@ -330,14 +324,13 @@ export const sermonsPage = defineType({
         layout: 'radio',
       },
     }),
-    defineField({
+    imageWithAlt({
       name: 'podcastArtwork',
       title: 'Podcast picture',
-      type: 'image',
       group: 'podcast',
       description:
         'A SQUARE picture, at least 1400 by 1400 pixels (3000 by 3000 is best). Leave empty to use the sharing picture from Site settings, cropped square.',
-      fields: [altField],
+      altRequired: false,
     }),
     defineField({
       name: 'applePodcastsUrl',
@@ -367,13 +360,11 @@ export const sermonsPage = defineType({
       validation: (R) =>
         R.max(160).warning('Descriptions longer than about 160 characters get cut off.'),
     }),
-    defineField({
+    imageWithAlt({
       name: 'seoImage',
       title: 'Sharing picture (this page)',
-      type: 'image',
       group: 'seo',
-      options: { hotspot: true },
-      fields: [altField],
+      altRequired: false,
     }),
     defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
   ],

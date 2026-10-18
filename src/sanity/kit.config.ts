@@ -22,7 +22,11 @@ import { AddDocumentIcon } from '@sanity/icons/AddDocument';
 import { ClockIcon } from '@sanity/icons/Clock';
 import { MenuIcon } from '@sanity/icons/Menu';
 import { MicrophoneIcon } from '@sanity/icons/Microphone';
+import { BellIcon } from '@sanity/icons/Bell';
+import { CalendarIcon } from '@sanity/icons/Calendar';
 import { collectionRules } from './collectionCheckup';
+import { comingSunday, lastSunday } from '../lib/studio-kit';
+import { buildNotice, buildSermon, PASTOR_QUERY } from '../lib/quick-updates';
 import { runPageCheck } from './actions/checkPage';
 import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
 
@@ -81,8 +85,16 @@ export const kitConfig: KitConfig = {
   // gets the staff view.
   staff: [],
 
-  staffTools: ['home', 'structure', 'presentation', 'site-guide', 'checkup'],
-  toolOrder: ['home', 'structure', 'presentation', 'site-guide', 'checkup', 'media'],
+  staffTools: ['home', 'quick-update', 'structure', 'presentation', 'site-guide', 'checkup'],
+  toolOrder: [
+    'home',
+    'quick-update',
+    'structure',
+    'presentation',
+    'site-guide',
+    'checkup',
+    'media',
+  ],
   toolTitles: { structure: 'Content', presentation: 'Live preview' },
 
   // Desk items only a developer needs (ids from src/sanity/structure.ts).
@@ -106,6 +118,11 @@ export const kitConfig: KitConfig = {
   },
 
   weekStartsOn: 1,
+  // The Sunday checklist (card 111, 2026-10-18). Sermon, bulletin, news and notices tick
+  // themselves from the content; "Checkup" ticks itself when nothing needs doing; the
+  // Church Trac job is ticked by hand (the website cannot see inside Church Trac), on a
+  // small document per week, so the list starts fresh every Monday.
+  thisWeekTitle: 'Sunday checklist',
   thisWeek: [
     // The collections (2026-10-18). The week starts on Monday, so "this week" for Sunday's
     // sermon and bulletin reaches back to the Saturday before it.
@@ -142,24 +159,127 @@ export const kitConfig: KitConfig = {
       target: { pane: 'content;announcement' },
       targetLabel: 'Open the notices',
     },
+    {
+      id: 'church-trac',
+      title: "Check this week's events in Church Trac",
+      detail:
+        'The calendar on the website comes from Church Trac. Tick this once the dates and times there are right.',
+      manual: true,
+    },
+    {
+      id: 'checkup',
+      title: 'Checkup is clear',
+      detail: 'Nothing in the Checkup marked "Needs doing".',
+      check: 'checkup',
+      target: { tool: 'checkup' },
+      targetLabel: 'Open the Checkup',
+    },
+  ],
+
+  // Quick update (card 111): the three jobs the pastor does from his phone. Each form
+  // publishes straight away, so the builders in src/lib/quick-updates.ts return whole,
+  // valid documents (tested in quick-updates.test.ts).
+  quickUpdate: [
+    {
+      id: 'notice',
+      title: 'Put up a notice',
+      detail: 'A short line across the top of every page, until the day you pick.',
+      icon: BellIcon,
+      fields: [
+        {
+          name: 'message',
+          title: 'The notice',
+          kind: 'text',
+          required: true,
+          max: 160,
+          description: 'One or two short sentences, like "Fall festival this Saturday at 4 pm."',
+        },
+        {
+          name: 'lastDay',
+          title: 'Last day to show it',
+          kind: 'date',
+          required: true,
+          initial: (now) => comingSunday(now),
+        },
+        {
+          name: 'link',
+          title: 'A link for more',
+          kind: 'url',
+          description: 'A full web address starting with https://',
+        },
+      ],
+      build: (v) =>
+        buildNotice({ message: v.message, lastDay: v.lastDay, link: v.link || undefined }),
+      doneMessage:
+        'The notice will be on the website in a few minutes, and it takes itself down after the day you picked.',
+    },
+    {
+      id: 'sermon',
+      title: "Add Sunday's sermon link",
+      detail: 'The title and the video link. The rest can wait.',
+      icon: MicrophoneIcon,
+      fields: [
+        { name: 'title', title: 'Sermon title', kind: 'string', required: true, max: 120 },
+        {
+          name: 'videoUrl',
+          title: 'Video link',
+          kind: 'url',
+          required: true,
+          description: 'Copy the link from YouTube or Facebook.',
+        },
+        {
+          name: 'date',
+          title: 'Date preached',
+          kind: 'date',
+          required: true,
+          initial: (now) => lastSunday(now),
+        },
+        {
+          name: 'passage',
+          title: 'Bible passage',
+          kind: 'string',
+          description: 'Like "John 3:1-21".',
+        },
+      ],
+      build: async (v, { client }) => {
+        const pastorId = await client.fetch<string | null>(PASTOR_QUERY).catch(() => null);
+        return buildSermon(
+          { title: v.title, date: v.date, videoUrl: v.videoUrl, passage: v.passage },
+          pastorId,
+        );
+      },
+      doneMessage:
+        'The sermon will be on the website in a few minutes. Open it in the full editor to add a summary or the audio.',
+    },
+    {
+      id: 'this-week',
+      title: 'Cancel or change something this week',
+      detail: 'A notice in red that takes itself down after Sunday.',
+      icon: CalendarIcon,
+      fields: [
+        {
+          name: 'message',
+          title: 'What is changing',
+          kind: 'text',
+          required: true,
+          max: 160,
+          description: 'Like "No Wednesday Bible study this week. See you Sunday."',
+        },
+      ],
+      build: (v, { now }) =>
+        buildNotice({ message: v.message, lastDay: comingSunday(now) }, 'urgent'),
+      doneMessage:
+        'The notice will be on the website in a few minutes and comes down by itself after Sunday.',
+    },
   ],
 
   checkup: {
     rules: [
       ...genericRules({
         seoTypes: SEO_TYPES,
-        // photo: a person's photo falls back to their name; picture: a sermon's picture is
-        // decorative beside its title; podcastArtwork: Apple never reads a description.
-        altExemptFields: [
-          'logo',
-          'favicon',
-          'icon',
-          'logoImage',
-          'seoImage',
-          'photo',
-          'picture',
-          'podcastArtwork',
-        ],
+        // podcastArtwork: Apple never reads a description. People's photos and sermon
+        // pictures now need one (alt text everywhere, 2026-10-18), so the Checkup asks.
+        altExemptFields: ['logo', 'favicon', 'icon', 'logoImage', 'seoImage', 'podcastArtwork'],
       }),
       // Seeded copy marks unconfirmed facts "to be confirmed" (service times,
       // the founding year, the verse), so the pastor can see what is left.

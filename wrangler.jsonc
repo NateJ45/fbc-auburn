@@ -89,6 +89,16 @@
   // Optional, both as secrets: TURNSTILE_SECRET (plus PUBLIC_TURNSTILE_SITE_KEY
   // in .env) and WEB3FORMS_KEY, the fallback for a site with no email binding.
 
+  // ── The Studio's deploy status (src/pages/api/studio/deploy-status.ts) ─────
+  // PORTS.md card 111. The Studio says "The last update didn't go through" and
+  // offers "Try again" when the newest deploy.yml run failed. The repo is a
+  // plain var (it is public); the token is a SECRET that Nathan sets once:
+  //   npx wrangler secret put GITHUB_DEPLOY_TOKEN
+  // a fine-grained GitHub token on NateJ45/fbc-auburn only, "Actions: Read and
+  // write" and nothing else (OPERATIONS.md, "When an update does not go
+  // through"). Until it exists the Studio keeps its old build-time check.
+  "vars": { "GITHUB_REPO": "NateJ45/fbc-auburn" },
+
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
     // @astrojs/cloudflare v14 splits the build into dist/client (static assets)

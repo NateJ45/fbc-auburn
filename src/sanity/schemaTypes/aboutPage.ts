@@ -9,6 +9,7 @@ import { defineType, defineField, defineArrayMember } from 'sanity';
 import { ABOUT_SECTION_TYPES } from './richSections';
 import { sectionArrayOptions } from './sections';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
+import { imageWithAlt } from './_imageWithAlt';
 
 export const aboutPage = defineType({
   name: 'aboutPage',
@@ -67,15 +68,13 @@ export const aboutPage = defineType({
           'Descriptions longer than about 160 characters get cut off in Google search results.',
         ),
     }),
-    defineField({
+    imageWithAlt({
       name: 'seoImage',
       title: 'Social share image (this page)',
-      type: 'image',
       group: 'seo',
       description:
         'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+      altRequired: false,
     }),
 
     // Hero (legacy structured fields — hidden for rollback safety)
@@ -107,24 +106,15 @@ export const aboutPage = defineType({
       readOnly: true,
       initialValue: "Here's who you'd be working with.",
     }),
-    defineField({
+    imageWithAlt({
       name: 'heroImage',
       title: 'Banner photo',
-      type: 'image',
       group: 'hero',
       hidden: true,
       readOnly: true,
       description:
         'Full-width photo behind the banner text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          validation: (R) => R.required(),
-        }),
-      ],
+      altRequired: false,
     }),
     defineField({
       name: 'heroScriptAccent',
@@ -177,22 +167,13 @@ export const aboutPage = defineType({
         }),
       ],
     }),
-    defineField({
+    imageWithAlt({
       name: 'founderPhoto',
       title: 'Founder portrait',
-      type: 'image',
       group: 'story',
       hidden: true,
       readOnly: true,
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          validation: (R) => R.required(),
-        }),
-      ],
+      altRequired: false,
     }),
     defineField({
       name: 'founderAttribution',
@@ -368,24 +349,15 @@ export const aboutPage = defineType({
       description:
         'A short, casual paragraph or two about life outside work: family, the dogs, hobbies. Write the way you talk.',
     }),
-    defineField({
+    imageWithAlt({
       name: 'candidPhoto',
       title: 'Candid photo (optional)',
-      type: 'image',
       group: 'personal',
       hidden: true,
       readOnly: true,
       description:
         'A relaxed, non-portrait photo. Skip the polished headshot here; warmth beats polish.',
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          validation: (R) => R.required(),
-        }),
-      ],
+      altRequired: false,
     }),
 
     // Stats (legacy — hidden for rollback safety)
@@ -481,16 +453,15 @@ export const aboutPage = defineType({
       hidden: true,
       readOnly: true,
     }),
-    defineField({
+    imageWithAlt({
       name: 'finalCtaBackgroundImage',
       title: 'Closing invitation: background photo (optional)',
-      type: 'image',
       group: 'final',
       hidden: true,
       readOnly: true,
-      options: { hotspot: true },
       description:
         'Optional. A photo behind the closing call-to-action. The site automatically darkens it so the headline and button stay readable. Leave empty to keep the solid charcoal panel.',
+      altRequired: false,
     }),
   ],
   preview: { prepare: () => ({ title: 'About page' }) },

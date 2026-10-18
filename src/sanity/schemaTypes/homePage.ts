@@ -11,6 +11,7 @@ import { defineType, defineField, defineArrayMember } from 'sanity';
 import { HOME_SECTION_TYPES } from './richSections';
 import { sectionArrayOptions } from './sections';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
+import { imageMember, imageWithAlt } from './_imageWithAlt';
 
 export const homePage = defineType({
   name: 'homePage',
@@ -71,15 +72,13 @@ export const homePage = defineType({
           'Descriptions longer than about 160 characters get cut off in Google search results.',
         ),
     }),
-    defineField({
+    imageWithAlt({
       name: 'seoImage',
       title: 'Social share image (this page)',
-      type: 'image',
       group: 'seo',
       description:
         'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+      altRequired: false,
     }),
 
     // Hero (legacy structured fields — hidden for rollback safety; GROQ still returns them)
@@ -113,22 +112,13 @@ export const homePage = defineType({
       hidden: true,
       readOnly: true,
     }),
-    defineField({
+    imageWithAlt({
       name: 'heroImage',
       title: 'Hero image (legacy)',
-      type: 'image',
       group: 'hero',
       hidden: true,
       readOnly: true,
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          validation: (R) => R.required(),
-        }),
-      ],
+      altRequired: false,
     }),
     defineField({
       name: 'heroImages',
@@ -139,13 +129,7 @@ export const homePage = defineType({
       readOnly: true,
       description:
         'The home hero. Add one photo for a single static hero. Add two or more for a slow cross-fading slideshow with a subtle zoom. Drag to set the order they appear in.',
-      of: [
-        defineArrayMember({
-          type: 'image',
-          options: { hotspot: true },
-          fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
-        }),
-      ],
+      of: [imageMember({ altRequired: false })],
     }),
     defineField({
       name: 'heroPrimaryCta',
@@ -186,22 +170,13 @@ export const homePage = defineType({
     }),
 
     // Meet the Founder (legacy — hidden for rollback safety)
-    defineField({
+    imageWithAlt({
       name: 'meetFounderPhoto',
       title: 'Founder photo',
-      type: 'image',
       group: 'meetFounder',
       hidden: true,
       readOnly: true,
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          validation: (R) => R.required(),
-        }),
-      ],
+      altRequired: false,
     }),
     defineField({
       name: 'meetFounderEyebrow',
@@ -484,16 +459,15 @@ export const homePage = defineType({
       hidden: true,
       readOnly: true,
     }),
-    defineField({
+    imageWithAlt({
       name: 'finalCtaBackgroundImage',
       title: 'Closing invitation: background photo (optional)',
-      type: 'image',
       group: 'final',
       hidden: true,
       readOnly: true,
-      options: { hotspot: true },
       description:
         'Optional. A photo behind the closing call-to-action. The site automatically darkens it so the headline and button stay readable. Leave empty to keep the solid charcoal panel.',
+      altRequired: false,
     }),
   ],
   preview: { prepare: () => ({ title: 'Home page' }) },

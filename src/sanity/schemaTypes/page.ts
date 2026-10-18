@@ -23,6 +23,7 @@ import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import { seoFields } from './_seoFields';
 import { RESERVED_SLUGS } from '../../lib/reservedSlugs';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
+import { imageWithAlt } from './_imageWithAlt';
 
 export const page = defineType({
   name: 'page',
@@ -172,15 +173,13 @@ export const page = defineType({
               'Descriptions longer than about 160 characters get cut off in search results.',
             ),
         }),
-        image: defineField({
+        image: imageWithAlt({
           name: 'seoImage',
           title: 'Social share image',
-          type: 'image',
           group: 'seo',
           description:
             'Optional. Shown when this page is shared. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
-          options: { hotspot: true },
-          fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+          altRequired: false,
         }),
       },
     }),

@@ -1,5 +1,27 @@
 # Change history
 
+_2026-10-18: the Studio remembers (PORTS card 111)._
+
+**What changed.** For the pastor editing alone on Sanity's free plan. **Scheduled publishing** is ready:
+`publish-due.yml` runs every half hour, reads `SANITY_API_WRITE_TOKEN`, skips cleanly without it, and starts a deploy
+after it publishes; "Publish automatically at" is now on notices, posts, sermons and downloads as well as pages. **A
+failed deploy says so**: `/api/studio/deploy-status/` reads `deploy.yml`'s newest run from GitHub (Worker secret
+`GITHUB_DEPLOY_TOKEN`, var `GITHUB_REPO`), the status line and Home say "The last update didn't go through. Nathan has
+been told." with Try again, and `deploy.yml` opens a `deploy-failed` issue so he is. **Undo from earlier in the week**:
+`npm run restore:doc -- <id>` puts one document back from a nightly backup as a draft (dry by default, rule 16's
+gate), plus a Site Guide entry telling the pastor to ask. **Sunday checklist** on Home: sermon, bulletin, news and
+notices tick themselves, "Checkup is clear" too, and "Check this week's events in Church Trac" is ticked by hand on a
+`studioWeek` document per week. **Quick update**, a phone tool with three forms (a notice with a last day, Sunday's
+sermon link, a change or cancellation this week); builders in `src/lib/quick-updates.ts`, tested. **Alt text
+everywhere**: every image field goes through `imageWithAlt()` (`schemaTypes/_imageWithAlt.ts`), still `type: 'image'`,
+hotspot on, a required "Description of the photo" on content photos and a warning on logos, share images and hidden
+legacy fields; no field removed or renamed. **Empty lists** the pastor uses explain themselves with "Create the first
+one". New guides: "Undo a change from earlier in the week", "Publish something later, by itself", "Quick update from
+your phone", "The Sunday checklist"; the guides now name Nathan.
+
+**Not done here.** The two secrets (PENDING 1k) and every signed-in check. The starter carries the PORTABLE half
+(draft PR first, per the marked-file order).
+
 _2026-10-18: the section library brought up to Home's standard (block polish)._
 
 **What changed.** The 21 church sections and the four collection blocks now use Home's own objects,

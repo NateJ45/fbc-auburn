@@ -19,6 +19,8 @@ import { SearchIcon } from '@sanity/icons/Search';
 import { CheckmarkCircleIcon } from '@sanity/icons/CheckmarkCircle';
 import { ActivityIcon } from '@sanity/icons/Activity';
 import { BulbOutlineIcon } from '@sanity/icons/BulbOutline';
+import { BoltIcon } from '@sanity/icons/Bolt';
+import { RestoreIcon } from '@sanity/icons/Restore';
 
 /**
  * A guide's `icon` is a name from this list (FBC Auburn, 2026-10-18: the
@@ -42,6 +44,9 @@ export const GUIDE_ICONS: Record<string, ComponentType> = {
   check: CheckmarkCircleIcon,
   activity: ActivityIcon,
   bulb: BulbOutlineIcon,
+  // Card 111 (2026-10-18): Quick update and "Undo a change from earlier in the week".
+  bolt: BoltIcon,
+  restore: RestoreIcon,
 };
 
 // =============================================================================

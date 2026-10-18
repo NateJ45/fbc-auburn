@@ -38,6 +38,7 @@ import { defineType, defineField } from 'sanity';
 import { SECTION_TYPES, additionalSectionsField, sectionArrayOptions } from './sections';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
+import { imageWithAlt } from './_imageWithAlt';
 
 interface PageDefaults {
   heroEyebrow?: string;
@@ -81,15 +82,12 @@ export function definePageSingleton(
     ],
     fields: [
       // ── Hero ─────────────────────────────────────────────────────────────
-      defineField({
+      imageWithAlt({
         name: 'heroImage',
         title: 'Hero background image (optional)',
-        type: 'image',
         group: 'hero',
         description:
           'Full-width photo behind the banner text. Landscape orientation works best. Leave empty to use a solid brand-color hero.',
-        options: { hotspot: true },
-        fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
       }),
       defineField({
         name: 'heroEyebrow',
@@ -170,15 +168,13 @@ export function definePageSingleton(
             'Descriptions longer than about 160 characters get cut off in Google.',
           ),
       }),
-      defineField({
+      imageWithAlt({
         name: 'seoImage',
         title: 'Social share image (this page)',
-        type: 'image',
         group: 'seo',
         description:
           'Optional. Shown when this page is shared on social media. About 1200 x 630 px. Overrides the site-wide default.',
-        options: { hotspot: true },
-        fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+        altRequired: false,
       }),
 
       // ── Publishing ────────────────────────────────────────────────────────

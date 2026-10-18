@@ -15,6 +15,7 @@
 import { defineType, defineField } from 'sanity';
 import { DownloadIcon } from '@sanity/icons/Download';
 import { DOWNLOAD_CATEGORIES, categoryTitle, churchToday, longDate } from '../../lib/sermons';
+import { publishAtField } from './_publishAt';
 
 export const download = defineType({
   name: 'download',
@@ -71,6 +72,8 @@ export const download = defineType({
         'The last day it shows. The website drops it the next morning. Leave empty to keep it up.',
       options: { dateFormat: 'MMMM D, YYYY' },
     }),
+    // Free-tier scheduled publishing; see ./_publishAt.ts. No tab bar on this type, so no group.
+    { ...publishAtField(), group: undefined },
   ],
   orderings: [
     { title: 'Newest first', name: 'dateDesc', by: [{ field: 'date', direction: 'desc' }] },

@@ -53,6 +53,7 @@ import { PinIcon } from '@sanity/icons/Pin';
 import { SplitVerticalIcon } from '@sanity/icons/SplitVertical';
 import { SyncIcon } from '@sanity/icons/Sync';
 import { TimelineIcon } from '@sanity/icons/Timeline';
+import { imageWithAlt } from './_imageWithAlt';
 
 // ── Shared fields ────────────────────────────────────────────────────────────
 
@@ -110,22 +111,12 @@ const simpleText = (name = 'body', title = 'Text') =>
 
 /** A photo with its description for people who cannot see it. */
 const photoField = (name: string, title: string, required = false) =>
-  defineField({
+  imageWithAlt({
     name,
     title,
-    type: 'image',
-    options: { hotspot: true },
-    validation: required ? (R) => R.required() : undefined,
-    fields: [
-      defineField({
-        name: 'alt',
-        title: 'Describe the photo',
-        type: 'string',
-        description:
-          'A few words for people who use a screen reader, like "Children singing at VBS".',
-        validation: (R) => R.required(),
-      }),
-    ],
+    validation: required ? (R: { required: () => unknown }) => R.required() : undefined,
+    // A logo is not a photo of people; the description is a reminder only.
+    altRequired: name !== 'logo',
   });
 
 const linkField = (title = 'Button (optional)') =>
