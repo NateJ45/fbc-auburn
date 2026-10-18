@@ -16,8 +16,8 @@ CTA). `studio`, `preview` and `api` are reserved slugs. The journal post page lo
 The Site Guide gained Rearrange the home page, Change the service times or the address, and
 After Sunday: name the message, and corrects Rename (redirects are automatic), Add a page and
 the menu guide. Data: `scripts/content/faq-church.mjs` added church FAQ categories and six
-questions from facts the site already states; retiring the four starter questions waits for
-Nathan (`--retire`). The publish webhook (OPERATIONS.md, PENDING 1e) needs Nathan's token.
+questions from facts the site already states; the four starter questions were retired the same
+day on Nathan's yes (`--retire`, backup in the studio's Sanity backups, 2026-10-18-faq-retire). The publish webhook (OPERATIONS.md, PENDING 1e) needs Nathan's token.
 
 _2026-10-18: the footer and the menus rebuilt to feel alive._
 
