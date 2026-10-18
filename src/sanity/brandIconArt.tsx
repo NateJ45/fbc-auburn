@@ -25,17 +25,24 @@ import givingHandUrl from '../assets/brand/stone-icon-giving-hand.svg?url';
 import mapPinUrl from '../assets/brand/stone-icon-map-pin.svg?url';
 import musicUrl from '../assets/brand/stone-icon-music.svg?url';
 import prayingHandsUrl from '../assets/brand/stone-icon-praying-hands.svg?url';
+import markUrl from '../assets/brand/fbc-auburn-icon-full-color.svg?url';
 
-const Bible = artIcon(bibleUrl, 'Open Bible');
-const Blocks = artIcon(blocksUrl, 'Building blocks');
-const Clock = artIcon(clockUrl, 'Clock');
-const Coffee = artIcon(coffeeUrl, 'Coffee cup');
-const GivingHand = artIcon(givingHandUrl, 'Giving hand');
-const MapPin = artIcon(mapPinUrl, 'Map pin');
-const Music = artIcon(musicUrl, 'Music');
-const PrayingHands = artIcon(prayingHandsUrl, 'Praying hands');
+// Inset 0: each file's viewBox is already cropped to its art, so the default 10% margin only made
+// the stones read small inside their list tiles (2026-10-18).
+const Bible = artIcon(bibleUrl, 'Open Bible', 0);
+const Blocks = artIcon(blocksUrl, 'Building blocks', 0);
+const Clock = artIcon(clockUrl, 'Clock', 0);
+const Coffee = artIcon(coffeeUrl, 'Coffee cup', 0);
+const GivingHand = artIcon(givingHandUrl, 'Giving hand', 0);
+const MapPin = artIcon(mapPinUrl, 'Map pin', 0);
+const Music = artIcon(musicUrl, 'Music', 0);
+const PrayingHands = artIcon(prayingHandsUrl, 'Praying hands', 0);
+// The church's own mark: who we are (the About page, mapped in brand.config.json).
+const Mark = artIcon(markUrl, 'The church mark', 0);
 
 export const BRAND_ICON_ART: Partial<Record<BrandIconKey, BrandIcon>> = {
+  // Who we are: the About page.
+  overview: Mark,
   // Sermons, series, the sermons page; downloads (bulletins and study notes).
   scripture: Bible,
   series: Bible,
