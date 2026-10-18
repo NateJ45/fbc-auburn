@@ -11,7 +11,7 @@
 // the form isn't a wall. The body field is the only one the editor touches for the
 // actual post copy; everything else is metadata.
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField, defineArrayMember, type Rule } from 'sanity';
 import { imageMember, imageWithAlt } from './_imageWithAlt';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
@@ -171,7 +171,15 @@ export const journalEntry = defineType({
                 type: 'object',
                 title: 'Link',
                 fields: [
-                  { name: 'href', type: 'url', title: 'URL' },
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'Link to',
+                    description:
+                      'A page on this website, like /contact/, or a full address starting https://. Email and phone links work too (mailto:, tel:).',
+                    validation: (R: Rule) =>
+                      R.uri({ allowRelative: true, scheme: ['https', 'http', 'mailto', 'tel'] }),
+                  },
                   {
                     name: 'openInNewTab',
                     type: 'boolean',
@@ -279,7 +287,18 @@ export const journalEntry = defineType({
                         type: 'object',
                         title: 'Link',
                         fields: [
-                          { name: 'href', type: 'url', title: 'URL' },
+                          {
+                            name: 'href',
+                            type: 'url',
+                            title: 'Link to',
+                            description:
+                              'A page on this website, like /contact/, or a full address starting https://. Email and phone links work too (mailto:, tel:).',
+                            validation: (R: Rule) =>
+                              R.uri({
+                                allowRelative: true,
+                                scheme: ['https', 'http', 'mailto', 'tel'],
+                              }),
+                          },
                           {
                             name: 'openInNewTab',
                             type: 'boolean',
