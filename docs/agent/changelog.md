@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-18: the Studio's edges: its own /studio page, the church's words, a wordmark (PORTS card 120)._
+
+**What changed.** `/studio` is now the site's own page (`src/pages/studio/index.astro`) instead of @sanity/astro's:
+the tab says "First Baptist Church of Auburn" with the church's icon from the first byte (no "Sanity Studio", no red
+S), and while the editor loads the page shows the church's mark, its name in Young Serif and the stone path on the
+Studio's own paper or dark ground, so there is no white flash. The sign-in card says "Sign in to update the church
+website"; the signed-out notice and the user menu use plain church words ("Invite someone from church to edit"). The
+navy top bar shows the white "First Baptist / Church of Auburn" wordmark beside the square icon on wider screens.
+Settings: `src/sanity/studioEdges.config.ts` and `src/sanity/StudioSplashMotif.astro`. astro.config no longer sets
+`studioBasePath`; `applySiteFavicon` is no longer called.
+
 _2026-10-18: the stone icons across the Studio, and a picture on every list row (PORTS card 119)._
 
 **What changed.** The eight stone icons from the brand kit now stand for what they mean all through the Studio: the

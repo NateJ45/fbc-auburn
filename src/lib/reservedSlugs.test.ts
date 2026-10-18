@@ -66,7 +66,7 @@ test('every reserved slug is a route this repo serves, a scaffolded one, or a bu
     // Served, but never for visitors: the fixed-data design-system wall the
     // visual suite screenshots. Reserved so a custom page cannot shadow it.
     'styleguide',
-    // The embedded Studio (astro.config.mjs, studioBasePath), and src/pages/preview/ and
+    // The embedded Studio (src/pages/studio/index.astro, card 120), and src/pages/preview/ and
     // src/pages/api/ (FBC Auburn, 2026-10-18).
     'studio',
     'preview',
