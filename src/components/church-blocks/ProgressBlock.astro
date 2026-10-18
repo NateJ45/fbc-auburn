@@ -1,6 +1,7 @@
 ---
 // Safe to edit by hand
-// Progress toward a goal (a building fund): raised so far over the goal, a bar, the amount to go
+// Progress toward a goal (a building fund): raised so far over the goal, a path of twenty stepping
+// stones laid in gold as the money comes in (block polish, 2026-10-18), the amount to go
 // and the "as of" date, all worked out from the two numbers typed (progressState, rule 15). Plain
 // whole-dollar formatting. Renders nothing without a positive goal.
 import ChurchBand from './ChurchBand.astro';
@@ -17,6 +18,9 @@ const { block, surface, headingId } = Astro.props;
 const p = progressState(block.goal, block.raised);
 const asOf = asOfLabel(block.asOf);
 const name = block.heading || 'Progress toward our goal';
+// Twenty stepping stones, each 5%: the laid ones gold, the last one part-laid (block polish).
+const STONES = 20;
+const laid = (i: number) => Math.max(0, Math.min(1, (p.percent / 100) * STONES - i));
 ---
 
 {p.valid && (
@@ -28,7 +32,7 @@ const name = block.heading || 'Progress toward our goal';
     surface={surface}
     label={name}
   >
-    <div class="cb-progress">
+    <div class="cb-sheet cb-progress">
       <p class="cb-progress__numbers">
         <span>
           <span class="cb-progress__raised">{p.raised}</span> raised
@@ -44,7 +48,9 @@ const name = block.heading || 'Progress toward our goal';
         aria-valuenow={p.percent}
         aria-valuetext={`${p.raised} of ${p.goal}, ${p.percent} percent`}
       >
-        <div class="cb-progress__fill" style={`width: ${p.percent}%`} />
+        {Array.from({ length: STONES }, (_, i) => (
+          <span class="cb-progress__stone" style={`--laid: ${laid(i)}`} />
+        ))}
       </div>
       <p class="cb-progress__foot cb-small">
         <span>{p.remaining}</span>

@@ -24,10 +24,11 @@ const { icalUrl } = await getChurchFacts();
     headingId={headingId}
     surface={surface}
     label="Add our calendar"
+    beside
   >
-    <SubscribeButtons />
-    <p class="cb-small" style="margin-top: 1rem">
-      New events then show up on your phone by themselves.
-    </p>
+    <div class="cb-sky">
+      <SubscribeButtons />
+      <p class="cb-small cb-sky__note">New events then show up on your phone by themselves.</p>
+    </div>
   </ChurchBand>
 )}

@@ -48,7 +48,7 @@ const cards = plain(block.layout) === 'cards';
         })}
       </ul>
     ) : (
-      <div class="cb-actions" style="margin-top: 0">
+      <div class="cb-actions cb-actions--flush">
         {links.map((l) => (
           <CtaLink cta={l.link} variant="secondary" />
         ))}

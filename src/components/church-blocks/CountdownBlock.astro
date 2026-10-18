@@ -4,7 +4,8 @@
 // before, the "happening now" line during, the thank-you line after (or nothing, when that line is
 // empty). All three are in the page; a tiny script recounts by the church's clock in the visitor's
 // browser, so the number is right between the morning rebuilds and the page reads fully without
-// JavaScript.
+// JavaScript. The words sit on the left and the number on the This Sunday card's deep stone ground
+// beside them, on the shared split (block polish, 2026-10-18).
 import ChurchBand from './ChurchBand.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import { churchDataNow } from '@/lib/church-feeds';
@@ -35,38 +36,42 @@ const name = block.eventName?.trim() || 'The big day';
     label={`Countdown: ${name}`}
   >
     <div
-      class="cb-countdown"
+      class="cb-countdown split"
       data-cb-countdown
       data-start={start}
       data-end={end}
       data-has-after={afterText ? '1' : undefined}
     >
-      <h2 class="cb-count__name" id={headingId}>
-        {name}
-      </h2>
-      <div data-phase="before" hidden={state.phase !== 'before'}>
-        <p class="cb-count">
-          <span class="cb-count__days" data-days>
-            {state.days}
-          </span>
-          <span class="cb-count__label" data-days-label>
-            {daysToGo(state.days).replace(/^\d+ /, '')}
-          </span>
+      <div class="cb-countdown__words">
+        <h2 class="cb-count__name" id={headingId}>
+          {name}
+        </h2>
+        <p class="cb-count__when">{when}</p>
+        {block.intro && <p class="cb-intro">{block.intro}</p>}
+        {block.link?.label && (
+          <div class="cb-actions">
+            <CtaLink cta={block.link} variant="secondary" />
+          </div>
+        )}
+      </div>
+      <div class="cb-deep cb-count__card">
+        <div data-phase="before" hidden={state.phase !== 'before'}>
+          <p class="cb-count">
+            <span class="cb-count__days" data-days>
+              {state.days}
+            </span>
+            <span class="cb-count__label" data-days-label>
+              {daysToGo(state.days).replace(/^\d+ /, '')}
+            </span>
+          </p>
+        </div>
+        <p class="cb-count__now" data-phase="during" hidden={state.phase !== 'during'}>
+          {block.duringText?.trim() || 'It is happening now.'}
+        </p>
+        <p class="cb-count__now" data-phase="after" hidden={state.phase !== 'after'}>
+          {afterText}
         </p>
       </div>
-      <p class="cb-count__now" data-phase="during" hidden={state.phase !== 'during'}>
-        {block.duringText?.trim() || 'It is happening now.'}
-      </p>
-      <p class="cb-count__now" data-phase="after" hidden={state.phase !== 'after'}>
-        {afterText}
-      </p>
-      <p class="cb-count__when cb-small">{when}</p>
-      {block.intro && <p class="cb-intro">{block.intro}</p>}
-      {block.link?.label && (
-        <div class="cb-actions">
-          <CtaLink cta={block.link} variant="secondary" />
-        </div>
-      )}
     </div>
   </ChurchBand>
 )}

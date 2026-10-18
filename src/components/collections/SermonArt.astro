@@ -2,9 +2,14 @@
 // Safe to edit by hand
 // The picture for a sermon or a series, in the one 16:9 frame with 14px corners: the sermon's own
 // picture, else its series' picture, else the YouTube thumbnail, else the stones (three gold steps
-// from the mark on deep navy) with the series title or book in display type, so a sermon with no
-// picture at all still looks intended. `play` adds the round play button (a link around it is the
-// caller's). Decorative: the words beside it carry the meaning, so alt is empty.
+// from the mark on a stone ground) with the series' book or title set in Auburn Stone, so a sermon
+// with no picture at all looks like series art, not a missing picture (block polish, 2026-10-18):
+//   - the ground is one of three stone tiles (navy, deep sky, green; scripts/gen-stones.mjs), picked
+//     from the words, so every sermon in a series shares its series' colour and neighbours differ;
+//   - the letters take white, sky and gold in turn, as the footer's Auburn does (each at least 3:1
+//     on all three grounds, large text);
+//   - the size follows the word's length (a container unit), so Mark and Lamentations both fill it.
+// `play` adds the round play button (a link around it is the caller's). Decorative: the words beside it carry the meaning, so alt is empty.
 import SanityImage from '@/components/SanityImage.astro';
 import PlayMark from './PlayMark.astro';
 import { MARKER } from '@/components/home/stones.generated';
@@ -17,6 +22,8 @@ interface Props {
   art?: unknown;
   /** The words on the stones when there is no picture. */
   word?: string | null;
+  /** What picks the ground: the series title, so a series card and its sermons match. */
+  seed?: string | null;
   play?: boolean;
   width?: number;
   sizes?: string;
@@ -26,6 +33,7 @@ const {
   sermon,
   art,
   word,
+  seed,
   play = false,
   width = 720,
   sizes = '(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw',
@@ -35,7 +43,21 @@ const picked = [sermon?.image, sermon?.series?.art, art].find(
   (img) => (img as { asset?: unknown } | null | undefined)?.asset,
 ) as SanityImageObject | undefined;
 const thumb = !picked ? sermonVideo(sermon?.videoUrl)?.thumbnailUrl : undefined;
-const blankWord = word ?? sermon?.series?.title ?? null;
+const blankWord = (word ?? sermon?.series?.title ?? '').trim();
+const GROUNDS = ['navy', 'deep', 'green'] as const;
+const hash = [...(seed ?? sermon?.series?.title ?? blankWord)].reduce(
+  (h, c) => (h * 31 + c.charCodeAt(0)) >>> 0,
+  9,
+);
+const ground = GROUNDS[hash % GROUNDS.length];
+// The longest word decides the size (Auburn Stone is about 0.6em a letter, so 120 / letters fills
+// about three quarters of the width); a title of several words is set smaller so it fits on two
+// or three lines under the steps.
+const words = blankWord.split(/\s+/).filter(Boolean);
+const longest = Math.max(4, ...words.map((w) => w.length));
+const size = Math.max(7, Math.min(22, Math.round((words.length > 1 ? 80 : 120) / longest)));
+let k = 0;
+const letters = [...blankWord].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k++ % 3 }));
 ---
 
 {picked ? (
@@ -65,13 +87,17 @@ const blankWord = word ?? sermon?.series?.title ?? null;
     {play && <PlayMark />}
   </span>
 ) : (
-  <span class="c-art c-art--blank" aria-hidden="true">
+  <span class:list={['c-art c-art--blank', `c-art--${ground}`]} aria-hidden="true">
     <svg viewBox="0 0 78 36" width="78" height="36" focusable="false">
       {MARKER.map((s) => (
         <path d={s.d} fill={s.fill} />
       ))}
     </svg>
-    {blankWord && <span class="c-art__word">{blankWord}</span>}
+    {blankWord && (
+      <span class="c-art__word" style={`--word: ${size}cqi`}>
+        {letters.map(({ c, i }) => (i < 0 ? ' ' : <span class={`w${i}`}>{c}</span>))}
+      </span>
+    )}
     {play && <PlayMark />}
   </span>
 )}

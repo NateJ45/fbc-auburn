@@ -21,7 +21,7 @@ const meta = [
 
 <li class="c-card">
   <a href={seriesHref(s.slug)}>
-    <SermonArt art={s.art} word={s.book || s.title} />
+    <SermonArt art={s.art} word={s.book || s.title} seed={s.title} />
     <Title class="c-card__title">{s.title}</Title>
     <p class="c-meta">{meta}</p>
   </a>
