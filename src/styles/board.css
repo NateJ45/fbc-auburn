@@ -1,0 +1,233 @@
+/* Safe to edit by hand.
+   Board E's grammar, shared by Home and the inner pages (2026-10-17). Imported by SectionLabel,
+   BoardRule and BoardPageHead (src/components/home/), so it ships on any page that uses them.
+   Home's own layout stays in home-board.css.
+
+   The inner pages, in one place (main:has(.board-head), so Home is never touched):
+   - white ground: the content cadence's tinted bands are white, and sections are separated by a
+     rule of three stepping stones and a hairline (BoardRule) instead of a change of colour;
+   - one left edge: every section's container, the page head and the closing band sit on the
+     same gutter as the header and footer (20px below 960px);
+   - one stone moment: the page head's mosaic title, or the mark / baptism drawing further down
+     (BoardPageHead `quiet`); the closing band no longer repeats the mark (the footer has it).
+
+   Colours read the theme tokens (not fixed values like Home's), so the forced-dark contrast
+   suites still see readable pairs. Light only for visitors (rule 3). */
+
+/* ---- Section labels: small caps, a hairline, led by three stepping stones ---------------- */
+.hb-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 28px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hb-label-color, var(--heading-solid));
+}
+.hb-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--hb-line, var(--border));
+}
+.hb-band .hb-label::after {
+  background: rgb(23 26 38 / 0.14);
+}
+.hb-marker {
+  flex: none;
+  width: 78px;
+  height: 36px;
+}
+
+/* ---- The gutter: one value for the page head, the rules and every section's container ------- */
+main:has(.board-head) {
+  --board-gutter: var(--spacing-l);
+  background: var(--background);
+}
+@media (max-width: 960px) {
+  main:has(.board-head) {
+    --board-gutter: 20px;
+  }
+}
+main:has(.board-head) :where(.max-w-content.px-m, .max-w-content.px-l) {
+  padding-inline: var(--board-gutter);
+}
+
+/* ---- Page head ------------------------------------------------------------------------------ */
+/* The masthead's hairline runs the full width of the words and the picture: drawn as a 1px
+   background inside the gutters, so a side picture does not break it. */
+.board-head__inner {
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding: 66px var(--board-gutter) 72px;
+  background: linear-gradient(var(--border), var(--border)) no-repeat;
+  background-size: calc(100% - 2 * var(--board-gutter)) 1px;
+  background-position: var(--board-gutter) 36px;
+}
+.board-head__inner > * {
+  min-width: 0;
+}
+@media (min-width: 961px) {
+  .board-head__inner--side {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: 64px;
+    align-items: end;
+  }
+}
+.board-head .stone-heading,
+.board-head__title {
+  margin: 0;
+  font-size: clamp(56px, 8.4vw, 128px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.board-head__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--heading-solid);
+  text-wrap: balance;
+}
+.board-head__sub {
+  max-width: 36rem;
+  margin: 22px 0 0;
+  font-size: clamp(19px, 1.1rem + 0.3vw, 21px);
+  line-height: 1.55;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+.board-head__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-top: 30px;
+}
+.board-head__photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--muted);
+}
+.board-head__photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.board-head__icon {
+  display: block;
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  object-position: left bottom;
+}
+@media (max-width: 960px) {
+  .board-head__inner {
+    padding-bottom: 48px;
+  }
+  .board-head__photo,
+  .board-head__icon {
+    margin-top: 32px;
+  }
+  .board-head__icon {
+    width: 112px;
+    height: 112px;
+  }
+}
+
+/* ---- Section rule (BoardRule): the marker and a hairline, at the top of each section --------- */
+.board-rule-wrap {
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding: 24px var(--board-gutter, var(--spacing-l)) 0;
+  background: var(--background);
+}
+.board-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.board-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+/* The section under a rule starts close to it: the rule is its label. */
+main:has(.board-head) .board-rule-wrap + section,
+main:has(.board-head) .board-rule-wrap + * > section {
+  padding-top: 0;
+}
+main:has(.board-head) .board-rule-wrap + section > :first-child,
+main:has(.board-head) .board-rule-wrap + * > section > :first-child {
+  padding-top: 28px;
+}
+
+/* ---- White ground: the cadence's tinted bands, the Walk and the closing band ------------------ */
+main:has(.board-head) section.bg-muted {
+  background-color: var(--background);
+}
+
+/* ---- Closing band: on the left edge, no second mark, the label rule above it -------------------- */
+main:has(.board-head) .final-cta--light {
+  border-top: 0;
+}
+main:has(.board-head) .final-cta--light > div {
+  text-align: left;
+}
+main:has(.board-head) .final-cta--light .final-cta__mark {
+  display: none;
+}
+main:has(.board-head) .final-cta--light p {
+  margin-inline: 0;
+}
+main:has(.board-head) .final-cta--light .flex {
+  justify-content: flex-start;
+}
+main:has(.board-head) .final-cta__h2 {
+  max-width: 22ch;
+  margin-inline: 0;
+  font-size: clamp(34px, 3.6vw, 48px);
+}
+
+/* ---- One left edge for narrow columns: a rich text block's centred reading column moves onto the
+   page's edge (the words keep their measure). ---- */
+main:has(.board-head) section > div.mx-auto.py-section-lg:not(.max-w-content) {
+  max-width: var(--container-content);
+  padding-inline: var(--board-gutter);
+}
+main:has(.board-head) section > div.mx-auto.py-section-lg:not(.max-w-content) > * {
+  max-width: 48rem;
+  margin-inline: 0;
+  text-align: left;
+}
+
+/* ---- Pictures: board E's 20px frame, not the first pass's arch ------------------------------- */
+main:has(.board-head) .auburn-arch {
+  aspect-ratio: 4 / 3;
+  max-height: 460px;
+  border-radius: 20px;
+}
+
+/* ---- Centred heads (the Walk, the steps rail) move onto the page's edge ---------------------- */
+main:has(.board-head) .steps-rail__intro,
+main:has(.board-head) .steps-rail__intro.text-center {
+  margin-inline: 0;
+  text-align: left;
+}
+main:has(.board-head) .steps-rail__intro > * {
+  margin-inline: 0;
+}
+
+/* ---- The faint background path stays off the board pages: their stone moment is the page head
+   or the mark, and its stones drifted under body text. (motion.ts still lays it; it is hidden.) */
+main:has(.board-head) > svg.bgpath {
+  display: none;
+}

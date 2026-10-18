@@ -1,0 +1,27 @@
+---
+// Safe to edit by hand
+// Board E on the inner pages: the section label's three stepping stones and its hairline, drawn
+// at the top of each section by SectionRenderer (it replaced the gold-stone divider on
+// 2026-10-17). Home's labels carry words; an inner page's sections carry their own headings, so
+// the rule is the marker and the line only. Marker colours follow the path down the page
+// (0 sky, 1 green, 2 gold, 3 red), the same as Home's labels. Decorative: aria-hidden.
+import '@/styles/board.css';
+import { MARKERS } from './stones.generated';
+
+interface Props {
+  /** 0 sky, 1 green, 2 gold, 3 red; wraps past 3. */
+  marker: number;
+}
+const { marker } = Astro.props;
+const stones = MARKERS[((marker % MARKERS.length) + MARKERS.length) % MARKERS.length];
+---
+
+<div class="board-rule-wrap" aria-hidden="true">
+  <div class="board-rule">
+    <svg class="hb-marker" viewBox="0 0 78 36" width="78" height="36" focusable="false">
+      {stones.map((s) => (
+        <path d={s.d} fill={s.fill} />
+      ))}
+    </svg>
+  </div>
+</div>

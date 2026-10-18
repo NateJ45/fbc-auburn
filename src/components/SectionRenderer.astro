@@ -13,7 +13,6 @@
 import Hero from '@/components/Hero.astro';
 import FinalCta from '@/components/FinalCta.astro';
 import StatsRow from '@/components/StatsRow.astro';
-import SectionDivider from '@/components/SectionDivider.astro';
 import RichTextSection from '@/components/sections/RichTextSection.astro';
 import ImageText from '@/components/sections/ImageText.astro';
 import GalleryGrid from '@/components/sections/GalleryGrid.astro';
@@ -33,6 +32,8 @@ import EmbedSection from '@/components/sections/EmbedSection.astro';
 import DynamicList from '@/components/sections/DynamicList.astro';
 import StepsRail from '@/components/sections/StepsRail.astro';
 import WalkSection from '@/components/sections/WalkSection.astro';
+import SectionDivider from '@/components/SectionDivider.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
 import { classifySections } from '@/lib/sectionCadence';
 import type { PageBuilderBlock } from '@/lib/pageBuilder.types';
 import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
@@ -59,6 +60,21 @@ interface Props {
 const { sections = [], idPrefix = 'section', editDoc } = Astro.props as Props;
 const rows = classifySections<PageBuilderBlock>(sections as PageBuilderBlock[], idPrefix);
 
+// FBC Auburn, board E on the inner pages (2026-10-17). Every section after the hero opens with a
+// rule of three stepping stones and a hairline (BoardRule), which replaced the gold-stone divider
+// that marked a change of band colour (the ground is white now; src/styles/board.css). Marker
+// colours follow the path down the page: the page head's label is 0, the first rule 1.
+// One stone moment per page (PRODUCT.md): a page that draws the mark or the baptism picture
+// further down gets a plain title rather than the mosaic one.
+const quietTitle = (sections as PageBuilderBlock[]).some(
+  (b) =>
+    b?._type === 'imageTextSection' &&
+    ((b as { art?: string }).art === 'mark' || (b as { art?: string }).art === 'baptism'),
+);
+const UNRULED = new Set(['heroSection', 'spacerSection']);
+let ruleCount = 0;
+const markers = rows.map(({ block }) => (UNRULED.has(block._type) ? -1 : ++ruleCount));
+
 // A real element in preview, nothing at all on the live site. The wrapper must
 // NOT be `display: contents`: the overlay outlines the element's rect, and a
 // contents element has none. A plain block-level div around a full-width
@@ -68,9 +84,9 @@ const wrapAttrs = (key: string | undefined) =>
   editDoc && key ? { 'data-sanity': sectionEditAttr(editDoc, key) } : {};
 ---
 
-{rows.map(({ block: s, surface, insertDividerBefore, headingId }) => (
+{rows.map(({ block: s, surface, headingId }, rowIndex) => (
   <>
-    {insertDividerBefore && <SectionDivider />}
+    {markers[rowIndex] > 0 && <BoardRule marker={markers[rowIndex]} />}
 
     <Wrap {...wrapAttrs((s as { _key?: string })._key)}>
       {s._type === 'heroSection' ? (
@@ -84,6 +100,7 @@ const wrapAttrs = (key: string | undefined) =>
           scriptAccent={s.scriptAccent}
           size={s.size ?? 'short'}
           icon={s.icon}
+          quiet={quietTitle}
           headingId={headingId}
         />
       ) : s._type === 'ctaBandSection' ? (

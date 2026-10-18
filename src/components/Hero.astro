@@ -71,6 +71,8 @@ interface Props {
   variant?: SiteLayout['hero'];
   /** FBC Auburn: a stone icon above an inner page's title (ArchHero). */
   icon?: string | null;
+  /** FBC Auburn: the page has its own stone moment, so the title is set plain (BoardPageHead). */
+  quiet?: boolean;
 }
 
 const {
@@ -87,6 +89,7 @@ const {
   scriptAccent,
   variant,
   icon,
+  quiet = false,
 } = Astro.props as Props;
 
 const heroVariant = variant ?? layout.hero;
@@ -257,6 +260,7 @@ const wrapperHeight =
     headingId={headingId}
     size={size}
     icon={icon}
+    quiet={quiet}
   />
 ) : hasImage ? (
   <section
