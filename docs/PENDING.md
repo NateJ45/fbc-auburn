@@ -191,7 +191,9 @@ safe without them: each feature skips quietly until its secret exists.
    token on `NateJ45/fbc-auburn` only, **Actions: Read and write**. Turns on "The last update didn't go through" and
    Try again in the Studio. Steps: OPERATIONS.md, "When an update does not go through".
 
-Then, signed in to `/studio` (nobody has yet), check and close: a hand tick on the Sunday checklist saves and the
+A first signed-in walkthrough ran on 2026-10-18 (Home, the checklist, the template and section pickers, saved
+sections, the Sermons, People and Downloads panes, Quick update, Checkup, Site Guide; fixes in #50 to #52), and
+Home and Quick update were checked signed in at 390px (no sideways scroll). Still to check, signed in: a hand tick on the Sunday checklist saves and the
 list is fresh next Monday; the Quick update tool at 375px on a phone (each of the three forms publishes, the notice
 shows on the site after the deploy); a scheduled draft publishes itself and a Deploy run follows; an empty list (for
 example Question groups, if it is empty) shows its note and "Create the first one"; and, once a deploy fails for
@@ -251,8 +253,8 @@ and the tour, checked signed in at `/studio` in light and dark. Still to do:
 - **Tutorial videos**, recorded at the end of the site build once the Studio stops changing.
 - **Guide recipes in the church's own jobs** (sermons, events, the bulletin) as those features land; the guides
   are still the starter's generic set.
-- **The signed-in Studio at 375px**: the Home grid drops to one column by design, but the desktop browser used for
-  the check could not be narrowed.
+- **The signed-in Studio at 375px**: checked 2026-10-18 at 390px in a frame (Home and Quick update fit, no sideways
+  scroll). Submitting a Quick update form on a phone is still untested.
 
 ### 1g. The church-speaking Studio: the signed-in click-through (opened 2026-10-18)
 
