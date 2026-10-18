@@ -10,6 +10,7 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
 | Fact                 | Field (Site settings, group "Church facts")       | Confirmed flag                 |
 | -------------------- | ------------------------------------------------- | ------------------------------ |
 | Address              | `churchAddress` { street, city, state, zip }      | `churchAddress.confirmed`      |
+| How to find us       | `churchAddress.findUs` (one optional sentence)    | n/a (Jacob's own words)        |
 | Service times        | `serviceTimes[]` { label, day, time (24h), note } | each row's `confirmed`         |
 | Phone                | `phone` (Identity & contact)                      | `phoneConfirmed`               |
 | Year founded         | `foundedYear`                                     | `foundedConfirmed`             |
@@ -30,8 +31,17 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
 `NotConfirmed.astro` is the small inline tag from the mockups. Pass the fact's flag:
 `<NotConfirmed confirmed={facts.founded?.confirmed} />`. It renders nothing once the flag is true,
 so the tag disappears on its own when someone ticks the box. Unconfirmed facts are also kept out of
-the site-wide JSON-LD (`src/lib/schemas.ts` merges `churchJsonLd`): no street address or phone is
-published to search engines until it is confirmed.
+the site-wide JSON-LD (`src/lib/schemas.ts` merges `churchJsonLd`): no street address, phone or
+service time is published to search engines until it is confirmed. The JSON-LD type is `Church`
+(Site settings > Business type, empty means Church; no `priceRange`), and each confirmed
+gathering is an `Event` with a weekly `eventSchedule` (2026-10-17).
+
+`/sunday.ics` (`src/pages/sunday.ics.ts`, `sundayIcs`) is "Add Sundays to my calendar": one weekly
+event per confirmed Sunday gathering, from this Sunday, at the address. The This Sunday card links
+it only once a Sunday time is confirmed.
+
+`churchAddress.findUs` is Jacob's optional "how to find us" sentence (parking, which door). It
+shows on the This Sunday card and in the footer under the address; empty hides it.
 
 ## Drop-in components (`src/components/church/`)
 

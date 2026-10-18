@@ -163,6 +163,10 @@ const footerFacts = await getChurchFacts();
 const footerSundays = footerFacts.serviceTimes.filter((t) => t.dayIndex === 0);
 const footerSundaysConfirmed = footerSundays.every((t) => t.confirmed);
 const footerAddress = footerFacts.address;
+// The closing invitation (Home audit research, 2026-10-17): the footer's first row is the last
+// thing on every page, so it ends with the two next steps a stranger can take. The visit button
+// goes where the header's button goes, so a build without Sanity never links to a missing page.
+const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
 ---
 
 <footer class="site-footer bg-muted text-foreground">
@@ -173,6 +177,17 @@ const footerAddress = footerFacts.address;
     <div>
       <img src={markAsset.src} width={84} height={84} alt="" loading="lazy" decoding="async" />
       {siteSettings?.tagline && <p class="site-footer__tagline">{siteSettings.tagline}</p>}
+      <p class="site-footer__invite">Come along on a Sunday, or ask us anything first.</p>
+      <div class="site-footer__actions">
+        {visitCta && (
+          <a class="btn-auburn btn-auburn--primary" href={visitCta.href}>
+            {visitCta.label}
+          </a>
+        )}
+        <a class="btn-auburn btn-auburn--secondary" href="/contact/">
+          Ask a question
+        </a>
+      </div>
     </div>
     {footerSundays.length > 0 && (
       <div>
@@ -196,6 +211,12 @@ const footerAddress = footerFacts.address;
           <br />
           {footerAddress.city}, Ohio
           <br />
+          {footerAddress.findUs && (
+            <>
+              <span class="site-footer__small">{footerAddress.findUs}</span>
+              <br />
+            </>
+          )}
           <a href={footerAddress.mapsUrl} rel="noopener" target="_blank">
             Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
           </a>

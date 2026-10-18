@@ -122,7 +122,14 @@ test('This week: services merged per day, calendar events added, duplicates and 
   const events = parseIcs(
     readFileSync(new URL('../../tests/fixtures/church-calendar.ics', import.meta.url), 'utf8'),
   );
-  const rows = thisWeek(f, events, WEDNESDAY);
+  const all = thisWeek(f, events, WEDNESDAY);
+  // A cancelled event is kept, flagged, so Home can strike it through instead of leaving a gap.
+  const cancelled = all.filter((r) => r.cancelled);
+  assert.deepEqual(
+    cancelled.map((r) => [r.when, r.dateLabel, r.what]),
+    [['Friday', 'October 23', 'Cancelled supper']],
+  );
+  const rows = all.filter((r) => !r.cancelled);
   assert.deepEqual(
     rows.map((r) => [r.when, r.dateLabel, r.what, r.time, r.confirmed]),
     [
@@ -155,12 +162,53 @@ test('structured data carries only confirmed facts', async () => {
   const ld = churchJsonLd(resolveChurchFacts(SETTINGS));
   assert.equal((ld.address as { streetAddress: string }).streetAddress, '1 Main St');
   assert.equal(ld.telephone, '(513) 555-0100');
+  // Confirmed services only (Sunday School is unconfirmed in SETTINGS), as weekly schedules.
+  const events = ld.event as {
+    name: string;
+    eventSchedule: { byDay: string; startTime: string };
+  }[];
+  assert.deepEqual(
+    events.map((e) => [e.name, e.eventSchedule.byDay, e.eventSchedule.startTime]),
+    [
+      ['Worship', 'https://schema.org/Sunday', '11:00'],
+      ['Bible study', 'https://schema.org/Wednesday', '18:00'],
+    ],
+  );
   const unconfirmed = churchJsonLd(
     resolveChurchFacts({
       ...SETTINGS,
       phoneConfirmed: false,
       churchAddress: { ...SETTINGS.churchAddress, confirmed: false },
+      serviceTimes: SETTINGS.serviceTimes.map((s) => ({ ...s, confirmed: false })),
     }),
   );
   assert.deepEqual(unconfirmed, {});
+});
+
+test('sundayIcs: confirmed Sunday times only, weekly, from this Sunday', async () => {
+  const { sundayIcs } = await import('./church-facts.ts');
+  const facts = resolveChurchFacts(SETTINGS);
+  const ics = sundayIcs(
+    { ...facts, title: 'First Baptist Church of Auburn' },
+    WEDNESDAY,
+    'https://example.org',
+  );
+  assert.ok(ics, 'Worship is confirmed, so there is a calendar');
+  // Worship (11:00, confirmed) only; Sunday School is unconfirmed in SETTINGS.
+  assert.equal((ics.match(/BEGIN:VEVENT/g) ?? []).length, 1);
+  assert.match(ics, /DTSTART;TZID=America\/New_York:20261025T110000/);
+  assert.match(ics, /RRULE:FREQ=WEEKLY;BYDAY=SU/);
+  // Commas in calendar text are escaped with a backslash (RFC 5545).
+  assert.ok(ics.includes('SUMMARY:Worship\\, First Baptist Church of Auburn'));
+  assert.ok(ics.includes('LOCATION:1 Main St\\, Hamilton\\, OH 45013'));
+  assert.ok(ics.includes('\r\n'), 'CRLF line endings');
+  const none = sundayIcs(
+    resolveChurchFacts({
+      ...SETTINGS,
+      serviceTimes: SETTINGS.serviceTimes.map((s) => ({ ...s, confirmed: false })),
+    }),
+    WEDNESDAY,
+    'https://example.org',
+  );
+  assert.equal(none, null, 'no confirmed Sunday time, no calendar');
 });

@@ -112,7 +112,7 @@
   display: block;
   margin: 0.06em 0 0 -0.04em;
   font-family: 'Auburn Stone', 'Young Serif', serif;
-  font-size: clamp(70px, 13.2vw, 200px);
+  font-size: calc(clamp(70px, 13.2vw, 200px) * var(--hb-word-scale, 1));
   line-height: 0.84;
   letter-spacing: -0.035em;
 }
@@ -262,6 +262,16 @@
   margin-top: 22px;
   padding-top: 18px;
   border-top: 1px solid rgb(255 255 255 / 0.22);
+}
+.hb-sunday__cal {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  font-size: 15px;
+}
+/* Jacob's "how to find us" line: parking, the door (Church facts > address; empty hides it). */
+.hb-sunday__findus {
+  color: #dbeaf8;
 }
 .hb-sunday__where p {
   margin: 0;
@@ -437,6 +447,141 @@ html.motion .hb-path.is-laid .hb-stone {
   }
 }
 
+/* ---- Your first Sunday: the walk (Home audit research, 2026-10-17) ------------------------------
+   Numbered stones in the path's colours joined by gold stepping-stone dashes: across on desktop,
+   down a rail on phones. */
+.hb-walk__intro {
+  max-width: 40rem;
+  margin: 0 0 36px;
+  font-size: 20px;
+  line-height: 1.55;
+  color: var(--hb-body);
+}
+.hb-walk__steps {
+  display: grid;
+  grid-template-columns: repeat(var(--hb-walk-n, 4), minmax(0, 1fr));
+  gap: 28px 36px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hb-walk__step {
+  position: relative;
+}
+.hb-walk__stone {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 56px;
+  margin-bottom: 18px;
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1;
+  color: #ffffff;
+}
+/* Each stone its own hand-laid shape, in the story's order. */
+.hb-walk__stone--0 {
+  border-radius: 44% 56% 48% 52% / 54% 46% 56% 44%;
+  background: #96c3ea;
+  color: #1d4f7c;
+}
+.hb-walk__stone--1 {
+  border-radius: 54% 46% 56% 44% / 46% 54% 44% 56%;
+  background: #2c5b3a;
+}
+.hb-walk__stone--2 {
+  border-radius: 48% 52% 42% 58% / 56% 48% 52% 44%;
+  background: #e8a93a;
+  color: #171a26;
+}
+.hb-walk__stone--3 {
+  border-radius: 56% 44% 52% 48% / 44% 56% 46% 54%;
+  background: #c4401f;
+}
+/* Gold stepping-stone dashes from each stone to the next. */
+.hb-walk__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 76px;
+  right: -20px;
+  height: 7px;
+  border-radius: 4px;
+  background: repeating-linear-gradient(90deg, #e8a93a 0 12px, transparent 12px 22px);
+}
+.hb-walk__when {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--auburn-deep);
+}
+.hb-walk__title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--hb-ink);
+}
+.hb-walk__body {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--hb-body);
+}
+.hb-walk__link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  font-weight: 600;
+  color: var(--link);
+  text-underline-offset: 3px;
+}
+.hb-walk__end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 40px;
+}
+.hb-walk__endline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--hb-ink);
+}
+@media (max-width: 960px) {
+  .hb-walk__steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .hb-walk__step {
+    display: grid;
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 0 18px;
+    padding-bottom: 28px;
+  }
+  .hb-walk__stone {
+    margin-bottom: 0;
+  }
+  .hb-walk__step:not(:last-child)::after {
+    top: 66px;
+    bottom: 6px;
+    left: 27px;
+    right: auto;
+    width: 7px;
+    height: auto;
+    background: repeating-linear-gradient(180deg, #e8a93a 0 12px, transparent 12px 22px);
+  }
+  .hb-walk__when {
+    margin-top: 4px;
+  }
+}
+
 /* ---- Who we are: the photo mosaic ------------------------------------------------------------- */
 .hb-section {
   padding-bottom: 80px;
@@ -478,6 +623,21 @@ html.motion .hb-path.is-laid .hb-stone {
 .hb-ph--big {
   grid-column: span 2;
   grid-row: span 2;
+}
+/* Fewer photos, no holes. The full set is the big photo (2x2), the note (2x1) and two small
+   photos under the note. With one small photo it takes both columns; with none the note stands
+   beside the big photo at full height; with no big photo the note spans the row. */
+.hb-mosaic[data-small='1'] .hb-ph:not(.hb-ph--big) {
+  grid-column: span 2;
+}
+.hb-mosaic[data-big='yes'][data-small='0'] .hb-note {
+  grid-row: span 2;
+}
+.hb-mosaic[data-big='no'] .hb-note {
+  grid-column: 1 / -1;
+}
+.hb-mosaic[data-big='no'] .hb-ph {
+  grid-column: span 2;
 }
 .hb-note {
   grid-column: span 2;
@@ -582,7 +742,33 @@ html.motion .hb-path.is-laid .hb-stone {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.5;
+}
+/* A scrim under the words only, so a real photo keeps its colour (it was dimmed to 50%). */
+.hb-watch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(23 26 38 / 0.85),
+    rgb(23 26 38 / 0.35) 50%,
+    rgb(23 26 38 / 0) 78%
+  );
+}
+.hb-watch__text {
+  z-index: 1;
+}
+.hb-watch__live {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #c4401f;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .hb-watch__text {
   position: absolute;
@@ -682,13 +868,13 @@ html.motion .hb-path.is-laid .hb-stone {
   .hb-place {
     grid-column: 1;
   }
+  /* On phones the fact line under the welcome names the road a moment later, so the place line
+     would only repeat it. */
   .hb-place {
-    grid-row: 3;
-    justify-self: start;
-    font-size: 11px;
+    display: none;
   }
   .hb-word {
-    font-size: 21vw;
+    font-size: calc(21vw * var(--hb-word-scale, 1));
   }
   .hb-band {
     padding: 48px 0 56px;
@@ -723,8 +909,27 @@ html.motion .hb-path.is-laid .hb-stone {
   .hb-ways {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* The line saying where it streams stays on phones too (it was hidden). */
   .hb-watch__sub {
-    display: none;
+    display: block;
+    font-size: 14px;
+  }
+  .hb-watch__play {
+    width: 48px;
+    height: 48px;
+  }
+}
+/* Phones: the two hero buttons stack full width, the usual pattern on the best church sites. */
+@media (max-width: 520px) {
+  .hb-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hb-actions .btn-auburn {
+    width: 100%;
+  }
+  .hb-textlink {
+    justify-content: center;
   }
 }
 @media (max-width: 420px) {
@@ -741,6 +946,67 @@ html.motion .hb-path.is-laid .hb-stone {
   .hb-way .stone-icon {
     width: 84px;
     height: 84px;
+  }
+}
+
+/* ---- The phone Sunday bar (Home audit research, 2026-10-17) ------------------------------------
+   Docks to the bottom once the This Sunday card has scrolled away (script in HomeHero.astro). It
+   replaces the back-to-top button on Home phones. White, with a thin edge in the mark's colours. */
+.hb-sundaybar {
+  display: none;
+}
+@media (max-width: 767px) {
+  .hb-sundaybar:not([hidden]) {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px max(16px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
+    border-top: 3px solid transparent;
+    border-image: linear-gradient(
+        90deg,
+        #96c3ea 0 25%,
+        #2c5b3a 25% 50%,
+        #e8a93a 50% 75%,
+        #c4401f 75% 100%
+      )
+      1;
+    background: #ffffff;
+    box-shadow: 0 -12px 30px -24px rgb(23 26 38 / 0.45);
+  }
+  .hb-sundaybar__times {
+    flex: 1;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--auburn-deep);
+  }
+  .hb-sundaybar__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    color: var(--link);
+    text-underline-offset: 3px;
+  }
+  .hb-sundaybar .hb-sundaybar__visit {
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  body:has(.hb-sundaybar) button[aria-label='Back to top'] {
+    display: none;
+  }
+  /* Room under the footer's last line for the bar, should it ever overlap. */
+  body:has(.hb-sundaybar:not([hidden])) .site-footer {
+    padding-bottom: 72px;
   }
 }
 

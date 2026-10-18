@@ -31,6 +31,13 @@ export type IconCardImage = {
   _type: 'image';
 };
 
+export type LastMessage = {
+  title?: string;
+  passage?: string;
+  date?: string;
+  videoUrl?: string;
+};
+
 export type Photo = {
   asset?: SanityImageAssetReference;
   media?: unknown; // Unable to locate the referenced type "photo.media" in schema
@@ -424,6 +431,7 @@ export type SiteSettings = {
     _key: string;
   }>;
   businessType?:
+    | 'Church'
     | 'LocalBusiness'
     | 'ProfessionalService'
     | 'HomeAndConstructionBusiness'
@@ -477,6 +485,7 @@ export type SiteSettings = {
     city?: string;
     state?: string;
     zip?: string;
+    findUs?: string;
     confirmed?: boolean;
   };
   serviceTimes?: Array<{
@@ -769,6 +778,8 @@ export type StepsRailSection = {
       | 'blocks';
     title?: string;
     body?: string;
+    gathering?: 'none' | 'first' | 'second';
+    place?: string;
     times?: Array<{
       time?: string;
       label?: string;
@@ -791,6 +802,7 @@ export type WatchSection = {
   heading?: string;
   body?: string;
   link?: CtaBlock;
+  lastMessage?: LastMessage;
   poster?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -2015,6 +2027,7 @@ export type Geopoint = {
 export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | IconCardImage
+  | LastMessage
   | Photo
   | Redirect
   | SectionPreset

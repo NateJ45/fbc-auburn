@@ -1,5 +1,24 @@
 # Change history
 
+_2026-10-17: Home after the church-site research: Your first Sunday, the phone Sunday bar._
+
+**Decision.** Four research passes over about 100 church sites (first screen, first visit,
+events and watch, closing and craft); recorded in `docs/design-directions/2026-10-17-fbc-auburn/README.md`.
+Home is now hero, Your first Sunday (`HomeWalk.astro`, from a `stepsRailSection`, whose steps
+gained `gathering` and `place`; `gathering` is in NON_STEGA_FIELDS), Who we are, This week beside
+Last Sunday, Other ways in. Through the week is retired (`scripts/content/home-first-sunday.mjs`,
+which also folded the footer's Connect column into Visit). This week shows the weekday rhythm
+from Church facts, dated calendar events (a cancelled one struck through: `occurrences()` takes
+`includeCancelled`, `WeekRow.cancelled`), and an empty-state line. The Watch card names last
+Sunday's message for 8 days from `watchSection.lastMessage` and shows "Live now" during worship;
+its poster is no longer dimmed. Header: the round mark alone on Home below 1280px until the hero
+lockup passes; the menu opens on the Sunday times and address. Phones get a Sunday bar once the
+This Sunday card scrolls away (it replaces back-to-top on Home). The footer's first row is the
+closing invitation (Plan your visit, Ask a question). JSON-LD is a `Church` with weekly service
+schedules; `/sunday.ics`; `churchAddress.findUs`; `SanityImage` aims CSS crops at the hotspot;
+the masthead scales for long words; the photo grid adapts to 0 to 3 photos; the card tile is
+preloaded.
+
 _2026-10-17: Home refined after the audit: one stone system, the path ends at the card._
 
 **Decision.** Recorded in `docs/design-directions/2026-10-17-fbc-auburn/README.md`.

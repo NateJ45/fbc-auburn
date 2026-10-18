@@ -7,6 +7,16 @@ Nothing here is site code; `brand/brand.config.json` and `src/**` are untouched.
 
 ## Decision
 
+2026-10-17 (late night): **Home after the church-site research** (four agents, about 100 church
+sites). Nathan asked for anything research found better. Home now runs hero, **Your first
+Sunday** (four numbered stones in the path's colours joined by gold steps; modelled on Jasper's
+First Baptist and Reynolda; the gathering steps take their times from Church facts), Who we
+are, This week beside Last Sunday, Other ways in, and a footer whose first row is the closing
+invitation. Through the week is gone (its three facts moved into the walk, This week and the Ask
+card). Phones get a Sunday bar after the card; the header shows the name once; the menu opens on
+when and where. Not copied, by the research's advice: map embeds, forms on Home, Facebook embeds,
+scroll reveals that hide text, carousels.
+
 2026-10-17 (night): **board E refined after a Home audit** (nine reviewers, one per section plus
 the motif and the whole page). The motif stays and becomes one system:
 

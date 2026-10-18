@@ -132,6 +132,32 @@ export const watchSection = defineType({
     }),
     defineField({ name: 'body', title: 'A sentence or two', type: 'text', rows: 3 }),
     defineField({ name: 'link', title: 'Link (optional)', type: 'ctaBlock' }),
+    // Home audit research (2026-10-17): the card should say WHICH message. Facebook has no feed a
+    // site can read, so this is a 30-second entry after Sunday. Shown for 8 days after its date;
+    // then the card falls back to the words above.
+    defineField({
+      name: 'lastMessage',
+      title: "Last Sunday's message (optional)",
+      type: 'object',
+      description:
+        'Fill this in after Sunday and the card names the message for the week after. Leave it and the card shows the words above.',
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({ name: 'title', title: 'Title', type: 'string' }),
+        defineField({
+          name: 'passage',
+          title: 'Bible passage',
+          type: 'string',
+          description: 'Like "Mark 4:1-20".',
+        }),
+        defineField({ name: 'date', title: 'Date it was preached', type: 'date' }),
+        defineField({
+          name: 'videoUrl',
+          title: 'Link to the video (Facebook or YouTube)',
+          type: 'url',
+        }),
+      ],
+    }),
     defineField({
       name: 'poster',
       title: 'Picture for the video card (optional)',

@@ -22,6 +22,7 @@ import SundayCard from './SundayCard.astro';
 import SundayFacts from './SundayFacts.astro';
 import StonePath from './StonePath.astro';
 import { getChurchFacts } from '@/lib/church-data';
+import { timesPhrase } from '@/lib/church-facts';
 import { ctaHref } from '@/lib/cta-href';
 import { splitStega } from '@/lib/preview-stega';
 import type { ProjectedHeroSection } from '@/lib/pageBuilder.types';
@@ -36,11 +37,22 @@ const { block } = Astro.props;
 const { cleaned: word, encoded } = splitStega(block.headline || 'Auburn');
 let k = 0;
 const letters = [...word].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k++ % 4 }));
+// The masthead is set for a word of up to 7 letters ("Auburn" is 6). A longer word, should an
+// editor type one, scales the type down so it never runs off the screen.
+const longest = Math.max(1, ...word.split(/\s+/).map((w) => w.length));
+const wordScale = Math.min(1, 7 / longest).toFixed(3);
 const name = [splitStega(block.eyebrow ?? '').cleaned, word].filter(Boolean).join(' ');
 const primary = block.primaryCta;
 
 // The place line: the road (house number dropped), then the town and the state written out.
 const facts = await getChurchFacts();
+
+// The phone Sunday bar (Home audit research, 2026-10-17): once the This Sunday card has scrolled
+// away, a slim bar at the bottom keeps when, where and the visit button one tap away. Same facts
+// as the card; same visit link as the hero's own button.
+const barMinutes = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
+const barTimes = barMinutes.length ? `Sundays ${timesPhrase(barMinutes)}` : '';
+const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
 const STATES: Record<string, string> = { OH: 'Ohio' };
 const addr = facts.address;
 const place = addr
@@ -54,6 +66,15 @@ const place = addr
 const secondary = block.secondaryCta;
 ---
 
+<!-- The This Sunday card is the largest thing on the first screen and its stone ground is a CSS
+     background, which the browser finds late; fetch it early (Lighthouse: LCP 3.7s on mobile). -->
+<link
+  rel="preload"
+  as="image"
+  href="/textures/tile-deep.svg"
+  type="image/svg+xml"
+  fetchpriority="high"
+/>
 <section class="hb-hero" aria-labelledby="hb-h1">
   <div class="hb-wrap">
     <div class="hb-masthead">
@@ -68,7 +89,7 @@ const secondary = block.secondaryCta;
       />
       <h1 class="hb-h1" id="hb-h1" aria-label={name}>
         {block.eyebrow && <span class="hb-eyebrow">{block.eyebrow}</span>}{' '}
-        <span class="hb-word">
+        <span class="hb-word" style={`--hb-word-scale: ${wordScale}`}>
           {letters.map(({ c, i }) =>
             i < 0 ? (
               ' '
@@ -114,6 +135,20 @@ const secondary = block.secondaryCta;
   </div>
 </section>
 
+{barTimes && (
+  <div class="hb-sundaybar" data-sundaybar hidden>
+    <p class="hb-sundaybar__times hb-num">{barTimes}</p>
+    {facts.address && (
+      <a class="hb-sundaybar__link" href={facts.address.mapsUrl} rel="noopener" target="_blank">
+        Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
+      </a>
+    )}
+    <a class="btn-auburn btn-auburn--primary hb-sundaybar__visit" href={barVisitHref}>
+      Plan a visit
+    </a>
+  </div>
+)}
+
 <script is:inline>
   // Arm the stone path before first paint, then lay it. Only under
   // html.motion (set in BaseLayout's head unless reduced motion or ?still), so without JS or
@@ -149,4 +184,30 @@ const secondary = block.secondaryCta;
       io.observe(p);
     });
   })();
+</script>
+
+<script>
+  // The phone Sunday bar: shown once the This Sunday card has scrolled up out of view, hidden again
+  // while the footer (which carries its own invitation) is on screen. Two IntersectionObservers, no
+  // scroll listener. CSS shows it below 768px only (home-board.css).
+  const bar = document.querySelector<HTMLElement>('[data-sundaybar]');
+  const card = document.querySelector<HTMLElement>('[data-this-sunday]');
+  const footer = document.querySelector<HTMLElement>('.site-footer');
+  if (bar && card && 'IntersectionObserver' in window) {
+    let pastCard = false;
+    let footerIn = false;
+    const sync = () => {
+      bar.hidden = !(pastCard && !footerIn);
+    };
+    new IntersectionObserver(([e]) => {
+      pastCard = !e.isIntersecting && e.boundingClientRect.top < 0;
+      sync();
+    }).observe(card);
+    if (footer) {
+      new IntersectionObserver(([e]) => {
+        footerIn = e.isIntersecting;
+        sync();
+      }).observe(footer);
+    }
+  }
 </script>

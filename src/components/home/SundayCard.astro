@@ -11,7 +11,8 @@
 // Renders nothing when no Sunday gathering is set.
 import SundayWeather from '@/components/church/SundayWeather.astro';
 import { getChurchFacts } from '@/lib/church-data';
-import { thisSunday } from '@/lib/church-facts';
+import { sundayIcs, thisSunday } from '@/lib/church-facts';
+import { site } from '@/data/site';
 import { churchDataNow } from '@/lib/church-feeds';
 
 interface Props {
@@ -22,6 +23,8 @@ const { now = churchDataNow() } = Astro.props;
 const facts = await getChurchFacts();
 const sunday = thisSunday(facts, now);
 const address = facts.address;
+// "Add Sundays to my calendar" (/sunday.ics), only once a Sunday time is confirmed.
+const hasCalendar = sundayIcs({ ...facts, title: site.name }, now, site.url) !== null;
 const timesConfirmed = sunday?.confirmed ?? true;
 const addressConfirmed = address?.confirmed ?? true;
 const pill = !timesConfirmed
@@ -58,11 +61,22 @@ const short = (label: string) => label.replace(/ am$/, '');
         </>
       ))}
     </dl>
+    {hasCalendar && (
+      <a class="hb-sunday__cal" href="/sunday.ics" download>
+        Add Sundays to my calendar
+      </a>
+    )}
     {address && (
       <div class="hb-sunday__where">
         <p>
           {[address.street, address.city, address.state].filter(Boolean).join(', ')}
           <br />
+          {address.findUs && (
+            <>
+              <span class="hb-sunday__findus">{address.findUs}</span>
+              <br />
+            </>
+          )}
           <a href={address.mapsUrl} rel="noopener" target="_blank">
             Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
           </a>
