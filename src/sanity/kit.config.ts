@@ -85,12 +85,21 @@ export const kitConfig: KitConfig = {
   // gets the staff view.
   staff: [],
 
-  staffTools: ['home', 'quick-update', 'structure', 'presentation', 'site-guide', 'checkup'],
+  staffTools: [
+    'home',
+    'quick-update',
+    'structure',
+    'presentation',
+    'messages',
+    'site-guide',
+    'checkup',
+  ],
   toolOrder: [
     'home',
     'quick-update',
     'structure',
     'presentation',
+    'messages',
     'site-guide',
     'checkup',
     'media',

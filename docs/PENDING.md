@@ -228,6 +228,22 @@ Also still to see signed in, light and dark, 375 and 1280: the dated greeting an
 a real scheduled draft (and its empty sentence); the Fix-it list (each Edit opens the right field); Your pages (every
 link opens the right form or list, and Give opens the online giving link); and a guide with a `video` once one exists.
 
+### 1m. Studio workflow tools: two settings and the signed-in checks (opened 2026-10-18)
+
+**Blocker: Nathan.** Two things only Nathan should do:
+
+1. `npx wrangler secret put SHARE_PREVIEW_SECRET` (32+ random characters; OPERATIONS.md, "Studio workflow tools").
+   Until then "Share a preview" says links are not set up, and `?share=` is ignored.
+2. Add `"previewShare"` to the publish webhook's deny-list (sanity.io/manage, API, Webhooks; the filter is in
+   OPERATIONS.md). Without it, making or stopping a preview link starts a deploy.
+
+Also: make sure the people who should get the morning change note watch `NateJ45/fbc-auburn` (All Activity, or
+Custom with Issues). Messages needs the forms on (item 1h) and `migrations/0003_message_status.sql` applied remotely.
+
+Still to check, signed in: make a link, open it in a private window (the draft, the banner, no Exit button), stop it,
+reload (the published page); Messages against a local D1 with a real Studio session; each table view sorting and
+Open; the first real change-note issue. Unit-tested and checked under `wrangler dev` signed out so far.
+
 ### 1d. Church data waiting on the church
 
 **Blocker: answers from the church, after signing.** All empty-safe today; each lights up with one
