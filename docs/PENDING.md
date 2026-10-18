@@ -305,6 +305,30 @@ yet: check the grid pictures, the plain-English descriptions, the "Who receives 
 countdown publishes and shows on the next build. The Sanity dataset needs no migration: every field
 is new and optional.
 
+### 1j. Church page templates and seasonal saved sections (opened 2026-10-18)
+
+**Blocker: the signed-in click-through.** The dataset write is done: the 12 saved sections were
+seeded as drafts on 2026-10-18 (`seed-section-patterns.mjs --apply`; a rerun now reports 0 changes).
+
+39 page templates in seven menu groups (`src/sanity/pageTemplates.ts`, shown as "Group: Title")
+and 12 seasonal saved sections (`src/sanity/sectionPatterns.ts`) landed on
+`feat/church-templates`. Verified by typegen (no change), check, build, unit tests (every template
+and pattern: allowed blocks, fresh keys, example markers, copy rules, schema limits, and no page
+warning but "example text") and four templates rendered locally at 375 and 1280.
+
+- **Seed the saved sections.** They live in the dataset, so they are offered only once
+  `scripts/content/seed-section-patterns.mjs` has run. It creates twelve DRAFT saved sections,
+  skips any that exist, and never overwrites or deletes. Dry run (read only, already clean on
+  2026-10-18: 12 to create): `node --experimental-strip-types scripts/content/seed-section-patterns.mjs`;
+  write: the same with `--apply` and `NCS_PRODUCTION_WRITE=yes`. Then check Pages, Saved sections.
+- **Signed in:** make one page from each group, check the "Group: Title" menu reads well, that
+  every Example line warns, and that the red "required" boxes left for the pastor (a countdown's
+  first day, a progress bar's goal and amount, which form to show) are the only errors. Insert one
+  saved section as a copy.
+- **Pastor's words:** the Beliefs drafts follow the Baptist Faith and Message 2000 but are Example
+  lines for him to rewrite; the State Convention of Baptists in Ohio card is there for him to keep
+  or remove.
+
 ## Known gaps, deliberately open
 
 ### 2. `npm run parity compare` is not a CI step

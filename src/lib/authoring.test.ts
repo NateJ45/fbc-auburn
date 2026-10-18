@@ -1,7 +1,9 @@
 // Safe to edit by hand
 // Pins the authoring kit's pure logic (PORTS.md card 109): fresh keys, patterns,
-// synced-section expansion, the example-text marker, and the page templates
-// themselves (every block type they use exists, every array member has a key).
+// synced-section expansion, the example-text marker, and the page templates and
+// section patterns themselves (every block type they use exists, every array
+// member has a key, the copy follows the site rules, and nothing but example text
+// trips a page warning).
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
@@ -16,7 +18,10 @@ import {
   syncedBlockFor,
   typesNotAllowed,
 } from './authoring.ts';
-import { PAGE_TEMPLATES } from '../sanity/pageTemplates.ts';
+import { PAGE_TEMPLATES, TEMPLATE_GROUPS, templateMenuTitle } from '../sanity/pageTemplates.ts';
+import { SECTION_PATTERNS } from '../sanity/sectionPatterns.ts';
+import { pageWarnings, type PageRules } from './page-guardrails.ts';
+import { STONE_ICONS } from './stone-icons.ts';
 
 const counter = () => {
   let n = 0;
@@ -198,15 +203,133 @@ describe('example text', () => {
   });
 });
 
+// ── Template and pattern checks (FBC Auburn, 2026-10-18) ─────────────────────
+
+/** Every string anywhere in a value, skipping keys and type names. */
+function stringsIn(value: unknown, out: string[] = []): string[] {
+  if (typeof value === 'string') out.push(value);
+  else if (Array.isArray(value)) value.forEach((v) => stringsIn(v, out));
+  else if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value)) {
+      if (k === '_key' || k === '_type') continue;
+      stringsIn(v, out);
+    }
+  }
+  return out;
+}
+
+/** The string list items of one exported array in a source file, read as text. */
+function listIn(file: string, name: string): string[] {
+  const src = readFileSync(new URL(file, import.meta.url), 'utf8');
+  const start = src.indexOf(name);
+  assert.ok(start >= 0, `${name} not found in ${file}`);
+  const open = src.indexOf('[', start);
+  const body = src.slice(open, src.indexOf(']', open));
+  return [...body.replace(/\/\/.*$/gm, '').matchAll(/'([A-Za-z]+)'/g)].map((m) => m[1]);
+}
+
+// The page checks as the Studio runs them (pageBuilderConfig.ts and kit.config.ts both
+// import `sanity`, so their lists are read as text here rather than imported).
+const CHECKS = {
+  selfFillingSections: [
+    ...listIn('../sanity/pageBuilderConfig.ts', 'const SELF_FILLING_SECTIONS'),
+    ...listIn('../sanity/schemaTypes/churchSections.ts', 'export const CHURCH_SELF_FILLING'),
+  ],
+  extraSettingKeys: listIn('../sanity/pageBuilderConfig.ts', 'extraSettingKeys:'),
+};
+const SITE_RULES: PageRules = {
+  appliesTo: ['page'],
+  mustStartWith: ['heroSection'],
+  atMostOnce: ['heroSection'],
+  maxSections: 20,
+};
+
+// Site copy rules (rule 2 and docs/claude/communication-style.md): no em-dashes, no
+// AI-tell words, US spelling, no prices.
+const BANNED =
+  /\b(delve|leverage|robust|seamless|tapestry|navigate|crucial|pivotal|meticulous|realm|transformative)\b/i;
+const UK =
+  /\b(colour|neighbour|favourite|honour|centre|baptis(e|ed|ing)|practise|organis(e|ed|ing))\b/i;
+
+function checkCopy(id: string, text: string) {
+  assert.ok(!text.includes('\u2014'), `${id}: em-dash in "${text}"`);
+  assert.ok(!text.includes(' -- '), `${id}: double hyphen in "${text}"`);
+  assert.ok(!BANNED.test(text), `${id}: AI-tell word in "${text}"`);
+  assert.ok(!UK.test(text), `${id}: UK spelling in "${text}"`);
+  assert.ok(!/\$\s?\d/.test(text), `${id}: a price in "${text}"`);
+}
+
+/** Field limits from the schema, so a template never opens with a red error to fix. */
+const MAX_LENGTH: Record<string, Record<string, number>> = {
+  tabPanel: { label: 30 },
+  timelineEntry: { year: 12, title: 100 },
+  countdownSection: { eventName: 80 },
+  noticeSection: { message: 200 },
+  belief: { title: 80 },
+  accordionItem: { question: 160 },
+  railStep: { title: 80 },
+  quickLink: { note: 120 },
+  affiliation: { name: 80, note: 120 },
+  scriptureSection: { verse: 700, reference: 60 },
+};
+const COUNT: Record<string, [string, number, number]> = {
+  buttonRowSection: ['links', 2, 6],
+  tabsSection: ['tabs', 2, 5],
+  columnsSection: ['textColumns', 2, 3],
+  iconCardsSection: ['cards', 1, 12],
+  stepsRailSection: ['steps', 2, 8],
+  accordionSection: ['items', 1, 20],
+  beliefsSection: ['beliefs', 1, 20],
+  timelineSection: ['entries', 1, 30],
+  affiliationsSection: ['items', 1, 8],
+};
+const REQUIRED: Record<string, string[]> = {
+  heroSection: ['headline'],
+  ctaBandSection: ['headline'],
+  iconCard: ['title'],
+  railStep: ['icon', 'title'],
+  stepsRailSection: ['heading'],
+  scriptureSection: ['verse', 'reference'],
+  countdownSection: ['eventName'],
+  noticeSection: ['message'],
+};
+const ICONS = new Set<string>(STONE_ICONS.map((i) => i.value));
+
+function checkLimits(id: string, value: unknown) {
+  for (const obj of [value, ...arrayMembers(value)].flatMap((v) => (Array.isArray(v) ? v : [v]))) {
+    if (!obj || typeof obj !== 'object') continue;
+    const o = obj as Record<string, unknown>;
+    const type = String(o._type);
+    for (const [field, max] of Object.entries(MAX_LENGTH[type] ?? {})) {
+      const v = o[field];
+      if (typeof v === 'string')
+        assert.ok(v.length <= max, `${id}: ${type}.${field} is over ${max}: "${v}"`);
+    }
+    const count = COUNT[type];
+    if (count) {
+      const list = o[count[0]];
+      const n = Array.isArray(list) ? list.length : 0;
+      assert.ok(n >= count[1] && n <= count[2], `${id}: ${type} needs ${count[1]}-${count[2]}`);
+    }
+    for (const field of REQUIRED[type] ?? []) {
+      assert.ok(typeof o[field] === 'string' && o[field], `${id}: ${type}.${field} is required`);
+    }
+    if ((type === 'iconCard' || type === 'railStep') && o.icon !== undefined) {
+      assert.ok(ICONS.has(String(o.icon)), `${id}: ${String(o.icon)} is not a stone icon`);
+    }
+  }
+}
+
 describe('page templates (src/sanity/pageTemplates.ts)', () => {
   // FBC Auburn: a Custom page takes the general blocks, the church's own blocks, and
   // the rich ones PAGE_SECTION_TYPES adds (richSections.ts; teamSection retired 2026-10-18).
-  const allowed = new Set([
-    ...declaredTypes('sections.ts'),
-    ...AUBURN_TYPES,
-    'faqSection',
-    'dynamicListSection',
-  ]);
+  // The logo strip is registered but no builder offers it (RETIRED_LIBRARY in sections.ts),
+  // and a template never starts with a synced section (it would point at nothing).
+  const allowed = new Set(
+    [...declaredTypes('sections.ts'), ...AUBURN_TYPES, 'faqSection', 'dynamicListSection'].filter(
+      (t) => t !== 'logoStripSection' && t !== 'syncedSection',
+    ),
+  );
 
   it('has a blank page and unique ids', () => {
     const ids = PAGE_TEMPLATES.map((t) => t.id);
@@ -215,6 +338,24 @@ describe('page templates (src/sanity/pageTemplates.ts)', () => {
       PAGE_TEMPLATES.some((t) => t.sections().length === 0),
       'one template should start empty',
     );
+  });
+
+  it('every template sits in a known group, and the list is in group order', () => {
+    const order = PAGE_TEMPLATES.map((t) => TEMPLATE_GROUPS.indexOf(t.group));
+    assert.ok(!order.includes(-1), 'a template names a group that is not in TEMPLATE_GROUPS');
+    assert.deepEqual(
+      order,
+      [...order].sort((a, b) => a - b),
+      'keep templates in group order',
+    );
+    for (const g of TEMPLATE_GROUPS) {
+      assert.ok(
+        PAGE_TEMPLATES.some((t) => t.group === g),
+        `group ${g} has no templates`,
+      );
+    }
+    const menu = PAGE_TEMPLATES.map(templateMenuTitle);
+    assert.equal(new Set(menu).size, menu.length, 'two templates read the same in the menu');
   });
 
   for (const template of PAGE_TEMPLATES) {
@@ -228,6 +369,7 @@ describe('page templates (src/sanity/pageTemplates.ts)', () => {
       const sections = template.sections();
       for (const member of arrayMembers(sections)) {
         assert.equal(typeof member._key, 'string', `${template.id}: a member has no _key`);
+        assert.equal(typeof member._type, 'string', `${template.id}: a member has no _type`);
       }
       const keys = keysIn(sections);
       assert.equal(new Set(keys).size, keys.length, `${template.id}: duplicate keys`);
@@ -239,6 +381,66 @@ describe('page templates (src/sanity/pageTemplates.ts)', () => {
       const sections = template.sections();
       if (sections.length)
         assert.ok(hasExampleText(sections), `${template.id} has no example marker`);
+    });
+
+    it(`${template.id}: copy follows the site copy rules`, () => {
+      for (const text of stringsIn(template.sections())) checkCopy(template.id, text);
+      checkCopy(template.id, template.title);
+      checkCopy(template.id, template.description);
+    });
+
+    it(`${template.id}: passes the page rules with no warning but "example text"`, () => {
+      const sections = template.sections();
+      if (!sections.length) return;
+      for (const w of pageWarnings(sections, 'page', SITE_RULES, CHECKS)) {
+        assert.match(w.message, /example text/, `${template.id}: ${w.message}`);
+      }
+    });
+
+    it(`${template.id}: stays inside the schema's limits`, () => {
+      checkLimits(template.id, template.sections());
+    });
+  }
+});
+
+describe('section patterns (src/sanity/sectionPatterns.ts)', () => {
+  // A saved section accepts the general blocks plus the rich ones (sectionPreset.ts),
+  // but never a synced section.
+  const allowed = new Set(
+    [...declaredTypes('sections.ts'), ...declaredTypes('richSections.ts'), ...AUBURN_TYPES].filter(
+      (t) => t !== 'logoStripSection' && t !== 'syncedSection',
+    ),
+  );
+
+  it('has unique ids', () => {
+    const ids = SECTION_PATTERNS.map((p) => p.id);
+    assert.equal(new Set(ids).size, ids.length);
+  });
+
+  for (const pattern of SECTION_PATTERNS) {
+    it(`${pattern.id}: is a valid saved section with fresh keys and example text`, () => {
+      const sections = pattern.sections();
+      assert.ok(sections.length >= 1 && sections.length <= 12, 'a saved section holds 1 to 12');
+      for (const s of sections) {
+        assert.ok(allowed.has(String(s._type)), `${pattern.id} uses unknown block ${s._type}`);
+      }
+      for (const member of arrayMembers(sections)) {
+        assert.equal(typeof member._key, 'string', `${pattern.id}: a member has no _key`);
+      }
+      const keys = keysIn(sections);
+      assert.equal(new Set(keys).size, keys.length, `${pattern.id}: duplicate keys`);
+      assert.notDeepEqual(keys, keysIn(pattern.sections()), 'each copy must get fresh keys');
+      assert.ok(hasExampleText(sections), `${pattern.id} has no example marker`);
+    });
+
+    it(`${pattern.id}: copy follows the site copy rules and the schema's limits`, () => {
+      for (const text of [pattern.title, pattern.note, ...stringsIn(pattern.sections())]) {
+        checkCopy(pattern.id, text);
+      }
+      checkLimits(pattern.id, pattern.sections());
+      for (const w of pageWarnings(pattern.sections(), 'sectionPreset', SITE_RULES, CHECKS)) {
+        assert.match(w.message, /example text/, `${pattern.id}: ${w.message}`);
+      }
     });
   }
 });

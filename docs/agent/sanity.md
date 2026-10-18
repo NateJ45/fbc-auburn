@@ -228,7 +228,10 @@ one would leave the site with a route and no document.
 What a WordPress block-editor handover gives a client, built on the page builder that is already here. Five parts:
 
 1. **Page templates.** `src/sanity/pageTemplates.ts` (the site's OWN file, not PORTABLE) lists the starting points
-   offered when a Custom page is made: Simple page, Ministry, Event, Sermon series, Blank page here (the starter ships Simple, Landing, Questions, Blank).
+   offered when a Custom page is made: 39 here in seven groups, Visitors to Blank, each shown in the menu as "Group: Title"
+   (the starter ships Simple, Landing, Questions, Blank). The builders are in `templateBlocks.ts`; the church-year
+   patterns (Easter, Christmas, a snow notice, the mission offerings) are in `sectionPatterns.ts`, which the seasonal
+   templates reuse and `scripts/content/seed-section-patterns.mjs` copies into the dataset as draft saved sections.
    `sanity.config.ts` registers each as an initial value template on `page` (`value` is a function, so every new page
    gets fresh `_key`s from `freshKeys()` in `src/lib/authoring.ts`) and `newDocumentOptions` hides the stock `page`
    template, which stays registered so intents that name it keep working. Every example line starts `Example:`.
