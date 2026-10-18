@@ -517,6 +517,9 @@ const RETIRED_RICH = new Set([
   'storySection',
   'serviceAreaSection',
   'guaranteeSection',
+  // FBC Auburn (2026-10-18): replaced by the People block (collectionSections.ts), which
+  // reads the people list. No page used it (dataset read 2026-10-18); kept registered.
+  'teamSection',
 ]);
 
 /** The rich blocks a saved section may hold (everything still on offer). */
@@ -536,7 +539,6 @@ export const RICH_SECTION_TYPES = richSectionSchemas
 export const HOME_SECTION_TYPES = [
   ...SECTION_TYPES,
   { type: 'faqSection' }, // scaffold: faq
-  { type: 'teamSection' },
   { type: 'dynamicListSection' },
 ];
 
@@ -544,14 +546,12 @@ export const HOME_SECTION_TYPES = [
 export const PAGE_SECTION_TYPES = [
   ...SECTION_TYPES,
   { type: 'faqSection' }, // scaffold: faq
-  { type: 'teamSection' },
   { type: 'dynamicListSection' },
 ];
 
 export const ABOUT_SECTION_TYPES = [
   ...SECTION_TYPES,
   { type: 'faqSection' }, // scaffold: faq
-  { type: 'teamSection' },
   { type: 'dynamicListSection' },
 ];
 // (SERVICES_ and PROCESS_SECTION_TYPES went with those pages: nothing used them.)

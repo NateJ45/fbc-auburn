@@ -1,0 +1,475 @@
+{
+  "sermonsPage": {
+    "heroEyebrow": "Sunday by Sunday",
+    "heroHeadline": "Sermons",
+    "heroSubhead": "Catch up on a Sunday you missed, or listen again.",
+    "bibleVersion": "KJV",
+    "podcastTitle": null,
+    "podcastDescription": null,
+    "podcastCategory": "Christianity",
+    "podcastArtwork": null,
+    "applePodcastsUrl": null,
+    "spotifyUrl": null,
+    "seoTitle": null,
+    "seoDescription": null,
+    "seoImage": null,
+    "additionalSections": []
+  },
+  "sermons": [
+    {
+      "audio": {
+        "url": "https://cdn.sanity.io/files/wdpzvn6m/production/example.mp3",
+        "size": 28311552,
+        "mimeType": "audio/mpeg",
+        "originalFilename": "sermon.mp3",
+        "extension": "mp3"
+      },
+      "notes": {
+        "url": "https://cdn.sanity.io/files/wdpzvn6m/production/example.pdf",
+        "size": 182000,
+        "mimeType": "application/pdf",
+        "originalFilename": "outline.pdf",
+        "extension": "pdf"
+      },
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": "Jesus tells a story about a farmer, and asks what kind of ground we are.",
+      "videoUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+      "service": "sunday-morning",
+      "_id": "sermon-mark-0",
+      "title": "Seed and soil",
+      "slug": "seed-and-soil-2026",
+      "date": "2026-10-11",
+      "passage": "Mark 4:1-20",
+      "series": {
+        "_id": "series-mark",
+        "title": "The Gospel of Mark",
+        "slug": "gospel-of-mark",
+        "art": null
+      }
+    },
+    {
+      "audio": {
+        "url": "https://cdn.sanity.io/files/wdpzvn6m/production/example.mp3",
+        "size": 28311552,
+        "mimeType": "audio/mpeg",
+        "originalFilename": "sermon.mp3",
+        "extension": "mp3"
+      },
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": "A message from the Gospel of Mark.",
+      "videoUrl": "https://www.facebook.com/fbcauburn/videos/1234567890/",
+      "service": "sunday-morning",
+      "_id": "sermon-mark-1",
+      "title": "Who then is this?",
+      "slug": "who-then-is-this-2026",
+      "date": "2026-10-04",
+      "passage": "Mark 4:35-41",
+      "series": {
+        "_id": "series-mark",
+        "title": "The Gospel of Mark",
+        "slug": "gospel-of-mark",
+        "art": null
+      }
+    },
+    {
+      "audio": {
+        "url": "https://cdn.sanity.io/files/wdpzvn6m/production/example.mp3",
+        "size": 28311552,
+        "mimeType": "audio/mpeg",
+        "originalFilename": "sermon.mp3",
+        "extension": "mp3"
+      },
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": "A message from the Gospel of Mark.",
+      "videoUrl": "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+      "service": "sunday-morning",
+      "_id": "sermon-mark-2",
+      "title": "Come and rest",
+      "slug": "come-and-rest-2026",
+      "date": "2026-09-27",
+      "passage": "Mark 6:30-44",
+      "series": {
+        "_id": "series-mark",
+        "title": "The Gospel of Mark",
+        "slug": "gospel-of-mark",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": "A message from the Gospel of Mark.",
+      "videoUrl": "https://www.facebook.com/fbcauburn/videos/1234567890/",
+      "service": "sunday-morning",
+      "_id": "sermon-mark-3",
+      "title": "The way of the cross",
+      "slug": "the-way-of-the-cross-2026",
+      "date": "2026-09-20",
+      "passage": "Mark 8:27-38",
+      "series": {
+        "_id": "series-mark",
+        "title": "The Gospel of Mark",
+        "slug": "gospel-of-mark",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": "A message from the Gospel of Mark.",
+      "videoUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+      "service": "sunday-morning",
+      "_id": "sermon-mark-4",
+      "title": "A ransom for many",
+      "slug": "a-ransom-for-many-2026",
+      "date": "2026-09-13",
+      "passage": "Mark 10:35-45",
+      "series": {
+        "_id": "series-mark",
+        "title": "The Gospel of Mark",
+        "slug": "gospel-of-mark",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": "A message from the Gospel of Mark.",
+      "videoUrl": "https://www.facebook.com/fbcauburn/videos/1234567890/",
+      "service": "sunday-morning",
+      "_id": "sermon-mark-5",
+      "title": "He is not here",
+      "slug": "he-is-not-here-2026",
+      "date": "2026-09-06",
+      "passage": "Mark 16:1-8",
+      "series": {
+        "_id": "series-mark",
+        "title": "The Gospel of Mark",
+        "slug": "gospel-of-mark",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": "A Sunday evening study.",
+      "videoUrl": null,
+      "service": "sunday-evening",
+      "_id": "sermon-evening",
+      "title": "Praying the Lord’s Prayer",
+      "slug": "praying-the-lords-prayer-2026",
+      "date": "2026-10-11",
+      "passage": "Matthew 6:9-13"
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": "Rev. Tom Hale",
+      "preacher": null,
+      "summary": null,
+      "videoUrl": null,
+      "service": "wednesday",
+      "_id": "sermon-wed",
+      "title": "Faith that works",
+      "slug": "faith-that-works-2026",
+      "date": "2026-10-07",
+      "passage": "James 2:14-26"
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": null,
+      "videoUrl": "https://youtu.be/aqz-KE-bpKQ",
+      "service": "sunday-morning",
+      "_id": "sermon-ruth-0",
+      "title": "Empty",
+      "slug": "empty-2026",
+      "date": "2026-08-30",
+      "passage": "Ruth 1",
+      "series": {
+        "_id": "series-ruth",
+        "title": "Ruth: Redeemed",
+        "slug": "ruth-redeemed",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": null,
+      "videoUrl": "https://youtu.be/ScMzIvxBSi4",
+      "service": "sunday-morning",
+      "_id": "sermon-ruth-1",
+      "title": "Under his wings",
+      "slug": "under-his-wings-2026",
+      "date": "2026-08-23",
+      "passage": "Ruth 2",
+      "series": {
+        "_id": "series-ruth",
+        "title": "Ruth: Redeemed",
+        "slug": "ruth-redeemed",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": null,
+      "videoUrl": "https://youtu.be/dQw4w9WgXcQ",
+      "service": "sunday-morning",
+      "_id": "sermon-ruth-2",
+      "title": "At the threshing floor",
+      "slug": "at-the-threshing-floor-2026",
+      "date": "2026-08-16",
+      "passage": "Ruth 3",
+      "series": {
+        "_id": "series-ruth",
+        "title": "Ruth: Redeemed",
+        "slug": "ruth-redeemed",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": null,
+      "videoUrl": "https://youtu.be/M7lc1UVf-VE",
+      "service": "sunday-morning",
+      "_id": "sermon-ruth-3",
+      "title": "A redeemer for Naomi",
+      "slug": "a-redeemer-for-naomi-2026",
+      "date": "2026-08-09",
+      "passage": "Ruth 4",
+      "series": {
+        "_id": "series-ruth",
+        "title": "Ruth: Redeemed",
+        "slug": "ruth-redeemed",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": null,
+      "videoUrl": null,
+      "service": "sunday-morning",
+      "_id": "sermon-ps-121",
+      "title": "I lift up my eyes",
+      "slug": "i-lift-up-my-eyes-2026",
+      "date": "2026-07-12",
+      "passage": "Psalm 121",
+      "series": {
+        "_id": "series-psalms",
+        "title": "Psalms for the Road",
+        "slug": "psalms-for-the-road",
+        "art": null
+      }
+    },
+    {
+      "audio": null,
+      "notes": null,
+      "image": null,
+      "guestPreacher": null,
+      "preacher": {
+        "_id": "person-pastor",
+        "name": "Pastor Daniel Reed",
+        "role": "Pastor"
+      },
+      "summary": null,
+      "videoUrl": null,
+      "service": "sunday-morning",
+      "_id": "sermon-ps-122",
+      "title": "Glad to go",
+      "slug": "glad-to-go-2026",
+      "date": "2026-07-19",
+      "passage": "Psalm 122",
+      "series": {
+        "_id": "series-psalms",
+        "title": "Psalms for the Road",
+        "slug": "psalms-for-the-road",
+        "art": null
+      }
+    }
+  ],
+  "series": [
+    {
+      "_id": "series-mark",
+      "title": "The Gospel of Mark",
+      "slug": "gospel-of-mark",
+      "book": "Mark",
+      "description": "Walking verse by verse through the shortest Gospel: who Jesus is, and what it means to follow him.",
+      "art": null,
+      "firstDate": "2026-09-06",
+      "lastDate": "2026-10-11",
+      "count": 6
+    },
+    {
+      "_id": "series-ruth",
+      "title": "Ruth: Redeemed",
+      "slug": "ruth-redeemed",
+      "book": "Ruth",
+      "description": "Four chapters about loss, loyalty and the God who brings people home.",
+      "art": null,
+      "firstDate": "2026-08-09",
+      "lastDate": "2026-08-30",
+      "count": 4
+    },
+    {
+      "_id": "series-psalms",
+      "title": "Psalms for the Road",
+      "slug": "psalms-for-the-road",
+      "book": "Psalms",
+      "description": "A summer in the songs of ascent.",
+      "art": null,
+      "firstDate": "2026-07-12",
+      "lastDate": "2026-07-19",
+      "count": 2
+    }
+  ],
+  "downloads": [
+    {
+      "_id": "dl-b1",
+      "title": "Bulletin for October 18",
+      "date": "2026-10-18",
+      "category": "bulletin",
+      "note": null,
+      "expires": null,
+      "file": {
+        "url": "https://cdn.sanity.io/files/wdpzvn6m/production/example.pdf",
+        "size": 240000,
+        "mimeType": "application/pdf",
+        "originalFilename": "bulletin.pdf",
+        "extension": "pdf"
+      }
+    },
+    {
+      "_id": "dl-b2",
+      "title": "Bulletin for October 11",
+      "date": "2026-10-11",
+      "category": "bulletin",
+      "note": null,
+      "expires": null,
+      "file": {
+        "url": "https://cdn.sanity.io/files/wdpzvn6m/production/example.pdf",
+        "size": 240000,
+        "mimeType": "application/pdf",
+        "originalFilename": "bulletin.pdf",
+        "extension": "pdf"
+      }
+    },
+    {
+      "_id": "dl-n1",
+      "title": "October newsletter",
+      "date": "2026-10-01",
+      "category": "newsletter",
+      "note": null,
+      "expires": null,
+      "file": {
+        "url": "https://cdn.sanity.io/files/wdpzvn6m/production/example.pdf",
+        "size": 240000,
+        "mimeType": "application/pdf",
+        "originalFilename": "bulletin.pdf",
+        "extension": "pdf"
+      }
+    },
+    {
+      "_id": "dl-f1",
+      "title": "Fall festival sign-up",
+      "date": "2026-09-20",
+      "category": "form",
+      "note": "Due back by October 25",
+      "expires": "2026-10-25",
+      "file": {
+        "url": "https://cdn.sanity.io/files/wdpzvn6m/production/example.pdf",
+        "size": 240000,
+        "mimeType": "application/pdf",
+        "originalFilename": "bulletin.pdf",
+        "extension": "pdf"
+      }
+    }
+  ]
+}

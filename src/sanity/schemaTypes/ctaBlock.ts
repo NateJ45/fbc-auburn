@@ -40,6 +40,9 @@ export const ctaBlock = defineType({
         { type: 'contactPage' },
         { type: 'journalPage' }, // scaffold: journal
         { type: 'journalEntry' }, // scaffold: journal
+        // The sermon archive (2026-10-18): the list page and one sermon.
+        { type: 'sermonsPage' },
+        { type: 'sermon' },
         { type: 'page' },
       ],
       hidden: ({ parent }) => parent?.linkType !== 'internal',

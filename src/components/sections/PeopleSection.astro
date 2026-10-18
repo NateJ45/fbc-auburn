@@ -1,0 +1,65 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-18): "People". Everyone in the groups the editor picked
+// (each group under its own small-caps name, in the groups' own order) or the people he picked,
+// in his order. Cards from the people list (PersonCard), so a person typed once shows the same
+// everywhere. A content block: the surface comes from the cadence.
+import PersonCard from '@/components/collections/PersonCard.astro';
+import { surfaceClass } from '@/lib/surfaces';
+import { groupPeople, type PersonDoc } from '@/lib/sermons';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  mode?: string;
+  items?: (PersonDoc | null)[] | null;
+  showBios?: boolean;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const {
+  heading = 'Our people',
+  intro,
+  mode = 'group',
+  items = [],
+  showBios = true,
+  surface = 'background',
+  headingId,
+} = Astro.props;
+const people = (items ?? []).filter((p): p is PersonDoc => Boolean(p?.name));
+// Picked by hand: one list in the editor's order. By group: one list per group, titled only when
+// there is more than one, so a "Deacons" block under a "Deacons" heading does not say it twice.
+const groups = mode === 'hand' ? [{ id: 'hand', title: '', people }] : groupPeople(people);
+const titled = groups.length > 1;
+---
+
+<section class={surfaceClass(surface)} aria-labelledby={headingId}>
+  <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
+    <div class="c-head">
+      <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
+        {heading}
+      </h2>
+      {intro && <p class="c-intro">{intro}</p>}
+    </div>
+    {people.length > 0 ? (
+      groups.map((g) => (
+        <div class="c-group">
+          {titled && g.title && <h3 class="c-group__title">{g.title}</h3>}
+          <ul class="c-people" role="list">
+            {g.people.map((p) => (
+              <PersonCard person={p} showBio={showBios} as={titled ? 'h4' : 'h3'} />
+            ))}
+          </ul>
+        </div>
+      ))
+    ) : (
+      <p class="c-empty">
+        Names and faces are on their way. Until then,{' '}
+        <a class="c-link" href="/contact/">
+          say hello
+        </a>{' '}
+        and someone will write back.
+      </p>
+    )}
+  </div>
+</section>

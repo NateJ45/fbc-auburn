@@ -14,6 +14,11 @@ import { surfaceClass } from '@/lib/surfaces';
 import { ctaHref } from '@/lib/cta-href';
 import type { ProjectedCtaBlock, SanityImageObject } from '@/lib/pageBuilder.types';
 import { getChurchFacts } from '@/lib/church-data';
+import { churchDataNow } from '@/lib/church-feeds';
+import { monthDay } from '@/lib/church-facts';
+import SermonArt from '@/components/collections/SermonArt.astro';
+import { sermonHref, watchSermon, type SermonDoc } from '@/lib/sermons';
+import { fixtureNewestSermon } from '@/lib/collection-queries';
 
 interface Props {
   eyebrow?: string;
@@ -22,6 +27,8 @@ interface Props {
   link?: ProjectedCtaBlock | null;
   fallback?: string;
   poster?: SanityImageObject | null;
+  /** The newest sermon (the Sermons list), 2026-10-18. */
+  latestSermon?: SermonDoc | null;
   surface?: 'background' | 'muted';
   headingId: string;
 }
@@ -32,6 +39,7 @@ const {
   link,
   fallback,
   poster,
+  latestSermon,
   surface = 'background',
   headingId,
 } = Astro.props;
@@ -40,6 +48,16 @@ const newTab = link?.linkType === 'external' || !!link?.openInNewTab;
 const { liveUrl, facebookUrl } = await getChurchFacts();
 // The Facebook page only gets its own line when the live link goes somewhere else.
 const facebookLine = facebookUrl && facebookUrl !== liveUrl ? facebookUrl : null;
+// The sermon archive (2026-10-18), first match wins: a sermon preached in the last eight days
+// (it names the card and goes to its page), then the YouTube replay (LastSunday), then the newest
+// sermon of any age as "Latest message", then the poster card or the "no video yet" line. With no
+// sermons at all the band is exactly what it was.
+const { fresh: sermonNow, latest: sermonAny } = watchSermon(
+  latestSermon ?? (await fixtureNewestSermon()),
+  churchDataNow(),
+);
+const sermon = sermonNow ?? sermonAny;
+const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
 ---
 
 <section class:list={[surfaceClass(surface), 'watch-band']} aria-labelledby={headingId}>
@@ -81,8 +99,19 @@ const facebookLine = facebookUrl && facebookUrl !== liveUrl ? facebookUrl : null
       )}
     </div>
     <div>
-      <LastSunday>
-        {posterHref ? (
+      <LastSunday fallbackOnly={Boolean(sermonNow)}>
+        {sermon ? (
+          <a slot="fallback" class="watch-sermon" href={sermonHref(sermon?.slug)}>
+            <SermonArt sermon={sermon} play width={760} sizes="(min-width: 54rem) 45vw, 100vw" />
+            <span class="watch-sermon__label">
+              {sermonLabel} ·{' '}
+              <time datetime={sermon?.date ?? undefined}>
+                {sermon?.date ? monthDay(sermon.date) : ''}
+              </time>
+            </span>
+            <span class="watch-sermon__title">{sermon?.title}</span>
+          </a>
+        ) : posterHref ? (
           <a
             slot="fallback"
             class="watch-card"
@@ -199,6 +228,32 @@ const facebookLine = facebookUrl && facebookUrl !== liveUrl ? facebookUrl : null
   .watch-card:focus-visible {
     outline: 3px solid var(--auburn-gold);
     outline-offset: 3px;
+  }
+  .watch-sermon {
+    display: grid;
+    gap: 0.25rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  .watch-sermon__label {
+    margin-top: 0.65rem;
+    font-weight: 600;
+    color: var(--heading-solid, var(--foreground));
+  }
+  .watch-sermon__title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1.3;
+    color: var(--foreground);
+  }
+  .watch-sermon:hover .watch-sermon__title {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .watch-sermon:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 4px;
+    border-radius: 14px;
   }
   @media (prefers-reduced-motion: reduce) {
     .watch-card :global(.watch-card__img),

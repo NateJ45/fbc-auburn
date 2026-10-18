@@ -36,6 +36,8 @@
 //   - src/lib/studio-guides.test.ts enforces the structural half of this.
 // =============================================================================
 
+import { collectionGuides } from './collections.ts';
+
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
 /** Where a "Where in the Studio" breadcrumb can link to. */
@@ -64,6 +66,8 @@ export const SITE = {
 export const GUIDE_CATEGORIES = [
   'Start here',
   'Pages and words',
+  // FBC Auburn, 2026-10-18 (guides/collections.ts).
+  'Sermons, people and downloads',
   'Pictures',
   'Housekeeping',
 ] as const;
@@ -538,6 +542,12 @@ export const guides: Guide[] = [
         text: 'The "Last Sunday" card on the home page can say which message was preached and link to the video. Facebook does not let a website read its videos by itself, so this is a quick entry after Sunday.',
       },
       {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'The easier way: add the sermon.',
+        text: 'A sermon added under `Sermons` names the card by itself, and goes on the Sermons page and the podcast too, so there is no need to do both. The steps below still work if you would rather not keep a sermon list.',
+      },
+      {
         kind: 'steps',
         items: [
           'Open `Home`, then `Page layout`, then the `Watch` section.',
@@ -843,6 +853,9 @@ guides.push(
   },
 );
 
+// The sermon, people and downloads guides (FBC Auburn, 2026-10-18).
+guides.push(...collectionGuides);
+
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
  * guide.forType, PORTS.md card 110). '*' is the fallback for anything unlisted.
@@ -863,5 +876,12 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   homePage: ['home-page', 'after-sunday', 'images-and-alt', 'seo-fields'],
   siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
   sectionPreset: ['reuse-sections', 'synced-sections'],
+  // The collections (guides/collections.ts, 2026-10-18).
+  sermon: ['add-sermon', 'sermon-series'],
+  sermonSeries: ['sermon-series', 'add-sermon'],
+  sermonsPage: ['podcast', 'add-sermon'],
+  person: ['add-person'],
+  personGroup: ['add-person'],
+  download: ['bulletin'],
   redirect: ['rename-a-page'],
 };

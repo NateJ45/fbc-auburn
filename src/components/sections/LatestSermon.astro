@@ -1,0 +1,90 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-18): "Latest sermon". The newest sermon (or the one the
+// editor picked), words on the left and its picture on the split's narrow track, linking to the
+// sermon's page where it plays. The passage links to BibleGateway, worked out from what was typed
+// (rule 15). A content block: the surface comes from the cadence. With no sermons yet, one
+// friendly line and a link to the Watch page.
+import SermonArt from '@/components/collections/SermonArt.astro';
+import { surfaceClass } from '@/lib/surfaces';
+import { bibleGatewayUrl, longDate, preacherName, sermonHref, type SermonDoc } from '@/lib/sermons';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  sermon?: SermonDoc | null;
+  bibleVersion?: string | null;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const {
+  heading = 'Latest sermon',
+  intro,
+  sermon: s,
+  bibleVersion,
+  surface = 'background',
+  headingId,
+} = Astro.props;
+const ok = Boolean(s?.title && s?.slug);
+const passageUrl = bibleGatewayUrl(s?.passage, bibleVersion);
+const who = s ? preacherName(s) : '';
+const after = [who, longDate(s?.date)].filter(Boolean).join(' · ');
+---
+
+<section class={surfaceClass(surface)} aria-labelledby={headingId}>
+  <div
+    class:list={['mx-auto max-w-content px-m py-section-lg', ok && 'split items-center']}
+    data-reveal
+  >
+    <div>
+      <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
+        {heading}
+      </h2>
+      {intro && <p class="c-intro">{intro}</p>}
+      {ok && s ? (
+        <>
+          <h3 class="c-card__title c-latest__h">
+            <a class="c-latest__title" href={sermonHref(s.slug)}>
+              {s.title}
+            </a>
+          </h3>
+          <p class="c-meta">
+            {s.passage &&
+              (passageUrl ? (
+                <a class="c-link" href={passageUrl} target="_blank" rel="noopener">
+                  {s.passage}
+                  <span class="sr-only"> (read it on BibleGateway, opens in a new tab)</span>
+                </a>
+              ) : (
+                s.passage
+              ))}
+            {s.passage && after ? ' · ' : ''}
+            {after}
+          </p>
+          {s.summary && <p class="c-card__body">{s.summary}</p>}
+          <div class="c-actions mt-l">
+            <a class="btn-auburn btn-auburn--secondary press-tactile" href={sermonHref(s.slug)}>
+              {s.videoUrl || s.audio?.url ? 'Watch and listen' : 'Read more'}
+            </a>
+            <a class="c-link c-latest__all" href="/sermons/">
+              All sermons
+            </a>
+          </div>
+        </>
+      ) : (
+        <p class="c-empty mt-m">
+          The first sermons are on their way. Until then, you can{' '}
+          <a class="c-link" href="/watch/">
+            watch Sunday's service
+          </a>
+          .
+        </p>
+      )}
+    </div>
+    {ok && s && (
+      <a href={sermonHref(s.slug)} tabindex="-1" aria-hidden="true">
+        <SermonArt sermon={s} play sizes="(min-width: 64rem) 40vw, 100vw" width={900} />
+      </a>
+    )}
+  </div>
+</section>

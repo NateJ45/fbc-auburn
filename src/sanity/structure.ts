@@ -44,6 +44,14 @@ import { ClipboardIcon } from '@sanity/icons/Clipboard';
 import ChurchOverview from './components/ChurchOverview';
 import BrandKit from './components/BrandKit';
 import { TrashIcon } from '@sanity/icons/Trash';
+import { MicrophoneIcon } from '@sanity/icons/Microphone';
+import { StackIcon } from '@sanity/icons/Stack';
+import { UsersIcon } from '@sanity/icons/Users';
+import { DownloadIcon } from '@sanity/icons/Download';
+import { PlayIcon } from '@sanity/icons/Play';
+import { InfoOutlineIcon } from '@sanity/icons/InfoOutline';
+import { DocumentPdfIcon } from '@sanity/icons/DocumentPdf';
+import { DownloadsIntro, PeopleIntro, SermonsIntro } from './components/CollectionIntro';
 import { staffDesk } from './kit/shared';
 import { kitConfig } from './kit.config';
 import { TRASH_TYPE } from '../lib/studio-trash';
@@ -59,6 +67,7 @@ const SINGLETON_TYPES = [
   'journalPage', // scaffold: journal
   'notFoundPage',
   'privacyPage',
+  'sermonsPage',
   // Kept registered but not shown: a document exists (see the note in the desk).
   'studioGuide',
 ] as const;
@@ -77,6 +86,12 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'faqCategory', // scaffold: faq
   'journalEntry', // scaffold: journal
   'journalCategory', // scaffold: journal
+  // The collections (2026-10-18), placed under Sermons, People and Downloads.
+  'sermon',
+  'sermonSeries',
+  'person',
+  'personGroup',
+  'download',
   'page', // custom pages, placed explicitly under "Pages"
   'sectionPreset', // saved sections, placed explicitly under "Pages"
   'redirect', // placed explicitly under "Pages" -> Redirects
@@ -227,6 +242,117 @@ const fullDesk = (S: StructureBuilder) =>
               // The form builder (schemaTypes/form.ts): forms the church writes, shown on a
               // page with the Form section. Answers are emailed, never stored here.
               S.documentTypeListItem('form').title('Forms').icon(ClipboardIcon),
+            ]),
+        ),
+
+      S.divider(),
+
+      // The collections (FBC Auburn, 2026-10-18): three headings the pastor keeps himself, each
+      // opening on a friendly front door (components/CollectionIntro.tsx) that says what the
+      // list is for and has a big button for the usual job. Ids are load-bearing: the Checkup
+      // and the Site Guide link to 'sermons;sermon', 'people;person' and 'downloads;download'.
+      S.listItem()
+        .id('sermons')
+        .title('Sermons')
+        .icon(MicrophoneIcon)
+        .child(
+          S.list()
+            .title('Sermons')
+            .items([
+              S.listItem()
+                .id('sermons-start')
+                .title('Start here')
+                .icon(InfoOutlineIcon)
+                .child(S.component(SermonsIntro).id('sermons-start-view').title('Sermons')),
+              S.listItem()
+                .id('sermon')
+                .title('Sermons')
+                .icon(MicrophoneIcon)
+                .schemaType('sermon')
+                .child(
+                  S.documentTypeList('sermon')
+                    .title('Sermons, newest first')
+                    .defaultOrdering([{ field: 'date', direction: 'desc' }]),
+                ),
+              S.documentTypeListItem('sermonSeries').title('Sermon series').icon(StackIcon),
+              S.divider(),
+              singletonWithPreview(S, 'sermonsPage', 'Sermons page and podcast', PlayIcon),
+            ]),
+        ),
+      S.listItem()
+        .id('people')
+        .title('People')
+        .icon(UsersIcon)
+        .child(
+          S.list()
+            .title('People')
+            .items([
+              S.listItem()
+                .id('people-start')
+                .title('Start here')
+                .icon(InfoOutlineIcon)
+                .child(S.component(PeopleIntro).id('people-start-view').title('People')),
+              S.listItem()
+                .id('person')
+                .title('People')
+                .icon(UserIcon)
+                .schemaType('person')
+                .child(
+                  S.documentTypeList('person')
+                    .title('People')
+                    .defaultOrdering([
+                      { field: 'order', direction: 'asc' },
+                      { field: 'name', direction: 'asc' },
+                    ]),
+                ),
+              S.listItem()
+                .id('personGroup')
+                .title('Groups')
+                .icon(UsersIcon)
+                .schemaType('personGroup')
+                .child(
+                  S.documentTypeList('personGroup')
+                    .title('Groups')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }]),
+                ),
+            ]),
+        ),
+      S.listItem()
+        .id('downloads')
+        .title('Downloads')
+        .icon(DownloadIcon)
+        .child(
+          S.list()
+            .title('Downloads')
+            .items([
+              S.listItem()
+                .id('downloads-start')
+                .title('Start here')
+                .icon(InfoOutlineIcon)
+                .child(S.component(DownloadsIntro).id('downloads-start-view').title('Downloads')),
+              S.listItem()
+                .id('download')
+                .title('All downloads')
+                .icon(DownloadIcon)
+                .schemaType('download')
+                .child(
+                  S.documentTypeList('download')
+                    .title('All downloads, newest first')
+                    .defaultOrdering([{ field: 'date', direction: 'desc' }]),
+                ),
+              S.listItem()
+                .id('bulletins')
+                .title('Bulletins')
+                .icon(DocumentPdfIcon)
+                .child(
+                  S.documentList()
+                    .id('bulletins-list')
+                    .title('Bulletins, newest first')
+                    .schemaType('download')
+                    .filter('_type == "download" && category == "bulletin"')
+                    .defaultOrdering([{ field: 'date', direction: 'desc' }])
+                    .initialValueTemplates([S.initialValueTemplateItem('download')]),
+                ),
             ]),
         ),
 

@@ -13,10 +13,16 @@ import SectionLabel from './SectionLabel.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import { getChurchFacts } from '@/lib/church-data';
-import { andList, thisWeek, timesPhrase } from '@/lib/church-facts';
+import { andList, monthDay, thisWeek, timesPhrase } from '@/lib/church-facts';
 import { churchDataNow, loadChurchEvents } from '@/lib/church-feeds';
 import { ctaHref } from '@/lib/cta-href';
-import type { ProjectedThisWeekSection, ProjectedWatchSection } from '@/lib/pageBuilder.types';
+import type {
+  ProjectedThisWeekSection,
+  ProjectedWatchSection,
+  SanityImageObject,
+} from '@/lib/pageBuilder.types';
+import { sermonHref, sermonVideo, watchSermon } from '@/lib/sermons';
+import { fixtureNewestSermon } from '@/lib/collection-queries';
 
 interface Props {
   week?: ProjectedThisWeekSection | null;
@@ -75,7 +81,38 @@ const liveStart = sundayTimes.length ? Math.max(...sundayTimes) - 5 : null;
 // No link set (the built-in defaults, where the Watch page may not exist): a plain card.
 const watchHref =
   fresh && lm?.videoUrl ? lm.videoUrl : watch?.link ? ctaHref(watch.link) : undefined;
-const WatchTag = watchHref ? 'a' : 'div';
+// The sermon archive (2026-10-18). Which message the card names, first match wins:
+//   1. a sermon preached in the last eight days (the Sermons list): the card names it and goes
+//      to its page, ahead of the YouTube replay, because it carries the passage and the audio;
+//   2. the YouTube replay (LastSunday), once a channel is set;
+//   3. the hand-typed "Last Sunday's message" above, while it is under eight days old;
+//   4. the newest sermon of any age, labelled "Latest message";
+//   5. the block's own words and poster.
+// With no sermons at all, 2, 3 and 5 are exactly what the card did before.
+const { fresh: sermonNow, latest: sermonAny } = watchSermon(
+  watch?.latestSermon ?? (watch ? await fixtureNewestSermon() : null),
+  now,
+);
+const sermon = sermonNow ?? (fresh ? null : sermonAny);
+const sermonPic = [sermon?.image, sermon?.series?.art].find(
+  (img) => (img as { asset?: unknown } | null | undefined)?.asset,
+) as SanityImageObject | undefined;
+const sermonThumb = sermon && !sermonPic ? sermonVideo(sermon.videoUrl)?.thumbnailUrl : undefined;
+const poster = sermon ? (sermonPic ?? (sermonThumb ? null : watch?.poster)) : watch?.poster;
+const cardHref = sermon ? sermonHref(sermon.slug) : watchHref;
+const cardTitle = sermon
+  ? sermon.title
+  : fresh
+    ? lm?.title
+    : watch?.link?.label || 'Watch the message';
+const cardSub = sermon
+  ? [sermonNow ? '' : 'Latest message', sermon.passage, sermon.date ? monthDay(sermon.date) : '']
+      .filter(Boolean)
+      .join(' · ')
+  : fresh
+    ? [lm?.passage, lmDate].filter(Boolean).join(' · ')
+    : watch?.body;
+const CardTag = cardHref ? 'a' : 'div';
 ---
 
 <section class="hb-section" aria-labelledby={headingId}>
@@ -132,20 +169,31 @@ const WatchTag = watchHref ? 'a' : 'div';
       {watch && (
         <div>
           <h2 id={week ? undefined : headingId}>{watchHeading}</h2>
-          <LastSunday showChannelLink={false}>
-            <WatchTag
+          <LastSunday showChannelLink={false} fallbackOnly={Boolean(sermonNow)}>
+            <CardTag
               slot="fallback"
-              class:list={['hb-watch', watchHref && 'hb-lift']}
-              href={watchHref}
-              data-live-href={watchHref && facts.liveUrl ? facts.liveUrl : undefined}
+              class:list={['hb-watch', cardHref && 'hb-lift']}
+              href={cardHref}
+              data-live-href={cardHref && facts.liveUrl ? facts.liveUrl : undefined}
             >
-              {watch.poster?.asset && (
+              {poster?.asset && (
                 <SanityImage
-                  source={watch.poster as never}
+                  source={poster as never}
                   width={900}
                   sizes="(max-width: 960px) 100vw, 50vw"
                   alt=""
                   quality={65}
+                />
+              )}
+              {sermonThumb && (
+                <img
+                  src={sermonThumb}
+                  alt=""
+                  width="480"
+                  height="360"
+                  loading="lazy"
+                  decoding="async"
+                  referrerpolicy="no-referrer"
                 />
               )}
               <span class="hb-watch__text">
@@ -160,19 +208,11 @@ const WatchTag = watchHref ? 'a' : 'div';
                       Live now
                     </span>
                   )}
-                  <strong class="hb-watch__title">
-                    {fresh ? lm?.title : watch.link?.label || 'Watch the message'}
-                  </strong>
-                  {fresh ? (
-                    <span class="hb-watch__sub">
-                      {[lm?.passage, lmDate].filter(Boolean).join(' · ')}
-                    </span>
-                  ) : (
-                    watch.body && <span class="hb-watch__sub">{watch.body}</span>
-                  )}
+                  <strong class="hb-watch__title">{cardTitle}</strong>
+                  {cardSub && <span class="hb-watch__sub">{cardSub}</span>}
                 </span>
               </span>
-            </WatchTag>
+            </CardTag>
           </LastSunday>
         </div>
       )}

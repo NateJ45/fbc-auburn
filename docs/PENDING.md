@@ -267,6 +267,20 @@ signed in to it yet. Signed in, in light and dark, check and screenshot:
 - Primary buttons, links, focus rings and the selected desk row are navy; Publish is still green.
 - Read the console on every screen. Close this item when it is clean.
 
+### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
+
+- The signed-in Studio click-through of the new desk (the Start here panes, "Add the usual
+  groups", the "Add Sunday's sermon" quick action prefilling date and preacher, Help for this page
+  on a sermon, the two Checkup rules) has not been done: verified by build, typegen and tests only.
+- The pastor adds "Sermons" to the menu himself (the Site Guide says how); menu data was not edited.
+- Before the podcast is submitted (OPERATIONS.md, "The sermon podcast"): Site settings needs the
+  church email (the feed's owner email; Spotify's verification code goes there) and the Sermons
+  page needs a square podcast picture. The production feed today has neither.
+- `sermonsPage`, `sermon` and `sermonSeries` have no `/preview/` route, so Live preview opens
+  the live address for them (src/sanity/urls.ts) rather than a draft.
+
+---
+
 ### 1h. Switch the form builder on (opened 2026-10-18)
 
 **Blocker: Cloudflare resources and secrets only Nathan should create, and Email Sending needs the
@@ -490,10 +504,10 @@ stale `studio/` path and every `studio:deploy` instruction in the live docs, but
 examples inside them were not retoned. Trust the patterns; fix nouns when you touch a
 file.
 
-### 14. Share images: sermons and the styleguide (opened 2026-10-18)
+### 14. Share images: the styleguide (opened 2026-10-18)
 
 The branded share cards (OPERATIONS.md, "Share images") cover every visitor route. Two loose ends:
-when `/sermons/` and the series pages land, add their `COLLECTIONS` rows in
-`scripts/generate-og-pages.mjs` (the commented example there) and run `npm run og:pages`; and the
-four noindex `/styleguide/` pages point at `/og/styleguide*.png` files that do not exist (harmless,
+`/sermons/` and `/bulletin/` have cards (2026-10-18); a sermon or series page shares its own
+picture or YouTube thumbnail and falls back to `sermons.png`, so there is no card per sermon. The
+one left: the four noindex `/styleguide/` pages point at `/og/styleguide*.png` files that do not exist (harmless,
 nobody shares them; a `STATIC_ROUTES` row each, or leave them).

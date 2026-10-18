@@ -60,6 +60,14 @@ export function pathForDoc(schemaType: string, doc: any): string | null {
     // scaffold:end
     case 'privacyPage':
       return '/privacy';
+    // The sermon archive (2026-10-18). No /preview route draws these yet, so the
+    // Presentation tool opens the live address.
+    case 'sermonsPage':
+      return '/sermons';
+    case 'sermon':
+      return slug ? `/sermons/${slug}` : '/sermons';
+    case 'sermonSeries':
+      return slug ? `/sermons/series/${slug}` : '/sermons';
     case 'notFoundPage':
       return '/404';
     // Collections with their own detail route

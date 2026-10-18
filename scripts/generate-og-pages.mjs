@@ -110,6 +110,11 @@ const SINGLETONS = [
 const STATIC_ROUTES = [
   { slug: 'give', title: 'Give' },
   { slug: '404', title: 'Page not found' },
+  // The sermon archive and the bulletin shortcut (2026-10-18). A sermon or series page shares its
+  // own picture (or its YouTube thumbnail) and falls back to sermons.png, so there is no card per
+  // sermon to regenerate every week.
+  { slug: 'sermons', title: 'Sermons' },
+  { slug: 'bulletin', title: "This week's bulletin" },
 ];
 for (const r of STATIC_ROUTES) await render(r.slug, r.title);
 

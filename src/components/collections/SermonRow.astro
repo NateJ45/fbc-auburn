@@ -1,0 +1,81 @@
+---
+// Safe to edit by hand
+// One sermon in a list: the date as a display numeral (like This week's dates on Home), the title
+// linking to the sermon's page, then the passage, the preacher and the series, and small tags for
+// what it has (video, audio, notes). The data- attributes are what the /sermons/ filters read.
+import { bookOf, preacherName, sermonHref, serviceTitle, type SermonDoc } from '@/lib/sermons';
+
+interface Props {
+  sermon: SermonDoc;
+  /** The heading level for the title (h3 under a section heading). */
+  as?: 'h2' | 'h3';
+  /** Leave the series off (on the series' own page). */
+  hideSeries?: boolean;
+}
+const { sermon: s, as: Title = 'h3', hideSeries = false } = Astro.props;
+const date = s.date ? new Date(`${s.date.slice(0, 10)}T12:00:00Z`) : null;
+const day = date ? date.getUTCDate() : '';
+const my = date
+  ? date.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+  : '';
+const who = preacherName(s);
+const service = s.service && s.service !== 'sunday-morning' ? serviceTitle(s.service) : '';
+const meta = [s.passage, who, hideSeries ? '' : s.series?.title, service].filter(Boolean);
+---
+
+<li
+  class="c-row"
+  data-sermon
+  data-series={s.series?.slug ?? ''}
+  data-preacher={who}
+  data-book={bookOf(s.passage) ?? ''}
+>
+  <time class="c-date" datetime={s.date ?? undefined}>
+    <span class="c-date__day">{day}</span>
+    <span class="c-date__my">{my}</span>
+  </time>
+  <div>
+    <Title class="c-row__title">
+      <a href={sermonHref(s.slug)}>{s.title}</a>
+    </Title>
+    {meta.length > 0 && <p class="c-meta">{meta.join(' · ')}</p>}
+    {(s.videoUrl || s.audio?.url || s.notes?.url) && (
+      <ul class="c-tags" aria-label="Includes">
+        {s.videoUrl && (
+          <li class="c-tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
+            </svg>
+            Video
+          </li>
+        )}
+        {s.audio?.url && (
+          <li class="c-tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M4 14v-2a8 8 0 0 1 16 0v2M4 14h3v6H5a1 1 0 0 1-1-1zm16 0h-3v6h2a1 1 0 0 0 1-1z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+            </svg>
+            Audio
+          </li>
+        )}
+        {s.notes?.url && (
+          <li class="c-tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M7 3h7l5 5v13H7zM14 3v5h5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+            </svg>
+            Notes
+          </li>
+        )}
+      </ul>
+    )}
+  </div>
+</li>

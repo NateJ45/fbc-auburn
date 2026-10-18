@@ -1,0 +1,184 @@
+---
+// Safe to edit by hand
+// /sermons/<slug>/: one sermon (FBC Auburn, 2026-10-18). The page head names it (the series as
+// the small line above), then the player (YouTube plays in place, Facebook opens Facebook, the
+// recording plays underneath), the few sentences about it, the facts (the passage links to
+// BibleGateway, worked out from what was typed, rule 15), the notes to download, and more from
+// the same series (or the newest others). JSON-LD: VideoObject or CreativeWork (sermonJsonLd).
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
+import SermonPlayer from '@/components/collections/SermonPlayer.astro';
+import SermonRow from '@/components/collections/SermonRow.astro';
+import { getSiteSettings } from '@/lib/queries';
+import { getAllSermons, getSermonsPage } from '@/lib/collection-queries';
+import {
+  bibleGatewayUrl,
+  fileLabel,
+  longDate,
+  preacherName,
+  sermonJsonLd,
+  sermonVideo,
+  seriesHref,
+  serviceTitle,
+  sortSermons,
+} from '@/lib/sermons';
+import { breadcrumbSchema } from '@/lib/schemas';
+import { urlFor } from '@/lib/sanity';
+import { site } from '@/data/site';
+
+export async function getStaticPaths() {
+  const sermons = await getAllSermons();
+  return sermons.filter((s) => s.slug && s.title).map((s) => ({ params: { slug: s.slug! } }));
+}
+
+const { slug } = Astro.params;
+const [all, page, siteSettings] = await Promise.all([
+  getAllSermons(),
+  getSermonsPage(),
+  getSiteSettings(),
+]);
+const s = all.find((x) => x.slug === slug);
+// Listed by getStaticPaths, so a miss means a failed read: stop rather than publish a 404.
+if (!s) throw new Error(`[sermons] "${slug}" was listed but is missing`);
+
+const who = preacherName(s);
+const passageUrl = bibleGatewayUrl(s.passage, page?.bibleVersion);
+const service = serviceTitle(s.service);
+const sorted = sortSermons(all.filter((x) => x.slug && x.title && x._id !== s._id));
+const sameSeries = s.series?._id ? sorted.filter((x) => x.series?._id === s.series?._id) : [];
+const more = (sameSeries.length ? sameSeries : sorted).slice(0, 4);
+const pageUrl = `${site.url}/sermons/${slug}/`;
+const video = sermonVideo(s.videoUrl);
+const picture = [s.image, s.series?.art].find((i) => (i as { asset?: unknown } | null)?.asset);
+const ogImage = picture
+  ? urlFor(picture as never)
+      .width(1200)
+      .height(630)
+      .fit('crop')
+      .quality(80)
+      .format('webp')
+      .url()
+  : (video?.thumbnailUrl ?? '/og/sermons.png');
+
+const title = s.title ?? 'Sermon';
+const description =
+  s.summary ||
+  [s.passage, who && `preached by ${who}`, longDate(s.date)].filter(Boolean).join(', ') ||
+  `A sermon from ${site.name}.`;
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: site.url },
+    { name: 'Sermons', url: `${site.url}/sermons/` },
+    { name: title, url: pageUrl },
+  ]),
+  JSON.stringify(sermonJsonLd(s, pageUrl, site.name)),
+];
+---
+
+<BaseLayout {title} {description} {schemas} {siteSettings} {ogImage} ogType="article">
+  <Hero
+    eyebrow={s.series?.title || 'Sermon'}
+    headline={title}
+    subhead={[s.passage, who, longDate(s.date)].filter(Boolean).join(' · ')}
+    headingId="sermon-heading"
+    size="short"
+    quiet
+  />
+
+  <BoardRule />
+  <section class="bg-background" aria-label="The sermon">
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <SermonPlayer sermon={s} />
+      <div class:list={['c-sermon-body', (video || s.audio?.url) && 'mt-l']}>
+        {s.summary && <p class="c-summary">{s.summary}</p>}
+        <dl class="c-facts mt-l">
+          {s.passage && (
+            <>
+              <dt>Passage</dt>
+              <dd>
+                {passageUrl ? (
+                  <a class="c-link" href={passageUrl} target="_blank" rel="noopener">
+                    {s.passage}
+                    <span class="sr-only"> (read it on BibleGateway, opens in a new tab)</span>
+                  </a>
+                ) : (
+                  s.passage
+                )}
+              </dd>
+            </>
+          )}
+          {who && (
+            <>
+              <dt>Preacher</dt>
+              <dd>{who}</dd>
+            </>
+          )}
+          {s.date && (
+            <>
+              <dt>Preached</dt>
+              <dd>
+                <time datetime={s.date}>{longDate(s.date)}</time>
+                {service && `, ${service}`}
+              </dd>
+            </>
+          )}
+          {s.series?.title && s.series.slug && (
+            <>
+              <dt>Series</dt>
+              <dd>
+                <a class="c-link" href={seriesHref(s.series.slug)}>
+                  {s.series.title}
+                </a>
+              </dd>
+            </>
+          )}
+        </dl>
+        {s.notes?.url && (
+          <p class="mt-l">
+            <a
+              class="btn-auburn btn-auburn--secondary press-tactile"
+              href={s.notes.url}
+              target="_blank"
+              rel="noopener"
+            >
+              Download the notes
+              {fileLabel(s.notes) && ` (${fileLabel(s.notes)})`}
+            </a>
+          </p>
+        )}
+      </div>
+    </div>
+  </section>
+
+  {more.length > 0 && (
+    <>
+      <BoardRule />
+      <section class="bg-background" aria-labelledby="sermon-more-heading">
+        <div class="mx-auto max-w-content px-m py-section-lg">
+          <div class="c-head">
+            <h2 id="sermon-more-heading" class="font-display text-h2 auburn-h2 leading-tight">
+              {sameSeries.length ? `More in ${s.series?.title}` : 'More sermons'}
+            </h2>
+          </div>
+          <ul class="c-rows" role="list">
+            {more.map((x) => (
+              <SermonRow sermon={x} hideSeries={sameSeries.length > 0} />
+            ))}
+          </ul>
+          <p class="c-more">
+            {sameSeries.length > 0 && s.series?.slug ? (
+              <a class="c-link" href={seriesHref(s.series.slug)}>
+                The whole series
+              </a>
+            ) : (
+              <a class="c-link" href="/sermons/">
+                Every sermon
+              </a>
+            )}
+          </p>
+        </div>
+      </section>
+    </>
+  )}
+</BaseLayout>

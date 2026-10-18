@@ -58,6 +58,8 @@ function declaredTypes(file: string): string[] {
 const AUBURN_TYPES = [
   ...declaredTypes('auburnSections.ts'),
   ...declaredTypes('auburnMotionSections.ts'),
+  // The collection-fed blocks (latest sermon, series grid, people, downloads), 2026-10-18.
+  ...declaredTypes('collectionSections.ts'),
   ...declaredTypes('churchSections.ts'),
 ];
 
@@ -198,12 +200,11 @@ describe('example text', () => {
 
 describe('page templates (src/sanity/pageTemplates.ts)', () => {
   // FBC Auburn: a Custom page takes the general blocks, the church's own blocks, and
-  // the three rich ones PAGE_SECTION_TYPES adds (richSections.ts).
+  // the rich ones PAGE_SECTION_TYPES adds (richSections.ts; teamSection retired 2026-10-18).
   const allowed = new Set([
     ...declaredTypes('sections.ts'),
     ...AUBURN_TYPES,
     'faqSection',
-    'teamSection',
     'dynamicListSection',
   ]);
 

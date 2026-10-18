@@ -288,4 +288,5 @@ const SINGLETON_TYPES = new Set<string>([
   'notFoundPage',
   'privacyPage',
   'studioGuide',
+  'sermonsPage',
 ]);

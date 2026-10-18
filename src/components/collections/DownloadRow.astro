@@ -1,0 +1,35 @@
+---
+// Safe to edit by hand
+// One file on the downloads shelf: a document mark, the title as the link (it opens the file),
+// the note, and the date with the kind and size of file ("PDF, 240 KB"), so nobody is surprised
+// by a large download on a phone.
+import { fileLabel, longDate, type DownloadDoc } from '@/lib/sermons';
+
+interface Props {
+  item: DownloadDoc;
+  showDate?: boolean;
+}
+const { item: d, showDate = true } = Astro.props;
+const label = fileLabel(d.file);
+const meta = [showDate ? longDate(d.date) : '', label].filter(Boolean).join(' · ');
+---
+
+<li class="c-file">
+  <svg class="c-file__icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linejoin="round"
+    ></path>
+  </svg>
+  <div>
+    <a class="c-file__title" href={d.file?.url} target="_blank" rel="noopener">
+      {d.title}
+      <span class="sr-only"> (opens the file{label ? `, ${label}` : ''})</span>
+    </a>
+    {d.note && <p class="c-meta">{d.note}</p>}
+    {meta && <p class="c-meta">{meta}</p>}
+  </div>
+</li>

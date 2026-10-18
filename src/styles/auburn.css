@@ -5,6 +5,9 @@
    the Auburn Stone heading face, the mosaic letter colours, the arched hero and the button shape.
    Design source: DESIGN.md and docs/design-directions/2026-10-17-fbc-auburn/ (A blended with B and C). */
 
+/* The sermon archive, people list and downloads shelf (2026-10-18). */
+@import './collections.css';
+
 @font-face {
   font-family: 'Auburn Stone';
   src: url('/fonts/auburn-stone.woff2') format('woff2');

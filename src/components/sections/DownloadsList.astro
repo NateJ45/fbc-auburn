@@ -1,0 +1,93 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-18): "Downloads list". The newest files of one kind (or
+// every kind), with this week's bulletin in a box of its own on top when the editor asks for it.
+// What is current is worked out at build time (src/lib/sermons.ts): a file past its "take it down
+// after" date drops off on the next morning's rebuild. A content block: the surface comes from the
+// cadence.
+import DownloadRow from '@/components/collections/DownloadRow.astro';
+import { surfaceClass } from '@/lib/surfaces';
+import { churchDataNow } from '@/lib/church-feeds';
+import {
+  currentDownloads,
+  fileLabel,
+  longDate,
+  newestBulletin,
+  type DownloadDoc,
+} from '@/lib/sermons';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  category?: string;
+  limit?: number;
+  showDates?: boolean;
+  featureBulletin?: boolean;
+  items?: DownloadDoc[] | null;
+  bulletins?: DownloadDoc[] | null;
+  surface?: 'background' | 'muted';
+  headingId: string;
+  now?: Date;
+}
+const {
+  heading = 'Downloads',
+  intro,
+  category = 'all',
+  limit = 5,
+  showDates = true,
+  featureBulletin = false,
+  items = [],
+  bulletins,
+  surface = 'background',
+  headingId,
+  now = churchDataNow(),
+} = Astro.props;
+const bulletin = featureBulletin ? newestBulletin(bulletins ?? [], now) : null;
+const list = currentDownloads(
+  (items ?? []).filter((d) => d._id !== bulletin?._id),
+  now,
+  category,
+  Math.max(1, Math.min(24, limit ?? 5)),
+);
+---
+
+<section class={surfaceClass(surface)} aria-labelledby={headingId}>
+  <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
+    <div class="c-head">
+      <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
+        {heading}
+      </h2>
+      {intro && <p class="c-intro">{intro}</p>}
+    </div>
+    {bulletin && (
+      <div class="c-feature">
+        <p class="c-feature__label">This week's bulletin</p>
+        <p class="c-feature__title">{bulletin.title}</p>
+        <p class="c-meta">
+          {[longDate(bulletin.date), fileLabel(bulletin.file)].filter(Boolean).join(' · ')}
+        </p>
+        <a
+          class="btn-auburn btn-auburn--secondary press-tactile"
+          href={bulletin.file?.url}
+          target="_blank"
+          rel="noopener"
+        >
+          Open the bulletin<span class="sr-only"> (opens the file)</span>
+        </a>
+      </div>
+    )}
+    {list.length > 0 ? (
+      <ul class="c-files" role="list">
+        {list.map((d) => (
+          <DownloadRow item={d} showDate={showDates} />
+        ))}
+      </ul>
+    ) : (
+      !bulletin && (
+        <p class="c-empty">
+          Nothing to download just now. Bulletins, newsletters and forms show here as they come out.
+        </p>
+      )
+    )}
+  </div>
+</section>

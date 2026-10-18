@@ -28,6 +28,8 @@ import { SyncIcon } from '@sanity/icons/Sync';
 import { columnsField, headingAccentField, hideWhenRich, richTwin } from './_appearanceFields';
 import { sideOptions } from '../../lib/layout-variants';
 import { iconCardsSection, stoneIconField, thisWeekSection, watchSection } from './auburnSections';
+// FBC Auburn collections (2026-10-18): latest sermon, series grid, people, downloads.
+import { collectionSectionSchemas } from './collectionSections';
 import { auburnSectionSchemas } from './auburnMotionSections';
 import { CHURCH_INSERT_GROUPS, churchSectionSchemas } from './churchSections';
 
@@ -723,6 +725,8 @@ export const pageSectionSchemas = [
   watchSection, // FBC Auburn
   // FBC Auburn: the stepping-stone rail and the Walk in with us plan (auburnMotionSections.ts)
   ...auburnSectionSchemas,
+  // FBC Auburn: blocks fed by the sermons, people and downloads lists (collectionSections.ts)
+  ...collectionSectionSchemas,
   // FBC Auburn: the general church section library (churchSections.ts, 2026-10-18)
   ...churchSectionSchemas,
 ];
@@ -821,7 +825,14 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
     {
       name: 'media',
       title: 'Media',
-      of: ['watchSection', 'gallerySection', 'videoSection', 'embedSection'],
+      of: [
+        'watchSection',
+        'latestSermonSection',
+        'sermonSeriesSection',
+        'gallerySection',
+        'videoSection',
+        'embedSection',
+      ],
     },
     {
       // FBC Auburn (2026-10-18): the starter's story, founder, service-area,
@@ -831,7 +842,8 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
       title: 'About the church',
       of: [
         'faqSection', // scaffold: faq
-        'teamSection',
+        'peopleSection',
+        'downloadsSection',
         'thisWeekSection',
         'dynamicListSection',
         'ctaBandSection',

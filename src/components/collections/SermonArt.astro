@@ -1,0 +1,77 @@
+---
+// Safe to edit by hand
+// The picture for a sermon or a series, in the one 16:9 frame with 14px corners: the sermon's own
+// picture, else its series' picture, else the YouTube thumbnail, else the stones (three gold steps
+// from the mark on deep navy) with the series title or book in display type, so a sermon with no
+// picture at all still looks intended. `play` adds the round play button (a link around it is the
+// caller's). Decorative: the words beside it carry the meaning, so alt is empty.
+import SanityImage from '@/components/SanityImage.astro';
+import PlayMark from './PlayMark.astro';
+import { MARKER } from '@/components/home/stones.generated';
+import { sermonVideo, type SermonDoc } from '@/lib/sermons';
+import type { SanityImageObject } from '@/lib/pageBuilder.types';
+
+interface Props {
+  sermon?: SermonDoc | null;
+  /** A series card passes its art here (and no sermon). */
+  art?: unknown;
+  /** The words on the stones when there is no picture. */
+  word?: string | null;
+  play?: boolean;
+  width?: number;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+}
+const {
+  sermon,
+  art,
+  word,
+  play = false,
+  width = 720,
+  sizes = '(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw',
+  loading = 'lazy',
+} = Astro.props;
+const picked = [sermon?.image, sermon?.series?.art, art].find(
+  (img) => (img as { asset?: unknown } | null | undefined)?.asset,
+) as SanityImageObject | undefined;
+const thumb = !picked ? sermonVideo(sermon?.videoUrl)?.thumbnailUrl : undefined;
+const blankWord = word ?? sermon?.series?.title ?? null;
+---
+
+{picked ? (
+  <span class="c-art">
+    <SanityImage
+      source={picked}
+      width={width}
+      height={Math.round((width * 9) / 16)}
+      sizes={sizes}
+      alt=""
+      quality={70}
+      loading={loading}
+    />
+    {play && <PlayMark />}
+  </span>
+) : thumb ? (
+  <span class="c-art">
+    <img
+      src={thumb}
+      alt=""
+      width="480"
+      height="360"
+      loading={loading}
+      decoding="async"
+      referrerpolicy="no-referrer"
+    />
+    {play && <PlayMark />}
+  </span>
+) : (
+  <span class="c-art c-art--blank" aria-hidden="true">
+    <svg viewBox="0 0 78 36" width="78" height="36" focusable="false">
+      {MARKER.map((s) => (
+        <path d={s.d} fill={s.fill} />
+      ))}
+    </svg>
+    {blankWord && <span class="c-art__word">{blankWord}</span>}
+    {play && <PlayMark />}
+  </span>
+)}
