@@ -130,8 +130,11 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   nav stones. Waiting on the church: a rough plan of the building (which door guests use, where
   the fellowship hall, children's room and sanctuary are). Until then the Walk's drawing is
   placeholder geometry in `src/lib/walk-plan.ts` (ROOMS, STOPS, ROUTE); only those change.
-- Still open: Events and Give in the menu once the church's Church Trac links exist; the deacons'
-  team grid once names and permissions exist.
+- Still open: Events in the menu once the church's Church Trac links exist; Give is in the menu
+  (2026-10-17) but goes to Contact until there is a giving link (swap it in Site settings >
+  Navigation); the deacons' team grid once names and permissions exist.
+- Waiting on Pastor Jacob: a head-and-shoulders photo for the round portrait beside his signature
+  in Who we are (Studio: Home, Who we are, "Photo of who signed it"; square, 600px or more).
 - DONE 2026-10-17: board E on Home (decision in the directions README), replacing the bold pass's
   full-height ribbon: the lockup hero, the This Sunday card, the generated stone path, Through the
   week, Who we are, This week and Last Sunday, Other ways in, the ink footer and the header's

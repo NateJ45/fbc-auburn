@@ -21,10 +21,9 @@ import type { ProjectedIconCard, ProjectedIconCardsSection } from '@/lib/pageBui
 interface Props {
   block: ProjectedIconCardsSection;
   variant: 'board' | 'ways';
-  marker: number;
   headingId: string;
 }
-const { block, variant, marker, headingId } = Astro.props;
+const { block, variant, headingId } = Astro.props;
 const cards: ProjectedIconCard[] = block.cards ?? [];
 const facts = await getChurchFacts();
 
@@ -42,7 +41,7 @@ function titleWithTime(title: string): string {
   aria-labelledby={block.heading ? headingId : undefined}
 >
   <div class="hb-wrap">
-    {block.heading && <SectionLabel text={block.heading} marker={marker} id={headingId} />}
+    {block.heading && <SectionLabel text={block.heading} id={headingId} />}
     {variant === 'board' ? (
       <div class="hb-board">
         {cards.map((c) => (

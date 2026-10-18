@@ -971,6 +971,14 @@ export type ImageTextSection = {
     _key: string;
   }>;
   signedBy?: string;
+  signedPhoto?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
   extraImages?: Array<{
     asset?: SanityImageAssetReference;
     media?: unknown;

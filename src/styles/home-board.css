@@ -57,21 +57,22 @@
 
 /* ---- Hero: the Auburn-wide lockup ---------------------------------------------------------- */
 .hb-hero {
-  padding-top: 36px;
+  padding: 12px 0 96px;
+  overflow-x: clip; /* the path runs in from past the left edge */
 }
 .hb-masthead {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   column-gap: clamp(20px, 3vw, 44px);
   align-items: end;
-  margin: 0 0 44px;
-  padding-top: 30px;
+  margin: 0 0 32px;
+  padding-top: 26px;
   border-top: 1px solid var(--hb-line);
 }
 .hb-hero-mark {
   grid-row: 1 / span 2;
   align-self: center;
-  width: clamp(150px, 18.5vw, 268px);
+  width: clamp(140px, 16vw, 236px);
   height: auto;
 }
 .hb-h1 {
@@ -81,6 +82,7 @@
 }
 .hb-eyebrow {
   grid-column: 2;
+  grid-row: 1;
   display: block;
   font-family: var(--font-body);
   font-size: clamp(15px, 1.25vw, 18px);
@@ -90,12 +92,27 @@
   text-transform: uppercase;
   color: var(--auburn-deep);
 }
+/* The place line, top right of the masthead: road, town, state (from Church facts). */
+.hb-place {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hb-body);
+}
 .hb-word {
   grid-column: 2;
+  grid-row: 2;
   display: block;
   margin: 0.06em 0 0 -0.04em;
   font-family: 'Auburn Stone', 'Young Serif', serif;
-  font-size: clamp(70px, 15.4vw, 232px);
+  font-size: clamp(70px, 13.2vw, 200px);
   line-height: 0.84;
   letter-spacing: -0.035em;
 }
@@ -168,6 +185,8 @@
 
 /* ---- This Sunday card ------------------------------------------------------------------------ */
 .hb-sunday {
+  position: relative;
+  z-index: 2; /* above the path's last step */
   padding: 32px 34px 30px;
   border-radius: var(--hb-radius);
   background-color: var(--auburn-deep);
@@ -244,11 +263,6 @@
   padding-top: 18px;
   border-top: 1px solid rgb(255 255 255 / 0.22);
 }
-.hb-sunday__where img {
-  flex: none;
-  width: 84px;
-  height: auto;
-}
 .hb-sunday__where p {
   margin: 0;
   font-size: 17px;
@@ -261,13 +275,25 @@
 }
 
 /* ---- The stone path ------------------------------------------------------------------------ */
+/* Desktop: drawn at its own size (1200x240, never scaled, so the stones keep the mark's
+   proportions) with its right edge on the This Sunday card's left side, so the last gold step
+   meets the card. The card is the right 5/12 of the lead row after a 64px gap, so its width is
+   (100% - 64px) * 5/12. The path runs out past the left edge (the hero clips it) and fades in.
+   The welcome column keeps room under its buttons so the path never meets text. */
+.hb-lead > :first-child {
+  padding-bottom: 170px;
+}
 .hb-path-wide {
-  position: relative;
+  position: absolute;
   z-index: 1;
+  right: calc((100% - 64px) * 5 / 12 - 16px);
+  bottom: -76px;
   display: block;
-  width: 100%;
-  height: auto;
-  margin-top: -140px;
+  width: 1200px;
+  max-width: none;
+  height: 240px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%);
+  mask-image: linear-gradient(to right, transparent, #000 14%);
 }
 .hb-path-phone {
   display: none;
@@ -303,19 +329,18 @@ html.motion .hb-path.is-laid .hb-stone {
 }
 
 /* ---- Bands: pale mosaic texture, white panels ------------------------------------------------ */
+/* One rhythm between sections (Home audit, 2026-10-17: the gaps had stacked to 160 to 250px). */
 .hb-band {
-  padding: 68px 0 84px;
-  background-repeat: repeat;
-  background-size: 420px 420px;
+  padding: 60px 0 64px;
 }
+/* Flat tints: the pebble textures were dropped in the Home audit (2026-10-17); the white panels
+   and the stone icons carry the bands. */
 .hb-band--sky {
-  margin: 8px 0 96px;
+  margin: 0 0 40px;
   background-color: #eaf2fb;
-  background-image: url('/textures/tile-sky.svg');
 }
 .hb-band--green {
   background-color: #ebf3ed;
-  background-image: url('/textures/tile-green.svg');
 }
 
 /* Through the week: a three-column board on a white panel. */
@@ -414,12 +439,14 @@ html.motion .hb-path.is-laid .hb-stone {
 
 /* ---- Who we are: the photo mosaic ------------------------------------------------------------- */
 .hb-section {
-  padding-bottom: 96px;
+  padding-bottom: 80px;
 }
 .hb-mosaic {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: 250px;
+  /* At least 250px, and taller when the note needs it: a long welcome must never slide under the
+     photos (Home audit, 2026-10-17). */
+  grid-auto-rows: minmax(250px, auto);
   gap: 12px;
 }
 .hb-ph {
@@ -493,6 +520,19 @@ html.motion .hb-path.is-laid .hb-stone {
   font-size: 64px;
   line-height: 0.9;
   color: #cfe3d5;
+}
+.hb-note__by {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hb-note__face {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.9);
 }
 .hb-note__sign {
   margin: 0;
@@ -590,6 +630,12 @@ html.motion .hb-path.is-laid .hb-stone {
   .hb-path-wide {
     display: none;
   }
+  .hb-hero {
+    padding-bottom: 32px;
+  }
+  .hb-lead > :first-child {
+    padding-bottom: 0;
+  }
   /* The card follows the welcome directly (time and place on the first phone screen); the path
      comes after it, 24px clear above and below, full bleed past the gutter. */
   .hb-lead {
@@ -632,8 +678,14 @@ html.motion .hb-path.is-laid .hb-stone {
     display: none;
   }
   .hb-eyebrow,
-  .hb-word {
+  .hb-word,
+  .hb-place {
     grid-column: 1;
+  }
+  .hb-place {
+    grid-row: 3;
+    justify-self: start;
+    font-size: 11px;
   }
   .hb-word {
     font-size: 21vw;

@@ -44,6 +44,7 @@ export function sectionsProjection(field = 'pageBuilder'): string {
     _type == "imageTextSection" => {
       ...,
       image${IMAGE_PROJECTION},
+      signedPhoto${IMAGE_PROJECTION},
       extraImages[]${IMAGE_PROJECTION},
       cta${CTA_PROJECTION}
     },

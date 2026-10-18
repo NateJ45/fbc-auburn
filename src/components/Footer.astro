@@ -229,12 +229,12 @@ const footerAddress = footerFacts.address;
     </div>
   )}
 
-  {/* Five-column link grid. Single centered column on mobile, five columns
-       at md+ (left-aligned). The fifth column carries contact details.
-       When siteSettings.footerColumns is non-empty, the custom Sanity columns
-       replace the built-in Studio / Work / Free tools columns. The Latest
-       Projects column and Get in touch column always render. */}
-  <div class="mx-auto grid max-w-content grid-cols-1 gap-l px-l pt-l pb-m text-left sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+  {/* Link grid. FBC Auburn (Home audit, 2026-10-17): it takes the brand row's own columns
+       (.site-footer__links in src/styles/auburn.css), so Visit, Belong and Connect line up under
+       the tagline, Sundays and Find us; two columns on phones. When siteSettings.footerColumns is
+       non-empty, the custom Sanity columns replace the built-in ones. Get in touch renders only
+       when there is an email, a phone or a social link to show. */}
+  <div class="site-footer__links mx-auto grid max-w-content gap-l px-l pt-l pb-m text-left">
     {/* --- Editor-managed columns (from Sanity siteSettings.footerColumns) --- */}
     {useCustomFooterColumns ? (
       sanityFooterColumns.map((col, colIdx) => (
@@ -455,54 +455,54 @@ const footerAddress = footerFacts.address;
           </p>
         )}
       </nav>
-    ) : (
-      <div aria-hidden="true" />
-    )}
+    ) : null}
 
-    {/* GET IN TOUCH — email, phone, location, socials. */}
-    <div>
-      <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Get in touch</p>
-      <div class="space-y-1 text-sm">
-        {email && (
-          <p>
-            <CopyEmailButton client:visible email={email} variant="link" />
-          </p>
-        )}
-        {phone && (
-          <p>
-            <a
-              href={telHref(phone)}
-              class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
-            >
-              <Phone size={14} aria-hidden="true" />
-              {phone}
-            </a>
-          </p>
+    {/* GET IN TOUCH: email, phone, socials. Skipped when there is none of them. */}
+    {(email || phone || socialLinksToRender.length > 0) && (
+      <div>
+        <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Get in touch</p>
+        <div class="space-y-1 text-sm">
+          {email && (
+            <p>
+              <CopyEmailButton client:visible email={email} variant="link" />
+            </p>
+          )}
+          {phone && (
+            <p>
+              <a
+                href={telHref(phone)}
+                class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+              >
+                <Phone size={14} aria-hidden="true" />
+                {phone}
+              </a>
+            </p>
+          )}
+        </div>
+        <p class="mt-s text-sm text-foreground/75">{site.name}</p>
+        {socialLinksToRender.length > 0 && (
+          <ul class="mt-m flex list-none justify-start gap-s p-0 text-sm">
+            {socialLinksToRender.map((link) => {
+              const Icon = socialIcon(link.platform);
+              const ariaLabel = link.label ?? link.platform ?? 'Social link';
+              return (
+                <li>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={ariaLabel}
+                    class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
+                  >
+                    <Icon size={20} stroke={1.5} />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         )}
       </div>
-      <p class="mt-s text-sm text-foreground/75">{site.name}</p>
-      {socialLinksToRender.length > 0 && (
-        <ul class="mt-m flex list-none justify-start gap-s p-0 text-sm">
-          {socialLinksToRender.map((link) => {
-            const Icon = socialIcon(link.platform);
-            const ariaLabel = link.label ?? link.platform ?? 'Social link';
-            return (
-              <li>
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={ariaLabel}
-                  class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
-                >
-                  <Icon size={20} stroke={1.5} />
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
+    )}
   </div>
 
   {/* Thin bottom bar — copyright, privacy, optional "Site by..." credit on one

@@ -7,6 +7,26 @@ Nothing here is site code; `brand/brand.config.json` and `src/**` are untouched.
 
 ## Decision
 
+2026-10-17 (night): **board E refined after a Home audit** (nine reviewers, one per section plus
+the motif and the whole page). The motif stays and becomes one system:
+
+- the stones are a middle ground between the board's round pebbles and the mark's dressed stones
+  (Nathan tried a squared, coursed path and judged it lost the warmth): the same random Voronoi
+  stones, every one a different size, with flatter sides and softened corners, in the mark's six
+  colours only (it was 13), even grout, and no red "cross" end;
+- the path runs in from the left under the buttons and ends in gold at the This Sunday card's
+  left side, whole stones only, so the card is the door; it lays when it comes into view; phones
+  get a short strip under the card instead of the diagonal;
+- the card's ground is the same soft stones in varied sizes; no map pin on it (mosaic on mosaic);
+- the sky and green bands are flat tints (the pebble texture read as wallpaper);
+- one section marker everywhere: three gold steps from the mark;
+- the masthead is a little smaller and carries the place ("Hamilton-Scipio Road · Hamilton,
+  Ohio", from Church facts), so "Auburn" is not read as Alabama;
+- Who we are grows with the welcome (it overflowed past about 35 words) and takes an optional
+  portrait beside the signature (`imageTextSection.signedPhoto`, Home only);
+- the header's four links are About, Watch, Ministries, Give; the footer's link grid shares the
+  brand row's columns; the gaps between sections are one rhythm (80 to 160px, was up to 218px).
+
 2026-10-17 (late): Nathan picked **board E, "the path to the door"**, which replaces the full-height
 ribbon on Home. A second design round (four Home directions on a Claude Design canvas) found the
 ribbon still weaker than the comp; he chose C (the noticeboard) with A's This Sunday card, polished

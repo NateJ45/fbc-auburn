@@ -21,12 +21,11 @@ import type { ProjectedThisWeekSection, ProjectedWatchSection } from '@/lib/page
 interface Props {
   week?: ProjectedThisWeekSection | null;
   watch?: ProjectedWatchSection | null;
-  marker: number;
   headingId: string;
   /** The build moment; tests pass a fixed one. */
   now?: Date;
 }
-const { week, watch, marker, headingId, now = churchDataNow() } = Astro.props;
+const { week, watch, headingId, now = churchDataNow() } = Astro.props;
 
 const facts = await getChurchFacts();
 const rows = week ? thisWeek(facts, await loadChurchEvents(facts), now).slice(0, 4) : [];
@@ -41,7 +40,7 @@ const WatchTag = watchHref ? 'a' : 'div';
 
 <section class="hb-section" aria-labelledby={headingId}>
   <div class="hb-wrap">
-    <SectionLabel text={label} marker={marker} as="p" />
+    <SectionLabel text={label} as="p" />
     <div class="hb-pair">
       {week && (
         <div>

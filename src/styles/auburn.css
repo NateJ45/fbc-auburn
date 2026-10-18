@@ -698,7 +698,16 @@ h6 {
   font-size: 14px;
   color: #b4b8c4;
 }
+/* The link grid shares the brand row's columns, so every column edge lines up. */
+.site-footer__links {
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  column-gap: 40px;
+}
 @media (max-width: 960px) {
+  .site-footer__links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+  }
   .site-footer__board {
     grid-template-columns: minmax(0, 1fr);
     gap: 28px;

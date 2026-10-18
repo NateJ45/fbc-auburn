@@ -3,20 +3,25 @@
 // Board E's opening: the church's Auburn-wide lockup at hero scale (the full-colour mark beside
 // "FIRST BAPTIST CHURCH OF" over a mosaic "Auburn"), then the lead row (the red welcome line, a
 // paragraph, one red button and a text link) beside the This Sunday card, then the stone path
-// rising from the left and tucking under the card. On a phone the mark is hidden (the header
-// carries it), the card comes straight after the welcome and its buttons (so the time and place
-// are on the first screen), and a smaller path follows the card.
+// running in from the left edge under the buttons and ending in gold steps at the card's left
+// side (the card is the door). The place line ("Hamilton-Scipio Road · Hamilton, Ohio") sits
+// top right of the masthead, from Church facts, so "Auburn" is never read as Alabama. On a
+// phone the mark is hidden (the header carries it), the card comes straight after the welcome
+// and its buttons (so the time and place are on the first screen), and a short strip of the path
+// follows the card.
 //
 // Content: the Home document's hero block (Studio > Home > Page layout > Hero). Eyebrow and
 // Headline draw the lockup, "Welcome line" is the red line, Subhead the paragraph, and the two
 // buttons. The h1 reads "First Baptist Church of Auburn" as one heading.
 //
-// The path lays itself once on load: the inline script below arms it before first paint (only
-// under html.motion), then lays it 350ms later. See StonePath.astro.
+// The path lays itself once, when it comes into view: the inline script below arms it before
+// first paint (only under html.motion), then lays it as soon as a third of it is on screen (at
+// once on a tall screen). See StonePath.astro.
 import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 import SundayCard from './SundayCard.astro';
 import SundayFacts from './SundayFacts.astro';
 import StonePath from './StonePath.astro';
+import { getChurchFacts } from '@/lib/church-data';
 import { ctaHref } from '@/lib/cta-href';
 import { splitStega } from '@/lib/preview-stega';
 import type { ProjectedHeroSection } from '@/lib/pageBuilder.types';
@@ -33,6 +38,19 @@ let k = 0;
 const letters = [...word].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k++ % 4 }));
 const name = [splitStega(block.eyebrow ?? '').cleaned, word].filter(Boolean).join(' ');
 const primary = block.primaryCta;
+
+// The place line: the road (house number dropped), then the town and the state written out.
+const facts = await getChurchFacts();
+const STATES: Record<string, string> = { OH: 'Ohio' };
+const addr = facts.address;
+const place = addr
+  ? [
+      addr.street.replace(/^\d+\s+/, ''),
+      [addr.city, STATES[addr.state] ?? addr.state].filter(Boolean).join(', '),
+    ]
+      .filter(Boolean)
+      .join(' · ')
+  : '';
 const secondary = block.secondaryCta;
 ---
 
@@ -63,6 +81,7 @@ const secondary = block.secondaryCta;
           {encoded}
         </span>
       </h1>
+      {place && <p class="hb-place">{place}</p>}
     </div>
 
     <div class="hb-lead">
@@ -90,9 +109,9 @@ const secondary = block.secondaryCta;
       </div>
       <SundayCard />
       <StonePath variant="phone" />
+      <StonePath variant="wide" />
     </div>
   </div>
-  <StonePath variant="wide" />
 </section>
 
 <script is:inline>
@@ -105,12 +124,29 @@ const secondary = block.secondaryCta;
     paths.forEach(function (p) {
       p.classList.add('is-armed');
     });
-    // Lay it 350ms after the markup is parsed, as the design does. Not on the window load event:
-    // that waits for every photo, and the path would then lay seconds after the page is up.
-    setTimeout(function () {
-      paths.forEach(function (p) {
-        p.classList.add('is-laid');
-      });
-    }, 350);
+    var lay = function (p) {
+      p.classList.add('is-laid');
+    };
+    // Lay each path when a third of it is in view, so people actually see it happen. Without
+    // IntersectionObserver, lay it 350ms after the markup is parsed, as before.
+    if (!('IntersectionObserver' in window)) {
+      setTimeout(function () {
+        paths.forEach(lay);
+      }, 350);
+      return;
+    }
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          lay(e.target);
+          io.unobserve(e.target);
+        });
+      },
+      { threshold: 0.33 },
+    );
+    paths.forEach(function (p) {
+      io.observe(p);
+    });
   })();
 </script>

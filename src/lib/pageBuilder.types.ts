@@ -125,11 +125,13 @@ export type ProjectedRichTextSection = { _key: string } & _RichTextSection & {
 
 export type ProjectedImageTextSection = { _key: string } & Omit<
   _ImageTextSection,
-  'image' | 'cta' | 'extraImages'
+  'image' | 'cta' | 'extraImages' | 'signedPhoto'
 > & {
     image?: ProjectedImage | null;
     /** Home only (board E): the two smaller photos of the Who we are mosaic. */
     extraImages?: ProjectedImage[] | null;
+    /** Home only: the round portrait beside the signature. */
+    signedPhoto?: ProjectedImage | null;
     cta?: ProjectedCtaBlock | null;
     /** Non-schema alias for imageSide present in some defaultSections entries. */
     imagePosition?: 'left' | 'right';

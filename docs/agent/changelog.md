@@ -1,5 +1,24 @@
 # Change history
 
+_2026-10-17: Home refined after the audit: one stone system, the path ends at the card._
+
+**Decision.** Recorded in `docs/design-directions/2026-10-17-fbc-auburn/README.md`.
+`scripts/lib/stone-mosaic.mjs` now draws soft, hand-laid stones (Voronoi cells with flatter sides,
+corners softened rather than rounded, varied sizes) in the mark's six colours only; the wide path
+is 1200x240 at its own size, absolutely placed in the hero's lead row with its right edge on the
+This Sunday card (`home-board.css`), whole stones only, and it lays on scroll into view
+(IntersectionObserver, 350ms fallback). The phone path is a 390x96 strip. `tile-sky.svg` and
+`tile-green.svg` are gone (flat bands); `tile-deep.svg` is the soft stones in varied sizes.
+`MARKERS` became one `MARKER` (three gold steps) and the `marker` prop is gone from SectionLabel,
+BoardRule and the Home sections. The card's address row has no pin and adds the state. The
+masthead gains the place line from Church facts. `.hb-mosaic` rows are `minmax(250px, auto)` so a
+long welcome grows the panel. New field `imageTextSection.signedPhoto` (Home only) draws a round
+portrait beside the signature. The footer link grid (`.site-footer__links`) shares the brand row's
+columns, with no spacer and no empty Get in touch. Data: `scripts/content/nav-give.mjs` reordered
+the menu (About, Watch, Ministries, Give first; Give goes to Contact until a giving link exists;
+"Plan your visit" left the list because the header button carries it). Measured at 320, 390, 1024,
+1280, 1366 and 1440: no sideways scroll, the path never meets text, a five-sentence welcome fits.
+
 _2026-10-17: board E corrections on Home, and E's grammar on the inner pages._
 
 **Decision.** Five critics reviewed live board E; these are the code fixes they agreed on. Home: on a phone the

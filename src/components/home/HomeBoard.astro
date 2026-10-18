@@ -12,7 +12,7 @@
 //   This week + Watch, adjacent  -> HomeWeekWatch: side by side (either alone is fine too)
 //   anything else                -> SectionRenderer, so a section an editor adds still renders
 //
-// Section-label markers follow the path down the page: sky, green, gold, red, then round again.
+// Every section label leads with the same marker: three gold steps from the mark.
 //
 // PREVIEW. The Studio preview passes `editDoc`, and each drawn block is wrapped in a real block box
 // carrying its data-sanity attribute (the in-canvas insert / move / remove controls), exactly as
@@ -47,21 +47,18 @@ type Row =
       key: string;
       block: ProjectedIconCardsSection;
       variant: 'board' | 'ways';
-      marker: number;
     }
-  | { kind: 'belong'; key: string; block: ProjectedImageTextSection; marker: number }
+  | { kind: 'belong'; key: string; block: ProjectedImageTextSection }
   | {
       kind: 'weekWatch';
       key: string;
       keys: string[];
       week: ProjectedThisWeekSection | null;
       watch: ProjectedWatchSection | null;
-      marker: number;
     }
   | { kind: 'other'; key: string; block: PageBuilderBlock };
 
 const rows: Row[] = [];
-let marker = 0;
 let seenHero = false;
 let seenCards = false;
 let seenBelong = false;
@@ -77,12 +74,11 @@ for (let i = 0; i < blocks.length; i++) {
       key,
       block: b as ProjectedIconCardsSection,
       variant: seenCards ? 'ways' : 'board',
-      marker: marker++,
     });
     seenCards = true;
   } else if (b._type === 'imageTextSection' && !seenBelong) {
     seenBelong = true;
-    rows.push({ kind: 'belong', key, block: b as ProjectedImageTextSection, marker: marker++ });
+    rows.push({ kind: 'belong', key, block: b as ProjectedImageTextSection });
   } else if (b._type === 'thisWeekSection' || b._type === 'watchSection') {
     const next = blocks[i + 1];
     const pairs =
@@ -97,7 +93,6 @@ for (let i = 0; i < blocks.length; i++) {
       keys: group.map((g) => (g as { _key?: string })._key ?? key),
       week: (group.find((g) => g._type === 'thisWeekSection') as ProjectedThisWeekSection) ?? null,
       watch: (group.find((g) => g._type === 'watchSection') as ProjectedWatchSection) ?? null,
-      marker: marker++,
     });
   } else {
     rows.push({ kind: 'other', key, block: b });
@@ -119,11 +114,11 @@ const hid = (key: string) => `home-${key}`;
         {r.kind === 'hero' ? (
           <HomeHero block={r.block} />
         ) : r.kind === 'band' ? (
-          <HomeBand block={r.block} variant={r.variant} marker={r.marker} headingId={hid(r.key)} />
+          <HomeBand block={r.block} variant={r.variant} headingId={hid(r.key)} />
         ) : r.kind === 'belong' ? (
-          <HomeBelong block={r.block} marker={r.marker} headingId={hid(r.key)} />
+          <HomeBelong block={r.block} headingId={hid(r.key)} />
         ) : (
-          <HomeWeekWatch week={r.week} watch={r.watch} marker={r.marker} headingId={hid(r.key)} />
+          <HomeWeekWatch week={r.week} watch={r.watch} headingId={hid(r.key)} />
         )}
       </Wrap>
     ),

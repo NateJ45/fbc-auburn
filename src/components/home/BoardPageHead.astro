@@ -44,7 +44,7 @@ const side = hasImage || !!icon;
 <section class="board-head" aria-labelledby={headingId} data-hero="board">
   <div class:list={['board-head__inner', side && 'board-head__inner--side']}>
     <div class="board-head__copy">
-      {eyebrow && <SectionLabel text={eyebrow} marker={0} as="p" />}
+      {eyebrow && <SectionLabel text={eyebrow} as="p" />}
       {quiet ? (
         <h1 id={headingId} class="board-head__title">
           {headline}
