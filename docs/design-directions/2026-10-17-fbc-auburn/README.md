@@ -7,6 +7,14 @@ Nothing here is site code; `brand/brand.config.json` and `src/**` are untouched.
 
 ## Decision
 
+2026-10-18: **the footer and the menus rebuilt** at Nathan's ask ("unique, beautiful, functional,
+use all the space; the menus full of style and alive"). The footer is a doorstep: the sill of
+stones across its top edge, the tagline at display size beside a live This Sunday panel, a
+directory of big serif links, and a giant mosaic "Auburn" signature running off the bottom. The
+menu panel numbers its links in gold, turns a number into a coloured stone on hover and on the
+current page, carries a This Sunday card, and lays the sill as it opens. The desktop nav marks
+hover and the current page with three gold steps from the mark.
+
 2026-10-17 (late night): **Home after the church-site research** (four agents, about 100 church
 sites). Nathan asked for anything research found better. Home now runs hero, **Your first
 Sunday** (four numbered stones in the path's colours joined by gold steps; modelled on Jasper's

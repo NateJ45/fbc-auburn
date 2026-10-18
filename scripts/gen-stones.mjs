@@ -21,6 +21,7 @@ const check = process.argv.includes('--check');
 export const PATHS = {
   wide: { width: 960, height: 240, preset: 'wide', seed: 7 },
   phone: { width: 390, height: 96, preset: 'phone', seed: 11 },
+  sill: { width: 1600, height: 64, preset: 'sill', seed: 5 },
 };
 
 export const TILES = {
@@ -38,6 +39,7 @@ const outputs = new Map();
 const ts = (name, value) => `export const ${name} = ${JSON.stringify(value, null, 0)} as const;\n`;
 const wide = stonePath(PATHS.wide);
 const phone = stonePath(PATHS.phone);
+const sill = stonePath(PATHS.sill);
 const marker = stoneMarkers();
 outputs.set(
   'src/components/home/stones.generated.ts',
@@ -47,6 +49,9 @@ outputs.set(
     `export const PATH_PHONE_VIEWBOX = '0 0 ${PATHS.phone.width} ${PATHS.phone.height}';\n` +
     ts('PATH_WIDE', wide) +
     ts('PATH_PHONE', phone) +
+    `export const SILL_VIEWBOX = '0 0 ${PATHS.sill.width} ${PATHS.sill.height}';\n` +
+    '/** The sill: the doorstep along the footer and the menu, in the same story colours. */\n' +
+    ts('SILL', sill) +
     '/** The section marker: three gold steps. viewBox 0 0 78 36. */\n' +
     ts('MARKER', marker),
 );
@@ -69,5 +74,7 @@ for (const [rel, body] of outputs) {
   fs.writeFileSync(file, body);
   console.log(`wrote ${rel} (${(body.length / 1024).toFixed(0)} KB)`);
 }
-console.log(`stones: wide ${wide.length}, phone ${phone.length}; marker ${marker.length}`);
+console.log(
+  `stones: wide ${wide.length}, phone ${phone.length}, sill ${sill.length}; marker ${marker.length}`,
+);
 if (check && stale) process.exit(1);

@@ -1,0 +1,46 @@
+---
+// Safe to edit by hand
+// The sill (2026-10-18): a band of the mark's stones in the story's colours (the water, the green
+// ring, the gold steps, the red cross), the doorstep along the top of the footer. Generated with
+// the Home path by scripts/gen-stones.mjs (SILL in src/components/home/stones.generated.ts), so it
+// is the same stone language everywhere. Drawn at its own size and centred, so the stones never
+// stretch; the edges run off the screen. Decorative: aria-hidden.
+//
+// Motion: with html.motion, the stones lay themselves left to right the first time the sill comes
+// into view (CSS in src/styles/auburn.css, script below); no JS or reduced motion shows it laid.
+import { SILL, SILL_VIEWBOX } from '@/components/home/stones.generated';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class:list={['sill', className]} aria-hidden="true" data-sill>
+  <svg viewBox={SILL_VIEWBOX} focusable="false" preserveAspectRatio="xMidYMid slice">
+    {SILL.map((s, i) => (
+      <path d={s.d} fill={s.fill} style={`--i: ${i}`} />
+    ))}
+  </svg>
+</div>
+
+<script>
+  // Lay each sill once, when a quarter of it is on screen. Only under html.motion (BaseLayout sets
+  // it unless reduced motion or ?still), so no JS shows the finished sill.
+  if (document.documentElement.classList.contains('motion') && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.add('is-laid');
+          io.unobserve(e.target);
+        }
+      },
+      { threshold: 0.25 },
+    );
+    document.querySelectorAll<HTMLElement>('[data-sill]').forEach((el) => {
+      el.classList.add('is-armed');
+      io.observe(el);
+    });
+  }
+</script>

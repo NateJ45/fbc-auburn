@@ -46,6 +46,10 @@ import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings'
 import { telHref } from '@/lib/phone';
 import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 import { getChurchFacts } from '@/lib/church-data';
+import { sundayIcs, thisSunday } from '@/lib/church-facts';
+import { churchDataNow } from '@/lib/church-feeds';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import Sill from '@/components/Sill.astro';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -167,18 +171,38 @@ const footerAddress = footerFacts.address;
 // thing on every page, so it ends with the two next steps a stranger can take. The visit button
 // goes where the header's button goes, so a build without Sanity never links to a missing page.
 const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
+// The This Sunday panel and its calendar link, from the same facts as Home's card.
+const sunday = thisSunday(footerFacts, churchDataNow());
+const hasCalendar =
+  sundayIcs({ ...footerFacts, title: site.name }, churchDataNow(), site.url) !== null;
 ---
 
 <footer class="site-footer bg-muted text-foreground">
-  {/* Board E brand row (2026-10-17): the mark and the tagline, then Sundays, Find us and Follow.
+  {/* FBC Auburn footer (2026-10-18): the last screen of every page, built as a doorstep.
+      1. The sill: a band of the mark's stones across the top edge, in the story's colours.
+      2. The closing invitation (the tagline at display size, two next steps) beside a live
+         This Sunday panel: date, times, address, Directions, all from Church facts.
+      3. The link row (Sanity footer columns; Follow and Get in touch only when filled).
+      4. The signature: a giant mosaic "Auburn" across the full width, running off the bottom.
+      5. A slim bottom bar.
       The whole footer is ink: .site-footer redefines the colour tokens (src/styles/auburn.css),
-      so the link grid below turns light-on-ink without touching its classes. */}
-  <div class="site-footer__board mx-auto max-w-content px-l">
-    <div>
-      <img src={markAsset.src} width={84} height={84} alt="" loading="lazy" decoding="async" />
-      {siteSettings?.tagline && <p class="site-footer__tagline">{siteSettings.tagline}</p>}
-      <p class="site-footer__invite">Come along on a Sunday, or ask us anything first.</p>
-      <div class="site-footer__actions">
+      so the starter's link grid below turns light-on-ink without touching its classes. */}
+  <Sill class="site-footer__sill" />
+
+  <div class="sf-top mx-auto max-w-content px-l">
+    <div class="sf-invite">
+      <img
+        class="sf-invite__mark"
+        src={markAsset.src}
+        width={72}
+        height={72}
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+      {siteSettings?.tagline && <p class="sf-invite__tagline">{siteSettings.tagline}</p>}
+      <p class="sf-invite__line">Come along on a Sunday, or ask us anything first.</p>
+      <div class="sf-invite__actions">
         {visitCta && (
           <a class="btn-auburn btn-auburn--primary" href={visitCta.href}>
             {visitCta.label}
@@ -189,54 +213,51 @@ const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
         </a>
       </div>
     </div>
-    {footerSundays.length > 0 && (
-      <div>
-        <p class="site-footer__head">Sundays</p>
-        <p class="site-footer__body">
-          {footerSundays.map((t) => (
-            <>
-              {t.timeLabel.replace(/ am$/, '')} {t.label}
-              <br />
-            </>
+
+    {sunday && (
+      <aside class="sf-sunday" aria-labelledby="sf-sunday-title">
+        <div class="sf-sunday__top">
+          <p class="sf-sunday__eyebrow" id="sf-sunday-title">
+            {sunday.isToday ? 'Today' : 'This Sunday'}
+          </p>
+          <NotConfirmed
+            confirmed={sunday.confirmed}
+            label="Times to confirm"
+            class="sf-sunday__tag"
+          />
+        </div>
+        <p class="sf-sunday__date">
+          <time datetime={sunday.date}>{sunday.dateLabel.replace(/^Sunday, /, '')}</time>
+        </p>
+        <dl class="sf-sunday__times">
+          {sunday.services.map((s) => (
+            <div>
+              <dt>{s.timeLabel.replace(/ am$/, '')}</dt>
+              <dd>{s.label}</dd>
+            </div>
           ))}
-          {!footerSundaysConfirmed && <span class="site-footer__small">Times to confirm</span>}
-        </p>
-      </div>
-    )}
-    {footerAddress && (
-      <div>
-        <p class="site-footer__head">Find us</p>
-        <p class="site-footer__body">
-          {footerAddress.street}
-          <br />
-          {footerAddress.city}, Ohio
-          <br />
-          {footerAddress.findUs && (
-            <>
-              <span class="site-footer__small">{footerAddress.findUs}</span>
+        </dl>
+        {footerAddress && (
+          <div class="sf-sunday__where">
+            <p>
+              {footerAddress.street}
               <br />
-            </>
-          )}
-          <a href={footerAddress.mapsUrl} rel="noopener" target="_blank">
-            Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
-          </a>
-        </p>
-      </div>
-    )}
-    {socialLinksToRender.length > 0 && (
-      <div>
-        <p class="site-footer__head">Follow</p>
-        <p class="site-footer__body">
-          {socialLinksToRender.map((l) => (
-            <>
-              <a href={l.url} rel="noopener" target="_blank">
-                {l.label || l.platform}
+              {footerAddress.city}, Ohio
+            </p>
+            {footerAddress.findUs && <p class="sf-sunday__findus">{footerAddress.findUs}</p>}
+            <p class="sf-sunday__links">
+              <a href={footerAddress.mapsUrl} rel="noopener" target="_blank">
+                Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
               </a>
-              <br />
-            </>
-          ))}
-        </p>
-      </div>
+              {hasCalendar && (
+                <a href="/sunday.ics" download>
+                  Add to my calendar
+                </a>
+              )}
+            </p>
+          </div>
+        )}
+      </aside>
     )}
   </div>
 
@@ -526,44 +547,42 @@ const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
     )}
   </div>
 
-  {/* Thin bottom bar — copyright, privacy, optional "Site by..." credit on one
-       line so they don't add a tall block to a footer column. */}
-  <div class="border-t border-border">
-    <div class="mx-auto flex max-w-content flex-col items-start justify-center gap-xs px-l py-m text-left text-xs text-foreground/80 sm:flex-row sm:justify-between">
+  {/* The signature: the church's name in the mosaic letters at full width, running off the bottom
+      edge. Decorative (the name is in the bottom bar as text). */}
+  <div class="sf-signature" aria-hidden="true">
+    <div class="sf-signature__word">
+      {['A', 'u', 'b', 'u', 'r', 'n'].map((c, i) => (
+        <span class={`s${i % 4}`}>{c}</span>
+      ))}
+    </div>
+  </div>
+
+  <div class="sf-bottom">
+    <div class="sf-bottom__inner mx-auto max-w-content px-l">
       <p>
         © {currentYear} {brandName}
+        <span class="sf-bottom__dot" aria-hidden="true">
+          ·
+        </span>
+        <span class="sf-bottom__about">A Southern Baptist church in Ross Township, Ohio</span>
       </p>
-      <div class="flex items-center gap-m">
+      <div class="sf-bottom__links">
         {LEGAL_LINKS.length > 0 ? (
-          LEGAL_LINKS.map((l) => (
-            <a
-              href={l.href}
-              class="hit-44 relative underline underline-offset-2 transition-colors hover:text-link"
-            >
-              {l.label}
-            </a>
-          ))
+          LEGAL_LINKS.map((l) => <a href={l.href}>{l.label}</a>)
         ) : (
-          <a
-            href="/privacy/"
-            class="hit-44 relative underline underline-offset-2 transition-colors hover:text-link"
-          >
-            Privacy policy
-          </a>
+          <a href="/privacy/">Privacy policy</a>
         )}
         {siteCredit &&
           (siteCreditUrl ? (
-            <a
-              href={siteCreditUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="hit-44 relative underline underline-offset-2 transition-colors hover:text-link"
-            >
+            <a href={siteCreditUrl} target="_blank" rel="noopener noreferrer">
               {siteCredit}
             </a>
           ) : (
             <span>{siteCredit}</span>
           ))}
+        <a href="#main" class="sf-bottom__top">
+          Back to top <span aria-hidden="true">↑</span>
+        </a>
       </div>
     </div>
   </div>
