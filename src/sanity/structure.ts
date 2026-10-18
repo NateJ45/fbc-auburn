@@ -233,11 +233,11 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       // non-orderable use standard lists.
       S.listItem()
         .id('content')
-        .title('Content')
+        .title('Questions, notices and forms')
         .icon(ThListIcon)
         .child(
           S.list()
-            .title('Content')
+            .title('Questions, notices and forms')
             .items([
               // scaffold: faq
               emptyAwareList(S, context, {

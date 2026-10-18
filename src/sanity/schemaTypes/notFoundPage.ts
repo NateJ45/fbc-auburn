@@ -18,7 +18,7 @@ export const notFoundPage = defineType({
   fields: [
     defineField({
       name: 'seoTitle',
-      title: 'SEO title',
+      title: 'Google title',
       type: 'string',
       group: 'seo',
       initialValue: 'Page not found',
@@ -31,7 +31,7 @@ export const notFoundPage = defineType({
     }),
     defineField({
       name: 'seoDescription',
-      title: 'SEO description',
+      title: 'Google description',
       type: 'text',
       rows: 2,
       group: 'seo',

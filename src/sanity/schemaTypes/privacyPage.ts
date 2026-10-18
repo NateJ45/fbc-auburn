@@ -10,7 +10,7 @@ import { imageWithAlt } from './_imageWithAlt';
 
 export const privacyPage = defineType({
   name: 'privacyPage',
-  title: 'Privacy Policy Page',
+  title: 'Privacy page',
   type: 'document',
   // Configuration, not prose the editor writes — exclude from Canvas.
   options: { canvasApp: { exclude: true } },
@@ -24,7 +24,7 @@ export const privacyPage = defineType({
     // SEO
     defineField({
       name: 'seoTitle',
-      title: 'SEO title',
+      title: 'Google title',
       type: 'string',
       group: 'seo',
       description:
@@ -36,7 +36,7 @@ export const privacyPage = defineType({
     }),
     defineField({
       name: 'seoDescription',
-      title: 'SEO description',
+      title: 'Google description',
       type: 'text',
       rows: 3,
       group: 'seo',
@@ -151,5 +151,5 @@ export const privacyPage = defineType({
     // The authoring kit (card 109): Insert a saved section, plus gentle warnings.
     defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
   ],
-  preview: { prepare: () => ({ title: 'Privacy Policy Page' }) },
+  preview: { prepare: () => ({ title: 'Privacy page' }) },
 });
