@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-18: the Studio's safety net (PORTS card 114)._
+
+**What changed.** Four tools modelled on the Theology Matters WordPress admin. A **morning change note**: every day at
+about 6 AM Eastern, `change-note.yml` lists what changed in the Studio in the last 24 hours (who, what, which page,
+Studio and live links) as a GitHub issue "What changed on <date>", which GitHub emails to whoever watches the repo;
+quiet days post nothing. **Share a preview**: a private link to one page's draft that works for 1, 3, 7 or 14 days
+with no login, can be stopped, is noindex, and is signed on the Worker (`SHARE_PREVIEW_SECRET`), never a Sanity
+token. **Messages**: the forms' submissions from D1 with New / Needs a person / Replied / Spam, prayer requests shown
+only as "one arrived", nothing personal in Sanity; it says "Forms are not set up yet" until the forms are on.
+**Table views** of sermons, downloads and people beside the normal lists.
+
 _2026-10-18: links in text accept addresses on this site._
 
 **What changed.** The link in the privacy policy, question answers and News posts used Sanity's default URL check, which only accepts full https addresses, so the privacy policy's own link to /contact/ (written by visitor-audit.mjs) blocked Publish with "Not a valid URL". Those four link fields now accept a page on this site (/contact/), https, http, mailto: and tel:, and say so in the field help. Found by Nathan in the Studio.

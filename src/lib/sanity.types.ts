@@ -3366,6 +3366,22 @@ export type TrashedItem = {
   payload?: string;
 };
 
+export type PreviewShare = {
+  _id: string;
+  _type: 'previewShare';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  docId?: string;
+  docType?: string;
+  path?: string;
+  days?: number;
+  expiresAt?: string;
+  createdBy?: string;
+  revoked?: boolean;
+};
+
 export type MediaFolderReference = {
   _ref: string;
   _type: 'reference';
@@ -3596,6 +3612,7 @@ export type AllSanitySchemaTypes =
   | HomePage
   | StudioWeek
   | TrashedItem
+  | PreviewShare
   | MediaFolderReference
   | MediaFolder
   | MediaTag

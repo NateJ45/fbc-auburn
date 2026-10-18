@@ -1180,6 +1180,79 @@ guides.push(
 // The sermon, people and downloads guides (FBC Auburn, 2026-10-18).
 guides.push(...collectionGuides);
 
+// ── Workflow tools (PORTS.md card 114) ───────────────────────────────────────
+// Appended like the kit helpers above, so a site rewriting its guides keeps them.
+guides.push(
+  {
+    slug: 'share-a-preview',
+    category: 'Pages and words',
+    title: 'Show someone a page before it goes live',
+    icon: '↗',
+    lead: 'A private link to your draft that works for a few days, no login needed.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Sometimes you want a second pair of eyes on a page before you publish it. **Share a preview** makes a private link that shows your unpublished changes to that one page. The person opening it does not need a Studio login.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open the page you are working on.',
+          'Open the menu next to `Publish` and choose `Share a preview`.',
+          'Pick how long the link should work: 1, 3, 7 or 14 days.',
+          'Click `Make the link`, then `Copy`, and paste it into an email or a message.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'The link is shown once.',
+        text: 'Copy it straight away. If you lose it, make a new one; the old one keeps working until its date unless you stop it.',
+      },
+      { kind: 'h', text: 'Stop a link early' },
+      {
+        kind: 'p',
+        text: 'Open `Share a preview` on the same page. Under **Links for this page that still work**, click `Stop this link`. Anyone who opens it after that sees the published page instead.',
+      },
+      { kind: 'seealso', items: ['Change the words on a page'] },
+    ],
+  },
+  {
+    slug: 'messages',
+    category: 'Housekeeping',
+    title: 'Read messages from the website',
+    icon: '@',
+    lead: 'Everything people send through the forms, in one list.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Click `Messages` in the top bar. Every form on the website lands here as well as in email, newest first. Click a name to read the message.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**New**: nobody has dealt with it yet.',
+          '**Needs a person**: someone has to answer it. A message whose email did not go out starts here, because nobody has seen it anywhere else.',
+          '**Replied**: answered. Mark it so nobody answers twice.',
+          '**Spam**: junk. Leave it there.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'Prayer requests stay private.',
+        text: 'A prayer request shows only that one arrived and when. Its words go to the email address set on the form and are not kept or shown here.',
+      },
+      {
+        kind: 'p',
+        text: 'If the page says **Forms are not set up yet**, the website forms have not been switched on. Ask for help.',
+      },
+    ],
+  },
+);
+
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
  * guide.forType, PORTS.md card 110). '*' is the fallback for anything unlisted.
@@ -1192,6 +1265,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   // FBC Auburn: the church's own guides first where they fit.
   page: [
     'edit-a-page',
+    'share-a-preview',
     'section-library',
     'page-templates',
     'seasonal-patterns',
@@ -1199,7 +1273,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
     'rename-a-page',
     'seo-fields',
   ],
-  form: ['make-a-form', 'prayer-requests'],
+  form: ['make-a-form', 'prayer-requests', 'messages'],
   homePage: ['home-page', 'add-sermon', 'images-and-alt', 'seo-fields'],
   siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
   sectionPreset: ['seasonal-patterns', 'reuse-sections', 'synced-sections'],

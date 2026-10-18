@@ -206,6 +206,22 @@ Alt text is now required on every content photo (2026-10-18). Existing published
 live, but the next edit to their document will not publish until the description is filled in; the Checkup's "pictures
 with no description" lists them.
 
+### 1l. Studio workflow tools: two settings and the signed-in checks (opened 2026-10-18)
+
+**Blocker: Nathan.** Two things only Nathan should do:
+
+1. `npx wrangler secret put SHARE_PREVIEW_SECRET` (32+ random characters; OPERATIONS.md, "Studio workflow tools").
+   Until then "Share a preview" says links are not set up, and `?share=` is ignored.
+2. Add `"previewShare"` to the publish webhook's deny-list (sanity.io/manage, API, Webhooks; the filter is in
+   OPERATIONS.md). Without it, making or stopping a preview link starts a deploy.
+
+Also: make sure the people who should get the morning change note watch `NateJ45/fbc-auburn` (All Activity, or
+Custom with Issues). Messages needs the forms on (item 1h) and `migrations/0003_message_status.sql` applied remotely.
+
+Still to check, signed in: make a link, open it in a private window (the draft, the banner, no Exit button), stop it,
+reload (the published page); Messages against a local D1 with a real Studio session; each table view sorting and
+Open; the first real change-note issue. Unit-tested and checked under `wrangler dev` signed out so far.
+
 ### 1d. Church data waiting on the church
 
 **Blocker: answers from the church, after signing.** All empty-safe today; each lights up with one
