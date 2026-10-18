@@ -411,7 +411,7 @@ export const journalEntry = defineType({
     // ---------- SEO (per-post overrides) ----------
     defineField({
       name: 'seoTitle',
-      title: 'SEO title',
+      title: 'Google title',
       type: 'string',
       description:
         'Browser tab and Google result title. Aim for 50 to 60 characters. Optional: leave blank to use the post title.',
@@ -429,7 +429,7 @@ export const journalEntry = defineType({
     }),
     defineField({
       name: 'seoDescription',
-      title: 'SEO description',
+      title: 'Google description',
       type: 'text',
       rows: 3,
       description:

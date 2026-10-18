@@ -45,7 +45,7 @@ export const aboutPage = defineType({
 
     defineField({
       name: 'seoTitle',
-      title: 'SEO title',
+      title: 'Google title',
       type: 'string',
       group: 'seo',
       description:
@@ -57,7 +57,7 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'seoDescription',
-      title: 'SEO description',
+      title: 'Google description',
       type: 'text',
       rows: 3,
       group: 'seo',

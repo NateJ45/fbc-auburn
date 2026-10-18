@@ -762,41 +762,6 @@ export const guides: Guide[] = [
     ],
   },
 
-  {
-    slug: 'after-sunday',
-    category: 'Pages and words',
-    title: 'After Sunday: name the message',
-    icon: 'play',
-    lead: 'Thirty seconds that make the home page feel current.',
-    diy: 'self',
-    body: [
-      {
-        kind: 'p',
-        text: 'The "Last Sunday" card on the home page can say which message was preached and link to the video. Facebook does not let a website read its videos by itself, so this is a quick entry after Sunday.',
-      },
-      {
-        kind: 'callout',
-        tone: 'primary',
-        title: 'The easier way: add the sermon.',
-        text: 'A sermon added under `Sermons` names the card by itself, and goes on the Sermons page and the podcast too, so there is no need to do both. The steps below still work if you would rather not keep a sermon list.',
-      },
-      {
-        kind: 'steps',
-        items: [
-          'Open `Home`, then `Page layout`, then the `Watch` section.',
-          "Fill in `Last Sunday's message`: the title, the Bible passage, the date it was preached, and the link to the video.",
-          'Publish.',
-        ],
-      },
-      {
-        kind: 'callout',
-        tone: 'primary',
-        title: 'It tidies itself away.',
-        text: 'The card shows the message for eight days after its date, then goes back to its usual words, so an old title is never left up by mistake.',
-      },
-    ],
-  },
-
   // ── The section library and the form builder (2026-10-18) ──────────────────
   {
     slug: 'section-library',
@@ -971,7 +936,7 @@ export const guides: Guide[] = [
     body: [
       {
         kind: 'p',
-        text: 'Each page has a `Google and sharing` tab with an **SEO title** and **SEO description**. They are not shown on the page itself. They are what appears in a search result and in the little card when somebody shares the link.',
+        text: 'Each page has a `Google and sharing` tab with a **Google title** and **Google description**. They are not shown on the page itself. They are what appears in a search result and in the little card when somebody shares the link.',
       },
       {
         kind: 'bullets',
@@ -1235,7 +1200,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
     'seo-fields',
   ],
   form: ['make-a-form', 'prayer-requests'],
-  homePage: ['home-page', 'after-sunday', 'images-and-alt', 'seo-fields'],
+  homePage: ['home-page', 'add-sermon', 'images-and-alt', 'seo-fields'],
   siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
   sectionPreset: ['seasonal-patterns', 'reuse-sections', 'synced-sections'],
   // The collections (guides/collections.ts, 2026-10-18).

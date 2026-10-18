@@ -113,6 +113,12 @@ export default defineConfig({
   title: brand.name,
   icon: StudioIcon,
 
+  // Content Releases and Scheduled Drafts are paid Sanity features: on the free plan they only
+  // show an "Upgrade to unlock" screen. Scheduling is done by the site's own
+  // "Publish automatically at" field and publish-due.yml (card 111) instead.
+  releases: { enabled: false },
+  scheduledDrafts: { enabled: false },
+
   projectId:
     envVal('SANITY_STUDIO_PROJECT_ID', 'PUBLIC_SANITY_PROJECT_ID') || 'placeholder-project-id',
   dataset: envVal('SANITY_STUDIO_DATASET', 'PUBLIC_SANITY_DATASET') || 'production',

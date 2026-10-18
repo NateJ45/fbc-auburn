@@ -1,5 +1,9 @@
 # Change history
 
+_2026-10-18: fixes from the first signed-in Studio walkthrough._
+
+**What changed.** Releases and Scheduled Drafts are switched off in `sanity.config.ts` (paid features that only showed an "Upgrade to unlock" screen; scheduling is the site's own "Publish automatically at"). The Content panel's inner "Content" list is now "Questions, notices and forms". "Privacy Policy Page" reads "Privacy page". "SEO title" and "SEO description" read "Google title" and "Google description" on every page type except the PORTABLE `_seoFields.ts` (starter first). The Home "Add a page" card no longer lists four templates. The "After Sunday: name the message" guide is retired: "Add Sunday's sermon" replaced it, and Home's help panel points there. Checked signed in: Home, the checklist, the template picker, the section picker, saved sections, Sermons, People and Downloads start panes, Quick update and Checkup.
+
 _2026-10-18: the Studio remembers (PORTS card 111)._
 
 **What changed.** For the pastor editing alone on Sanity's free plan. **Scheduled publishing** is ready:

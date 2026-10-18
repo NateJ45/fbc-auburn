@@ -43,7 +43,7 @@ export const page = defineType({
       type: 'string',
       group: 'content',
       description:
-        'The name of this page (used for the menu link and the browser tab unless you set an SEO title).',
+        'The name of this page (used for the menu link and the browser tab unless you set a Google title).',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -150,7 +150,7 @@ export const page = defineType({
       reuse: {
         title: defineField({
           name: 'seoTitle',
-          title: 'SEO title',
+          title: 'Google title',
           type: 'string',
           group: 'seo',
           description:
@@ -162,7 +162,7 @@ export const page = defineType({
         }),
         description: defineField({
           name: 'seoDescription',
-          title: 'SEO description',
+          title: 'Google description',
           type: 'text',
           rows: 3,
           group: 'seo',

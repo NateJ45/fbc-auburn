@@ -321,7 +321,8 @@ export const kitConfig: KitConfig = {
     },
     {
       title: 'Add a page',
-      detail: 'Press + and pick Ministry, Event, Sermon series or a simple page.',
+      detail:
+        'Press + and pick from about 40 ready-made pages: Plan a visit, Kids, VBS, Easter and more.',
       target: { pane: 'pages;page' },
       icon: AddDocumentIcon,
     },
