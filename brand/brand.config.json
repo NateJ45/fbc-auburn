@@ -133,6 +133,7 @@
     },
     "icons": {
       "types": {
+        "aboutPage": "overview",
         "sermon": "scripture",
         "sermonSeries": "series",
         "sermonsPage": "scripture",

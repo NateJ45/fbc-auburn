@@ -17,7 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { mosaicTile, stoneMarkers, stonePath } from './lib/stone-mosaic.mjs';
+import { MARK, mosaicTile, stoneMarkers, stonePath } from './lib/stone-mosaic.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const check = process.argv.includes('--check');
@@ -87,8 +87,13 @@ const svgOf = ({ width, height }, stones) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">` +
   stones.map((st) => `<path d="${st.d}" fill="${st.fill}"/>`).join('') +
   '</svg>\n';
-const banner = stonePath(PATHS.banner);
-const bannerPhone = stonePath(PATHS.bannerPhone);
+// On the navy Home banner the mark's green (#2C5B3A) nearly disappears into the ground, so the
+// banner strips (and only they) draw that run in a lighter green of the same hue (2026-10-18).
+const BANNER_GREEN = '#5E9B6B';
+const onNavy = (stones) =>
+  stones.map((st) => (st.fill === MARK.green ? { ...st, fill: BANNER_GREEN } : st));
+const banner = onNavy(stonePath(PATHS.banner));
+const bannerPhone = onNavy(stonePath(PATHS.bannerPhone));
 outputs.set('public/studio-banner/stone-path.svg', svgOf(PATHS.banner, banner));
 outputs.set('public/studio-banner/stone-path-phone.svg', svgOf(PATHS.bannerPhone, bannerPhone));
 for (const [name, opts] of Object.entries(TILES)) {

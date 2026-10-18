@@ -1,5 +1,9 @@
 # Change history
 
+_2026-10-18: Studio brand polish._
+
+**What changed.** The stone icons fill their list tiles (inset 0 in brandIconArt.tsx; each file is already cropped to its art). The About page shows the church mark (aboutPage maps to the overview meaning, drawn with the full-colour mark). The Home banner strips draw the mark green run in a lighter #5E9B6B so it reads on navy; every other stone path keeps the mark six colours.
+
 _2026-10-18: the Studio's edges: its own /studio page, the church's words, a wordmark (PORTS card 120)._
 
 **What changed.** `/studio` is now the site's own page (`src/pages/studio/index.astro`) instead of @sanity/astro's:
