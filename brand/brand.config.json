@@ -130,6 +130,29 @@
     "fonts": {
       "display": "\"Young Serif\", Georgia, \"Times New Roman\", serif",
       "body": "\"Familjen Grotesk Variable\", system-ui, -apple-system, sans-serif"
+    },
+    "icons": {
+      "types": {
+        "sermon": "scripture",
+        "sermonSeries": "series",
+        "sermonsPage": "scripture",
+        "download": "download",
+        "person": "person",
+        "personGroup": "people",
+        "form": "form"
+      },
+      "groups": {
+        "church": "times",
+        "podcast": "music",
+        "pageBuilder": "sections",
+        "forms": "form"
+      },
+      "tools": {
+        "structure": "pages"
+      },
+      "tile": {
+        "dark": "#CDC3AF"
+      }
     }
   }
 }

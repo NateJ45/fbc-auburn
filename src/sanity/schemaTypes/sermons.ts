@@ -12,6 +12,7 @@
 // =============================================================================
 
 import { defineType, defineField } from 'sanity';
+import { previewDate, previewSubtitle } from '../../lib/studio-icons';
 import { MicrophoneIcon } from '@sanity/icons/Microphone';
 import { StackIcon } from '@sanity/icons/Stack';
 import { PlayIcon } from '@sanity/icons/Play';
@@ -20,7 +21,6 @@ import {
   BIBLE_VERSIONS,
   SERVICES,
   bookOf,
-  longDate,
   sermonSunday,
 } from '../../lib/sermons';
 import { additionalSectionsField } from './sections';
@@ -190,8 +190,10 @@ export const sermon = defineType({
     },
     prepare: ({ title, date, series, passage, media, seriesArt }) => ({
       title: title || 'New sermon',
-      subtitle: [longDate(date), series || passage].filter(Boolean).join(' · '),
-      media: media?.asset ? media : seriesArt?.asset ? seriesArt : MicrophoneIcon,
+      // "Sunday, November 9, 2026 · John 3:16-21" (the series when there is no passage).
+      subtitle: previewSubtitle(previewDate(date) || 'No date yet', passage || series),
+      // Its own picture, else the series art, else the type's icon on a tile (card 119).
+      media: media?.asset ? media : seriesArt?.asset ? seriesArt : undefined,
     }),
   },
 });
@@ -244,7 +246,7 @@ export const sermonSeries = defineType({
     prepare: ({ title, book, media }) => ({
       title: title || 'New series',
       subtitle: book ? `Series · ${book}` : 'Series',
-      media: media?.asset ? media : StackIcon,
+      media: media?.asset ? media : undefined,
     }),
   },
 });

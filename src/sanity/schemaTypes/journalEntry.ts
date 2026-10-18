@@ -12,6 +12,7 @@
 // actual post copy; everything else is metadata.
 
 import { defineType, defineField, defineArrayMember, type Rule } from 'sanity';
+import { previewDate, previewSubtitle } from '../../lib/studio-icons';
 import { imageMember, imageWithAlt } from './_imageWithAlt';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
@@ -489,7 +490,10 @@ export const journalEntry = defineType({
     },
     prepare: ({ title, publishedAt, featured, media }) => ({
       title: title ?? 'Untitled post',
-      subtitle: `${featured ? '★ ' : ''}${publishedAt ? new Date(publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}`,
+      subtitle: previewSubtitle(
+        featured ? 'Featured' : '',
+        previewDate(publishedAt) || 'No date yet',
+      ),
       media,
     }),
   },

@@ -13,8 +13,9 @@
 // =============================================================================
 
 import { defineType, defineField } from 'sanity';
+import { previewDate, previewSubtitle } from '../../lib/studio-icons';
 import { DownloadIcon } from '@sanity/icons/Download';
-import { DOWNLOAD_CATEGORIES, categoryTitle, churchToday, longDate } from '../../lib/sermons';
+import { DOWNLOAD_CATEGORIES, categoryTitle, churchToday } from '../../lib/sermons';
 import { publishAtField } from './_publishAt';
 
 export const download = defineType({
@@ -82,14 +83,12 @@ export const download = defineType({
     select: { title: 'title', category: 'category', date: 'date', expires: 'expires' },
     prepare: ({ title, category, date, expires }) => ({
       title: title || 'New download',
-      subtitle: [
+      // "Sunday, November 9, 2026 · Bulletin", and "Taken down" once it has expired.
+      subtitle: previewSubtitle(
+        previewDate(date) || 'No date yet',
         categoryTitle(category),
-        longDate(date),
-        expires && expires < churchToday(new Date()) ? 'taken down' : '',
-      ]
-        .filter(Boolean)
-        .join(' · '),
-      media: DownloadIcon,
+        expires && expires < churchToday(new Date()) ? 'Taken down' : '',
+      ),
     }),
   },
 });

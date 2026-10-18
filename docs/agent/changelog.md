@@ -1,5 +1,18 @@
 # Change history
 
+_2026-10-18: the stone icons across the Studio, and a picture on every list row (PORTS card 119)._
+
+**What changed.** The eight stone icons from the brand kit now stand for what they mean all through the Studio: the
+Bible for sermons, series and downloads, the clock for service times and the church facts, the coffee cup for notices
+and news, the giving hand for giving and the people who serve, the map pin for the address and the newcomers'
+questions, music for the podcast, praying hands for prayer and the forms, and the blocks for pages and sections. They
+show on the desk, on the document types (lists, search, the create menu), on field-group tabs, on page templates and
+on the tools in the phone sidebar, drawn exactly as in the kit. Every list row has a picture: its own photo when it
+has one, else its stone icon on a small tile (a stone-coloured tile in dark mode, where the navy and green stones
+would sink into a navy one). Subtitles say the date and status plainly: "Sun, Nov 8, 2026 · John 10:1-18" for a
+sermon, "Mon, Nov 9, 2026 · Bulletin" for a download, "Shows until ..." for a notice. Art: `src/sanity/brandIconArt.tsx`;
+which type means what: `brand/brand.config.json` `studio.icons`.
+
 _2026-10-18: Home opens on a branded welcome banner (PORTS card 118)._
 
 **What changed.** The plain text at the top of the Studio's Home is now a navy banner, the same colour as the top
