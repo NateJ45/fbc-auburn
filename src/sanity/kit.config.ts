@@ -369,9 +369,9 @@ export const kitConfig: KitConfig = {
   // (npm run gen:stones writes it), the editor's name in gold, and "Auburn" in Auburn Stone with
   // the footer signature's on-navy letter colours (white, water, gold).
   homeBanner: {
-    mark: '/studio/mark-full-color.svg',
-    motif: '/studio/home-banner-path.svg',
-    motifNarrow: '/studio/home-banner-path-phone.svg',
+    mark: '/studio-banner/mark.svg',
+    motif: '/studio-banner/stone-path.svg',
+    motifNarrow: '/studio-banner/stone-path-phone.svg',
     accent: '#E8A93A',
     lettering: {
       text: 'Auburn',

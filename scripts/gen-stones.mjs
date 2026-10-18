@@ -7,7 +7,7 @@
 //   public/textures/tile-deep.svg             the This Sunday card's stone ground
 //   public/textures/tile-{green,navy,sky}.svg the section library's panels and sermon art
 //                                             (church-blocks.css, collections.css)
-//   public/studio/home-banner-path*.svg       the stone path along the Studio Home banner's foot
+//   public/studio-banner/stone-path*.svg      the stone path along the Studio Home banner's foot
 //                                             (kit.config.ts homeBanner.motif, card 118)
 //
 // Redrawn 2026-10-17 after the Home audit: soft, hand-laid stones between the old pebbles and the
@@ -89,8 +89,8 @@ const svgOf = ({ width, height }, stones) =>
   '</svg>\n';
 const banner = stonePath(PATHS.banner);
 const bannerPhone = stonePath(PATHS.bannerPhone);
-outputs.set('public/studio/home-banner-path.svg', svgOf(PATHS.banner, banner));
-outputs.set('public/studio/home-banner-path-phone.svg', svgOf(PATHS.bannerPhone, bannerPhone));
+outputs.set('public/studio-banner/stone-path.svg', svgOf(PATHS.banner, banner));
+outputs.set('public/studio-banner/stone-path-phone.svg', svgOf(PATHS.bannerPhone, bannerPhone));
 for (const [name, opts] of Object.entries(TILES)) {
   outputs.set(`public/textures/tile-${name}.svg`, mosaicTile(opts));
 }

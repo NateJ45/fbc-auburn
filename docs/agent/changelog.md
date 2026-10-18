@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-18: Home opens on a branded welcome banner (PORTS card 118)._
+
+**What changed.** The plain text at the top of the Studio's Home is now a navy banner, the same colour as the top
+bar: the date, "Good afternoon" with the editor's name in gold, "First Baptist Church of Auburn" with "Auburn" in
+Auburn Stone (white, water and gold letters, as in the footer signature), the reassurance line and a View the website
+button. The church's full-colour mark sits on a cream disc, and the stone path runs along the foot from the water to
+the red cross, every stone rounded (the share card's filters). Settings: `homeBanner` in `src/sanity/kit.config.ts`;
+the stone strips are `public/studio-banner/stone-path{,-phone}.svg`, written by `npm run gen:stones`.
+
 _2026-10-18: the Studio's safety net (PORTS card 117)._
 
 **What changed.** Four tools modelled on the Theology Matters WordPress admin. A **morning change note**: every day at
