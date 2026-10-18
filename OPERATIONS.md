@@ -153,7 +153,9 @@ for a `repository_dispatch` of type `sanity-publish`. A Sanity webhook sends it:
 4. The change is live.
 
 Without the webhook a publish waits for the next scheduled build (daily 10:00 UTC, and Sunday
-18:00 UTC) or a push. As of 2026-10-18 it is **not set up** (docs/PENDING.md 1e).
+18:00 UTC) or a push. It is **set up** (2026-10-18): a publish in the Studio starts a `repository_dispatch` Deploy run within seconds and
+the change is live in about three and a half minutes. The GitHub token (Contents: Read and write, fbc-auburn only)
+is in 1Password; it expires after a year.
 
 **Setting it up (Nathan, about five minutes; it needs a token, so nobody else does it):**
 
