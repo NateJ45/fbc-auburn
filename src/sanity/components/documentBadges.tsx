@@ -6,7 +6,7 @@
 //
 //   - "Featured"      — a project or post pinned to a prominent spot
 //   - "Needs a photo" — a project/post whose cover image is still empty
-//   - "Add SEO"       — an indexable page whose SEO title or description is blank
+//   - "Add search text" — an indexable page whose SEO title or description is blank
 //
 // Registered via document.badges in sanity.config.ts. Each badge returns null
 // when it doesn't apply, so a doc only shows the badges that are relevant to it.
@@ -94,7 +94,12 @@ const SeoBadge: DocumentBadgeComponent = (props) => {
   if (hasTitle && hasDescription) return null;
   const missing =
     !hasTitle && !hasDescription ? 'title and description' : !hasTitle ? 'title' : 'description';
-  return { label: 'Add SEO', title: `Missing SEO ${missing}`, color: 'warning', icon: SearchIcon };
+  return {
+    label: 'Add search text',
+    title: `Missing the Google ${missing} (Google and sharing tab)`,
+    color: 'warning',
+    icon: SearchIcon,
+  };
 };
 
 // Order matters — badges render left to right in this order.

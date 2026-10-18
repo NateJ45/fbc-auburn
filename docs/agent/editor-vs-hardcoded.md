@@ -18,8 +18,7 @@
 - **Section visibility** -- `siteSettings.sectionVisibility` boolean toggles for each opt-in module section. Toggling any one off removes that section from the nav, footer, homepage, and its own route simultaneously. Core pages are always on. See [Section visibility](page-architecture.md#section-visibility).
 - **404 page** -- `notFoundPage` singleton (eyebrow, headline, body, hero photo, CTA labels + hrefs). Every field has a hardcoded fallback so the page works before the doc exists.
 - **Privacy page** -- `privacyPage` singleton (body Portable Text, lastUpdated). A plain static fallback renders before the doc exists.
-- **Start Here guide** -- `studioGuide` singleton: the "How the website works" handbook panel in Studio. Update the site map, how-tos, and tips without a code change.
-- **Start Here business notes** -- `studioNotes` singleton: the three static positioning sections in the "Your business at a glance" panel.
+- **Editor help** -- the Site Guide tool, from `src/sanity/guides/content.ts` (repo data, so it changes with code, not in the Studio). The old `studioGuide` singleton is no longer shown, and `studioNotes` is gone (2026-10-18).
 
 **Module-specific editor fields** are documented per module under `docs/modules/`. Examples: portfolio projects, process steps, press items, lead magnets, shop collections, style quiz questions, budget calculator options.
 

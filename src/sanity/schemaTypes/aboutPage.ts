@@ -12,19 +12,19 @@ import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 
 export const aboutPage = defineType({
   name: 'aboutPage',
-  title: 'About Page',
+  title: 'About page',
   type: 'document',
   // Marketing copy is locked and structural — edit fields directly in Studio, not Canvas.
   options: { canvasApp: { exclude: true } },
   groups: [
     { name: 'pageBuilder', title: 'Page layout' },
-    { name: 'seo', title: 'SEO' },
-    { name: 'hero', title: 'Hero' },
+    { name: 'seo', title: 'Google and sharing' },
+    { name: 'hero', title: 'Opening banner' },
     { name: 'story', title: 'Story' },
     { name: 'philosophy', title: 'Philosophy' },
     { name: 'personal', title: 'Personal' },
     { name: 'stats', title: 'Stats' },
-    { name: 'final', title: 'Final CTA' },
+    { name: 'final', title: 'Closing invitation' },
   ],
   fields: [
     // Page builder (primary editing surface — section-driven)
@@ -48,7 +48,7 @@ export const aboutPage = defineType({
       type: 'string',
       group: 'seo',
       description:
-        'Browser tab and Google result title. Aim for 50 to 60 characters. Front-load the location or service.',
+        'Browser tab and Google result title. Aim for 50 to 60 characters. Start with the church name or Hamilton.',
       validation: (Rule) =>
         Rule.max(60).warning(
           'Titles longer than about 60 characters get cut off in Google search results.',
@@ -73,7 +73,7 @@ export const aboutPage = defineType({
       type: 'image',
       group: 'seo',
       description:
-        'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site Settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
+        'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
@@ -81,7 +81,7 @@ export const aboutPage = defineType({
     // Hero (legacy structured fields — hidden for rollback safety)
     defineField({
       name: 'heroEyebrow',
-      title: 'Hero eyebrow',
+      title: 'Small line above the heading',
       type: 'string',
       group: 'hero',
       hidden: true,
@@ -90,7 +90,7 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'heroHeadline',
-      title: 'Hero headline',
+      title: 'Heading',
       type: 'string',
       group: 'hero',
       hidden: true,
@@ -99,7 +99,7 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'heroSubhead',
-      title: 'Hero subhead',
+      title: 'Line under the heading',
       type: 'text',
       rows: 2,
       group: 'hero',
@@ -109,13 +109,13 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'heroImage',
-      title: 'Hero background image',
+      title: 'Banner photo',
       type: 'image',
       group: 'hero',
       hidden: true,
       readOnly: true,
       description:
-        'Full-bleed photo behind the hero text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
+        'Full-width photo behind the banner text. Pick a landscape shot; the page applies a dark gradient over the bottom for readability.',
       options: { hotspot: true },
       fields: [
         defineField({
@@ -201,7 +201,6 @@ export const aboutPage = defineType({
       group: 'story',
       hidden: true,
       readOnly: true,
-      initialValue: 'Your Name · Founder, Studio Name',
     }),
     defineField({
       name: 'backgroundLine',
@@ -420,7 +419,7 @@ export const aboutPage = defineType({
               name: 'label',
               title: 'Label',
               type: 'string',
-              description: 'e.g. Years in Business',
+              description: 'e.g. Years in Hamilton',
               validation: (R) => R.required(),
             }),
           ],
@@ -439,7 +438,7 @@ export const aboutPage = defineType({
     // Final CTA (legacy — hidden for rollback safety)
     defineField({
       name: 'finalCtaEyebrow',
-      title: 'Final CTA eyebrow',
+      title: 'Closing invitation: small line above the heading',
       type: 'string',
       group: 'final',
       hidden: true,
@@ -448,7 +447,7 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'finalCtaHeadline',
-      title: 'Final CTA headline',
+      title: 'Closing invitation: heading',
       type: 'string',
       group: 'final',
       hidden: true,
@@ -457,7 +456,7 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'finalCtaScriptAccent',
-      title: 'Final CTA heading script accent (optional)',
+      title: 'Closing invitation: script accent word (optional)',
       type: 'string',
       group: 'final',
       hidden: true,
@@ -467,7 +466,7 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'finalCtaSubhead',
-      title: 'Final CTA subhead',
+      title: 'Closing invitation: line under the heading',
       type: 'text',
       rows: 2,
       group: 'final',
@@ -476,7 +475,7 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'finalCta',
-      title: 'Final CTA button',
+      title: 'Closing invitation: button',
       type: 'ctaBlock',
       group: 'final',
       hidden: true,
@@ -484,7 +483,7 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: 'finalCtaBackgroundImage',
-      title: 'Final CTA background image (optional)',
+      title: 'Closing invitation: background photo (optional)',
       type: 'image',
       group: 'final',
       hidden: true,
@@ -494,5 +493,5 @@ export const aboutPage = defineType({
         'Optional. A photo behind the closing call-to-action. The site automatically darkens it so the headline and button stay readable. Leave empty to keep the solid charcoal panel.',
     }),
   ],
-  preview: { prepare: () => ({ title: 'About Page' }) },
+  preview: { prepare: () => ({ title: 'About page' }) },
 });

@@ -3,6 +3,46 @@ import type { ComponentType } from 'react';
 import { useWorkspace } from 'sanity';
 import { useRouter } from 'sanity/router';
 import { guides, SITE, type DiyLevel, type GuideBlock, type PathLink } from '../guides/content';
+import { InfoOutlineIcon } from '@sanity/icons/InfoOutline';
+import { DocumentTextIcon } from '@sanity/icons/DocumentText';
+import { AddIcon } from '@sanity/icons/Add';
+import { ThLargeIcon } from '@sanity/icons/ThLarge';
+import { CopyIcon } from '@sanity/icons/Copy';
+import { SyncIcon } from '@sanity/icons/Sync';
+import { ArrowRightIcon } from '@sanity/icons/ArrowRight';
+import { ImageIcon } from '@sanity/icons/Image';
+import { MenuIcon } from '@sanity/icons/Menu';
+import { HomeIcon } from '@sanity/icons/Home';
+import { ClockIcon } from '@sanity/icons/Clock';
+import { PlayIcon } from '@sanity/icons/Play';
+import { SearchIcon } from '@sanity/icons/Search';
+import { CheckmarkCircleIcon } from '@sanity/icons/CheckmarkCircle';
+import { ActivityIcon } from '@sanity/icons/Activity';
+import { BulbOutlineIcon } from '@sanity/icons/BulbOutline';
+
+/**
+ * A guide's `icon` is a name from this list (FBC Auburn, 2026-10-18: the
+ * guides used emoji, which read as clip art beside Sanity's own icons). An
+ * unknown name falls back to the info icon, so a typo never breaks a guide.
+ */
+export const GUIDE_ICONS: Record<string, ComponentType> = {
+  info: InfoOutlineIcon,
+  document: DocumentTextIcon,
+  add: AddIcon,
+  blocks: ThLargeIcon,
+  copy: CopyIcon,
+  sync: SyncIcon,
+  arrow: ArrowRightIcon,
+  image: ImageIcon,
+  menu: MenuIcon,
+  home: HomeIcon,
+  clock: ClockIcon,
+  play: PlayIcon,
+  search: SearchIcon,
+  check: CheckmarkCircleIcon,
+  activity: ActivityIcon,
+  bulb: BulbOutlineIcon,
+};
 
 // =============================================================================
 // GuideView — read-only Help pane rendered inside the Studio structure
@@ -12,7 +52,7 @@ import { guides, SITE, type DiyLevel, type GuideBlock, type PathLink } from '../
 // stonesteps-50k. This copy assumes ONE workspace (wcp has two and swaps the
 // path segment; there is nothing to swap to in a single-workspace Studio).
 //
-// The chip colours read Sanity UI's own theme variables with a neutral
+// The chip colors read Sanity UI's own theme variables with a neutral
 // fallback, so a fork inherits something sane and can hardcode its brand if it
 // wants the guides to feel like the site.
 //
@@ -277,6 +317,12 @@ function BlockView({ block }: { block: GuideBlock }) {
 }
 
 // Returns a component bound to one guide slug (used by structure.ts).
+/** The guide's icon, looked up by name in GUIDE_ICONS. */
+function GuideIcon({ name }: { name: string }) {
+  const Icon = GUIDE_ICONS[name] ?? InfoOutlineIcon;
+  return <Icon />;
+}
+
 export function makeGuideView(slug: string): ComponentType {
   return function GuideView() {
     const guide = guides.find((g) => g.slug === slug);
@@ -291,7 +337,7 @@ export function makeGuideView(slug: string): ComponentType {
       <Box padding={4}>
         <Box style={{ maxWidth: 680, margin: '0 auto' }}>
           <Flex align="center" gap={3} style={{ flexWrap: 'wrap' }}>
-            {/* The hub-style icon chip: soft sky tint behind the guide's emoji. */}
+            {/* The hub-style icon chip: soft sky tint behind the guide's icon. */}
             <span
               aria-hidden
               style={{
@@ -303,11 +349,11 @@ export function makeGuideView(slug: string): ComponentType {
                 width: 40,
                 height: 40,
                 borderRadius: 12,
-                fontSize: 20,
+                fontSize: 24,
                 flexShrink: 0,
               }}
             >
-              {guide.icon}
+              <GuideIcon name={guide.icon} />
             </span>
             <Heading as="h1" size={4}>
               {guide.title}

@@ -95,7 +95,7 @@ const proseBody = (name = 'body', title = 'Text') =>
 // ── 1. Hero ──────────────────────────────────────────────────────────────────
 export const heroSection = defineType({
   name: 'heroSection',
-  title: 'Hero (big page opener)',
+  title: 'Opening banner (big page opener)',
   type: 'object',
   icon: ComponentIcon,
   fields: [
@@ -104,10 +104,10 @@ export const heroSection = defineType({
       'Stone icon above the title (optional)',
       'Inner pages show one large stone icon above the title.',
     ),
-    defineField({ name: 'eyebrow', title: 'Eyebrow (small line above)', type: 'string' }),
+    defineField({ name: 'eyebrow', title: 'Small line above the heading', type: 'string' }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
     }),
@@ -127,7 +127,7 @@ export const heroSection = defineType({
       description: 'The big red line under the church name, for example "Come as you are."',
       hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
     }),
-    defineField({ name: 'subhead', title: 'Subhead', type: 'text', rows: 2 }),
+    defineField({ name: 'subhead', title: 'Line under the heading', type: 'text', rows: 2 }),
     imageWithAlt('backgroundImage', 'Background photo (optional)'),
     defineField({ name: 'primaryCta', title: 'Main button', type: 'ctaBlock' }),
     defineField({ name: 'secondaryCta', title: 'Second button (optional)', type: 'ctaBlock' }),
@@ -147,7 +147,11 @@ export const heroSection = defineType({
   ],
   preview: {
     select: { title: 'headline', media: 'backgroundImage' },
-    prepare: ({ title, media }) => ({ title: title || 'Hero', subtitle: 'Hero', media }),
+    prepare: ({ title, media }) => ({
+      title: title || 'Opening banner',
+      subtitle: 'Opening banner',
+      media,
+    }),
   },
 });
 
@@ -158,7 +162,11 @@ export const richTextSection = defineType({
   type: 'object',
   icon: BlockElementIcon,
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({ name: 'heading', title: 'Heading (optional)', type: 'string' }),
     defineField({
       name: 'scriptAccent',
@@ -240,7 +248,11 @@ export const imageTextSection = defineType({
       // read the same way. See src/lib/layout-variants.ts.
       options: { list: sideOptions('Image'), layout: 'radio' },
     }),
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     proseBody('body', 'Text'),
     // FBC Auburn Home (board E, 2026-10-17): "Who we are" is a photo mosaic. The main image is the
@@ -330,7 +342,7 @@ export const gallerySection = defineType({
 // ── 5. Quote ─────────────────────────────────────────────────────────────────
 export const quoteSection = defineType({
   name: 'quoteSection',
-  title: 'Quote / testimonial',
+  title: "Quote (a verse or someone's words)",
   type: 'object',
   icon: StarIcon,
   fields: [
@@ -346,7 +358,8 @@ export const quoteSection = defineType({
       name: 'detail',
       title: 'Their detail (optional)',
       type: 'string',
-      description: 'Context that adds credibility. Example: "Location" or "Project type".',
+      description:
+        'A few words about who said it. Example: "Church member since 1998" or "John 3:16".',
     }),
   ],
   preview: {
@@ -386,7 +399,7 @@ export const statSection = defineType({
               name: 'suffix',
               title: 'Suffix (optional)',
               type: 'string',
-              description: 'Optional suffix after the number. Examples: "+", "%", "yrs".',
+              description: 'Optional suffix after the number. Examples: "+", "%", "years".',
             }),
             defineField({
               name: 'label',
@@ -417,14 +430,18 @@ export const statSection = defineType({
 // ── 7. CTA band ──────────────────────────────────────────────────────────────
 export const ctaBandSection = defineType({
   name: 'ctaBandSection',
-  title: 'Call-to-action band',
+  title: 'Invitation band',
   type: 'object',
   icon: BulbOutlineIcon,
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
     defineField({
       name: 'headline',
-      title: 'Headline',
+      title: 'Heading',
       type: 'string',
       validation: (R) => R.required(),
     }),
@@ -437,20 +454,20 @@ export const ctaBandSection = defineType({
     headingAccentField(),
     defineField({
       name: 'subhead',
-      title: 'Subhead',
+      title: 'Line under the heading',
       type: 'text',
       rows: 2,
       hidden: hideWhenRich('subheadRich'),
     }),
-    richTwin('subheadRich', 'Subhead'),
+    richTwin('subheadRich', 'Line under the heading'),
     defineField({ name: 'cta', title: 'Button', type: 'ctaBlock' }),
     imageWithAlt('backgroundImage', 'Background photo (optional)'),
   ],
   preview: {
     select: { title: 'headline', media: 'backgroundImage' },
     prepare: ({ title, media }) => ({
-      title: title || 'Call to action',
-      subtitle: 'CTA band',
+      title: title || 'Invitation',
+      subtitle: 'Invitation band',
       media,
     }),
   },
@@ -514,11 +531,11 @@ export const logoStripSection = defineType({
   fields: [
     defineField({
       name: 'eyebrow',
-      title: 'Eyebrow (optional)',
+      title: 'Small line above the heading (optional)',
       type: 'string',
       description: 'Examples: "Trusted by" or "As seen in".',
     }),
-    defineField({ name: 'headline', title: 'Headline (optional)', type: 'string' }),
+    defineField({ name: 'headline', title: 'Heading (optional)', type: 'string' }),
     defineField({
       name: 'logos',
       title: 'Logos',
@@ -574,29 +591,38 @@ export const logoStripSection = defineType({
 // in the CMS.
 export const embedSection = defineType({
   name: 'embedSection',
-  title: 'Embed (form, scheduler, or widget)',
+  title: 'Embed (a form, calendar or giving page)',
   type: 'object',
   icon: CodeBlockIcon,
   description: 'Only paste embed code from providers you trust. It renders as-is on the live site.',
   fields: [
-    defineField({ name: 'eyebrow', title: 'Eyebrow (optional)', type: 'string' }),
-    defineField({ name: 'headline', title: 'Headline (optional)', type: 'string' }),
-    defineField({ name: 'subhead', title: 'Subhead (optional)', type: 'text', rows: 2 }),
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
+    defineField({ name: 'headline', title: 'Heading (optional)', type: 'string' }),
+    defineField({
+      name: 'subhead',
+      title: 'Line under the heading (optional)',
+      type: 'text',
+      rows: 2,
+    }),
     defineField({
       name: 'embedUrl',
       title: 'Embed URL',
       type: 'url',
       description:
-        'Use for providers that embed via URL: Calendly, Cal.com, Tally, Google Forms. Paste the full URL.',
+        'For services that embed from a web address, such as Google Forms or a Church Trac page. Paste the full address.',
       validation: (R) => R.uri({ scheme: ['http', 'https'] }),
     }),
     defineField({
       name: 'embedCode',
-      title: 'Embed code (raw iframe)',
+      title: 'Embed code (from Church Trac, a giving form, and so on)',
       type: 'text',
       rows: 4,
       description:
-        'Use for providers that give a raw iframe snippet. Only paste from providers you trust.',
+        'For services that give you a piece of code to paste. Only paste code from services you trust.',
       validation: (R) =>
         R.custom((value, context) => {
           const doc = context.document as Record<string, unknown> | undefined;
@@ -700,7 +726,14 @@ export const pageSectionSchemas = [
 
 // The general blocks on their own. A saved section accepts these (plus the rich
 // blocks) but NOT a synced section; see syncedSection above.
-export const LIBRARY_SECTION_TYPES = pageSectionSchemas.map((s) => ({ type: s.name }));
+//
+// FBC Auburn (2026-10-18): the logo strip ("trusted by / as seen in") is a
+// business block. It stays registered (old data would still open; none exists)
+// but no builder offers it.
+const RETIRED_LIBRARY = new Set(['logoStripSection']);
+export const LIBRARY_SECTION_TYPES = pageSectionSchemas
+  .filter((s) => !RETIRED_LIBRARY.has(s.name))
+  .map((s) => ({ type: s.name }));
 
 // The list a pageBuilder array uses for `of`. Single source of truth so every
 // builder offers the same blocks: the general library plus the synced section.
@@ -756,14 +789,8 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
     },
     {
       name: 'proof',
-      title: 'Proof and trust',
-      of: [
-        'quoteSection',
-        'statSection',
-        'logoStripSection',
-        'guaranteeSection',
-        'faqSection', // scaffold: faq
-      ],
+      title: 'Voices and numbers',
+      of: ['quoteSection', 'statSection'],
     },
     {
       // The authoring kit (card 109). A saved section can also be dropped in as
@@ -778,14 +805,15 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
       of: ['watchSection', 'gallerySection', 'videoSection', 'embedSection'],
     },
     {
-      name: 'business',
-      title: 'About the business',
+      // FBC Auburn (2026-10-18): the starter's story, founder, service-area,
+      // guarantee and logo-strip blocks are offered nowhere (see RETIRED_RICH
+      // in richSections.ts and RETIRED_LIBRARY below).
+      name: 'church',
+      title: 'About the church',
       of: [
-        'storySection', // scaffold: about
-        'founderSection', // scaffold: about
+        'faqSection', // scaffold: faq
         'teamSection',
         'thisWeekSection',
-        'serviceAreaSection',
         'dynamicListSection',
         'ctaBandSection',
       ],

@@ -32,7 +32,7 @@ export const page = defineType({
   groups: [
     { name: 'content', title: 'Content', default: true },
     { name: 'menu', title: 'Menu placement' },
-    { name: 'seo', title: 'Search & sharing' },
+    { name: 'seo', title: 'Google and sharing' },
     PUBLISH_AT_GROUP,
   ],
   fields: [
@@ -84,7 +84,7 @@ export const page = defineType({
       group: 'menu',
       initialValue: false,
       description:
-        'Off by default, so you can build and preview privately. Turn on and the page joins the end of the menu. To put it somewhere particular instead, add it in Site settings > Navigation.',
+        'Off by default, so you can build and preview privately. Turn on and the page joins the end of the menu. To put it somewhere particular instead, add it in Site settings > Menus.',
     }),
     defineField({
       name: 'navGroup',
@@ -120,7 +120,7 @@ export const page = defineType({
       group: 'menu',
       initialValue: false,
       description:
-        'Turn on and the page joins the last row of footer links. To put it in a particular row, add it in Site settings > Navigation > Footer link columns.',
+        'Turn on and the page joins the last row of footer links. To put it in a particular row, add it in Site settings > Menus > Footer link columns.',
     }),
 
     // ── Archived ──────────────────────────────────────────────────────────────

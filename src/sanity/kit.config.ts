@@ -84,17 +84,18 @@ export const kitConfig: KitConfig = {
   toolTitles: { structure: 'Content', presentation: 'Live preview' },
 
   // Desk items only a developer needs (ids from src/sanity/structure.ts).
-  // None yet: the guides send the editor to Redirects, Start Here holds his
-  // own notes, and Saved sections feed Live preview. Add an id here when a
+  // None yet: the guides send the editor to Redirects, Our church at a glance
+  // is his, and Saved sections feed Live preview. Add an id here when a
   // list appears that only a developer should see.
   staffHiddenPanes: [],
 
   trashTypes: {
+    // One name per thing, matching the desk (FBC Auburn, 2026-10-18).
     announcement: 'Notice',
-    faqItem: 'Question and answer',
+    faqItem: 'Question',
     faqCategory: 'Question group',
-    journalEntry: 'News post',
-    journalCategory: 'News category',
+    journalEntry: 'Post',
+    journalCategory: 'Post category',
   },
 
   weekStartsOn: 1,
@@ -129,7 +130,7 @@ export const kitConfig: KitConfig = {
       unconfirmedRule(),
       expiredNotices,
     ],
-    ignoreTypes: ['sectionPreset', 'studioGuide', 'studioNotes', 'redirect'],
+    ignoreTypes: ['sectionPreset', 'studioGuide', 'redirect'],
   },
 
   guide: {

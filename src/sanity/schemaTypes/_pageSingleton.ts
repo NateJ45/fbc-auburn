@@ -73,9 +73,9 @@ export function definePageSingleton(
     // Configuration-style document -- keep Canvas AI writing tools away from it.
     options: { canvasApp: { exclude: true } },
     groups: [
-      { name: 'hero', title: 'Hero' },
+      { name: 'hero', title: 'Opening banner' },
       { name: 'builder', title: 'Page sections' },
-      { name: 'seo', title: 'SEO' },
+      { name: 'seo', title: 'Google and sharing' },
       PUBLISH_AT_GROUP,
       ...(extra.groups ?? []),
     ],
@@ -87,7 +87,7 @@ export function definePageSingleton(
         type: 'image',
         group: 'hero',
         description:
-          'Full-bleed photo behind the hero text. Landscape orientation works best. Leave empty to use a solid brand-color hero.',
+          'Full-width photo behind the banner text. Landscape orientation works best. Leave empty to use a solid brand-color hero.',
         options: { hotspot: true },
         fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
       }),
@@ -101,7 +101,7 @@ export function definePageSingleton(
       }),
       defineField({
         name: 'heroHeadline',
-        title: 'Headline',
+        title: 'Heading',
         type: 'string',
         group: 'hero',
         description: 'The big heading on this page.',
@@ -117,7 +117,7 @@ export function definePageSingleton(
       }),
       defineField({
         name: 'heroSubhead',
-        title: 'Subhead (optional)',
+        title: 'Line under the heading (optional)',
         type: 'text',
         rows: 2,
         group: 'hero',

@@ -25,7 +25,7 @@ import { BellIcon } from '@sanity/icons/Bell';
 
 export const announcement = defineType({
   name: 'announcement',
-  title: 'Announcement',
+  title: 'Notice',
   type: 'document',
   icon: BellIcon,
   fields: [
@@ -34,7 +34,7 @@ export const announcement = defineType({
       title: 'Internal name',
       type: 'string',
       description:
-        'For your reference in the Studio only. Not shown on the site. Example: "Summer hours notice".',
+        'For your reference in the Studio only. Not shown on the site. Example: "Christmas service times".',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -42,7 +42,7 @@ export const announcement = defineType({
       title: 'Message',
       type: 'string',
       description:
-        'The text shown in the banner. Keep it short (under 160 characters). Example: "We are closed 26 Dec through 1 Jan. Replies will be slower than usual."',
+        'The text shown in the banner. Keep it short (under 160 characters). Example: "No Wednesday Bible study this week. See you Sunday."',
       validation: (Rule) => Rule.required().max(160),
     }),
     defineField({
@@ -87,21 +87,20 @@ export const announcement = defineType({
       title: 'Show from (optional)',
       type: 'datetime',
       description:
-        'Leave blank to show immediately when enabled. Set a date to schedule the banner ahead of time. Evaluated at build time -- set up a scheduled rebuild if you need precise timing.',
+        'Leave blank to show as soon as it is switched on. Set a date to put the notice up ahead of time. The website checks the dates when it updates (after each publish and every morning), so it can be a few hours out.',
     }),
     defineField({
       name: 'endDate',
       title: 'Hide after (optional)',
       type: 'datetime',
       description:
-        'Leave blank to keep showing until you disable it. Set a date to auto-expire the banner. Evaluated at build time -- a rebuild is needed for the banner to disappear.',
+        'Leave blank to keep showing until you switch it off. Set a date and the notice takes itself down when the website next updates after that date.',
     }),
     defineField({
       name: 'enabled',
-      title: 'Enabled',
+      title: 'Switched on',
       type: 'boolean',
-      description:
-        'Master on/off switch. When off, this announcement never shows regardless of dates.',
+      description: 'The on/off switch. When off, this notice never shows, whatever the dates say.',
       initialValue: true,
     }),
   ],
@@ -121,7 +120,7 @@ export const announcement = defineType({
         .filter(Boolean)
         .join(' to ');
       return {
-        title: message || 'Announcement',
+        title: message || 'Notice',
         subtitle: `${enabled ? '' : 'OFF: '}${style ?? 'info'}${window ? ` (${window})` : ''}`,
       };
     },
