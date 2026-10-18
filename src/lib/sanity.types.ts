@@ -357,12 +357,11 @@ export type SiteSettings = {
       } & NavLink)
     | {
         label?: string;
-        links?: Array<{
-          label?: string;
-          href?: string;
-          _type: 'navSubLink';
-          _key: string;
-        }>;
+        links?: Array<
+          {
+            _key: string;
+          } & NavLink
+        >;
         _type: 'navGroup';
         _key: string;
       }
@@ -452,6 +451,9 @@ export type SiteSettings = {
     alt?: string;
     _type: 'image';
   };
+  footerInvite?: string;
+  footerSecondaryCta?: CtaBlock;
+  footerAbout?: string;
   footerCredit?: string;
   footerCreditUrl?: string;
   newsletter?: {
@@ -539,11 +541,11 @@ export type JournalPageReference = {
   [internalGroqTypeReferenceTo]?: 'journalPage';
 };
 
-export type PrivacyPageReference = {
+export type JournalEntryReference = {
   _ref: string;
   _type: 'reference';
   _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'privacyPage';
+  [internalGroqTypeReferenceTo]?: 'journalEntry';
 };
 
 export type PageReference = {
@@ -551,6 +553,31 @@ export type PageReference = {
   _type: 'reference';
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: 'page';
+};
+
+export type CtaBlock = {
+  _type: 'ctaBlock';
+  label?: string;
+  linkType?: 'internal' | 'external' | 'email' | 'phone';
+  internalLink?:
+    | HomePageReference
+    | AboutPageReference
+    | FaqPageReference
+    | ContactPageReference
+    | JournalPageReference
+    | JournalEntryReference
+    | PageReference;
+  externalUrl?: string;
+  emailAddress?: string;
+  phoneNumber?: string;
+  openInNewTab?: boolean;
+};
+
+export type PrivacyPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'privacyPage';
 };
 
 export type NavLink = {
@@ -1109,31 +1136,56 @@ export type PrivacyPage = {
     _type: 'block';
     _key: string;
   }>;
-};
-
-export type JournalEntryReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'journalEntry';
-};
-
-export type CtaBlock = {
-  _type: 'ctaBlock';
-  label?: string;
-  linkType?: 'internal' | 'external' | 'email' | 'phone';
-  internalLink?:
-    | HomePageReference
-    | AboutPageReference
-    | FaqPageReference
-    | ContactPageReference
-    | JournalPageReference
-    | JournalEntryReference
-    | PageReference;
-  externalUrl?: string;
-  emailAddress?: string;
-  phoneNumber?: string;
-  openInNewTab?: boolean;
+  additionalSections?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & LogoStripSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+  >;
 };
 
 export type Page = {
@@ -1441,6 +1493,56 @@ export type JournalPage = {
     crop?: SanityImageCrop;
     _type: 'image';
   };
+  additionalSections?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & LogoStripSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+  >;
 };
 
 export type ContactPage = {
@@ -1509,6 +1611,56 @@ export type ContactPage = {
   schedulingLinkLabel?: string;
   availabilityNote?: string;
   note?: string;
+  additionalSections?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & LogoStripSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+  >;
 };
 
 export type FaqPage = {
@@ -1554,6 +1706,56 @@ export type FaqPage = {
   };
   secondaryCta?: CtaBlock;
   note?: string;
+  additionalSections?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & LogoStripSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+  >;
 };
 
 export type AboutPage = {
@@ -2049,8 +2251,10 @@ export type AllSanitySchemaTypes =
   | FaqPageReference
   | ContactPageReference
   | JournalPageReference
-  | PrivacyPageReference
+  | JournalEntryReference
   | PageReference
+  | CtaBlock
+  | PrivacyPageReference
   | NavLink
   | DynamicListSection
   | TeamSection
@@ -2078,8 +2282,6 @@ export type AllSanitySchemaTypes =
   | HeroSection
   | FormQuestion
   | PrivacyPage
-  | JournalEntryReference
-  | CtaBlock
   | Page
   | JournalCategoryReference
   | JournalEntry

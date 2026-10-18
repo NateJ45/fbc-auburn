@@ -91,28 +91,10 @@ export const siteSettings = defineType({
               title: 'Menu links',
               type: 'array',
               of: [
-                defineArrayMember({
-                  type: 'object',
-                  name: 'navSubLink',
-                  title: 'Link',
-                  icon: LinkIcon,
-                  fields: [
-                    defineField({
-                      name: 'label',
-                      title: 'Label',
-                      type: 'string',
-                      validation: (Rule) => Rule.required(),
-                    }),
-                    defineField({
-                      name: 'href',
-                      title: 'Address',
-                      type: 'string',
-                      description: 'A page on this site like /process, or a full URL.',
-                      validation: (Rule) => Rule.required(),
-                    }),
-                  ],
-                  preview: { select: { title: 'label', subtitle: 'href' } },
-                }),
+                // FBC Auburn (2026-10-18): the same link as the top level, with a page picker, so a
+                // renamed page never breaks a dropdown link (it used to be a typed address; no saved
+                // data used that type).
+                defineArrayMember({ type: 'navLink' }),
               ],
               validation: (Rule) => Rule.required().min(1),
             }),
@@ -133,7 +115,7 @@ export const siteSettings = defineType({
       type: 'array',
       group: 'navigation',
       description:
-        'The titled link columns in the footer. Leave empty to use the built-in default columns. The "Get in touch" column (email, phone, socials) always shows automatically. Aim for three or four columns so the footer grid stays balanced; four is the most that fits.',
+        'The rows of links in the footer, each with a small title (for example Visit, Belong). Leave empty to use the built-in default. Pick pages from the list so a renamed page never breaks a link. A "Get in touch" row (email, phone, socials) appears by itself once those are filled in. Four rows is the most that fits.',
       validation: (Rule) => Rule.max(4),
       of: [
         defineArrayMember({
@@ -480,6 +462,34 @@ export const siteSettings = defineType({
         'The image shown when any page of the site is shared on social media or in a text message (the Open Graph image). Use a wide image, about 1200 by 630 pixels. Individual pages can override this in their own SEO section. Leave blank to use the auto-generated branded cards.',
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+    }),
+    // FBC Auburn (2026-10-18): the footer's own words, so the pastor can change them himself.
+    // Each falls back to the built-in wording when left empty.
+    defineField({
+      name: 'footerInvite',
+      title: 'Footer: the line under the big heading',
+      type: 'string',
+      group: 'social',
+      description:
+        'One short sentence under "A small church with the door open." (the tagline above). Leave empty for "Come along on a Sunday, or ask us anything first."',
+      validation: (Rule) => Rule.max(120),
+    }),
+    defineField({
+      name: 'footerSecondaryCta',
+      title: 'Footer: the second button',
+      type: 'ctaBlock',
+      group: 'social',
+      description:
+        'The outline button beside "Plan your visit". Leave the label empty for "Ask a question", which goes to the Contact page.',
+    }),
+    defineField({
+      name: 'footerAbout',
+      title: 'Footer: the line in the bottom bar',
+      type: 'string',
+      group: 'social',
+      description:
+        'A few words after the copyright line. Leave empty for "A Southern Baptist church in Ross Township, Ohio".',
+      validation: (Rule) => Rule.max(90),
     }),
     defineField({
       name: 'footerCredit',

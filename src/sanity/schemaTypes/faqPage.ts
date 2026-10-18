@@ -3,6 +3,7 @@
 // grouped by category in the order specified by categoryOrder.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { additionalSectionsField } from './sections';
 
 export const faqPage = defineType({
   name: 'faqPage',
@@ -15,6 +16,7 @@ export const faqPage = defineType({
     { name: 'hero', title: 'Hero' },
     { name: 'list', title: 'Category order' },
     { name: 'final', title: 'Final CTA' },
+    { name: 'extra', title: 'Extra sections' },
   ],
   fields: [
     defineField({
@@ -177,6 +179,9 @@ export const faqPage = defineType({
       description:
         'Internal-only reminder for editors. Anything you write here stays in Studio and never renders on the live page.',
     }),
+    // FBC Auburn (2026-10-18): an append zone, so the pastor can add a photo, a callout or
+    // anything from the section library to this page himself.
+    additionalSectionsField,
   ],
   preview: { prepare: () => ({ title: 'FAQ Page' }) },
 });

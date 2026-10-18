@@ -9,6 +9,7 @@
 // to static HTML copy for the period before the editor publishes the doc.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
 import Hero from '@/components/Hero.astro';
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import { getPrivacyPage, getSiteSettings } from '@/lib/queries';
@@ -175,4 +176,7 @@ const hasSanityBody = Boolean(page?.body);
       )}
     </div>
   </section>
+  {/* Extra sections (2026-10-18): anything the editor adds from the section library, Studio:
+      this page > Extra sections. Empty renders nothing. */}
+  <SectionRenderer sections={page?.additionalSections ?? []} idPrefix="privacy-extra" />
 </BaseLayout>

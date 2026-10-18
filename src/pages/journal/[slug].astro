@@ -85,8 +85,9 @@ if (!entry) {
 }
 
 // Meta
-const title = entry.seoTitle ?? `${entry.title} · Studio Journal`;
-const description = entry.seoDescription ?? entry.excerpt ?? 'A note from the studio.';
+// The layout adds the church's name to the title. (The starter's "Studio Journal" wording is gone.)
+const title = entry.seoTitle ?? entry.title;
+const description = entry.seoDescription ?? entry.excerpt ?? `News and notes from ${site.name}.`;
 const coverOg = entry.coverImage?.asset
   ? urlFor(entry.coverImage).width(1200).height(630).fit('crop').quality(80).format('webp').url()
   : undefined;
@@ -281,10 +282,16 @@ const schemas = [
   )}
 
   {/* ------- 6. Final CTA -------------------------------------------------- */}
+  {/* The same closing call-to-action as the News and notes page (Studio: Journal page > Final
+      CTA), with church wording when it is empty. It was the starter's studio sales copy. */}
   <FinalCta
-    headline="Working on a project of your own?"
-    subhead="The studio takes on a small handful of projects at a time. Get in touch and let's see if we're a fit."
-    fallbackCtaLabel="Start a Conversation"
+    headline={journalPage?.finalCtaHeadline || 'Come and see on a Sunday'}
+    subhead={
+      journalPage?.finalCtaSubhead ||
+      'We would love to meet you. Plan your visit, or ask us anything first.'
+    }
+    cta={journalPage?.finalCta}
+    scriptAccent={journalPage?.finalCtaScriptAccent}
     backgroundImage={journalPage?.finalCtaBackgroundImage}
   />
 

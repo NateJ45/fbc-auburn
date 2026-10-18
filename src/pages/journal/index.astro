@@ -10,6 +10,7 @@
 // the big slot; others get normal cards.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
 import {
   getJournalPage,
   getAllJournalEntries,
@@ -147,6 +148,10 @@ const schemas = [
   )}
 
   {/* ------- 5. Final CTA ---------------------------------------------------- */}
+  {/* Extra sections (2026-10-18): anything the editor adds from the section library, Studio:
+      this page > Extra sections. Empty renders nothing. */}
+  <SectionRenderer sections={page?.additionalSections ?? []} idPrefix="journal-extra" />
+
   <FinalCta
     headline={page?.finalCtaHeadline}
     subhead={page?.finalCtaSubhead}

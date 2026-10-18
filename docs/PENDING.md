@@ -169,6 +169,14 @@ week list, the Watch band and Plan your visit. The prose in `src/data/defaultSec
 Sanity page copy still types the times as words; when a section is rebuilt, put `ThisSunday` or
 `ServiceTimes` there instead of a sentence with a time in it.
 
+### 1e. The publish webhook, and the pastor's Studio login
+
+**Blocker: Nathan (a GitHub token and a Sanity invite).** Until the webhook exists, a publish in
+the Studio only goes live at the next scheduled build (daily 10:00 UTC, Sunday 18:00 UTC), though
+the Studio tells editors "a few minutes". Steps: OPERATIONS.md, "Sanity publish → GitHub → live".
+Then invite Pastor Jacob to the Sanity project (Editor role), and once he accepts, add his user id
+to `staff` in `src/sanity/kit.config.ts` so he gets the staff view (no permanent delete).
+
 ### 1d. Church data waiting on the church
 
 **Blocker: answers from the church, after signing.** All empty-safe today; each lights up with one

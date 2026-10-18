@@ -204,6 +204,9 @@ export const SITE_SETTINGS_PROJECTION = `{
     seoImage${IMAGE_PROJECTION},
     footerCredit,
     footerCreditUrl,
+    footerInvite,
+    footerAbout,
+    footerSecondaryCta${CTA_PROJECTION},
     newsletter,
     googleBusinessUrl,
     reviewsNote,
@@ -349,6 +352,7 @@ export async function getAboutPage() {
 export async function getFaqPage() {
   return sanityFetch(
     `*[_type == "faqPage"][0]{
+    ${sectionsProjection('additionalSections')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -377,6 +381,7 @@ export async function getFaqPage() {
 export async function getContactPage() {
   return sanityFetch(
     `*[_type == "contactPage"][0]{
+    ${sectionsProjection('additionalSections')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -474,6 +479,7 @@ const JOURNAL_CARD_PROJECTION = `{
 export async function getJournalPage() {
   return sanityFetch(
     `*[_type == "journalPage"][0]{
+    ${sectionsProjection('additionalSections')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -576,6 +582,7 @@ export async function getAllJournalSlugs(): Promise<string[]> {
 export async function getPrivacyPage() {
   return sanityFetch(
     `*[_type == "privacyPage"][0]{
+    ${sectionsProjection('additionalSections')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
