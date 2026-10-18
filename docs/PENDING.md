@@ -354,7 +354,16 @@ in a throwaway page with the real Studio theme, light and dark, 1280 and 375 (ma
 name in gold, "Auburn" in Auburn Stone, no sideways scroll). Signed in, check: the banner sits under the navy top bar
 as one colour, the pastor's real first name shows, and View the website opens the live site in a new tab.
 
-### 1o. The Studio's edges: the signed-in check (opened 2026-10-18)
+### 1o. Stone icons and list-row pictures: the signed-in check (opened 2026-10-18)
+
+Starter PORTS.md card 119, branch `feat/studio-brand-icons`. Checked so far: unit tests (every document type has an
+icon meaning and a preview), types, build, and Sanity's own preview rows plus every icon at 16, 20 and 24px in a
+throwaway page with the real Studio theme, light and dark. Signed in, check in light and dark at 1280 and 375: the
+desk items and the Sermons, People, Downloads and News lists with their tiles; a sermon with a photo beside one
+without; the field-group tabs (Church facts with the clock); the create menu and page templates; and the tools' stone
+icons in the phone sidebar.
+
+### 1p. The Studio's edges: the signed-in check (opened 2026-10-18)
 
 Starter PORTS.md card 120, branch `feat/studio-edges`. Checked signed out under `astro dev` and `wrangler dev`: the
 tab says "First Baptist Church of Auburn" with the church's icon from the first byte, the splash (mark, name in Young

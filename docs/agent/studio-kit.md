@@ -39,6 +39,7 @@ are commented in that site's `src/sanity/kit.config.ts`.
 | Deploy status (111)     | `src/pages/api/studio/deploy-status.ts`, `src/lib/deploy-status.ts`, `src/lib/studio-auth.ts` | GET the newest deploy run's outcome; POST "Try again" (same origin + Sanity session); tests in `deploy-status.test.ts`                                  |
 | Home cards (115)        | `src/sanity/kit/HomeCards.tsx`, `src/lib/studio-home.ts`                                      | Coming up, Fix-it list, Visitors, Your pages, and the Panel frame; pure parts tested in `studio-home.test.ts`                                           |
 | Home banner (118)       | `src/sanity/kit/HomeBanner.tsx`, `src/lib/studio-banner.ts`                                   | The navy welcome at the top of Home; `kitConfig.homeBanner`; pure parts tested in `studio-banner.test.ts`                                               |
+| Icons (119)             | `src/sanity/brandIcons.tsx`, `src/sanity/artIcon.tsx`, `src/lib/studio-icons.ts`              | Not the kit plugin: icons by meaning and list-row pictures; the site's art in `brandIconArt.tsx`; tests in `studio-icons.test.ts`                       |
 | Guide videos (115)      | `src/sanity/kit/GuideVideos.tsx`                                                              | "Watch how it is done" on Home and in the Site Guide; `videoSource()` in `studio-home.ts`                                                               |
 | Visitors route (115)    | `src/pages/api/studio/visitors.ts`, `src/lib/studio-analytics.ts`                             | Cloudflare Web Analytics GraphQL through the Worker (same origin + Sanity session); tests in `studio-analytics.test.ts`                                 |
 | Weekly ticks (111)      | `src/sanity/kit/weekType.ts`                                                                  | `studioWeek` document per week for hand-ticked jobs; `checklist()` and `weekKey()` in `studio-kit.ts`                                                   |
@@ -241,6 +242,42 @@ mark and motif are decorative (`alt=""`); the heading carries the name, with an 
 The starter sets only `mark: '/favicon.svg'`. Keep a site's banner files out of `public/studio/`, which is the Studio's
 own address; a folder such as `public/studio-banner/` is clear of it.
 
+## Icons and list-row pictures (card 119)
+
+Not part of the kit plugin either, but it is on every screen. Every icon the Studio draws is named by what it MEANS
+(`times`, `give`, `scripture`, `sections`...; the list is `BRAND_ICON_KEYS` in `src/lib/studio-icons.ts`), and
+`src/sanity/brandIcons.tsx` draws each meaning: with `@sanity/icons` by default, or with the site's own art when
+`src/sanity/brandIconArt.tsx` (per site, not PORTABLE) lists it. `artIcon(url, title)` (`src/sanity/artIcon.tsx`)
+turns a brand-kit SVG (a Vite `?url` import) into a Sanity icon: the file is drawn as it is, colours included, inside a
+1em `<svg data-sanity-icon>`, so Sanity sizes it like its own icons everywhere.
+
+Which document type, field group and tool means what is data: the starter's defaults in `studio-icons.ts`, plus
+`brand/brand.config.json` `studio.icons.types` / `.groups` / `.tools` for the site (a church: `"sermon": "scripture"`).
+An unknown meaning there is dropped and the default stays (the unit test lists it).
+
+Where the icons land:
+
+- `withBrandPreviews(types)` in `sanity.config.ts` decorates the schema: each document type's `icon` (so lists,
+  search, references and the create menu agree), an icon on each field group whose name is mapped, and a preview that
+  always returns `media`. A type's own `prepare` still runs; only a missing `media` is filled, with `IconTile`: the
+  type's icon on a square of the brand's tint, read from the theme's scheme, so it is right in light and dark. A
+  type's own image still wins, so a `prepare` should return `media: image?.asset ? image : undefined`, never an icon.
+- `brandIcons()`, registered right after the kit: the same for types that plugins register (Trash, the weekly tick,
+  share links), and an icon on every tool (the top bar draws none, the phone's sidebar does).
+- `structure.ts` asks `typeIcon('<type>')` or `brandIcon('<meaning>')` instead of importing icons;
+  `singletonWithPreview` defaults to the type's icon, and names its one view "Edit".
+- Page templates take `typeIcon('page')`.
+
+The tile is a wash of the accent on the paper, and a deeper one on the dark ground; `studio.icons.tile.light` /
+`.dark` (hex) set either square, and a one-colour icon on it is kept at 3:1 (`iconTileColors`). Multi-colour art with
+dark parts (navy, deep green) can sink into the dark tile: give the dark tile a light, warm colour
+instead (a stone or paper tone), so the art sits on it like a photo would. List-row subtitles use `previewDate` and `previewSubtitle` from `studio-icons.ts`: a short
+date, then status or detail, joined with " · ", in plain words ("Shows until Sun, Nov 9, 2026").
+
+`src/lib/studio-icons.test.ts` is the gate: every document type in `src/sanity/schemaTypes/` and the kit's and
+workflow's types needs a meaning and a `preview`, `sanity.config.ts` must run `withBrandPreviews` and register
+`brandIcons()` after the kit, and `brandIconArt.tsx` may name only real meanings.
+
 ## The look (card 116)
 
 Not part of the kit plugin, but it is what an editor sees around it. `src/sanity/studioTheme.ts` (theme, light by
@@ -248,6 +285,30 @@ default, see PORTS.md card 116) and `src/sanity/components/StudioLook.tsx`: `stu
 the brand's deep colour (a navbar middleware that always calls `renderDefault`, so the status line still shows), and
 `withEditorTypography(types, fonts)` gives every Portable Text style a `component` in the site's fonts. A new rich
 text field picks it up with no extra work, as long as it lists its `styles`.
+
+## The edges: /studio page, words, wordmark (card 120)
+
+Also outside the kit plugin; site choices in `src/sanity/studioEdges.config.ts`.
+
+- **The /studio page is the site's own** (`src/pages/studio/index.astro`). The tab says the site's name with the
+  site's icons from the first byte, the page ground is the Studio's paper or dark background (the editor's last
+  Appearance pick, else light, as `seedLightScheme` seeds it), and a plain HTML splash (the mark, the name in the
+  display font, "Opening the editor", an optional motif from `src/sanity/StudioSplashMotif.astro`) shows until React
+  mounts and replaces it (the island's `fallback` slot). React is still @sanity/astro's `StudioComponentHash`, so
+  hash routing and deep links (`/studio/#/structure/...`) are unchanged. astro.config.mjs no longer sets
+  `studioBasePath` (that would inject Sanity's page on top of ours); `studioConfigModule()` in
+  `src/lib/studio-route.ts` serves the `sanity:studio` config module instead.
+- **The site's words** (`src/sanity/studioWording.ts`): the workspace `subtitle` under the name on the sign-in card,
+  and an `i18n.bundles` entry for the signed-out notice and user-menu labels (Appearance and Sign out stay Sanity's).
+  "Choose login provider", the "Not authorized" dialog and the request-access form are hard-coded English in sanity
+  6.19 and stay Sanity's. `studio-edges.test.ts` fails if a key we override disappears from the installed sanity.
+- **The wordmark** (`StudioWordmarkNavbar` in `StudioLook.tsx`): the brand logo named by `wordmark.logo` (a
+  `logoPaths` entry; `view` crops an SVG lockup to its words) beside the square icon, hidden under 600px. It is
+  registered at the ROOT of sanity.config (`studio.components.navbar`), the innermost middleware, so it wraps only
+  Sanity's bar and not the kit's status line. The page hands it the built URL in `#ncs-studio-boot`.
+- **Not done, on purpose:** a branded heading inside the sign-in card through a custom `auth` store. Sanity uses a
+  custom store as-is, which drops its own request handler (expired-session handling, the CORS and project-not-found
+  screens). Not worth that for a heading.
 
 ## Checkup rules
 
@@ -290,7 +351,7 @@ and staff view place `messages`. PORTS.md card 117 has the full file list.
 - Desk items that a link can reach need an **explicit `.id()`**. A singleton's id is its document id (`aboutPage`),
   because an intent link resolves to `pages;aboutPage`; a title-derived id (`about`) left that pane blank.
 - The deployed Studio is hash-routed: every kit link goes through `useStudioLink()` (router), never a bare href.
-- The kit plugin stays **last** in `plugins`.
+- The kit plugin stays **last** in `plugins`. The wordmark navbar is the one middleware at the config root (card 120).
 - The navbar wrapper renders `props.renderDefault(props)` first, always; a wrapper that drops it silently disables every
   plugin's navbar after it.
 - Home's Publish and Discard use `useDocumentOperation`; they never call the client directly, so history, undo and

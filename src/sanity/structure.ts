@@ -24,35 +24,11 @@
 
 import type { StructureBuilder, StructureResolverContext } from 'sanity/structure';
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
-import { BellIcon } from '@sanity/icons/Bell';
-import { BlockElementIcon } from '@sanity/icons/BlockElement';
-import { CogIcon } from '@sanity/icons/Cog';
-import { HomeIcon } from '@sanity/icons/Home';
-import { UserIcon } from '@sanity/icons/User';
-import { HelpCircleIcon } from '@sanity/icons/HelpCircle';
-import { EnvelopeIcon } from '@sanity/icons/Envelope';
-import { DocumentTextIcon } from '@sanity/icons/DocumentText';
-import { DocumentsIcon } from '@sanity/icons/Documents';
-import { ThListIcon } from '@sanity/icons/ThList';
-import { EditIcon } from '@sanity/icons/Edit';
-import { TagIcon } from '@sanity/icons/Tag';
-import { BookIcon } from '@sanity/icons/Book';
-import { LockIcon } from '@sanity/icons/Lock';
-import { ColorWheelIcon } from '@sanity/icons/ColorWheel';
-import { ArrowRightIcon } from '@sanity/icons/ArrowRight';
-import { ClipboardIcon } from '@sanity/icons/Clipboard';
 import ChurchOverview from './components/ChurchOverview';
 import BrandKit from './components/BrandKit';
-import { TrashIcon } from '@sanity/icons/Trash';
-import { MicrophoneIcon } from '@sanity/icons/Microphone';
-import { StackIcon } from '@sanity/icons/Stack';
-import { UsersIcon } from '@sanity/icons/Users';
-import { DownloadIcon } from '@sanity/icons/Download';
-import { PlayIcon } from '@sanity/icons/Play';
-import { InfoOutlineIcon } from '@sanity/icons/InfoOutline';
-import { DocumentPdfIcon } from '@sanity/icons/DocumentPdf';
 import { DownloadsIntro, PeopleIntro, SermonsIntro } from './components/CollectionIntro';
 import { staffDesk } from './kit/shared';
+import { brandIcon, typeIcon, type BrandIcon } from './brandIcons';
 import { emptyAwareList } from './kit/emptyList';
 import { WEEK_TYPE } from '../lib/studio-kit';
 import { tableListItem } from './workflow';
@@ -121,7 +97,12 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
  * S.document().views([...]) bypasses defaultDocumentNode in sanity.config.ts,
  * and that is where the per-type extra tabs are added.
  */
-function singletonWithPreview(S: StructureBuilder, schemaType: string, title: string, icon: any) {
+function singletonWithPreview(
+  S: StructureBuilder,
+  schemaType: string,
+  title: string,
+  icon: BrandIcon = typeIcon(schemaType),
+) {
   // The id is the document id ON PURPOSE: an intent link ("open the About
   // page", from the Studio kit's Home and Checkup) resolves to the path
   // pages;aboutPage, and a title-derived id ("about") left that pane blank.
@@ -129,7 +110,12 @@ function singletonWithPreview(S: StructureBuilder, schemaType: string, title: st
     .id(schemaType)
     .title(title)
     .icon(icon)
-    .child(S.document().schemaType(schemaType).documentId(schemaType).views([S.view.form()]));
+    .child(
+      S.document()
+        .schemaType(schemaType)
+        .documentId(schemaType)
+        .views([S.view.form().title('Edit')]),
+    );
 }
 
 // The Studio kit's staff view hides kitConfig.staffHiddenPanes from this desk
@@ -157,20 +143,20 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       S.listItem()
         .id('church-at-a-glance')
         .title('Our church at a glance')
-        .icon(HomeIcon)
+        .icon(brandIcon('times'))
         .child(
           S.component(ChurchOverview).id('church-at-a-glance-view').title('Our church at a glance'),
         ),
       S.listItem()
         .id('brand-kit')
         .title('Brand colors and fonts')
-        .icon(ColorWheelIcon)
+        .icon(brandIcon('brandKit'))
         .child(S.component(BrandKit).title('Brand colors and fonts')),
 
       S.divider(),
 
       // Site settings: pinned singleton (no preview; not a page)
-      singletonWithPreview(S, 'siteSettings', 'Site settings', CogIcon),
+      singletonWithPreview(S, 'siteSettings', 'Site settings'),
 
       S.divider(),
 
@@ -179,21 +165,21 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       S.listItem()
         .id('pages')
         .title('Pages')
-        .icon(DocumentTextIcon)
+        .icon(brandIcon('pages'))
         .child(
           S.list()
             .title('Pages')
             .items([
-              singletonWithPreview(S, 'homePage', 'Home', HomeIcon),
-              singletonWithPreview(S, 'aboutPage', 'About', UserIcon), // scaffold: about
-              singletonWithPreview(S, 'faqPage', 'Questions', HelpCircleIcon), // scaffold: faq
-              singletonWithPreview(S, 'contactPage', 'Contact', EnvelopeIcon),
-              singletonWithPreview(S, 'journalPage', 'News and notes (the list page)', BookIcon), // scaffold: journal
-              singletonWithPreview(S, 'notFoundPage', 'Page not found', DocumentTextIcon),
+              singletonWithPreview(S, 'homePage', 'Home'),
+              singletonWithPreview(S, 'aboutPage', 'About'), // scaffold: about
+              singletonWithPreview(S, 'faqPage', 'Questions'), // scaffold: faq
+              singletonWithPreview(S, 'contactPage', 'Contact'),
+              singletonWithPreview(S, 'journalPage', 'News and notes (the list page)'), // scaffold: journal
+              singletonWithPreview(S, 'notFoundPage', 'Page not found'),
 
               S.divider(),
 
-              singletonWithPreview(S, 'privacyPage', 'Privacy policy', LockIcon),
+              singletonWithPreview(S, 'privacyPage', 'Privacy policy'),
 
               S.divider(),
 
@@ -203,7 +189,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'page',
                 type: 'page',
                 title: 'Custom pages (build your own)',
-                icon: DocumentsIcon,
+                icon: typeIcon('page'),
                 explain:
                   'Pages you build yourself: a ministry, an event, a sermon series. Start from a template and change the words.',
               }),
@@ -217,7 +203,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
               // you find one again.
               S.documentTypeListItem('sectionPreset')
                 .title('Saved sections')
-                .icon(BlockElementIcon),
+                .icon(typeIcon('sectionPreset')),
 
               S.divider(),
 
@@ -227,7 +213,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
               // hand for an address that never existed on this site.
               S.documentTypeListItem('redirect')
                 .title('Redirects (old links)')
-                .icon(ArrowRightIcon),
+                .icon(typeIcon('redirect')),
             ]),
         ),
 
@@ -238,7 +224,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       S.listItem()
         .id('content')
         .title('Questions, notices and forms')
-        .icon(ThListIcon)
+        .icon(brandIcon('content'))
         .child(
           S.list()
             .title('Questions, notices and forms')
@@ -248,7 +234,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'faqCategory',
                 type: 'faqCategory',
                 title: 'Question groups',
-                icon: TagIcon,
+                icon: typeIcon('faqCategory'),
                 explain:
                   'Headings that gather the questions on the Questions page, like "Sunday mornings" or "Children".',
               }),
@@ -256,7 +242,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'faqItem',
                 type: 'faqItem',
                 title: 'Questions',
-                icon: HelpCircleIcon,
+                icon: typeIcon('faqItem'),
                 explain:
                   'The questions visitors ask, with your answers. They show on the Questions page, in their groups.',
               }),
@@ -272,7 +258,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'announcement',
                 type: 'announcement',
                 title: 'Notices',
-                icon: BellIcon,
+                icon: typeIcon('announcement'),
                 explain:
                   'A short line across the top of every page, like a weather closing or a special service. Each one can take itself down on a date you pick.',
               }),
@@ -285,7 +271,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'form',
                 type: 'form',
                 title: 'Forms',
-                icon: ClipboardIcon,
+                icon: typeIcon('form'),
                 explain:
                   'Forms people fill in on the website, like a prayer request or a sign-up. Add one to a page with the Form section.',
               }),
@@ -301,7 +287,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       S.listItem()
         .id('sermons')
         .title('Sermons')
-        .icon(MicrophoneIcon)
+        .icon(typeIcon('sermon'))
         .child(
           S.list()
             .title('Sermons')
@@ -309,13 +295,13 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
               S.listItem()
                 .id('sermons-start')
                 .title('Start here')
-                .icon(InfoOutlineIcon)
+                .icon(brandIcon('guide'))
                 .child(S.component(SermonsIntro).id('sermons-start-view').title('Sermons')),
               emptyAwareList(S, context, {
                 id: 'sermon',
                 type: 'sermon',
                 title: 'Sermons',
-                icon: MicrophoneIcon,
+                icon: typeIcon('sermon'),
                 explain:
                   "Each Sunday's message: the title, the passage and the video link. They fill the Sermons page and the podcast.",
                 createLabel: 'Add the first sermon',
@@ -330,18 +316,18 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'sermonSeries',
                 type: 'sermonSeries',
                 title: 'Sermon series',
-                icon: StackIcon,
+                icon: typeIcon('sermonSeries'),
                 explain:
                   'A run of sermons on one book or theme. Add a series, then pick it on each sermon in it.',
               }),
               S.divider(),
-              singletonWithPreview(S, 'sermonsPage', 'Sermons page and podcast', PlayIcon),
+              singletonWithPreview(S, 'sermonsPage', 'Sermons page and podcast'),
             ]),
         ),
       S.listItem()
         .id('people')
         .title('People')
-        .icon(UsersIcon)
+        .icon(typeIcon('personGroup'))
         .child(
           S.list()
             .title('People')
@@ -349,13 +335,13 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
               S.listItem()
                 .id('people-start')
                 .title('Start here')
-                .icon(InfoOutlineIcon)
+                .icon(brandIcon('guide'))
                 .child(S.component(PeopleIntro).id('people-start-view').title('People')),
               emptyAwareList(S, context, {
                 id: 'person',
                 type: 'person',
                 title: 'People',
-                icon: UserIcon,
+                icon: typeIcon('person'),
                 explain:
                   'The pastor, staff, deacons and missionaries the website names, each with a photo and a line about them.',
                 createLabel: 'Add the first person',
@@ -373,7 +359,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'personGroup',
                 type: 'personGroup',
                 title: 'Groups',
-                icon: UsersIcon,
+                icon: typeIcon('personGroup'),
                 explain:
                   'The headings people are listed under, like "Staff", "Deacons" or "Missionaries".',
                 list: (S) =>
@@ -386,7 +372,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       S.listItem()
         .id('downloads')
         .title('Downloads')
-        .icon(DownloadIcon)
+        .icon(typeIcon('download'))
         .child(
           S.list()
             .title('Downloads')
@@ -394,13 +380,13 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
               S.listItem()
                 .id('downloads-start')
                 .title('Start here')
-                .icon(InfoOutlineIcon)
+                .icon(brandIcon('guide'))
                 .child(S.component(DownloadsIntro).id('downloads-start-view').title('Downloads')),
               emptyAwareList(S, context, {
                 id: 'download',
                 type: 'download',
                 title: 'All downloads',
-                icon: DownloadIcon,
+                icon: typeIcon('download'),
                 explain:
                   'Files people can open from the website: the weekly bulletin, a newsletter, a form to print.',
                 createLabel: 'Upload the first one',
@@ -414,7 +400,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
               S.listItem()
                 .id('bulletins')
                 .title('Bulletins')
-                .icon(DocumentPdfIcon)
+                .icon(typeIcon('download'))
                 .child(
                   S.documentList()
                     .id('bulletins-list')
@@ -436,7 +422,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       S.listItem()
         .id('journal')
         .title('News and notes')
-        .icon(BookIcon)
+        .icon(brandIcon('journal'))
         .child(
           S.list()
             .title('News and notes')
@@ -445,7 +431,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'journalEntry',
                 type: 'journalEntry',
                 title: 'Posts',
-                icon: EditIcon,
+                icon: typeIcon('journalEntry'),
                 explain:
                   'News from the church: a word about Sunday, an event coming up, a prayer need. Newest first on the News and notes page.',
                 createLabel: 'Write the first post',
@@ -454,7 +440,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'journalCategory',
                 type: 'journalCategory',
                 title: 'Categories',
-                icon: TagIcon,
+                icon: typeIcon('journalCategory'),
                 explain: 'Labels that sort the posts, like "Events" or "Missions".',
               }),
             ]),
@@ -469,7 +455,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       S.listItem()
         .id('trash')
         .title('Trash (bring things back)')
-        .icon(TrashIcon)
+        .icon(brandIcon('trash'))
         .child(
           S.documentTypeList(TRASH_TYPE)
             .id('trash-list')
