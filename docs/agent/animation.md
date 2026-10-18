@@ -143,10 +143,12 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
 - **Baptism** (`BaptismGraphic.astro`, `art = baptism`): the green ring turns about 14 degrees across the scroll
   and the ripples swell; `#cross` is never transformed.
 - **Background path**: on a page with a rail or a walk, faint stones on an S-curve behind `<main>`, laid just ahead
-  of the reader; it skips the hero and any `[data-no-bgpath]` section. Script only (it needs layout).
+  of the reader; it skips the hero and any `[data-no-bgpath]` section. Script only (it needs layout). Hidden on the
+  board E inner pages since 2026-10-17 (`src/styles/board.css`): its stones drifted under body text.
 - **Walk in with us** (`walkSection`): the plan is drawn at BUILD time from `walk-plan.ts` (placeholder geometry:
   ROOMS, STOPS, ROUTE), pinned with `position: sticky` beside the stops; an IntersectionObserver on the middle tenth of
-  the screen lights the route up to the current stop. Without motion the whole route is shown and the tags are hidden.
+  the screen lights the route up to the current stop. Stops not yet reached have a grey heading (colour, not opacity,
+  so they pass contrast). Without motion the whole route is shown and the tags are hidden.
 - **Nav**: three tiny stones under the current page's link replace the underline.
 - **Home's stone path** (board E, 2026-10-17; replaced the full-height ribbon): `src/components/home/StonePath.astro`
   inlines the generated mosaic (`stones.generated.ts`, from `npm run gen:stones`), one `<path class="hb-stone">`
