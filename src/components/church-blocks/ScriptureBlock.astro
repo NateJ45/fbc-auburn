@@ -1,0 +1,42 @@
+---
+// Safe to edit by hand
+// Bible verse: the verse set large in the display face, its reference under it as a link to the
+// passage on BibleGateway in the chosen translation (built from the reference, rule 15).
+import ChurchBand from './ChurchBand.astro';
+import { bibleGatewayUrl } from '@/lib/church-blocks';
+import type { ProjectedScriptureSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedScriptureSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const verse = block.verse?.trim();
+const href = bibleGatewayUrl(block.reference, block.translation);
+---
+
+{verse && (
+  <ChurchBand type={block._type} headingId={headingId} surface={surface} label="Bible verse">
+    <figure class="cb-verse">
+      <blockquote>
+        <p class="cb-verse__text">{verse}</p>
+      </blockquote>
+      {block.reference && (
+        <figcaption>
+          <cite class="cb-verse__ref">
+            {href ? (
+              <a class="cb-link" href={href} target="_blank" rel="noopener noreferrer">
+                {block.reference}
+                {block.translation ? ` (${block.translation})` : ''}
+                <span class="sr-only"> (read it on BibleGateway, opens in a new tab)</span>
+              </a>
+            ) : (
+              block.reference
+            )}
+          </cite>
+        </figcaption>
+      )}
+    </figure>
+  </ChurchBand>
+)}

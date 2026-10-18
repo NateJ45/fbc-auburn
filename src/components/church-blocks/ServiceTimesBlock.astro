@@ -1,0 +1,32 @@
+---
+// Safe to edit by hand
+// Service times block: every regular gathering from Site settings > Church facts (rule 15), drawn
+// by the same ServiceTimes list Plan your visit uses, in a hairline card.
+import ChurchBand from './ChurchBand.astro';
+import ServiceTimes from '@/components/church/ServiceTimes.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import type { ProjectedServiceTimesSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedServiceTimesSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const { serviceTimes } = await getChurchFacts();
+---
+
+{serviceTimes.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Service times"
+  >
+    <div class="cb-card" style="max-width: 36rem">
+      <ServiceTimes />
+    </div>
+  </ChurchBand>
+)}

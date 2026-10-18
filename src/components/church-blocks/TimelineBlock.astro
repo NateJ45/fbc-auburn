@@ -1,0 +1,48 @@
+---
+// Safe to edit by hand
+// History timeline: moments in order down a rail of gold stepping stones, the year in the display
+// face, a photo under a moment that has one.
+import ChurchBand from './ChurchBand.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import type { ProjectedTimelineSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedTimelineSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const entries = (block.entries ?? []).filter((e) => e?.title || e?.year);
+const Title = block.heading ? 'h3' : 'h2';
+---
+
+{entries.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="History timeline"
+  >
+    <ol class="cb-timeline" role="list">
+      {entries.map((e) => (
+        <li class="cb-moment">
+          {e.year && <span class="cb-moment__year">{e.year}</span>}
+          {e.title && <Title class="cb-moment__title">{e.title}</Title>}
+          {e.text && <p>{e.text}</p>}
+          {e.image?.asset && (
+            <div class="cb-moment__photo">
+              <SanityImage
+                source={e.image}
+                width={720}
+                sizes="(min-width: 40rem) 26rem, 90vw"
+                quality={72}
+              />
+            </div>
+          )}
+        </li>
+      ))}
+    </ol>
+  </ChurchBand>
+)}

@@ -1,0 +1,95 @@
+---
+// Safe to edit by hand
+// Ways to give, the same three as the Give page, all derived from Church facts (rule 15): in the
+// offering at Sunday worship (its time from Service times), by mail to the church address, and
+// online through the giving link when one is set. The optional text-to-give line sits under them.
+import ChurchBand from './ChurchBand.astro';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { streamedService } from '@/lib/church-blocks';
+import { site } from '@/data/site';
+import type { ProjectedGivingSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedGivingSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const facts = await getChurchFacts();
+const worship = streamedService(facts.serviceTimes);
+const address = facts.address;
+const Title = block.heading ? 'h3' : 'h2';
+---
+
+<ChurchBand
+  type={block._type}
+  heading={block.heading}
+  intro={block.intro}
+  headingId={headingId}
+  surface={surface}
+  label="Ways to give"
+>
+  <ul class="cb-grid cb-grid--3" role="list">
+    <li class="cb-card">
+      <Title class="cb-title">On a Sunday</Title>
+      <p>
+        The offering is taken during{' '}
+        {worship ? (
+          <>
+            {worship.label.toLowerCase()} at {worship.timeLabel}
+            <NotConfirmed confirmed={worship.confirmed} />
+          </>
+        ) : (
+          'Sunday worship'
+        )}
+        . Cash or a check in the plate is fine.
+      </p>
+    </li>
+    {address && (
+      <li class="cb-card">
+        <Title class="cb-title">By mail</Title>
+        <p>Make a check out to {site.name} and mail it to:</p>
+        <address style="margin-top: 0.5rem; font-style: normal; font-weight: 600">
+          {site.name}
+          <br />
+          {address.lines[0]}
+          <br />
+          {address.lines[1]}
+          <NotConfirmed confirmed={address.confirmed} />
+        </address>
+      </li>
+    )}
+    <li class="cb-card">
+      <Title class="cb-title">Online</Title>
+      {facts.givingUrl ? (
+        <>
+          <p>Give through the church’s secure giving page.</p>
+          <div class="cb-actions" style="margin-top: 1rem">
+            <a
+              class="btn-auburn btn-auburn--secondary press-tactile"
+              href={facts.givingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Give online<span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </div>
+        </>
+      ) : (
+        <p>
+          Online giving is being set up. Until then, give on a Sunday or by mail, or{' '}
+          <a class="cb-link" href="/contact/">
+            ask us
+          </a>{' '}
+          about another way.
+        </p>
+      )}
+    </li>
+  </ul>
+  {block.textToGive && (
+    <p class="cb-intro" style="margin-top: 1.5rem">
+      {block.textToGive}
+    </p>
+  )}
+</ChurchBand>

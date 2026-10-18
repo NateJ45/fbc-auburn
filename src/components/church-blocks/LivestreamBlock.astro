@@ -1,0 +1,116 @@
+---
+// Safe to edit by hand
+// Live stream: a "Watch live" button to Church facts' live stream link (or the Facebook page), with
+// "Live now" during Sunday worship and the next service the rest of the week. Both are worked out
+// from Service times (rule 15): at build time, then corrected in the visitor's browser by the
+// church's clock, the same window the Home watch card uses.
+//
+// The optional video is click-to-load: a drawn play card until someone presses play, so nothing
+// loads from YouTube or Facebook (and nothing tracks a visitor) before they choose to watch. Only
+// those two hosts are ever framed (streamEmbedUrl).
+import ChurchBand from './ChurchBand.astro';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { churchDataNow } from '@/lib/church-feeds';
+import { isLiveNow, liveWindow, streamEmbedUrl, streamedService } from '@/lib/church-blocks';
+import type { ProjectedLivestreamSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedLivestreamSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+  now?: Date;
+}
+const { block, surface, headingId, now = churchDataNow() } = Astro.props;
+const facts = await getChurchFacts();
+const win = liveWindow(facts.serviceTimes);
+const service = streamedService(facts.serviceTimes);
+const live = isLiveNow(win, now);
+const embed = streamEmbedUrl(block.videoUrl);
+const show = Boolean(facts.liveUrl || embed);
+---
+
+{show && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Live stream"
+  >
+    <div class:list={[embed && 'split']}>
+      <div class="cb-card" style="align-self: start">
+        {win && (
+          <p class="cb-live" data-cb-live data-start={win.start} data-end={win.end} hidden={!live}>
+            Live now
+          </p>
+        )}
+        {service && (
+          <p style="margin-top: 0.75rem">
+            We stream {service.label.toLowerCase()} live, <strong>{win?.label}</strong>
+            <NotConfirmed confirmed={service.confirmed} />.
+          </p>
+        )}
+        {facts.liveUrl && (
+          <div class="cb-actions">
+            <a
+              class="btn-auburn btn-auburn--secondary press-tactile"
+              href={facts.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Watch live<span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </div>
+        )}
+      </div>
+      {embed && (
+        <div class="cb-player" data-cb-player data-src={embed}>
+          <button type="button" class="cb-play">
+            <span class="cb-play__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+            Play the video
+            <span class="cb-small">
+              It loads from {embed.includes('facebook') ? 'Facebook' : 'YouTube'} when you press
+              play.
+            </span>
+          </button>
+        </div>
+      )}
+    </div>
+  </ChurchBand>
+)}
+
+<script>
+  // "Live now" by the church's clock (Eastern), Sundays inside the window.
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    weekday: 'short',
+    hour: 'numeric',
+    minute: 'numeric',
+    hourCycle: 'h23',
+  }).formatToParts(new Date());
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+  const minutes = Number(get('hour')) * 60 + Number(get('minute'));
+  for (const tag of document.querySelectorAll<HTMLElement>('[data-cb-live]')) {
+    const start = Number(tag.dataset.start);
+    const end = Number(tag.dataset.end);
+    tag.hidden = !(get('weekday') === 'Sun' && minutes >= start && minutes <= end);
+  }
+  // Click-to-load player: nothing is fetched from the video host until play is pressed.
+  for (const box of document.querySelectorAll<HTMLElement>('[data-cb-player]')) {
+    box.querySelector('button')?.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = `${box.dataset.src}${box.dataset.src?.includes('?') ? '&' : '?'}autoplay=1`;
+      frame.title = 'Video player';
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      box.replaceChildren(frame);
+      frame.focus();
+    });
+  }
+</script>

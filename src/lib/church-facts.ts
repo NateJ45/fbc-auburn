@@ -81,6 +81,7 @@ export interface RawChurchFacts {
   socialFacebook?: string | null;
   givingUrl?: string | null;
   liveStreamUrl?: string | null;
+  officeHours?: string | null;
   serviceTimes?: (RawServiceTime | null)[] | null;
   foundedYear?: number | null;
   foundedConfirmed?: boolean | null;
@@ -142,6 +143,8 @@ export interface ChurchFacts {
   icalUrl: string | null;
   /** Church Trac's public calendar page, derived from the feed, or null. */
   calendarPageUrl: string | null;
+  /** Office hours, one line each (Church facts > Office hours), or [] when not set. */
+  officeHours: string[];
 }
 
 /**
@@ -390,6 +393,10 @@ export function resolveChurchFacts(raw?: RawChurchFacts | null): ChurchFacts {
     youtubeChannelId: /^UC[\w-]{22}$/.test(channel) ? channel : null,
     icalUrl: /^(https|webcal):\/\//i.test(ical) ? ical.replace(/^webcal:/i, 'https:') : null,
     calendarPageUrl: calendarPageFor(ical || null),
+    officeHours: plain(s.officeHours)
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter(Boolean),
   };
 }
 

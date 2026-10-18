@@ -1,5 +1,34 @@
 # Change history
 
+_2026-10-18: the section library and the form builder._
+
+**What changed.** Twenty-one page-builder sections so the church can build any page without a
+developer (`src/sanity/schemaTypes/churchSections.ts`, components in `src/components/church-blocks/`
+behind one `ChurchBlock` branch in SectionRenderer, styles in `src/styles/church-blocks.css`):
+service times, map and directions (reuses `ChurchMap`), contact details, what we believe (Bible
+references link to BibleGateway, optional Baptist Faith and Message 2000 link), history timeline,
+fold-out questions (inline, apart from the FAQ collection), tabs, Bible verse, a notice with
+start and end dates, a countdown, ways to give, progress toward a goal, live stream (Live now from
+Service times, click-to-load player), upcoming events from the Church Trac feed with keyword filter,
+calendar subscribe buttons (Google, Apple, Outlook, derived from the feed), newsletter sign-up
+(reuses `NewsletterSignup`, which gained `hideHeading` and `idPrefix`), our wider Baptist family,
+a row of buttons or link cards, text in columns, one wide photo, and a Form section. The photo pair
+was not built: the photo gallery set to two across already is one. Derived values (date windows,
+days left, dollars, Bible and calendar links, the live window) live in `src/lib/church-blocks.ts`
+with tests. Church facts gained `officeHours`.
+
+The form builder: a `form` document (Content > Forms: questions using `formQuestion`, a recipient
+key from the new Site settings > Forms list, a prayer mode that warns in the Studio, an anonymous
+option, a thank-you line), and `/api/form/` (`src/pages/api/form.ts`), Auburn's own endpoint so the
+PORTABLE `/api/contact/` is untouched. It checks answers against the form's questions
+(`src/lib/church-form.ts`, tested), stores them in D1 (`migrations/0002_form_submissions.sql`),
+emails the recipient whose address comes from the `FORM_RECIPIENTS` secret, and clears a prayer
+request's words once its email is accepted. Not switched on yet: see PENDING 1h.
+
+Site Guide: "Sections you can add to a page", "Make a new form", "Prayer requests: what happens to
+them", "Put up a notice for a snow Sunday" and "Count down to VBS". Rendered markup of every
+existing page is unchanged (parity: only the shared CSS bundle grew, by the library's styles).
+
 _2026-10-18: share images in the church's brand._
 
 **What changed.** The share (Open Graph) cards were navy text in a thin frame on white, the

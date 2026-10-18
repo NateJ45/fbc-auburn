@@ -33,6 +33,7 @@ import type {
   // FaqSection, LogoStripSection, TeamSection, EmbedSection — not imported from
   // sanity.types yet; their projected types are fully defined below.
 } from './sanity.types';
+import type { ChurchPageBlock } from './churchBlocks.types';
 
 // ---------------------------------------------------------------------------
 // Shared projected shapes
@@ -464,4 +465,6 @@ export type PageBuilderBlock =
   | ProjectedWatchSection
   // FBC Auburn stone-path blocks
   | ProjectedStepsRailSection
-  | ProjectedWalkSection;
+  | ProjectedWalkSection
+  // FBC Auburn: the church section library (churchBlocks.types.ts)
+  | ChurchPageBlock;
