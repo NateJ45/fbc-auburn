@@ -242,6 +242,39 @@ export const PATH_PRESETS = {
     maxPoint: 1.6,
     minRealCorner: 80,
   },
+  // The Studio's Home banner (PORTS.md card 118, 2026-10-18): a long, low band along the foot of
+  // the navy welcome banner, rising from the water to the red cross like the share card's. Only
+  // rounded stones: the share card's stricter filters, so nothing reads as a point or a pick.
+  banner: {
+    curve: [
+      [-0.03, 0.6],
+      [0.3, 0.74],
+      [0.62, 0.3],
+      [1.03, 0.36],
+    ],
+    half: [22, 25],
+    r: [10, 12],
+    grout: 2.8,
+    minCorner: 88,
+    maxPoint: 1.6,
+    minRealCorner: 80,
+  },
+  // The same band for a phone-width banner (homeBanner.motifNarrow): fewer, relatively larger
+  // stones, so the path still reads at 375px instead of shrinking to beads.
+  bannerPhone: {
+    curve: [
+      [-0.03, 0.6],
+      [0.3, 0.74],
+      [0.62, 0.3],
+      [1.03, 0.36],
+    ],
+    half: [14, 16],
+    r: [7, 8],
+    grout: 2.2,
+    minCorner: 88,
+    maxPoint: 1.6,
+    minRealCorner: 80,
+  },
 };
 
 /** Four clear bands, the mark's story: the water, the green ring, the gold steps, the red cross. */
