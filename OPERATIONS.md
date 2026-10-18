@@ -299,7 +299,8 @@ Home's Visitors card reads Cloudflare Web Analytics through `/api/studio/visitor
 Until the Worker has three settings, the card says "Not set up yet". FBC Auburn (2026-10-18): Web Analytics is not on
 for this site yet (no beacon in the pages), so step 1 comes first; after it, set the beacon token as the repo variable
 `PUBLIC_CF_ANALYTICS_TOKEN` (GitHub, Settings, Secrets and variables, Actions, Variables; `deploy.yml` reads it) so
-visits are counted at all. Once per site:
+visits are counted at all. Steps 2 and 5 are done for Auburn: `CF_ACCOUNT_ID` and `CF_WEB_ANALYTICS_SITE_TAG` are in
+`wrangler.jsonc` (2026-10-18); what is left is the beacon token variable and the API token secret. Once per site:
 
 1. **Turn on Web Analytics** for the site if it is not already (Cloudflare dashboard, Analytics & Logs, Web Analytics,
    Add a site). The beacon token it shows goes in `PUBLIC_CF_ANALYTICS_TOKEN` as before; that is NOT the site tag.

@@ -215,9 +215,9 @@ yet" until all of this is done, in order (full steps: OPERATIONS.md, "Visitor nu
 1. Turn on Web Analytics for `fbc-auburn.nathanjnixon86.workers.dev` (Analytics & Logs, Web Analytics, Add a site,
    manual JS snippet) and set its beacon token as the repo variable `PUBLIC_CF_ANALYTICS_TOKEN`. Nothing is counted
    until the next deploy after that. Redo this at cutover for the church's own domain.
-2. Note the site tag (the address bar on that site's Web Analytics page ends `siteTag~in=<32 characters>`) and the
-   account id (`npx wrangler whoami`); add both to `wrangler.jsonc` `vars` as `CF_WEB_ANALYTICS_SITE_TAG` and
-   `CF_ACCOUNT_ID`.
+2. **Done 2026-10-18:** `CF_ACCOUNT_ID` and `CF_WEB_ANALYTICS_SITE_TAG` are in `wrangler.jsonc` `vars` (the site tag
+   is the Web Analytics site id from the dashboard's edit URL). If the card says "could not load" with the token set,
+   check this id against the `siteTag~in=` value in the site's Web Analytics address bar first.
 3. Create a Cloudflare API token, Custom, one permission: **Account, Account Analytics, Read**, on this account only.
    `npx wrangler secret put CF_ANALYTICS_TOKEN`, paste, and keep a copy in 1Password.
 4. Deploy and look at Home: compare "visits in the last 7 days" with the Web Analytics dashboard. The GraphQL field
