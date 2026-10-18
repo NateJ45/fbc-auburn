@@ -1,5 +1,11 @@
 # Change history
 
+_2026-10-17: the header logo shows with JavaScript off (starter card 108)._
+
+**Decision.** With JS off the header logo was only its alt text: the theme-aware img ships with no `src` so the
+inline script can fetch just one variant. `Header.astro` now adds a `<noscript>` copy with the light logo and a scoped
+rule that hides the src-less img, which is only src-less when that script never ran. With JS on nothing changes.
+
 _2026-10-17: the bold home pass: a full-height stone ribbon, a white page, photos._
 
 **Decision.** Home looked weaker than a Gemini comp of the same brief: the stone path was timid, there were no photos,
