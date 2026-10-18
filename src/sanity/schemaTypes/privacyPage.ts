@@ -3,7 +3,7 @@
 // One instance only; singleton enforcement in sanity.config.ts.
 // Safe to edit by hand.
 
-import { defineType, defineField, defineArrayMember } from 'sanity';
+import { defineType, defineField, defineArrayMember, type Rule } from 'sanity';
 import { additionalSectionsField } from './sections';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 import { imageWithAlt } from './_imageWithAlt';
@@ -131,7 +131,15 @@ export const privacyPage = defineType({
                 type: 'object',
                 title: 'Link',
                 fields: [
-                  { name: 'href', type: 'url', title: 'URL' },
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'Link to',
+                    description:
+                      'A page on this website, like /contact/, or a full address starting https://. Email and phone links work too (mailto:, tel:).',
+                    validation: (R: Rule) =>
+                      R.uri({ allowRelative: true, scheme: ['https', 'http', 'mailto', 'tel'] }),
+                  },
                   {
                     name: 'openInNewTab',
                     type: 'boolean',
