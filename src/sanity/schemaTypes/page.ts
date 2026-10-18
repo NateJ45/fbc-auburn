@@ -30,7 +30,6 @@ export const page = defineType({
   icon: DocumentsIcon,
   groups: [
     { name: 'content', title: 'Content', default: true },
-    { name: 'extra', title: 'Extra sections' },
     { name: 'menu', title: 'Menu placement' },
     { name: 'seo', title: 'Search & sharing' },
     PUBLISH_AT_GROUP,
@@ -51,7 +50,7 @@ export const page = defineType({
       type: 'slug',
       group: 'content',
       description:
-        'The end of the address, like "studio-tour" for example.com/studio-tour. Click Generate to make one from the title.',
+        'The end of the address, like "youth-group" for the page at /youth-group/. Click Generate to make one from the title.',
       options: { source: 'title', maxLength: 96 },
       validation: (Rule) =>
         Rule.required().custom((slug) => {
@@ -82,7 +81,7 @@ export const page = defineType({
       group: 'menu',
       initialValue: false,
       description:
-        'Off by default, so you can build and preview privately. Turn on when you want visitors to find it in the menu.',
+        'Off by default, so you can build and preview privately. Turn on and the page joins the end of the menu. To put it somewhere particular instead, add it in Site settings > Navigation.',
     }),
     defineField({
       name: 'navGroup',
@@ -90,7 +89,9 @@ export const page = defineType({
       type: 'string',
       group: 'menu',
       initialValue: 'top',
-      hidden: ({ parent }) => !parent?.addToMainNav,
+      // FBC Auburn (2026-10-18): this site has no Services or Resources groups; a ticked page
+      // simply joins the end of the menu (src/lib/page-switches.ts). Kept, hidden, for old data.
+      hidden: true,
       options: {
         list: [
           { title: 'Its own menu item', value: 'top' },
@@ -115,6 +116,8 @@ export const page = defineType({
       type: 'boolean',
       group: 'menu',
       initialValue: false,
+      description:
+        'Turn on and the page joins the last row of footer links. To put it in a particular row, add it in Site settings > Navigation > Footer link columns.',
     }),
 
     // ── Archived ──────────────────────────────────────────────────────────────

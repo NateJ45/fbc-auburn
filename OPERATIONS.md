@@ -141,24 +141,45 @@ npm run deploy
 
 Only needed if you're testing a config change locally before committing, or if the auto-deploy webhook is broken.
 
-### Sanity → Cloudflare deploy hook
+### Sanity publish → GitHub → live (the publish webhook)
 
-The site is fully prerendered, so a Sanity content edit doesn't change the live HTML until a rebuild. A Sanity webhook is configured and hits a Cloudflare deploy hook. The flow:
+The site is fully prerendered, so a Sanity publish changes nothing live until a rebuild. Cloudflare
+Workers have no deploy hook; the rebuild is GitHub Actions' `deploy.yml`, which already listens
+for a `repository_dispatch` of type `sanity-publish`. A Sanity webhook sends it:
 
-1. Editor publishes a document in Sanity Studio
-2. Sanity POSTs to the Cloudflare deploy hook
-3. Cloudflare rebuilds + deploys in about 1 to 2 minutes
-4. New content is live
+1. An editor publishes in the Studio.
+2. Sanity POSTs to GitHub's dispatch endpoint.
+3. `deploy.yml` builds and deploys (about 3 to 4 minutes).
+4. The change is live.
 
-If a content change isn't appearing on the live site after a few minutes:
+Without the webhook a publish waits for the next scheduled build (daily 10:00 UTC, and Sunday
+18:00 UTC) or a push. As of 2026-10-18 it is **not set up** (docs/PENDING.md 1e).
 
-- Check the webhook fired (Sanity Studio → Manage → API → Webhooks)
-- Check the Cloudflare deploy hook is configured (Workers → Settings → Triggers → Deploy hooks)
-- Try a manual `git push` to force a rebuild
+**Setting it up (Nathan, about five minutes; it needs a token, so nobody else does it):**
+
+1. GitHub: Settings → Developer settings → Fine-grained tokens → Generate. Repository access: only
+   `NateJ45/fbc-auburn`. Permissions: **Contents: Read and write** (what the dispatch endpoint
+   needs) and nothing else. Expiry: a year, with a calendar reminder. Save the token in 1Password,
+   not anywhere else.
+2. Sanity: manage.sanity.io → project `wdpzvn6m` → API → Webhooks → Create.
+   - URL: `https://api.github.com/repos/NateJ45/fbc-auburn/dispatches`
+   - Dataset: `production`. Trigger on: Create, Update, Delete. Drafts: off.
+   - Filter: the deny-list below.
+   - Projection: `{"event_type": "sanity-publish"}`
+   - HTTP method: POST. HTTP headers: `Authorization: Bearer <the token>`,
+     `Accept: application/vnd.github+json`.
+   - API version: `v2021-03-25`.
+3. Publish any small change and watch GitHub → Actions: a "Deploy" run with the
+   `repository_dispatch` event should start within a few seconds. The webhook's attempt log in
+   Sanity shows the response (a 204 is success; 401 or 404 means the token or its permission).
+
+If a content change isn't appearing a few minutes after publishing: check the webhook's attempt
+log in Sanity, then GitHub → Actions for a failed Deploy run. Run the Deploy workflow by hand
+(Actions → Deploy → Run workflow) to push the latest content out.
 
 ### Rebuild webhook filter (recommended)
 
-The webhook lives at manage.sanity.io → API → Webhooks. The recommended GROQ filter is a deny-list:
+The webhook lives at manage.sanity.io → API → Webhooks. The GROQ filter is a deny-list:
 
 ```
 !(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData"])

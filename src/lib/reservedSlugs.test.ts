@@ -61,6 +61,11 @@ test('every reserved slug is a route this repo serves, a scaffolded one, or a bu
     // Served, but never for visitors: the fixed-data design-system wall the
     // visual suite screenshots. Reserved so a custom page cannot shadow it.
     'styleguide',
+    // The embedded Studio (astro.config.mjs, studioBasePath), and src/pages/preview/ and
+    // src/pages/api/ (FBC Auburn, 2026-10-18).
+    'studio',
+    'preview',
+    'api',
   ]);
   // Not pages: two are emitted by the build, one is the asset directory.
   const artefacts = new Set(['sitemap-index.xml', 'og', '_astro']);

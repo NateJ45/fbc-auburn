@@ -39,6 +39,10 @@ export const RESERVED_SLUGS = new Set([
   'sitemap-index.xml',
   'og',
   '_astro',
+  // The Studio, the draft preview and the API routes (2026-10-18): a page must not shadow them.
+  'studio',
+  'preview',
+  'api',
 ]);
 
 /** Returns true when a slug collides with a built-in route. */

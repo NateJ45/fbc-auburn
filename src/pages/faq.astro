@@ -13,6 +13,7 @@
 // Google's rich-result accordion in search.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
 import { getFaqPage, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema, faqPageSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
@@ -81,6 +82,10 @@ const schemas = [
   </section>
 
   {/* ------- 3. Final CTA ---------------------------------------------------- */}
+  {/* Extra sections (2026-10-18): anything the editor adds from the section library, Studio:
+      this page > Extra sections. Empty renders nothing. */}
+  <SectionRenderer sections={page?.additionalSections ?? []} idPrefix="faq-extra" />
+
   <FinalCta
     eyebrow={page?.finalCtaEyebrow}
     headline={page?.finalCtaHeadline}

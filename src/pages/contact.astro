@@ -3,6 +3,7 @@
 // Pulls contactPage singleton from Sanity, renders form + scheduling link + map + sidebar.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
 import { getContactPage, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { telHref } from '@/lib/phone';
@@ -48,7 +49,7 @@ const questions = written.length > 0 ? written : normalizeCustomFields(DEFAULT_V
 const questionProps = { customFields: questions };
 
 const schedulingLink = page?.schedulingLink;
-const schedulingLinkLabel = page?.schedulingLinkLabel ?? 'Schedule a 20-minute discovery call.';
+const schedulingLinkLabel = page?.schedulingLinkLabel ?? 'Book a time to talk.';
 
 const availability = page?.availabilityNote ?? siteSettings?.availabilityStatus;
 const email = siteSettings?.email;
@@ -232,4 +233,7 @@ const schemas = [
       </div>
     </aside>
   </section>
+  {/* Extra sections (2026-10-18): anything the editor adds from the section library, Studio:
+      this page > Extra sections. Empty renders nothing. */}
+  <SectionRenderer sections={page?.additionalSections ?? []} idPrefix="contact-extra" />
 </BaseLayout>

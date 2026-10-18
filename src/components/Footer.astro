@@ -39,13 +39,15 @@ import {
 import { Mail, Phone } from 'lucide-react';
 import CopyEmailButton from '@/components/CopyEmailButton';
 import NewsletterSignup from '@/components/NewsletterSignup';
-import { getAllProjects, type CoreProjectCard } from '@/lib/queries';
+import { getAllProjects, getNavPages, type CoreProjectCard } from '@/lib/queries';
+import { mergePageSwitches } from '@/lib/page-switches';
 // The brand row shows the mark (board E, 2026-10-17); the lockup lives in the header.
 import { getSectionVisibility } from '@/lib/sectionVisibility';
 import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings';
 import { telHref } from '@/lib/phone';
 import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 import { getChurchFacts } from '@/lib/church-data';
+import { ctaHref, type CtaTarget } from '@/lib/cta-href';
 import { sundayIcs, thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
@@ -81,6 +83,9 @@ interface Props {
         tagline?: string;
         footerCredit?: string;
         footerCreditUrl?: string;
+        footerInvite?: string;
+        footerAbout?: string;
+        footerSecondaryCta?: CtaTarget & { label?: string };
         newsletter?: NewsletterConfig | null;
       })
     | null;
@@ -149,7 +154,8 @@ const siteCreditUrl = siteSettings?.footerCreditUrl;
 // Optional editor-managed footer columns. When non-empty, these replace the
 // built-in Studio / Work / Free tools columns. "Get in touch" always renders
 // as the last column regardless. Additive: empty = built-in defaults.
-const sanityFooterColumns = chrome.footerColumns;
+// A custom page ticked "Show in the footer" joins the last row (src/lib/page-switches.ts).
+const sanityFooterColumns = mergePageSwitches([], chrome.footerColumns, await getNavPages()).footer;
 const useCustomFooterColumns = sanityFooterColumns.length > 0;
 
 // The small-print row at the very bottom. EMPTY means "keep the built-in
@@ -171,6 +177,16 @@ const footerAddress = footerFacts.address;
 // thing on every page, so it ends with the two next steps a stranger can take. The visit button
 // goes where the header's button goes, so a build without Sanity never links to a missing page.
 const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
+// The footer's own words (Site settings > Social & footer), each with the built-in fallback.
+const footerInvite =
+  siteSettings?.footerInvite || 'Come along on a Sunday, or ask us anything first.';
+const footerAbout = siteSettings?.footerAbout || 'A Southern Baptist church in Ross Township, Ohio';
+const secondaryCta = siteSettings?.footerSecondaryCta?.label
+  ? { label: siteSettings.footerSecondaryCta.label, href: ctaHref(siteSettings.footerSecondaryCta) }
+  : { label: 'Ask a question', href: '/contact/' };
+// The state written out ("Ohio"), from Church facts, not typed.
+const STATES: Record<string, string> = { OH: 'Ohio' };
+const footerState = footerAddress ? (STATES[footerAddress.state] ?? footerAddress.state) : '';
 // The This Sunday panel and its calendar link, from the same facts as Home's card.
 const sunday = thisSunday(footerFacts, churchDataNow());
 const hasCalendar =
@@ -201,15 +217,15 @@ const hasCalendar =
         decoding="async"
       />
       {siteSettings?.tagline && <p class="sf-invite__tagline">{siteSettings.tagline}</p>}
-      <p class="sf-invite__line">Come along on a Sunday, or ask us anything first.</p>
+      <p class="sf-invite__line">{footerInvite}</p>
       <div class="sf-invite__actions">
         {visitCta && (
           <a class="btn-auburn btn-auburn--primary" href={visitCta.href}>
             {visitCta.label}
           </a>
         )}
-        <a class="btn-auburn btn-auburn--secondary" href="/contact/">
-          Ask a question
+        <a class="btn-auburn btn-auburn--secondary" href={secondaryCta.href}>
+          {secondaryCta.label}
         </a>
       </div>
     </div>
@@ -244,7 +260,7 @@ const hasCalendar =
             <p>
               {footerAddress.street}
               <br />
-              {footerAddress.city}, Ohio
+              {[footerAddress.city, footerState].filter(Boolean).join(', ')}
             </p>
             {footerAddress.findUs && <p class="sf-sunday__findus">{footerAddress.findUs}</p>}
             <p class="sf-sunday__links">
@@ -566,7 +582,7 @@ const hasCalendar =
         <span class="sf-bottom__dot" aria-hidden="true">
           ·
         </span>
-        <span class="sf-bottom__about">A Southern Baptist church in Ross Township, Ohio</span>
+        <span class="sf-bottom__about">{footerAbout}</span>
       </p>
       <div class="sf-bottom__links">
         {LEGAL_LINKS.length > 0 ? (

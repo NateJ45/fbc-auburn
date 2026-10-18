@@ -28,6 +28,8 @@ import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
 import MobileNav from './MobileNav';
 import { ChevronDown } from 'lucide-react';
 import { getChurchFacts } from '@/lib/church-data';
+import { getNavPages } from '@/lib/queries';
+import { mergePageSwitches } from '@/lib/page-switches';
 import { thisSunday, timesPhrase } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import logoLightAsset from '@/assets/logo-light.svg';
@@ -141,7 +143,8 @@ const mobileCtaProps =
 // and the built-in safety-net menu live in src/lib/siteSettings.ts, so the
 // header, the drawer, and the footer read one source. Empty in Sanity = the
 // built-in menu, so a fresh clone is byte-identical to the old behavior.
-const NAV_ITEMS = chrome.headerNav;
+// A custom page ticked "Show in the top menu" joins the end of the menu (src/lib/page-switches.ts).
+const NAV_ITEMS = mergePageSwitches(chrome.headerNav, [], await getNavPages()).nav;
 
 // Flatten NAV_ITEMS into the shape MobileNav expects (a list of NavLink[]
 // with optional sub-items for the groups). MobileNav already handles both

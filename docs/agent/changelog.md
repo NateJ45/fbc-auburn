@@ -1,5 +1,24 @@
 # Change history
 
+_2026-10-18: the pastor can run the site without a developer._
+
+**Decision.** Nathan: "Jacob should be able to do as much as he wants without me." An audit of
+the Studio found the gaps; this closes the ones that need no credentials. A custom page's "Show
+in the top menu" and "Show in the footer" switches now work (`src/lib/page-switches.ts`, tested:
+the page joins the end of the menu and the last footer row, never twice); the non-existent
+Services/Resources placement is hidden and the empty Extra sections tab removed. Dropdown menu
+links use the page-picker link type (no saved data used the old typed one). The footer's words
+are Site settings fields (`footerInvite`, `footerSecondaryCta`, `footerAbout`) with the old
+wording as fallback, and the state comes from Church facts. Contact, FAQ, News and notes and
+Privacy gained an Extra sections zone (`additionalSections`, rendered before each page's closing
+CTA). `studio`, `preview` and `api` are reserved slugs. The journal post page lost the starter's
+"Studio Journal" wording and sales CTA (it reads the Journal page's Final CTA, church fallback).
+The Site Guide gained Rearrange the home page, Change the service times or the address, and
+After Sunday: name the message, and corrects Rename (redirects are automatic), Add a page and
+the menu guide. Data: `scripts/content/faq-church.mjs` added church FAQ categories and six
+questions from facts the site already states; retiring the four starter questions waits for
+Nathan (`--retire`). The publish webhook (OPERATIONS.md, PENDING 1e) needs Nathan's token.
+
 _2026-10-18: the footer and the menus rebuilt to feel alive._
 
 **Decision.** Recorded in `docs/design-directions/2026-10-17-fbc-auburn/README.md`. Footer

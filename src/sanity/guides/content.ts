@@ -146,6 +146,11 @@ export const guides: Guide[] = [
         title: 'The preview shows your draft.',
         text: 'What you see in Presentation is your unpublished draft, not the live site. That is the point: you see the change before anyone else does.',
       },
+      { kind: 'h', text: 'Adding something to Contact, Questions, News and notes or Privacy' },
+      {
+        kind: 'p',
+        text: 'Those pages keep their own layout, and each has an `Extra sections` tab. Anything you add there (a photo, a short note, a button) appears at the bottom of that page.',
+      },
     ],
   },
 
@@ -160,9 +165,10 @@ export const guides: Guide[] = [
       {
         kind: 'steps',
         items: [
-          'Open `Pages` in the menu, then the `+` button.',
-          'Give it a title. The **slug**, which is the part of the web address after the slash, is generated from it.',
-          'Add sections until it says what you want.',
+          'Open `Pages`, then `Custom pages (build your own)`, then the `+` button.',
+          'Give it a title. The **slug**, which is the part of the web address after the slash, is made from it when you click `Generate`.',
+          'Add sections until it says what you want. Drag them to change the order.',
+          'To put it in the menu, open the `Menu placement` tab and turn on `Show in the top menu`. It joins the end of the menu. `Show in the footer` adds it to the last row of footer links.',
           'Publish.',
         ],
       },
@@ -196,9 +202,8 @@ export const guides: Guide[] = [
         kind: 'steps',
         items: [
           'Change the slug on the page and publish.',
-          'Open `Redirects (old links)` in the menu.',
-          'Add one: the old address in `From`, the new one in `To`.',
-          'Publish that too.',
+          'That is it. The Studio notices the address changed and files the redirect for you. You can see it under `Pages`, `Redirects (old links)`.',
+          'For an address that never existed here (a link printed on an old flyer, say), add a redirect by hand: the old address in `From`, the page in `To`, then publish.',
         ],
       },
       {
@@ -256,13 +261,122 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: 'The header menu and the footer columns both live in Site Settings. Drag rows to reorder them, and use the `...` menu on a row to remove one.',
+        text: 'Open the `Navigation (menus)` tab. `Top menu links` is the full menu, the one that opens from the `Menu` button; the bar across the top of the website shows the **first four** of them, so put the most important first. A `Dropdown` groups several pages under one heading. `Header button` is the `Plan your visit` button. `Footer link columns` are the rows of links in the footer. Pick pages from the list rather than typing addresses, so a renamed page never breaks a link. Drag rows to reorder them, and use the `...` menu on a row to remove one.',
+      },
+      {
+        kind: 'p',
+        text: "The footer's own words (the line under the big heading, the second button and the line in the bottom bar) are on the `Social & footer` tab. Leave one empty and the website uses its built-in wording.",
       },
       {
         kind: 'callout',
         tone: 'caution',
         title: 'A long menu is a worse menu.',
         text: 'Every item you add makes the others harder to find, and the header runs out of room on a phone before it does on your screen. If something has to go in, consider what comes out.',
+      },
+    ],
+  },
+
+  {
+    slug: 'home-page',
+    category: 'Pages and words',
+    title: 'Rearrange the home page',
+    icon: '🏠',
+    lead: 'Move, add or remove the sections on the front page.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Pages', 'Home', 'Page layout'],
+        link: { doc: 'homePage' },
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Home`, then the `Page layout` tab.',
+          'Drag a section to move it. Use the `...` menu on a section to remove it, and `Add item` to add one from the library.',
+          'Publish.',
+        ],
+      },
+      { kind: 'h', text: 'The home page has a few special sections' },
+      {
+        kind: 'bullets',
+        items: [
+          'The **Hero** is the welcome at the top, with the This Sunday card. Keep it first.',
+          'The first **Stepping-stone steps** section is drawn as "Your first Sunday", the numbered walk. Steps marked as a Sunday gathering show their time by themselves.',
+          'The first **Image + text** section is "Who we are": the photos and your signed welcome.',
+          '**This week** and **Watch** sit side by side when they are next to each other.',
+          'A **Cards with stone icons** section after those is drawn as the "Other ways in" band.',
+          'Anything else you add appears in the standard style, wherever you put it.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'positive',
+        title: 'The times are not typed here.',
+        text: 'The This Sunday card, the walk and This week all read the service times from Church facts, so they always agree. See the guide on changing the times.',
+      },
+      { kind: 'seealso', items: ['Change the service times or the address'] },
+    ],
+  },
+
+  {
+    slug: 'church-facts',
+    category: 'Housekeeping',
+    title: 'Change the service times or the address',
+    icon: '🕘',
+    lead: 'Typed once, shown everywhere.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Site Settings', 'Church facts'],
+        link: { doc: 'siteSettings' },
+      },
+      {
+        kind: 'p',
+        text: 'The service times and the address are typed in one place only. The top of the website, the This Sunday card, "Your first Sunday", This week, the menu, the footer, Google and the "Add to my calendar" link all read them from here, so a change here changes all of them.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Site Settings`, then the `Church facts` tab.',
+          'Change a time in `Service times`. Type it the 24-hour way: `09:45`, `11:00`, `18:00` for 6 pm.',
+          'Tick `Confirmed by the church` once it is right. Until then the website shows a small "To confirm" tag beside it and keeps it away from Google.',
+          'Publish.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: '`How to find us`, under the address, is one optional sentence for someone driving out: where to park, which door. It shows on the This Sunday card and in the footer.',
+      },
+    ],
+  },
+
+  {
+    slug: 'after-sunday',
+    category: 'Pages and words',
+    title: 'After Sunday: name the message',
+    icon: '🎙️',
+    lead: 'Thirty seconds that make the home page feel current.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'The "Last Sunday" card on the home page can say which message was preached and link to the video. Facebook does not let a website read its videos by itself, so this is a quick entry after Sunday.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Home`, then `Page layout`, then the `Watch` section.',
+          "Fill in `Last Sunday's message`: the title, the Bible passage, the date it was preached, and the link to the video.",
+          'Publish.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'It tidies itself away.',
+        text: 'The card shows the message for eight days after its date, then goes back to its usual words, so an old title is never left up by mistake.',
       },
     ],
   },
