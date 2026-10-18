@@ -6,6 +6,7 @@
 // the legacy category string so existing data renders without migration.
 
 import { defineType, defineField, defineArrayMember, type Rule } from 'sanity';
+import { previewSubtitle } from '../../lib/studio-icons';
 
 export const faqItem = defineType({
   name: 'faqItem',
@@ -138,9 +139,9 @@ export const faqItem = defineType({
       categoryRefTitle: 'categoryRef.title',
       displayOrder: 'displayOrder',
     },
-    prepare: ({ question, category, categoryRefTitle, displayOrder }) => ({
+    prepare: ({ question, category, categoryRefTitle }) => ({
       title: question ?? '(no question)',
-      subtitle: `${categoryRefTitle ?? category ?? '?'} · #${displayOrder ?? '?'}`,
+      subtitle: previewSubtitle(categoryRefTitle ?? category ?? 'No group yet'),
     }),
   },
   orderings: [

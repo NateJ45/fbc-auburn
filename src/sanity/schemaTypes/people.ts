@@ -146,7 +146,7 @@ export const person = defineType({
     prepare: ({ title, role, group, media }) => ({
       title: title || 'New person',
       subtitle: [role, group].filter(Boolean).join(' · '),
-      media: media?.asset ? media : UserIcon,
+      media: media?.asset ? media : undefined,
     }),
   },
 });
