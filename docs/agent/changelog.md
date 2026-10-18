@@ -1,5 +1,28 @@
 # Change history
 
+_2026-10-18: church page templates and seasonal saved sections._
+
+**What changed.** The "new page" menu grew from five starting points to 39, in seven groups
+(Visitors, About us, Ministries, Life events, Seasonal, Sermons and news, Blank). Sanity's menu has
+no headings, so `sanity.config.ts` shows each as "Group: Title" (`templateMenuTitle`) and the list
+is kept in group order. Every template is a sequence of existing blocks with warm, plain copy: lines
+only the church can supply (names, dates, rooms, claims about how something is run) start
+"Example:", generic true sentences are left plain, and service times, address, phone, giving and the
+live stream come from the Church facts blocks, never typed. Verses are typed in the King James
+Version. The builders moved to `src/sanity/templateBlocks.ts`. Twelve seasonal and one-off
+**patterns** (Easter, Christmas, Homecoming, Revival week, Trunk-or-treat, Thanksgiving meal,
+Building fund, Anniversary year, Snow Sunday notice, Lottie Moon, Annie Armstrong, Memorial for a
+member) live in `src/sanity/sectionPatterns.ts`; the Seasonal templates reuse them, and
+`scripts/content/seed-section-patterns.mjs` (dry by default, create-only, drafts) puts them in
+the dataset where "Insert a saved section" reads them. The Site Guide gained a "Page templates"
+category: the refreshed "Start a page from a template" guide, one guide per group and one for the
+saved sections. The template tests now also check copy (no em-dashes, AI-tell words, UK spellings
+or prices), schema limits, stone icon names, group order, and that a fresh page trips no warning
+but "example text". The "Phone, email, giving" guide's emoji icon became `info`.
+
+**Not done here.** Sermons landing: `/sermons/` already is one, so there is no template for it.
+No new blocks were needed. The dataset write is queued in PENDING 1j.
+
 _2026-10-18: sermons, people and downloads._
 
 **What changed.** Three collections the pastor keeps himself. **Sermons**: `sermon` (title, date,
