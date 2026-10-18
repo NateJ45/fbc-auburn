@@ -9,7 +9,7 @@ the first screen even with the browser's bars; the phone path follows the card, 
 the church" sits beside the button (gap 16px, no side padding); the hero eyebrow is quieter (18px, 0.18em);
 the forecast line is 15px and brighter; the Who we are note opens with a curly quote. Site-wide: the header's
 "Plan your visit" is the outline button, so the page's own red button is the only red in view; the header
-stripe and resting hairline are gone on every page (E pages open on their own hairline); below 960px the
+stripe, the desktop eyebrow strip (tagline on a pale band; the footer carries the tagline) and the resting hairline are gone on every page (E pages open on their own hairline); below 960px the
 header and footer sit on the same 20px gutter as the page. Inner pages: `ArchHero` hands the short hero to
 `BoardPageHead.astro` (label with stepping stones, title, subhead, buttons, a photo or stone icon beside them;
 no arch, no second mark); `SectionRenderer` opens each section with `BoardRule.astro` instead of the

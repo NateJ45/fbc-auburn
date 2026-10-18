@@ -630,8 +630,10 @@ h6 {
   }
 }
 /* Board E pages open on their own hairline under the header (Home's masthead, the inner pages'
-   BoardPageHead), so the bar has no stripe and no rule until it scrolls. */
-.site-header .site-header__stripe {
+   BoardPageHead), so the bar has no stripe, no tinted eyebrow strip (the tagline is in the footer) and no
+   rule until it scrolls. */
+.site-header .site-header__stripe,
+.site-header .site-header__eyebrow {
   display: none;
 }
 .site-header:not([data-scrolled]) .site-header__row {
