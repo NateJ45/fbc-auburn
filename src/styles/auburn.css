@@ -247,6 +247,20 @@ h6 {
 .btn-auburn--secondary:hover {
   background: var(--muted);
 }
+/* Nav and text links get the same clear ring as the buttons (it was a 1px half-transparent
+   outline on the desktop nav; Home critic, 2026-10-17). */
+.site-nav a:focus-visible,
+.site-nav summary:focus-visible,
+.hb a:focus-visible,
+.site-footer a:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.site-footer a:focus-visible,
+.site-footer .btn-auburn:focus-visible {
+  outline-color: #96c3ea;
+}
 .btn-auburn:focus-visible {
   outline: 3px solid var(--ring);
   outline-offset: 3px;
@@ -640,6 +654,7 @@ h6 {
   gap: 1.2rem;
 }
 .auburn-menu__tagline {
+  text-wrap: balance;
   font-family: var(--font-display);
   font-size: 1.5rem;
   line-height: 1.3;

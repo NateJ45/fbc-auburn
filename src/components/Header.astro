@@ -309,10 +309,9 @@ function isGroupActive(items: { href: string }[]) {
           <span class="site-header__note-times">{sundayNote}</span>
           {noteAddress && (
             <span class="site-header__note-where">
-              {noteAddress.street}, {noteAddress.city} ·{' '}
-              <a href={noteAddress.mapsUrl} rel="noopener" target="_blank">
-                Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
-              </a>
+              {/* No Directions link here: the This Sunday card just below carries it (Home critic,
+                  2026-10-17: three Directions links before the walk). */}
+              {noteAddress.street}, {noteAddress.city}
             </span>
           )}
         </p>

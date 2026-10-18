@@ -28,12 +28,12 @@ interface Props {
 const { week, watch, headingId, now = churchDataNow() } = Astro.props;
 
 const facts = await getChurchFacts();
-// This week carries only what the rest of Home does not (Home audit research, 2026-10-17). The
-// This Sunday card owns Sunday, so here: the weekday rhythm in one line per day (from Church
-// facts), then the dated things from the church calendar, a cancelled one struck through rather
-// than silently missing, and one honest line when there is nothing extra.
+// This week (Home audit research, 2026-10-17): the weekly schedule in one line per day (from
+// Church facts, Sunday included so a quiet week still reads as a full week), then the dated
+// things from the church calendar, a cancelled one struck through rather than silently missing,
+// and one honest line when there is nothing extra.
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const weekday = facts.serviceTimes.filter((s) => s.dayIndex !== 0);
+const weekday = facts.serviceTimes;
 const rhythm = [...new Set(weekday.map((s) => s.dayIndex))].map((d) => {
   const day = weekday.filter((s) => s.dayIndex === d);
   return {
@@ -184,7 +184,7 @@ const WatchTag = watchHref ? 'a' : 'div';
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 2px solid var(--hb-ink);
+    border-top: 0;
   }
   .hb-week li {
     display: flex;
@@ -210,8 +210,7 @@ const WatchTag = watchHref ? 'a' : 'div';
   .hb-rhythm {
     list-style: none;
     margin: 0 0 18px;
-    padding: 14px 0 0;
-    border-top: 2px solid var(--hb-ink);
+    padding: 0;
     color: var(--hb-body);
   }
   .hb-rhythm ~ .hb-week {

@@ -15,14 +15,14 @@
 import SectionLabel from './SectionLabel.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { ctaHref } from '@/lib/cta-href';
-import type { ProjectedStepsRailSection } from '@/lib/pageBuilder.types';
+import type { ProjectedRailStep, ProjectedStepsRailSection } from '@/lib/pageBuilder.types';
 
 interface Props {
   block: ProjectedStepsRailSection;
   headingId: string;
 }
 const { block, headingId } = Astro.props;
-const steps = (block.steps ?? []).filter((s) => s?.title);
+const steps: ProjectedRailStep[] = (block.steps ?? []).filter((s: ProjectedRailStep) => s?.title);
 const facts = await getChurchFacts();
 const sunday = facts.serviceTimes.filter((s) => s.dayIndex === 0);
 const gatheringOf = (g?: string) =>
@@ -35,8 +35,18 @@ const cta = block.primaryCta?.label ? block.primaryCta : null;
 {steps.length > 0 && (
   <section class="hb-section hb-walk" id="first-sunday" aria-labelledby={headingId}>
     <div class="hb-wrap">
-      <SectionLabel text={block.heading || 'Your first Sunday'} id={headingId} />
-      {block.intro && <p class="hb-walk__intro">{block.intro}</p>}
+      {/* The label names the section; the intro is its display headline, the same pairing as
+          "Who we are" over "A place to belong" (Home critic, 2026-10-17). */}
+      {block.intro ? (
+        <>
+          <SectionLabel text={block.heading || 'Your first Sunday'} as="p" />
+          <h2 class="hb-walk__heading" id={headingId}>
+            {block.intro}
+          </h2>
+        </>
+      ) : (
+        <SectionLabel text={block.heading || 'Your first Sunday'} id={headingId} />
+      )}
       <ol class="hb-walk__steps" style={`--hb-walk-n: ${Math.min(steps.length, 4)}`}>
         {steps.map((s, i) => {
           const g = gatheringOf(s.gathering);
@@ -47,7 +57,13 @@ const cta = block.primaryCta?.label ? block.primaryCta : null;
                 {i + 1}
               </span>
               <div class="hb-walk__text">
-                {eyebrow && <p class="hb-walk__when hb-num">{eyebrow}</p>}
+                {/* Every step keeps the time line, empty or not, so the titles line up. */}
+                <p
+                  class:list={['hb-walk__when hb-num', !eyebrow && 'is-empty']}
+                  aria-hidden={eyebrow ? undefined : 'true'}
+                >
+                  {eyebrow || '\u00a0'}
+                </p>
                 <h3 class="hb-walk__title">{s.title}</h3>
                 {s.body && <p class="hb-walk__body">{s.body}</p>}
                 {s.linkLabel && s.linkHref && (

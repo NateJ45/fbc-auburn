@@ -26,7 +26,8 @@ export const PATHS = {
 export const TILES = {
   deep: {
     size: 420,
-    grout: '#1E5385',
+    // A grout close to the stones, so the texture stays behind the card's white text (Home critic).
+    grout: '#205890',
     fills: ['#235E93', '#24609A', '#225B8E', '#26639B'],
     seed: 7,
   },

@@ -4,7 +4,7 @@
 // "FIRST BAPTIST CHURCH OF" over a mosaic "Auburn"), then the lead row (the red welcome line, a
 // paragraph, one red button and a text link) beside the This Sunday card, then the stone path
 // running in from the left edge under the buttons and ending in red at the card's left
-// side (the card is the door). The place line ("Hamilton-Scipio Road · Hamilton, Ohio") sits
+// side (the card is the door). The place line ("Hamilton, Ohio") sits
 // top right of the masthead, from Church facts, so "Auburn" is never read as Alabama. On a
 // phone the mark is hidden (the header carries it), the card comes straight after the welcome
 // and its buttons (so the time and place are on the first screen), and a short strip of the path
@@ -44,7 +44,6 @@ const wordScale = Math.min(1, 7 / longest).toFixed(3);
 const name = [splitStega(block.eyebrow ?? '').cleaned, word].filter(Boolean).join(' ');
 const primary = block.primaryCta;
 
-// The place line: the road (house number dropped), then the town and the state written out.
 const facts = await getChurchFacts();
 
 // The phone Sunday bar (Home audit research, 2026-10-17): once the This Sunday card has scrolled
@@ -55,14 +54,9 @@ const barTimes = barMinutes.length ? `Sundays ${timesPhrase(barMinutes)}` : '';
 const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
 const STATES: Record<string, string> = { OH: 'Ohio' };
 const addr = facts.address;
-const place = addr
-  ? [
-      addr.street.replace(/^\d+\s+/, ''),
-      [addr.city, STATES[addr.state] ?? addr.state].filter(Boolean).join(', '),
-    ]
-      .filter(Boolean)
-      .join(' · ')
-  : '';
+// The town and the state written out; the road is already in the header note and on the card
+// (the Home critic counted it three times above the fold).
+const place = addr ? [addr.city, STATES[addr.state] ?? addr.state].filter(Boolean).join(', ') : '';
 const secondary = block.secondaryCta;
 ---
 
@@ -144,7 +138,7 @@ const secondary = block.secondaryCta;
       </a>
     )}
     <a class="btn-auburn btn-auburn--primary hb-sundaybar__visit" href={barVisitHref}>
-      Plan a visit
+      Plan your visit
     </a>
   </div>
 )}
