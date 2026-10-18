@@ -42,7 +42,7 @@ npm install @fontsource/your-display-font @fontsource-variable/your-body-font
 3. Run `npm run apply-brand` — deterministically rewrites `globals.css` tokens, `src/data/site.ts`, Studio theme props, and OG generator inputs, then regenerates `public/og-default.png`.
 4. Run `npm run build` to verify nothing broke.
 
-The shipped `brand/brand.config.json` encodes the neutral starter defaults, so `npm run apply-brand` on a fresh clone is a no-op. The OG image is non-deterministic (node-canvas rendering) and re-running produces a visually identical but byte-different file.
+The shipped `brand/brand.config.json` encodes the neutral starter defaults, so `npm run apply-brand` on a fresh clone is a no-op. Auburn's share images are deterministic and are only rewritten when their bytes change (see "Share images" below).
 
 **Layout (structure) is a second config axis.** The `layout` block in `brand/brand.config.json` picks `header` (inline, centered, minimal), `hero` (bleed, split, editorial), `density` (standard, airy, tight) and `cards` (standard, outline, soft). The first value of each is the original layout and the default; `apply-brand` writes `src/data/layout.ts` and the rest is CSS and one component prop. To try a variant: set it in the config, `npm run apply-brand`, `npm run build`, look at `/` at 390 and 1280. `/styleguide/layouts/` (noindex) shows every variant side by side with fixed data. Detail: `docs/brand/brand-system.md`, rule 18 in `.claude/rules/brand-reskin.md`.
 
@@ -450,6 +450,47 @@ Note: the MCP lighthouse_audit only returns Accessibility / BP / SEO / Agentic. 
 | "No CSP"                                     | Astro 6's `security.csp` would satisfy this                   | DON'T enable — ClientRouter's runtime inline scripts get blocked. See CLAUDE.md → Stack → Astro config don'ts. |
 
 ---
+
+## Share images (Open Graph)
+
+Every route shares a 1200x630 card in the church's brand: the lockup top left, the page title in
+Auburn Stone with the mosaic letter colours (one colour, deep sky, when it needs three lines), and
+the stone path across the foot. Home and the fallback `public/og-default.png` use the masthead
+(mark, "First Baptist Church of", Auburn in mosaic) with the Site settings tagline. Drawn by
+`scripts/lib/og-card.mjs` (site-specific; the starter's PORTABLE `scripts/lib/render-og.mjs` is
+no longer called here). PNGs are committed; CI never draws them.
+
+**Regenerate** after a title, the tagline or a page changes in the Studio, or after adding a route:
+
+```powershell
+npm run og:pages   # one card per route into public/og/
+npm run og         # public/og-default.png
+```
+
+Both read Sanity anonymously when `PUBLIC_SANITY_PROJECT_ID` is set (it is in `.env`). A card is
+rewritten only when its bytes change, so a re-run with nothing changed leaves `git status` clean.
+The run lists any `public/og/*.png` it did not draw ("Not drawn this run"): delete those once the
+route is really gone. Then commit, and deploy as usual.
+
+**How a route finds its card.** `BaseLayout.astro` turns the pathname into a file name:
+`/` is `og/home.png`, `/plan-your-visit/` is `og/plan-your-visit.png`, `/journal/a-post/` is
+`og/journal-a-post.png`. No file means `og-default.png`. A real photo still wins when a page
+passes `ogImage` (a post's cover) or an editor sets a sharing image in the Studio.
+
+**A new route or collection gets a card** in `scripts/generate-og-pages.mjs`: a code-only page is a
+`STATIC_ROUTES` row, a page singleton a `SINGLETONS` row, a collection a `COLLECTIONS` row
+(`prefix`, a GROQ `query`, `pick` for the title, optional `kicker`). Sermons, say: prefix
+`sermons`, `kicker: (d) => longDate(d.date)`; a series row uses `kicker: () => 'Sermon series'`.
+To draw a card from any other script:
+
+```js
+import { renderCard, closeCards } from './lib/og-card.mjs';
+await renderCard({ title, kicker: 'Sermon series', outPath }); // kicker is optional
+await closeCards(); // once, at the end, or the process never exits
+```
+
+Titles up to about 70 characters fit (120px down to 64px, three lines at most); em and en dashes
+become colons. The card's stone path is the `og` preset in `scripts/lib/stone-mosaic.mjs`, seed 4, with stricter stone-shape limits than the site paths so no stone reads as a teardrop.
 
 ## Regenerate logos
 

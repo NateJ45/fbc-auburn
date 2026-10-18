@@ -29,6 +29,22 @@ Site Guide: "Sections you can add to a page", "Make a new form", "Prayer request
 them", "Put up a notice for a snow Sunday" and "Count down to VBS". Rendered markup of every
 existing page is unchanged (parity: only the shared CSS bundle grew, by the library's styles).
 
+_2026-10-18: share images in the church's brand._
+
+**What changed.** The share (Open Graph) cards were navy text in a thin frame on white, the
+starter's generic card. They are now drawn by `scripts/lib/og-card.mjs`, site-specific: the
+church lockup top left, the page title in Auburn Stone with the mosaic letter colours (deep sky
+alone when it needs three lines), and the stone path rising across the foot from the water to the
+red cross (a new `og` preset in `stone-mosaic.mjs`, seed 4, with stricter shape limits so no stone is pointy). Home and `og-default.png` carry the
+masthead and the Site settings tagline. Picked from three directions (stone path; deep sky with the
+This Sunday card ground; an arched mosaic window): the path won on brand (it is the site's own H1
+and path) and on long titles, which the arch squeezed to five lines. Titles fit from 120px down to
+64px in three lines; the cards are deterministic and rewritten only when their bytes change.
+`renderCard({ title, kicker, outPath })` is the reusable call for new collections; journal posts
+get their date as the kicker. Seventeen leftover cards from the starter's source site (portfolio,
+shop, quiz and the rest) were deleted. `render-og.mjs` (PORTABLE) and `og-theme.mjs` are
+untouched and no longer called by the generators.
+
 _2026-10-18: the visitor audit fixes._
 
 **What changed.** From a live audit of the pre-launch site. Church facts gained `emailConfirmed`,

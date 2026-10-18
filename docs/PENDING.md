@@ -489,3 +489,11 @@ Flagged in the topic index (now docs/claude/topic-index.md, formerly in CLAUDE.m
 stale `studio/` path and every `studio:deploy` instruction in the live docs, but the
 examples inside them were not retoned. Trust the patterns; fix nouns when you touch a
 file.
+
+### 14. Share images: sermons and the styleguide (opened 2026-10-18)
+
+The branded share cards (OPERATIONS.md, "Share images") cover every visitor route. Two loose ends:
+when `/sermons/` and the series pages land, add their `COLLECTIONS` rows in
+`scripts/generate-og-pages.mjs` (the commented example there) and run `npm run og:pages`; and the
+four noindex `/styleguide/` pages point at `/og/styleguide*.png` files that do not exist (harmless,
+nobody shares them; a `STATIC_ROUTES` row each, or leave them).
