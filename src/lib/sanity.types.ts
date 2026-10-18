@@ -91,6 +91,7 @@ export type Download = {
   };
   note?: string;
   expires?: string;
+  publishAt?: string;
 };
 
 export type JournalCategory = {
@@ -176,6 +177,7 @@ export type Announcement = {
   startDate?: string;
   endDate?: string;
   enabled?: boolean;
+  publishAt?: string;
 };
 
 export type StudioGuide = {
@@ -1917,8 +1919,10 @@ export type Sermon = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    alt?: string;
     _type: 'image';
   };
+  publishAt?: string;
 };
 
 export type SermonSeries = {
@@ -2332,6 +2336,7 @@ export type JournalEntry = {
       _key: string;
     } & JournalEntryReference
   >;
+  publishAt?: string;
 };
 
 export type JournalPage = {
@@ -2372,6 +2377,7 @@ export type JournalPage = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    alt?: string;
     _type: 'image';
   };
   additionalSections?: Array<
@@ -2733,6 +2739,7 @@ export type FaqPage = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    alt?: string;
     _type: 'image';
   };
   secondaryCta?: CtaBlock;
@@ -3099,6 +3106,7 @@ export type AboutPage = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    alt?: string;
     _type: 'image';
   };
 };
@@ -3328,8 +3336,19 @@ export type HomePage = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
+    alt?: string;
     _type: 'image';
   };
+};
+
+export type StudioWeek = {
+  _id: string;
+  _type: 'studioWeek';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  weekOf?: string;
+  ticked?: Array<string>;
 };
 
 export type TrashedItem = {
@@ -3575,6 +3594,7 @@ export type AllSanitySchemaTypes =
   | FaqPage
   | AboutPage
   | HomePage
+  | StudioWeek
   | TrashedItem
   | MediaFolderReference
   | MediaFolder

@@ -176,6 +176,32 @@ the Studio only goes live at the next scheduled build (daily 10:00 UTC, Sunday 1
 the Studio tells editors "a few minutes". Steps: OPERATIONS.md, "Sanity publish → GitHub → live".
 Then invite Pastor Jacob to the Sanity project (Editor role), and once he accepts, add his user id
 to `staff` in `src/sanity/kit.config.ts` so he gets the staff view (no permanent delete).
+When you make the webhook, use the filter in OPERATIONS.md: it now also skips `studioWeek` (the Home
+checklist's weekly tick document, card 111), or every tick would rebuild the website.
+
+### 1k. Two secrets for "the Studio remembers" (opened 2026-10-18)
+
+**Blocker: Nathan. Two secrets, nothing else.** PORTS.md card 111 (branch `feat/studio-remembers`) is built and
+safe without them: each feature skips quietly until its secret exists.
+
+1. **`SANITY_API_WRITE_TOKEN`**, a GitHub Actions repo secret: a Sanity token with the **Editor** role (sanity.io/manage,
+   project `wdpzvn6m`, API, Tokens). Turns on scheduled publishing ("Publish automatically at"), which now runs every
+   half hour and starts a deploy after it publishes. Steps: OPERATIONS.md, "Scheduled publishing".
+2. **`GITHUB_DEPLOY_TOKEN`**, a Worker secret (`npx wrangler secret put GITHUB_DEPLOY_TOKEN`): a fine-grained GitHub
+   token on `NateJ45/fbc-auburn` only, **Actions: Read and write**. Turns on "The last update didn't go through" and
+   Try again in the Studio. Steps: OPERATIONS.md, "When an update does not go through".
+
+Then, signed in to `/studio` (nobody has yet), check and close: a hand tick on the Sunday checklist saves and the
+list is fresh next Monday; the Quick update tool at 375px on a phone (each of the three forms publishes, the notice
+shows on the site after the deploy); a scheduled draft publishes itself and a Deploy run follows; an empty list (for
+example Question groups, if it is empty) shows its note and "Create the first one"; and, once a deploy fails for
+real, the red line, the `deploy-failed` issue and Try again. Also run `npm run restore:doc -- <some id>` dry once
+against a real backup artifact (needs `BACKUP_PASSPHRASE` and the write token in `.env`); it has only been
+unit-tested.
+
+Alt text is now required on every content photo (2026-10-18). Existing published photos with no description stay
+live, but the next edit to their document will not publish until the description is filled in; the Checkup's "pictures
+with no description" lists them.
 
 ### 1d. Church data waiting on the church
 
@@ -218,9 +244,9 @@ and the tour, checked signed in at `/studio` in light and dark. Still to do:
   view goes by role, and he is an administrator, so he would see the full Studio.
 - **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its
   email button.
-- **The Worker half**: `src/lib/studio-auth.ts` and `/api/studio/*` (visitors from GA4 with a service-account key,
-  the Ask form through Cloudflare Email Sending once the church's domain is on Cloudflare, deploy status from GitHub,
-  an external link check, the monthly report with its cron). The spike's findings are in the kit doc.
+- **The rest of the Worker half**: `/api/studio/*` for visitors from GA4 with a service-account key, the Ask form
+  through Cloudflare Email Sending once the church's domain is on Cloudflare, an external link check, and the monthly
+  report with its cron. `src/lib/studio-auth.ts` and deploy status landed with card 111 (item 1k).
 - **The live publish checklist** (a document inspector, plus "Publish anyway" for blocking items).
 - **Tutorial videos**, recorded at the end of the site build once the Studio stops changing.
 - **Guide recipes in the church's own jobs** (sermons, events, the bulletin) as those features land; the guides

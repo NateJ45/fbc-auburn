@@ -22,6 +22,7 @@
 
 import { defineType, defineField } from 'sanity';
 import { BellIcon } from '@sanity/icons/Bell';
+import { publishAtField } from './_publishAt';
 
 export const announcement = defineType({
   name: 'announcement',
@@ -103,6 +104,8 @@ export const announcement = defineType({
       description: 'The on/off switch. When off, this notice never shows, whatever the dates say.',
       initialValue: true,
     }),
+    // Free-tier scheduled publishing; see ./_publishAt.ts. No tab bar on this type, so no group.
+    { ...publishAtField(), group: undefined },
   ],
   preview: {
     select: {

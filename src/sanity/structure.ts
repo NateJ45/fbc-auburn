@@ -53,6 +53,8 @@ import { InfoOutlineIcon } from '@sanity/icons/InfoOutline';
 import { DocumentPdfIcon } from '@sanity/icons/DocumentPdf';
 import { DownloadsIntro, PeopleIntro, SermonsIntro } from './components/CollectionIntro';
 import { staffDesk } from './kit/shared';
+import { emptyAwareList } from './kit/emptyList';
+import { WEEK_TYPE } from '../lib/studio-kit';
 import { kitConfig } from './kit.config';
 import { TRASH_TYPE } from '../lib/studio-trash';
 
@@ -100,6 +102,8 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   // sanity-plugin-media registers this tag type; keep it out of the desk root
   // (the "Media" tool in the top sidebar is where tags belong).
   'media.tag',
+  // The Studio kit's weekly tick document (card 111): Home's bookkeeping, never edited here.
+  WEEK_TYPE,
   // processStep is placed explicitly under Content → Process Steps
 ]);
 
@@ -127,9 +131,13 @@ function singletonWithPreview(S: StructureBuilder, schemaType: string, title: st
 // The Studio kit's staff view hides kitConfig.staffHiddenPanes from this desk
 // (src/sanity/kit/shared.tsx, staffDesk); everyone else sees all of it.
 export const deskStructure = (S: StructureBuilder, context: StructureResolverContext) =>
-  staffDesk(fullDesk(S), context, kitConfig);
+  staffDesk(fullDesk(S, context), context, kitConfig);
 
-const fullDesk = (S: StructureBuilder) =>
+// Empty lists say what goes there (card 111, emptyAwareList in kit/emptyList.tsx): while a
+// list the pastor keeps has nothing in it, it opens on a short note and a "Create the first
+// one" button instead of Sanity's bare "No documents of this type". Same ids as before, so
+// every link into these lists keeps working.
+const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
   S.list()
     .title('Content')
     .items([
@@ -187,9 +195,14 @@ const fullDesk = (S: StructureBuilder) =>
 
               // Custom pages: editors build these themselves from the section library.
               // Multi-instance (not a singleton), so it is a normal document list.
-              S.documentTypeListItem('page')
-                .title('Custom pages (build your own)')
-                .icon(DocumentsIcon),
+              emptyAwareList(S, context, {
+                id: 'page',
+                type: 'page',
+                title: 'Custom pages (build your own)',
+                icon: DocumentsIcon,
+                explain:
+                  'Pages you build yourself: a ministry, an event, a sermon series. Start from a template and change the words.',
+              }),
 
               S.divider(),
 
@@ -226,8 +239,24 @@ const fullDesk = (S: StructureBuilder) =>
           S.list()
             .title('Content')
             .items([
-              S.documentTypeListItem('faqCategory').title('Question groups').icon(TagIcon), // scaffold: faq
-              S.documentTypeListItem('faqItem').title('Questions').icon(HelpCircleIcon), // scaffold: faq
+              // scaffold: faq
+              emptyAwareList(S, context, {
+                id: 'faqCategory',
+                type: 'faqCategory',
+                title: 'Question groups',
+                icon: TagIcon,
+                explain:
+                  'Headings that gather the questions on the Questions page, like "Sunday mornings" or "Children".',
+              }),
+              emptyAwareList(S, context, {
+                id: 'faqItem',
+                type: 'faqItem',
+                title: 'Questions',
+                icon: HelpCircleIcon,
+                explain:
+                  'The questions visitors ask, with your answers. They show on the Questions page, in their groups.',
+              }),
+              // scaffold:end
 
               S.divider(),
 
@@ -235,13 +264,27 @@ const fullDesk = (S: StructureBuilder) =>
               // Each one has a date window (startDate / endDate) and an on/off toggle.
               // The active announcement is picked at build time; a rebuild is required
               // for the banner to appear or disappear on the live site.
-              S.documentTypeListItem('announcement').title('Notices').icon(BellIcon),
+              emptyAwareList(S, context, {
+                id: 'announcement',
+                type: 'announcement',
+                title: 'Notices',
+                icon: BellIcon,
+                explain:
+                  'A short line across the top of every page, like a weather closing or a special service. Each one can take itself down on a date you pick.',
+              }),
 
               S.divider(),
 
               // The form builder (schemaTypes/form.ts): forms the church writes, shown on a
               // page with the Form section. Answers are emailed, never stored here.
-              S.documentTypeListItem('form').title('Forms').icon(ClipboardIcon),
+              emptyAwareList(S, context, {
+                id: 'form',
+                type: 'form',
+                title: 'Forms',
+                icon: ClipboardIcon,
+                explain:
+                  'Forms people fill in on the website, like a prayer request or a sign-up. Add one to a page with the Form section.',
+              }),
             ]),
         ),
 
@@ -264,17 +307,27 @@ const fullDesk = (S: StructureBuilder) =>
                 .title('Start here')
                 .icon(InfoOutlineIcon)
                 .child(S.component(SermonsIntro).id('sermons-start-view').title('Sermons')),
-              S.listItem()
-                .id('sermon')
-                .title('Sermons')
-                .icon(MicrophoneIcon)
-                .schemaType('sermon')
-                .child(
+              emptyAwareList(S, context, {
+                id: 'sermon',
+                type: 'sermon',
+                title: 'Sermons',
+                icon: MicrophoneIcon,
+                explain:
+                  "Each Sunday's message: the title, the passage and the video link. They fill the Sermons page and the podcast.",
+                createLabel: 'Add the first sermon',
+                list: (S) =>
                   S.documentTypeList('sermon')
                     .title('Sermons, newest first')
                     .defaultOrdering([{ field: 'date', direction: 'desc' }]),
-                ),
-              S.documentTypeListItem('sermonSeries').title('Sermon series').icon(StackIcon),
+              }),
+              emptyAwareList(S, context, {
+                id: 'sermonSeries',
+                type: 'sermonSeries',
+                title: 'Sermon series',
+                icon: StackIcon,
+                explain:
+                  'A run of sermons on one book or theme. Add a series, then pick it on each sermon in it.',
+              }),
               S.divider(),
               singletonWithPreview(S, 'sermonsPage', 'Sermons page and podcast', PlayIcon),
             ]),
@@ -292,29 +345,34 @@ const fullDesk = (S: StructureBuilder) =>
                 .title('Start here')
                 .icon(InfoOutlineIcon)
                 .child(S.component(PeopleIntro).id('people-start-view').title('People')),
-              S.listItem()
-                .id('person')
-                .title('People')
-                .icon(UserIcon)
-                .schemaType('person')
-                .child(
+              emptyAwareList(S, context, {
+                id: 'person',
+                type: 'person',
+                title: 'People',
+                icon: UserIcon,
+                explain:
+                  'The pastor, staff, deacons and missionaries the website names, each with a photo and a line about them.',
+                createLabel: 'Add the first person',
+                list: (S) =>
                   S.documentTypeList('person')
                     .title('People')
                     .defaultOrdering([
                       { field: 'order', direction: 'asc' },
                       { field: 'name', direction: 'asc' },
                     ]),
-                ),
-              S.listItem()
-                .id('personGroup')
-                .title('Groups')
-                .icon(UsersIcon)
-                .schemaType('personGroup')
-                .child(
+              }),
+              emptyAwareList(S, context, {
+                id: 'personGroup',
+                type: 'personGroup',
+                title: 'Groups',
+                icon: UsersIcon,
+                explain:
+                  'The headings people are listed under, like "Staff", "Deacons" or "Missionaries".',
+                list: (S) =>
                   S.documentTypeList('personGroup')
                     .title('Groups')
                     .defaultOrdering([{ field: 'order', direction: 'asc' }]),
-                ),
+              }),
             ]),
         ),
       S.listItem()
@@ -330,16 +388,19 @@ const fullDesk = (S: StructureBuilder) =>
                 .title('Start here')
                 .icon(InfoOutlineIcon)
                 .child(S.component(DownloadsIntro).id('downloads-start-view').title('Downloads')),
-              S.listItem()
-                .id('download')
-                .title('All downloads')
-                .icon(DownloadIcon)
-                .schemaType('download')
-                .child(
+              emptyAwareList(S, context, {
+                id: 'download',
+                type: 'download',
+                title: 'All downloads',
+                icon: DownloadIcon,
+                explain:
+                  'Files people can open from the website: the weekly bulletin, a newsletter, a form to print.',
+                createLabel: 'Upload the first one',
+                list: (S) =>
                   S.documentTypeList('download')
                     .title('All downloads, newest first')
                     .defaultOrdering([{ field: 'date', direction: 'desc' }]),
-                ),
+              }),
               S.listItem()
                 .id('bulletins')
                 .title('Bulletins')
@@ -370,8 +431,22 @@ const fullDesk = (S: StructureBuilder) =>
           S.list()
             .title('News and notes')
             .items([
-              S.documentTypeListItem('journalEntry').title('Posts').icon(EditIcon),
-              S.documentTypeListItem('journalCategory').title('Categories').icon(TagIcon),
+              emptyAwareList(S, context, {
+                id: 'journalEntry',
+                type: 'journalEntry',
+                title: 'Posts',
+                icon: EditIcon,
+                explain:
+                  'News from the church: a word about Sunday, an event coming up, a prayer need. Newest first on the News and notes page.',
+                createLabel: 'Write the first post',
+              }),
+              emptyAwareList(S, context, {
+                id: 'journalCategory',
+                type: 'journalCategory',
+                title: 'Categories',
+                icon: TagIcon,
+                explain: 'Labels that sort the posts, like "Events" or "Missions".',
+              }),
             ]),
         ),
       // scaffold:end

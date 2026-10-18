@@ -182,10 +182,12 @@ log in Sanity, then GitHub → Actions for a failed Deploy run. Run the Deploy w
 The webhook lives at manage.sanity.io → API → Webhooks. The GROQ filter is a deny-list:
 
 ```
-!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData"])
+!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek"])
 ```
 
 This filter skips rebuilds triggered by draft saves and internal Sanity asset-management events (tagging an uploaded photo, rotating an image, etc.), which don't affect live HTML. New content types are covered automatically because the filter excludes only the named system types and lets everything else through. The old hand-maintained allow-list approach (explicitly listing every `_type` that should trigger a rebuild) silently dropped new types until a developer remembered to add them. The deny-list is safer: add a new schema type and it triggers rebuilds out of the box.
+
+`studioWeek` (added 2026-10-18, card 111) is the Studio Home checklist's weekly tick document: ticking a box writes it, and without it in the filter every tick would rebuild the website.
 
 If the webhook currently has no filter or uses an allow-list, replace the filter with the deny-list above and save. No other webhook config changes are needed.
 
@@ -213,19 +215,69 @@ The site has a section visibility system that lets you launch now and finish sec
 
 ### Scheduled publishing
 
-Sanity supports scheduling a document to go live at a future date and time.
+Sanity's own scheduling is a paid-plan feature, so this site has the free version (PORTS.md card 111 and
+`src/sanity/schemaTypes/_publishAt.ts`): an editor fills in **Publish automatically at** on a draft and leaves it
+unpublished; `.github/workflows/publish-due.yml` runs every half hour, publishes any draft whose time has passed
+(`scripts/publish-due.mjs`), and then starts `deploy.yml` so the change reaches the website. The field is on pages
+(Publishing tab), sermons (Publishing tab), notices, posts and downloads (last box). The pastor's guide is "Publish
+something later, by itself" in the Site Guide.
 
-**How to schedule a publish:**
+**The one step only Nathan can do (until then every run skips, green, with a warning):**
 
-1. Open the document you want to schedule.
-2. Click the small arrow (chevron) to the right of the blue Publish button in the bottom bar.
-3. Choose "Schedule publish" from the menu.
-4. Pick the date and time. Times are local to your browser.
-5. Click "Schedule." The document moves to a "Scheduled" state.
+1. sanity.io/manage → project `wdpzvn6m` → API → Tokens → Add API token. Name it `publish-due (GitHub Actions)`,
+   permission **Editor**. Copy it once.
+2. GitHub → `NateJ45/fbc-auburn` → Settings → Secrets and variables → Actions → New repository secret. Name
+   `SANITY_API_WRITE_TOKEN`, value the token. Keep a copy in 1Password, nowhere else.
+3. Actions → "Publish scheduled drafts" → Run workflow. The log should end "nothing scheduled is due" (or list what it
+   published). `SANITY_PROJECT_ID` is already a repo variable.
 
-The live site rebuilds automatically when the scheduled publish fires. You can see, edit, or cancel scheduled items by going back to that document before the time fires.
+Do not reuse `SANITY_AUTH_TOKEN`: that is the nightly backup's READ token and cannot publish.
 
-**Note:** as of May 2026, the `@sanity/scheduled-publishing` plugin is incompatible with this Studio's React 19 dependency. Use the built-in document actions scheduling path above until the plugin is updated.
+To test it: schedule a throwaway draft notice (switched off) for the next quarter hour, wait for the next run, and
+check the notice is published and a Deploy run started.
+
+### When an update does not go through
+
+The Studio's status line used to say "taking longer than usual" for ever when a deploy FAILED. Now
+`/api/studio/deploy-status/` reads `deploy.yml`'s newest runs from GitHub, and on a failure the Studio says "The last
+update didn't go through. Nathan has been told." with **Try again** (which re-runs `deploy.yml`, at most once every five
+minutes, only for a signed-in Studio member). The telling is real: `deploy.yml` opens one GitHub issue labelled
+`deploy-failed` when a run fails (or comments on the open one) and closes it on the next green run, so GitHub emails
+Nathan. Detail: `docs/agent/studio-kit.md`.
+
+**The one step only Nathan can do (until then the Studio keeps the old behaviour and offers no Try again):**
+
+1. GitHub → Settings (your account) → Developer settings → Fine-grained tokens → Generate. Repository access: only
+   `NateJ45/fbc-auburn`. Permissions: **Actions: Read and write**, nothing else. Expiry: a year, with a reminder.
+2. From the repo folder: `npx wrangler secret put GITHUB_DEPLOY_TOKEN` and paste it at the prompt. Keep a copy in
+   1Password. (`GITHUB_REPO` is already a plain var in `wrangler.jsonc`.)
+3. Check: `https://fbc-auburn.nathanjnixon86.workers.dev/api/studio/deploy-status/` should answer
+   `{"configured":true,"state":"ok",...}`.
+
+When the red line appears: read the failed Deploy run (the issue links it), fix the cause, and the next green deploy
+clears both the line and the issue.
+
+### Undo a change from earlier in the week (restore one document)
+
+The free plan keeps three days of history, administrators only, so the pastor's guide ("Undo a change from earlier in
+the week") tells him to ask Nathan with the page's name and the day it was right. The nightly backup
+(`sanity-backup.yml`) is the source, and `scripts/restore-doc.mjs` puts ONE document back as a draft:
+
+1. Find the id. In the Studio, open the document; the id is the last part of the address bar (`...;<id>`). Or:
+   `npx sanity documents query '*[title match "Easter*"]{_id, _type, title}'`.
+2. Dry run, newest backup: `npm run restore:doc -- <id>`. With a day: `npm run restore:doc -- <id> --from 2026-10-15`.
+   It downloads that night's `sanity-backup` artifact with `gh` (signed in), decrypts it in memory with
+   `BACKUP_PASSPHRASE` (1Password; set it in the shell or `.env`), and prints which copy it found and every field that
+   would change. Needs `SANITY_API_WRITE_TOKEN` and the project id in `.env`, like the other data scripts.
+3. Apply (rule 16's gate): `$env:NCS_PRODUCTION_WRITE = 'yes'; npm run restore:doc -- <id> --apply` in PowerShell
+   (`NCS_PRODUCTION_WRITE=yes npm run restore:doc -- <id> --apply` in bash). It writes the backup copy as a DRAFT of
+   the same document and reads it back. Nothing on the website changes.
+4. Tell the pastor to open it, check it and press Publish (or Discard changes if it is not what he meant).
+
+Artifacts last 14 days. The weekly off-site copy in R2 is NOT set up for this site yet (no `BACKUP_R2_BUCKET` repo
+variable; `sanity-backup.yml` has the steps), so two weeks is the limit until it is. Any backup file on disk can be
+passed directly: `--from sanity-backup-<date>-full.tar.gz.enc`. Images come back as references to the same assets, which
+Sanity keeps unless an asset itself was deleted.
 
 ### Field comments
 
@@ -273,43 +325,44 @@ See the "Patch Sanity content programmatically" section below for the client set
 
 Core routes that ship with the starter:
 
-| Path                 | Notes                                                                                    |
-| -------------------- | ---------------------------------------------------------------------------------------- |
-| `/`                  | Home — section-driven via `pageBuilder` + `SectionRenderer`                              |
-| `/about`             | About — section-driven                                                                   |
-| `/services`          | Services — section-driven                                                                |
-| `/process`           | Process — section-driven                                                                 |
-| `/[slug]`            | Custom pages created in the Studio; reserved slugs filtered in `getStaticPaths`          |
-| `/faq`               | FAQ grouped by category                                                                  |
-| `/contact`           | Contact form + Calendly + post-inquiry roadmap                                           |
-| `/journal`           | Journal/blog index                                                                       |
-| `/journal/[slug]`    | Post detail                                                                              |
-| `/journal/rss.xml`   | Journal RSS feed                                                                         |
-| `/robots.txt`        | Generated by `src/pages/robots.txt.ts`; reads production URL from `site.ts`              |
-| `/privacy`           | Privacy policy                                                                           |
-| `/give`              | Give: in person, by mail, online (Church facts); menus swap to `givingUrl`               |
-| `/sermons`           | Sermon archive; also `/sermons/[slug]`, `/sermons/series/[slug]`, `/sermons/podcast.xml` |
-| `/bulletin`          | The newest current Bulletin (Downloads)                                                  |
-| `/404`               | Custom 404                                                                               |
-| `/sitemap-index.xml` | Auto-generated by @astrojs/sitemap                                                       |
-| Path                 | Notes                                                                                    |
-| -------------------- | --------------------------------------------------------------------------------------   |
-| `/`                  | Home — section-driven via `pageBuilder` + `SectionRenderer`                              |
-| `/about`             | About — section-driven                                                                   |
-| `/services`          | Services — section-driven                                                                |
-| `/process`           | Process — section-driven                                                                 |
-| `/[slug]`            | Custom pages created in the Studio; reserved slugs filtered in `getStaticPaths`          |
-| `/faq`               | FAQ grouped by category                                                                  |
-| `/contact`           | Contact form + Calendly + post-inquiry roadmap                                           |
-| `/journal`           | Journal/blog index                                                                       |
-| `/journal/[slug]`    | Post detail                                                                              |
-| `/journal/rss.xml`   | Journal RSS feed                                                                         |
-| `/robots.txt`        | Generated by `src/pages/robots.txt.ts`; reads production URL from `site.ts`              |
-| `/privacy`           | Privacy policy                                                                           |
-| `/give`              | Give: in person, by mail, online (Church facts); menus swap to `givingUrl`               |
-| `/api/form/`         | Form builder endpoint (SSR): readiness check and submissions (`src/pages/api/form.ts`)   |
-| `/404`               | Custom 404                                                                               |
-| `/sitemap-index.xml` | Auto-generated by @astrojs/sitemap                                                       |
+| Path                         | Notes                                                                                                     |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `/`                          | Home — section-driven via `pageBuilder` + `SectionRenderer`                                               |
+| `/about`                     | About — section-driven                                                                                    |
+| `/services`                  | Services — section-driven                                                                                 |
+| `/process`                   | Process — section-driven                                                                                  |
+| `/[slug]`                    | Custom pages created in the Studio; reserved slugs filtered in `getStaticPaths`                           |
+| `/faq`                       | FAQ grouped by category                                                                                   |
+| `/contact`                   | Contact form + Calendly + post-inquiry roadmap                                                            |
+| `/journal`                   | Journal/blog index                                                                                        |
+| `/journal/[slug]`            | Post detail                                                                                               |
+| `/journal/rss.xml`           | Journal RSS feed                                                                                          |
+| `/robots.txt`                | Generated by `src/pages/robots.txt.ts`; reads production URL from `site.ts`                               |
+| `/privacy`                   | Privacy policy                                                                                            |
+| `/give`                      | Give: in person, by mail, online (Church facts); menus swap to `givingUrl`                                |
+| `/sermons`                   | Sermon archive; also `/sermons/[slug]`, `/sermons/series/[slug]`, `/sermons/podcast.xml`                  |
+| `/bulletin`                  | The newest current Bulletin (Downloads)                                                                   |
+| `/404`                       | Custom 404                                                                                                |
+| `/sitemap-index.xml`         | Auto-generated by @astrojs/sitemap                                                                        |
+| Path                         | Notes                                                                                                     |
+| --------------------         | --------------------------------------------------------------------------------------                    |
+| `/`                          | Home — section-driven via `pageBuilder` + `SectionRenderer`                                               |
+| `/about`                     | About — section-driven                                                                                    |
+| `/services`                  | Services — section-driven                                                                                 |
+| `/process`                   | Process — section-driven                                                                                  |
+| `/[slug]`                    | Custom pages created in the Studio; reserved slugs filtered in `getStaticPaths`                           |
+| `/faq`                       | FAQ grouped by category                                                                                   |
+| `/contact`                   | Contact form + Calendly + post-inquiry roadmap                                                            |
+| `/journal`                   | Journal/blog index                                                                                        |
+| `/journal/[slug]`            | Post detail                                                                                               |
+| `/journal/rss.xml`           | Journal RSS feed                                                                                          |
+| `/robots.txt`                | Generated by `src/pages/robots.txt.ts`; reads production URL from `site.ts`                               |
+| `/privacy`                   | Privacy policy                                                                                            |
+| `/give`                      | Give: in person, by mail, online (Church facts); menus swap to `givingUrl`                                |
+| `/api/form/`                 | Form builder endpoint (SSR): readiness check and submissions (`src/pages/api/form.ts`)                    |
+| `/api/studio/deploy-status/` | Studio kit (SSR): did the last deploy go through, and Try again (`src/pages/api/studio/deploy-status.ts`) |
+| `/404`                       | Custom 404                                                                                                |
+| `/sitemap-index.xml`         | Auto-generated by @astrojs/sitemap                                                                        |
 
 Additional routes are added by opt-in modules under `modules/`. There are 13 opt-in modules:
 

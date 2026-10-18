@@ -59,8 +59,8 @@ export type GuideBlock =
 
 /** Names the prose refers to. Replace these, do not hardcode them in guides. */
 export const SITE = {
-  /** Who the owner should ask when a guide does not cover it. */
-  contactName: 'your developer',
+  /** Who the owner should ask when a guide does not cover it. Matches kitConfig.helper.name. */
+  contactName: 'Nathan',
 };
 
 export const GUIDE_CATEGORIES = [
@@ -609,14 +609,14 @@ export const guides: Guide[] = [
         items: [
           'Open the page and find the section holding the picture.',
           'Click it, then `Replace`, and choose a new one.',
-          'Fill in `Alt text`. See below, it matters.',
+          'Fill in `Description of the photo`. The website will not publish a photo without one. See below, it matters.',
           'Publish.',
         ],
       },
-      { kind: 'h', text: 'What alt text is' },
+      { kind: 'h', text: 'What the description is for' },
       {
         kind: 'p',
-        text: 'One plain sentence describing what is in the picture, for somebody who cannot see it. It is read aloud by screen readers, shown if the image fails to load, and read by Google. Describe what is happening, not the file: "a full workshop with people at long tables" rather than "IMG_4471".',
+        text: 'One plain sentence describing what is in the picture, for somebody who cannot see it, like "Children singing at the Christmas service". It is read aloud by screen readers, shown if the image fails to load, and read by Google. Describe what is happening, not the file: "a full workshop with people at long tables" rather than "IMG_4471".',
       },
       {
         kind: 'callout',
@@ -1044,6 +1044,11 @@ guides.push(
           '**The website update is taking longer than usual**: it has been a while. Nothing is lost, your change is safe and published. Click `Details`, and if it still says this an hour later, ask ' +
             SITE.contactName +
             '.',
+          "**The last update didn't go through**, in red: the website tried to update and something stopped it, so it is still showing the older version. " +
+            SITE.contactName +
+            ' gets an email about it straight away. Your published changes are safe. Press `Try again` once; if it comes back red, leave it with ' +
+            SITE.contactName +
+            '.',
         ],
       },
       {
@@ -1084,6 +1089,127 @@ guides.push(
       { kind: 'seealso', items: ['Change the words on a page'] },
     ],
   },
+  // The Studio remembers (card 111, 2026-10-18): undo from a backup, scheduling, the phone
+  // tool and the weekly checklist.
+  {
+    slug: 'undo-earlier',
+    category: 'Start here',
+    title: 'Undo a change from earlier in the week',
+    icon: 'restore',
+    lead: 'Put a page back the way it was on a day you remember.',
+    diy: 'ask',
+    body: [
+      {
+        kind: 'p',
+        text: 'For something you changed in the last few minutes, use Undo at the top of the page, or `Discard changes` if you have not published yet.',
+      },
+      {
+        kind: 'p',
+        text:
+          "For anything older, this one is not yours to do, and that is not your fault: the church's Sanity plan keeps only three days of history, and only an administrator can open it. But the website is copied every night, and " +
+          SITE.contactName +
+          ' can take one page out of a copy and put it back for you.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Tell ' +
+            SITE.contactName +
+            ' which page or item it is (its name as you see it in the Studio, like "Easter" or "Notices: Snow closing"), and roughly which day it was still right.',
+          'He puts that copy back as an unpublished change. Nothing on the website moves yet.',
+          'Open it, check it reads the way you remember, and press `Publish`. If it is not what you wanted, press `Discard changes` and nothing has happened.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Ask within two weeks.',
+        text: 'The nightly copies are kept for fourteen days, so the sooner you ask, the more there is to choose from.',
+      },
+      { kind: 'seealso', items: ['Start here: how this all works'] },
+    ],
+  },
+  {
+    slug: 'schedule-publish',
+    category: 'Start here',
+    title: 'Publish something later, by itself',
+    icon: 'clock',
+    lead: 'Get a notice, a post or a page ready now and let it go up on the day.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'Write it as usual, but do not press Publish.',
+          'Find `Publish automatically at`. On a page or a sermon it is under the `Publishing` tab at the top; on a notice, a post or a download it is the last box.',
+          'Pick the date and the time, in your own time.',
+          'Leave it. Within half an hour of that time it publishes itself, and the website updates a few minutes later.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Changed your mind?',
+        text: 'Clear the box before the time comes and it stays a draft. Pressing Publish yourself also works; the time is then simply ignored.',
+      },
+      { kind: 'seealso', items: ['The line under the top bar'] },
+    ],
+  },
+  {
+    slug: 'quick-update',
+    category: 'Start here',
+    title: 'Quick update from your phone',
+    icon: 'bolt',
+    lead: 'Three jobs made small enough for a phone.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Open the Studio on your phone, tap the menu at the top and choose `Quick update` (on Home it is also a button). Pick one:',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Put up a notice**: a short line across the top of every page, until the last day you pick.',
+          "**Add Sunday's sermon link**: the title and the YouTube or Facebook link. The date fills itself in as last Sunday.",
+          '**Cancel or change something this week**: a notice in red that comes down by itself after Sunday.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'Fill in the boxes and press the green button. It is published straight away and the website updates in a few minutes. To add more later (a summary, the audio), open it from `Content` as usual.',
+      },
+      { kind: 'seealso', items: ['The Sunday checklist'] },
+    ],
+  },
+  {
+    slug: 'sunday-checklist',
+    category: 'Start here',
+    title: 'The Sunday checklist',
+    icon: 'check',
+    lead: 'The weekly jobs on Home, and how they get ticked.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Home has a card called **Sunday checklist** with the jobs that keep the website current each week. Most of them tick themselves when the website can see they are done:',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          "**Sunday's sermon**: a sermon dated last Sunday is in the list.",
+          "**This week's bulletin**: a bulletin dated this week is under Downloads.",
+          '**Notices that have ended**: none is still switched on past its last day.',
+          '**Checkup is clear**: nothing in the Checkup says "Needs doing".',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'The website cannot see inside Church Trac, so **checking the events** has a box you tick yourself. Ticks start fresh every Monday.',
+      },
+      { kind: 'seealso', items: ['Quick update from your phone'] },
+    ],
+  },
 );
 
 // The sermon, people and downloads guides (FBC Auburn, 2026-10-18).
@@ -1095,7 +1221,9 @@ guides.push(...collectionGuides);
  * A site that rewrites its guides rewrites this map with them.
  */
 export const GUIDES_FOR_TYPE: Record<string, string[]> = {
-  '*': ['edit-a-page', 'help-panel'],
+  '*': ['edit-a-page', 'help-panel', 'undo-earlier'],
+  announcement: ['schedule-publish', 'quick-update', 'undo-earlier'],
+  journalEntry: ['schedule-publish', 'undo-earlier'],
   // FBC Auburn: the church's own guides first where they fit.
   page: [
     'edit-a-page',
@@ -1111,7 +1239,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
   sectionPreset: ['seasonal-patterns', 'reuse-sections', 'synced-sections'],
   // The collections (guides/collections.ts, 2026-10-18).
-  sermon: ['add-sermon', 'sermon-series'],
+  sermon: ['add-sermon', 'sermon-series', 'quick-update', 'schedule-publish'],
   sermonSeries: ['sermon-series', 'add-sermon'],
   sermonsPage: ['podcast', 'add-sermon'],
   person: ['add-person'],

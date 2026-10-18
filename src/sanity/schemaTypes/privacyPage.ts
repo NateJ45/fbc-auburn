@@ -6,6 +6,7 @@
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { additionalSectionsField } from './sections';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
+import { imageWithAlt } from './_imageWithAlt';
 
 export const privacyPage = defineType({
   name: 'privacyPage',
@@ -46,15 +47,13 @@ export const privacyPage = defineType({
           'Descriptions longer than about 160 characters get cut off in Google search results.',
         ),
     }),
-    defineField({
+    imageWithAlt({
       name: 'seoImage',
       title: 'Social share image (this page)',
-      type: 'image',
       group: 'seo',
       description:
         'Optional. The image shown when this page is shared on social media or in a text. Overrides the site default in Site Settings. Use a wide image, about 1200 by 630 pixels. Leave blank to use the site default.',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+      altRequired: false,
     }),
 
     // Hero
@@ -80,20 +79,10 @@ export const privacyPage = defineType({
       rows: 2,
       group: 'hero',
     }),
-    defineField({
+    imageWithAlt({
       name: 'heroImage',
       title: 'Hero background image (optional)',
-      type: 'image',
       group: 'hero',
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          validation: (R) => R.required(),
-        }),
-      ],
     }),
     defineField({
       name: 'heroScriptAccent',

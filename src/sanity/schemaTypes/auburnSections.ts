@@ -6,6 +6,7 @@ import { ThLargeIcon } from '@sanity/icons/ThLarge';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { PlayIcon } from '@sanity/icons/Play';
 import { STONE_ICONS } from '../../lib/stone-icons';
+import { imageWithAlt } from './_imageWithAlt';
 
 /** A stone-icon picker. Always named `icon` (on NON_STEGA_FIELDS, so the preview keeps it clean). */
 export const stoneIconField = (title = 'Stone icon (optional)', description?: string) =>
@@ -46,13 +47,10 @@ export const iconCardsSection = defineType({
           name: 'iconCard',
           fields: [
             stoneIconField(),
-            defineField({
+            imageWithAlt({
               name: 'image',
               title: 'Photo (optional)',
-              type: 'image',
-              options: { hotspot: true },
               description: 'With a photo the card shows the photo instead of the stone icon.',
-              fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
             }),
             defineField({
               name: 'title',
@@ -166,14 +164,11 @@ export const watchSection = defineType({
         }),
       ],
     }),
-    defineField({
+    imageWithAlt({
       name: 'poster',
       title: 'Picture for the video card (optional)',
-      type: 'image',
-      options: { hotspot: true },
       description:
         'Until the YouTube channel is connected, this picture stands in for the video, with a play button that goes to the link above.',
-      fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
     }),
     defineField({
       name: 'fallback',

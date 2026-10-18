@@ -16,6 +16,7 @@
 import { defineType, defineField } from 'sanity';
 import { UserIcon } from '@sanity/icons/User';
 import { UsersIcon } from '@sanity/icons/Users';
+import { imageWithAlt } from './_imageWithAlt';
 
 export const personGroup = defineType({
   name: 'personGroup',
@@ -75,21 +76,11 @@ export const person = defineType({
       to: [{ type: 'personGroup' }],
       description: 'Which list they appear in on the website.',
     }),
-    defineField({
+    imageWithAlt({
       name: 'photo',
       title: 'Photo',
-      type: 'image',
-      options: { hotspot: true },
       description:
         'A friendly head-and-shoulders photo. After uploading, click the photo and drag the circle onto their face so it crops well.',
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Describe the photo (optional)',
-          type: 'string',
-          description: 'Leave empty and the website uses their name.',
-        }),
-      ],
     }),
     defineField({
       name: 'bio',

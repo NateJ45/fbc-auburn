@@ -32,24 +32,7 @@ import { iconCardsSection, stoneIconField, thisWeekSection, watchSection } from 
 import { collectionSectionSchemas } from './collectionSections';
 import { auburnSectionSchemas } from './auburnMotionSections';
 import { CHURCH_INSERT_GROUPS, churchSectionSchemas } from './churchSections';
-
-// Shared image field with required alt text (accessibility + SEO).
-const imageWithAlt = (name = 'image', title = 'Image') =>
-  defineField({
-    name,
-    title,
-    type: 'image',
-    options: { hotspot: true },
-    fields: [
-      defineField({
-        name: 'alt',
-        title: 'Alt text',
-        type: 'string',
-        description: 'Describe the photo in a few words, for screen readers and search engines.',
-        validation: (R) => R.required(),
-      }),
-    ],
-  });
+import { imageMember, imageWithAlt } from './_imageWithAlt';
 
 // Short rich-text body: paragraphs, bold/italic, links, simple headings/lists.
 const proseBody = (name = 'body', title = 'Text') =>
@@ -131,7 +114,7 @@ export const heroSection = defineType({
       hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
     }),
     defineField({ name: 'subhead', title: 'Line under the heading', type: 'text', rows: 2 }),
-    imageWithAlt('backgroundImage', 'Background photo (optional)'),
+    imageWithAlt({ name: 'backgroundImage', title: 'Background photo (optional)' }),
     defineField({ name: 'primaryCta', title: 'Main button', type: 'ctaBlock' }),
     defineField({ name: 'secondaryCta', title: 'Second button (optional)', type: 'ctaBlock' }),
     defineField({
@@ -236,11 +219,12 @@ export const imageTextSection = defineType({
         layout: 'radio',
       },
     }),
-    {
-      ...imageWithAlt('image', 'Image'),
+    imageWithAlt({
+      name: 'image',
+      title: 'Image',
       hidden: ({ parent }: { parent?: { art?: string } }) =>
         Boolean(parent?.art && parent.art !== 'photo'),
-    },
+    }),
     defineField({
       name: 'imageSide',
       title: 'Which side is the image on?',
@@ -269,23 +253,18 @@ export const imageTextSection = defineType({
     }),
     // Home audit (2026-10-17): visitors want to see the pastor; a small round portrait beside the
     // signature turns the note into a letter from a person. Optional: no photo, no circle.
-    {
-      ...imageWithAlt('signedPhoto', 'Photo of who signed it (Home only)'),
+    imageWithAlt({
+      name: 'signedPhoto',
+      title: 'Photo of who signed it (Home only)',
       description:
         'A head-and-shoulders photo, square, at least 600px. It shows as a small circle beside the signature.',
       hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
-    },
+    }),
     defineField({
       name: 'extraImages',
       title: 'Two more photos (Home only)',
       type: 'array',
-      of: [
-        {
-          type: 'image',
-          options: { hotspot: true },
-          fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
-        },
-      ],
+      of: [imageMember()],
       validation: (R) => R.max(2),
       hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
     }),
@@ -315,18 +294,8 @@ export const gallerySection = defineType({
       type: 'array',
       validation: (R) => R.min(1),
       of: [
-        defineArrayMember({
-          type: 'image',
-          options: { hotspot: true },
-          fields: [
-            defineField({
-              name: 'alt',
-              title: 'Alt text',
-              type: 'string',
-              validation: (R) => R.required(),
-            }),
-            defineField({ name: 'caption', title: 'Caption (optional)', type: 'string' }),
-          ],
+        imageMember({
+          fields: [defineField({ name: 'caption', title: 'Caption (optional)', type: 'string' })],
         }),
       ],
     }),
@@ -464,7 +433,7 @@ export const ctaBandSection = defineType({
     }),
     richTwin('subheadRich', 'Line under the heading'),
     defineField({ name: 'cta', title: 'Button', type: 'ctaBlock' }),
-    imageWithAlt('backgroundImage', 'Background photo (optional)'),
+    imageWithAlt({ name: 'backgroundImage', title: 'Background photo (optional)' }),
   ],
   preview: {
     select: { title: 'headline', media: 'backgroundImage' },
@@ -545,21 +514,7 @@ export const logoStripSection = defineType({
       type: 'array',
       validation: (R) => R.min(2).max(12),
       description: 'Add between 2 and 12 logos. Each needs an alt text for screen readers.',
-      of: [
-        defineArrayMember({
-          type: 'image',
-          options: { hotspot: true },
-          fields: [
-            defineField({
-              name: 'alt',
-              title: 'Alt text',
-              type: 'string',
-              description: 'Company or outlet name, for screen readers and search engines.',
-              validation: (R) => R.required(),
-            }),
-          ],
-        }),
-      ],
+      of: [imageMember({ altRequired: false })],
     }),
     defineField({
       name: 'layout',

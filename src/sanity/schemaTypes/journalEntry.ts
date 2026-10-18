@@ -12,6 +12,8 @@
 // actual post copy; everything else is metadata.
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { imageMember, imageWithAlt } from './_imageWithAlt';
+import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
 
 export const journalEntry = defineType({
   name: 'journalEntry',
@@ -22,6 +24,7 @@ export const journalEntry = defineType({
     { name: 'content', title: 'Content' },
     { name: 'seo', title: 'Google and sharing' },
     { name: 'related', title: 'Related' },
+    PUBLISH_AT_GROUP,
   ],
   fields: [
     // ---------- Meta ----------
@@ -66,20 +69,12 @@ export const journalEntry = defineType({
       },
       validation: (Rule) => Rule.required().max(220),
     }),
-    defineField({
+    imageWithAlt({
       name: 'coverImage',
       title: 'Cover image',
-      type: 'image',
       description: 'Shows large at the top of the post and as the card picture in News and notes.',
       group: 'meta',
-      options: { hotspot: true },
       fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          validation: (R) => R.required(),
-        }),
         defineField({
           name: 'caption',
           title: 'Caption (optional)',
@@ -190,18 +185,11 @@ export const journalEntry = defineType({
         }),
 
         // Inline image (single, with caption)
-        defineArrayMember({
-          type: 'image',
+        imageMember({
           name: 'inlineImage',
           title: 'Image',
-          options: { hotspot: true },
+          preview: { select: { title: 'caption', subtitle: 'alt', media: 'asset' } },
           fields: [
-            defineField({
-              name: 'alt',
-              title: 'Alt text',
-              type: 'string',
-              validation: (R) => R.required(),
-            }),
             defineField({ name: 'caption', title: 'Caption', type: 'string' }),
             defineField({
               name: 'size',
@@ -219,7 +207,6 @@ export const journalEntry = defineType({
               initialValue: 'wide',
             }),
           ],
-          preview: { select: { title: 'caption', subtitle: 'alt', media: 'asset' } },
         }),
 
         // Pull quote: a line pulled out large
@@ -333,18 +320,8 @@ export const journalEntry = defineType({
               title: 'Images',
               type: 'array',
               of: [
-                defineArrayMember({
-                  type: 'image',
-                  options: { hotspot: true },
-                  fields: [
-                    defineField({
-                      name: 'alt',
-                      title: 'Alt text',
-                      type: 'string',
-                      validation: (R) => R.required(),
-                    }),
-                    defineField({ name: 'caption', title: 'Caption', type: 'string' }),
-                  ],
+                imageMember({
+                  fields: [defineField({ name: 'caption', title: 'Caption', type: 'string' })],
                 }),
               ],
               validation: (Rule) => Rule.required().min(2),
@@ -481,6 +458,8 @@ export const journalEntry = defineType({
       validation: (Rule) => Rule.max(3),
       group: 'related',
     }),
+    // Free-tier scheduled publishing; see ./_publishAt.ts.
+    publishAtField(),
   ],
   preview: {
     select: {
