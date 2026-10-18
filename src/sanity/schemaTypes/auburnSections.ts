@@ -54,6 +54,8 @@ export const iconCardsSection = defineType({
               name: 'title',
               title: 'Title',
               type: 'string',
+              description:
+                'On Home, a title that starts with a weekday ("Wednesdays") gets that day’s times from Church facts added, so never type a time here.',
               validation: (R) => R.required(),
             }),
             defineField({ name: 'body', title: 'A few sentences', type: 'text', rows: 3 }),

@@ -25,7 +25,6 @@
 // Latest projects pull from Sanity. Gracefully degrades to a "see portfolio"
 // message when nothing is published yet.
 
-import { getImage } from 'astro:assets';
 import { site } from '@/data/site';
 import {
   IconBrandInstagram,
@@ -41,30 +40,12 @@ import { Mail, Phone } from 'lucide-react';
 import CopyEmailButton from '@/components/CopyEmailButton';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { getAllProjects, type CoreProjectCard } from '@/lib/queries';
-// THE SVG, NOT A PNG, and the same files the header uses.
-//
-// Until 2026-09-08 this imported logo-{light,dark}.png, which were a REAL
-// CLIENT'S wordmark left in the starter from the build it was forked from.
-// Every project made from this starter therefore shipped somebody else's logo
-// in its footer, and at least one of them reached a live site that way. The
-// header had always used the neutral placeholder SVGs; only the footer was
-// wrong, because nobody scrolls to the bottom of a page they are building.
-//
-// Keep both chrome components on the SAME asset. If they ever diverge again,
-// this is the failure mode.
-import logoLightAsset from '@/assets/logo-light.svg';
-import logoDarkAsset from '@/assets/logo-dark.svg';
+// The brand row shows the mark (board E, 2026-10-17); the lockup lives in the header.
 import { getSectionVisibility } from '@/lib/sectionVisibility';
 import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings';
 import { telHref } from '@/lib/phone';
-
-// One themed pair, passed through Astro's pipeline for a cache-busted URL. No
-// width variants and no webp conversion: these are SVGs, so one file is sharp
-// at every size and asking the optimizer to rasterise them would be a
-// downgrade. The BaseLayout anti-FOUC script swaps src on a theme change, the
-// same as it does for the header.
-const footerLogoLight = await getImage({ src: logoLightAsset });
-const footerLogoDark = await getImage({ src: logoDarkAsset });
+import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
+import { getChurchFacts } from '@/lib/church-data';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -175,16 +156,73 @@ const LEGAL_LINKS = chrome.legalNav;
 // Falls back to an empty array when Sanity isn't reachable (build won't fail).
 const allProjects: CoreProjectCard[] = (await getAllProjects().catch(() => [])) ?? [];
 const latestProjects = allProjects.slice(0, 3);
+
+// FBC Auburn, board E (2026-10-17): the ink footer's brand row. The mark with the tagline, then
+// Sundays, Find us and Follow, all from Site settings (facts derived, never typed).
+const footerFacts = await getChurchFacts();
+const footerSundays = footerFacts.serviceTimes.filter((t) => t.dayIndex === 0);
+const footerSundaysConfirmed = footerSundays.every((t) => t.confirmed);
+const footerAddress = footerFacts.address;
 ---
 
-<footer class="bg-muted text-foreground">
-  {/* Brand accent stripe — matches header + mobile drawer. */}
-  <div class="h-1 bg-primary" aria-hidden="true"></div>
+<footer class="site-footer bg-muted text-foreground">
+  {/* Board E brand row (2026-10-17): the mark and the tagline, then Sundays, Find us and Follow.
+      The whole footer is ink: .site-footer redefines the colour tokens (src/styles/auburn.css),
+      so the link grid below turns light-on-ink without touching its classes. */}
+  <div class="site-footer__board mx-auto max-w-content px-l">
+    <div>
+      <img src={markAsset.src} width={84} height={84} alt="" loading="lazy" decoding="async" />
+      {siteSettings?.tagline && <p class="site-footer__tagline">{siteSettings.tagline}</p>}
+    </div>
+    {footerSundays.length > 0 && (
+      <div>
+        <p class="site-footer__head">Sundays</p>
+        <p class="site-footer__body">
+          {footerSundays.map((t) => (
+            <>
+              {t.timeLabel.replace(/ am$/, '')} {t.label}
+              <br />
+            </>
+          ))}
+          {!footerSundaysConfirmed && <span class="site-footer__small">Times to confirm</span>}
+        </p>
+      </div>
+    )}
+    {footerAddress && (
+      <div>
+        <p class="site-footer__head">Find us</p>
+        <p class="site-footer__body">
+          {footerAddress.street}
+          <br />
+          {footerAddress.city}, Ohio
+          <br />
+          <a href={footerAddress.mapsUrl} rel="noopener" target="_blank">
+            Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
+          </a>
+        </p>
+      </div>
+    )}
+    {socialLinksToRender.length > 0 && (
+      <div>
+        <p class="site-footer__head">Follow</p>
+        <p class="site-footer__body">
+          {socialLinksToRender.map((l) => (
+            <>
+              <a href={l.url} rel="noopener" target="_blank">
+                {l.label || l.platform}
+              </a>
+              <br />
+            </>
+          ))}
+        </p>
+      </div>
+    )}
+  </div>
 
   {/* Newsletter signup — renders only when siteSettings.newsletter.enabled is
        true. Island hydrates when scrolled into view. */}
   {siteSettings?.newsletter?.enabled && (
-    <div class="mx-auto max-w-content px-m pt-l">
+    <div class="mx-auto max-w-content px-l pt-l">
       <div class="mx-auto max-w-md">
         <NewsletterSignup client:visible newsletter={siteSettings.newsletter} source="footer" />
       </div>
@@ -196,7 +234,7 @@ const latestProjects = allProjects.slice(0, 3);
        When siteSettings.footerColumns is non-empty, the custom Sanity columns
        replace the built-in Studio / Work / Free tools columns. The Latest
        Projects column and Get in touch column always render. */}
-  <div class="mx-auto grid max-w-content grid-cols-1 gap-l px-m pt-l pb-m text-center sm:grid-cols-2 md:grid-cols-3 md:text-left lg:grid-cols-5">
+  <div class="mx-auto grid max-w-content grid-cols-1 gap-l px-l pt-l pb-m text-left sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
     {/* --- Editor-managed columns (from Sanity siteSettings.footerColumns) --- */}
     {useCustomFooterColumns ? (
       sanityFooterColumns.map((col, colIdx) => (
@@ -212,7 +250,7 @@ const latestProjects = allProjects.slice(0, 3);
               <li>
                 <a
                   href={link.href}
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                 >
                   {link.label}
                 </a>
@@ -235,7 +273,7 @@ const latestProjects = allProjects.slice(0, 3);
             <li>
               <a
                 href="/about/"
-                class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
               >
                 About
               </a>
@@ -245,7 +283,7 @@ const latestProjects = allProjects.slice(0, 3);
             <li>
               <a
                 href="/faq/"
-                class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
               >
                 FAQ
               </a>
@@ -255,7 +293,7 @@ const latestProjects = allProjects.slice(0, 3);
               <li>
                 <a
                   href="/press/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                 >
                   Press
                 </a>
@@ -274,7 +312,7 @@ const latestProjects = allProjects.slice(0, 3);
               <li>
                 <a
                   href="/portfolio/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                 >
                   Portfolio
                 </a>
@@ -284,7 +322,7 @@ const latestProjects = allProjects.slice(0, 3);
               <li>
                 <a
                   href="/portfolio/before-after/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                 >
                   Before &amp; After
                 </a>
@@ -295,7 +333,7 @@ const latestProjects = allProjects.slice(0, 3);
               <li>
                 <a
                   href="/journal/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                 >
                   Journal
                 </a>
@@ -306,7 +344,7 @@ const latestProjects = allProjects.slice(0, 3);
               <li>
                 <a
                   href="/shop/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                 >
                   Shop
                 </a>
@@ -316,7 +354,7 @@ const latestProjects = allProjects.slice(0, 3);
               <li>
                 <a
                   href="/gift-certificates/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                 >
                   Gift Certificates
                 </a>
@@ -336,7 +374,7 @@ const latestProjects = allProjects.slice(0, 3);
                 <li>
                   <a
                     href="/quiz/"
-                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                   >
                     Style Quiz
                   </a>
@@ -346,7 +384,7 @@ const latestProjects = allProjects.slice(0, 3);
                 <li>
                   <a
                     href="/calculator/"
-                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                   >
                     Cost Calculator
                   </a>
@@ -356,7 +394,7 @@ const latestProjects = allProjects.slice(0, 3);
                 <li>
                   <a
                     href="/guides/"
-                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                   >
                     Guides
                   </a>
@@ -366,7 +404,7 @@ const latestProjects = allProjects.slice(0, 3);
                 <li>
                   <a
                     href="/resources/"
-                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                   >
                     Resources
                   </a>
@@ -390,7 +428,7 @@ const latestProjects = allProjects.slice(0, 3);
               <li>
                 <a
                   href={`/portfolio/${p.slug?.current ?? ''}/`}
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-foreground/85 transition-colors hover:text-link md:justify-start"
+                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
                 >
                   {p.title}
                 </a>
@@ -444,7 +482,7 @@ const latestProjects = allProjects.slice(0, 3);
       </div>
       <p class="mt-s text-sm text-foreground/75">{site.name}</p>
       {socialLinksToRender.length > 0 && (
-        <ul class="mt-m flex list-none justify-center gap-s p-0 text-sm md:justify-start">
+        <ul class="mt-m flex list-none justify-start gap-s p-0 text-sm">
           {socialLinksToRender.map((link) => {
             const Icon = socialIcon(link.platform);
             const ariaLabel = link.label ?? link.platform ?? 'Social link';
@@ -467,42 +505,10 @@ const latestProjects = allProjects.slice(0, 3);
     </div>
   </div>
 
-  {/* Logo + tagline — sits below the nav grid as a centered brand signature. */}
-  <div class="mx-auto flex max-w-content flex-col items-center gap-s px-m pb-l text-center">
-    <a
-      href="/"
-      aria-label={`${brandName} home`}
-      class="inline-block transition-opacity hover:opacity-80"
-    >
-      {/* Sized by WIDTH: the placeholder mark is a wide lockup (280x60), not
-          the square badge the old PNG was. An unloaded lazy image with
-          width:auto shrink-wraps to 0x0, never intersects the viewport and so
-          never loads, which is a real bug this family has hit more than once.
-          Give it real dimensions. */}
-      <img
-        alt={brandName}
-        width={280}
-        height={60}
-        class="h-14 w-auto"
-        loading="lazy"
-        decoding="async"
-        data-theme-logo
-        src={footerLogoLight.src}
-        data-logo-light-src={footerLogoLight.src}
-        data-logo-light-srcset={footerLogoLight.src}
-        data-logo-dark-src={footerLogoDark.src}
-        data-logo-dark-srcset={footerLogoDark.src}
-      />
-    </a>
-    {siteSettings?.tagline && (
-      <p class="max-w-[28rem] text-sm text-foreground/80 italic">{siteSettings.tagline}</p>
-    )}
-  </div>
-
   {/* Thin bottom bar — copyright, privacy, optional "Site by..." credit on one
        line so they don't add a tall block to a footer column. */}
   <div class="border-t border-border">
-    <div class="mx-auto flex max-w-content flex-col items-center justify-center gap-xs px-m py-m text-center text-xs text-foreground/80 sm:flex-row sm:justify-between">
+    <div class="mx-auto flex max-w-content flex-col items-start justify-center gap-xs px-l py-m text-left text-xs text-foreground/80 sm:flex-row sm:justify-between">
       <p>
         © {currentYear} {brandName}
       </p>

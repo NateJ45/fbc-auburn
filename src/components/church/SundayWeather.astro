@@ -15,15 +15,25 @@
 // space, and the script shows it only while its place is NOT on screen. A
 // visitor already looking at the spot when the answer lands simply does not
 // get the line (a shift in view is worse than a missing forecast).
+//
+// RESERVE MODE (`reserve`, Home's This Sunday card, board E). The caller's CSS keeps one line of
+// room for it (see .hb-sunday .sunday-weather in home-board.css), so nothing can move and the line
+// is shown even while it is on screen. Outside the window the room simply stays empty.
 
 interface Props {
+  /** The caller reserves the line's room, so show it even while on screen. */
+  reserve?: boolean;
   class?: string;
 }
 
-const { class: className = '' } = Astro.props;
+const { reserve = false, class: className = '' } = Astro.props;
 ---
 
-<div class:list={['sunday-weather', className]} data-sunday-weather>
+<div
+  class:list={['sunday-weather', className]}
+  data-sunday-weather
+  data-reserve={reserve ? '' : undefined}
+>
   <p class="sunday-weather__line" hidden>
     <span data-sunday-weather-text></span>
   </p>
@@ -51,7 +61,8 @@ const { class: className = '' } = Astro.props;
       const sentence = weatherSentence(sundayPeriod(periods, new Date()));
       if (!sentence) return;
       const top = box.getBoundingClientRect().top;
-      if (top >= 0 && top < window.innerHeight) return; // in view: no shift, no line
+      const reserved = box.hasAttribute('data-reserve');
+      if (!reserved && top >= 0 && top < window.innerHeight) return; // in view: no shift, no line
       text.textContent = sentence;
       line.hidden = false;
     } catch {

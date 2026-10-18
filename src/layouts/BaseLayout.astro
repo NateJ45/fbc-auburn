@@ -495,7 +495,8 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
             requestAnimationFrame(() => {
               const y = window.scrollY;
               const dy = y - lastY;
-              if (reduceMotion) {
+              // Home (board E) keeps its bar: the logo swaps in there as the page scrolls.
+              if (reduceMotion || header.hasAttribute('data-home')) {
                 header.removeAttribute('data-state');
               } else if (y < HIDE_AFTER) {
                 header.removeAttribute('data-state');

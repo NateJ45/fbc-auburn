@@ -1,0 +1,684 @@
+/* Safe to edit by hand.
+   FBC Auburn Home, "board E" (approved 2026-10-17; docs/design-directions/2026-10-17-fbc-auburn/).
+   Imported by src/components/home/HomeBoard.astro only, so it ships on Home alone.
+
+   The system, in one place:
+   - one 20px radius for every card-sized surface (--hb-radius); buttons keep the site's 10px;
+   - red only for the welcome line and the one main button; dates in deep sky;
+   - tabular numerals for times (.hb-num); text-wrap: balance on headings;
+   - the stone path lays itself stone by stone once (html.motion only, so no JS and reduced
+     motion show it finished); cards lift 4px on hover and focus, never under reduced motion.
+
+   Light only (rule 3): no dark styles here. */
+
+.hb {
+  --hb-radius: 20px;
+  --hb-ink: #171a26;
+  --hb-body: #343846;
+  --hb-muted: #4a4f5e;
+  --hb-line: #d9dee6;
+  --hb-gutter: var(--spacing-l);
+  /* Light in every case (rule 3); pinned so a forced dark theme cannot turn links pale here. */
+  --link: #235e93;
+  background: #ffffff;
+  color: var(--hb-ink);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  overflow-x: clip;
+}
+.hb h1,
+.hb h2,
+.hb h3 {
+  text-wrap: balance;
+}
+.hb p {
+  text-wrap: pretty;
+}
+.hb-num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.hb-wrap {
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding-inline: var(--hb-gutter);
+}
+/* :where() keeps this at the lowest specificity, so a panel's own link colour (the card, the
+   green note) always wins. */
+.hb :where(a:not([class])) {
+  color: var(--link);
+  text-underline-offset: 3px;
+}
+.hb :where(a:not([class])):hover {
+  color: var(--hb-ink);
+}
+
+/* ---- Section labels: small caps, a hairline, led by three stepping stones ---------------- */
+.hb-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 28px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--auburn-deep);
+}
+.hb-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--hb-line);
+}
+.hb-band .hb-label::after {
+  background: rgb(23 26 38 / 0.14);
+}
+.hb-marker {
+  flex: none;
+  width: 78px;
+  height: 36px;
+}
+
+/* ---- Hero: the Auburn-wide lockup ---------------------------------------------------------- */
+.hb-hero {
+  padding-top: 36px;
+}
+.hb-masthead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: clamp(20px, 3vw, 44px);
+  align-items: end;
+  margin: 0 0 44px;
+  padding-top: 30px;
+  border-top: 1px solid var(--hb-line);
+}
+.hb-hero-mark {
+  grid-row: 1 / span 2;
+  align-self: center;
+  width: clamp(150px, 18.5vw, 268px);
+  height: auto;
+}
+.hb-h1 {
+  display: contents;
+  margin: 0;
+  font-weight: 400;
+}
+.hb-eyebrow {
+  grid-column: 2;
+  display: block;
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.75vw, 26px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--auburn-deep);
+}
+.hb-word {
+  grid-column: 2;
+  display: block;
+  margin: 0.06em 0 0 -0.04em;
+  font-family: 'Auburn Stone', 'Young Serif', serif;
+  font-size: clamp(70px, 15.4vw, 232px);
+  line-height: 0.84;
+  letter-spacing: -0.035em;
+}
+/* Fixed light values, not the theme's --mosaic tokens: Home's board is a light surface in every
+   case (rule 3), so the forced-dark test suite must not swap them for the dark set. */
+.hb-word .s0 {
+  color: #2c5b3a;
+}
+.hb-word .s1 {
+  color: #235e93;
+}
+.hb-word .s2 {
+  color: #c4401f;
+}
+.hb-word .s3 {
+  color: #3b83aa;
+}
+
+/* ---- Lead row: the welcome beside the This Sunday card -------------------------------------- */
+.hb-lead {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 64px;
+  align-items: start;
+}
+.hb-welcome {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.2vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--auburn-red);
+}
+.hb-intro {
+  max-width: 31rem;
+  margin: 0 0 30px;
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--hb-body);
+}
+.hb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.hb-actions .btn-auburn {
+  min-height: 52px;
+  padding: 10px 26px;
+}
+.hb-textlink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 10px 4px;
+  font-weight: 600;
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.hb-textlink:hover {
+  color: var(--hb-ink);
+}
+
+/* ---- This Sunday card ------------------------------------------------------------------------ */
+.hb-sunday {
+  padding: 32px 34px 30px;
+  border-radius: var(--hb-radius);
+  background-color: var(--auburn-deep);
+  background-image: url('/textures/tile-deep.svg');
+  background-size: 420px 420px;
+  box-shadow: 0 30px 60px -36px rgb(23 26 38 / 0.7);
+  color: #ffffff;
+}
+.hb-sunday__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+.hb-sunday__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #dbeaf8;
+}
+.hb-pill {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--auburn-red-dark);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hb-sunday__date {
+  margin: 6px 0 4px;
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1.1;
+}
+/* The forecast line keeps one line of room, so it can arrive with the card on screen without
+   moving anything (SundayWeather reserve mode). Empty outside Wednesday to Sunday noon. */
+.hb-sunday .sunday-weather {
+  min-height: 1.5em;
+  margin: 0 0 20px;
+}
+.hb-sunday .sunday-weather .sunday-weather__line {
+  margin: 0;
+  font-size: 16px;
+  color: #d4e6f7;
+}
+.hb-sunday__times {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 14px 22px;
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid rgb(255 255 255 / 0.22);
+}
+.hb-sunday__times dt {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+}
+.hb-sunday__times dd {
+  margin: 0;
+}
+.hb-sunday__where {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(255 255 255 / 0.22);
+}
+.hb-sunday__where img {
+  flex: none;
+  width: 84px;
+  height: auto;
+}
+.hb-sunday__where p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+}
+.hb-sunday a {
+  color: #ffffff;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+/* ---- The stone path ------------------------------------------------------------------------ */
+.hb-path-wide {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: -140px;
+}
+.hb-path-phone {
+  display: none;
+}
+.hb-stone {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+/* Hidden starting state ONLY under html.motion and only once the page script arms the path,
+   so no JS, ?still and reduced motion all show the finished path. */
+html.motion .hb-path.is-armed:not(.is-laid) .hb-stone {
+  opacity: 0;
+}
+html.motion .hb-path.is-laid .hb-stone {
+  animation: hb-lay 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i) * 24ms);
+}
+@keyframes hb-lay {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.35) rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hb-stone {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ---- Bands: pale mosaic texture, white panels ------------------------------------------------ */
+.hb-band {
+  padding: 68px 0 84px;
+  background-repeat: repeat;
+  background-size: 420px 420px;
+}
+.hb-band--sky {
+  margin: 8px 0 96px;
+  background-color: #eaf2fb;
+  background-image: url('/textures/tile-sky.svg');
+}
+.hb-band--green {
+  background-color: #ebf3ed;
+  background-image: url('/textures/tile-green.svg');
+}
+
+/* Through the week: a three-column board on a white panel. */
+.hb-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 10px 34px 26px;
+  border-radius: var(--hb-radius);
+  background: #ffffff;
+  box-shadow: 0 24px 48px -36px rgb(23 26 38 / 0.45);
+}
+.hb-board > div {
+  padding: 26px 28px 8px;
+  border-left: 1px solid var(--hb-line);
+}
+.hb-board > div:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.hb-board .stone-icon {
+  display: block;
+  width: 104px;
+  height: 104px;
+  object-fit: contain;
+  object-position: left bottom;
+}
+.hb-board__title {
+  margin: 10px 0 2px;
+  font-weight: 700;
+}
+.hb-board__body {
+  margin: 0;
+  color: var(--hb-muted);
+}
+.hb-board__body a {
+  font-weight: 600;
+}
+
+/* Other ways in: three white link cards. */
+.hb-ways {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.hb-way {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  border-radius: var(--hb-radius);
+  background: #ffffff;
+  box-shadow: 0 18px 40px -32px rgb(23 26 38 / 0.4);
+  color: var(--hb-ink);
+  text-decoration: none;
+}
+.hb-way .stone-icon {
+  flex: none;
+  width: 112px;
+  height: 112px;
+  object-fit: contain;
+}
+.hb-way__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 23px;
+  line-height: 1.25;
+}
+.hb-way__body {
+  color: var(--hb-muted);
+}
+
+/* ---- Hover lift (cards that are links) -------------------------------------------------------- */
+.hb-lift {
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.3s ease;
+}
+.hb-lift:hover,
+.hb-lift:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 48px -30px rgb(23 26 38 / 0.5);
+}
+.hb-lift:focus-visible {
+  outline: 3px solid var(--auburn-gold);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hb-lift {
+    transition: none;
+  }
+  .hb-lift:hover,
+  .hb-lift:focus-visible {
+    transform: none;
+  }
+}
+
+/* ---- Who we are: the photo mosaic ------------------------------------------------------------- */
+.hb-section {
+  padding-bottom: 96px;
+}
+.hb-mosaic {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 250px;
+  gap: 12px;
+}
+.hb-ph {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--hb-radius);
+  background: #e5e8ee;
+}
+.hb-ph img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hb-ph figcaption {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #171a26;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.hb-ph--big {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.hb-note {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 30px 34px;
+  border-radius: var(--hb-radius);
+  background: var(--auburn-green);
+  color: #ffffff;
+}
+.hb-note h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 3.2vw, 46px);
+  font-weight: 400;
+  line-height: 1.05;
+}
+.hb-note__quote {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.45;
+}
+.hb-note__quote,
+.hb-note__quote :where(p, span, strong, em) {
+  color: #ffffff;
+}
+.hb-note__quote p {
+  margin: 0;
+}
+.hb-note__sign {
+  margin: 0;
+  font-size: 15px;
+  color: #cfe3d5;
+}
+.hb-note__sign a {
+  color: #ffffff;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+/* ---- This week and last Sunday ---------------------------------------------------------------- */
+.hb-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
+}
+.hb-pair h2 {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 3.6vw, 48px);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.hb-week-foot {
+  margin: 14px 0 0;
+  font-size: 15px;
+  color: var(--hb-muted);
+}
+.hb-week-foot a {
+  font-weight: 600;
+}
+.hb-watch {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--hb-radius);
+  background: var(--hb-ink);
+  color: #ffffff;
+  text-decoration: none;
+}
+.hb-watch img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+}
+.hb-watch__text {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hb-watch__play {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  background: #ffffff;
+}
+.hb-watch__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.2;
+}
+.hb-watch__sub {
+  font-size: 15px;
+  color: #ffffff;
+}
+.hb .last-sunday {
+  margin: 0;
+}
+
+/* ---- Narrow screens (below 960px): one column, the phone path, no hero mark ------------------- */
+@media (max-width: 960px) {
+  .hb {
+    --hb-gutter: 20px;
+  }
+  .hb-lead,
+  .hb-pair {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+  .hb-path-wide {
+    display: none;
+  }
+  /* Flipped so it lands on the card below. Full bleed past the gutter. */
+  .hb-path-phone {
+    display: block;
+    width: calc(100% + 2 * var(--hb-gutter));
+    max-width: none;
+    height: auto;
+    margin: -8px calc(-1 * var(--hb-gutter)) -20px;
+    transform: scaleY(-1);
+  }
+  .hb-masthead {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 10px;
+    align-items: center;
+  }
+  .hb-hero-mark {
+    display: none;
+  }
+  .hb-eyebrow,
+  .hb-word {
+    grid-column: 1;
+  }
+  .hb-word {
+    font-size: 21vw;
+  }
+  .hb-band {
+    padding: 48px 0 56px;
+  }
+  .hb-band--sky {
+    margin-top: 32px;
+  }
+  .hb-board {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 4px 22px 18px;
+  }
+  .hb-board > div {
+    padding: 22px 0 14px;
+    border-top: 1px solid var(--hb-line);
+    border-left: 0;
+  }
+  .hb-board > div:first-child {
+    border-top: 0;
+  }
+  .hb-mosaic {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(170px, auto);
+  }
+  .hb-ph--big,
+  .hb-note {
+    grid-column: span 2;
+  }
+  .hb-ph--big {
+    grid-row: span 1;
+    min-height: 240px;
+  }
+  .hb-ways {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hb-watch__sub {
+    display: none;
+  }
+}
+@media (max-width: 420px) {
+  .hb-sunday {
+    padding: 26px 22px 24px;
+  }
+  .hb-intro {
+    font-size: 19px;
+  }
+  .hb-way {
+    padding: 18px;
+    gap: 14px;
+  }
+  .hb-way .stone-icon {
+    width: 84px;
+    height: 84px;
+  }
+}
+
+/* Home's ground is plain white, edge to edge (the site's other pages keep their tinted bands). */
+main:has(> .hb) {
+  background: #ffffff;
+}

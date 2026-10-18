@@ -48,7 +48,8 @@
     "favicon": "node scripts/generate-favicons.mjs",
     "scaffold": "node scripts/scaffold.mjs",
     "audit:studio": "node scripts/audit-studio.mjs",
-    "audit:data": "node scripts/audit-data-vs-schema.mjs"
+    "audit:data": "node scripts/audit-data-vs-schema.mjs",
+    "gen:stones": "node scripts/gen-stones.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.4.0",
