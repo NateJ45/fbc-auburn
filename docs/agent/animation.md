@@ -148,6 +148,12 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   ROOMS, STOPS, ROUTE), pinned with `position: sticky` beside the stops; an IntersectionObserver on the middle tenth of
   the screen lights the route up to the current stop. Without motion the whole route is shown and the tags are hidden.
 - **Nav**: three tiny stones under the current page's link replace the underline.
+- **The stone ribbon** (Home only, 2026-10-17): `StoneRibbon.astro` placed first in `<main>` and
+  `src/scripts/ribbon.ts`. Two lanes of rounded stones in red, gold, green and sky along one path: down a gutter,
+  across the page in the empty gap between two sections (measured from the real words and pictures, so a stone never
+  sits on text), down the other gutter; a slim left rail under 64rem. Stones land as they scroll in (`.rstone` gets
+  `.in`; a redraw on resize does not replay them). Script only; with no JS there is simply no ribbon. A page with
+  the ribbon has no rail or walk, so the background path does not run there.
 
 ---
 

@@ -132,7 +132,20 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   placeholder geometry in `src/lib/walk-plan.ts` (ROOMS, STOPS, ROUTE); only those change.
 - Still open: Events and Give in the menu once the church's Church Trac links exist; the deacons'
   team grid once names and permissions exist.
-- Photos: every arch shows the mark or a soft fill until the photo session.
+- DONE 2026-10-17: the bold home pass (decision in the directions README): the full-height stone
+  ribbon, a white page, the red intro and This Sunday line in the hero, photos on Home, the Watch
+  band's video card (`watchSection.poster`), photo cards (`iconCard.image`), Home cut to six
+  blocks. The data change is `scripts/content/home-bold-pass.mjs`. The rail and the closing band
+  came off Home (still available as blocks).
+- Photos: Home uses six STOCK stand-ins from Unsplash (free licence; each asset's `source` field
+  holds its Unsplash id): the hero church, "A place to belong", the Watch poster and the three
+  "Find your place" cards. They are not this church, so replace each with a real photo from the
+  photo session before launch (Studio: Home, then the block). Every other arch shows the mark or a
+  soft fill until then.
+- Pastor Jacob's welcome came off Home with the "Meet our pastor" band; it belongs on About when
+  he writes it.
+- Inner pages still have the first pass's tinted bands and dividers; whether the white page and a
+  ribbon go there too is Nathan's call after seeing Home.
 
 Service times, the 1959 founding and Hebrews 13:8 are still unconfirmed with the church; copy
 marks them "to be confirmed". Since 2026-10-17 the facts themselves live in Site settings > Church
