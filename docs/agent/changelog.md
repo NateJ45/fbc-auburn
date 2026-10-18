@@ -11,11 +11,17 @@ and `npm run gen:stones`, byte-identical to the approved art. Schema: `heroSecti
 `imageTextSection.signedBy` and `extraImages`, all hidden outside Home. Facts stay derived: the This
 Sunday card, This week, the header's Sunday note, the footer's Sundays and a weekday card title
 ("Wednesdays") all read Church facts. `SundayWeather` gained a `reserve` mode so the forecast can
-show inside the card while it is on screen. The header lockup is 84px (64px on phones and once the
-page scrolls) and the footer is ink, site-wide. `StoneRibbon.astro` and `src/scripts/ribbon.ts` are
+show inside the card while it is on screen. The header lockup is 84px from 1280px (64px below that and once
+the page scrolls) and the footer is ink, site-wide. `StoneRibbon.astro` and `src/scripts/ribbon.ts` are
 gone. Measured on the dev build at 320, 375, 768, 1024 and 1440: no sideways scroll, no stone painted
 over text; reduced motion and no JS show the path finished. Data: `scripts/content/home-board-e.mjs`
 (backup, dry run, apply, `audit:data` clean).
+
+_2026-10-17: the header logo shows with JavaScript off (starter card 108)._
+
+**Decision.** With JS off the header logo was only its alt text: the theme-aware img ships with no `src` so the
+inline script can fetch just one variant. `Header.astro` now adds a `<noscript>` copy with the light logo and a scoped
+rule that hides the src-less img, which is only src-less when that script never ran. With JS on nothing changes.
 
 _2026-10-17: the bold home pass: a full-height stone ribbon, a white page, photos._
 
