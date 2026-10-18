@@ -11,6 +11,16 @@ token. **Messages**: the forms' submissions from D1 with New / Needs a person / 
 only as "one arrived", nothing personal in Sanity; it says "Forms are not set up yet" until the forms are on.
 **Table views** of sermons, downloads and people beside the normal lists.
 
+_2026-10-18: the Studio Home dashboard (PORTS card 115)._
+
+**What changed.** Home now reads like the WordPress dashboard on the studio's other sites: today's date above the
+greeting; "Coming up" for pages set to publish by themselves; a Fix-it list naming each page that needs a picture
+description, a Google description or a fact confirmed, each with an Edit button (the Checkup's own rules); a Visitors
+card with the week's visits, a four-week chart, the most-read pages and how people found the site (Cloudflare Web
+Analytics through `/api/studio/visitors/`, signed-in members only; it says "not set up yet" until Nathan adds the
+token, PENDING 1l); a "Your pages" card with every page in the menu's own words; and a "Watch how it is done" row that
+appears once a guide has a video. A new guide, "What Home in the Studio shows you", explains each card.
+
 _2026-10-18: links in text accept addresses on this site._
 
 **What changed.** The link in the privacy policy, question answers and News posts used Sanity's default URL check, which only accepts full https addresses, so the privacy policy's own link to /contact/ (written by visitor-audit.mjs) blocked Publish with "Not a valid URL". Those four link fields now accept a page on this site (/contact/), https, http, mailto: and tel:, and say so in the field help. Found by Nathan in the Studio.

@@ -308,6 +308,61 @@ export const kitConfig: KitConfig = {
     forType: GUIDES_FOR_TYPE,
   },
 
+  // Home's "Your pages" card (card 115): every page the pastor can change, in
+  // the menu's own words, one click each. The five built pages are custom pages
+  // (type 'page', ids from the seed); "Other pages you built" lists any new
+  // custom page by name without touching this file. Give has no document of its
+  // own (src/pages/give.astro builds it from Church facts), so it opens the
+  // online giving link. Desk ids are load-bearing (structure.ts).
+  pages: [
+    {
+      title: 'Main pages',
+      links: [
+        { title: 'Home', target: { doc: 'homePage' } },
+        { title: 'About', target: { doc: 'aboutPage' } },
+        { title: 'Plan your visit', target: { doc: 'page-plan-your-visit', type: 'page' } },
+        { title: 'What we believe', target: { doc: 'page-what-we-believe', type: 'page' } },
+        { title: 'Ministries', target: { doc: 'page-ministries', type: 'page' } },
+        { title: 'Leadership', target: { doc: 'page-leadership', type: 'page' } },
+        { title: 'Watch', target: { doc: 'page-watch', type: 'page' } },
+        {
+          title: 'Give',
+          detail: 'The online giving link',
+          target: { doc: 'siteSettings', field: 'givingUrl' },
+        },
+        { title: 'Contact', target: { doc: 'contactPage' } },
+        { title: 'Questions', target: { doc: 'faqPage' } },
+        { title: 'Privacy policy', target: { doc: 'privacyPage' } },
+      ],
+    },
+    { title: 'Other pages you built', listType: 'page' },
+    {
+      title: 'Sermons, people and more',
+      links: [
+        { title: 'Sermons', target: { pane: 'sermons;sermon' } },
+        { title: 'Sermon series', target: { pane: 'sermons;sermonSeries' } },
+        { title: 'People', target: { pane: 'people;person' } },
+        { title: 'Downloads and bulletins', target: { pane: 'downloads;download' } },
+        { title: 'News and notes', target: { pane: 'journal;journalEntry' } },
+        { title: 'Notices', target: { pane: 'content;announcement' } },
+        { title: 'Questions and answers', target: { pane: 'content;faqItem' } },
+      ],
+    },
+    {
+      title: 'Site-wide',
+      links: [
+        {
+          title: 'Church facts',
+          detail: 'Service times, address, phone',
+          target: { doc: 'siteSettings', field: 'churchAddress' },
+        },
+        { title: 'Menus', target: { doc: 'siteSettings', field: 'navItems' } },
+        { title: 'Footer', target: { doc: 'siteSettings', field: 'footerColumns' } },
+        { title: 'Site settings', target: { doc: 'siteSettings' } },
+      ],
+    },
+  ],
+
   // Home's big buttons (card 110): the pastor's most common jobs, as intent
   // links. Keep it to four. FBC Auburn (2026-10-18): Sunday's sermon, the
   // service times, a new page and the menus.
@@ -379,9 +434,11 @@ export const kitConfig: KitConfig = {
     tour: true,
     trash: true,
     publishNote: true,
-    // GA4 (decided 2026-10-17) needs the analytics route and a property; until
-    // then the Home card says "not set up yet".
-    visitors: false,
+    // Card 115: Cloudflare Web Analytics through /api/studio/visitors/ (it
+    // replaced the 2026-10-17 GA4 plan: cookieless, free, no service account).
+    // The route says "not set up yet" until the Worker has CF_ANALYTICS_TOKEN,
+    // CF_ACCOUNT_ID and CF_WEB_ANALYTICS_SITE_TAG (OPERATIONS.md, "Visitor numbers").
+    visitors: true,
     // Card 110: the status line under the top bar, and the help panel.
     navbarStatus: true,
     helpPanel: true,
