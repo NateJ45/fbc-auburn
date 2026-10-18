@@ -215,7 +215,9 @@ const hasCalendar =
     </div>
 
     {sunday && (
-      <aside class="sf-sunday" aria-labelledby="sf-sunday-title">
+      <div class="sf-sunday" role="group" aria-labelledby="sf-sunday-title">
+        {/* A group, not an aside: Home's This Sunday card is the page's complementary landmark of
+            that name, and two would clash (axe landmark-unique). */}
         <div class="sf-sunday__top">
           <p class="sf-sunday__eyebrow" id="sf-sunday-title">
             {sunday.isToday ? 'Today' : 'This Sunday'}
@@ -257,7 +259,7 @@ const hasCalendar =
             </p>
           </div>
         )}
-      </aside>
+      </div>
     )}
   </div>
 
