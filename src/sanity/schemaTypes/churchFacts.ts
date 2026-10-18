@@ -182,6 +182,16 @@ export const churchFactsFields = [
       'Where people watch on Sunday, like the church’s Facebook live videos page. Shown on Watch and in the footer. Leave empty to use the Facebook link from Social links.',
     validation: (Rule) => Rule.uri({ scheme: ['https'] }),
   }),
+  // Section library (2026-10-18): the "Contact details" block shows these lines.
+  defineField({
+    name: 'officeHours',
+    title: 'Office hours (optional)',
+    type: 'text',
+    rows: 3,
+    group: 'church',
+    description:
+      'When someone can be reached at the church office, one line each, like "Tuesday to Thursday, 9 am to 1 pm". Shown in the Contact details block. Leave empty to leave them out.',
+  }),
   defineField({
     name: 'foundedYear',
     title: 'Year founded',

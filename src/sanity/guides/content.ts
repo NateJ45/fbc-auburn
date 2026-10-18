@@ -564,6 +564,170 @@ export const guides: Guide[] = [
     ],
   },
 
+  // ── The section library and the form builder (2026-10-18) ──────────────────
+  {
+    slug: 'section-library',
+    category: 'Pages and words',
+    title: 'Sections you can add to a page',
+    icon: 'blocks',
+    lead: 'What each section in the "+ Add" menu is for, in one line each.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Open any page, go to its sections and press `+ Add item`. The sections are sorted into groups, and the search box finds one by name. Sections marked **from Church facts** fill themselves from Site settings, so you never type a time or an address twice.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Service times**: every regular gathering with its day and time, from Church facts.',
+          '**Map and directions**: the address on a drawn map with Google and Apple Maps buttons, from Church facts. Add a line about parking if it helps.',
+          '**Contact details**: phone, email, address and office hours, from Church facts.',
+          '**What we believe**: a heading and a few sentences per belief, with Bible references that link to the verses.',
+          '**History timeline**: a year, what happened, and a photo if you have one.',
+          '**Bible verse**: one verse set large, its reference linking to the passage.',
+          '**Our wider Baptist family**: the SBC, the Ohio convention and others, each with its website.',
+          '**Fold-out questions and answers**: questions a visitor taps to open, typed right on that page.',
+          '**Tabs**: two to five labeled tabs, like Kids, Students and Adults.',
+          '**Text in columns**: two or three columns of text side by side.',
+          '**Row of buttons or link cards**: two to six links, as buttons or as cards with a line of text.',
+          '**One wide photo with a caption**: a single photo across the page. For two side by side, use the photo gallery set to two across.',
+          '**Notice with dates**: a short notice that shows only between two dates.',
+          '**Countdown to a date**: days left until an event, then a "happening now" line, then a thank-you.',
+          '**Upcoming events**: the next events from the Church Trac calendar, with "Add to your calendar" buttons.',
+          '**Add our calendar to your phone**: just the calendar buttons.',
+          '**Ways to give**: on Sunday, by mail and online, from Church facts.',
+          '**Progress toward a goal**: a bar that fills toward a building fund or offering goal.',
+          '**Live stream**: a "Watch live" button that says "Live now" during Sunday worship.',
+          '**Newsletter sign-up**: the email sign-up box, or a button to your sign-up page.',
+          '**Form**: one of your forms, like prayer requests or a sign-up sheet.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Empty sections hide themselves.',
+        text: 'A section with nothing to show (no events on the calendar, a notice outside its dates) simply does not appear, so a page never shows an empty box.',
+      },
+      { kind: 'seealso', items: ['Make a new form', 'Put up a notice for a snow Sunday'] },
+    ],
+  },
+  {
+    slug: 'make-a-form',
+    category: 'Pages and words',
+    title: 'Make a new form',
+    icon: 'add',
+    lead: 'Write the questions once, then put the form on any page.',
+    diy: 'self',
+    body: [
+      { kind: 'path', items: ['Content', 'Forms'] },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Content`, then `Forms`, and press the pencil to start a new one.',
+          'Give it a `Form name`, like "VBS sign-up". This is the heading above the form.',
+          'Pick `What kind of form is it?`. Choose prayer requests only for prayer requests.',
+          'Under `Who receives it`, pick the person whose email the answers go to.',
+          'Add your `Questions`. For each one pick the kind of answer: a short line, a paragraph, a choice from a list, a tick box, an email or a phone number. Turn on `Must be answered?` only where you really need the answer.',
+          'Publish the form.',
+          'Open the page it belongs on, press `+ Add item`, choose `Form`, pick your form, and publish the page.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Answers are never kept in this editor.',
+        text: 'What people send is emailed to the person you picked. It never comes back into the Studio, so there is nothing personal here to protect or lose.',
+      },
+      {
+        kind: 'p',
+        text: 'Need a new person on the "Who receives it" list? Ask your developer: they connect the email address on the server, because addresses are not kept in the Studio. Until then, forms for that name go to the church office.',
+      },
+      { kind: 'seealso', items: ['Prayer requests: what happens to them'] },
+    ],
+  },
+  {
+    slug: 'prayer-requests',
+    category: 'Pages and words',
+    title: 'Prayer requests: what happens to them',
+    icon: 'info',
+    lead: 'Where a prayer request goes, who sees it, and what the website keeps.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'bullets',
+        items: [
+          'A prayer request is **emailed to the person the form names**, and to nobody else.',
+          'It is **never saved in the Studio** and never shown on the website.',
+          'The website keeps a copy only until the email has gone. Once it is delivered, the words are wiped from the website’s own records.',
+          'If you tick `Let people send it without their name`, people can send a request with no name or email at all. You will not be able to reply to those.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'critical',
+        title: 'Never paste a request into a page.',
+        text: 'Everything in the Studio is public once published. Share prayer needs by email or in person, the way the person asked.',
+      },
+      {
+        kind: 'p',
+        text: 'Until email is connected for the website, the form shows a note asking people to email or call the church instead, so nobody types a request that cannot be sent.',
+      },
+      { kind: 'seealso', items: ['Make a new form'] },
+    ],
+  },
+  {
+    slug: 'snow-sunday',
+    category: 'Pages and words',
+    title: 'Put up a notice for a snow Sunday',
+    icon: 'clock',
+    lead: 'A notice that appears on the day you choose and takes itself down.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'Open the home page (or any page) and press `+ Add item`, then `Notice with dates`.',
+          'Type the `Message`, like "No services this Sunday because of the snow. Stay safe."',
+          'For weather or a cancellation, pick `Urgent` under `How important is it?`.',
+          'Set `Show from` and `Show until`. Both days are included. Leave `Show from` empty to show it straight away.',
+          'Drag the notice to the top of the page, then publish.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Give it a couple of minutes.',
+        text: 'The site updates a few minutes after you publish, and again every morning at about 6 am. A notice past its last day is hidden that morning, and people’s browsers hide it at midnight anyway, so you can leave it in place for next winter.',
+      },
+    ],
+  },
+  {
+    slug: 'vbs-countdown',
+    category: 'Pages and words',
+    title: 'Count down to VBS',
+    icon: 'activity',
+    lead: 'Days to go, then "happening now", then a thank-you, all on its own.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'On the page you want, press `+ Add item`, then `Countdown to a date`.',
+          'Type what you are counting down to, like "Vacation Bible School".',
+          'Pick the `First day`, and the `Last day` if it runs all week.',
+          'Change the "during" and "afterward" lines if you like. Empty the "afterward" line to hide the countdown once VBS is over.',
+          'Add a `Button` to the sign-up form if you have one, then publish.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'The number of days updates by itself every day. Nothing needs changing until next year, when you only pick new dates.',
+      },
+      { kind: 'seealso', items: ['Make a new form'] },
+    ],
+  },
+
   {
     slug: 'seo-fields',
     category: 'Housekeeping',
@@ -700,7 +864,15 @@ guides.push(...collectionGuides);
 export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   '*': ['edit-a-page', 'help-panel'],
   // FBC Auburn: the church's own guides first where they fit.
-  page: ['edit-a-page', 'page-templates', 'reuse-sections', 'rename-a-page', 'seo-fields'],
+  page: [
+    'edit-a-page',
+    'section-library',
+    'page-templates',
+    'reuse-sections',
+    'rename-a-page',
+    'seo-fields',
+  ],
+  form: ['make-a-form', 'prayer-requests'],
   homePage: ['home-page', 'after-sunday', 'images-and-alt', 'seo-fields'],
   siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
   sectionPreset: ['reuse-sections', 'synced-sections'],

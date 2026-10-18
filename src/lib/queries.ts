@@ -110,6 +110,24 @@ const SECTION_ARMS = `
       // The newest sermon names the card (src/lib/sermons.ts, watchSermon).
       ${LATEST_SERMON_FIELD}
     },
+    // FBC Auburn church section library (churchSections.ts): photos, buttons and the form.
+    _type == "timelineSection" => { ..., entries[]{ ..., image${IMAGE_PROJECTION} } },
+    _type == "affiliationsSection" => { ..., items[]{ ..., logo${IMAGE_PROJECTION} } },
+    _type == "buttonRowSection" => { ..., links[]{ ..., link${CTA_PROJECTION} } },
+    _type == "noticeSection" => { ..., link${CTA_PROJECTION} },
+    _type == "countdownSection" => { ..., link${CTA_PROJECTION} },
+    _type == "progressSection" => { ..., link${CTA_PROJECTION} },
+    _type == "photoSection" => { ..., image${IMAGE_PROJECTION} },
+    // The form's words only. The recipient's NAME is looked up for the page; its address is
+    // never in the dataset (src/lib/church-form.ts).
+    _type == "formSection" => {
+      ...,
+      "form": form->{
+        _id, title, intro, mode, askForContact, allowAnonymous, questions, recipient,
+        submitLabel, successMessage,
+        "recipientName": *[_type == "siteSettings"][0].formRecipients[key == ^.recipient][0].name
+      }
+    },
     _type == "teamSection" => {
       ...,
       members[]{
@@ -260,6 +278,7 @@ export const SITE_SETTINGS_PROJECTION = `{
     emailConfirmed,
     givingUrl,
     liveStreamUrl,
+    officeHours,
     foundedYear,
     foundedConfirmed,
     youtubeChannelId,

@@ -34,6 +34,7 @@ import type {
   // sanity.types yet; their projected types are fully defined below.
 } from './sanity.types';
 import type { DownloadDoc, PersonDoc, SeriesDoc, SermonDoc } from './sermons';
+import type { ChurchPageBlock } from './churchBlocks.types';
 
 // ---------------------------------------------------------------------------
 // Shared projected shapes
@@ -516,4 +517,6 @@ export type PageBuilderBlock =
   | ProjectedLatestSermonSection
   | ProjectedSermonSeriesSection
   | ProjectedPeopleSection
-  | ProjectedDownloadsSection;
+  | ProjectedDownloadsSection
+  // FBC Auburn: the church section library (churchBlocks.types.ts)
+  | ChurchPageBlock;

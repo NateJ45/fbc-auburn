@@ -1,0 +1,39 @@
+---
+// Safe to edit by hand
+// Text in two or three columns, each with an optional heading. Stacks on a phone.
+import ChurchBand from './ChurchBand.astro';
+import PortableText from '@/components/PortableText';
+import type { ProjectedColumnsSection } from '@/lib/churchBlocks.types';
+import type { PortableTextBlock } from '@portabletext/types';
+
+interface Props {
+  block: ProjectedColumnsSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const cols = (block.textColumns ?? []).filter(
+  (c) => c?.heading || (Array.isArray(c?.body) && c.body.length > 0),
+);
+const Title = block.heading ? 'h3' : 'h2';
+---
+
+{cols.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Text in columns"
+  >
+    <div class:list={['cb-grid', cols.length >= 3 ? 'cb-grid--3' : 'cb-grid--2']}>
+      {cols.map((c) => (
+        <div>
+          {c.heading && <Title class="cb-title">{c.heading}</Title>}
+          <PortableText value={(c.body ?? []) as PortableTextBlock[]} className="cb-prose" />
+        </div>
+      ))}
+    </div>
+  </ChurchBand>
+)}

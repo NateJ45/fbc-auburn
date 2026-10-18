@@ -34,6 +34,8 @@ export const SELF_CONTAINED_TYPES = new Set([
   'embedSection',
   // Church-reverse-port: dynamic list section manages its own surface
   'dynamicListSection',
+  // FBC Auburn church library: the dated notice draws its own band (churchSections.ts)
+  'noticeSection',
 ]);
 
 /** _type strings for blocks that receive alternating surface assignment. */
@@ -59,6 +61,27 @@ export const CONTENT_TYPES = new Set([
   'sermonSeriesSection',
   'peopleSection',
   'downloadsSection',
+  // FBC Auburn church section library (churchSections.ts, 2026-10-18)
+  'serviceTimesSection',
+  'mapSection',
+  'beliefsSection',
+  'timelineSection',
+  'accordionSection',
+  'tabsSection',
+  'scriptureSection',
+  'countdownSection',
+  'givingSection',
+  'livestreamSection',
+  'eventsSection',
+  'newsletterSection',
+  'calendarSubscribeSection',
+  'progressSection',
+  'affiliationsSection',
+  'buttonRowSection',
+  'contactCardSection',
+  'columnsSection',
+  'photoSection',
+  'formSection',
 ]);
 
 export interface SectionBlock {

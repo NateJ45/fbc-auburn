@@ -1,0 +1,69 @@
+---
+// Safe to edit by hand
+// What we believe: each belief's heading and words, with its Bible references as links to the
+// passage (built from the reference, rule 15), and an optional link to the Baptist Faith and
+// Message 2000. Two across on a wide screen.
+import ChurchBand from './ChurchBand.astro';
+import { bibleGatewayUrl, splitReferences } from '@/lib/church-blocks';
+import type { ProjectedBeliefsSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedBeliefsSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const beliefs = (block.beliefs ?? []).filter((b) => b?.title);
+const Title = block.heading ? 'h3' : 'h2';
+const BFM_URL = 'https://bfm.sbc.net/bfm2000/';
+---
+
+{beliefs.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="What we believe"
+  >
+    <ul class="cb-grid cb-grid--2" role="list">
+      {beliefs.map((b) => {
+        const refs = splitReferences(b.references);
+        return (
+          <li class="cb-belief">
+            <Title class="cb-title">{b.title}</Title>
+            {b.text && <p>{b.text}</p>}
+            {refs.length > 0 && (
+              <ul class="cb-refs" role="list" aria-label={`Bible references for ${b.title}`}>
+                {refs.map((r) => (
+                  <li>
+                    <a
+                      class="cb-link"
+                      href={bibleGatewayUrl(r, block.translation)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {r}
+                      <span class="sr-only"> (opens BibleGateway in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+    {block.linkFaithAndMessage !== false && (
+      <p class="cb-small" style="margin-top: 2rem">
+        We hold to the{' '}
+        <a class="cb-link" href={BFM_URL} target="_blank" rel="noopener noreferrer">
+          Baptist Faith and Message 2000
+          <span class="sr-only"> (opens in a new tab)</span>
+        </a>
+        , the statement of faith Southern Baptist churches share.
+      </p>
+    )}
+  </ChurchBand>
+)}

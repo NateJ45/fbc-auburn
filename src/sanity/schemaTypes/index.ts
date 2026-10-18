@@ -9,6 +9,7 @@ import { ctaBlock } from './ctaBlock';
 import { faqCategory } from './faqCategory'; // scaffold: faq
 import { faqItem } from './faqItem'; // scaffold: faq
 import { faqPage } from './faqPage'; // scaffold: faq
+import { form } from './form';
 import { formQuestion } from './formQuestion';
 import { homePage } from './homePage';
 import { journalCategory } from './journalCategory'; // scaffold: journal
@@ -67,6 +68,8 @@ export const schemaTypes = [
   ...sermonSchemas,
   ...peopleSchemas,
   download,
+  // A form the church writes (the form builder); the Form block shows it.
+  form,
   // Custom pages built from the section library (multi-instance, not a singleton)
   page,
   // One saved section, kept for reuse on other pages. Not content: nothing

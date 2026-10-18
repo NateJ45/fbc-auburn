@@ -1,0 +1,65 @@
+---
+// Safe to edit by hand
+// The wider Baptist family: each group's logo (or its first letter on a soft tile), its name as a
+// link to its website, and a line about it. Three across on a wide screen.
+import ChurchBand from './ChurchBand.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import type { ProjectedAffiliationsSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedAffiliationsSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const items = (block.items ?? []).filter((i) => i?.name);
+const safe = (url?: string) => (url && /^https?:\/\//.test(url) ? url : undefined);
+---
+
+{items.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Our wider Baptist family"
+  >
+    <ul class="cb-grid cb-grid--3" role="list">
+      {items.map((i) => {
+        const href = safe(i.url);
+        return (
+          <li class="cb-card cb-partner">
+            <span class="cb-partner__logo" aria-hidden="true">
+              {i.logo?.asset ? (
+                <SanityImage source={i.logo} width={112} alt="" />
+              ) : (
+                (i.name ?? '?').charAt(0)
+              )}
+            </span>
+            <span>
+              {href ? (
+                <a
+                  class="cb-link cb-partner__name"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {i.name}
+                  <span class="sr-only"> (opens in a new tab)</span>
+                </a>
+              ) : (
+                <span class="cb-partner__name">{i.name}</span>
+              )}
+              {i.note && (
+                <span class="cb-small" style="display: block">
+                  {i.note}
+                </span>
+              )}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  </ChurchBand>
+)}

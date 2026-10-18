@@ -124,6 +124,11 @@ try {
   // block's design and would need the network. Answer them with a plain
   // stand-in panel so the shot is offline and deterministic but still reads as
   // a frame. Anything else off-site is refused.
+  // The Form block asks /api/form/ whether forms can be delivered and shows "email us instead"
+  // when the answer is no; a static server has no endpoint, so answer yes to picture the form.
+  await page.route('**/api/form/**', (route) =>
+    route.fulfill({ contentType: 'application/json', body: '{"ready":true}' }),
+  );
   await page.route(
     /youtube(-nocookie)?\.com\/embed|player\.vimeo\.com|embed\.example\.com/,
     (route) => route.fulfill({ contentType: 'text/html', body: STAND_IN }),

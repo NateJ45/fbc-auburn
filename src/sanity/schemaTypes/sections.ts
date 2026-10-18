@@ -31,6 +31,7 @@ import { iconCardsSection, stoneIconField, thisWeekSection, watchSection } from 
 // FBC Auburn collections (2026-10-18): latest sermon, series grid, people, downloads.
 import { collectionSectionSchemas } from './collectionSections';
 import { auburnSectionSchemas } from './auburnMotionSections';
+import { CHURCH_INSERT_GROUPS, churchSectionSchemas } from './churchSections';
 
 // Shared image field with required alt text (accessibility + SEO).
 const imageWithAlt = (name = 'image', title = 'Image') =>
@@ -726,6 +727,8 @@ export const pageSectionSchemas = [
   ...auburnSectionSchemas,
   // FBC Auburn: blocks fed by the sermons, people and downloads lists (collectionSections.ts)
   ...collectionSectionSchemas,
+  // FBC Auburn: the general church section library (churchSections.ts, 2026-10-18)
+  ...churchSectionSchemas,
 ];
 
 // The general blocks on their own. A saved section accepts these (plus the rich
@@ -769,12 +772,28 @@ export const sectionThumbnailUrl = (type: string): string | undefined =>
 // types are all absent from a given array simply does not appear, which is what
 // lets one config serve the curated per-page lists in richSections.ts. Any type
 // not named in a group falls under "All".
+/**
+ * Merge the church library's menu groups (churchSections.ts) into a list: a group
+ * that already exists gains the types, a new group is added at the end.
+ */
+function withChurchGroups<G extends { name: string; title: string; of: string[] }>(
+  groups: G[],
+): G[] {
+  const out = groups.map((g) => ({ ...g, of: [...g.of] }));
+  for (const extra of CHURCH_INSERT_GROUPS) {
+    const found = out.find((g) => g.name === extra.name);
+    if (found) found.of.push(...extra.of);
+    else out.push({ ...extra } as G);
+  }
+  return out;
+}
+
 export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
   filter: true,
   // Grid first, so the picker opens on pictures; the list view stays one click
   // away and keeps the search box (the authoring kit, card 109).
   views: [{ name: 'grid', previewImageUrl: sectionThumbnailUrl }, { name: 'list' }],
-  groups: [
+  groups: withChurchGroups([
     {
       name: 'basics',
       title: 'Basics',
@@ -830,7 +849,7 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'ctaBandSection',
       ],
     },
-  ],
+  ]),
 };
 
 /** The `options` block every pageBuilder array should carry. */

@@ -39,13 +39,25 @@ interface Props {
   newsletter: NewsletterConfig;
   /** Human-readable source label for tracking (e.g. "footer", "journal-index"). */
   source?: string;
+  /**
+   * Leave out the box's own heading and line, for a page block that draws its own above it
+   * (the church library's Newsletter sign-up block, 2026-10-18). Default: shown, as before.
+   */
+  hideHeading?: boolean;
+  /** Prefix for the field ids, so a block and the footer box can share a page. */
+  idPrefix?: string;
 }
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 const WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
 
-export default function NewsletterSignup({ newsletter, source = 'newsletter' }: Props) {
+export default function NewsletterSignup({
+  newsletter,
+  source = 'newsletter',
+  hideHeading = false,
+  idPrefix = 'newsletter',
+}: Props) {
   // Guard: render nothing when the feature is disabled or unconfigured.
   if (!newsletter?.enabled) return null;
   if (!newsletter.formActionUrl && !WEB3FORMS_KEY) return null;
@@ -116,8 +128,10 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
       {/* Brand accent stripe at the top — matches card grammar. */}
       <div className="mb-l h-0.5 bg-primary" aria-hidden="true"></div>
 
-      <h3 className="font-display text-h3 text-foreground">{heading}</h3>
-      {blurb && <p className="mt-s text-sm leading-relaxed text-foreground/80">{blurb}</p>}
+      {!hideHeading && <h3 className="font-display text-h3 text-foreground">{heading}</h3>}
+      {!hideHeading && blurb && (
+        <p className="mt-s text-sm leading-relaxed text-foreground/80">{blurb}</p>
+      )}
 
       <form
         onSubmit={onSubmit}
@@ -156,14 +170,14 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
 
         <div>
           <label
-            htmlFor="newsletter-email"
+            htmlFor={`${idPrefix}-email`}
             className="mb-1 block text-sm font-semibold text-foreground"
           >
             Email address
           </label>
           <input
             ref={emailRef}
-            id="newsletter-email"
+            id={`${idPrefix}-email`}
             name="email"
             type="email"
             required
@@ -174,13 +188,13 @@ export default function NewsletterSignup({ newsletter, source = 'newsletter' }: 
               if (errorMsg) setErrorMsg('');
             }}
             aria-invalid={!!errorMsg}
-            aria-describedby={errorMsg ? 'newsletter-email-error' : undefined}
+            aria-describedby={errorMsg ? `${idPrefix}-email-error` : undefined}
             placeholder="you@example.com"
             className="min-h-[44px] w-full rounded-md border border-input bg-background px-s py-s text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
           />
           {errorMsg && (
             <p
-              id="newsletter-email-error"
+              id={`${idPrefix}-email-error`}
               role="alert"
               aria-live="polite"
               className="mt-xs text-sm text-destructive"

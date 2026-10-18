@@ -1,0 +1,41 @@
+---
+// Safe to edit by hand
+// Fold-out questions typed inline (not the FAQ collection). Native <details>: opens with a tap or
+// the keyboard, works without JavaScript, and a browser's find-in-page opens the right answer.
+import ChurchBand from './ChurchBand.astro';
+import PortableText from '@/components/PortableText';
+import type { ProjectedAccordionSection } from '@/lib/churchBlocks.types';
+import type { PortableTextBlock } from '@portabletext/types';
+
+interface Props {
+  block: ProjectedAccordionSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const items = (block.items ?? []).filter((i) => i?.question);
+---
+
+{items.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Questions and answers"
+  >
+    <ul class="cb-accordion" role="list">
+      {items.map((i) => (
+        <li>
+          <details>
+            <summary>{i.question}</summary>
+            <div class="cb-accordion__answer">
+              <PortableText value={(i.answer ?? []) as PortableTextBlock[]} className="cb-prose" />
+            </div>
+          </details>
+        </li>
+      ))}
+    </ul>
+  </ChurchBand>
+)}

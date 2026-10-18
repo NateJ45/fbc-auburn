@@ -6,6 +6,7 @@ import { LinkIcon } from '@sanity/icons/Link';
 import { ChevronDownIcon } from '@sanity/icons/ChevronDown';
 import { ListIcon } from '@sanity/icons/List';
 import { churchFactsFields } from './churchFacts';
+import { formSettingsFields } from './form';
 
 export const siteSettings = defineType({
   name: 'siteSettings',
@@ -20,6 +21,7 @@ export const siteSettings = defineType({
     { name: 'visibility', title: 'Parts of the site' },
     { name: 'social', title: 'Social and footer' },
     { name: 'newsletter', title: 'Newsletter' },
+    { name: 'forms', title: 'Forms' },
   ],
   fields: [
     defineField({
@@ -743,6 +745,8 @@ export const siteSettings = defineType({
     }),
     // Church facts (address, service times, YouTube, calendar): ./churchFacts.ts.
     ...churchFactsFields,
+    // Forms (the form builder): who a form can go to, as names and codes only (./form.ts).
+    ...formSettingsFields,
   ],
   preview: {
     prepare: () => ({ title: 'Site settings' }),

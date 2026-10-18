@@ -1,0 +1,72 @@
+---
+// Safe to edit by hand
+// Contact details: phone, email, address and office hours in one card, every line from Site
+// settings > Church facts (rule 15), each with its "To confirm" tag until confirmed. Lines that are
+// not set are left out; with none at all the block draws nothing.
+import ChurchBand from './ChurchBand.astro';
+import ChurchAddress from '@/components/church/ChurchAddress.astro';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import type { ProjectedContactCardSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedContactCardSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const { phone, email, address, officeHours } = await getChurchFacts();
+const any = Boolean(phone || email || address || officeHours.length);
+---
+
+{any && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Contact details"
+  >
+    <div class="cb-card" style="max-width: 36rem">
+      <dl class="cb-contact">
+        {phone && (
+          <div>
+            <dt>Phone</dt>
+            <dd>
+              <a href={phone.tel}>{phone.display}</a>
+              <NotConfirmed confirmed={phone.confirmed} />
+            </dd>
+          </div>
+        )}
+        {email && (
+          <div>
+            <dt>Email</dt>
+            <dd>
+              <a href={email.href}>{email.display}</a>
+              <NotConfirmed confirmed={email.confirmed} />
+            </dd>
+          </div>
+        )}
+        {address && (
+          <div>
+            <dt>Address</dt>
+            <dd>
+              <ChurchAddress />
+            </dd>
+          </div>
+        )}
+        {officeHours.length > 0 && (
+          <div>
+            <dt>Office hours</dt>
+            <dd>
+              {officeHours.map((line) => (
+                <span style="display: block">{line}</span>
+              ))}
+            </dd>
+          </div>
+        )}
+      </dl>
+    </div>
+  </ChurchBand>
+)}

@@ -281,6 +281,30 @@ signed in to it yet. Signed in, in light and dark, check and screenshot:
 
 ---
 
+### 1h. Switch the form builder on (opened 2026-10-18)
+
+**Blocker: Cloudflare resources and secrets only Nathan should create, and Email Sending needs the
+church's domain on Cloudflare plus Workers Paid.**
+
+The form builder (Content > Forms, the Form section, `/api/form/`) is built and tested locally
+against a local D1 and a simulated email binding, but `wrangler.jsonc` binds neither, so on the
+live site every Form section shows "please email or call us instead". The six steps are in
+OPERATIONS.md, "Forms": create the D1 database, apply `migrations/` remotely, enable Email Sending,
+put `CONTACT_FROM`, `CONTACT_TO` and `FORM_RECIPIENTS` as secrets, uncomment the two bindings,
+deploy, send one labelled test and read `notified = 1` back. Close this when that row reads 1.
+
+Also open with it: the church names who forms go to (Site settings > Forms starts with "Church
+office" and "Pastor"), and the office hours in Church facts are empty until the church gives them.
+
+### 1i. Section library: the signed-in Studio click-through (opened 2026-10-18)
+
+The 21 new sections render on `/styleguide/sections/` (Playwright: `tests/church-blocks.spec.ts`)
+and the schema type-checks, but no one has added each from the "+ Add" menu in the signed-in Studio
+yet: check the grid pictures, the plain-English descriptions, the "Who receives it" picker on a form
+(it reads Site settings > Forms live), the prayer-form warning, and that a page with a notice or a
+countdown publishes and shows on the next build. The Sanity dataset needs no migration: every field
+is new and optional.
+
 ## Known gaps, deliberately open
 
 ### 2. `npm run parity compare` is not a CI step

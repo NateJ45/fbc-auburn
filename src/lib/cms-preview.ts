@@ -166,6 +166,18 @@ const NON_STEGA_FIELDS = new Set([
   'bibleVersion',
   'podcastCategory',
   'videoUrl',
+  // 2026-10-18, the church section library (churchSections.ts) and the form builder (form.ts).
+  // Dropdowns the blocks branch on, dates and keywords compared at build time, and links that
+  // become hrefs or player addresses. church-blocks.ts ALSO strips each one with plain(), because
+  // that code runs on the live site too, where this list does not exist.
+  'urgency',
+  'translation',
+  'recipient',
+  'startDate',
+  'endDate',
+  'asOf',
+  'keywords',
+  'signupUrl',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

@@ -13,6 +13,7 @@
 
 import type { PageCheckConfig } from '../lib/page-checks';
 import { RESERVED_SLUGS } from '../lib/reservedSlugs';
+import { CHURCH_SELF_FILLING } from './schemaTypes/churchSections';
 
 /**
  * Every document type that carries a page-builder array, and the field a new
@@ -52,6 +53,8 @@ const SELF_FILLING_SECTIONS = [
   // Holds no words of its own: they live in the saved section it shows
   // (the authoring kit, card 109). Nothing picked is its own warning.
   'syncedSection',
+  // FBC Auburn church library: blocks that fill themselves from Church facts or the calendar.
+  ...CHURCH_SELF_FILLING,
 ];
 
 export const PAGE_CHECK_CONFIG: PageCheckConfig = {

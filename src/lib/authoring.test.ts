@@ -60,6 +60,7 @@ const AUBURN_TYPES = [
   ...declaredTypes('auburnMotionSections.ts'),
   // The collection-fed blocks (latest sermon, series grid, people, downloads), 2026-10-18.
   ...declaredTypes('collectionSections.ts'),
+  ...declaredTypes('churchSections.ts'),
 ];
 
 describe('freshKeys', () => {

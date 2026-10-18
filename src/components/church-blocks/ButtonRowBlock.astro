@@ -1,0 +1,58 @@
+---
+// Safe to edit by hand
+// A row of two to six links: as outline buttons (the page's one red button stays the page's own
+// main action, so these are all the secondary family, rule 17), or as cards with a line of text.
+import ChurchBand from './ChurchBand.astro';
+import CtaLink from '@/components/CtaLink.astro';
+import { ctaHref } from '@/lib/cta-href';
+import { plain } from '@/lib/church-facts';
+import type { ProjectedButtonRowSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedButtonRowSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const links = (block.links ?? []).filter((l) => l?.link?.label);
+const cards = plain(block.layout) === 'cards';
+---
+
+{links.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Links"
+  >
+    {cards ? (
+      <ul class="cb-grid cb-grid--3" role="list">
+        {links.map((l) => {
+          const external = l.link?.linkType === 'external' || l.link?.openInNewTab;
+          return (
+            <li>
+              <a
+                class="cb-card cb-linkcard"
+                href={ctaHref(l.link)}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+              >
+                <span class="cb-linkcard__label">{l.link?.label}</span>
+                {l.note && <span class="cb-small">{l.note}</span>}
+                {external && <span class="sr-only"> (opens in a new tab)</span>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    ) : (
+      <div class="cb-actions" style="margin-top: 0">
+        {links.map((l) => (
+          <CtaLink cta={l.link} variant="secondary" />
+        ))}
+      </div>
+    )}
+  </ChurchBand>
+)}

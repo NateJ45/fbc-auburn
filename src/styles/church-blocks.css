@@ -1,0 +1,711 @@
+/* Safe to edit by hand
+   The church section library's look (src/components/church-blocks/, 2026-10-18), in Auburn's
+   design language: white ground, deep-sky Young Serif headings, hairline borders, 20px card
+   radius, the gold stepping stone as the one accent mark, and red only for the page's one main
+   button (and an urgent notice). Every colour is a token from globals.css or auburn.css, so the
+   forced-dark test suites still read it. The grid of a block never draws its own split: text and
+   pictures that sit side by side use the shared .split tokens (rule 17).
+   Everything is prefixed cb- so nothing here can reach another block. */
+
+/* ---- Band head: the heading and its intro line, one left edge with every other band ---- */
+.cb-head {
+  max-width: 44rem;
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+}
+.cb-intro {
+  margin-top: 0.8rem;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+.cb-intro:first-child {
+  margin-top: 0;
+}
+
+/* ---- Cards: the board's hairline card ---- */
+.cb-card {
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+.cb-card h3,
+.cb-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  line-height: 1.2;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 48rem) {
+  .cb-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cb-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 40rem) and (max-width: 47.99rem) {
+  .cb-grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.cb-link {
+  font-weight: 600;
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.cb-link:hover {
+  text-decoration-thickness: 2px;
+}
+.cb-link:focus-visible,
+.cb-card a:focus-visible,
+.cb-tab:focus-visible,
+.cb-accordion summary:focus-visible,
+.cb-play:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.cb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+.cb-small {
+  font-size: 0.95rem;
+  color: var(--muted-foreground);
+}
+.cb-prose p + p,
+.cb-prose ul,
+.cb-prose ol {
+  margin-top: 0.75rem;
+}
+.cb-prose ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.cb-prose ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+.cb-prose a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- Beliefs ---- */
+.cb-belief {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--border);
+}
+.cb-belief p {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+.cb-refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.95rem;
+}
+
+/* ---- Timeline: a rail of gold stones, year in the display face ---- */
+.cb-timeline {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 1.75rem;
+  list-style: none;
+}
+.cb-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  left: 0.45rem;
+  width: 2px;
+  background: var(--border);
+}
+.cb-moment {
+  position: relative;
+  padding-bottom: clamp(1.75rem, 4vw, 2.5rem);
+}
+.cb-moment:last-child {
+  padding-bottom: 0;
+}
+.cb-moment::before {
+  content: '';
+  position: absolute;
+  top: 0.45rem;
+  left: -1.75rem;
+  width: 0.95rem;
+  height: 0.75rem;
+  border-radius: 45% 55% 50% 50% / 60% 55% 45% 40%;
+  background: var(--auburn-gold);
+}
+.cb-moment__year {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-moment__title {
+  margin: 0.3rem 0 0.35rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+.cb-moment p {
+  margin: 0;
+  max-width: 40rem;
+  line-height: 1.6;
+}
+.cb-moment__photo {
+  max-width: 26rem;
+  margin-top: 0.9rem;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--muted);
+}
+.cb-moment__photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---- Fold-out questions ---- */
+.cb-accordion {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 48rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cb-accordion details {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--background);
+}
+.cb-accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 48px;
+  padding: 0.85rem 1.25rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--foreground);
+  cursor: pointer;
+  list-style: none;
+}
+.cb-accordion summary::-webkit-details-marker {
+  display: none;
+}
+.cb-accordion summary::after {
+  content: '+';
+  flex: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--link);
+}
+.cb-accordion details[open] summary::after {
+  content: '\2212';
+}
+.cb-accordion__answer {
+  padding: 0 1.25rem 1.1rem;
+  line-height: 1.6;
+  color: var(--foreground);
+}
+
+/* ---- Tabs ---- */
+.cb-tablist {
+  display: none;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.cb-tabs--js .cb-tablist {
+  display: flex;
+}
+.cb-tab {
+  min-height: 44px;
+  padding: 0.55rem 1.1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  background: var(--background);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.cb-tab[aria-selected='true'] {
+  border-color: var(--link);
+  background: var(--link);
+  color: var(--primary-foreground);
+}
+.cb-panel + .cb-panel {
+  margin-top: 1.5rem;
+}
+.cb-tabs--js .cb-panel + .cb-panel {
+  margin-top: 0;
+}
+.cb-tabs--js .cb-panel__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---- Bible verse ---- */
+.cb-verse {
+  max-width: 46rem;
+  margin: 0;
+}
+.cb-verse__text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.4vw, 2.2rem);
+  line-height: 1.35;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-verse__ref {
+  display: block;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* ---- Notice band: a strip between bands ---- */
+.cb-notice {
+  border-block: 1px solid var(--border);
+  background: var(--muted);
+}
+.cb-notice--urgent {
+  border-color: #e9b4a6;
+  background: #fbe9e4;
+}
+.cb-notice__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding-block: 1rem;
+}
+.cb-notice__tag {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--link);
+  color: var(--primary-foreground);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.cb-notice--urgent .cb-notice__tag {
+  background: #8f2c14;
+  color: #ffffff;
+}
+.cb-notice__message {
+  flex: 1 1 16rem;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--foreground);
+}
+.cb-notice--urgent .cb-notice__message {
+  color: #5e1d0d;
+}
+.cb-notice--urgent .cb-link {
+  color: #8f2c14;
+}
+
+/* ---- Countdown ---- */
+.cb-count {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+}
+.cb-count__days {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 12vw, 6.5rem);
+  line-height: 1;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-count__label {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+.cb-count__name {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.15;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-count__when {
+  margin-top: 0.75rem;
+}
+.cb-count__now {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--foreground);
+}
+
+/* ---- Live now tag ---- */
+.cb-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: #fbe9e4;
+  color: #8f2c14;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.cb-live::before {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+.cb-live[hidden] {
+  display: none;
+}
+.cb-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--muted);
+}
+.cb-player iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.cb-play {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--muted);
+  color: var(--foreground);
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cb-play__icon {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: var(--link);
+  color: var(--primary-foreground);
+}
+
+/* ---- Events ---- */
+.cb-events {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cb-event {
+  display: grid;
+  grid-template-columns: 4.25rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+.cb-event__date {
+  display: grid;
+  justify-items: center;
+  padding: 0.45rem 0;
+  border-radius: 12px;
+  background: var(--muted);
+  line-height: 1;
+}
+.cb-event__month {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+}
+.cb-event__day {
+  margin-top: 0.2rem;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-event__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+.cb-event__meta {
+  margin: 0.2rem 0 0;
+  color: var(--muted-foreground);
+}
+
+/* ---- Progress ---- */
+.cb-progress {
+  max-width: 46rem;
+}
+.cb-progress__numbers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 0.75rem;
+}
+.cb-progress__raised {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.05;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-progress__track {
+  height: 1.1rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--muted);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.cb-progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--link);
+}
+.cb-progress__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-top: 0.6rem;
+}
+
+/* ---- Affiliations and link cards ---- */
+.cb-partner {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+.cb-partner__logo {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--muted);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-partner__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.cb-partner__name {
+  font-weight: 700;
+  line-height: 1.3;
+}
+.cb-linkcard {
+  display: grid;
+  gap: 0.35rem;
+  height: 100%;
+  text-decoration: none;
+  transition: border-color 160ms ease;
+}
+.cb-linkcard:hover {
+  border-color: var(--link);
+}
+.cb-linkcard__label {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: var(--heading-solid, var(--foreground));
+}
+.cb-linkcard__label::after {
+  content: ' \2192';
+}
+
+/* ---- Contact details ---- */
+.cb-contact {
+  display: grid;
+  gap: 1.1rem;
+  margin: 0;
+}
+.cb-contact dt {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+}
+.cb-contact dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.1rem;
+}
+.cb-contact a {
+  color: var(--link);
+  font-weight: 600;
+}
+
+/* ---- One wide photo ---- */
+.cb-photo {
+  margin: 0;
+}
+.cb-photo__frame {
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--muted);
+}
+.cb-photo__frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.cb-photo figcaption {
+  margin-top: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* ---- Forms ---- */
+.cb-form {
+  display: grid;
+  gap: 1.1rem;
+  max-width: 40rem;
+}
+.cb-field {
+  display: grid;
+  gap: 0.35rem;
+}
+.cb-field label,
+.cb-field legend {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.cb-field input[type='text'],
+.cb-field input[type='email'],
+.cb-field input[type='tel'],
+.cb-field select,
+.cb-field textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--input, var(--border));
+  border-radius: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+}
+.cb-field textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+.cb-field input:focus-visible,
+.cb-field select:focus-visible,
+.cb-field textarea:focus-visible,
+.cb-check input:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+.cb-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  min-height: 44px;
+  font-weight: 500;
+}
+.cb-check input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2rem;
+  flex: none;
+}
+.cb-error {
+  margin: 0;
+  color: #8f2c14;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.cb-field[data-invalid] input,
+.cb-field[data-invalid] select,
+.cb-field[data-invalid] textarea {
+  border-color: #8f2c14;
+}
+.cb-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.cb-form-note {
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  background: var(--muted);
+  line-height: 1.55;
+}
+.cb-form button[type='submit'] {
+  justify-self: start;
+  cursor: pointer;
+  border: 0;
+}
+.cb-form button[type='submit'][disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
+.cb-form-done {
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--link);
+  border-radius: 16px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
