@@ -6,7 +6,6 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import SectionRenderer from '@/components/SectionRenderer.astro';
 import { getContactPage, getSiteSettings } from '@/lib/queries';
 import { breadcrumbSchema } from '@/lib/schemas';
-import { telHref } from '@/lib/phone';
 import { site } from '@/data/site';
 import { normalizeCustomFields } from '@/lib/custom-form-fields';
 import Hero from '@/components/Hero.astro';
@@ -16,6 +15,8 @@ import ContactForm from '@/components/ContactForm';
 import CopyEmailButton from '@/components/CopyEmailButton';
 import CalendlyInline from '@/components/CalendlyInline';
 import ChurchAddress from '@/components/church/ChurchAddress.astro';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
 import { Mail, Phone } from 'lucide-react';
 import PostInquiryRoadmap from '@/components/PostInquiryRoadmap.astro';
 
@@ -52,8 +53,9 @@ const schedulingLink = page?.schedulingLink;
 const schedulingLinkLabel = page?.schedulingLinkLabel ?? 'Book a time to talk.';
 
 const availability = page?.availabilityNote ?? siteSettings?.availabilityStatus;
-const email = siteSettings?.email;
-const phone = siteSettings?.phone;
+// The church's phone and email, from Site settings through Church facts (src/lib/church-facts.ts):
+// each is null until it is filled in, and carries its "To confirm" tag until confirmed.
+const { email, phone } = await getChurchFacts();
 
 // Satisfaction guarantee — renders near the form CTA when set in siteSettings.
 const satisfactionGuarantee = siteSettings?.satisfactionGuarantee;
@@ -116,7 +118,8 @@ const schemas = [
         <p class="mt-m flex flex-wrap items-center gap-xs text-sm text-foreground/75">
           <Mail size={14} aria-hidden="true" className="text-secondary" />
           <span>Prefer email? Reach us directly at</span>
-          <CopyEmailButton client:visible email={email} variant="link" />
+          <CopyEmailButton client:visible email={email.display} variant="link" />
+          <NotConfirmed confirmed={email.confirmed} />
         </p>
       )}
       {phone && (
@@ -124,11 +127,12 @@ const schemas = [
           <Phone size={14} aria-hidden="true" className="text-secondary" />
           <span>Or call</span>
           <a
-            href={telHref(phone)}
+            href={phone.tel}
             class="font-medium text-link underline underline-offset-2 hover:text-primary-dark"
           >
-            {phone}
+            {phone.display}
           </a>
+          <NotConfirmed confirmed={phone.confirmed} />
         </p>
       )}
 
@@ -182,7 +186,8 @@ const schemas = [
       {email && (
         <div>
           <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Email</p>
-          <CopyEmailButton client:visible email={email} variant="link" />
+          <CopyEmailButton client:visible email={email.display} variant="link" />
+          <NotConfirmed confirmed={email.confirmed} />
         </div>
       )}
 
@@ -190,12 +195,13 @@ const schemas = [
         <div>
           <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Call</p>
           <a
-            href={telHref(phone)}
+            href={phone.tel}
             class="inline-flex items-center gap-xs text-sm text-link transition-colors hover:text-primary-dark"
           >
             <Phone size={14} aria-hidden="true" />
-            {phone}
+            {phone.display}
           </a>
+          <NotConfirmed confirmed={phone.confirmed} />
         </div>
       )}
 

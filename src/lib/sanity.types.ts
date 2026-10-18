@@ -406,6 +406,8 @@ export type SiteSettings = {
     state?: string;
     zip?: string;
     findUs?: string;
+    lat?: number;
+    lng?: number;
     confirmed?: boolean;
   };
   serviceTimes?: Array<{
@@ -418,6 +420,9 @@ export type SiteSettings = {
     _key: string;
   }>;
   phoneConfirmed?: boolean;
+  emailConfirmed?: boolean;
+  givingUrl?: string;
+  liveStreamUrl?: string;
   foundedYear?: number;
   foundedConfirmed?: boolean;
   youtubeChannelId?: string;

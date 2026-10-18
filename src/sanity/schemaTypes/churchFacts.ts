@@ -1,8 +1,9 @@
 // Foundation, edit with care
 // The church's facts, held ONCE on the Site settings document (group "Church
 // facts") and derived everywhere else through src/lib/church-facts.ts:
-// address, service times, phone, founding year, the YouTube channel and the
-// Church Trac calendar feed. Kept in its own file and spread into
+// address, service times, the phone and email confirmations, founding year, the
+// YouTube channel, the Church Trac calendar feed, and the giving and live stream
+// links. Kept in its own file and spread into
 // siteSettings.ts so the shared settings schema carries a one-line change.
 //
 // THE `confirmed` FLAGS (schema convention, PORTS.md card 66). Every fact here
@@ -16,8 +17,9 @@
 // at build time from these inputs.
 //
 // RULE 8b. `day` is a dropdown that drives logic, and `time`,
-// `youtubeChannelId` and `churchTracIcalUrl` are parsed or fetched, so all
-// four are in NON_STEGA_FIELDS (src/lib/cms-preview.ts).
+// `youtubeChannelId`, `churchTracIcalUrl`, `givingUrl` and `liveStreamUrl` are
+// parsed, fetched or put in hrefs, so all six are in NON_STEGA_FIELDS
+// (src/lib/cms-preview.ts). `lat` and `lng` are numbers, which stega leaves alone.
 
 import { defineArrayMember, defineField } from 'sanity';
 import { ClockIcon } from '@sanity/icons/Clock';
@@ -69,6 +71,21 @@ export const churchFactsFields = [
         description:
           'One short sentence in your own words for someone driving out: which road, what is nearby, where to park. It shows in the footer under the address. Leave empty to hide it.',
         validation: (Rule) => Rule.max(140),
+      }),
+      defineField({
+        name: 'lat',
+        title: 'Map pin: latitude (optional)',
+        type: 'number',
+        description:
+          'Only if you want search engines to have the exact spot, like 39.4321. Leave empty and the address alone is used.',
+        validation: (Rule) => Rule.min(-90).max(90),
+      }),
+      defineField({
+        name: 'lng',
+        title: 'Map pin: longitude (optional)',
+        type: 'number',
+        description: 'Goes with the latitude above, like -84.5678.',
+        validation: (Rule) => Rule.min(-180).max(180),
       }),
       defineField({
         name: 'confirmed',
@@ -146,6 +163,25 @@ export const churchFactsFields = [
     ],
   }),
   confirmedField('phoneConfirmed', 'the phone number (Identity & contact)'),
+  confirmedField('emailConfirmed', 'the email address (Identity & contact)'),
+  defineField({
+    name: 'givingUrl',
+    title: 'Online giving link',
+    type: 'url',
+    group: 'church',
+    description:
+      'The page where people give online (from Church Trac or another giving service). When it is set, every "Give" link goes straight there. Leave empty and Give opens the site’s own page about giving on Sunday or by mail.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
+    name: 'liveStreamUrl',
+    title: 'Live stream link',
+    type: 'url',
+    group: 'church',
+    description:
+      'Where people watch on Sunday, like the church’s Facebook live videos page. Shown on Watch and in the footer. Leave empty to use the Facebook link from Social links.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
   defineField({
     name: 'foundedYear',
     title: 'Year founded',

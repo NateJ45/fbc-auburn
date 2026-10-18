@@ -1,0 +1,113 @@
+---
+// Safe to edit by hand
+// "Getting here" map card (visitor audit, 2026-10-18). A drawn map, not an embedded one: a soft
+// street grid with the stone map pin, the address from Site settings > Church facts, and two
+// buttons that open the address in Google Maps or Apple Maps. Nothing loads from a map service
+// and nothing tracks a visitor until they choose to click a button.
+//
+// SectionRenderer puts it under the rich-text band that gives the church's street address (the
+// "Getting here" band on Plan your visit), so it follows the words wherever an editor moves them.
+// Renders nothing when no address is set.
+import StoneIcon from '@/components/StoneIcon.astro';
+import NotConfirmed from './NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+
+const { address } = await getChurchFacts();
+---
+
+{address && (
+  <div class="church-map">
+    <div class="church-map__art" aria-hidden="true">
+      <StoneIcon name="map-pin" size={88} class="church-map__pin" />
+    </div>
+    <div class="church-map__body">
+      <address class="church-map__address">
+        {address.lines.map((line, i) => (
+          <span>
+            {line}
+            {i === address.lines.length - 1 && <NotConfirmed confirmed={address.confirmed} />}
+          </span>
+        ))}
+      </address>
+      <div class="church-map__actions">
+        <a
+          class="btn-auburn btn-auburn--secondary press-tactile"
+          href={address.mapsUrl}
+          target="_blank"
+          rel="noopener"
+        >
+          Open in Google Maps<span class="sr-only"> (opens in a new tab)</span>
+        </a>
+        <a
+          class="btn-auburn btn-auburn--secondary press-tactile"
+          href={address.appleMapsUrl}
+          target="_blank"
+          rel="noopener"
+        >
+          Apple Maps<span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .church-map {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 2rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--background);
+  }
+  @media (min-width: 40rem) {
+    .church-map {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+  }
+  /* A street grid drawn in CSS: two road widths over the plan ground, with the pin on top. */
+  .church-map__art {
+    display: grid;
+    place-items: center;
+    min-height: 180px;
+    background-color: #f3f6f9;
+    background-image:
+      linear-gradient(90deg, transparent 47%, #dce2ea 47%, #dce2ea 53%, transparent 53%),
+      linear-gradient(0deg, transparent 58%, #e6eaf0 58%, #e6eaf0 62%, transparent 62%),
+      linear-gradient(90deg, #e9edf2 1px, transparent 1px),
+      linear-gradient(0deg, #e9edf2 1px, transparent 1px);
+    background-size:
+      100% 100%,
+      100% 100%,
+      28px 28px,
+      28px 28px;
+  }
+  .church-map__art :global(.church-map__pin) {
+    width: 88px;
+    height: 88px;
+    filter: drop-shadow(0 10px 12px rgb(23 26 38 / 0.18));
+  }
+  .church-map__body {
+    display: grid;
+    align-content: center;
+    gap: 1.25rem;
+    padding: clamp(1.25rem, 4vw, 2rem);
+  }
+  .church-map__address {
+    display: grid;
+    gap: 0.15rem;
+    font-style: normal;
+    font-size: 1.1rem;
+    line-height: 1.45;
+    color: var(--foreground);
+  }
+  .church-map__address span:first-child {
+    font-weight: 700;
+  }
+  .church-map__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+</style>

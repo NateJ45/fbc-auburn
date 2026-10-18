@@ -212,3 +212,87 @@ test('sundayIcs: confirmed Sunday times only, weekly, from this Sunday', async (
   );
   assert.equal(none, null, 'no confirmed Sunday time, no calendar');
 });
+
+// ── Visitor audit (2026-10-18): email, Facebook, live stream, giving, the map pin ──
+
+test('email, Facebook, the live link and giving resolve, and stay null when empty', async () => {
+  const empty = resolveChurchFacts(null);
+  assert.equal(empty.email, null);
+  assert.equal(empty.facebookUrl, null);
+  assert.equal(empty.liveUrl, null);
+  assert.equal(empty.givingUrl, null);
+  assert.equal(empty.address?.geo, null);
+
+  const f = resolveChurchFacts({
+    ...SETTINGS,
+    email: 'office@example.org',
+    emailConfirmed: true,
+    socialLinks: [
+      { platform: 'Instagram', url: 'https://instagram.com/x' },
+      { platform: 'Facebook', url: 'https://www.facebook.com/fbcauburn' },
+    ],
+    givingUrl: 'https://give.example.org/fbc',
+    churchAddress: { ...SETTINGS.churchAddress, lat: 39.43, lng: -84.6 },
+  });
+  assert.deepEqual(f.email, {
+    display: 'office@example.org',
+    href: 'mailto:office@example.org',
+    confirmed: true,
+  });
+  assert.equal(f.facebookUrl, 'https://www.facebook.com/fbcauburn');
+  assert.equal(f.liveUrl, 'https://www.facebook.com/fbcauburn', 'live falls back to Facebook');
+  assert.equal(f.givingUrl, 'https://give.example.org/fbc');
+  assert.deepEqual(f.address?.geo, { lat: 39.43, lng: -84.6 });
+  assert.match(f.address?.appleMapsUrl ?? '', /^https:\/\/maps\.apple\.com\/\?q=1%20Main%20St/);
+
+  const live = resolveChurchFacts({
+    liveStreamUrl: 'https://www.facebook.com/fbcauburn/live',
+    socialFacebook: 'http://not-https.example',
+    email: 'not an email',
+  });
+  assert.equal(live.liveUrl, 'https://www.facebook.com/fbcauburn/live');
+  assert.equal(live.facebookUrl, null, 'only https addresses are linked');
+  assert.equal(live.email, null, 'a malformed email is not linked');
+});
+
+test('structured data adds the email and the map pin only once confirmed', async () => {
+  const { churchJsonLd } = await import('./church-facts.ts');
+  const raw = {
+    ...SETTINGS,
+    email: 'office@example.org',
+    churchAddress: { ...SETTINGS.churchAddress, lat: 39.43, lng: -84.6 },
+  };
+  const unconfirmedEmail = churchJsonLd(resolveChurchFacts(raw));
+  assert.equal(unconfirmedEmail.email, undefined);
+  assert.deepEqual(unconfirmedEmail.geo, {
+    '@type': 'GeoCoordinates',
+    latitude: 39.43,
+    longitude: -84.6,
+  });
+  const ld = churchJsonLd(resolveChurchFacts({ ...raw, emailConfirmed: true }));
+  assert.equal(ld.email, 'office@example.org');
+  const noAddress = churchJsonLd(
+    resolveChurchFacts({ ...raw, churchAddress: { ...raw.churchAddress, confirmed: false } }),
+  );
+  assert.equal(noAddress.geo, undefined, 'the pin goes with a confirmed address only');
+});
+
+test('earlierSundayLine names the gatherings before worship', async () => {
+  const { earlierSundayLine } = await import('./church-facts.ts');
+  assert.deepEqual(earlierSundayLine(resolveChurchFacts(SETTINGS)), {
+    text: 'Sunday School meets at 9:45 am, before worship at 11:00 am.',
+    confirmed: false,
+  });
+  assert.deepEqual(earlierSundayLine(resolveChurchFacts(null)), {
+    text: 'Sunday School for all ages meets at 9:45 am, before worship at 11:00 am.',
+    confirmed: false,
+  });
+  assert.equal(
+    earlierSundayLine(
+      resolveChurchFacts({
+        serviceTimes: [{ label: 'Worship', day: 'sunday', time: '11:00', confirmed: true }],
+      }),
+    ),
+    null,
+  );
+});

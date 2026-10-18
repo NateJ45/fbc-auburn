@@ -68,7 +68,9 @@ export function localBusinessSchema(settings: SiteSettings | null | undefined): 
     name: s.title ?? site.name,
     url: site.url,
     image: `${site.url}${site.assets.ogDefault}`,
-    email: s.email ?? undefined,
+    // The church's mark, square, as search engines want a logo (visitor audit, 2026-10-18).
+    logo: `${site.url}/icon-512.png`,
+    // The email joins below from churchJsonLd, and only once the church has confirmed it.
     // Merge legacy fields + socialLinks urls, deduplicating by url string.
     sameAs: Array.from(
       new Set(
@@ -112,9 +114,10 @@ export function localBusinessSchema(settings: SiteSettings | null | undefined): 
     schema.priceRange = '$$';
   }
 
-  // Church facts (src/lib/church-facts.ts): the full street address, the phone
-  // and the service times, each ONLY once the church has confirmed it, so search
-  // engines are never told a provisional fact. Replaces the city-only address.
+  // Church facts (src/lib/church-facts.ts): the full street address and its map
+  // pin, the phone, the email and the service times, each ONLY once the church
+  // has confirmed it, so search engines are never told a provisional fact.
+  // Replaces the city-only address. sameAs above already carries the social links.
   Object.assign(schema, churchJsonLd(resolveChurchFacts(s)));
   return JSON.stringify(schema);
 }

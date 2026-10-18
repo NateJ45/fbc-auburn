@@ -336,7 +336,16 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
+  }
+  /* One solid keyboard ring everywhere (WCAG 1.4.11, visitor audit 2026-10-18): --ring at full
+     strength, which is #235e93 on the light grounds (about 7:1) and #96c3ea inside the ink footer
+     and the night menu, which redefine it (src/styles/auburn.css). The old default was the same
+     blue at 50%, about 2.3:1, and near invisible on the navy menu. In the base layer, so a
+     component's own focus utilities still win. */
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
   }
   html {
     font-family: var(--font-body);

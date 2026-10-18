@@ -275,6 +275,13 @@ h6 {
   font-weight: 500;
   letter-spacing: 0;
 }
+/* A 32px tall target for each link (it was the 23px line box; WCAG 2.5.8 asks for 24px, visitor
+   audit 2026-10-18). The gold steps under it moved up by the same 4.5px, so they sit where they did. */
+.site-header .site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
 .site-header .btn-auburn {
   white-space: nowrap;
   min-height: 44px;
@@ -332,6 +339,14 @@ h6 {
 }
 .site-header[data-scrolled] .site-header__logo {
   height: 64px;
+}
+/* The narrowest phones (under 360px): a smaller lockup and a slimmer Menu pill, so "First
+   Baptist" no longer runs into the pill (6px apart at 320px; visitor audit, 2026-10-18). */
+@media (max-width: 22.49rem) {
+  .site-header__logo,
+  .site-header[data-scrolled] .site-header__logo {
+    height: 52px;
+  }
 }
 .site-header__brand {
   display: grid;
@@ -494,7 +509,7 @@ h6 {
 .site-header .site-nav a.nav-underline::after,
 .site-header .site-nav a.nav-underline[aria-current='page']::after {
   left: 50%;
-  bottom: -14px;
+  bottom: -9.5px;
   width: 34px;
   height: 11px;
   background: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 34 11%27%3E%3Crect x=%270%27 y=%275.5%27 width=%2710%27 height=%275%27 rx=%272.2%27 fill=%27%23E8A93A%27/%3E%3Crect x=%2712%27 y=%272.8%27 width=%279.5%27 height=%274.8%27 rx=%272.2%27 fill=%27%23E8A93A%27/%3E%3Crect x=%2723.5%27 y=%270%27 width=%279%27 height=%274.6%27 rx=%272.2%27 fill=%27%23E8A93A%27/%3E%3C/svg%3E')
@@ -549,6 +564,12 @@ h6 {
 .menu-pill:hover {
   background: var(--muted);
 }
+/* Under 360px the pill slims down beside the smaller lockup (see the header block above). */
+@media (max-width: 22.49rem) {
+  .menu-pill {
+    padding-inline: 0.8rem;
+  }
+}
 .menu-pill:focus-visible {
   outline: 3px solid var(--ring);
   outline-offset: 3px;
@@ -582,6 +603,8 @@ h6 {
   background: var(--menu-night);
   color: #ffffff;
   overflow-y: auto;
+  /* A light focus ring on the night ground (the close button and anything without its own). */
+  --ring: #96c3ea;
 }
 .auburn-menu > button {
   color: #ffffff;
@@ -957,6 +980,8 @@ h6 {
   --link: #ffffff;
   --primary: #96c3ea;
   --accent: #232838;
+  /* A light focus ring on ink (WCAG 1.4.11): about 9:1 here. */
+  --ring: #96c3ea;
   background: #171a26;
   color: #f3f6f9;
 }

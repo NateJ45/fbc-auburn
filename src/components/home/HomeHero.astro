@@ -4,7 +4,7 @@
 // "FIRST BAPTIST CHURCH OF" over a mosaic "Auburn"), then the lead row (the red welcome line, a
 // paragraph, one red button and a text link) beside the This Sunday card, then the stone path
 // running in from the left edge under the buttons and ending in red at the card's left
-// side (the card is the door). The place line ("Hamilton, Ohio") sits
+// side (the card is the door). The place line ("Hamilton, OH 45013") sits
 // top right of the masthead, from Church facts, so "Auburn" is never read as Alabama. On a
 // phone the mark is hidden (the header carries it), the card comes straight after the welcome
 // and its buttons (so the time and place are on the first screen), and a short strip of the path
@@ -52,11 +52,11 @@ const facts = await getChurchFacts();
 const barMinutes = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
 const barTimes = barMinutes.length ? `Sundays ${timesPhrase(barMinutes)}` : '';
 const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
-const STATES: Record<string, string> = { OH: 'Ohio' };
 const addr = facts.address;
-// The town and the state written out; the road is already in the header note and on the card
-// (the Home critic counted it three times above the fold).
-const place = addr ? [addr.city, STATES[addr.state] ?? addr.state].filter(Boolean).join(', ') : '';
+// The town, state and ZIP ("Hamilton, OH 45013"), worded as everywhere else (visitor audit,
+// 2026-10-18); the road is already in the header note and on the card (the Home critic counted it
+// three times above the fold).
+const place = addr ? addr.lines[1] : '';
 const secondary = block.secondaryCta;
 ---
 

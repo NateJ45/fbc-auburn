@@ -33,6 +33,7 @@
 
 import { navHref, resolveNavLinks, type RawNavLink, type ResolvedNavLink } from '@/lib/nav-href';
 import { getSectionVisibility, type SectionVisibility } from '@/lib/sectionVisibility';
+import { giveHref } from '@/lib/give';
 
 /** One header menu entry: a plain link, or a dropdown group of links. */
 export type NavItem =
@@ -76,6 +77,8 @@ export interface RawChromeSettings {
   showSocials?: boolean | null;
   showFooterSocials?: boolean | null;
   sectionVisibility?: Parameters<typeof getSectionVisibility>[0];
+  /** Church facts > Online giving link. */
+  givingUrl?: string | null;
 }
 
 export interface ResolvedChromeSettings {
@@ -183,19 +186,30 @@ function footerColumnsFromSettings(cols?: RawFooterColumn[] | null): FooterColum
 export function resolveSiteSettings(raw?: RawChromeSettings | null): ResolvedChromeSettings {
   const s = raw ?? {};
   const visible = getSectionVisibility(s.sectionVisibility);
+  const give = (href: string) => giveHref(href, s.givingUrl);
+  const giveLinks = <T extends { href: string }>(links: T[]): T[] =>
+    links.map((l) => ({ ...l, href: give(l.href) }));
+  const nav = navFromSettings(s.navItems) ?? fallbackNavItems(visible);
 
   return {
     logo: s.logo?.asset ? s.logo : undefined,
-    headerNav: navFromSettings(s.navItems) ?? fallbackNavItems(visible),
+    headerNav: nav.map((item) =>
+      item.kind === 'flat'
+        ? { ...item, href: give(item.href) }
+        : { ...item, items: giveLinks(item.items) },
+    ),
     headerCta: {
       show: onUnlessOff(s.headerCta?.show),
       label: clean(s.headerCta?.label) ?? FALLBACK_HEADER_CTA.label,
-      href: navHref(s.headerCta?.link) ?? FALLBACK_HEADER_CTA.href,
+      href: give(navHref(s.headerCta?.link) ?? FALLBACK_HEADER_CTA.href),
     },
     showEmail: onUnlessOff(s.showEmail),
     showSocials: onUnlessOff(s.showSocials),
-    footerColumns: footerColumnsFromSettings(s.footerColumns),
-    legalNav: resolveNavLinks(s.legalNav),
+    footerColumns: footerColumnsFromSettings(s.footerColumns).map((c) => ({
+      ...c,
+      links: giveLinks(c.links),
+    })),
+    legalNav: giveLinks(resolveNavLinks(s.legalNav)),
     showFooterSocials: onUnlessOff(s.showFooterSocials),
   };
 }
