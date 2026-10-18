@@ -1,0 +1,132 @@
+---
+// Foundation, edit with care
+//
+// THE LOOKS WALL: one page stacking the content blocks in every look an editor
+// can pick (src/lib/section-looks.ts, rule 9 as amended 2026-10-18), rendered
+// through the real SectionRenderer so the cadence resolves them exactly as it
+// would on a live page. FBC Auburn's looks: Standard (the white board), Feature
+// (the church blue) and Stone (the pale stepping-stone tiles), with a second Stone
+// in a row shown falling back to Standard.
+//
+// It is also the fixture tests/lightbox.spec.ts drives: a gallery with
+// captions, a second gallery on the Feature band, and nothing else that opens
+// the viewer. Fixed data, fake Sanity image references (the spec answers the
+// CDN with a local picture). noindex, out of the sitemap ('/styleguide' is
+// filtered in astro.config.mjs) and under a reserved slug, like the other walls.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
+import { site } from '@/data/site';
+
+const image = (alt: string, key: string, dims = '1600x1067') => ({
+  _type: 'image',
+  _key: key,
+  alt,
+  asset: {
+    _type: 'reference',
+    _ref: `image-0123456789abcdef0123456789abcdef01234567-${dims}-jpg`,
+  },
+});
+
+const para = (key: string, text: string) => ({
+  _type: 'block',
+  _key: key,
+  style: 'normal',
+  markDefs: [],
+  children: [{ _type: 'span', _key: `${key}-s`, marks: [], text }],
+});
+
+const SECTIONS: Record<string, unknown>[] = [
+  {
+    _type: 'heroSection',
+    _key: 'hero',
+    eyebrow: 'Styleguide',
+    headline: 'Section looks',
+    subhead: 'Standard, Feature and Stone, as the page rhythm resolves them.',
+    size: 'short',
+  },
+  {
+    _type: 'richTextSection',
+    _key: 'standard-text',
+    eyebrow: 'Standard',
+    heading: 'The plain white page',
+    body: [para('s1', 'Every section starts here. Most sections never need anything else.')],
+  },
+  {
+    _type: 'gallerySection',
+    _key: 'standard-gallery',
+    heading: 'A gallery on the plain page',
+    columns: 3,
+    images: [
+      { ...image('Volunteers setting out chairs', 'g1'), caption: 'Setting up on Saturday' },
+      { ...image('A table of food at the picnic', 'g2', '1200x1600'), caption: 'The picnic' },
+      image('The front steps in the snow', 'g3'),
+    ],
+  },
+  {
+    _type: 'quoteSection',
+    _key: 'feature-quote',
+    look: 'feature',
+    quote: 'The one thing on this page we most want you to remember.',
+    attribution: 'Feature look',
+    detail: 'The deep brand band',
+  },
+  {
+    _type: 'imageTextSection',
+    _key: 'standard-imagetext',
+    imageSide: 'left',
+    eyebrow: 'Standard',
+    heading: 'Back to the page after a Feature',
+    body: [para('i1', 'A Feature band sits outside the rhythm, so the page carries on as before.')],
+    image: image('A person reading by a window', 'it1'),
+  },
+  {
+    _type: 'richTextSection',
+    _key: 'stone-text',
+    look: 'stone',
+    eyebrow: 'Stone',
+    heading: 'A pale band of stepping stones',
+    body: [para('q1', 'A gentle way to set a section apart, with dark text.')],
+  },
+  {
+    _type: 'richTextSection',
+    _key: 'stone-twice',
+    look: 'stone',
+    heading: 'Asked for Stone, shown as Standard',
+    body: [para('a1', 'Two sections with the same look never sit side by side.')],
+  },
+  {
+    _type: 'gallerySection',
+    _key: 'feature-gallery',
+    look: 'feature',
+    heading: 'A gallery on the Feature band',
+    columns: 2,
+    images: [
+      { ...image('A choir singing', 'f1'), caption: 'Choir, Easter morning' },
+      image('Children painting stones', 'f2'),
+    ],
+  },
+  {
+    _type: 'quoteSection',
+    _key: 'stone-quote',
+    look: 'stone',
+    quote: 'The pale stones can sit right beside the church blue.',
+    attribution: 'Stone look',
+  },
+  {
+    _type: 'ctaBandSection',
+    _key: 'cta',
+    headline: 'The closing call to action',
+    subhead: 'The light close, with no photo.',
+    cta: { _type: 'ctaBlock', label: 'Get in touch', linkType: 'external', externalUrl: '#' },
+  },
+];
+---
+
+<BaseLayout
+  title={`Looks wall | ${site.name}`}
+  description="Fixed-data wall of the section looks. Not for visitors."
+  noindex
+>
+  <SectionRenderer sections={SECTIONS} idPrefix="looks" />
+</BaseLayout>

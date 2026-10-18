@@ -107,6 +107,9 @@ const NON_STEGA_FIELDS = new Set([
   'imageSide',
   'layout',
   'linkType',
+  // 2026-10-18: a content block's look (src/lib/section-looks.ts). The cadence
+  // compares it to 'feature' / 'stone'; an encoded value would render Standard.
+  'look',
   'navGroup',
   'platform',
   'size',

@@ -1,5 +1,18 @@
 # Change history
 
+_2026-10-18: section looks and a photo viewer (PORTS card 122)._
+
+**Decision.** Editors can pick a section's look instead of a colour. The five content blocks (text, image + text,
+gallery, quote, video) carry a `look` radio: Standard (the white board), Feature (the church blue with white text) and
+Stone (the pale stepping-stone tiles with dark text). There is no Quiet look here: the board is already white.
+SectionRenderer's cadence resolves the look with the neighbours in view, so two of the same look never touch and a
+Feature never touches a dark band; every surface is a measured AA pair (Stone measured on the darkest gap in the tile). Rule 9 now allows that
+one enum and still forbids free colour fields, and the gate test says so. Unset means Standard, so no page moved
+(parity). Gallery photos, the photo section and journal post photos now open a full-screen viewer (native `<dialog>`, no dependency):
+caption and position, arrows and swipe, Escape, a focus trap and focus return, reduced motion respected, and with
+JavaScript off each photo is a link to the full-size picture. A Squarespace-style free background picker was weighed
+and left out: it is how a site drifts.
+
 _2026-10-18: Studio brand polish._
 
 **What changed.** The stone icons fill their list tiles (inset 0 in brandIconArt.tsx; each file is already cropped to its art). The About page shows the church mark (aboutPage maps to the overview meaning, drawn with the full-colour mark). The Home banner strips draw the mark green run in a lighter #5E9B6B so it reads on navy; every other stone path keeps the mark six colours.

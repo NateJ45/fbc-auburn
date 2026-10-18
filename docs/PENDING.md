@@ -437,6 +437,19 @@ warning but "example text") and four templates rendered locally at 375 and 1280.
 
 ## Known gaps, deliberately open
 
+### 1q. Section looks and the photo viewer: the signed-in check (opened 2026-10-18)
+
+Built and verified on the built site (PORTS.md card 122): the looks wall `/styleguide/looks/`, the
+viewer's keyboard, focus and swipe tests, axe, and parity on the fallback build (no Sanity project in
+the worktree, so real pages were not compared). Still to do signed in:
+
+- Open a text block in the Studio, check the **Look** radio shows its three cards with their band
+  pictures, pick Feature and then Standard (Standard clears the field), and publish.
+- In the preview, pick Feature and Stone on a page and check the band changes without a reload
+  (`look` is in `NON_STEGA_FIELDS`).
+- On the live site, open a real gallery and a photo section on a phone: swipe, close, and check the
+  full-size photo is sharp.
+
 ### 2. `npm run parity compare` is not a CI step
 
 The baselines in `scripts/.parity/` are captured on a developer machine, and nobody in
