@@ -10,7 +10,6 @@ import Hero from '@/components/Hero.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import SermonPlayer from '@/components/collections/SermonPlayer.astro';
 import SermonRow from '@/components/collections/SermonRow.astro';
-import '@/styles/collections.css';
 import { getSiteSettings } from '@/lib/queries';
 import { getAllSermons, getSermonsPage } from '@/lib/collection-queries';
 import {
@@ -60,7 +59,7 @@ const ogImage = picture
       .quality(80)
       .format('webp')
       .url()
-  : video?.thumbnailUrl;
+  : (video?.thumbnailUrl ?? '/og/sermons.png');
 
 const title = s.title ?? 'Sermon';
 const description =

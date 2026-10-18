@@ -18,6 +18,7 @@ import { churchDataNow } from '@/lib/church-feeds';
 import { monthDay } from '@/lib/church-facts';
 import SermonArt from '@/components/collections/SermonArt.astro';
 import { sermonHref, watchSermon, type SermonDoc } from '@/lib/sermons';
+import { fixtureNewestSermon } from '@/lib/collection-queries';
 
 interface Props {
   eyebrow?: string;
@@ -51,7 +52,10 @@ const facebookLine = facebookUrl && facebookUrl !== liveUrl ? facebookUrl : null
 // (it names the card and goes to its page), then the YouTube replay (LastSunday), then the newest
 // sermon of any age as "Latest message", then the poster card or the "no video yet" line. With no
 // sermons at all the band is exactly what it was.
-const { fresh: sermonNow, latest: sermonAny } = watchSermon(latestSermon, churchDataNow());
+const { fresh: sermonNow, latest: sermonAny } = watchSermon(
+  latestSermon ?? (await fixtureNewestSermon()),
+  churchDataNow(),
+);
 const sermon = sermonNow ?? sermonAny;
 const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
 ---
@@ -95,64 +99,51 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
       )}
     </div>
     <div>
-      {sermonNow ? (
-        <a class="watch-sermon" href={sermonHref(sermon?.slug)}>
-          <SermonArt sermon={sermon} play width={760} sizes="(min-width: 54rem) 45vw, 100vw" />
-          <span class="watch-sermon__label">
-            {sermonLabel} ·{' '}
-            <time datetime={sermon?.date ?? undefined}>
-              {sermon?.date ? monthDay(sermon.date) : ''}
-            </time>
-          </span>
-          <span class="watch-sermon__title">{sermon?.title}</span>
-        </a>
-      ) : (
-        <LastSunday>
-          {sermon ? (
-            <a slot="fallback" class="watch-sermon" href={sermonHref(sermon?.slug)}>
-              <SermonArt sermon={sermon} play width={760} sizes="(min-width: 54rem) 45vw, 100vw" />
-              <span class="watch-sermon__label">
-                {sermonLabel} ·{' '}
-                <time datetime={sermon?.date ?? undefined}>
-                  {sermon?.date ? monthDay(sermon.date) : ''}
-                </time>
-              </span>
-              <span class="watch-sermon__title">{sermon?.title}</span>
-            </a>
-          ) : posterHref ? (
-            <a
-              slot="fallback"
-              class="watch-card"
-              href={posterHref}
-              target={newTab ? '_blank' : undefined}
-              rel={newTab ? 'noopener noreferrer' : undefined}
-            >
-              <SanityImage
-                source={poster}
-                width={760}
-                height={428}
-                alt=""
-                sizes="(min-width: 54rem) 45vw, 100vw"
-                quality={65}
-                class="watch-card__img"
-              />
-              <span class="watch-card__shade" aria-hidden="true"></span>
-              <span class="watch-card__play" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26">
-                  <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
-                </svg>
-              </span>
-              <span class="watch-card__label">Watch the latest message</span>
-            </a>
-          ) : (
-            fallback && (
-              <p slot="fallback" class="watch-band__fallback">
-                {fallback}
-              </p>
-            )
-          )}
-        </LastSunday>
-      )}
+      <LastSunday fallbackOnly={Boolean(sermonNow)}>
+        {sermon ? (
+          <a slot="fallback" class="watch-sermon" href={sermonHref(sermon?.slug)}>
+            <SermonArt sermon={sermon} play width={760} sizes="(min-width: 54rem) 45vw, 100vw" />
+            <span class="watch-sermon__label">
+              {sermonLabel} ·{' '}
+              <time datetime={sermon?.date ?? undefined}>
+                {sermon?.date ? monthDay(sermon.date) : ''}
+              </time>
+            </span>
+            <span class="watch-sermon__title">{sermon?.title}</span>
+          </a>
+        ) : posterHref ? (
+          <a
+            slot="fallback"
+            class="watch-card"
+            href={posterHref}
+            target={newTab ? '_blank' : undefined}
+            rel={newTab ? 'noopener noreferrer' : undefined}
+          >
+            <SanityImage
+              source={poster}
+              width={760}
+              height={428}
+              alt=""
+              sizes="(min-width: 54rem) 45vw, 100vw"
+              quality={65}
+              class="watch-card__img"
+            />
+            <span class="watch-card__shade" aria-hidden="true"></span>
+            <span class="watch-card__play" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26">
+                <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
+              </svg>
+            </span>
+            <span class="watch-card__label">Watch the latest message</span>
+          </a>
+        ) : (
+          fallback && (
+            <p slot="fallback" class="watch-band__fallback">
+              {fallback}
+            </p>
+          )
+        )}
+      </LastSunday>
     </div>
   </div>
 </section>

@@ -1416,12 +1416,11 @@ export type Sermon = {
     media?: unknown;
     _type: 'file';
   };
-  image?: {
+  picture?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    alt?: string;
     _type: 'image';
   };
 };

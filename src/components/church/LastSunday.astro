@@ -23,12 +23,17 @@ import { monthDay } from '@/lib/church-facts';
 interface Props {
   /** Show the "All messages on YouTube" link under the title. */
   showChannelLink?: boolean;
+  /**
+   * Skip the replay and draw the fallback slot (the Watch cards, 2026-10-18: a sermon preached
+   * in the last eight days names the card ahead of the YouTube video).
+   */
+  fallbackOnly?: boolean;
   class?: string;
 }
 
-const { showChannelLink = true, class: className = '' } = Astro.props;
+const { showChannelLink = true, fallbackOnly = false, class: className = '' } = Astro.props;
 const facts = await getChurchFacts();
-const video = await loadLatestVideo(facts);
+const video = fallbackOnly ? null : await loadLatestVideo(facts);
 const hasFallback = Astro.slots.has('fallback');
 ---
 

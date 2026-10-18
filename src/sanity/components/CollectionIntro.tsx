@@ -82,7 +82,7 @@ export function makeCollectionIntro(config: IntroConfig) {
     const [one, many] = config.noun;
     return (
       <Container width={1} padding={4}>
-        <Stack space={4}>
+        <Stack gap={4}>
           <Heading as="h2" size={2}>
             {config.title}
           </Heading>
@@ -92,7 +92,7 @@ export function makeCollectionIntro(config: IntroConfig) {
             </Text>
           ))}
           <Card padding={4} radius={3} tone={count === 0 ? 'primary' : 'transparent'} border>
-            <Stack space={4}>
+            <Stack gap={4}>
               <Text size={2} weight="semibold">
                 {count === null
                   ? 'Counting...'
@@ -117,7 +117,7 @@ export function makeCollectionIntro(config: IntroConfig) {
           </Card>
           {config.seedGroups && groups === 0 && (
             <Card padding={4} radius={3} border tone="caution">
-              <Stack space={3}>
+              <Stack gap={3}>
                 <Text size={2} weight="semibold">
                   There are no groups yet.
                 </Text>

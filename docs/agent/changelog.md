@@ -1,5 +1,34 @@
 # Change history
 
+_2026-10-18: sermons, people and downloads._
+
+**What changed.** Three collections the pastor keeps himself. **Sermons**: `sermon` (title, date,
+service, passage, preacher from the people list or a guest name, series, summary, video link,
+audio file, notes file, picture), `sermonSeries` and the `sermonsPage` singleton (page head,
+passage translation, podcast name, description, category, picture, Apple and Spotify links). Routes
+`/sermons/` (latest, every sermon with series, preacher and book filters and "Show more", series,
+podcast), `/sermons/<slug>/` (YouTube lite embed, Facebook link-out, audio player, BibleGateway
+link, notes, more in the series; VideoObject or CreativeWork JSON-LD), `/sermons/series/<slug>/`
+and `/sermons/podcast.xml` (RSS 2.0 + iTunes, only sermons with audio). The book, the passage
+link, a series' order, dates and count, and the podcast are derived at build time (rule 15,
+`src/lib/sermons.ts`, unit-tested including Apple's required tags). **People**: `person` and
+editable `personGroup` documents; the People block replaces "Staff and leaders" (`teamSection`,
+unused in the dataset, kept registered, offered nowhere). Email shows only when ticked, a
+missionary's place only when unticked; the GROQ leaves both out otherwise. **Downloads**:
+`download` (bulletin, newsletter, form, policy, other; expiry date) and `/bulletin/`, always the
+newest current bulletin. Four page-builder blocks (`collectionSections.ts`): Latest sermon,
+Sermon series grid, People, Downloads list, with thumbnails, in the Media and About the church
+groups. The home "Last Sunday" card and the Watch band now name a sermon preached in the last eight
+days first, then the YouTube replay, then the hand-typed message, then the newest sermon of any age,
+then their own words; with no sermons both render exactly as before (parity 17/18, the 18th being
+the sections wall). Studio: Sermons, People and Downloads headings, each opening on a "Start here"
+pane (`CollectionIntro.tsx`; People offers to add the usual five groups), a Home quick action
+"Add Sunday's sermon" (date = the Sunday just gone, preacher = the person whose role says Pastor),
+two This week tasks, two Checkup rules, five Site Guide entries. Local example data:
+`COLLECTIONS_FIXTURE=1` builds from `tests/fixtures/collections.json`; nothing was written to the
+dataset. The collection styles ride in the site stylesheet (`collections.css`, imported by
+`auburn.css`), so no page gains a stylesheet request.
+
 _2026-10-18: share images in the church's brand._
 
 **What changed.** The share (Open Graph) cards were navy text in a thin frame on white, the

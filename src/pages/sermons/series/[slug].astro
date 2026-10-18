@@ -7,7 +7,6 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/Hero.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import SermonRow from '@/components/collections/SermonRow.astro';
-import '@/styles/collections.css';
 import { getSiteSettings } from '@/lib/queries';
 import { getAllSeries, getAllSermons } from '@/lib/collection-queries';
 import { seriesSpan, sortSermons } from '@/lib/sermons';
@@ -50,7 +49,14 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={art ?? undefined}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={art ?? undefined}
+  ogImage={art ? undefined : '/og/sermons.png'}
+>
   <Hero
     eyebrow="Sermon series"
     headline={series.title ?? 'Sermon series'}

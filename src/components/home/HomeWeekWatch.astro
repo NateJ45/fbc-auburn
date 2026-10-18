@@ -22,6 +22,7 @@ import type {
   SanityImageObject,
 } from '@/lib/pageBuilder.types';
 import { sermonHref, sermonVideo, watchSermon } from '@/lib/sermons';
+import { fixtureNewestSermon } from '@/lib/collection-queries';
 
 interface Props {
   week?: ProjectedThisWeekSection | null;
@@ -88,7 +89,10 @@ const watchHref =
 //   4. the newest sermon of any age, labelled "Latest message";
 //   5. the block's own words and poster.
 // With no sermons at all, 2, 3 and 5 are exactly what the card did before.
-const { fresh: sermonNow, latest: sermonAny } = watchSermon(watch?.latestSermon, now);
+const { fresh: sermonNow, latest: sermonAny } = watchSermon(
+  watch?.latestSermon ?? (watch ? await fixtureNewestSermon() : null),
+  now,
+);
 const sermon = sermonNow ?? (fresh ? null : sermonAny);
 const sermonPic = [sermon?.image, sermon?.series?.art].find(
   (img) => (img as { asset?: unknown } | null | undefined)?.asset,
@@ -109,8 +113,6 @@ const cardSub = sermon
     ? [lm?.passage, lmDate].filter(Boolean).join(' · ')
     : watch?.body;
 const CardTag = cardHref ? 'a' : 'div';
-// A fresh sermon takes the card outright; otherwise the card is LastSunday's fallback.
-const Outer = sermonNow ? Fragment : LastSunday;
 ---
 
 <section class="hb-section" aria-labelledby={headingId}>
@@ -167,9 +169,9 @@ const Outer = sermonNow ? Fragment : LastSunday;
       {watch && (
         <div>
           <h2 id={week ? undefined : headingId}>{watchHeading}</h2>
-          <Outer {...(sermonNow ? {} : { showChannelLink: false })}>
+          <LastSunday showChannelLink={false} fallbackOnly={Boolean(sermonNow)}>
             <CardTag
-              slot={sermonNow ? undefined : 'fallback'}
+              slot="fallback"
               class:list={['hb-watch', cardHref && 'hb-lift']}
               href={cardHref}
               data-live-href={cardHref && facts.liveUrl ? facts.liveUrl : undefined}
@@ -211,7 +213,7 @@ const Outer = sermonNow ? Fragment : LastSunday;
                 </span>
               </span>
             </CardTag>
-          </Outer>
+          </LastSunday>
         </div>
       )}
     </div>

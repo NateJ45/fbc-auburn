@@ -116,3 +116,13 @@ export async function getBulletins(): Promise<DownloadDoc[]> {
   );
   return Array.isArray(list) ? list : [];
 }
+
+/**
+ * The fixture's newest sermon, for the Watch card when COLLECTIONS_FIXTURE is
+ * set (the card's sermon normally arrives inside the page's GROQ, which the
+ * fixture cannot reach). Null in every real build.
+ */
+export async function fixtureNewestSermon(): Promise<SermonDoc | null> {
+  const f = await fixture();
+  return f ? (f.sermons[0] ?? null) : null;
+}

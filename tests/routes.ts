@@ -27,6 +27,11 @@ export const routes: string[] = [
   '/privacy/',
   // A Studio page (page document, slug plan-your-visit) carrying the Walk in with us block.
   '/plan-your-visit/',
+  // The sermon archive and the newest-bulletin shortcut (2026-10-18). Both build with no Sanity
+  // project and with an empty dataset, when they show their friendly empty lines
+  // (tests/collections.spec.ts). /sermons/<slug>/ and /sermons/series/<slug>/ are dynamic.
+  '/sermons/',
+  '/bulletin/',
 ];
 
 /**

@@ -1,7 +1,7 @@
 /* Safe to edit by hand.
    The sermon archive, the people list and the downloads shelf (FBC Auburn, 2026-10-18).
-   Imported by the components in src/components/collections/, so it ships only on pages that
-   show one of them. Board E's grammar (src/styles/board.css, rule 17): one left edge, headings
+   Imported by auburn.css, so it rides in the site's one stylesheet: the blocks can sit on any
+   page, and a separate file would be one more request on every page that uses SectionRenderer. Board E's grammar (src/styles/board.css, rule 17): one left edge, headings
    in the deep-sky everyday colour, dates as display numerals, 14px picture corners like the
    icon cards, the site's own buttons, and the three stepping stones as the placeholder for a
    missing picture. Colours read the theme tokens, light only for visitors (rule 3). */
@@ -28,6 +28,8 @@
 .c-link {
   color: var(--link);
   font-weight: 600;
+  /* A web address (the podcast feed) wraps rather than pushing the page sideways at 320px. */
+  overflow-wrap: anywhere;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -105,6 +107,26 @@ a:focus-visible > .c-art .c-art__play,
   .c-art__play {
     transition: none;
   }
+}
+
+/* ---- The Latest sermon block's title ------------------------------------------------------ */
+.c-latest__h {
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+}
+.c-latest__title {
+  color: inherit;
+  text-decoration: none;
+}
+.c-latest__title:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.c-latest__title:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+.c-latest__all {
+  align-self: center;
 }
 
 /* ---- Sermon rows (the archive) ------------------------------------------------------------- */

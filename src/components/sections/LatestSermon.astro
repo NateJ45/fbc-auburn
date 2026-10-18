@@ -5,7 +5,6 @@
 // sermon's page where it plays. The passage links to BibleGateway, worked out from what was typed
 // (rule 15). A content block: the surface comes from the cadence. With no sermons yet, one
 // friendly line and a link to the Watch page.
-import '@/styles/collections.css';
 import SermonArt from '@/components/collections/SermonArt.astro';
 import { surfaceClass } from '@/lib/surfaces';
 import { bibleGatewayUrl, longDate, preacherName, sermonHref, type SermonDoc } from '@/lib/sermons';
@@ -89,24 +88,3 @@ const after = [who, longDate(s?.date)].filter(Boolean).join(' · ');
     )}
   </div>
 </section>
-
-<style>
-  .c-latest__h {
-    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
-  }
-  .c-latest__title {
-    color: inherit;
-    text-decoration: none;
-  }
-  .c-latest__title:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .c-latest__title:focus-visible {
-    outline: 3px solid var(--ring);
-    outline-offset: 3px;
-  }
-  .c-latest__all {
-    align-self: center;
-  }
-</style>
