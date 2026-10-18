@@ -14,9 +14,16 @@
 
 import type { KitConfig } from './kit/types';
 import { genericRules, unconfirmedRule, plural, type CheckupRule } from '../lib/studio-checkup';
-import { guides, GUIDE_CATEGORIES } from './guides/content';
+import { guides, GUIDE_CATEGORIES, GUIDES_FOR_TYPE } from './guides/content';
 import { makeGuideView } from './components/GuideView';
 import { envVal } from './urls';
+import type { PageRules } from '../lib/page-guardrails';
+import { AddDocumentIcon } from '@sanity/icons/AddDocument';
+import { ClockIcon } from '@sanity/icons/Clock';
+import { MenuIcon } from '@sanity/icons/Menu';
+import { PlayIcon } from '@sanity/icons/Play';
+import { runPageCheck } from './actions/checkPage';
+import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
 
 const PUBLISHED = '!(_id in path("drafts.**"))';
 
@@ -129,7 +136,43 @@ export const kitConfig: KitConfig = {
     guides,
     categories: GUIDE_CATEGORIES,
     view: makeGuideView,
+    // "Help for this page" (card 110): which guides each document type shows.
+    forType: GUIDES_FOR_TYPE,
   },
+
+  // Home's big buttons (card 110): the pastor's most common jobs, as intent
+  // links. Keep it to four. FBC Auburn (2026-10-18): Sunday's message, the
+  // service times, a new page and the menus.
+  quickActions: [
+    {
+      title: "Name last Sunday's message",
+      detail: 'Home, then the Watch section: the title, the passage and the video link.',
+      target: { doc: 'homePage', field: 'pageBuilder' },
+      icon: PlayIcon,
+    },
+    {
+      title: 'Change the service times',
+      detail: 'Church facts. Every page that shows a time reads it from here.',
+      target: { doc: 'siteSettings', field: 'serviceTimes' },
+      icon: ClockIcon,
+    },
+    {
+      title: 'Add a page',
+      detail: 'Press + and pick Ministry, Event, Sermon series or a simple page.',
+      target: { pane: 'pages;page' },
+      icon: AddDocumentIcon,
+    },
+    {
+      title: 'Edit the menus',
+      detail: 'The top menu, the header button and the footer links.',
+      target: { doc: 'siteSettings', field: 'navItems' },
+      icon: MenuIcon,
+    },
+  ],
+
+  // The page check inside "Help for this page" (card 110): the same three
+  // checks as the "Check this page..." action, on the page-builder types.
+  pageCheck: { types: [...PAGE_BUILDER_TYPES], run: (doc, client) => runPageCheck(client, doc) },
 
   tourSteps: [
     {
@@ -166,5 +209,28 @@ export const kitConfig: KitConfig = {
     // GA4 (decided 2026-10-17) needs the analytics route and a property; until
     // then the Home card says "not set up yet".
     visitors: false,
+    // Card 110: the status line under the top bar, and the help panel.
+    navbarStatus: true,
+    helpPanel: true,
   },
+};
+
+/**
+ * The site's own page-builder rules (the authoring kit, PORTS.md card 109).
+ * Each one shows as a yellow WARNING beside a page's sections, never an error,
+ * so nothing here can stop Publish or break content that is already live. The
+ * built-in warnings (empty sections, leftover template example text, a synced
+ * section with nothing picked) apply everywhere whatever this says. Logic and
+ * tests: src/lib/page-guardrails.ts.
+ *
+ * The starter's defaults suit a custom page: open with a hero, one hero only,
+ * and a nudge past twenty sections. A fork tunes these, or empties them.
+ */
+export const pageRules: PageRules = {
+  // Document types the rules below apply to ('page' is a Custom page). The
+  // built-in pages often open with something else on purpose, so they are off.
+  appliesTo: ['page'],
+  mustStartWith: ['heroSection'],
+  atMostOnce: ['heroSection'],
+  maxSections: 20,
 };

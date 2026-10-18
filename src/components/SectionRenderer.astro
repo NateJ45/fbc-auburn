@@ -35,6 +35,7 @@ import WalkSection from '@/components/sections/WalkSection.astro';
 import SectionDivider from '@/components/SectionDivider.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import { classifySections } from '@/lib/sectionCadence';
+import { expandSyncedSections } from '@/lib/authoring';
 import type { PageBuilderBlock } from '@/lib/pageBuilder.types';
 import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
 
@@ -58,7 +59,13 @@ interface Props {
 }
 
 const { sections = [], idPrefix = 'section', editDoc } = Astro.props as Props;
-const rows = classifySections<PageBuilderBlock>(sections as PageBuilderBlock[], idPrefix);
+// Synced sections (the authoring kit, PORTS.md card 109) are swapped for the
+// sections their saved copy holds BEFORE the cadence runs, so a synced band
+// takes its place in the alternating rhythm like any typed-in band (rule 9).
+const rows = classifySections<PageBuilderBlock>(
+  expandSyncedSections(sections as PageBuilderBlock[]),
+  idPrefix,
+);
 
 // FBC Auburn, board E on the inner pages (2026-10-17). Every section after the hero opens with a
 // rule of three stepping stones and a hairline (BoardRule), which replaced the gold-stone divider
@@ -81,13 +88,19 @@ const ruled = rows.map(({ block }) => !UNRULED.has(block._type));
 const Wrap = editDoc ? 'div' : Fragment;
 const wrapAttrs = (key: string | undefined) =>
   editDoc && key ? { 'data-sanity': sectionEditAttr(editDoc, key) } : {};
+// A section that came out of a synced section is not in the page itself; its
+// in-canvas controls act on the synced block it came from, which is.
+const editKeyOf = (block: unknown) => {
+  const b = block as { _key?: string; _editKey?: string };
+  return b._editKey ?? b._key;
+};
 ---
 
 {rows.map(({ block: s, surface, headingId }, rowIndex) => (
   <>
     {ruled[rowIndex] && <BoardRule />}
 
-    <Wrap {...wrapAttrs((s as { _key?: string })._key)}>
+    <Wrap {...wrapAttrs(editKeyOf(s))}>
       {s._type === 'heroSection' ? (
         <Hero
           eyebrow={s.eyebrow}

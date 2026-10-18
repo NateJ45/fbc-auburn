@@ -59,88 +59,6 @@ export type Redirect = {
   note?: string;
 };
 
-export type SectionPreset = {
-  _id: string;
-  _type: 'sectionPreset';
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  sectionType?: string;
-  section?: Array<
-    | ({
-        _key: string;
-      } & HeroSection)
-    | ({
-        _key: string;
-      } & RichTextSection)
-    | ({
-        _key: string;
-      } & ImageTextSection)
-    | ({
-        _key: string;
-      } & GallerySection)
-    | ({
-        _key: string;
-      } & QuoteSection)
-    | ({
-        _key: string;
-      } & StatSection)
-    | ({
-        _key: string;
-      } & CtaBandSection)
-    | ({
-        _key: string;
-      } & VideoSection)
-    | ({
-        _key: string;
-      } & SpacerSection)
-    | ({
-        _key: string;
-      } & LogoStripSection)
-    | ({
-        _key: string;
-      } & EmbedSection)
-    | ({
-        _key: string;
-      } & IconCardsSection)
-    | ({
-        _key: string;
-      } & ThisWeekSection)
-    | ({
-        _key: string;
-      } & WatchSection)
-    | ({
-        _key: string;
-      } & StepsRailSection)
-    | ({
-        _key: string;
-      } & WalkSection)
-    | ({
-        _key: string;
-      } & FounderSection)
-    | ({
-        _key: string;
-      } & StorySection)
-    | ({
-        _key: string;
-      } & ServiceAreaSection)
-    | ({
-        _key: string;
-      } & GuaranteeSection)
-    | ({
-        _key: string;
-      } & FaqSection)
-    | ({
-        _key: string;
-      } & TeamSection)
-    | ({
-        _key: string;
-      } & DynamicListSection)
-  >;
-  note?: string;
-};
-
 export type JournalCategory = {
   _id: string;
   _type: 'journalCategory';
@@ -772,6 +690,100 @@ export type FounderSection = {
   cta?: CtaBlock;
 };
 
+export type SectionPresetReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sectionPreset';
+};
+
+export type SyncedSection = {
+  _type: 'syncedSection';
+  preset?: SectionPresetReference;
+};
+
+export type SectionPreset = {
+  _id: string;
+  _type: 'sectionPreset';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  sectionType?: string;
+  section?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & LogoStripSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
+      } & FounderSection)
+    | ({
+        _key: string;
+      } & StorySection)
+    | ({
+        _key: string;
+      } & ServiceAreaSection)
+    | ({
+        _key: string;
+      } & GuaranteeSection)
+    | ({
+        _key: string;
+      } & FaqSection)
+    | ({
+        _key: string;
+      } & TeamSection)
+    | ({
+        _key: string;
+      } & DynamicListSection)
+  >;
+  note?: string;
+};
+
 export type WalkSection = {
   _type: 'walkSection';
   heading?: string;
@@ -1185,6 +1197,9 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & WalkSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
 };
 
@@ -1245,6 +1260,9 @@ export type Page = {
     | ({
         _key: string;
       } & WalkSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
     | ({
         _key: string;
       } & FaqSection)
@@ -1542,6 +1560,9 @@ export type JournalPage = {
     | ({
         _key: string;
       } & WalkSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
 };
 
@@ -1660,6 +1681,9 @@ export type ContactPage = {
     | ({
         _key: string;
       } & WalkSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
 };
 
@@ -1755,6 +1779,9 @@ export type FaqPage = {
     | ({
         _key: string;
       } & WalkSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
   >;
 };
 
@@ -1813,6 +1840,9 @@ export type AboutPage = {
     | ({
         _key: string;
       } & WalkSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
     | ({
         _key: string;
       } & StorySection)
@@ -1983,6 +2013,9 @@ export type HomePage = {
     | ({
         _key: string;
       } & WalkSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
     | ({
         _key: string;
       } & FounderSection)
@@ -2232,7 +2265,6 @@ export type AllSanitySchemaTypes =
   | LastMessage
   | Photo
   | Redirect
-  | SectionPreset
   | JournalCategory
   | Slug
   | FaqCategoryReference
@@ -2264,6 +2296,9 @@ export type AllSanitySchemaTypes =
   | ServiceAreaSection
   | StorySection
   | FounderSection
+  | SectionPresetReference
+  | SyncedSection
+  | SectionPreset
   | WalkSection
   | StepsRailSection
   | WatchSection

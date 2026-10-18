@@ -4,6 +4,7 @@
 
 import { defineType, defineField } from 'sanity';
 import { additionalSectionsField } from './sections';
+import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 
 export const journalPage = defineType({
   name: 'journalPage',
@@ -145,7 +146,8 @@ export const journalPage = defineType({
     }),
     // FBC Auburn (2026-10-18): an append zone, so the pastor can add a photo, a callout or
     // anything from the section library to this page himself.
-    additionalSectionsField,
+    // The authoring kit (card 109): Insert a saved section, plus gentle warnings.
+    defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
   ],
   preview: { prepare: () => ({ title: 'Journal Page' }) },
 });

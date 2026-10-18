@@ -215,6 +215,31 @@ and the tour, checked signed in at `/studio` in light and dark. Still to do:
 - **The signed-in Studio at 375px**: the Home grid drops to one column by design, but the desktop browser used for
   the check could not be narrowed.
 
+### 1f. Authoring kit and branded Studio: the signed-in click-through (opened 2026-10-18)
+
+**Blocker: the pastor's Sanity login (1e), then about 20 minutes with him or Nathan signed in.** PORTS.md cards
+109 and 110 landed together on branch `feat/authoring-kit`: page templates (Simple page, Ministry, Event, Sermon
+series, Blank page), the picture grid in "+ Add item" (thumbnails shot in Auburn's brand), saved sections that hold
+several sections and go in as a copy or synced, page-builder warnings, the Studio's name, stone mark and navy accent,
+the status line under the top bar, "Help for this page" and Home's quick actions. Checked so far: types, build, unit
+tests (the colour gate included), and the `/studio` login screen in light and dark with a clean console. Nobody has
+signed in to it yet. Signed in, in light and dark, check and screenshot:
+
+- Make a page from each template under Pages, then Custom pages. Every "Example:" line shows a yellow warning until
+  it is replaced; nothing blocks Publish.
+- "+ Add item" opens on the picture grid, Auburn's blocks included; the list view and search still work. Do the same
+  from the in-canvas insert menu in Live preview.
+- Save a section, add two more to it under Pages, then Saved sections, publish it, and insert it on a page as a copy
+  and as synced; change the saved section and check the synced page follows after a rebuild. Try it in an Extra
+  sections zone (Contact, FAQ, News and notes, Privacy) too.
+- Home: the greeting, and each of the four quick actions opens the right place ("Name last Sunday's message" lands
+  on the home page's sections, "Change the service times" on Church facts, "Add a page" on Custom pages, "Edit the
+  menus" on the Navigation tab). Fix any target that lands wrong in `kit.config.ts`.
+- The status line under the top bar (needs the deployed `/build-info.json`), "Help for this page" on the home page,
+  Site settings and a custom page, and the amber "Shown on every page" in Live preview on Site settings.
+- Primary buttons, links, focus rings and the selected desk row are navy; Publish is still green.
+- Read the console on every screen. Close this item when it is clean.
+
 ## Known gaps, deliberately open
 
 ### 2. `npm run parity compare` is not a CI step
