@@ -12,7 +12,7 @@
 - Open Graph + Twitter meta -- set in BaseLayout. The OG image resolves in priority order: (1) the `ogImage` prop a page passes (detail pages pass their real hero/cover photo, served from cdn.sanity.io); (2) the page singleton's `seoImage` field -- a per-page override set in the page's SEO section in Studio; (3) `siteSettings.seoImage` -- the site-wide default social image; (4) the auto-generated branded card at `/og/<route>.png` (from `npm run og:pages`); (5) `og-default.png`. Sanity images (2 and 3) run through `urlFor().width(1200).height(630).fit('crop')` via the `ogUrlFromImage` helper. BaseLayout also emits `og:locale`, `og:image:alt`, and a theme-aware `theme-color`.
 - `<html lang="en">`. Update this if the site ships in another language.
 
-**OG regeneration is a per-project step.** The `og-default.png` committed in the starter is a placeholder. Run `npm run og` after updating the brand inputs in `scripts/generate-og-default.mjs` (brand colors, tagline, wordmark) to regenerate it for the actual project.
+**OG regeneration.** Auburn draws its own cards (`scripts/lib/og-card.mjs`, 2026-10-18) instead of the starter's generic `render-og.mjs`: `npm run og` for `og-default.png`, `npm run og:pages` for every route, both from Sanity data. Full steps: OPERATIONS.md, "Share images".
 
 **llms.txt regeneration is also per-project.** `public/llms.txt` ships as an AI/LLM crawler index for the core routes. Update it when pages are added or removed, and review it before launch to make sure it describes the actual project.
 

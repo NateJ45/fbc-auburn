@@ -200,6 +200,19 @@ export const PATH_PRESETS = {
     r: [10, 11],
     grout: 2.6,
   },
+  // The share card's path (scripts/lib/og-card.mjs, 2026-10-18): a low, gently rising band across
+  // the foot of a 1200x630 card, stones big enough to read in a 300px-wide thumbnail.
+  og: {
+    curve: [
+      [-0.03, 0.66],
+      [0.3, 0.86],
+      [0.62, 0.26],
+      [1.03, 0.32],
+    ],
+    half: [32, 38],
+    r: [15, 18],
+    grout: 3.6,
+  },
 };
 
 /** Four clear bands, the mark's story: the water, the green ring, the gold steps, the red cross. */
