@@ -477,7 +477,7 @@ warning but "example text") and four templates rendered locally at 375 and 1280.
 
 ## Known gaps, deliberately open
 
-### 1s. Section looks and the photo viewer: the signed-in check (opened 2026-10-18)
+### 1t. Section looks and the photo viewer: the signed-in check (opened 2026-10-18)
 
 Built and verified on the built site (PORTS.md card 124): the looks wall `/styleguide/looks/`, the
 viewer's keyboard, focus and swipe tests, axe, and parity on the fallback build (no Sanity project in
