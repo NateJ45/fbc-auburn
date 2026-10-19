@@ -516,6 +516,10 @@ check. Once the first sermon and news post are published and deployed:
 
 ## Known gaps, deliberately open
 
+### 17. Card 135: Home's banner style slot (2026-10-19)
+
+Home's banner takes its look from `kitConfig.homeBanner.style` when the site sets one; Auburn sets none and its banner is unchanged. Nothing to do here unless the banner is restyled: do it in the slot, never in CSS by class name (docs/agent/studio-kit.md, "Home's banner style").
+
 ### 16. Cards 131 and 132: the Studio surfaces still in plain @sanity/ui (opened 2026-10-19)
 
 Cards 131 and 132 redrew tool headings, Home (every card), the findings, the weekly checklist, "Is it live?", Quick
