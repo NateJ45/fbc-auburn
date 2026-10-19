@@ -963,6 +963,60 @@ export const guides: Guide[] = [
   },
 
   {
+    slug: 'site-search',
+    category: 'Housekeeping',
+    title: 'How visitors search the site',
+    icon: 'search',
+    lead: 'What the search box finds, and how to help people find the right page.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Every page has a round magnifying glass beside the `Menu` button, and the menu itself starts with `Search the site`. A visitor types a word, say "parking", "baptism" or a book of the Bible, and gets a list of pages, sermons and news, each with a few words showing where it matched.',
+      },
+      {
+        kind: 'h',
+        text: 'What it searches',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          'The **main words of every published page**: headings, paragraphs, questions and answers. Not the menu or the footer, which are on every page and would only get in the way.',
+          '**Sermons**, with their date and Bible passage, **sermon series**, and **news** posts with their date. Visitors can narrow a search to just sermons or just news with the buttons above the results.',
+          'Pages you have kept out of Google are kept out of search too.',
+          'Nothing in the Studio, and no drafts. A page shows up in search once it is published and the site has rebuilt.',
+        ],
+      },
+      {
+        kind: 'h',
+        text: 'Helping the right page come first',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Use the words people actually type. If everyone says "parking", say "parking" on Plan your visit, not only "where to leave your car".',
+          'Fill in each sermon\'s **Passage** and **Summary**. Both are searched, so someone looking for "Romans 8" finds the sermon.',
+          'Give each page a clear heading. The heading is the title in the results list.',
+          'Try it yourself after you publish: search for what a visitor would look for, and see which page comes first.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'New words appear after the rebuild.',
+        text: 'Search reads the live site, so a change you publish is searchable a couple of minutes later, at the same time it appears on the page.',
+      },
+      {
+        kind: 'p',
+        text:
+          'When nothing matches, search offers Plan your visit and Contact us instead. Those links, and whether search is on at all, are set in the site code. Ask ' +
+          SITE.contactName +
+          ' to change them.',
+      },
+    ],
+  },
+
+  {
     slug: 'housekeeping',
     category: 'Housekeeping',
     title: 'The occasional tidy-up',

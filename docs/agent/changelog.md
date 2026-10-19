@@ -16,6 +16,17 @@ each new surface rebuilding its own look.
 **Left open.** Real screenshots for GuideShot, art for guide meanings with none, a signed-in look at the navbar status
 line, and the next card's roughly twenty surfaces (`docs/PENDING.md`).
 
+_2026-10-18: visitor site search and share buttons (PORTS card 126)._
+
+**Decision.** Visitor search is on for this site (`site.search.enabled`). Pagefind 1.5.2, pinned as a
+devDependency, indexes the built HTML straight after `astro build`, main content only, skipping noindex pages; the
+index ships as static files under `/pagefind/`. A round search button beside the Menu pill and a row at the top of
+the night menu open a native dialog styled from the theme tokens, with type filters, dates and sermon passages,
+keyboard movement, a live result count and friendly suggestions when nothing matches. Nothing loads until search is
+opened. Share buttons (Facebook, X, email, copy link, and the phone's share sheet) sit under every sermon, sermon
+series and news post in the outline button style, as plain links with no third-party code. Pagefind's own UI was
+left out: heavier, its own look.
+
 _2026-10-18: writing help, "Before you publish" and AI visitors in the Studio (PORTS card 123)._
 
 **Decision.** Three editor features that hosted site builders now ship. "Suggest" buttons under the Google
