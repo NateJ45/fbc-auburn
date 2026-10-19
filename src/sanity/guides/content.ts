@@ -38,6 +38,8 @@
 
 import { collectionGuides } from './collections.ts';
 
+import { phoneGuides } from './phoneGuides.ts';
+
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
 /** Where a "Where in the Studio" breadcrumb can link to. */
@@ -1359,6 +1361,11 @@ guides.push({
     { kind: 'seealso', items: ['Change the words on a page'] },
   ],
 });
+
+// ── The Studio app and earlier versions (PORTS.md card 125) ──────────────────
+// Shared by every site (src/sanity/guides/phoneGuides.ts, PORTABLE): keep this
+// line when rewriting the guides above.
+guides.push(...phoneGuides(SITE.contactName));
 
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts

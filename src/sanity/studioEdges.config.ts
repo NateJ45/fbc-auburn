@@ -14,6 +14,7 @@
 // =============================================================================
 
 import type { StudioWordingInput } from './studioWording';
+import type { StudioStart } from '../lib/studio-app';
 
 export interface StudioEdgesConfig extends StudioWordingInput {
   wordmark: {
@@ -25,6 +26,17 @@ export interface StudioEdgesConfig extends StudioWordingInput {
      * already the Studio's icon right beside it).
      */
     view?: string | null;
+  };
+  /**
+   * The Studio as a phone app (card 125): what the home-screen icon is called
+   * and where it opens. Optional; the default is the site's name, opening on
+   * Home. 'quick-update' needs the Quick update tool (kit.config.ts
+   * quickUpdate or postPhoto).
+   */
+  app?: {
+    /** Under the icon. About 12 characters fits every phone. */
+    shortName?: string;
+    start?: StudioStart;
   };
 }
 
@@ -46,4 +58,7 @@ export const studioEdges: StudioEdgesConfig = {
     // The church's own help is the Guide tool; this menu is Sanity's.
     'help-resources.title': 'Sanity help and resources',
   },
+  // The phone app (card 125): "FBC Auburn" under the icon, opening on Quick
+  // update, which is what a phone is for here (a notice, a sermon, a photo).
+  app: { shortName: 'FBC Auburn', start: 'quick-update' },
 };
