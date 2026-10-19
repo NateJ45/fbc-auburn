@@ -484,6 +484,12 @@ once the organiser has downloaded them (the key is in the RSVPs tool's download 
 - **Table views.** Sermons, Downloads and People each have "... as a table" under the normal list. Columns live in
   `src/sanity/tables.config.ts`.
 
+## Sign-in method (PORTS.md card 129)
+
+The Studio signs in by token (`auth.loginMethod: 'token'` in `sanity.config.ts`), because the Studio's own routes verify a
+Bearer token and a cookie session sends none (401). After a deploy that carries this line each editor signs out from the
+user menu and signs in once; nothing else changes. If a kit card says "needs a fresh sign-in", that is the one step.
+
 ## The Studio app and Earlier versions (PORTS.md card 125)
 
 - **The Studio on a phone.** Nothing to switch on: `/studio/manifest.webmanifest` and `/studio/sw.js` ship with
