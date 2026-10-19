@@ -16,6 +16,10 @@ sequence).
 
 ## Waiting on a human
 
+### 1x. Card 133 (Studio polish): check it signed in on the live Studio (opened 2026-10-19)
+
+Home's ways-in tiles now fit three across with the art top left, and Live preview loads the brand layer (`auburn.css`, `starwind.css`) so the This Sunday pill shows its words instead of white on white. Both were checked on the kit bench and by build output, not on the live Studio (the preview needs the Worker token). After the deploy: open Live preview on Home and confirm the pill, and the tiles at the dashboard width. Then delete this entry.
+
 ### 1w. Card 129 (token sign-in): every editor signs in once (opened 2026-10-19)
 
 **Blocker: each editor signs out and in once after this deploys.** `sanity.config.ts` now sets `auth: { loginMethod: 'token' }`
