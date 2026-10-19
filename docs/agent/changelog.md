@@ -1,5 +1,9 @@
 # Change history
 
+_2026-10-19: eight more stone icons for the Studio (help, restore, quick, mail, settings, trash, calendar, palette)._
+
+**Decision.** Six more meanings now draw stone art in `src/sanity/brandIconArt.tsx`: help, quickUpdate (the quick-update tool), message (messages and the newsletter), settings (Site settings and the settings and meta groups), trash (the Trash) and publishing (the scheduling group, drawn as the calendar), plus brandKit as the palette. They were generated in Gemini and vectorised faithfully. The restore (undo arrow) stone is in `src/assets/brand/` but not mapped: no meaning key stands for it yet, because the guides' `restore` and `bolt` are glyph names, not meanings.
+
 _2026-10-19: eight stone icons for the Studio (guide, page, camera, home, eye, search, link, checkup)._
 
 **Decision.** Eight more meanings now draw the brand's stone art in the Studio: guide, page, image, home, preview, search, link and checkup, in `src/sanity/brandIconArt.tsx` and `src/assets/brand/stone-icon-*.svg`. They were generated in Gemini and vectorised faithfully, with no redrawing. `page` replaces the building-blocks stone it used before; `pages` and the section meanings keep theirs.
