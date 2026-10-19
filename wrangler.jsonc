@@ -116,6 +116,18 @@
   //   npx wrangler secret put CF_ANALYTICS_TOKEN
   // (a Cloudflare API token with Account Analytics: Read only). Until it exists
   // the card says "not set up yet". Steps: OPERATIONS.md, "Visitor numbers".
+  //
+  // PORTS.md card 136: the card can read Google Analytics 4 instead, and a
+  // Search Console card ("Found on Google") can sit under it, through the
+  // studio-status Worker. Auburn stays on Cloudflare. To add Search Console
+  // after the domain cutover: give Auburn an entry in studio-status's
+  // src/site-data.ts, then bind it here and name the key:
+  // "services": [
+  //   { "binding": "SITE_DATA", "service": "studio-status", "entrypoint": "SiteData" }
+  // ],
+  // and "SITE_DATA_KEY": "<key>" in vars below. Cloudflare stays the Visitors
+  // source unless "ANALYTICS_PROVIDER": "ga4" is added. Steps:
+  // docs/agent/studio-kit.md, "Google Analytics and Search Console".
   "vars": {
     "GITHUB_REPO": "NateJ45/fbc-auburn",
     "CF_ACCOUNT_ID": "7e75a15ddc72aae04dca71aca5c7294b",

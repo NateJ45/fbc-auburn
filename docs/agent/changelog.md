@@ -1,5 +1,17 @@
 # Change history
 
+_2026-10-19: Home's Visitors card reads Google Analytics 4, and a Search Console card (PORTS card 136)._
+
+**Decision.** No Google key in any site Worker: the studio's own Worker, studio-status, already holds the read-only
+service account, so it gains a `SiteData` RPC entrypoint and each site binds to it (`SITE_DATA`, `SITE_DATA_KEY`). The
+site builds the report bodies and maps the answers onto the same shape the Cloudflare source makes, so the card draws
+either. `ANALYTICS_PROVIDER` picks the source; unset, Cloudflare wins when it is set up, so no existing site moves.
+GA4's own AI Assistant channel feeds the AI assistants group, with the source names as a fallback. Search Console is
+its own card under Visitors, hidden until set up, reading 28 days that end three days ago because Google's search
+figures lag. A refused key says "finish connecting Google" and nothing more. The in-Worker JWT sign-in, built first,
+stays as a tested optional fallback for a site outside the studio's account. Fixtures, a mock binding and a throwaway
+key in the tests; nothing calls Google.
+
 _2026-10-19: the Studio covers the pastor's whole week (studio-plan.md)._
 
 **Decision.** `docs/agent/studio-plan.md` maps each weekly, monthly and seasonal job to the Studio surface that serves it. Quick update gained three phone jobs (an event notice, a short news post, starting the week's newsletter, which is saved and never sent from there); the bulletin, which needs a file box Quick update does not have, replaced "Edit the menus" on Home's big buttons. The Site Guide opens on a new "Every week" category with four new guides and six more "How to" field chips. New screenshots and videos wait for launch, when the content is real; tours and video scripts are written as data in `src/sanity/guides/tours.ts` for the shared tour pieces (starter card 137). Sermon, post and newsletter web addresses now always keep their date (`datedSlug`), so a long title can no longer make two the same.

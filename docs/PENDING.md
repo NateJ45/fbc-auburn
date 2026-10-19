@@ -16,6 +16,14 @@ sequence).
 
 ## Waiting on a human
 
+### 1z. Card 136: Search Console on Home, once the church's domain is chosen (opened 2026-10-19)
+
+**Blocker: the domain cutover, then a Google service account.** Card 136 came in with the starter: the Visitors card can
+read GA4 and a "Found on Google" card can show Search Console. Auburn stays on Cloudflare Web Analytics
+(`ANALYTICS_PROVIDER` unset, Cloudflare picked first), so nothing changed on its Home. Once the church's own domain is
+live and verified in Search Console, add Auburn to studio-status's `SITE_DATA` (and give its service account access), then
+bind `SITE_DATA` and set `SITE_DATA_KEY` here (`docs/agent/studio-kit.md`, "Google Analytics and Search Console").
+
 ### 1y. Studio complete: pictures, videos and tours at launch (opened 2026-10-19)
 
 The weekly jobs are mapped in `docs/agent/studio-plan.md`. Held until launch, when the content is real: the eight
