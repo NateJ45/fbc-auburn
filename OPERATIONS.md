@@ -80,7 +80,7 @@ The four core pages (home, about, services, process) and any custom `page` docum
 
 **Once a Sanity project is connected:** seed the pages with `npm run seed`, then edit sections in Studio → the relevant page singleton → the "Sections" tab.
 
-**Available block types:** the twelve general blocks (heroSection, richTextSection, imageTextSection, gallerySection, quoteSection, statSection, ctaBandSection, videoSection, spacerSection, logoStripSection, embedSection, rsvpSection) plus the page-specific rich blocks (founderSection, servicesGridSection, testimonialsSection, processSection, faqSection, teamSection on Home; storySection, valuesSection, faqSection, teamSection on About; servicesGridSection, serviceAreaSection, guaranteeSection, faqSection on Services; processSection, faqSection on Process).
+**Available block types:** the eleven general blocks (heroSection, richTextSection, imageTextSection, gallerySection, quoteSection, statSection, ctaBandSection, videoSection, spacerSection, logoStripSection, embedSection ("Custom code or embed", card 121)) plus the page-specific rich blocks (founderSection, servicesGridSection, testimonialsSection, processSection, faqSection, teamSection on Home; storySection, valuesSection, faqSection, teamSection on About; servicesGridSection, serviceAreaSection, guaranteeSection, faqSection on Services; processSection, faqSection on Process).
 
 Blocks carry no background color field. `SectionRenderer` owns the alternating surface cadence automatically.
 
@@ -184,7 +184,7 @@ log in Sanity, then GitHub → Actions for a failed Deploy run. Run the Deploy w
 The webhook lives at manage.sanity.io → API → Webhooks. The GROQ filter is a deny-list:
 
 ```
-!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek", "previewShare"])
+!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek", "previewShare", "privatePage", "linkReport"])
 ```
 
 This filter skips rebuilds triggered by draft saves and internal Sanity asset-management events (tagging an uploaded photo, rotating an image, etc.), which don't affect live HTML. New content types are covered automatically because the filter excludes only the named system types and lets everything else through. The old hand-maintained allow-list approach (explicitly listing every `_type` that should trigger a rebuild) silently dropped new types until a developer remembered to add them. The deny-list is safer: add a new schema type and it triggers rebuilds out of the box.
@@ -328,6 +328,32 @@ visits are counted at all. Steps 2 and 5 are done for Auburn: `CF_ACCOUNT_ID` an
 Numbers are Cloudflare's sampled estimates, by UTC day; visits to `/studio`, `/preview` and `/api` are left out of the
 most-read list. To rotate the token, create a new one, `secret put` it, then delete the old one in the dashboard.
 
+Since card 123 the sources include **AI assistants** (ChatGPT, Perplexity, Copilot, Gemini, Claude and similar) with a
+this-week and week-before count. Nothing to set up: it comes with the same token.
+
+### Writing help (the Studio's "Suggest" buttons, PORTS.md card 123)
+
+The "Suggest" buttons under the Google description, photo description and summary fields, and "Improve this
+paragraph" in rich text, call `/api/studio/ai/`, which asks the Claude API. Until the Worker has the key the buttons do
+not appear at all. Once per site:
+
+1. **Make an API key** at console.anthropic.com (Settings, API Keys, Create Key), named for the site
+   (`<site> Studio writing help`), in a workspace used for nothing else so its spend is easy to read.
+2. **Set a spend limit** on that workspace (Settings, Limits): a monthly cap of a few dollars is plenty. Rough cost:
+   a Google description or summary is about a tenth of a cent (Claude Haiku 5.5), a photo description under a cent
+   (Claude Sonnet 5.5, the picture sent at 800px). Every request has a hard token cap, and each person gets at most 30
+   suggestions an hour (per Worker instance), so even a busy week of editing stays well under a dollar.
+3. **Give it to the Worker as a secret** (never in the repo or in chat). From the site repo:
+   `npx wrangler secret put ANTHROPIC_API_KEY` and paste it at the prompt. Keep a copy in 1Password.
+4. Optional: a different hourly limit per person as a plain var in `wrangler.jsonc` `vars`: `"AI_HOURLY_LIMIT": "20"`.
+5. Deploy, open `/studio`, open a page, and check "Suggest a Google description" appears under its description. Press
+   it once to see a suggestion arrive. `npx wrangler tail` shows `studio-ai: seo: suggested` (only the task and the
+   outcome are ever logged, never the words). "Writing help did not answer" with `Claude API answered 401` in the tail
+   means the key is wrong; `429` means the spend limit or the account's rate limit.
+
+To switch it off, `npx wrangler secret delete ANTHROPIC_API_KEY`; the buttons disappear on the next Studio load. To
+rotate the key, make a new one, `secret put` it, then delete the old one in the console.
+
 ### Studio deploy
 
 There isn't one. The Studio is **embedded at `/studio`** and built by `astro build`, so
@@ -345,6 +371,41 @@ then commit both files together. CI fails the build if the committed types are s
 For the complete schema-change sequence, see the "Schema-change procedure" section above.
 
 ---
+
+## Custom code and site-wide code (PORTS.md card 121)
+
+The "Custom code or embed" block runs pasted code in its own box: an `srcdoc` iframe sandboxed WITHOUT
+`allow-same-origin`, so it cannot read the site's cookies or localStorage (where the embedded Studio keeps an editor's
+session) or touch the page. Two opt-outs run code directly on the page: the block's "Runs directly on the page" switch,
+and Site settings' "Code on every page" (head and end of body, public pages only, never `/studio` or `/preview`).
+Both are listed by the Checkup while in use. Trust model: `docs/agent/custom-code.md`.
+
+- **An editor's widget does not work in the box.** Read the Studio's yellow warning first: `document.cookie`,
+  `localStorage`, `top.location` or `parent.` are blocked in the box. Ask for a version without them before
+  reaching for the switch. Turn the switch on only for a provider you trust, and only after reading the code.
+- **Fonts in the box look wrong.** Check `/_astro/*` answers `Access-Control-Allow-Origin: *` under
+  `npm run preview` (public/_headers). `npm run dev` never sends it, so system fonts there are expected.
+- **Auditing what runs on the page.** Studio, Checkup: "Code that runs directly on the page" names every page; "Code on
+  every page" opens Site settings at the field. Or GROQ:
+  `*[count(pageBuilder[_type == "embedSection" && runsOnPage == true]) > 0]{_id, title}` (use the field name your
+  page types use for sections).
+- **Proof the box holds.** `tests/custom-code.spec.ts` stores a secret in the page's localStorage and checks the
+  boxed probe on /styleguide/sections/ reports `parent-dom:blocked storage:blocked cookie:blocked`, while the on-page
+  probe can read it.
+
+## Private pages and the link report (PORTS.md card 122)
+
+- **Password pages.** `npx wrangler secret put PRIVATE_PAGE_SECRET` (32+ random characters:
+  `node -e "console.log(crypto.randomBytes(32).toString('base64url'))"`) plus the preview stack's `SANITY_TOKEN`.
+  Without either, `/private/<slug>/` says "not ready yet" and never shows a page. Optional: a Cloudflare rate
+  limiting rule on `POST /private/*` for a hard global limit. Locally: `.dev.vars` with `PRIVATE_PAGE_SECRET` and
+  `PRIVATE_PAGE_TEST_FIXTURE=1`, copied to `dist/server/`, then `npm run preview` and
+  `PRIVATE_PAGES_BASE_URL=http://localhost:8787 npx playwright test private-pages`. Never set the fixture flag on a
+  deployed Worker. Design and security note: `docs/agent/private-pages.md`.
+- **Link report in the Checkup.** Repo secret `SANITY_API_WRITE_TOKEN` (the one publish-due uses); link-health.yml
+  then saves `linkReport.latest` every Monday. Try it by hand: `node scripts/check-live-links.mjs --write-report`
+  with the token in the environment.
+- Both types are in the webhook deny-list above; add them to the live webhook's filter.
 
 ## Email: the newsletter, RSVPs and form mail (PORTS.md card 127)
 

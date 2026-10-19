@@ -48,6 +48,8 @@ export const RESERVED_SLUGS = new Set([
   'studio',
   'preview',
   'api',
+  // Private pages live under /private/<slug>/ (card 122, server-rendered).
+  'private',
   // The email backbone (card 127): the newsletter's link pages and its archive.
   'email',
   'newsletter',

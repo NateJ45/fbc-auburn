@@ -1359,18 +1359,261 @@ guides.push(
   },
 );
 
+// ── Custom code (PORTS.md card 121) ──────────────────────────────────────────
+// Appended like the blocks above, so a site rewriting its guides keeps it.
+guides.push({
+  slug: 'add-a-widget',
+  category: 'Pages and words',
+  title: 'Add a widget from an AI or a website',
+  icon: '</>',
+  lead: 'A countdown, a sign-up box, a map or a calculator, pasted in as code.',
+  diy: 'mixed',
+  body: [
+    {
+      kind: 'p',
+      text: 'Sometimes you want something on a page that the Studio does not have a block for: a countdown to Vacation Bible School, a small sign-up gadget, a map, a calculator. You can ask an AI chat (ChatGPT, Claude, Gemini) to write it, or copy the code a website gives you, and paste it into a **Custom code or embed** section.',
+    },
+    { kind: 'h', text: 'What to ask the AI for' },
+    {
+      kind: 'p',
+      text: 'Describe the widget, then add this sentence: _"Give me a single self-contained HTML snippet with inline CSS and JS, no external build step."_ That gets you one block of code you can paste in one go, instead of several files.',
+    },
+    { kind: 'h', text: 'Put it on the page' },
+    {
+      kind: 'steps',
+      items: [
+        'Open the page and click `+ Add item` where you want the widget.',
+        'Pick `Custom code or embed`.',
+        'Give it a headline if you like, then paste the whole snippet into `Custom code`. The count under the box tells you it all went in.',
+        'Open `Presentation` and look at the page. The widget runs in the preview exactly as it will on the website.',
+        'If it looks right, click `Publish`.',
+      ],
+    },
+    {
+      kind: 'callout',
+      tone: 'positive',
+      title: 'It runs in its own box.',
+      text: 'The code cannot change the rest of the website, and it cannot see anything private, such as your Studio login. The box grows to fit what is inside it. Links in it open in a new tab.',
+    },
+    {
+      kind: 'callout',
+      tone: 'primary',
+      title: 'It cannot restyle the rest of the site.',
+      text:
+        'Colours and fonts inside the box start out matching the website, but the code only ever styles itself. To change how the whole website looks, ask ' +
+        SITE.contactName +
+        ': design changes go through the theme.',
+    },
+    { kind: 'h', text: 'If it does not work' },
+    {
+      kind: 'bullets',
+      items: [
+        'Ask the AI to fix it, and tell it the code runs **inside a sandboxed iframe with no access to cookies, localStorage or the parent page**. Most widgets do not need any of those.',
+        'A yellow warning under the box means the code tries to reach outside it. In the box that is blocked, so that part will not work.',
+        'A widget cannot remember things between visits (it has no storage). For sign-ups, ask for a version that sends to a form service, or use one of the site forms.',
+      ],
+    },
+    { kind: 'h', text: 'The "Runs directly on the page" switch' },
+    {
+      kind: 'callout',
+      tone: 'caution',
+      title: 'Leave it off unless a provider you trust needs it.',
+      text: 'Some giving or booking services give you code that only works on the page itself. The switch lets it. With it on, the code can do anything the website can, including reading what a signed-in editor is doing, so never turn it on for code you are not sure about. The Checkup lists every page where it is on.',
+    },
+    { kind: 'seealso', items: ['Change the words on a page'] },
+  ],
+});
+
+// ── Private pages and link checks (PORTS.md card 122) ──────────────────────
+// Appended like the blocks above, so a site rewriting its guides keeps them.
+guides.push(
+  {
+    slug: 'make-a-page-private',
+    category: 'Pages and words',
+    title: 'Make a page private',
+    icon: '#',
+    lead: 'Hide a page from Google and the menus, or put it behind a password.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'There are two ways to keep a page quiet. Pick the one that fits.',
+      },
+      { kind: 'h', text: 'Hidden: anyone with the link can open it' },
+      {
+        kind: 'p',
+        text: 'Good for a page you only send to some people, like a sign-up form for one event. It stays off Google, the menus and the site search, but it is not secret.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open the page under **Pages**, **Custom pages**.',
+          'Click the `Search & sharing` tab.',
+          'Turn on `Hide this page from Google and the menus`.',
+          'Click `Publish`. Share the page address with the people who need it.',
+        ],
+      },
+      { kind: 'h', text: 'Private: only people with the password can see it' },
+      {
+        kind: 'p',
+        text: 'Good for things meant for members only. Visitors are asked for a password before they see anything.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Go to **Pages**, **Private pages (password)** and click the `+` button.',
+          'Give it a title and click `Generate` beside the web address.',
+          'Add sections the same way as any other page.',
+          'Under **Only people with the password can see this**, type a password and click `Save password`. Write it down somewhere safe: nobody can look it up later.',
+          'Click `Publish`. Copy the address shown under the password and share it, with the password, with the people who need it.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Pictures are less private than words.',
+        text: 'The words on a private page are locked away. Pictures are stored where someone determined could find them, so keep anything truly sensitive as text, and never put photos of children on a page because it is private.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Changing the password** asks everyone for the new one. Use it if someone should no longer have access.',
+          'Someone who types the right password is not asked again on that device for two weeks.',
+          'Too many wrong tries and the page asks the person to wait a while.',
+          'Private pages change the moment you publish. There is no rebuild to wait for.',
+        ],
+      },
+      {
+        kind: 'seealso',
+        items: ['Show someone a page before it goes live', 'What the Google and sharing boxes do'],
+      },
+    ],
+  },
+  {
+    slug: 'keep-links-working',
+    category: 'Housekeeping',
+    title: 'Keep links working',
+    icon: '~',
+    lead: 'What the Checkup says about links and headings, and how to fix each one.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Once a week the website checks every link to another website. Anything that has stopped working shows in the `Checkup`, with an `Edit` button that opens the page it is on.',
+      },
+      { kind: 'h', text: 'What it looks for' },
+      {
+        kind: 'bullets',
+        items: [
+          '**A link to another website that no longer works**: change it to the right address, or take it out.',
+          '**A link to a page that is not on the website**: pick the page from the list instead of typing its address.',
+          '**Links that do not say where they go**: change "click here" or "read more" to words like "Our service times". People using screen readers often hear the links on their own.',
+          '**A web address typed into the text**: select some words, click the link button and paste the address there instead.',
+          '**Headings out of order**: use the headings in order, the bigger one first, then the next size down under it. Do not pick a size just for how it looks.',
+          '**A page nobody can click through to**: add it to a menu or link to it from another page. If that is on purpose, hide it from Google and the menus.',
+          '**A Google title or description that gets cut off**: shorten it so the important words come first.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Some websites refuse to be checked.',
+        text: 'A few sites, like some social media pages, turn away automatic checks. Those are not reported as broken. Open them yourself now and then.',
+      },
+      { kind: 'seealso', items: ['Make a page private', 'What the Google and sharing boxes do'] },
+    ],
+  },
+);
+
+// ── Writing help and "Before you publish" (PORTS.md card 123) ────────────────
+// Appended like the kit helpers above, so a site rewriting its guides keeps them.
+guides.push(
+  {
+    slug: 'writing-help',
+    category: 'Pages and words',
+    title: 'Get help with the words',
+    icon: '✎',
+    lead: 'A suggested Google description, photo description, summary or a tidier paragraph, for you to use, change or ignore.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Under some boxes there is a **Suggest** button: the Google description, the description of a photo, and the short summary of a post. In the main text, click into a paragraph and **Improve this paragraph** appears under it.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Write the page first. The suggestion is made from the words already on it.',
+          'Click `Suggest a Google description` (or the button under the box you are filling in).',
+          'Read the suggestion. Change anything you like in the box it appears in.',
+          'Click `Use this` to put it in, `Try again` for another one, or `No thanks`.',
+          'Publish as usual when you are happy.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'Check the facts.',
+        text: 'Suggestions are written by an AI from your own words. It is told not to invent anything, but read every one before you use it, especially times, dates and names.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          'Nothing changes until you click `Use this`, and nothing is published until you press Publish.',
+          'For a paragraph with bold words or a link in it, the suggestion cannot go straight in (the bold and the link would be lost). Click `Copy the words` and paste them yourself.',
+          'There is a limit of about 30 suggestions an hour for each person.',
+          'If you do not see the buttons, writing help is not switched on for this website. Ask for help if you would like it.',
+        ],
+      },
+      {
+        kind: 'seealso',
+        items: ['Add or change a picture', 'What the Google and sharing boxes do'],
+      },
+    ],
+  },
+  {
+    slug: 'before-you-publish',
+    category: 'Start here',
+    title: 'Before you publish',
+    icon: '✓',
+    lead: 'One last look at the page you are working on, with a link to each thing worth fixing.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'When a page is open, click `Before you publish` at the top of it (it can also sit in the menu with three dots). A panel opens beside the boxes and lists what the Checkup would say about this page once your changes go live.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          'Photos with no description, and a missing Google description.',
+          'Links to things that are not on the website, or have not been published yet.',
+          'Facts still marked "to be confirmed", and words still starting "Example:" from the template the page came from.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'Click `Show me` to jump to the box that needs a look. The list updates as you type. None of it stops you publishing: it is there to catch what is easy to miss.',
+      },
+      { kind: 'seealso', items: ['Help for this page', 'Get help with the words'] },
+    ],
+  },
+);
+
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
  * guide.forType, PORTS.md card 110). '*' is the fallback for anything unlisted.
  * A site that rewrites its guides rewrites this map with them.
  */
 export const GUIDES_FOR_TYPE: Record<string, string[]> = {
-  '*': ['edit-a-page', 'help-panel', 'undo-earlier'],
+  '*': ['edit-a-page', 'help-panel', 'before-you-publish', 'undo-earlier'],
   announcement: ['schedule-publish', 'quick-update', 'undo-earlier'],
-  journalEntry: ['schedule-publish', 'undo-earlier'],
+  journalEntry: ['schedule-publish', 'writing-help', 'undo-earlier'],
   // FBC Auburn: the church's own guides first where they fit.
   page: [
     'edit-a-page',
+    'before-you-publish',
+    'writing-help',
     'share-a-preview',
     'section-library',
     'page-templates',
@@ -1378,14 +1621,23 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
     'reuse-sections',
     'rename-a-page',
     'seo-fields',
+    'make-a-page-private',
+    'add-a-widget',
   ],
+  privatePage: ['make-a-page-private', 'edit-a-page'],
   form: ['make-a-form', 'prayer-requests', 'messages'],
   homePage: ['home-page', 'add-sermon', 'images-and-alt', 'seo-fields'],
   newsletter: ['send-the-newsletter'],
-  siteSettings: ['church-facts', 'contact-give-live', 'menus-and-footer', 'website-status'],
+  siteSettings: [
+    'church-facts',
+    'contact-give-live',
+    'menus-and-footer',
+    'website-status',
+    'add-a-widget',
+  ],
   sectionPreset: ['seasonal-patterns', 'reuse-sections', 'synced-sections'],
   // The collections (guides/collections.ts, 2026-10-18).
-  sermon: ['add-sermon', 'sermon-series', 'quick-update', 'schedule-publish'],
+  sermon: ['add-sermon', 'sermon-series', 'quick-update', 'schedule-publish', 'writing-help'],
   sermonSeries: ['sermon-series', 'add-sermon'],
   sermonsPage: ['podcast', 'add-sermon'],
   person: ['add-person'],
