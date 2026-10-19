@@ -154,6 +154,35 @@
       "tile": {
         "dark": "#CDC3AF"
       }
+    },
+    "look": {
+      "headingColor": "#235E93",
+      "marker": {
+        "src": "/studio-banner/marker.svg",
+        "width": 78,
+        "height": 36
+      },
+      "markColors": ["#2C5B3A", "#235E93", "#C4401F", "#3B83AA"],
+      "stone": "pebble",
+      "connector": {
+        "kind": "dashes",
+        "color": "#E8A93A"
+      },
+      "tones": {
+        "note": "#3B83AA",
+        "tip": "#E8A93A",
+        "careful": "#C4401F"
+      },
+      "motif": "/studio-banner/stone-path.svg",
+      "motifNarrow": "/studio-banner/stone-path-phone.svg",
+      "texture": "/textures/tile-deep.svg",
+      "edgeColors": ["#96C3EA", "#2C5B3A", "#E8A93A", "#C4401F"],
+      "lettering": {
+        "family": "Auburn Stone",
+        "src": "/fonts/auburn-stone.woff2",
+        "colors": ["#FFFFFF", "#96C3EA", "#E8A93A"]
+      },
+      "motion": "lay"
     }
   }
 }

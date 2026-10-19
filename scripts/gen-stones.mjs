@@ -9,6 +9,8 @@
 //                                             (church-blocks.css, collections.css)
 //   public/studio-banner/stone-path*.svg      the stone path along the Studio Home banner's foot
 //                                             (kit.config.ts homeBanner.motif, card 118)
+//   public/studio-banner/marker.svg           the three gold steps, as the Studio's section marker
+//                                             (brand.config.json studio.look.marker, card 128)
 //
 // Redrawn 2026-10-17 after the Home audit: soft, hand-laid stones between the old pebbles and the
 // mark's dressed stones, in four clear bands of the mark's colours. The wide path is 960x240 and
@@ -96,6 +98,8 @@ const banner = onNavy(stonePath(PATHS.banner));
 const bannerPhone = onNavy(stonePath(PATHS.bannerPhone));
 outputs.set('public/studio-banner/stone-path.svg', svgOf(PATHS.banner, banner));
 outputs.set('public/studio-banner/stone-path-phone.svg', svgOf(PATHS.bannerPhone, bannerPhone));
+// The Studio's section marker (card 128): the same three gold steps as the site's .hb-label.
+outputs.set('public/studio-banner/marker.svg', svgOf({ width: 78, height: 36 }, marker));
 for (const [name, opts] of Object.entries(TILES)) {
   outputs.set(`public/textures/tile-${name}.svg`, mosaicTile(opts));
 }

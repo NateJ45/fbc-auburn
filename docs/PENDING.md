@@ -421,6 +421,10 @@ Sanity session (401), and the Studio loads with the plugin, signed out, no conso
   and `public/llms-full.txt` are still the starter's. Rewrite `llms.txt` for the church before launch and run
   `npm run llms:full`.
 
+### 1t. Card 128 (Studio design language, Site Guide): captures, art, the signed-in checks (opened 2026-10-18)
+
+Unit-tested, checked, built and Playwright-clean, and seen in the dev bench (`/kit-harness/guide/`, `/kit-harness/studio/`) at 375 and 1280, light and dark. Still open: (a) real Studio screenshots for `GuideShot` in place of the wireframe `public/guide-shots/example-editor.svg`; (b) art for the eight guide meanings that have only a placeholder glyph on a stone (the Gemini brief is drafted; liked art goes into Figma as it is); (c) the navbar status line: a signed-in check on the live Studio, since the clipping seen once did not reproduce under mock auth (the text now wraps; ask for a screenshot with the exact width if it persists); (d) the next card: redraw the remaining roughly twenty Studio surfaces from `src/sanity/kit/ui/`.
+
 ### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
 
 - The signed-in Studio click-through of the new desk (the Start here panes, "Add the usual

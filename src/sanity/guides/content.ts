@@ -28,8 +28,11 @@
 //     so a step can be skimmed for its clickable part.
 //   - _underscores_ for a light aside.
 //   - No em-dashes. Commas, or "and".
-//   - `icon` is a NAME from GUIDE_ICONS in components/GuideView.tsx (an
-//     @sanity/icons icon), never an emoji. FBC Auburn, 2026-10-18.
+//   - `icon` is a NAME, never an emoji: one of GUIDE_ICON_MEANINGS in
+//     src/lib/studio-look.ts ('clock'), or a meaning from the icon registry
+//     ('times'). The guide then wears the church's stone for that meaning
+//     where there is one (brandIconArt.tsx). FBC Auburn 2026-10-18, card 128.
+//   - A picture of the Studio: a { kind: 'shot' } block (GuideShot, card 128).
 //   - Call things what the Studio calls them: "web address ending", not slug;
 //     "Site settings"; "Live preview" (the tool's own name); US spelling.
 //   - Define any jargon in plain words the first time it appears.
@@ -38,6 +41,7 @@
 
 import { collectionGuides } from './collections.ts';
 
+import type { KitGuideBlock } from '../kit/guide/GuidePage';
 import { phoneGuides } from './phoneGuides.ts';
 
 export type DiyLevel = 'self' | 'ask' | 'mixed';
@@ -45,19 +49,13 @@ export type DiyLevel = 'self' | 'ask' | 'mixed';
 /** Where a "Where in the Studio" breadcrumb can link to. */
 export type PathLink = { doc: string; type?: string } | { pane: string } | { tool: string };
 
-export type GuideBlock =
-  | { kind: 'h'; text: string }
-  | { kind: 'p'; text: string }
-  | { kind: 'steps'; items: string[] }
-  | { kind: 'bullets'; items: string[] }
-  | { kind: 'path'; items: string[]; link?: PathLink }
-  | {
-      kind: 'callout';
-      tone?: 'primary' | 'positive' | 'caution' | 'critical' | 'default';
-      title?: string;
-      text: string;
-    }
-  | { kind: 'seealso'; items: string[] };
+/**
+ * Every block a guide can hold: the kit's list (kit/guide/GuidePage.tsx, card
+ * 128). The card 41 kinds and tones still work; new and optional are
+ * { kind: 'shot' } (a GuideShot), { kind: 'quote' }, steps { across: true } and
+ * the tones 'note' | 'tip' | 'careful'.
+ */
+export type GuideBlock = KitGuideBlock;
 
 /** Names the prose refers to. Replace these, do not hardcode them in guides. */
 export const SITE = {

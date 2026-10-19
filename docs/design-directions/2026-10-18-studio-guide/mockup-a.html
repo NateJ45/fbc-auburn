@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Site Guide mockup A: the board page</title>
+<link rel="stylesheet" href="mock.css">
+<style>
+.wrap { max-width: 780px; margin: 0 auto; padding: 28px 24px 96px; }
+.tools { display: flex; gap: 8px; margin-bottom: 20px; }
+.tools .chip { font-size: 14px; padding: 9px 14px; }
+.banner { position: relative; background: var(--navy); color: #fff; border-radius: 20px; overflow: hidden; }
+.banner__in { display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center; padding: 40px 44px 18px; }
+.eyebrow { display: flex; align-items: center; gap: 12px; font: 700 13px var(--body); letter-spacing: .16em; text-transform: uppercase; color: #cfe2f4; }
+.banner h1 { font: 400 clamp(40px, 6vw, 58px)/1.0 'Auburn Stone', var(--display); margin: 14px 0 14px; letter-spacing: -.01em; }
+.banner h1 .a { color: #fff } .banner h1 .b { color: var(--sky) } .banner h1 .c { color: var(--gold) }
+.banner .lead { font: 400 20px/1.5 var(--body); color: #dfe9f3; max-width: 30rem; margin: 0 0 20px; }
+.disc { width: 132px; height: 132px; border-radius: 50%; background: #f4eee1; display: grid; place-items: center; }
+.disc img { width: 92px; height: 92px; }
+.banner .motif { display: block; width: 100%; height: auto; }
+.tag--light { background: #2a5680; color: #fff; }
+.tag--light i { background: #8fc7a0; }
+.rule { display: flex; align-items: center; gap: 16px; margin: 56px 0 18px; }
+.rule::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+h2 { font: 400 30px/1.2 var(--display); color: var(--deep); margin: 0 0 14px; }
+p { margin: 0 0 18px; max-width: 40rem; }
+.steps { list-style: none; margin: 8px 0 24px; padding: 0; position: relative; }
+.steps li:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 46px; bottom: 4px; width: 6px; border-radius: 3px; background: repeating-linear-gradient(180deg, #e8a93a 0 9px, transparent 9px 16px); }
+.steps li { position: relative; display: grid; grid-template-columns: 44px 1fr; gap: 18px; padding: 0 0 22px; }
+.num { position: relative; width: 44px; height: 40px; display: grid; place-items: center; }
+.num svg { position: absolute; inset: 0; }
+.num b { position: relative; font: 400 19px var(--display); color: #fff; }
+.call { position: relative; border-radius: 16px; padding: 20px 24px 20px 64px; margin: 8px 0 26px; }
+.call [data-pebble] { position: absolute; left: 20px; top: 22px; }
+.call h3 { font: 400 20px/1.3 var(--display); margin: 0 0 6px; }
+.call p { margin: 0; }
+.call--tip { background: #fcf2df; } .call--tip h3 { color: #6e4a0c; }
+.call--note { background: #eaf3fb; } .call--note h3 { color: #1b4a75; }
+.call--careful { background: #fbebe6; } .call--careful h3 { color: var(--red-dark); }
+.where { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; border: 1px solid var(--rule); background: #fff; border-radius: 16px; padding: 16px 20px; margin: 10px 0 26px; }
+.where small { font: 700 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); width: 100%; }
+.crumbs { display: flex; align-items: center; gap: 10px; flex: 1; flex-wrap: wrap; }
+.dots { display: inline-flex; gap: 3px; } .dots i { width: 6px; height: 5px; border-radius: 3px 2px; background: var(--gold); }
+.go { margin-left: auto; font: 700 15px var(--body); color: var(--deep); text-decoration: none; border-bottom: 2px solid var(--gold); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.card { display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: start; background: #fff; border: 1px solid var(--rule); border-radius: 16px; padding: 18px; text-decoration: none; color: inherit; }
+.card img { width: 52px; height: 52px; }
+.card b { display: block; font: 400 18px/1.25 var(--display); color: var(--deep); }
+.card span { font-size: 15px; color: var(--muted); }
+ul.b { padding: 0; margin: 0 0 20px; list-style: none; } ul.b li { position: relative; padding-left: 26px; margin-bottom: 10px; }
+ul.b li::before { content: ''; position: absolute; left: 4px; top: .6em; width: 10px; height: 8px; border-radius: 5px 3px 5px 3px; background: var(--water); }
+@media (max-width: 640px) { .banner__in { grid-template-columns: 1fr; padding: 28px 22px 10px; } .disc { width: 84px; height: 84px; order: -1 } .disc img { width: 58px; height: 58px } .wrap { padding: 16px 16px 64px } }
+</style></head><body>
+<div class="bar"><b>FBC Auburn</b><span>Home</span><span>Content</span><span>Live preview</span><span class="on">Site Guide</span><span>Checkup</span></div>
+<div class="status">Website up to date</div>
+<div class="wrap">
+  <div class="tools"><span class="chip">&larr; All guides</span><span class="chip">Print this guide</span></div>
+  <section class="banner">
+    <div class="banner__in">
+      <div>
+        <div class="eyebrow"><svg viewBox="0 0 78 36" width="52" height="24"><path d="M4.0 23.7L22.0 21.8Q25.0 21.5 25.5 24.5L26.5 31.5Q27.0 34.5 24.0 34.6L5.5 34.9Q2.5 35.0 2.1 32.0L1.4 27.0Q1.0 24.0 4.0 23.7Z" fill="#E8A93A"/><path d="M32.0 13.2L46.5 11.8Q49.5 11.5 49.9 14.5L50.6 19.0Q51.0 22.0 48.0 22.1L33.5 22.9Q30.5 23.0 30.0 20.0L29.5 16.5Q29.0 13.5 32.0 13.2Z" fill="#E8A93A"/><path d="M57.0 3.7L68.5 2.8Q71.5 2.5 71.8 5.5L72.2 8.5Q72.5 11.5 69.5 11.7L58.5 12.3Q55.5 12.5 55.0 9.5L54.5 7.0Q54.0 4.0 57.0 3.7Z" fill="#E8A93A"/></svg>Site Guide &middot; Pages and words</div>
+        <h1><span class="a">C</span><span class="b">h</span><span class="c">a</span><span class="a">n</span><span class="b">g</span><span class="c">e</span> <span class="a">t</span><span class="b">h</span><span class="c">e</span> <span class="a">w</span><span class="b">o</span><span class="c">r</span><span class="a">d</span><span class="b">s</span> <span class="c">o</span><span class="a">n</span> <span class="b">a</span> <span class="c">p</span><span class="a">a</span><span class="b">g</span><span class="c">e</span></h1>
+        <p class="lead">Every page is a stack of blocks. You edit the blocks.</p>
+        <span class="tag tag--light"><i></i>You can do this yourself</span>
+      </div>
+      <div class="disc"><img src="../../../src/assets/brand/stone-icon-blocks.svg" alt=""></div>
+    </div>
+    <img class="motif" src="../../../public/studio-banner/stone-path.svg" alt="">
+  </section>
+
+  <div class="rule"><svg viewBox="0 0 78 36" width="78" height="36"><path d="M4.0 23.7L22.0 21.8Q25.0 21.5 25.5 24.5L26.5 31.5Q27.0 34.5 24.0 34.6L5.5 34.9Q2.5 35.0 2.1 32.0L1.4 27.0Q1.0 24.0 4.0 23.7Z" fill="#E8A93A"/><path d="M32.0 13.2L46.5 11.8Q49.5 11.5 49.9 14.5L50.6 19.0Q51.0 22.0 48.0 22.1L33.5 22.9Q30.5 23.0 30.0 20.0L29.5 16.5Q29.0 13.5 32.0 13.2Z" fill="#E8A93A"/><path d="M57.0 3.7L68.5 2.8Q71.5 2.5 71.8 5.5L72.2 8.5Q72.5 11.5 69.5 11.7L58.5 12.3Q55.5 12.5 55.0 9.5L54.5 7.0Q54.0 4.0 57.0 3.7Z" fill="#E8A93A"/></svg></div>
+  <h2>How a page is built</h2>
+  <p>A page is a stack of <strong>sections</strong>, one on top of the other. You edit what is inside a section. You do not have to think about colors or spacing: the design decides those from where the section sits on the page.</p>
+  <div class="where"><small>Where in the Studio</small><div class="crumbs"><span class="chip chip--tool">Content</span><span class="dots"><i></i><i></i><i></i></span><span class="chip">Pages</span><span class="dots"><i></i><i></i><i></i></span><span class="chip">About us</span></div><a class="go" href="#">Take me there</a></div>
+
+  <div class="rule"><svg viewBox="0 0 78 36" width="78" height="36"><path d="M4.0 23.7L22.0 21.8Q25.0 21.5 25.5 24.5L26.5 31.5Q27.0 34.5 24.0 34.6L5.5 34.9Q2.5 35.0 2.1 32.0L1.4 27.0Q1.0 24.0 4.0 23.7Z" fill="#E8A93A"/><path d="M32.0 13.2L46.5 11.8Q49.5 11.5 49.9 14.5L50.6 19.0Q51.0 22.0 48.0 22.1L33.5 22.9Q30.5 23.0 30.0 20.0L29.5 16.5Q29.0 13.5 32.0 13.2Z" fill="#E8A93A"/><path d="M57.0 3.7L68.5 2.8Q71.5 2.5 71.8 5.5L72.2 8.5Q72.5 11.5 69.5 11.7L58.5 12.3Q55.5 12.5 55.0 9.5L54.5 7.0Q54.0 4.0 57.0 3.7Z" fill="#E8A93A"/></svg></div>
+  <h2>Seeing it as you type</h2>
+  <ol class="steps">
+    <li><span class="num" data-pebble="3" data-fill="#2c5b3a"><b>1</b></span><div>Click <span class="chip chip--tool">Live preview</span> in the bar at the top of the Studio.</div></li>
+    <li><span class="num" data-pebble="5" data-fill="#235e93"><b>2</b></span><div>Pick the page on the left. The real page appears beside it.</div></li>
+    <li><span class="num" data-pebble="8" data-fill="#c4401f"><b>3</b></span><div>Click any words on the page to jump to the box that holds them.</div></li>
+    <li><span class="num" data-pebble="11" data-fill="#3b83aa"><b>4</b></span><div>Type. The page updates as you go.</div></li>
+    <li><span class="num" data-pebble="13" data-fill="#2c5b3a"><b>5</b></span><div>Click <span class="chip chip--publish">Publish</span> when it reads right.</div></li>
+  </ol>
+  <div class="call call--note"><span data-pebble="21" data-w="30" data-h="26" data-fill="#3b83aa"></span><h3>The preview shows your draft.</h3><p>What you see in Live preview is your unpublished draft, not the live site. That is the point: you see the change before anyone else does.</p></div>
+  <div class="call call--tip"><span data-pebble="22" data-w="30" data-h="26" data-fill="#e8a93a"></span><h3>Nothing is live until you press Publish.</h3><p>If you make a mess and have not published, close the tab and walk away.</p></div>
+  <div class="call call--careful"><span data-pebble="23" data-w="30" data-h="26" data-fill="#c4401f"></span><h3>Never click Remove field.</h3><p>It deletes that box's words on every page. Ask Nathan first.</p></div>
+  <ul class="b"><li><span class="chip chip--tool">Home</span> shows what to do this week.</li><li><span class="chip chip--tool">Content</span> is where everything is edited.</li></ul>
+
+  <div class="rule"><svg viewBox="0 0 78 36" width="78" height="36"><path d="M4.0 23.7L22.0 21.8Q25.0 21.5 25.5 24.5L26.5 31.5Q27.0 34.5 24.0 34.6L5.5 34.9Q2.5 35.0 2.1 32.0L1.4 27.0Q1.0 24.0 4.0 23.7Z" fill="#E8A93A"/><path d="M32.0 13.2L46.5 11.8Q49.5 11.5 49.9 14.5L50.6 19.0Q51.0 22.0 48.0 22.1L33.5 22.9Q30.5 23.0 30.0 20.0L29.5 16.5Q29.0 13.5 32.0 13.2Z" fill="#E8A93A"/><path d="M57.0 3.7L68.5 2.8Q71.5 2.5 71.8 5.5L72.2 8.5Q72.5 11.5 69.5 11.7L58.5 12.3Q55.5 12.5 55.0 9.5L54.5 7.0Q54.0 4.0 57.0 3.7Z" fill="#E8A93A"/></svg></div>
+  <h2>See also</h2>
+  <div class="cards">
+    <a class="card" href="#"><img src="../../../src/assets/brand/stone-icon-blocks.svg" alt=""><div><b>Start a page from a template</b><span>Thirty-nine ready pages to begin from.</span></div></a>
+    <a class="card" href="#"><img src="../../../src/assets/brand/stone-icon-map-pin.svg" alt=""><div><b>Rename a page without breaking links</b><span>Change the address safely.</span></div></a>
+  </div>
+</div>
+<script src="stones.js"></script>
+</body></html>
