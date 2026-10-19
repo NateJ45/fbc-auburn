@@ -395,6 +395,24 @@ Built and tested locally (unit tests, the static half of `tests/private-pages.sp
       published), set a password, publish, open `/private/<slug>/` on the live site in a private window.
 - [ ] Look at the new Checkup findings on the real content (links, headings, pages nobody can reach).
 
+### 1s. Card 123 (writing help, Before you publish, AI visitors): the key and the signed-in checks (opened 2026-10-18)
+
+Starter PORTS.md card 123, branch `feat/studio-ai`. Unit-tested, `astro check`, build and `npm test` clean;
+under `astro dev` `/api/studio/ai/` answers `configured` and refuses a cross-site POST (403) and a POST without a
+Sanity session (401), and the Studio loads with the plugin, signed out, no console errors.
+
+- **Nathan: the Anthropic key.** Make a key for the church site in its own Anthropic workspace, set a monthly spend
+  limit of a few dollars there (a description costs about a tenth of a cent, a photo description under a cent), then
+  `npx wrangler secret put ANTHROPIC_API_KEY`. Steps: OPERATIONS.md, "Writing help". Until then the buttons do not
+  show, which is the intended state.
+- **Signed in, light and dark, 375 and 1280:** "Suggest a Google description" on a page, "Suggest a summary" on a
+  sermon and a journal post, "Suggest a description of the photo" on a person's photo, "Improve this paragraph" (the
+  dialog, Use this on a plain paragraph, Copy on one with a link), and "Before you publish" on a page with a missing
+  description and example text, "Show me" opening the field.
+- **llms files.** The Checkup will now say 'The summary for AI assistants still has the template's words': `public/llms.txt`
+  and `public/llms-full.txt` are still the starter's. Rewrite `llms.txt` for the church before launch and run
+  `npm run llms:full`.
+
 ### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
 
 - The signed-in Studio click-through of the new desk (the Start here panes, "Add the usual
