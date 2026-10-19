@@ -15,6 +15,7 @@
 import type { KitConfig } from './kit/types';
 import { genericRules, unconfirmedRule, plural, type CheckupRule } from '../lib/studio-checkup';
 import { qualityRules } from '../lib/studio-checkup-quality';
+import { exampleTextRule, llmsRules } from '../lib/studio-prepublish';
 import { guides, GUIDE_CATEGORIES, GUIDES_FOR_TYPE } from './guides/content';
 import { makeGuideView } from './components/GuideView';
 import { envVal } from './urls';
@@ -294,6 +295,10 @@ export const kitConfig: KitConfig = {
       // Seeded copy marks unconfirmed facts "to be confirmed" (service times,
       // the founding year, the verse), so the pastor can see what is left.
       unconfirmedRule(),
+      // Card 123: words still starting "Example:" from a page template, and the
+      // files for AI assistants (/llms.txt, /llms-full.txt) being stale.
+      exampleTextRule(),
+      ...llmsRules({ pageTypes: ['page'] }),
       expiredNotices,
       // Sermons with nothing to watch or hear, people without a photo (2026-10-18).
       ...collectionRules,
@@ -489,6 +494,8 @@ export const kitConfig: KitConfig = {
     // Card 110: the status line under the top bar, and the help panel.
     navbarStatus: true,
     helpPanel: true,
+    // Card 123: "Before you publish", the Checkup for the open document.
+    publishPanel: true,
   },
 };
 
