@@ -69,7 +69,7 @@ export const site = {
     favicon: '/favicon.svg',
   },
 
-  // Visitor site search (PORTS.md card 123, docs/agent/site-search.md). On for
+  // Visitor site search (PORTS.md card 126, docs/agent/site-search.md). On for
   // FBC Auburn: a search button in the header and the mobile menu, a /search/
   // page, and a Pagefind index of every page's main content, written after
   // `astro build` by scripts/build-search-index.mjs. `suggestions` are the

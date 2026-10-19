@@ -48,7 +48,7 @@ export const RESERVED_SLUGS = new Set([
   'studio',
   'preview',
   'api',
-  // Visitor search (PORTS.md card 123): src/pages/search/[...search].astro.
+  // Visitor search (PORTS.md card 126): src/pages/search/[...search].astro.
   'search',
 ]);
 

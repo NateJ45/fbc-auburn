@@ -71,7 +71,7 @@ test('every reserved slug is a route this repo serves, a scaffolded one, or a bu
     'studio',
     'preview',
     'api',
-    // Visitor search (card 123): src/pages/search/[...search].astro.
+    // Visitor search (card 126): src/pages/search/[...search].astro.
     'search',
   ]);
   // Not pages: two are emitted by the build, one is the asset directory.

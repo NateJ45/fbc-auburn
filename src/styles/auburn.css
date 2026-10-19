@@ -567,7 +567,7 @@ h6 {
 .menu-pill:hover {
   background: var(--muted);
 }
-/* Visitor search (PORTS.md card 123): a round button in the Menu pill's style, just left of it at
+/* Visitor search (PORTS.md card 126): a round button in the Menu pill's style, just left of it at
    every width, and a search row at the top of the night menu. The dialog itself is styled from the
    theme tokens in src/components/search/. */
 .site-header__menu {

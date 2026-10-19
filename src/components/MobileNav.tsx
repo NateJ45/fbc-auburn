@@ -99,7 +99,7 @@ interface Props {
   /** The current path, so the page you are on keeps its stone. */
   current?: string;
   /**
-   * Visitor search is on (src/data/site.ts search.enabled, PORTS.md card 123): a round search
+   * Visitor search is on (src/data/site.ts search.enabled, PORTS.md card 126): a round search
    * button beside the Menu pill at every width, and a "Search the site" row at the top of the night
    * menu. Both are real links to /search/ that open the header's search dialog
    * (src/components/search/SiteSearch.astro). Header.astro passes it only when search is on.

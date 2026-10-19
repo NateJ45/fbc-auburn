@@ -445,7 +445,7 @@ warning but "example text") and four templates rendered locally at 375 and 1280.
 
 ### 1q. Search and share on real sermons and news (opened 2026-10-18)
 
-**Blocker: the production dataset has no sermons or news posts yet.** Card 123 put visitor search and share buttons
+**Blocker: the production dataset has no sermons or news posts yet.** Card 126 put visitor search and share buttons
 on the site. Verified on a local build of the live content plus a temporary sermon-shaped page (not committed): the
 dialog finds pages, the type filters, the date and passage line, the keyboard, axe, the night-menu row, the share links
 and Copy link. CI builds without content, so its search tests cover pages only and its share tests find nothing to

@@ -15,7 +15,7 @@ These are the files where a project maintainer can make changes without risk of 
   - Font imports at the top of `src/styles/globals.css` (swap `@fontsource/libre-baskerville` and `@fontsource-variable/inter` for a project's chosen fonts; update `--font-display` and `--font-body` tokens accordingly)
   - `public/favicon.svg`, `public/og-default.png` and `public/og/*.png` (regenerate with `npm run og` and `npm run og:pages`; OPERATIONS.md, "Share images")
   - Logo files in `src/assets/` (imported by `Header.astro` / `Footer.astro` via `getImage()`)
-- `src/data/site.ts` `search` -- visitor search on or off, the box's placeholder, and the suggestion links (PORTS.md card 123, `docs/agent/site-search.md`). Turning it on needs the pinned `pagefind` devDependency.
+- `src/data/site.ts` `search` -- visitor search on or off, the box's placeholder, and the suggestion links (PORTS.md card 126, `docs/agent/site-search.md`). Turning it on needs the pinned `pagefind` devDependency.
 - `src/data/defaultSections.ts` -- code-defined default section arrays for the section-driven core pages. These are the fallback content shown when no Sanity project is connected. Safe to edit as long as each object matches its schema type.
 - Images in `src/assets/` (logo variants, OG image)
 - Copy strings and `href` values in static page components
