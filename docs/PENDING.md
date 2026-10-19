@@ -651,6 +651,16 @@ kept its name and took a marker.
 The seed audit landed with it, along with the modules archive, the reserved-slug
 cleanup, and the Studio audit ported from the Stone Steps build.
 
+### 15. Studio app, Post a photo, Earlier versions (starter card 125): switch on and check (opened 2026-10-18)
+
+Built, unit-tested and checked on the build (manifest valid, worker on /studio/ only, offline page, Chrome's
+installability check clean). To switch Earlier versions on: the nightly backup running (`sanity-backup.yml` with
+`BACKUP_PASSPHRASE`, `SANITY_AUTH_TOKEN` and the `SANITY_PROJECT_ID` variable), the repo secret
+`SANITY_API_WRITE_TOKEN`, and the Worker's `GITHUB_DEPLOY_TOKEN` (fine-grained, this repo only, Actions: Read and
+write) with `GITHUB_REPO` in wrangler.jsonc. Until then the panel offers "Ask Nathan to restore this". Not yet done:
+install it on an iPhone and an Android phone, post a photo from a phone into a gallery and into a News and notes post
+(signed in), and one scan and restore round trip on a real page, finished with Discard changes.
+
 ### 11. Three things the scaffold work left open
 
 **Queued, 2026-09-18.** None blocks anything; each is a smaller job than it looks and
