@@ -1,0 +1,26 @@
+/* Shared by the three Site Guide mockups (2026-10-18). Static, for picking a direction only. */
+@font-face { font-family: 'Auburn Stone'; src: url('../../../public/fonts/auburn-stone.woff2') format('woff2'); }
+@font-face { font-family: 'Young Serif'; src: url('../../../public/fonts/young-serif-latin-400.woff2') format('woff2'); }
+@font-face { font-family: 'Familjen Grotesk'; src: url('../../../public/fonts/familjen-grotesk-latin-wght.woff2') format('woff2-variations'); font-weight: 400 700; }
+:root {
+  --paper: #fbfaf7; --ink: #171a26; --muted: #4a4f5e; --rule: #dde3ea;
+  --navy: #173f64; --deep: #235e93; --water: #3b83aa; --sky: #96c3ea; --gold: #e8a93a;
+  --green: #2c5b3a; --red: #c4401f; --red-dark: #a8361a;
+  --display: 'Young Serif', Georgia, serif; --body: 'Familjen Grotesk', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.65 var(--body); }
+/* A fake Studio top bar so the page is seen in place. */
+.bar { height: 51px; background: var(--navy); display: flex; align-items: center; gap: 18px; padding: 0 16px; color: #dfe9f3; font: 600 14px var(--body); border-bottom: 1px solid #0f2c47; }
+.bar b { font: 400 18px var(--display); color: #fff; margin-right: 12px; }
+.bar span { padding: 6px 10px; border-radius: 6px; }
+.bar span.on { background: #2a5680; color: #fff; }
+.status { display: flex; justify-content: flex-end; padding: 6px 16px; font-size: 13px; color: #5a6170; border-bottom: 1px solid var(--rule); background: #fff; }
+/* Studio button chips: small faithful copies */
+.chip { display: inline-flex; align-items: center; gap: 5px; font: 600 0.84em/1 var(--body); padding: 0.32em 0.6em; border-radius: 5px; border: 1px solid #c9d1db; background: #fff; color: #262b38; vertical-align: 0.06em; white-space: nowrap; box-shadow: 0 1px 0 rgba(23,26,38,.06); }
+.chip--publish { background: #1f7a4d; border-color: #1f7a4d; color: #fff; }
+.chip--tool { background: var(--navy); border-color: var(--navy); color: #fff; }
+.chip svg { width: 1.05em; height: 1.05em; }
+.tag { display: inline-flex; align-items: center; gap: 8px; font: 700 12.5px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; padding: 8px 14px 8px 10px; color: #12361f; background: #dcebd9; border-radius: 14px 10px 13px 9px / 10px 13px 9px 12px; }
+.tag i { width: 12px; height: 10px; background: var(--green); border-radius: 5px 4px 6px 3px; }
+.mark { display: block; }
