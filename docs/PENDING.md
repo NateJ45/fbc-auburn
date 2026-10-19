@@ -289,6 +289,7 @@ edit in Site settings > Church facts, then a publish.
 2026-10-17 (`docs/agent/studio-kit.md`): Home, Site Guide, Checkup, the staff view, Trash, the note after Publish
 and the tour, checked signed in at `/studio` in light and dark. Still to do:
 
+- **Nathan to review the new stone icons; alternatives in the overnight scratchpad.** Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`.
 - **The editor's Sanity user id in `kitConfig.staff`** once he has accepted the invitation. Until then the staff
   view goes by role, and he is an administrator, so he would see the full Studio.
 - **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its
