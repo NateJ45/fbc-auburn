@@ -16,6 +16,7 @@ import type { KitConfig } from './kit/types';
 import { genericRules, unconfirmedRule, plural, type CheckupRule } from '../lib/studio-checkup';
 import { qualityRules } from '../lib/studio-checkup-quality';
 import { exampleTextRule, llmsRules } from '../lib/studio-prepublish';
+import { TOURS, WELCOME, WHATS_NEW } from './studio-tours';
 import { guides, GUIDE_CATEGORIES, GUIDE_FOR_FIELD, GUIDES_FOR_TYPE } from './guides/content';
 import { makeGuideView } from './components/GuideView';
 import { envVal } from './urls';
@@ -596,6 +597,13 @@ export const kitConfig: KitConfig = {
   // The page check inside "Help for this page" (card 110): the same three
   // checks as the "Check this page..." action, on the page-builder types.
   pageCheck: { types: [...PAGE_BUILDER_TYPES], run: (doc, client) => runPageCheck(client, doc) },
+
+  // Card 137: the spotlight tours, the welcome and What's new live in
+  // studio-tours.ts (plain data, unit-tested; a minimal set until Auburn's own
+  // tours in guides/tours.ts are mapped onto it). tourSteps stays as the fallback.
+  tours: TOURS,
+  welcome: WELCOME,
+  whatsNew: WHATS_NEW,
 
   tourSteps: [
     {
