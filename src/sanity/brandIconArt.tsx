@@ -11,8 +11,8 @@
 // colours read on the paper and on the dark ground, so no one-colour version.
 //
 // Which document type, field group or tool means what: brand/brand.config.json
-// `studio.icons`. Meanings with no stone (home, settings, contact, redirects,
-// the Trash, the guide...) keep the starter's @sanity/icons.
+// `studio.icons`. Meanings with no stone (settings, contact, redirects, the
+// Trash...) keep the starter's @sanity/icons.
 // =============================================================================
 
 import type { BrandIconKey } from '../lib/studio-icons';
@@ -25,6 +25,14 @@ import givingHandUrl from '../assets/brand/stone-icon-giving-hand.svg?url';
 import mapPinUrl from '../assets/brand/stone-icon-map-pin.svg?url';
 import musicUrl from '../assets/brand/stone-icon-music.svg?url';
 import prayingHandsUrl from '../assets/brand/stone-icon-praying-hands.svg?url';
+import guideUrl from '../assets/brand/stone-icon-guide.svg?url';
+import pageUrl from '../assets/brand/stone-icon-page.svg?url';
+import imageUrl from '../assets/brand/stone-icon-image.svg?url';
+import homeUrl from '../assets/brand/stone-icon-home.svg?url';
+import previewUrl from '../assets/brand/stone-icon-preview.svg?url';
+import searchUrl from '../assets/brand/stone-icon-search.svg?url';
+import linkUrl from '../assets/brand/stone-icon-link.svg?url';
+import checkupUrl from '../assets/brand/stone-icon-checkup.svg?url';
 import markUrl from '../assets/brand/fbc-auburn-icon-full-color.svg?url';
 
 // Inset 0: each file's viewBox is already cropped to its art, so the default 10% margin only made
@@ -37,6 +45,14 @@ const GivingHand = artIcon(givingHandUrl, 'Giving hand', 0);
 const MapPin = artIcon(mapPinUrl, 'Map pin', 0);
 const Music = artIcon(musicUrl, 'Music', 0);
 const PrayingHands = artIcon(prayingHandsUrl, 'Praying hands', 0);
+const Guide = artIcon(guideUrl, 'Guide book', 0);
+const Page = artIcon(pageUrl, 'Page', 0);
+const Camera = artIcon(imageUrl, 'Camera', 0);
+const House = artIcon(homeUrl, 'House', 0);
+const Eye = artIcon(previewUrl, 'Eye', 0);
+const Magnifier = artIcon(searchUrl, 'Magnifying glass', 0);
+const ChainLink = artIcon(linkUrl, 'Chain link', 0);
+const Heartbeat = artIcon(checkupUrl, 'Heartbeat', 0);
 // The church's own mark: who we are (the About page, mapped in brand.config.json).
 const Mark = artIcon(markUrl, 'The church mark', 0);
 
@@ -69,8 +85,19 @@ export const BRAND_ICON_ART: Partial<Record<BrandIconKey, BrandIcon>> = {
   form: PrayingHands,
   // Pages and the sections they are built from.
   pages: Blocks,
-  page: Blocks,
   sections: Blocks,
   savedSection: Blocks,
   children: Blocks,
+  // Guides and the Studio's own help, the single page, and the page-level tools.
+  guide: Guide,
+  page: Page,
+  home: House,
+  // Pictures and media, and the preview of the live site.
+  image: Camera,
+  preview: Eye,
+  // Search fields, and the links (share links, redirects in the Studio).
+  search: Magnifier,
+  link: ChainLink,
+  // The health check.
+  checkup: Heartbeat,
 };
