@@ -8,6 +8,8 @@
 @import 'shadcn/tailwind.css';
 @import '@fontsource/young-serif/400.css';
 @import '@fontsource-variable/familjen-grotesk';
+/* The photo viewer (src/components/Lightbox.astro), PORTABLE. */
+@import './lightbox.css';
 
 /* Tailwind v4 scans every non-gitignored file for class names. The committed
    parity baselines (scripts/.parity/*.html) and the Markdown docs name hundreds
@@ -234,6 +236,27 @@
   --input: #dde3ea;
   --ring: #235e93;
   --link: #235e93; /* ~8:1 on #FBFBFA — passes AA */
+
+  /* The section looks' bands (src/lib/section-looks.ts, 2026-10-18), measured as pairs by
+     src/lib/surfaces.test.ts. Declared here and NOT in .dark: each band is the same colour on
+     a light or a dark page. Literals, because the gate reads this file only (--auburn-deep and
+     the sky panel live in auburn.css).
+     Feature: the church blue, flat, white text (6.8:1), sky accent word (3.6:1). */
+  --feature: #235e93;
+  --feature-foreground: #ffffff;
+  --feature-muted-foreground: #e9f2fb; /* captions, 5.9:1 */
+  --feature-link: #ffffff;
+  --feature-accent: #96c3ea;
+  /* Stone: the pale stepping-stone tiles. --stone is the DARKEST colour in tile-sky.svg (the
+     gaps), so every pair is measured at the worst spot; the band paints --stone-paint under
+     the tiles. Ink text 13:1, blue headings and links 5.2:1. */
+  --stone: #d3e3f3;
+  --stone-paint: #e9f2fb;
+  --stone-foreground: #171a26;
+  --stone-heading: #235e93;
+  --stone-muted-foreground: #3f4452; /* captions, 7.4:1 */
+  --stone-link: #235e93;
+  --stone-accent: #235e93;
 
   /* Charts (kept neutral, not used at launch) */
   --chart-1: oklch(0.87 0 0);
@@ -579,6 +602,44 @@ html.motion [data-reveal].is-visible {
    pin it to the lifted slate that reads on near-black in either theme. */
 .bg-accent-dark {
   --section-accent: #8a96a6;
+}
+
+/* The section looks (src/lib/section-looks.ts). Rather than give every section component a
+   set of band classes, a band re-points the page tokens for everything inside it:
+   `text-foreground`, `text-link`, the blue headings (--heading-solid) and friends all read
+   the band's values. The tokens are the measured pairs in src/lib/surfaces.ts. */
+.surface-feature {
+  --background: var(--feature);
+  --foreground: var(--feature-foreground);
+  --heading-solid: var(--feature-foreground);
+  --muted: var(--feature);
+  --muted-foreground: var(--feature-muted-foreground);
+  --card: var(--feature);
+  --card-foreground: var(--feature-foreground);
+  --link: var(--feature-link);
+  --primary: var(--feature-foreground);
+  --primary-foreground: var(--feature);
+  --ring: var(--feature-foreground);
+  --border: rgb(255 255 255 / 0.3);
+  --hb-line: rgb(255 255 255 / 0.3);
+  --section-accent: var(--feature-accent);
+  background-color: var(--feature);
+  color: var(--feature-foreground);
+}
+.surface-stone {
+  --background: var(--stone-paint);
+  --foreground: var(--stone-foreground);
+  --heading-solid: var(--stone-heading);
+  --muted: var(--stone-paint);
+  --muted-foreground: var(--stone-muted-foreground);
+  --card: #ffffff;
+  --link: var(--stone-link);
+  --border: #c9d6e4;
+  --section-accent: var(--stone-accent);
+  background-color: var(--stone-paint);
+  background-image: url('/textures/tile-sky.svg');
+  background-size: 420px 420px;
+  color: var(--stone-foreground);
 }
 
 /* Tactile press on primary CTAs. Tap/click depresses ~1px so the press

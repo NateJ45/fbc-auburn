@@ -245,3 +245,94 @@ test('dynamicListSection appears in SELF_CONTAINED_TYPES and not CONTENT_TYPES',
     'dynamicListSection must not be in CONTENT_TYPES',
   );
 });
+
+// ── Looks (src/lib/section-looks.ts, rule 9 as amended 2026-10-18) ─────────────
+// FBC Auburn's looks: Standard, Feature (the church blue), Stone (pale tiles).
+const looks = (rows: ReturnType<typeof classifySections>) => rows.map((r) => r.look);
+
+test('an unset or Standard look is the old cadence exactly', () => {
+  const plain = classifySections([
+    block('heroSection'),
+    block('richTextSection'),
+    block('gallerySection'),
+    block('quoteSection'),
+  ]);
+  const standard = classifySections([
+    block('heroSection'),
+    block('richTextSection', { look: 'standard' }),
+    block('gallerySection', { look: 'standard' }),
+    block('quoteSection'),
+  ]);
+  assert.deepEqual(surfaces(standard), surfaces(plain));
+  assert.deepEqual(dividers(standard), dividers(plain));
+  assert.deepEqual(looks(plain), ['standard', 'standard', 'standard', 'standard']);
+});
+
+test('Feature and Stone sit outside the alternation and take no divider', () => {
+  const rows = classifySections([
+    block('richTextSection'), // background (idx 0)
+    block('quoteSection', { look: 'feature' }), // feature, counter does not move
+    block('imageTextSection'), // muted (idx 1)
+    block('gallerySection', { look: 'stone' }), // stone, counter does not move
+    block('videoSection'), // background (idx 2)
+  ]);
+  assert.deepEqual(surfaces(rows), ['background', 'feature', 'muted', 'stone', 'background']);
+  assert.deepEqual(looks(rows), ['standard', 'feature', 'standard', 'stone', 'standard']);
+  assert.deepEqual(dividers(rows), [false, false, false, false, false]);
+});
+
+test('two bands of the same look never touch; different looks may', () => {
+  const rows = classifySections([
+    block('richTextSection', { look: 'stone' }),
+    block('quoteSection', { look: 'stone' }), // second Stone in a row: Standard
+    block('videoSection', { look: 'feature' }),
+    block('richTextSection', { look: 'feature' }), // second Feature in a row: Standard
+    block('gallerySection', { look: 'stone' }),
+  ]);
+  assert.deepEqual(looks(rows), ['stone', 'standard', 'feature', 'standard', 'stone']);
+});
+
+test('a Feature band never touches a dark band, and Auburn closes light without a photo', () => {
+  const photo = { backgroundImage: { asset: { _ref: 'image-a' } } };
+  const rows = classifySections([
+    block('heroSection', photo),
+    block('richTextSection', { look: 'feature' }), // after a photo hero: Standard
+    block('quoteSection', { look: 'feature' }), // fine here
+    block('gallerySection'),
+    block('imageTextSection', { look: 'feature' }), // before a photo CTA band: Standard
+    block('ctaBandSection', photo),
+  ]);
+  assert.equal(rows[1].look, 'standard');
+  assert.equal(rows[2].look, 'feature');
+  assert.equal(rows[4].look, 'standard');
+  // The light close (no photo) is not a dark band, so a Feature may sit above it.
+  const light = classifySections([
+    block('quoteSection', { look: 'feature' }),
+    block('ctaBandSection'),
+  ]);
+  assert.equal(light[0].look, 'feature');
+  // Stone is light: it may touch anything dark.
+  const stone = classifySections([
+    block('heroSection', photo),
+    block('quoteSection', { look: 'stone' }),
+  ]);
+  assert.equal(stone[1].look, 'stone');
+});
+
+test('a look a block does not offer, or nonsense, is Standard', () => {
+  const rows = classifySections([
+    block('richTextSection', { look: 'quiet' }), // the starter's look, not offered here
+    block('richTextSection', { look: 42 }),
+    block('faqSection', { look: 'feature' }), // self-contained: never takes a look
+    block('photoSection', { look: 'stone' }), // church library block: not eligible
+  ]);
+  assert.deepEqual(looks(rows), ['standard', 'standard', 'standard', 'standard']);
+  assert.equal(rows[2].surface, null);
+});
+
+test('stega markers on a look are ignored', () => {
+  const rows = classifySections([
+    block('quoteSection', { look: 'stone' + String.fromCharCode(0x200b, 0x200c, 0x200d) }),
+  ]);
+  assert.equal(rows[0].look, 'stone');
+});

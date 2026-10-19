@@ -1566,6 +1566,7 @@ export type VideoSection = {
   url?: string;
   heading?: string;
   caption?: string;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type CtaBandSection = {
@@ -1617,6 +1618,7 @@ export type QuoteSection = {
   quote?: string;
   attribution?: string;
   detail?: string;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type GallerySection = {
@@ -1633,6 +1635,7 @@ export type GallerySection = {
     _key: string;
   }>;
   columns?: 2 | 3 | 4;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type ImageTextSection = {
@@ -1686,6 +1689,7 @@ export type ImageTextSection = {
     _key: string;
   }>;
   cta?: CtaBlock;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type RichTextSection = {
@@ -1714,6 +1718,7 @@ export type RichTextSection = {
   }>;
   width?: 'normal' | 'narrow';
   align?: 'left' | 'center';
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type HeroSection = {

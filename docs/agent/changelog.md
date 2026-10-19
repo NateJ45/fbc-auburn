@@ -11,6 +11,34 @@ batches); an RSVP section on any page takes replies with capacity and a waiting 
 the Studio's RSVPs tool lists them with a CSV download. A provider-hosted list was weighed and left out: one more
 account and a second home for people's addresses.
 
+_2026-10-18: section looks and a photo viewer (PORTS card 124)._
+
+**Decision.** Editors can pick a section's look instead of a colour. The five content blocks (text, image + text,
+gallery, quote, video) carry a `look` radio: Standard (the white board), Feature (the church blue with white text) and
+Stone (the pale stepping-stone tiles with dark text). There is no Quiet look here: the board is already white.
+SectionRenderer's cadence resolves the look with the neighbours in view, so two of the same look never touch and a
+Feature never touches a dark band; every surface is a measured AA pair (Stone measured on the darkest gap in the tile). Rule 9 now allows that
+one enum and still forbids free colour fields, and the gate test says so. Unset means Standard, so no page moved
+(parity). Gallery photos, the photo section and journal post photos now open a full-screen viewer (native `<dialog>`, no dependency):
+caption and position, arrows and swipe, Escape, a focus trap and focus return, reduced motion respected, and with
+JavaScript off each photo is a link to the full-size picture. A Squarespace-style free background picker was weighed
+and left out: it is how a site drifts.
+
+_2026-10-18: the Studio on a phone, "Post a photo", and earlier versions from the nightly backups (PORTS card 125)._
+
+**Decision.** `/studio` installs to a phone's home screen: its own manifest (`/studio/manifest.webmanifest`, scope
+`/studio/`, standalone, the site's name and icons plus a padded maskable one, the Studio's navy and paper) and a small
+service worker scoped to `/studio/` that keeps only the hashed code files, icons and an offline page ("You're
+offline"). It never stores a Sanity answer, a login or anything from `/api/`, and fetches the boot page fresh every
+time. Quick update gains "Post a photo": camera or gallery, a required description, into a gallery on any page or a new
+post, saved as a DRAFT only (the editor presses Publish), with the photo redrawn smaller and without its EXIF location.
+Every document gains an "Earlier versions" panel that reaches the last 14 nightly backups: the Worker
+(`/api/studio/earlier-versions/`, same origin, a signed-in editor, rate limited) starts `restore-doc.yml` with the
+existing deploy token, CI decrypts and either lists which fields differ (names and list lengths only, because public
+run logs are public) or writes ONE draft after a dry run, with `NCS_PRODUCTION_WRITE` on that one step. Weighed and
+left out: decrypting in the Worker (it would need the passphrase and a backup can exceed a Worker's memory), and a
+network-first-with-timeout shell (a stale boot page can point at code a later deploy removed).
+
 _2026-10-18: visitor site search and share buttons (PORTS card 126)._
 
 **Decision.** Visitor search is on for this site (`site.search.enabled`). Pagefind 1.5.2, pinned as a
@@ -47,6 +75,7 @@ and end of body, never on /studio or /preview). The Checkup lists both while the
 unchanged (rule 1); `runsOnPage`, `headCode` and `bodyEndCode` are new. The "not both URL and code" check now reads
 the block (`context.parent`) instead of the document, so it finally fires. A full CSP was weighed and left for later:
 it would not stop same-origin script reading localStorage, which is the actual risk here.
+
 _2026-10-18: hidden pages, password pages, and link and heading checks in the Checkup (PORTS card 122)._
 
 **Decision.** "Hide this page from Google and the menus" now also keeps a page out of the menus, the menu picker and

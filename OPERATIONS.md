@@ -484,6 +484,25 @@ once the organiser has downloaded them (the key is in the RSVPs tool's download 
 - **Table views.** Sermons, Downloads and People each have "... as a table" under the normal list. Columns live in
   `src/sanity/tables.config.ts`.
 
+## The Studio app and Earlier versions (PORTS.md card 125)
+
+- **The Studio on a phone.** Nothing to switch on: `/studio/manifest.webmanifest` and `/studio/sw.js` ship with
+  every build. Check after a deploy: open `/studio/` in Chrome, DevTools, Application, Manifest (no errors, the
+  maskable icon looks right in the "Show only the minimum safe area" preview) and Service workers (scope `/studio/`).
+  To make it drop everything it keeps, bump `VERSION` in `public/studio/sw.js`. A new brand mark: `npm run favicon`.
+- **Post a photo.** `kitConfig.postPhoto` in `src/sanity/kit.config.ts`: every page-builder page's galleries, or a new
+  News and notes post, with a reminder about children's photos. Drafts only.
+- **Home-screen name.** `studioEdges.app`: "FBC Auburn" under the icon, opening on Quick update. The maskable icon
+  is the hand-drawn `public/icon-maskable-512.png` from the reskin (kept by `npm run favicon`).
+- **Earlier versions.** Needs three things already used elsewhere: the nightly backup running
+  (`sanity-backup.yml`, with `BACKUP_PASSPHRASE`), the repo secret `SANITY_API_WRITE_TOKEN` and variable
+  `SANITY_PROJECT_ID` (read by `restore-doc.yml`), and the Worker's `GITHUB_DEPLOY_TOKEN` secret plus
+  `GITHUB_REPO` var (the "Try again" settings). The token must be fine-grained, this repository only, with
+  **Actions: Read and write**; that one permission covers starting the workflow, listing the backups and reading the
+  run log. Without any of it the panel offers "Ask for help" instead. Try it by hand first: Actions, "Restore one
+  document from a backup", Run workflow, mode `scan`, a document id. A restore from the Studio shows in the Actions
+  list as `restore-doc restore <request id>`, with an audit line naming the Sanity user who asked.
+
 ## Seed placeholder content
 
 Seed scripts bootstrap document types with placeholder content for a fresh dataset. The reusable scripts in `scripts/` cover the core content types. Modules may include their own seed scripts documented in `docs/modules/`.

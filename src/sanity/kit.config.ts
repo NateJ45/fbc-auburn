@@ -31,6 +31,7 @@ import { comingSunday, lastSunday } from '../lib/studio-kit';
 import { buildNotice, buildSermon, PASTOR_QUERY } from '../lib/quick-updates';
 import { runPageCheck } from './actions/checkPage';
 import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
+import { slugify } from '../lib/slugify';
 
 const PUBLISHED = '!(_id in path("drafts.**"))';
 
@@ -192,6 +193,37 @@ export const kitConfig: KitConfig = {
   // Quick update (card 111): the three jobs the pastor does from his phone. Each form
   // publishes straight away, so the builders in src/lib/quick-updates.ts return whole,
   // valid documents (tested in quick-updates.test.ts).
+  // "Post a photo" on Quick update (card 125): a photo from a phone into a
+  // gallery on any page, or into a new News and notes post. Always a DRAFT; the
+  // editor presses Publish.
+  postPhoto: {
+    galleryTypes: [...PAGE_BUILDER_TYPES],
+    note: "Photos of children need a parent's permission first, and never add a child's name.",
+    post: {
+      label: 'A new News and notes post',
+      type: 'journalEntry',
+      build: ({ title, alt, caption, image, now }) => ({
+        _type: 'journalEntry',
+        title,
+        slug: { _type: 'slug', current: slugify(title) },
+        excerpt: (caption || alt).slice(0, 220),
+        coverImage: image,
+        publishedAt: now.toISOString(),
+        body: [
+          {
+            _type: 'block',
+            _key: 'photo-intro',
+            style: 'normal',
+            markDefs: [],
+            children: [
+              { _type: 'span', _key: 'photo-intro-text', text: caption || alt, marks: [] },
+            ],
+          },
+        ],
+      }),
+    },
+  },
+
   quickUpdate: [
     {
       id: 'notice',

@@ -171,6 +171,19 @@ main:has(.board-head) .board-rule-wrap + section > :first-child,
 main:has(.board-head) .board-rule-wrap + * > section > :first-child {
   padding-top: 28px;
 }
+/* A band from a section look (Feature, Stone; src/lib/section-looks.ts) has its own edge, so it
+   keeps its full top padding rather than tucking up under the rule like a white section. */
+main:has(.board-head)
+  .board-rule-wrap
+  + section:is(.surface-feature, .surface-stone)
+  > :first-child,
+main:has(.board-head)
+  .board-rule-wrap
+  + *
+  > section:is(.surface-feature, .surface-stone)
+  > :first-child {
+  padding-top: var(--spacing-section-lg);
+}
 
 /* ---- White ground: the cadence's tinted bands, the Walk and the closing band ------------------ */
 main:has(.board-head) section.bg-muted {
