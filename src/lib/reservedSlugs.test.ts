@@ -71,6 +71,8 @@ test('every reserved slug is a route this repo serves, a scaffolded one, or a bu
     'studio',
     'preview',
     'api',
+    // Visitor search (card 126): src/pages/search/[...search].astro.
+    'search',
     // Password pages (src/pages/private/[slug].astro, card 122).
     'private',
   ]);

@@ -45,7 +45,14 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={page?.seoImage}
+  searchType="question"
+>
   {/* ------- 1. Hero --------------------------------------------------------- */}
   <Hero
     eyebrow={heroEyebrow}

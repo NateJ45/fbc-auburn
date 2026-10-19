@@ -50,14 +50,16 @@ const short = (label: string) => label.replace(/ am$/, '');
       <time datetime={sunday.date}>{sunday.dateLabel.replace(/^Sunday, /, '')}</time>
     </p>
     <SundayWeather reserve />
+    {/* The spaces between dt and dd are for site search (card 126): the list is a grid, so they
+        change nothing on screen, but without them Pagefind reads "9:45Sunday School". */}
     <dl class="hb-sunday__times hb-num">
       {sunday.services.map((s) => (
         <>
-          <dt>{short(s.timeLabel)}</dt>
+          <dt>{short(s.timeLabel)}</dt>{' '}
           <dd>
             {s.label}
             {s.note && `, ${s.note}`}
-          </dd>
+          </dd>{' '}
         </>
       ))}
     </dl>
