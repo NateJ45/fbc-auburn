@@ -523,6 +523,10 @@ check. Once the first sermon and news post are published and deployed:
 
 ## Known gaps, deliberately open
 
+### Card 137 on Auburn: map the tours and record the clips (opened 2026-10-19)
+
+The tour engine, the clip player, the job kinds and the capture scripts are in (PORTS.md card 137). `src/sanity/studio-tours.ts` holds a minimal starter set; Auburn's own tours in `src/sanity/guides/tours.ts` are to be mapped onto it (`selector` becomes `anchor: 'css:...'`, `needsHook` controls now have hooks: `home-this-week`, `quick:<form id>`, `quick-submit`, `quick-field-<name>`, `newsletter-send-everyone`, `field:<path>`). Then record the clips (`tools/tutorial-videos/`), fill `src/sanity/guides/videos.ts`, and capture the shots (`tools/guide-shots/shots.json`). Detail: `docs/agent/studio-kit.md` "Spotlight tours".
+
 ### 17. Card 135: Home's banner style slot (2026-10-19)
 
 Home's banner takes its look from `kitConfig.homeBanner.style` when the site sets one; Auburn sets none and its banner is unchanged. Nothing to do here unless the banner is restyled: do it in the slot, never in CSS by class name (docs/agent/studio-kit.md, "Home's banner style").
