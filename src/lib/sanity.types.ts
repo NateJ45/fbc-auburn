@@ -206,6 +206,9 @@ export type PrivatePage = {
       } & FormSection)
     | ({
         _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -214,6 +217,42 @@ export type Slug = {
   _type: 'slug';
   current?: string;
   source?: string;
+};
+
+export type SermonReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sermon';
+};
+
+export type Newsletter = {
+  _id: string;
+  _type: 'newsletter';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  subject?: string;
+  date?: string;
+  slug?: Slug;
+  preheader?: string;
+  intro?: string;
+  includeSermon?: boolean;
+  sermon?: SermonReference;
+  notices?: Array<{
+    title?: string;
+    text?: string;
+    link?: string;
+    _type: 'notice';
+    _key: string;
+  }>;
+  includeEvents?: boolean;
+  eventDays?: number;
+  note?: {
+    heading?: string;
+    text?: string;
+  };
+  showOnWebsite?: boolean;
 };
 
 export type SanityFileAssetReference = {
@@ -644,13 +683,6 @@ export type SermonsPageReference = {
   [internalGroqTypeReferenceTo]?: 'sermonsPage';
 };
 
-export type SermonReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'sermon';
-};
-
 export type PageReference = {
   _ref: string;
   _type: 'reference';
@@ -1028,12 +1060,34 @@ export type SectionPreset = {
       } & FormSection)
     | ({
         _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
       } & FaqSection)
     | ({
         _key: string;
       } & DynamicListSection)
   >;
   note?: string;
+};
+
+export type RsvpSection = {
+  _type: 'rsvpSection';
+  heading?: string;
+  intro?: string;
+  eventName?: string;
+  startsAt?: string;
+  where?: string;
+  capacity?: number;
+  waitlist?: boolean;
+  maxParty?: number;
+  closesAt?: string;
+  questions?: Array<
+    {
+      _key: string;
+    } & FormQuestion
+  >;
+  confirmationNote?: string;
 };
 
 export type FormReference = {
@@ -1512,6 +1566,7 @@ export type VideoSection = {
   url?: string;
   heading?: string;
   caption?: string;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type CtaBandSection = {
@@ -1563,6 +1618,7 @@ export type QuoteSection = {
   quote?: string;
   attribution?: string;
   detail?: string;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type GallerySection = {
@@ -1579,6 +1635,7 @@ export type GallerySection = {
     _key: string;
   }>;
   columns?: 2 | 3 | 4;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type ImageTextSection = {
@@ -1632,6 +1689,7 @@ export type ImageTextSection = {
     _key: string;
   }>;
   cta?: CtaBlock;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type RichTextSection = {
@@ -1660,6 +1718,7 @@ export type RichTextSection = {
   }>;
   width?: 'normal' | 'narrow';
   align?: 'left' | 'center';
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type HeroSection = {
@@ -1863,6 +1922,9 @@ export type PrivacyPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -1996,6 +2058,9 @@ export type Page = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & RsvpSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2347,6 +2412,9 @@ export type SermonsPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -2648,6 +2716,9 @@ export type JournalPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -2841,6 +2912,9 @@ export type ContactPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -3012,6 +3086,9 @@ export type FaqPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -3143,6 +3220,9 @@ export type AboutPage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & RsvpSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3383,6 +3463,9 @@ export type HomePage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & RsvpSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3659,6 +3742,8 @@ export type AllSanitySchemaTypes =
   | Redirect
   | PrivatePage
   | Slug
+  | SermonReference
+  | Newsletter
   | SanityFileAssetReference
   | Download
   | JournalCategory
@@ -3679,7 +3764,6 @@ export type AllSanitySchemaTypes =
   | JournalPageReference
   | JournalEntryReference
   | SermonsPageReference
-  | SermonReference
   | PageReference
   | CtaBlock
   | PrivacyPageReference
@@ -3695,6 +3779,7 @@ export type AllSanitySchemaTypes =
   | SectionPresetReference
   | SyncedSection
   | SectionPreset
+  | RsvpSection
   | FormReference
   | FormSection
   | Form

@@ -78,6 +78,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'sectionPreset', // saved sections, placed explicitly under "Pages"
   'redirect', // placed explicitly under "Pages" -> Redirects
   'form', // the form builder, placed explicitly under Content -> Forms
+  'newsletter', // card 127, placed explicitly under Content -> Newsletter
   TRASH_TYPE, // the Studio kit's Trash, placed explicitly at the bottom
   // sanity-plugin-media registers this tag type; keep it out of the desk root
   // (the "Media" tool in the top sidebar is where tags belong).
@@ -297,6 +298,17 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 icon: typeIcon('form'),
                 explain:
                   'Forms people fill in on the website, like a prayer request or a sign-up. Add one to a page with the Form section.',
+              }),
+
+              // The newsletter (card 127): issues written here, sent with the buttons beside
+              // Publish. The people who get it are kept in the site's database, never here.
+              emptyAwareList(S, context, {
+                id: 'newsletter',
+                type: 'newsletter',
+                title: 'Newsletter',
+                icon: typeIcon('newsletter'),
+                explain:
+                  'The email that goes to everyone who signed up on the website. Write an issue, publish it, send yourself a test, then send it.',
               }),
             ]),
         ),

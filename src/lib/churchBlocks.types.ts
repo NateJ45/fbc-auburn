@@ -158,6 +158,24 @@ export interface ProjectedFormSection {
   form?: Record<string, unknown> | null;
 }
 
+/** An RSVP form for one event (card 127). `pageId` comes from the projection (^._id). */
+export interface ProjectedRsvpSection {
+  _type: 'rsvpSection';
+  _key: string;
+  pageId?: string;
+  heading?: string;
+  intro?: string;
+  eventName?: string;
+  startsAt?: string;
+  where?: string;
+  capacity?: number;
+  waitlist?: boolean;
+  maxParty?: number;
+  closesAt?: string;
+  questions?: unknown[];
+  confirmationNote?: string;
+}
+
 export type ChurchPageBlock =
   | ProjectedServiceTimesSection
   | ProjectedMapSection
@@ -179,7 +197,8 @@ export type ChurchPageBlock =
   | ProjectedContactCardSection
   | ProjectedColumnsSection
   | ProjectedPhotoSection
-  | ProjectedFormSection;
+  | ProjectedFormSection
+  | ProjectedRsvpSection;
 
 export type ChurchBlockType = ChurchPageBlock['_type'];
 
@@ -206,6 +225,7 @@ export const CHURCH_BLOCK_TYPES: ReadonlySet<string> = new Set<ChurchBlockType>(
   'columnsSection',
   'photoSection',
   'formSection',
+  'rsvpSection',
 ]);
 
 /** Narrow a page-builder block to a church block. */

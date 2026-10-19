@@ -25,7 +25,10 @@
 // sibling site repos DO expose a surface swatch, because their sections carry a
 // per-section `background` object and no cadence to protect. Here the cadence
 // picks; this file only says what the cadence is picking BETWEEN, and holds the
-// pairs to AA while it does. For the same reason there is no accent map here:
+// pairs to AA while it does. Since 2026-10-18 an editor can ASK for a band with
+// a block's `look` (src/lib/section-looks.ts, rule 9 as amended): a short
+// enum of designed looks, resolved by the cadence into one of the pairs below.
+// Still no colour picker and still no `tone` field. For the same reason there is no accent map here:
 // an accent choice needs a shared section shell to hang a class on, and this
 // template has none - every section paints its own <section>.
 //
@@ -34,7 +37,14 @@
 // =============================================================================
 
 /** The surface names the components and the cadence already use. */
-export type SurfaceValue = 'background' | 'muted' | 'card' | 'ink';
+export type SurfaceValue = 'background' | 'muted' | 'card' | 'ink' | 'feature' | 'stone';
+
+/**
+ * The surfaces a CONTENT block can be handed by src/lib/sectionCadence.ts:
+ * the two the alternating cadence assigns, plus the ones an editor's `look`
+ * can ask for (src/lib/section-looks.ts).
+ */
+export type CadenceSurface = 'background' | 'muted' | 'feature' | 'stone';
 
 export interface SurfacePair {
   value: SurfaceValue;
@@ -61,6 +71,12 @@ export interface SurfacePair {
   themeStatic?: boolean;
   /** True when src/lib/sectionCadence.ts can assign this surface to a section. */
   inCadence?: boolean;
+  /**
+   * The token the accent word inside a heading reads on this band, when the
+   * band sets its own (`--section-accent` in globals.css). Unset means the
+   * shared HEADING_ACCENT rules below. The gate measures whichever applies.
+   */
+  accentToken?: string;
 }
 
 export const SECTION_SURFACES: SurfacePair[] = [
@@ -115,6 +131,52 @@ export const SECTION_SURFACES: SurfacePair[] = [
       text: '--color-bg',
       heading: '--color-bg',
       link: '--color-bg',
+    },
+  },
+  // The Feature look (2026-10-18, src/lib/section-looks.ts): the church blue,
+  // flat, with white text. THEME-STATIC like Ink (the site is light only, rule
+  // 3, but the forced-dark suites still measure it). `.surface-feature` in
+  // globals.css re-points the page tokens INSIDE the band, so a section
+  // component paints it with no component-level dark styles.
+  {
+    value: 'feature',
+    title: 'Feature',
+    hint: 'The church blue an editor can ask for with the Feature look. White text.',
+    className: 'surface-feature',
+    dot: '#235E93',
+    dotDark: '#235E93',
+    dotInk: '#FFFFFF',
+    themeStatic: true,
+    inCadence: true,
+    accentToken: '--feature-accent',
+    tokens: {
+      bg: '--feature',
+      text: '--feature-foreground',
+      heading: '--feature-foreground',
+      link: '--feature-link',
+    },
+  },
+  // The Stone look (2026-10-18): the pale stepping-stone tiles
+  // (public/textures/tile-sky.svg) the church's sky panels use, with dark text.
+  // The band paints #E9F2FB under the tiles, but the pair is MEASURED on
+  // --stone, the darkest colour in the tile (#D3E3F3, the gaps between stones),
+  // so the gate checks the worst spot any word can land on.
+  {
+    value: 'stone',
+    title: 'Stone',
+    hint: 'The pale stepping-stone band an editor can ask for with the Stone look. Dark text.',
+    className: 'surface-stone',
+    dot: '#D3E3F3',
+    dotDark: '#D3E3F3',
+    dotInk: '#171A26',
+    themeStatic: true,
+    inCadence: true,
+    accentToken: '--stone-accent',
+    tokens: {
+      bg: '--stone',
+      text: '--stone-foreground',
+      heading: '--stone-foreground',
+      link: '--stone-link',
     },
   },
 ];

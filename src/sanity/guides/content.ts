@@ -42,6 +42,7 @@
 import { collectionGuides } from './collections.ts';
 
 import type { KitGuideBlock } from '../kit/guide/GuidePage';
+import { phoneGuides } from './phoneGuides.ts';
 
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
@@ -575,6 +576,48 @@ export const guides: Guide[] = [
   },
 
   {
+    slug: 'section-looks',
+    category: 'Pages and words',
+    title: 'Change how a section looks',
+    icon: 'blocks',
+    lead: 'Make one section stand out in the church blue or on the pale stones, without picking colours.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Text, picture and text, photo gallery, quote and video sections each have a **Look**. Most sections sit on the plain white page and never need changing. The look is for the few that should stand apart.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Standard** is the plain white page. Every section starts here.',
+          '**Feature** puts the section on the church blue with white text. Use it once or twice a page, for the part that matters most, like a welcome or a verse.',
+          '**Stone** puts the section on a pale blue band of stepping stones, with dark text. A gentler way to set something apart.',
+        ],
+      },
+      { kind: 'h', text: 'Change one' },
+      {
+        kind: 'steps',
+        items: [
+          'Open the page and click the section.',
+          'Scroll to `Look` near the bottom and pick one. The little picture beside each shows the band.',
+          'Check it in the preview, then `Publish`.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Two sections with the same look never sit side by side.',
+        text: 'If two Stone sections (or two Feature sections) come one after the other, the website shows the second one as Standard, so they do not run together into one long band. A Feature next to a banner with a photo shows as Standard too. Move one, or pick a different look.',
+      },
+      {
+        kind: 'p',
+        text: '_There is no colour picker on purpose. The looks use the church colours the design was made with, and they are checked for easy reading._',
+      },
+    ],
+  },
+
+  {
     slug: 'rename-a-page',
     category: 'Pages and words',
     title: 'Rename a page without breaking links',
@@ -1041,6 +1084,70 @@ export const guides: Guide[] = [
           'It appears when a page has a box the design no longer uses. It deletes that box across EVERY page at once and cannot be undone without restoring a backup. If you see it, leave it and ask ' +
           SITE.contactName +
           '.',
+      },
+    ],
+  },
+  {
+    slug: 'send-the-newsletter',
+    category: 'Housekeeping',
+    title: 'Send the weekly newsletter',
+    icon: '✉',
+    lead: 'Write it, publish it, send yourself a test, then send it to everyone.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          "Open `Newsletter` in the list on the left and press `+` for a new issue, or duplicate last week's.",
+          'Write the subject line and a few opening words, then pick what goes in. Leave out anything you do not need this week.',
+          'Press `Publish`. Only the published issue is ever sent, so publish again after any change.',
+          'Press `Send a test to me` (under the arrow beside Publish). Read it in your own inbox, on your phone too.',
+          'Happy? Press `Send to everyone` and then `Yes, send it to everyone`. Keep the window open while the count goes up.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'caution',
+        title: 'An issue goes once.',
+        text: 'After an issue has gone out, `Send to everyone` only tells you when it went. To send a correction, make a new issue. If the window closes halfway, press the button again: it carries on, and nobody gets it twice.',
+      },
+      {
+        kind: 'p',
+        text: 'People join from the newsletter sign-up box on the website and confirm by pressing a link in an email. **Home** shows how many people get it. Everyone can leave with the link at the bottom of every issue; you never need to remove anyone by hand.',
+      },
+      {
+        kind: 'p',
+        text: 'If the buttons say **Email is not set up on this website yet**, ask for help to switch it on.',
+      },
+    ],
+  },
+  {
+    slug: 'rsvps',
+    category: 'Housekeeping',
+    title: 'Let people RSVP',
+    icon: '✓',
+    lead: 'Add an RSVP section to an event page and see who is coming.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          "Open the event's page, add a section and pick `RSVP (who is coming)` under Sign-ups.",
+          'Fill in the event name and when it starts. Add how many places there are if there is a limit, and whether to keep a waiting list.',
+          'Add any questions you need, like allergies or an age group. Ask only for what you will use.',
+          'Publish the page. People who reply get a confirmation email with the details.',
+          'Click `RSVPs` in the top bar to see who is coming. `Download for a spreadsheet` gives the organiser a list that opens in Excel or Google Sheets.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Replies stop by themselves.',
+        text: 'The form closes when the event starts, or at the time you set in "Stop taking replies at". When the places are full it offers the waiting list, or says the event is full.',
+      },
+      {
+        kind: 'p',
+        text: 'This form does not take payments. For a paid event, say where to pay in the line under the heading.',
       },
     ],
   },
@@ -1589,6 +1696,11 @@ guides.push(
   },
 );
 
+// ── The Studio app and earlier versions (PORTS.md card 125) ──────────────────
+// Shared by every site (src/sanity/guides/phoneGuides.ts, PORTABLE): keep this
+// line when rewriting the guides above.
+guides.push(...phoneGuides(SITE.contactName));
+
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
  * guide.forType, PORTS.md card 110). '*' is the fallback for anything unlisted.
@@ -1616,6 +1728,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   privatePage: ['make-a-page-private', 'edit-a-page'],
   form: ['make-a-form', 'prayer-requests', 'messages'],
   homePage: ['home-page', 'add-sermon', 'images-and-alt', 'seo-fields'],
+  newsletter: ['send-the-newsletter'],
   siteSettings: [
     'church-facts',
     'contact-give-live',

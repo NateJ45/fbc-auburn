@@ -2,7 +2,9 @@
 // Foundation, edit with care
 // Renders a page-builder section array. Maps each block _type to its component
 // and OWNS the alternating background cadence for content blocks, so reordering
-// can never break the page rhythm (that is why blocks have no color field).
+// can never break the page rhythm (that is why blocks have no color field). A
+// content block's `look` (src/lib/section-looks.ts, rule 9 as amended) is a
+// request the cadence resolves into a measured surface, never a colour.
 // Self-contained blocks (hero, CTA band, stats, spacer) manage their own surface.
 //
 // Cadence logic lives in src/lib/sectionCadence.ts and is unit-tested separately.
@@ -73,6 +75,11 @@ const { sections = [], idPrefix = 'section', editDoc } = Astro.props as Props;
 // Synced sections (the authoring kit, PORTS.md card 109) are swapped for the
 // sections their saved copy holds BEFORE the cadence runs, so a synced band
 // takes its place in the alternating rhythm like any typed-in band (rule 9).
+// Only the five content blocks take a look (src/lib/section-looks.ts), so every other block is
+// only ever handed a light surface by the cadence; this narrows the type for them.
+const lightSurface = (s: string | null): 'background' | 'muted' =>
+  s === 'muted' ? 'muted' : 'background';
+
 const rows = classifySections<PageBuilderBlock>(
   expandSyncedSections(sections as PageBuilderBlock[]),
   idPrefix,
@@ -238,7 +245,7 @@ const editKeyOf = (block: unknown) => {
           attribution={s.attribution}
           credentialLine={s.credentialLine}
           serviceAreaLine={s.serviceAreaLine}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'serviceAreaSection' ? (
@@ -248,14 +255,14 @@ const editKeyOf = (block: unknown) => {
           description={s.description}
           travelFees={s.travelFees ?? []}
           showTravelFees={s.showTravelFees ?? true}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'guaranteeSection' ? (
         <GuaranteeSection
           text={s.text}
           siteSettingsText={s.siteSettingsText}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
         />
       ) : // scaffold-branch: faq
       s._type === 'faqSection' ? (
@@ -283,14 +290,14 @@ const editKeyOf = (block: unknown) => {
           heading={s.heading}
           intro={s.intro}
           cards={s.cards ?? []}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'thisWeekSection' ? (
         <ThisWeekSection
           heading={s.heading}
           intro={s.intro}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'watchSection' ? (
@@ -302,7 +309,7 @@ const editKeyOf = (block: unknown) => {
           poster={s.poster}
           fallback={s.fallback}
           latestSermon={s.latestSermon}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'teamSection' ? (
@@ -346,7 +353,7 @@ const editKeyOf = (block: unknown) => {
           endHeading={s.endHeading}
           primaryCta={s.primaryCta}
           secondaryCta={s.secondaryCta}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'walkSection' ? (
@@ -358,7 +365,7 @@ const editKeyOf = (block: unknown) => {
           endBody={s.endBody}
           endLinkLabel={s.endLinkLabel}
           endLinkHref={s.endLinkHref}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'latestSermonSection' ? (
@@ -367,7 +374,7 @@ const editKeyOf = (block: unknown) => {
           intro={s.intro}
           sermon={s.sermon}
           bibleVersion={s.bibleVersion}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'sermonSeriesSection' ? (
@@ -376,7 +383,7 @@ const editKeyOf = (block: unknown) => {
           intro={s.intro}
           limit={s.limit}
           series={s.series ?? []}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'peopleSection' ? (
@@ -386,7 +393,7 @@ const editKeyOf = (block: unknown) => {
           mode={s.mode}
           items={s.items ?? []}
           showBios={s.showBios ?? true}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : s._type === 'downloadsSection' ? (
@@ -399,11 +406,11 @@ const editKeyOf = (block: unknown) => {
           featureBulletin={s.featureBulletin ?? false}
           items={s.items ?? []}
           bulletins={s.bulletins}
-          surface={surface ?? 'background'}
+          surface={lightSurface(surface)}
           headingId={headingId}
         />
       ) : isChurchBlock(s) ? (
-        <ChurchBlock block={s} surface={surface ?? 'background'} headingId={headingId} />
+        <ChurchBlock block={s} surface={lightSurface(surface)} headingId={headingId} />
       ) : (
         // Unknown block type: render nothing, log in dev.
         import.meta.env.DEV &&

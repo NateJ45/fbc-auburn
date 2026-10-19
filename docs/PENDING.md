@@ -16,6 +16,14 @@ sequence).
 
 ## Waiting on a human
 
+### 1v. Card 127 (the email backbone): a real send, and the Studio buttons signed in (opened 2026-10-18)
+
+**Blocker: a sending domain and a signed-in Studio.** Unit-tested on real SQLite and exercised under `wrangler dev` with
+a local D1 and the local `send_email` binding (OPERATIONS.md "Email"). Not yet seen: an email arriving through Resend
+or Cloudflare (and how Gmail and Outlook show the template in dark mode), "Send a test to me" and "Send to everyone"
+pressed signed in, the RSVPs tool and its CSV opened in Excel, Home's Newsletter card with real numbers, and the
+List-Unsubscribe one-click button in Gmail.
+
 ### 1. Verify the live preview against a real Sanity project
 
 **Blocker: this template has no Sanity project, by design.**
@@ -496,6 +504,19 @@ check. Once the first sermon and news post are published and deployed:
 
 ## Known gaps, deliberately open
 
+### 1u. Section looks and the photo viewer: the signed-in check (opened 2026-10-18)
+
+Built and verified on the built site (PORTS.md card 124): the looks wall `/styleguide/looks/`, the
+viewer's keyboard, focus and swipe tests, axe, and parity on the fallback build (no Sanity project in
+the worktree, so real pages were not compared). Still to do signed in:
+
+- Open a text block in the Studio, check the **Look** radio shows its three cards with their band
+  pictures, pick Feature and then Standard (Standard clears the field), and publish.
+- In the preview, pick Feature and Stone on a page and check the band changes without a reload
+  (`look` is in `NON_STEGA_FIELDS`).
+- On the live site, open a real gallery and a photo section on a phone: swipe, close, and check the
+  full-size photo is sharp.
+
 ### 2. `npm run parity compare` is not a CI step
 
 The baselines in `scripts/.parity/` are captured on a developer machine, and nobody in
@@ -641,6 +662,16 @@ kept its name and took a marker.
 
 The seed audit landed with it, along with the modules archive, the reserved-slug
 cleanup, and the Studio audit ported from the Stone Steps build.
+
+### 15. Studio app, Post a photo, Earlier versions (starter card 125): switch on and check (opened 2026-10-18)
+
+Built, unit-tested and checked on the build (manifest valid, worker on /studio/ only, offline page, Chrome's
+installability check clean). To switch Earlier versions on: the nightly backup running (`sanity-backup.yml` with
+`BACKUP_PASSPHRASE`, `SANITY_AUTH_TOKEN` and the `SANITY_PROJECT_ID` variable), the repo secret
+`SANITY_API_WRITE_TOKEN`, and the Worker's `GITHUB_DEPLOY_TOKEN` (fine-grained, this repo only, Actions: Read and
+write) with `GITHUB_REPO` in wrangler.jsonc. Until then the panel offers "Ask Nathan to restore this". Not yet done:
+install it on an iPhone and an Android phone, post a photo from a phone into a gallery and into a News and notes post
+(signed in), and one scan and restore round trip on a real page, finished with Discard changes.
 
 ### 11. Three things the scaffold work left open
 

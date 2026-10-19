@@ -407,6 +407,64 @@ Both are listed by the Checkup while in use. Trust model: `docs/agent/custom-cod
   with the token in the environment.
 - Both types are in the webhook deny-list above; add them to the live webhook's filter.
 
+## Email: the newsletter, RSVPs and form mail (PORTS.md card 127)
+
+One sender for everything the site emails (`src/lib/mail-send.ts`), one database for everything people send it
+(`CONTACT_DB`). Until it is set up, the sign-up box hides itself (or shows its fallback link), the RSVP form says
+"RSVPs open here soon", and the Studio's Newsletter card and buttons say "not set up yet". Nothing breaks.
+
+**1. The database** (skip if the forms already have one):
+
+```powershell
+npx wrangler d1 create fbc-auburn-contact
+npx wrangler d1 migrations apply fbc-auburn-contact --remote
+```
+
+Paste the returned `database_id` into the `d1_databases` block in `wrangler.jsonc` and uncomment it. Locally:
+`npx wrangler d1 migrations apply fbc-auburn-contact --local -c dist/server/wrangler.json` after a build.
+
+**2. Pick a provider.**
+
+- **Resend** (works before the client's domain is on Cloudflare). Make a free Resend account (100 emails a day,
+  3,000 a month), verify a domain you control (a subdomain such as `mail.<your-domain>` is fine: Resend shows an SPF
+  TXT, a DKIM TXT and an MX for bounces to add at that domain's DNS), make an API key with "Sending access" only, then
+  `npx wrangler secret put RESEND_API_KEY`. `MAIL_FROM` must be an address on the verified domain. When the client's
+  own domain arrives, verify it in Resend too and change `MAIL_FROM`.
+- **Cloudflare Email Sending** (Workers Paid, domain on Cloudflare DNS): `npx wrangler email sending enable <domain>`
+  (writes SPF and DKIM under a `cf-bounce` subdomain, so it sits beside Microsoft 365 or Google Workspace), then
+  uncomment `"send_email": [{ "name": "EMAIL" }]` in `wrangler.jsonc`. Sends to any address count against the plan's
+  quota; check it before a large list.
+- Both set up? `MAIL_PROVIDER` (a var: `cloudflare` or `resend`) says which; unset, Cloudflare wins.
+
+**3. The settings.**
+
+```powershell
+npx wrangler secret put MAIL_SECRET    # 32+ random characters; signs confirm and unsubscribe links
+npx wrangler secret put MAIL_FROM      # e.g. news@<verified domain> (or a var; falls back to CONTACT_FROM)
+```
+
+Optional vars: `MAIL_FROM_NAME` (defaults to the site's name), `MAIL_REPLY_TO` (where replies to RSVP confirmations go;
+defaults to `CONTACT_TO`). Make a secret with `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`.
+Changing `MAIL_SECRET` later breaks every unsubscribe link already sent: do not rotate it casually.
+
+**4. DNS notes.** Keep DMARC at `p=none` until every service that sends as the domain has DKIM; a stricter policy first
+makes ordinary mail fail. Gmail and Yahoo want SPF or DKIM aligned with the From domain, a working one-click unsubscribe
+(the List-Unsubscribe headers are sent) and a complaint rate under 0.3%; double opt-in keeps that low.
+
+**5. Check it.** Deploy, sign up on the live site with your own address, press the link, then
+`npx wrangler d1 execute fbc-auburn-contact --remote --command "SELECT email, status FROM subscribers"`. In the Studio, open a
+published Newsletter and press "Send a test to me". For RSVPs, reply to a test event and look in the RSVPs tool.
+
+**Locally:** `npm run build`, add the `d1_databases` and `send_email` blocks to `dist/server/wrangler.json`, put
+`MAIL_FROM`, `MAIL_SECRET`, `CONTACT_TO` and `MAIL_TEST_FIXTURES=1` in `dist/server/.dev.vars`, apply the migrations
+with `--local -c dist/server/wrangler.json`, `npm run preview`. The local binding writes each email to a file under
+`dist/server/.wrangler/tmp/email/` instead of sending it, and `MAIL_TEST_FIXTURES=1` lets the made-up issue
+(`fixture-issue`) and event (`fixture-page:fixture-rsvp`) through. Never set `MAIL_TEST_FIXTURES` on the real Worker.
+
+**Privacy.** Subscribers are an address, a status and dates. RSVPs hold what the form asks, in D1 only; clear an old
+event's replies with `npx wrangler d1 execute fbc-auburn-contact --remote --command "DELETE FROM rsvps WHERE event_key = '<key>'"`
+once the organiser has downloaded them (the key is in the RSVPs tool's download name and the `rsvps` table).
+
 ## Studio workflow tools (PORTS.md card 117)
 
 - **Morning change note** (`.github/workflows/change-note.yml`, ON). Daily at 10:00 UTC (6 AM Eastern in summer,
@@ -425,6 +483,25 @@ Both are listed by the Checkup while in use. Trust model: `docs/agent/custom-cod
   (do not commit the uncommented binding).
 - **Table views.** Sermons, Downloads and People each have "... as a table" under the normal list. Columns live in
   `src/sanity/tables.config.ts`.
+
+## The Studio app and Earlier versions (PORTS.md card 125)
+
+- **The Studio on a phone.** Nothing to switch on: `/studio/manifest.webmanifest` and `/studio/sw.js` ship with
+  every build. Check after a deploy: open `/studio/` in Chrome, DevTools, Application, Manifest (no errors, the
+  maskable icon looks right in the "Show only the minimum safe area" preview) and Service workers (scope `/studio/`).
+  To make it drop everything it keeps, bump `VERSION` in `public/studio/sw.js`. A new brand mark: `npm run favicon`.
+- **Post a photo.** `kitConfig.postPhoto` in `src/sanity/kit.config.ts`: every page-builder page's galleries, or a new
+  News and notes post, with a reminder about children's photos. Drafts only.
+- **Home-screen name.** `studioEdges.app`: "FBC Auburn" under the icon, opening on Quick update. The maskable icon
+  is the hand-drawn `public/icon-maskable-512.png` from the reskin (kept by `npm run favicon`).
+- **Earlier versions.** Needs three things already used elsewhere: the nightly backup running
+  (`sanity-backup.yml`, with `BACKUP_PASSPHRASE`), the repo secret `SANITY_API_WRITE_TOKEN` and variable
+  `SANITY_PROJECT_ID` (read by `restore-doc.yml`), and the Worker's `GITHUB_DEPLOY_TOKEN` secret plus
+  `GITHUB_REPO` var (the "Try again" settings). The token must be fine-grained, this repository only, with
+  **Actions: Read and write**; that one permission covers starting the workflow, listing the backups and reading the
+  run log. Without any of it the panel offers "Ask for help" instead. Try it by hand first: Actions, "Restore one
+  document from a backup", Run workflow, mode `scan`, a document id. A restore from the Studio shows in the Actions
+  list as `restore-doc restore <request id>`, with an audit line naming the Sanity user who asked.
 
 ## Seed placeholder content
 

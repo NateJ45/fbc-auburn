@@ -225,6 +225,7 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 105 | A text hero (no photo, or editorial) still renders its buttons                 | n/a     | no          | yes      | no               | no            | no             | n/a                | n/a                 | no             |
 | 109 | Authoring kit: page templates, picture picker, patterns, synced sections       | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
 | 110 | Studio looks like the site: name, mark, colours, status line, help panel       | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
+| 127 | Email backbone: Cloudflare/Resend sender, newsletter (opt-in), RSVPs           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
 
 Row 73 (2026-10-03) is a workflow plus three scripts, not a drift-checked behaviour: a site takes it by running `npm run sync-check` and copying the marked files; every cell but the starter is `no` until that site does.
 
@@ -8535,3 +8536,158 @@ help" for the key and spend limit. Marked-file order: the starter merges first, 
 
 **Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-ai`, PR after this merges. Other
 sites `no`.
+
+## Card 127: the email backbone: one sender (Cloudflare or Resend), a newsletter with double opt-in, RSVPs (2026-10-18)
+
+**Origin:** the Squarespace and Wix comparison (studio vault, 2026-10 report, section 2 items 2 and 3): both builders
+send a newsletter and take RSVPs from the same dashboard; we sent nobody anything. Items 2 and 3 share one backbone (D1
+plus an email sender), so it was built once. Built in the starter, then first-baptist-auburn.
+
+**Canonical:** PORTABLE: `src/lib/mail-send.ts` (providers behind one interface, `pickMailer`), `mail-token.ts` (HMAC
+links), `mail-template.ts` (table-based HTML + plain text, `brandFromConfig`), `mail-db.ts` (`MAIL_DDL`),
+`mail-subscribe.ts`, `mail-newsletter.ts`, `mail-rsvp.ts`, `mail-studio.ts`, `mail-env.ts`, `mail-fixtures.ts`,
+`mail-sqlite.ts` (tests only) and the three `mail-*.test.ts`; routes `src/pages/api/subscribe/index.ts`,
+`subscribe/confirm.ts`, `unsubscribe.ts`, `rsvp.ts`, `studio/newsletter.ts`, `studio/rsvps.ts`;
+`src/components/RsvpForm.tsx`; `src/sanity/schemaTypes/rsvpSection.ts`; `src/sanity/mail/*` (`ncsMailTools`: the
+newsletter's two buttons, the RSVPs tool, Home's Newsletter card, the RSVP rows in Coming up and Messages). Changed
+PORTABLE files: `contact.ts` (sends through the backbone, same message), `subscribe.ts` (the own list between an ESP form
+and Web3Forms), `studio-auth.ts` (`email` on the user, for "Send a test to me"), `studio-icons.ts`, `HomeTool.tsx`,
+`HomeCards.tsx` (`ComingUp` takes children), `kit/types.ts` (`features.mail`), `MessagesTool.tsx`. Per site (NOT
+portable): `src/lib/newsletter-content.ts` (what an issue holds, the brand, the footer address, the time zone),
+`src/sanity/schemaTypes/newsletter.ts`, the section component (`RsvpSection.astro` here),
+`src/pages/email/[state].astro`, `src/pages/newsletter/[...issue].astro`, `NewsletterSignup.tsx`, the section wiring
+(sections.ts, sectionCadence, pageBuilder.types, the queries arm `"pageId": ^._id`, SectionRenderer, the styleguide
+wall), `'email'` and `'newsletter'` reserved (both copies and the test), the migration file (numbered after the site's
+own), kit.config (`features.mail`, `rsvps` in the tool order), sanity.config (`ncsMailTools()` before the kit), the
+sitemap filter for `/email/`.
+
+**What it adds.**
+
+- **One sender.** `pickMailer(env)` returns Cloudflare Email Sending (the `EMAIL` binding; Workers Paid and the domain on
+  Cloudflare DNS) or Resend (`RESEND_API_KEY`; any domain verified in Resend, so it works before a client's domain is on
+  Cloudflare), chosen by `MAIL_PROVIDER` or, unset, whichever is configured. Nothing configured is a state, not an error:
+  every route says "not set up yet". The Cloudflare message keeps the contact form's exact shape and its retry without
+  headers, so `/api/contact/` sends what it always sent (and gains Resend for free).
+- **The list.** Double opt-in: `/api/subscribe/` stores the address as pending and emails a signed confirm link (HMAC
+  with `MAIL_SECRET`, purpose and expiry signed in, 7 days); only confirmed addresses get issues. D1 keeps the address,
+  a status and timestamps, nothing else (the optional first name says hello once and is dropped). The answer is the same
+  whatever the list holds, an already-subscribed address gets no mail, the link is resent at most every 10 minutes, and
+  unconfirmed addresses are forgotten after 30 days. Unsubscribe never expires: the footer link opens
+  `/email/unsubscribe/` (a button, so mail scanners cannot unsubscribe anyone) and List-Unsubscribe plus
+  List-Unsubscribe-Post give Gmail's one-click button (RFC 8058).
+- **The newsletter.** A `newsletter` document (subject, date, preview line, opening words, picks, notices, a closing
+  note, "show on the website"). "Send a test to me" emails the signed-in editor (their Sanity login's email). "Send to
+  everyone" sends the PUBLISHED issue in batches (40 per call; Resend's batch API takes up to 100) while the dialog shows
+  the count. Never twice: one `newsletter_sends` row per issue (a finished issue is refused with its date), and each
+  person is claimed in `newsletter_deliveries` (primary key issue + subscriber) BEFORE their email goes, so racing
+  batches cannot both send; a refused message is counted, never retried. Every issue carries its reader's own
+  unsubscribe link and the postal address (CAN-SPAM). `/newsletter/` archives issues marked for the website; with none,
+  no page is built.
+- **RSVPs.** An `rsvpSection` for any page: event name, start, where, places, waiting list, most per reply, closing time
+  (defaults to the start, rule 15), the editor's own `formQuestion`s, a note for the confirmation. The block is the event
+  (key `<doc id>:<block key>`, `^._id` in the projection), so sites that keep a calendar elsewhere need no events type.
+  `/api/rsvp/` re-reads the published block, refuses after closing, and decides going / waiting list / full in the SAME
+  SQL statement as the insert, so replies arriving together cannot overbook. A confirmation email follows; a reply whose
+  email failed is still kept. No payments, by design. A party too big for the last places goes on the waiting list even
+  if a smaller one later fits.
+- **The Studio.** The RSVPs tool (counts per event, the replies as a table, "Download for a spreadsheet" CSV with
+  formula-safe cells), RSVP counts in Home's Coming up and on top of Messages, Home's Newsletter card (people on the
+  list, the last send). The two Studio routes fail closed: same origin (403), then a signed-in project member (401), then
+  the settings (503), before D1 is read.
+- **The template.** Nested tables, a 600px column, inline styles, bgcolor attributes, system font stacks taken from the
+  brand config's fallbacks, hex colours only (`brandFromConfig`), and a `prefers-color-scheme` / `[data-ogsc]` dark
+  scheme for Apple Mail and Outlook; every coloured cell sets text and background together so Gmail's own inversion
+  stays legible.
+
+**Weighed and left out.** A provider-hosted list (Buttondown, Resend Audiences): one more account and a second place
+people's addresses live; D1 is already the forms' database. A GET that unsubscribes: link scanners follow every link.
+An events collection: the family's churches keep their calendar elsewhere. Retrying failed newsletter sends: the
+provider may have sent them.
+
+**Verified.** 48 unit tests on real SQLite (`node:sqlite`, the real `MAIL_DDL`): signing, both wire formats, double
+opt-in, unsubscribe, batching, never twice (restart and race), capacity, waiting list, concurrent replies, CSV, and the
+auth order. `wrangler dev` on the build with a local D1 and the local `send_email` binding (`MAIL_TEST_FIXTURES=1`):
+subscribe, the confirm link to `/email/confirmed/` and the row `subscribed`, three RSVPs filling six places then the
+waiting list, confirmation emails written by the binding, the contact form `notified = 1`, the Studio routes 403 and 401. The three emails rendered and screenshotted light and dark at 375 and 700 (no overflow). Not yet: a real send
+through Resend or Cloudflare, and the Studio buttons signed in (`docs/PENDING.md` item 24).
+
+**Adopting it in a site.** Copy the PORTABLE files; write `newsletter-content.ts` and the `newsletter` type for the
+site's picks; add the section to its block library and the projection's `"pageId": ^._id`; add the migration
+(`MAIL_DDL`, numbered after the site's last); register `ncsMailTools()` before the kit, `features.mail: true`, `rsvps`
+in the tool order; reserve `email` and `newsletter`; `npm run typegen`, `build`, `test:unit`. Then OPERATIONS.md
+"Email". Marked-file order: the starter merges first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/email-backbone`, PR after this merges.
+Other sites `no`.
+
+## Card 125: the Studio on a phone, "Post a photo", and earlier versions from the nightly backups (2026-10-18)
+
+**Origin:** two editor needs: quick edits from a phone, photos included, and going back further than Sanity's three
+days of history. Quick update (card 111) already covered text on a phone, and `restore-doc.mjs` (card 111) already put
+one document back from a backup, but only the developer could run it. Built
+in the starter, then first-baptist-auburn.
+
+**Canonical (PORTABLE):** `src/lib/studio-app.ts`, `src/pages/studio/manifest.webmanifest.ts`,
+`src/pages/studio/offline.astro`, `public/studio/sw.js`, the manifest link and worker registration in
+`src/pages/studio/index.astro`, the maskable icon in `scripts/generate-favicons.mjs`; `src/lib/photo-post.ts`,
+`src/sanity/kit/PostPhoto.tsx`, the photo button in `QuickUpdateTool.tsx`, `PostPhotoConfig` and
+`features.earlierVersions` in `kit/types.ts`, the inspector wiring in `kit/index.tsx`;
+`src/lib/earlier-versions.ts`, `src/pages/api/studio/earlier-versions.ts`, `src/sanity/kit/EarlierVersions.tsx`,
+`.github/workflows/restore-doc.yml`, `--scan`/`--run`/`--no-values` in `scripts/restore-doc.mjs` and
+`changeSummary`/`restoreRefusal`/`markerLine` in `scripts/lib/restore-doc.mjs`, `roles` on `StudioUser` in
+`src/lib/studio-auth.ts`; `src/sanity/guides/phoneGuides.ts`; tests `studio-app.test.ts`, `photo-post.test.ts`,
+`earlier-versions.test.ts`, `restore-doc.test.mjs`, `tests/studio-app.spec.ts`. Per site (NOT portable):
+`studioEdges.app` (short name, start page), `kitConfig.postPhoto` (gallery types, the post builder, a photo note),
+the one `guides.push(...phoneGuides(...))` line in `guides/content.ts`, and `public/icon-maskable-512.png`.
+
+**What it adds.**
+
+- **The Studio installs.** `/studio/manifest.webmanifest` (prerendered): `id` and `scope` `/studio/`,
+  standalone, the brand name and an optional short name, the navy chrome as `theme_color` and the paper as
+  `background_color`, the 192 and 512 icons and a maskable 512 (the mark at 60% on its own plate colour, or white; a site's own drawn one is kept). Only the boot
+  page links it, with the iOS app-title metas; the public site's `/site.webmanifest` stays `display: browser`.
+- **A service worker that stays out of the way.** `/studio/sw.js`, scope `/studio/`, registered by the boot page in
+  production builds only. The boot page is fetched fresh (network first) and falls back to `/studio/offline/` ("You're
+  offline. Your changes are saved when you're back online"); hashed `/_astro/*` files are kept and served first; icons,
+  the manifest and the offline page are served kept and refreshed behind. It NEVER keeps anything from another origin
+  (every Sanity API call, the realtime channel, cdn.sanity.io), `/api/**`, `/preview/**`, a non-GET, a request
+  carrying `Authorization`, or a range request. A unit test runs the file in a sandbox against those URLs.
+- **Post a photo.** The first Quick update button when `kitConfig.postPhoto` is set (and enough on its own to give
+  the tool): `<input type=file accept="image/*" capture>` for the camera plus a plain one for the phone's photos, a
+  required description (a file name or a number is refused), an optional caption, and a choice of every gallery on
+  `galleryTypes` (drafts perspective, labelled "Page: Gallery (n photos)") or a new post. The photo is redrawn at 2560px
+  at most as a JPEG, which also drops its EXIF (including where it was taken); GIFs and SVGs go up as they are. It is
+  appended to the page's DRAFT (made from the published copy when there is none) in one transaction and checked after,
+  or created as `drafts.<uuid>`. Nothing publishes: the done screen opens it in the full editor for the Studio's own
+  Publish and its validation.
+- **Earlier versions.** A document inspector on every document but the Trash. `GET /api/studio/earlier-versions/`
+  lists the backups GitHub keeps (artifact list, one per night, 14 at most); a scan or a restore POST dispatches
+  `restore-doc.yml` with a request id in the run's title; the panel polls, and the route reads the finished job's log
+  for the script's marker line. The scan reports, per night, whether the document is there and which fields differ
+  from now (names and list lengths only); the restore runs `restore-doc.mjs --run <id> --no-values` as a dry run and
+  then with `--apply`, `NCS_PRODUCTION_WRITE=yes` set on that one step. The route requires the same origin and a
+  signed-in member who is not only a viewer, refuses a backup run it did not list, rate-limits (20 seconds between
+  starts per editor, 10 an hour each, 30 in all per Worker instance), logs who asked, and fails closed without its
+  settings; the workflow re-checks every input and only ever sees them as environment variables. Without the settings
+  the panel offers "Ask <helper> to restore this".
+- **Site Guide.** "Put the Studio on your phone's home screen" (iPhone and Android steps), "Post a photo from your
+  phone" and "Go back to an earlier version", shared through `phoneGuides()`.
+
+**Safety calls.** The passphrase never leaves GitHub: the Worker holds only the deploy token it already had, and
+decrypting a backup in a Worker would also run into its memory limit on a full export. The run log is public on a public
+repository, so CI output is value-free by flag and by test. Sanity's own documents (ids starting `_`, `sanity.*` and
+`system.*` types) are never restored. Restores write drafts only.
+
+**Weighed and left out.** A network-first-with-timeout or cache-first boot page (faster on a weak signal, but a copy
+from before a deploy can point at code files that deploy removed, and the Studio would half-load). Offline editing: the
+Studio needs Sanity to edit, so the offline page says so rather than pretending. Lighthouse's PWA audit: removed in
+Lighthouse 12; `tests/studio-app.spec.ts` asks Chrome itself (`Page.getInstallabilityErrors`) instead.
+
+**Adopting it in a site.** Needs cards 106, 111 and 120. Copy the PORTABLE files, run
+`npm run favicon -- --maskable-only` (it keeps an existing file; `--force-maskable` redraws it) and look at `public/icon-maskable-512.png`, set `studioEdges.app` and
+`kitConfig.postPhoto`, add the `phoneGuides` line to the guides, build, `npm run test:unit`, `npm test`. For
+Earlier versions: the backup running, `SANITY_API_WRITE_TOKEN` and `SANITY_PROJECT_ID` in the repo, and the Worker's
+`GITHUB_DEPLOY_TOKEN` with Actions: Read and write (OPERATIONS.md). Marked-file order: the starter merges first.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-pwa`, PR after this merges. Other
+sites `no`. Signed-in and on-device checks: `docs/PENDING.md` item 26.

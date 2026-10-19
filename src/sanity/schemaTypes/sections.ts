@@ -27,7 +27,13 @@ import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { CodeTextInput } from '../components/CodeTextInput';
 import { codeWarningMessage } from '../../lib/custom-code';
 import { SyncIcon } from '@sanity/icons/Sync';
-import { columnsField, headingAccentField, hideWhenRich, richTwin } from './_appearanceFields';
+import {
+  columnsField,
+  headingAccentField,
+  hideWhenRich,
+  lookField,
+  richTwin,
+} from './_appearanceFields';
 import { sideOptions } from '../../lib/layout-variants';
 import { iconCardsSection, stoneIconField, thisWeekSection, watchSection } from './auburnSections';
 // FBC Auburn collections (2026-10-18): latest sermon, series grid, people, downloads.
@@ -190,6 +196,7 @@ export const richTextSection = defineType({
         layout: 'radio',
       },
     }),
+    lookField('richTextSection'),
   ],
   preview: {
     select: { title: 'heading', body: 'body' },
@@ -271,6 +278,7 @@ export const imageTextSection = defineType({
       hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
     }),
     defineField({ name: 'cta', title: 'Button (optional)', type: 'ctaBlock' }),
+    lookField('imageTextSection'),
   ],
   preview: {
     select: { title: 'heading', media: 'image' },
@@ -302,6 +310,7 @@ export const gallerySection = defineType({
       ],
     }),
     columnsField('gallerySection'),
+    lookField('gallerySection'),
   ],
   preview: {
     select: { images: 'images', heading: 'heading' },
@@ -335,6 +344,7 @@ export const quoteSection = defineType({
       description:
         'A few words about who said it. Example: "Church member since 1998" or "John 3:16".',
     }),
+    lookField('quoteSection'),
   ],
   preview: {
     select: { title: 'quote', subtitle: 'attribution' },
@@ -463,6 +473,7 @@ export const videoSection = defineType({
     }),
     defineField({ name: 'heading', title: 'Heading (optional)', type: 'string' }),
     defineField({ name: 'caption', title: 'Caption (optional)', type: 'string' }),
+    lookField('videoSection'),
   ],
   preview: {
     select: { title: 'heading', url: 'url' },
