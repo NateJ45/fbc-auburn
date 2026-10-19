@@ -4,6 +4,18 @@ _2026-10-19: eight more stone icons for the Studio (help, restore, quick, mail, 
 
 **Decision.** Six more meanings now draw stone art in `src/sanity/brandIconArt.tsx`: help, quickUpdate (the quick-update tool), message (messages and the newsletter), settings (Site settings and the settings and meta groups), trash (the Trash) and publishing (the scheduling group, drawn as the calendar), plus brandKit as the palette. They were generated in Gemini and vectorised faithfully. The restore (undo arrow) stone is in `src/assets/brand/` but not mapped: no meaning key stands for it yet, because the guides' `restore` and `bolt` are glyph names, not meanings.
 
+_2026-10-19: every Studio surface in the design language, first pass (PORTS card 131)._
+
+**Decision.** The Studio's middle now draws in card 128's language instead of plain @sanity/ui. Tool headings carry the
+site's rule, art and display type; Home's cards are white cards with a marker and a display-font title; findings are
+white cards with their severity along the left edge, grouped "Needs doing / Worth a look / Good to know", with an
+all-clear that lays three stones over the motif; the weekly checklist is a path whose stones are the checkboxes; "Is
+it live?" and the navbar line are three stones (Saved, Building, On the website); Quick update has art tiles and a
+done screen that shows the path laid so far; a prayer request in Messages is a gentle sky callout. The pieces are
+presentational (`kit/ui/surfaces.tsx`) so a dev-only bench can draw them with made-up data. The kit stylesheet now
+goes into the page once instead of once per card. Severity is always words as well as colour; every new colour pair
+is in the contrast gate.
+
 _2026-10-19: eight stone icons for the Studio (guide, page, camera, home, eye, search, link, checkup)._
 
 **Decision.** Eight more meanings now draw the brand's stone art in the Studio: guide, page, image, home, preview, search, link and checkup, in `src/sanity/brandIconArt.tsx` and `src/assets/brand/stone-icon-*.svg`. They were generated in Gemini and vectorised faithfully, with no redrawing. `page` replaces the building-blocks stone it used before; `pages` and the section meanings keep theirs.
