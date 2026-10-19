@@ -475,7 +475,7 @@ warning but "example text") and four templates rendered locally at 375 and 1280.
   lines for him to rewrite; the State Convention of Baptists in Ohio card is there for him to keep
   or remove.
 
-### 1q. Search and share on real sermons and news (opened 2026-10-18)
+### 1t. Search and share on real sermons and news (opened 2026-10-18)
 
 **Blocker: the production dataset has no sermons or news posts yet.** Card 126 put visitor search and share buttons
 on the site. Verified on a local build of the live content plus a temporary sermon-shaped page (not committed): the
