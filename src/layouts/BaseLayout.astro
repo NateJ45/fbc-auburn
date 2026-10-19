@@ -340,11 +340,17 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
 
     <Header siteSettings={siteSettings} />
 
+    {/* Site search (cards 122 and 126). With search on, an indexable page's
+        <main> carries data-pagefind-body (main content only) and its type as a
+        filter. A noindex page (hidden, 404, styleguide, private) gets neither,
+        and data-pagefind-ignore="all" keeps it out even if something else on
+        the page is marked. */}
     <main
       id="main"
       class="flex-1"
       data-pagefind-body={searchable ? '' : undefined}
       data-pagefind-filter={searchable ? `type:${searchType}` : undefined}
+      data-pagefind-ignore={noindex ? 'all' : undefined}
     >
       <slot />
     </main>

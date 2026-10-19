@@ -11,6 +11,16 @@ opened. Share buttons (Facebook, X, email, copy link, and the phone's share shee
 series and news post in the outline button style, as plain links with no third-party code. Pagefind's own UI was
 left out: heavier, its own look.
 
+_2026-10-18: hidden pages, password pages, and link and heading checks in the Checkup (PORTS card 122)._
+
+**Decision.** "Hide this page from Google and the menus" now also keeps a page out of the menus, the menu picker and
+site search. Password pages are a separate type, `privatePage` (Pages, Private pages), stored under a private id path
+because the dataset is public (a password on an ordinary page would leave its words readable over the API), served
+at `/private/<slug>/` by a server-rendered route with a hashed password, a signed cookie and a rate limit, and never
+built. The Checkup gained dead external links (from the weekly link check), internal links to missing pages, skipped
+headings, vague link words, long Google text, pages nobody can reach, and private-page guards. Detail and the
+security note: `docs/agent/private-pages.md`.
+
 _2026-10-18: custom code, safe by default (PORTS card 121)._
 
 **Decision.** The pastor and editors can paste a widget (a VBS countdown, a sign-up gadget, a map, something an AI wrote) into the block
