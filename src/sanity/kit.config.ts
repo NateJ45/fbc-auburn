@@ -230,6 +230,7 @@ export const kitConfig: KitConfig = {
       title: 'Put up a notice',
       detail: 'A short line across the top of every page, until the day you pick.',
       icon: BellIcon,
+      meaning: 'notice',
       fields: [
         {
           name: 'message',
@@ -263,6 +264,7 @@ export const kitConfig: KitConfig = {
       title: "Add Sunday's sermon link",
       detail: 'The title and the video link. The rest can wait.',
       icon: MicrophoneIcon,
+      meaning: 'scripture',
       fields: [
         { name: 'title', title: 'Sermon title', kind: 'string', required: true, max: 120 },
         {
@@ -301,6 +303,7 @@ export const kitConfig: KitConfig = {
       title: 'Cancel or change something this week',
       detail: 'A notice in red that takes itself down after Sunday.',
       icon: CalendarIcon,
+      meaning: 'times',
       fields: [
         {
           name: 'message',
