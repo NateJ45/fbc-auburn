@@ -27,6 +27,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | Performance budgets + Lighthouse                                                                         | `docs/agent/performance.md`                                          |
 | Content data + Sanity integration                                                                        | `docs/agent/sanity.md`                                               |
 | Visitor site search (Pagefind, opt-in) + share buttons                                                   | `docs/agent/site-search.md`                                          |
+| Custom code: the trust model (pasted widgets, the box, the opt-outs)                                     | `docs/agent/custom-code.md`                                          |
 | Deployment + env vars + rebuild model                                                                    | `docs/agent/deployment.md`                                           |
 | Studio kit (Home, Site Guide, Checkup, staff view, Trash)                                                | `docs/agent/studio-kit.md`                                           |
 | Church facts, This Sunday, This week, YouTube replay, weather (drop-in components)                       | `docs/agent/church-data.md`                                          |
