@@ -27,6 +27,8 @@ import { CHURCH_SELF_FILLING } from './schemaTypes/churchSections';
  */
 export const SECTION_HOST_TYPES: Readonly<Record<string, string>> = {
   page: 'pageBuilder',
+  // Private pages (card 122) are built from the same library.
+  privatePage: 'pageBuilder',
   homePage: 'pageBuilder',
   aboutPage: 'pageBuilder', // scaffold: about
 };
