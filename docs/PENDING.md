@@ -16,6 +16,14 @@ sequence).
 
 ## Waiting on a human
 
+### 32. Card 136: Search Console on Home, once the church's domain is chosen (opened 2026-10-19)
+
+**Blocker: the domain cutover, then a Google service account.** Card 136 came in with the starter: the Visitors card can
+read GA4 and a "Found on Google" card can show Search Console. Auburn stays on Cloudflare Web Analytics
+(`ANALYTICS_PROVIDER` unset, Cloudflare picked first), so nothing changed on its Home. Once the church's own domain is
+live and verified in Search Console, add Auburn to studio-status's `SITE_DATA` (and give its service account access), then
+bind `SITE_DATA` and set `SITE_DATA_KEY` here (`docs/agent/studio-kit.md`, "Google Analytics and Search Console").
+
 ### 1x. Card 133 (Studio polish): check it signed in on the live Studio (opened 2026-10-19)
 
 Home's ways-in tiles now fit three across with the art top left, and Live preview loads the brand layer (`auburn.css`, `starwind.css`) so the This Sunday pill shows its words instead of white on white. Both were checked on the kit bench and by build output, not on the live Studio (the preview needs the Worker token). After the deploy: open Live preview on Home and confirm the pill, and the tiles at the dashboard width. Then delete this entry.
