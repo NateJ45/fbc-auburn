@@ -55,12 +55,14 @@ the photo (a draft) and the newsletter (published, never sent until he presses S
 
 **Not in Quick update, and why** (notes for the shared kit, starter card 137):
 
-- **The bulletin** needs a file box. Quick update forms take words, dates and links only. Until there is a `file`
-  field kind, Home's big button opens a new download with Kind and date already filled in.
-- **Messages and RSVPs** are tools, not forms. A "link" tile kind (a tile that opens a tool or an outside address)
-  would let Quick update also hold "Read new messages" and "Check this week's events in Church Trac".
-- **The newsletter** could be sent from Quick update once there is a form step that runs a document action (send a
-  test, then send).
+Card 137 added the missing pieces, and Quick update now also holds (2026-10-19):
+
+- **Put up this week's bulletin**: a `create` job with a PDF box, the Sunday it is for and a title. It makes a
+  published download of kind Bulletin. (An `upload` job puts a file into one existing document, and the bulletin is a
+  new download each week, so it is `create`.) Home's big button still opens the full editor.
+- **Messages** and **RSVPs**: `link` tiles that open those tools.
+- **Send the newsletter**: a `link` tile that opens the Newsletter list. Sending stays on the issue itself, which
+  keeps its test-first safeguards; Quick update never sends mail.
 
 ## Guides, field help, pictures
 
@@ -78,11 +80,13 @@ the photo (a draft) and the newsletter (published, never sent until he presses S
 
 ## Tours (wired with card 137) and video scripts (recorded at launch)
 
-`src/sanity/guides/tours.ts` holds, as data: a first-run welcome for the pastor and a shorter one for staff, a
-Quick update tour, on-demand tours for the sermon, bulletin and newsletter editors, a "What's new" modal for this
-change, and six video scripts (sermon, bulletin, event, photo, newsletter, news post) with sample data and a caption
-for every shot. Anchors that have no stable hook yet are marked `needsHook`. When card 137 lands, only the tours are
-wired; the videos are recorded at launch from these scripts, with sample data.
+`src/sanity/studio-tours.ts` holds the tours, as card 137 data: a first-run welcome for the pastor (role `editor`)
+and a shorter one for staff, the Home and Quick update "How this screen works" tours, walk-throughs for the sermon,
+bulletin and newsletter editors (started with `startTour('<id>')`), and the "What's new" entry. The Phase A stops
+that were marked `needsHook` use the kit's hooks (`home-this-week`, `home-quick-actions`, `quick:<form id>`,
+`newsletter-send-everyone`); a stop with no anchor is centred. `src/sanity/guides/tours.ts` keeps the six video
+scripts (sermon, bulletin, event, photo, newsletter, news post) with sample data and a caption for every shot; the
+videos are recorded at launch from them.
 
 ## Ideas, not built
 

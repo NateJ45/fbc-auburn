@@ -28,8 +28,8 @@ bind `SITE_DATA` and set `SITE_DATA_KEY` here (`docs/agent/studio-kit.md`, "Goog
 
 The weekly jobs are mapped in `docs/agent/studio-plan.md`. Held until launch, when the content is real: the eight
 "shot to capture at launch" pictures listed there, retaking `quick-update` and `home-tiles` (both now out of date),
-and recording the six videos scripted in `src/sanity/guides/tours.ts`. When starter card 137 lands, wire the tours
-from the same file. Signed in, try each new Quick update job once on a phone (event, news post, newsletter).
+and recording the six videos scripted in `src/sanity/guides/tours.ts`. Signed in, try each Quick update job once on
+a phone (event, news post, newsletter, bulletin, and the Messages, RSVPs and newsletter tiles).
 
 ### 1x. Card 133 (Studio polish): check it signed in on the live Studio (opened 2026-10-19)
 
@@ -533,7 +533,7 @@ check. Once the first sermon and news post are published and deployed:
 
 ### Card 137 on Auburn: map the tours and record the clips (opened 2026-10-19)
 
-The tour engine, the clip player, the job kinds and the capture scripts are in (PORTS.md card 137). `src/sanity/studio-tours.ts` holds a minimal starter set; Auburn's own tours in `src/sanity/guides/tours.ts` are to be mapped onto it (`selector` becomes `anchor: 'css:...'`, `needsHook` controls now have hooks: `home-this-week`, `quick:<form id>`, `quick-submit`, `quick-field-<name>`, `newsletter-send-everyone`, `field:<path>`). Then record the clips (`tools/tutorial-videos/`), fill `src/sanity/guides/videos.ts`, and capture the shots (`tools/guide-shots/shots.json`). Detail: `docs/agent/studio-kit.md` "Spotlight tours".
+The tour engine, the clip player, the job kinds and the capture scripts are in (PORTS.md card 137). `src/sanity/studio-tours.ts` now holds Auburn's own tours (mapped 2026-10-19). Still to do at launch: try each tour signed in (the anchors on documents and the newsletter's send step were not checked against the live Studio), then record the clips (`tools/tutorial-videos/`), fill `src/sanity/guides/videos.ts`, and capture the shots (`tools/guide-shots/shots.json`). Detail: `docs/agent/studio-kit.md` "Spotlight tours".
 
 ### 17. Card 135: Home's banner style slot (2026-10-19)
 

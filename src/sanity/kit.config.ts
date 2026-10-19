@@ -419,6 +419,75 @@ export const kitConfig: KitConfig = {
       doneMessage:
         'Saved, and not sent yet. Open it in the full editor, press "Send a test to me", read it, then send it to everyone.',
     },
+    // Card 137 jobs (2026-10-19, Auburn's Phase A plan).
+    // The bulletin is a new Download each week, so it is a create job with a file box
+    // (an upload job needs one existing document to put the file into). The kind is fixed
+    // to Bulletin and the date starts as the coming Sunday; the pastor still presses
+    // nothing else: it publishes, and /bulletin/ shows the newest.
+    {
+      id: 'bulletin',
+      title: "Put up this week's bulletin",
+      detail: 'Pick the PDF and the Sunday it is for. It shows at /bulletin/.',
+      icon: DownloadIcon,
+      meaning: 'download',
+      job: { kind: 'create', type: 'download', defaults: { category: 'bulletin' } },
+      fields: [
+        {
+          name: 'title',
+          title: 'Title',
+          kind: 'string',
+          required: true,
+          max: 120,
+          description: 'Like "Bulletin for October 25".',
+        },
+        {
+          name: 'date',
+          title: 'The Sunday it is for',
+          kind: 'date',
+          required: true,
+          initial: (now) => comingSunday(now),
+        },
+        {
+          name: 'file',
+          title: 'The PDF',
+          kind: 'file',
+          required: true,
+          accept: 'application/pdf',
+          description:
+            'Anything uploaded is public, so leave out private phone numbers and prayer requests.',
+        },
+      ],
+      submitLabel: 'Put it up',
+      doneTitle: 'The bulletin is up',
+      doneMessage:
+        'It will be at /bulletin/ in a few minutes. The address always opens the newest one.',
+    },
+    // Link tiles: they open their own screens and keep those screens' safeguards.
+    {
+      id: 'messages',
+      title: 'Messages',
+      detail: 'What people sent through the website forms.',
+      icon: EnvelopeIcon,
+      meaning: 'message',
+      job: { kind: 'link', target: { tool: 'messages' } },
+    },
+    {
+      id: 'rsvps',
+      title: 'RSVPs',
+      detail: 'Who has said they are coming to an event.',
+      icon: CalendarIcon,
+      meaning: 'event',
+      job: { kind: 'link', target: { tool: 'rsvps' } },
+    },
+    // Opens the Newsletter list, newest issue first. Sending stays on the issue itself, test first.
+    {
+      id: 'send-newsletter',
+      title: 'Send the newsletter',
+      detail: "Open this week's issue. Send yourself a test before it goes to everyone.",
+      icon: EnvelopeIcon,
+      meaning: 'message',
+      job: { kind: 'link', target: { pane: 'content;newsletter' } },
+    },
   ],
 
   checkup: {
@@ -583,9 +652,9 @@ export const kitConfig: KitConfig = {
       icon: AddDocumentIcon,
     },
     // 2026-10-19: the bulletin replaced "Edit the menus" (a monthly job at most; the menus
-    // are still one click away in "Your pages", Site-wide). Quick update cannot take a file
-    // yet, so this button is the phone's way in: the new download starts as a bulletin
-    // dated today.
+    // are still one click away in "Your pages", Site-wide). The same job is also a Quick
+    // update tile (id 'bulletin', a create job with a file box); this button opens the full
+    // editor instead, with the new download started as a bulletin dated today.
     {
       title: "Put up this week's bulletin",
       detail: 'Upload the PDF. It shows at /bulletin/ a few minutes after you publish.',
@@ -599,8 +668,8 @@ export const kitConfig: KitConfig = {
   pageCheck: { types: [...PAGE_BUILDER_TYPES], run: (doc, client) => runPageCheck(client, doc) },
 
   // Card 137: the spotlight tours, the welcome and What's new live in
-  // studio-tours.ts (plain data, unit-tested; a minimal set until Auburn's own
-  // tours in guides/tours.ts are mapped onto it). tourSteps stays as the fallback.
+  // studio-tours.ts (plain data, unit-tested; Auburn's own tours, mapped from the
+  // Phase A plan on 2026-10-19). tourSteps stays as the fallback.
   tours: TOURS,
   welcome: WELCOME,
   whatsNew: WHATS_NEW,
