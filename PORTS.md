@@ -226,6 +226,7 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 109 | Authoring kit: page templates, picture picker, patterns, synced sections       | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
 | 110 | Studio looks like the site: name, mark, colours, status line, help panel       | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
 | 127 | Email backbone: Cloudflare/Resend sender, newsletter (opt-in), RSVPs           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
+| 130 | Real screenshots in the Site Guide: per-site shot registry                     | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
 | 131 | Every Studio surface in the design language (first pass)                       | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
 
 Row 73 (2026-10-03) is a workflow plus three scripts, not a drift-checked behaviour: a site takes it by running `npm run sync-check` and copying the marked files; every cell but the starter is `no` until that site does.
@@ -8692,6 +8693,45 @@ Earlier versions: the backup running, `SANITY_API_WRITE_TOKEN` and `SANITY_PROJE
 
 **Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-pwa`, PR after this merges. Other
 sites `no`. Signed-in and on-device checks: `docs/PENDING.md` item 26.
+
+## Card 130: real Studio screenshots in the Site Guide, with a per-site shot registry (2026-10-19)
+
+**Origin:** first-baptist-auburn, 2026-10-19. Card 128 added `GuideShot` (a picture with numbered stones, rings and
+arrows laid over it in percent of the picture) but only a wireframe drawing to show in it. Auburn's live, signed-in Studio
+was captured, and the guides that most need a picture (how it all works, change the words on a page, Quick update,
+Before you publish, Home, Live preview) now show the real controls with the stones on them. Built in the starter, then
+first-baptist-auburn.
+
+**Canonical (PORTABLE, new):** `src/lib/guide-shots.test.ts`.
+**PORTABLE, existing, changed:** `src/lib/studio-look.ts` (`GuideShotBlock`, `PLACEHOLDER_SHOT`, `resolveShot()`),
+`src/sanity/kit/guide/GuidePage.tsx` (a shot block resolves by key), `src/sanity/kit/ui/GuideShot.tsx` (one arrowhead id per
+picture, a thinner paper halo on rings, stones shrink with the picture), `src/sanity/kit/ui/css.ts`,
+`src/sanity/kit/harness/Harness.tsx` (the wireframe is the shared `PLACEHOLDER_SHOT`), `docs/agent/studio-kit.md`.
+**Per site (not PORTABLE):** `src/sanity/guides/shots.ts` (the registry; the starter ships it empty), the images in
+`public/guide-shots/`, and the `{ kind: 'shot', key }` blocks in `src/sanity/guides/content.ts`.
+
+**What it changes.**
+
+- **Guides ask for a picture by key.** A guide block is `{ kind: 'shot', key: 'publish-button' }`. The site's registry
+  says what that key shows there: the image, its alt text, its size and the marks. The guide text stays the same on every
+  site; only the pictures differ. A block with its own `src` and `alt` still works as before.
+- **No picture, no hole.** A key the site has no entry for falls back to the wireframe drawing, captioned as a drawing.
+- **Phone-sized.** The picture scales to the column with no overflow, strokes scale with it, and the numbered stones shrink
+  in two steps below about 560 and 400 px so they do not cover what they point at.
+- **Checked.** `guide-shots.test.ts` fails a registry entry whose file is missing or over 200 KB, whose alt text is thin,
+  whose marks run outside the picture, or whose label holds an em-dash; it also pins `resolveShot()`.
+- **Privacy recipe.** Crop to the useful part, cover the account avatar and any personal name, save as WebP under about
+  150 KB (docs/agent/studio-kit.md, "Real captures in the guides").
+
+**Gates.** `guide-shots.test.ts` and the `studio-look` and `studio-guides` tests; a guide in the kit harness
+(`/kit-harness/guide/?view=page&g=start-here`) at 1280 and 375.
+
+**Adopting.** Copy the PORTABLE files. Capture your own Studio, run the recipe, add entries to `src/sanity/guides/shots.ts`
+and `{ kind: 'shot', key }` blocks to your guides. A site with no captures changes nothing it can see except the starter's
+own guide showing the wireframe.
+
+**Status, 2026-10-19.** Starter `yes`. first-baptist-auburn on branch `feat/guide-shots`, PR after this merges.
+Other sites `no`.
 
 ## Card 131: every Studio surface in the design language, first pass (2026-10-19)
 
