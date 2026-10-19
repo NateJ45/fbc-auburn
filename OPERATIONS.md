@@ -328,6 +328,9 @@ visits are counted at all. Steps 2 and 5 are done for Auburn: `CF_ACCOUNT_ID` an
 Numbers are Cloudflare's sampled estimates, by UTC day; visits to `/studio`, `/preview` and `/api` are left out of the
 most-read list. To rotate the token, create a new one, `secret put` it, then delete the old one in the dashboard.
 
+Since card 136 the card can read **Google Analytics 4** instead, and a Search Console card can sit under it, both
+through the studio-status Worker. Auburn stays on Cloudflare. Setup: `docs/agent/studio-kit.md`, "Google Analytics and Search Console".
+
 Since card 123 the sources include **AI assistants** (ChatGPT, Perplexity, Copilot, Gemini, Claude and similar) with a
 this-week and week-before count. Nothing to set up: it comes with the same token.
 
