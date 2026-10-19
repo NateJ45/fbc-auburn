@@ -52,6 +52,9 @@ export const RESERVED_SLUGS = new Set([
   'search',
   // Private pages live under /private/<slug>/ (card 122, server-rendered).
   'private',
+  // The email backbone (card 127): the newsletter's link pages and its archive.
+  'email',
+  'newsletter',
 ]);
 
 /** Returns true when a slug collides with a built-in route. */

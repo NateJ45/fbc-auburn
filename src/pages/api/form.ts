@@ -28,7 +28,9 @@
 //   CONTACT_DB         D1 binding, shared with the contact form. The safety net: on its own
 //                      it does not switch forms on (a message must reach a person).
 //   EMAIL              Cloudflare Email Sending binding (Workers Paid, domain on
-//                      Cloudflare). CONTACT_FROM is the sending address.
+//                      Cloudflare), or RESEND_API_KEY for Resend: the email backbone
+//                      (src/lib/mail-send.ts, PORTS.md card 127) picks one. MAIL_FROM,
+//                      else CONTACT_FROM, is the sending address.
 //   FORM_RECIPIENTS    secret, JSON of recipient key to address. A key with no
 //                      address goes to "office", then to CONTACT_TO.
 //   WEB3FORMS_KEY      fallback email transport (it emails the Web3Forms
@@ -54,6 +56,7 @@ import {
 import { FIXTURE_FORMS } from '@/lib/church-form-fixtures';
 import { sanityFetch } from '@/lib/sanity';
 import { site } from '@/data/site';
+import { workerMailer, type MailWorkerEnv } from '@/lib/mail-env';
 
 export const prerender = false;
 
@@ -64,9 +67,8 @@ interface D1Lite {
   };
 }
 
-interface FormEnv {
+interface FormEnv extends Omit<MailWorkerEnv, 'CONTACT_DB'> {
   CONTACT_DB?: D1Lite;
-  EMAIL?: { send: (message: Record<string, unknown>) => Promise<{ messageId?: string }> };
   CONTACT_TO?: string;
   CONTACT_FROM?: string;
   FORM_RECIPIENTS?: string;
@@ -82,14 +84,13 @@ const json = (body: unknown, status = 200) =>
   });
 
 /**
- * Can a submission reach a PERSON? An email path is required: the Email binding with a sending
- * address and somewhere to send (FORM_RECIPIENTS or CONTACT_TO), or Web3Forms. The database alone
+ * Can a submission reach a PERSON? An email path is required: the backbone's sender (Cloudflare or
+ * Resend, with a sending address) and somewhere to send (FORM_RECIPIENTS or CONTACT_TO), or Web3Forms. The database alone
  * is a safety net nobody reads, so it does not count: a prayer request must never sit unread.
  */
 const canDeliver = (e: FormEnv): boolean =>
   Boolean(
-    (e.EMAIL &&
-      e.CONTACT_FROM &&
+    (workerMailer(e).mailer &&
       (Object.keys(parseRecipients(e.FORM_RECIPIENTS)).length || e.CONTACT_TO)) ||
     e.WEB3FORMS_KEY,
   );
@@ -143,30 +144,21 @@ async function notify(
 ): Promise<string | null> {
   const note = buildFormNotification(form, s, site.name);
   const to = recipientAddress(form.recipient, parseRecipients(e.FORM_RECIPIENTS), e.CONTACT_TO);
-  let failure: string | null = 'email binding not configured';
-  if (e.EMAIL && e.CONTACT_FROM && to) {
-    const message: Record<string, unknown> = {
+  const { mailer, reason } = workerMailer(e);
+  let failure: string | null = reason ?? 'no recipient address';
+  if (mailer && to) {
+    // The message this route always sent; the backbone keeps Reply-To and, on
+    // Cloudflare, the retry without it.
+    const r = await mailer.send({
       to,
-      from: { email: e.CONTACT_FROM, name: `${site.name} website` },
+      fromName: `${site.name} website`,
       subject: note.subject,
       text: note.text,
       html: note.html,
-    };
-    try {
-      await e.EMAIL.send(
-        note.replyTo
-          ? { ...message, headers: [{ key: 'Reply-To', value: note.replyTo }] }
-          : message,
-      );
-      return null;
-    } catch {
-      try {
-        await e.EMAIL.send(message);
-        return null;
-      } catch (err) {
-        failure = err instanceof Error ? err.message : 'send failed';
-      }
-    }
+      replyTo: note.replyTo || undefined,
+    });
+    if (r.ok) return null;
+    failure = r.error ?? 'send failed';
   }
   if (e.WEB3FORMS_KEY) {
     try {

@@ -1,0 +1,70 @@
+---
+// Safe to edit by hand
+// RSVP (PORTS.md card 127): "let us know you are coming" for a church event (VBS, Easter
+// breakfast, homecoming). The block IS the event: Auburn's calendar lives in Church Trac, so the
+// block carries the name, time, places and questions. The reply form is the shared RsvpForm
+// island, dressed in the church forms' own classes (cb-form, cb-field, btn-auburn) so it reads
+// like the Form block beside it (rule 17). Replies go to the site's database, never to Sanity.
+import ChurchBand from './ChurchBand.astro';
+import RsvpForm from '@/components/RsvpForm';
+import { eventKey, normalizeRsvpBlock, whenWords } from '@/lib/mail-rsvp';
+import { TIME_ZONE } from '@/lib/newsletter-content';
+import type { ProjectedRsvpSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedRsvpSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const pageId = block.pageId ?? '';
+const ev = normalizeRsvpBlock(block, pageId);
+const key = eventKey(pageId, block._key ?? '');
+const when = whenWords(ev?.startsAt ?? null, TIME_ZONE);
+const closed = ev?.closesAt ? Date.parse(ev.closesAt) <= Date.now() : false;
+---
+
+{ev && key && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading || ev.name}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label={`RSVP: ${ev.name}`}
+    beside
+  >
+    <div class="cb-form-wrap" data-rsvp={key}>
+      {(when || ev.where || block.heading) && (
+        <p class="cb-form-note" style="max-width: 40rem; margin-bottom: 1.25rem">
+          {[block.heading ? ev.name : '', when, ev.where].filter(Boolean).join('. ')}.
+        </p>
+      )}
+      <RsvpForm
+        client:visible
+        eventKey={key}
+        eventName={ev.name}
+        questions={ev.questions}
+        maxParty={ev.maxParty}
+        closedAtBuild={closed}
+        idPrefix={`${headingId}-rsvp`}
+        classes={{
+          form: 'cb-form',
+          field: 'cb-field',
+          label: '',
+          input: '',
+          check: 'cb-check',
+          checkbox: '',
+          error: 'cb-error',
+          alert: 'cb-error',
+          note: 'cb-form-note',
+          panel: 'cb-form-note',
+          text: '',
+          done: 'cb-form-done',
+          doneTitle: '',
+          button: 'btn-auburn btn-auburn--primary press-tactile',
+        }}
+      />
+    </div>
+  </ChurchBand>
+)}
