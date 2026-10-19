@@ -82,6 +82,8 @@ export const CONTENT_TYPES = new Set([
   'columnsSection',
   'photoSection',
   'formSection',
+  // The email backbone (card 127)
+  'rsvpSection',
 ]);
 
 export interface SectionBlock {

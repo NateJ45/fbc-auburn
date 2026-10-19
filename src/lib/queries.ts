@@ -120,6 +120,8 @@ const SECTION_ARMS = `
     _type == "photoSection" => { ..., image${IMAGE_PROJECTION} },
     // The form's words only. The recipient's NAME is looked up for the page; its address is
     // never in the dataset (src/lib/church-form.ts).
+    // The RSVP form names its event "<document id>:<block key>" (card 127).
+    _type == "rsvpSection" => { "pageId": ^._id },
     _type == "formSection" => {
       ...,
       "form": form->{

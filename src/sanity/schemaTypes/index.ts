@@ -16,6 +16,7 @@ import { journalCategory } from './journalCategory'; // scaffold: journal
 import { journalEntry } from './journalEntry'; // scaffold: journal
 import { journalPage } from './journalPage'; // scaffold: journal
 import { navLink } from './navLink';
+import { newsletter } from './newsletter';
 import { page } from './page';
 import { pageSectionSchemas, syncedSection } from './sections';
 import { richSectionSchemas } from './richSections';
@@ -70,6 +71,8 @@ export const schemaTypes = [
   download,
   // A form the church writes (the form builder); the Form block shows it.
   form,
+  // One issue of the email newsletter (card 127); subscribers live in D1, never here.
+  newsletter,
   // Custom pages built from the section library (multi-instance, not a singleton)
   page,
   // One saved section, kept for reuse on other pages. Not content: nothing

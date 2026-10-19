@@ -48,6 +48,9 @@ export const RESERVED_SLUGS = new Set([
   'studio',
   'preview',
   'api',
+  // The email backbone (card 127): the newsletter's link pages and its archive.
+  'email',
+  'newsletter',
 ]);
 
 /** Returns true when a slug collides with a built-in route. */

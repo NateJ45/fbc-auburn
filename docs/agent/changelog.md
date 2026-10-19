@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-18: the email backbone: one sender, a newsletter with double opt-in, RSVPs (PORTS card 127)._
+
+**Decision.** Everything the site emails now goes through one module (`src/lib/mail-send.ts`) with two providers
+behind it, Cloudflare Email Sending and Resend, picked by a Worker setting; with neither, every piece says "not set up
+yet". The contact form sends the same message through it. One D1 database (`CONTACT_DB`) now also holds newsletter
+subscribers (address, status, timestamps only), the send log with a per-person claim that makes a second send to anyone
+impossible, and RSVPs. A Newsletter document is sent from the Studio ("Send a test to me", "Send to everyone", in
+batches); an RSVP section on any page takes replies with capacity and a waiting list decided in one SQL statement, and
+the Studio's RSVPs tool lists them with a CSV download. A provider-hosted list was weighed and left out: one more
+account and a second home for people's addresses.
+
 _2026-10-18: Studio brand polish._
 
 **What changed.** The stone icons fill their list tiles (inset 0 in brandIconArt.tsx; each file is already cropped to its art). The About page shows the church mark (aboutPage maps to the overview meaning, drawn with the full-colour mark). The Home banner strips draw the mark green run in a lighter #5E9B6B so it reads on navy; every other stone path keeps the mark six colours.

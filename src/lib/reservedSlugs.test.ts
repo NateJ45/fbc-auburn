@@ -71,6 +71,9 @@ test('every reserved slug is a route this repo serves, a scaffolded one, or a bu
     'studio',
     'preview',
     'api',
+    // The newsletter's link pages and archive (src/pages/email/, src/pages/newsletter/, card 127).
+    'email',
+    'newsletter',
   ]);
   // Not pages: two are emitted by the build, one is the asset directory.
   const artefacts = new Set(['sitemap-index.xml', 'og', '_astro']);

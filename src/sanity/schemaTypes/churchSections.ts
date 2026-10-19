@@ -54,6 +54,7 @@ import { SplitVerticalIcon } from '@sanity/icons/SplitVertical';
 import { SyncIcon } from '@sanity/icons/Sync';
 import { TimelineIcon } from '@sanity/icons/Timeline';
 import { imageWithAlt } from './_imageWithAlt';
+import { rsvpSection } from './rsvpSection';
 
 // ── Shared fields ────────────────────────────────────────────────────────────
 
@@ -1000,6 +1001,8 @@ export const churchSectionSchemas = [
   columnsSection,
   photoSection,
   formSection,
+  // The email backbone (card 127): replies kept in D1, never in Sanity.
+  rsvpSection,
 ];
 
 /**
@@ -1031,7 +1034,7 @@ export const CHURCH_INSERT_GROUPS: { name: string; title: string; of: string[] }
   {
     name: 'giving',
     title: 'Giving and sign-ups',
-    of: ['givingSection', 'progressSection', 'formSection', 'newsletterSection'],
+    of: ['givingSection', 'progressSection', 'formSection', 'newsletterSection', 'rsvpSection'],
   },
   { name: 'media', title: 'Media', of: ['livestreamSection'] },
 ];

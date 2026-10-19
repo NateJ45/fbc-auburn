@@ -27,6 +27,7 @@ import ContactCardBlock from './ContactCardBlock.astro';
 import ColumnsBlock from './ColumnsBlock.astro';
 import PhotoBlock from './PhotoBlock.astro';
 import FormBlock from './FormBlock.astro';
+import RsvpBlock from './RsvpBlock.astro';
 
 interface Props {
   block: ChurchPageBlock;
@@ -80,4 +81,6 @@ const common = { surface, headingId };
   <PhotoBlock block={b} {...common} />
 ) : b._type === 'formSection' ? (
   <FormBlock block={b} {...common} />
+) : b._type === 'rsvpSection' ? (
+  <RsvpBlock block={b} {...common} />
 ) : null}

@@ -91,6 +91,7 @@ export const kitConfig: KitConfig = {
     'structure',
     'presentation',
     'messages',
+    'rsvps',
     'site-guide',
     'checkup',
   ],
@@ -100,6 +101,7 @@ export const kitConfig: KitConfig = {
     'structure',
     'presentation',
     'messages',
+    'rsvps',
     'site-guide',
     'checkup',
     'media',
@@ -457,6 +459,9 @@ export const kitConfig: KitConfig = {
     // The route says "not set up yet" until the Worker has CF_ANALYTICS_TOKEN,
     // CF_ACCOUNT_ID and CF_WEB_ANALYTICS_SITE_TAG (OPERATIONS.md, "Visitor numbers").
     visitors: true,
+    // The email backbone (card 127): the Newsletter card and RSVP counts. Each
+    // says "not set up yet" until the Worker has the settings (OPERATIONS.md, "Email").
+    mail: true,
     // Card 110: the status line under the top bar, and the help panel.
     navbarStatus: true,
     helpPanel: true,
