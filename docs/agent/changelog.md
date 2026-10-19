@@ -1,5 +1,9 @@
 # Change history
 
+_2026-10-19: eight stone icons for the Studio (guide, page, camera, home, eye, search, link, checkup)._
+
+**Decision.** Eight more meanings now draw the brand's stone art in the Studio: guide, page, image, home, preview, search, link and checkup, in `src/sanity/brandIconArt.tsx` and `src/assets/brand/stone-icon-*.svg`. They were generated in Gemini and vectorised faithfully, with no redrawing. `page` replaces the building-blocks stone it used before; `pages` and the section meanings keep theirs.
+
 _2026-10-18: the Studio's design language and a redesigned Site Guide (PORTS card 128)._
 
 **Decision.** The Studio now has a small design language the site's brand drives: a marker, a stone shape, a connector,

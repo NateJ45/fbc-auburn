@@ -16,6 +16,13 @@ sequence).
 
 ## Waiting on a human
 
+### 1w. Card 129 (token sign-in): every editor signs in once (opened 2026-10-19)
+
+**Blocker: each editor signs out and in once after this deploys.** `sanity.config.ts` now sets `auth: { loginMethod: 'token' }`
+so the Studio's own routes (Messages, Visitors, Try again, Earlier versions) get the session token they check; a browser
+signed in by cookie got 401 on them. Until an editor does the sign-out and sign-in, the Studio says so in plain words
+instead of "sign in again". Check signed in: Home's Visitors card and Messages load after the one sign-in.
+
 ### 1v. Card 127 (the email backbone): a real send, and the Studio buttons signed in (opened 2026-10-18)
 
 **Blocker: a sending domain and a signed-in Studio.** Unit-tested on real SQLite and exercised under `wrangler dev` with
@@ -289,6 +296,7 @@ edit in Site settings > Church facts, then a publish.
 2026-10-17 (`docs/agent/studio-kit.md`): Home, Site Guide, Checkup, the staff view, Trash, the note after Publish
 and the tour, checked signed in at `/studio` in light and dark. Still to do:
 
+- **Nathan to review the new stone icons; alternatives in the overnight scratchpad.** Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`.
 - **The editor's Sanity user id in `kitConfig.staff`** once he has accepted the invitation. Until then the staff
   view goes by role, and he is an administrator, so he would see the full Studio.
 - **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its
