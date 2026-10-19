@@ -16,6 +16,13 @@ sequence).
 
 ## Waiting on a human
 
+### 1y. Studio complete: pictures, videos and tours at launch (opened 2026-10-19)
+
+The weekly jobs are mapped in `docs/agent/studio-plan.md`. Held until launch, when the content is real: the eight
+"shot to capture at launch" pictures listed there, retaking `quick-update` and `home-tiles` (both now out of date),
+and recording the six videos scripted in `src/sanity/guides/tours.ts`. When starter card 137 lands, wire the tours
+from the same file. Signed in, try each new Quick update job once on a phone (event, news post, newsletter).
+
 ### 1x. Card 133 (Studio polish): check it signed in on the live Studio (opened 2026-10-19)
 
 Home's ways-in tiles now fit three across with the art top left, and Live preview loads the brand layer (`auburn.css`, `starwind.css`) so the This Sunday pill shows its words instead of white on white. Both were checked on the kit bench and by build output, not on the live Studio (the preview needs the Worker token). After the deploy: open Live preview on Home and confirm the pill, and the tiles at the dashboard width. Then delete this entry.

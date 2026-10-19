@@ -40,6 +40,7 @@
 // =============================================================================
 
 import { collectionGuides } from './collections.ts';
+import { EVERY_WEEK, WEEKLY_CATEGORY, weeklyGuides } from './weekly.ts';
 
 import type { KitGuideBlock } from '../kit/guide/GuidePage';
 import { phoneGuides } from './phoneGuides.ts';
@@ -66,6 +67,8 @@ export const SITE = {
 
 export const GUIDE_CATEGORIES = [
   'Start here',
+  // FBC Auburn, 2026-10-19: the pastor's weekly jobs first (guides/weekly.ts).
+  WEEKLY_CATEGORY,
   'Pages and words',
   // FBC Auburn, 2026-10-18: one guide per group of page templates (src/sanity/pageTemplates.ts).
   'Page templates',
@@ -1102,14 +1105,14 @@ export const guides: Guide[] = [
     slug: 'send-the-newsletter',
     category: 'Housekeeping',
     title: 'Send the weekly newsletter',
-    icon: '✉',
+    icon: 'mail',
     lead: 'Write it, publish it, send yourself a test, then send it to everyone.',
     diy: 'self',
     body: [
       {
         kind: 'steps',
         items: [
-          "Open `Newsletter` in the list on the left and press `+` for a new issue, or duplicate last week's.",
+          "From your phone, tap `Start this week's newsletter` in `Quick update`. At a desk, open `Newsletter` in the list on the left and press `+`, or duplicate last week's.",
           'Write the subject line and a few opening words, then pick what goes in. Leave out anything you do not need this week.',
           'Press `Publish`. Only the published issue is ever sent, so publish again after any change.',
           'Press `Send a test to me` (under the arrow beside Publish). Read it in your own inbox, on your phone too.',
@@ -1136,7 +1139,7 @@ export const guides: Guide[] = [
     slug: 'rsvps',
     category: 'Housekeeping',
     title: 'Let people RSVP',
-    icon: '✓',
+    icon: 'event',
     lead: 'Add an RSVP section to an event page and see who is coming.',
     diy: 'self',
     body: [
@@ -1351,7 +1354,7 @@ guides.push(
     category: 'Start here',
     title: 'Quick update from your phone',
     icon: 'bolt',
-    lead: 'Four jobs made small enough for a phone.',
+    lead: 'The weekly jobs, made small enough for a phone.',
     diy: 'self',
     body: [
       {
@@ -1366,13 +1369,20 @@ guides.push(
           '**Put up a notice**: a short line across the top of every page, until the last day you pick.',
           "**Add Sunday's sermon link**: the title and the YouTube or Facebook link. The date fills itself in as last Sunday.",
           '**Cancel or change something this week**: a notice in red that comes down by itself after Sunday.',
+          '**Tell people about an event**: a notice with the day and time that comes down after the event.',
+          '**Write a short news post**: a headline and a few lines for News and notes.',
+          "**Start this week's newsletter**: the subject and opening words. It is saved, not sent, until you send it from the full editor.",
         ],
       },
       {
         kind: 'p',
         text: 'Fill in the boxes and press the green button. It is published straight away and the website updates in a few minutes. To add more later (a summary, the audio), open it from `Content` as usual.',
       },
-      { kind: 'seealso', items: ['The Sunday checklist'] },
+      {
+        kind: 'p',
+        text: "The bulletin needs a file, so it has its own button on Home: `Put up this week's bulletin`.",
+      },
+      { kind: 'seealso', items: ['The Sunday checklist', 'Your week on the website'] },
     ],
   },
   {
@@ -1450,7 +1460,7 @@ guides.push(
     slug: 'messages',
     category: 'Housekeeping',
     title: 'Read messages from the website',
-    icon: '@',
+    icon: 'mail',
     lead: 'Everything people send through the forms, in one list.',
     diy: 'self',
     body: [
@@ -1739,6 +1749,11 @@ guides.push(
 // line when rewriting the guides above.
 guides.push(...phoneGuides(SITE.contactName));
 
+// The pastor's week (guides/weekly.ts, 2026-10-19), then every weekly job, wherever it
+// was written, filed under "Every week" so the Site Guide opens on them.
+guides.push(...weeklyGuides);
+for (const g of guides) if (EVERY_WEEK.includes(g.slug)) g.category = WEEKLY_CATEGORY;
+
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
  * guide.forType, PORTS.md card 110). '*' is the fallback for anything unlisted.
@@ -1746,8 +1761,8 @@ guides.push(...phoneGuides(SITE.contactName));
  */
 export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   '*': ['edit-a-page', 'help-panel', 'before-you-publish', 'undo-earlier'],
-  announcement: ['schedule-publish', 'quick-update', 'undo-earlier'],
-  journalEntry: ['schedule-publish', 'writing-help', 'undo-earlier'],
+  announcement: ['put-up-a-notice', 'tell-about-an-event', 'snow-sunday', 'schedule-publish'],
+  journalEntry: ['news-post', 'post-a-photo', 'schedule-publish', 'writing-help', 'undo-earlier'],
   // FBC Auburn: the church's own guides first where they fit.
   page: [
     'edit-a-page',
@@ -1766,7 +1781,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   privatePage: ['make-a-page-private', 'edit-a-page'],
   form: ['make-a-form', 'prayer-requests', 'messages'],
   homePage: ['home-page', 'add-sermon', 'images-and-alt', 'seo-fields'],
-  newsletter: ['send-the-newsletter'],
+  newsletter: ['send-the-newsletter', 'tell-about-an-event', 'your-week'],
   siteSettings: [
     'church-facts',
     'contact-give-live',
@@ -1781,7 +1796,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   sermonsPage: ['podcast', 'add-sermon'],
   person: ['add-person'],
   personGroup: ['add-person'],
-  download: ['bulletin'],
+  download: ['bulletin', 'your-week'],
   redirect: ['rename-a-page'],
 };
 
@@ -1809,6 +1824,15 @@ export const GUIDE_FOR_FIELD: FieldGuideMap = {
       guide: 'make-a-page-private',
       section: 'Private: only people with the password can see it',
     },
+    // Shown on the fields owners get wrong most (2026-10-19, docs/agent/studio-plan.md).
+    // file is only the download's PDF; videoUrl is the same link on a sermon and on the
+    // Watch and replay sections.
+    file: { guide: 'bulletin', section: 'From your phone' },
+    videoUrl: { guide: 'add-sermon', section: 'Copying the video link' },
+    excerpt: { guide: 'news-post', section: 'A longer post, at a desk' },
+    givingUrl: { guide: 'contact-give-live' },
+    preheader: { guide: 'send-the-newsletter' },
+    capacity: { guide: 'rsvps' },
   },
   // Schema type name -> section, for a type used in many places (none yet).
   types: {},
