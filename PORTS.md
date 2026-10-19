@@ -8474,7 +8474,7 @@ gate passes in both schemes. Quick actions: name last Sunday's message, change t
 menus. `GUIDES_FOR_TYPE` lists Auburn's own guides first. Login screen checked in a dev server in light and dark; the
 signed-in views wait on the pastor (`docs/PENDING.md`).
 
-## Card 122: Studio writing help (Claude API), a "Before you publish" panel, AI assistants on the Visitors card (2026-10-18)
+## Card 123: Studio writing help (Claude API), a "Before you publish" panel, AI assistants on the Visitors card (2026-10-18)
 
 **Origin:** hosted site builders now ship AI writing help in the editor, a pre-publish check and an AI visibility
 report (2026-10-18). Our editors are non-writers, photo descriptions are already required (card 111's Checkup), and the Checkup and Fix-it list already
@@ -8501,8 +8501,8 @@ and `.dev.vars.example` comments, OPERATIONS.md "Writing help".
   has `ANTHROPIC_API_KEY`.
 - **The route.** `POST /api/studio/ai/`: same origin, a Sanity project member (`studio-auth.ts`), the key, an hourly
   limit per person (30, `AI_HOURLY_LIMIT`; per Worker instance), a checked body, then one `fetch` to the Messages API.
-  Haiku 5.5 for text (thinking `disabled`), Sonnet 5.5 for photos (thinking `between_tools`, `fallbacks: "default"`),
-  effort `low`, `max_tokens` 160 to 700, input capped. The photo URL is built on the Worker from the asset id and this
+  Haiku 5.5 for text, Sonnet 5.5 for photos; the body is only model, `max_tokens` (1024, 2048 for a paragraph, room
+  for the default thinking), system and messages, and the input is capped. The photo URL is built on the Worker from the asset id and this
   project only. The system prompt compiles `docs/claude/communication-style.md` (a test keeps the banned words in
   step) plus the brand name; dashes in the answer become commas. Logs the task and outcome only.
 - **Before you publish.** A second document inspector. `forDocument()` runs the site's own Checkup rules with the
@@ -8526,7 +8526,7 @@ cases with a stubbed fetch; the panel's draft swap; the llms and example rules; 
 `astro check`, build, `npm test`. On first-baptist-auburn under `astro dev`: `GET /api/studio/ai/` answers
 `configured`, a cross-site POST is 403 and a POST without a Sanity session is 401; the Studio loads with the plugin
 and no console errors (signed out). Not yet seen: the buttons and the panel signed in, and a real suggestion from the
-API (needs the key; `docs/PENDING.md` item 24).
+API (needs the key; `docs/PENDING.md` item 26).
 
 **Adopting it in a site.** Needs cards 106, 111, 115 and 117 (`studioApi`). Copy the PORTABLE files, add
 `ncsWritingHelp()` to `sanity.config.ts` plugins before the kit, add the two rules and `publishPanel: true` in

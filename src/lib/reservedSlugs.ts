@@ -48,6 +48,8 @@ export const RESERVED_SLUGS = new Set([
   'studio',
   'preview',
   'api',
+  // Private pages live under /private/<slug>/ (card 122, server-rendered).
+  'private',
 ]);
 
 /** Returns true when a slug collides with a built-in route. */

@@ -1,6 +1,6 @@
 # Change history
 
-_2026-10-18: writing help, "Before you publish" and AI visitors in the Studio (PORTS card 122)._
+_2026-10-18: writing help, "Before you publish" and AI visitors in the Studio (PORTS card 123)._
 
 **Decision.** Three editor features that hosted site builders now ship. "Suggest" buttons under the Google
 description, photo description and summary fields, and "Improve this paragraph" in rich text, ask a new Worker route
@@ -25,6 +25,15 @@ and end of body, never on /studio or /preview). The Checkup lists both while the
 unchanged (rule 1); `runsOnPage`, `headCode` and `bodyEndCode` are new. The "not both URL and code" check now reads
 the block (`context.parent`) instead of the document, so it finally fires. A full CSP was weighed and left for later:
 it would not stop same-origin script reading localStorage, which is the actual risk here.
+_2026-10-18: hidden pages, password pages, and link and heading checks in the Checkup (PORTS card 122)._
+
+**Decision.** "Hide this page from Google and the menus" now also keeps a page out of the menus, the menu picker and
+site search. Password pages are a separate type, `privatePage` (Pages, Private pages), stored under a private id path
+because the dataset is public (a password on an ordinary page would leave its words readable over the API), served
+at `/private/<slug>/` by a server-rendered route with a hashed password, a signed cookie and a rate limit, and never
+built. The Checkup gained dead external links (from the weekly link check), internal links to missing pages, skipped
+headings, vague link words, long Google text, pages nobody can reach, and private-page guards. Detail and the
+security note: `docs/agent/private-pages.md`.
 
 _2026-10-18: custom code, safe by default (PORTS card 121)._
 
