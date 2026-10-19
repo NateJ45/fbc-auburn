@@ -3,7 +3,7 @@
 // The church's own icon art for the Studio (starter PORTS.md card 119)
 // =============================================================================
 // NOT PORTABLE. The registry in src/sanity/brandIcons.tsx draws every meaning
-// with @sanity/icons; each meaning listed here is drawn with one of the eight
+// with @sanity/icons; each meaning listed here is drawn with one of the
 // stone icons from the brand kit instead (src/assets/brand/stone-icon-*.svg,
 // the same files the site uses through src/lib/stone-icons.ts). The files are
 // shown exactly as drawn, stone colours included: artIcon() only places them in
@@ -11,8 +11,8 @@
 // colours read on the paper and on the dark ground, so no one-colour version.
 //
 // Which document type, field group or tool means what: brand/brand.config.json
-// `studio.icons`. Meanings with no stone (settings, contact, redirects, the
-// Trash...) keep the starter's @sanity/icons.
+// `studio.icons`. Meanings with no stone (contact,
+// redirects...) keep the starter's @sanity/icons.
 // =============================================================================
 
 import type { BrandIconKey } from '../lib/studio-icons';
@@ -33,6 +33,13 @@ import previewUrl from '../assets/brand/stone-icon-preview.svg?url';
 import searchUrl from '../assets/brand/stone-icon-search.svg?url';
 import linkUrl from '../assets/brand/stone-icon-link.svg?url';
 import checkupUrl from '../assets/brand/stone-icon-checkup.svg?url';
+import helpUrl from '../assets/brand/stone-icon-help.svg?url';
+import quickUrl from '../assets/brand/stone-icon-quick.svg?url';
+import mailUrl from '../assets/brand/stone-icon-mail.svg?url';
+import settingsUrl from '../assets/brand/stone-icon-settings.svg?url';
+import trashUrl from '../assets/brand/stone-icon-trash.svg?url';
+import calendarUrl from '../assets/brand/stone-icon-calendar.svg?url';
+import paletteUrl from '../assets/brand/stone-icon-palette.svg?url';
 import markUrl from '../assets/brand/fbc-auburn-icon-full-color.svg?url';
 
 // Inset 0: each file's viewBox is already cropped to its art, so the default 10% margin only made
@@ -53,6 +60,13 @@ const Eye = artIcon(previewUrl, 'Eye', 0);
 const Magnifier = artIcon(searchUrl, 'Magnifying glass', 0);
 const ChainLink = artIcon(linkUrl, 'Chain link', 0);
 const Heartbeat = artIcon(checkupUrl, 'Heartbeat', 0);
+const HelpIcon = artIcon(helpUrl, 'Help speech bubble', 0);
+const QuickIcon = artIcon(quickUrl, 'Lightning bolt', 0);
+const MailIcon = artIcon(mailUrl, 'Envelope', 0);
+const SettingsIcon = artIcon(settingsUrl, 'Gear', 0);
+const TrashIcon = artIcon(trashUrl, 'Bin', 0);
+const CalendarIcon = artIcon(calendarUrl, 'Calendar', 0);
+const PaletteIcon = artIcon(paletteUrl, 'Paint palette', 0);
 // The church's own mark: who we are (the About page, mapped in brand.config.json).
 const Mark = artIcon(markUrl, 'The church mark', 0);
 
@@ -100,4 +114,13 @@ export const BRAND_ICON_ART: Partial<Record<BrandIconKey, BrandIcon>> = {
   link: ChainLink,
   // The health check.
   checkup: Heartbeat,
+  // The Studio's furniture: help, the quick-update tool, messages, settings, the Trash.
+  help: HelpIcon,
+  quickUpdate: QuickIcon,
+  message: MailIcon,
+  settings: SettingsIcon,
+  trash: TrashIcon,
+  // Scheduling and publishing, and the Brand kit.
+  publishing: CalendarIcon,
+  brandKit: PaletteIcon,
 };
