@@ -381,6 +381,20 @@ on-page probe can), and seen under `wrangler dev` with the site fonts loading in
 once there is code, Site settings' "Code on every page" tab, both Checkup findings opening the right field, and the
 boxed frame in Presentation.
 
+### 1r. Card 122 (hidden and password pages, link checks): secrets and the signed-in checks (opened 2026-10-18)
+
+Built and tested locally (unit tests, the static half of `tests/private-pages.spec.ts`, the Worker half against
+`wrangler dev` with the fixture page). Waiting on a human:
+
+- [ ] `npx wrangler secret put PRIVATE_PAGE_SECRET` (32+ random characters). `SANITY_TOKEN` is already set for the
+      preview. Until then `/private/<slug>/` says "not ready yet".
+- [ ] Repo secret `SANITY_API_WRITE_TOKEN` (if not already there) so the Monday link check saves its report for the
+      Checkup.
+- [ ] Add `"privatePage"` and `"linkReport"` to the publish webhook's deny-list (OPERATIONS.md).
+- [ ] Signed in: make a page from Pages, Private pages (password); check its id starts `privatePage.` (draft and
+      published), set a password, publish, open `/private/<slug>/` on the live site in a private window.
+- [ ] Look at the new Checkup findings on the real content (links, headings, pages nobody can reach).
+
 ### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
 
 - The signed-in Studio click-through of the new desk (the Start here panes, "Add the usual
@@ -445,9 +459,9 @@ warning but "example text") and four templates rendered locally at 375 and 1280.
 
 ## Known gaps, deliberately open
 
-### 1q. Section looks and the photo viewer: the signed-in check (opened 2026-10-18)
+### 1s. Section looks and the photo viewer: the signed-in check (opened 2026-10-18)
 
-Built and verified on the built site (PORTS.md card 122): the looks wall `/styleguide/looks/`, the
+Built and verified on the built site (PORTS.md card 124): the looks wall `/styleguide/looks/`, the
 viewer's keyboard, focus and swipe tests, axe, and parity on the fallback build (no Sanity project in
 the worktree, so real pages were not compared). Still to do signed in:
 

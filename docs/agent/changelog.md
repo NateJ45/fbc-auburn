@@ -1,6 +1,6 @@
 # Change history
 
-_2026-10-18: section looks and a photo viewer (PORTS card 122)._
+_2026-10-18: section looks and a photo viewer (PORTS card 124)._
 
 **Decision.** Editors can pick a section's look instead of a colour. The five content blocks (text, image + text,
 gallery, quote, video) carry a `look` radio: Standard (the white board), Feature (the church blue with white text) and
@@ -12,6 +12,16 @@ one enum and still forbids free colour fields, and the gate test says so. Unset 
 caption and position, arrows and swipe, Escape, a focus trap and focus return, reduced motion respected, and with
 JavaScript off each photo is a link to the full-size picture. A Squarespace-style free background picker was weighed
 and left out: it is how a site drifts.
+
+_2026-10-18: hidden pages, password pages, and link and heading checks in the Checkup (PORTS card 122)._
+
+**Decision.** "Hide this page from Google and the menus" now also keeps a page out of the menus, the menu picker and
+site search. Password pages are a separate type, `privatePage` (Pages, Private pages), stored under a private id path
+because the dataset is public (a password on an ordinary page would leave its words readable over the API), served
+at `/private/<slug>/` by a server-rendered route with a hashed password, a signed cookie and a rate limit, and never
+built. The Checkup gained dead external links (from the weekly link check), internal links to missing pages, skipped
+headings, vague link words, long Google text, pages nobody can reach, and private-page guards. Detail and the
+security note: `docs/agent/private-pages.md`.
 
 _2026-10-18: custom code, safe by default (PORTS card 121)._
 

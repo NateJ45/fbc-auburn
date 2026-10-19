@@ -68,6 +68,154 @@ export type Redirect = {
   note?: string;
 };
 
+export type PrivatePage = {
+  _id: string;
+  _type: 'privatePage';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  password?: {
+    alg?: string;
+    iterations?: number;
+    salt?: string;
+    hash?: string;
+    setAt?: string;
+  };
+  pageBuilder?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
+      } & ServiceTimesSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
+      } & BeliefsSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & ScriptureSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & GivingSection)
+    | ({
+        _key: string;
+      } & LivestreamSection)
+    | ({
+        _key: string;
+      } & EventsSection)
+    | ({
+        _key: string;
+      } & NewsletterSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & ProgressSection)
+    | ({
+        _key: string;
+      } & AffiliationsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & FormSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
+  >;
+};
+
+export type Slug = {
+  _type: 'slug';
+  current?: string;
+  source?: string;
+};
+
 export type SanityFileAssetReference = {
   _ref: string;
   _type: 'reference';
@@ -103,12 +251,6 @@ export type JournalCategory = {
   title?: string;
   slug?: Slug;
   description?: string;
-};
-
-export type Slug = {
-  _type: 'slug';
-  current?: string;
-  source?: string;
 };
 
 export type FaqCategoryReference = {
@@ -3520,10 +3662,11 @@ export type AllSanitySchemaTypes =
   | TimelineEntryImage
   | Logo
   | Redirect
+  | PrivatePage
+  | Slug
   | SanityFileAssetReference
   | Download
   | JournalCategory
-  | Slug
   | FaqCategoryReference
   | FaqItem
   | FaqCategory
