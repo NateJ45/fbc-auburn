@@ -48,6 +48,8 @@ export const RESERVED_SLUGS = new Set([
   'studio',
   'preview',
   'api',
+  // Visitor search (PORTS.md card 123): src/pages/search/[...search].astro.
+  'search',
 ]);
 
 /** Returns true when a slug collides with a built-in route. */

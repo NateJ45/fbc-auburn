@@ -34,8 +34,8 @@
 // Data: the links, tagline, email, socials and the Sunday facts all come from the Header (Sanity
 // Site settings and Church facts), with sensible defaults so the menu renders before content does.
 
-import { useState } from 'react';
-import { Mail, Phone } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Mail, Phone, Search } from 'lucide-react';
 import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { telHref } from '@/lib/phone';
@@ -98,6 +98,13 @@ interface Props {
   sunday?: MenuSunday;
   /** The current path, so the page you are on keeps its stone. */
   current?: string;
+  /**
+   * Visitor search is on (src/data/site.ts search.enabled, PORTS.md card 123): a round search
+   * button beside the Menu pill at every width, and a "Search the site" row at the top of the night
+   * menu. Both are real links to /search/ that open the header's search dialog
+   * (src/components/search/SiteSearch.astro). Header.astro passes it only when search is on.
+   */
+  search?: boolean;
 }
 
 /** Built-in drawer button, matching the header's own default. */
@@ -133,8 +140,13 @@ export default function MobileNav({
   cta = DEFAULT_CTA,
   sunday,
   current,
+  search = false,
 }: Props) {
   const [open, setOpen] = useState(false);
+  // Set when the visitor picks "Search the site" inside the menu: the menu closes first, and the
+  // search dialog opens once Radix has handed focus back (onCloseAutoFocus below), so the two
+  // modals never fight over focus.
+  const searchNext = useRef(false);
 
   const tagline = siteSettings?.tagline ?? 'A small church with the door open.';
   const email = siteSettings?.email;
@@ -157,6 +169,16 @@ export default function MobileNav({
 
   return (
     <div className="site-header__menu">
+      {search && (
+        <a
+          href="/search/"
+          className="search-pill"
+          aria-label="Search the site"
+          data-site-search-open
+        >
+          <Search size={20} strokeWidth={2} aria-hidden="true" />
+        </a>
+      )}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <button type="button" aria-label="Open the menu" className="menu-pill">
@@ -164,7 +186,17 @@ export default function MobileNav({
             <span>Menu</span>
           </button>
         </SheetTrigger>
-        <SheetContent side="right" className="auburn-menu" aria-describedby={undefined}>
+        <SheetContent
+          side="right"
+          className="auburn-menu"
+          aria-describedby={undefined}
+          onCloseAutoFocus={(e) => {
+            if (!searchNext.current) return;
+            searchNext.current = false;
+            e.preventDefault();
+            window.dispatchEvent(new CustomEvent('site-search:open'));
+          }}
+        >
           <SheetHeader className="auburn-menu__head">
             <SheetTitle className="auburn-menu__eyebrow">Menu</SheetTitle>
           </SheetHeader>
@@ -213,6 +245,21 @@ export default function MobileNav({
             </nav>
 
             <div className="auburn-menu__side">
+              {search && (
+                <a
+                  href="/search/"
+                  className="auburn-menu__search"
+                  onClick={(e) => {
+                    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+                    e.preventDefault();
+                    searchNext.current = true;
+                    close();
+                  }}
+                >
+                  <Search size={18} aria-hidden="true" />
+                  Search the site
+                </a>
+              )}
               {sunday && (
                 <section className="auburn-menu__card" aria-label={sunday.title || 'This Sunday'}>
                   <div className="auburn-menu__card-top">

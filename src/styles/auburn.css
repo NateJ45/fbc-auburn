@@ -567,6 +567,67 @@ h6 {
 .menu-pill:hover {
   background: var(--muted);
 }
+/* Visitor search (PORTS.md card 123): a round button in the Menu pill's style, just left of it at
+   every width, and a search row at the top of the night menu. The dialog itself is styled from the
+   theme tokens in src/components/search/. */
+.site-header__menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.search-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  color: var(--foreground);
+  background: var(--background);
+  transition: background-color 160ms ease;
+}
+.search-pill:hover {
+  background: var(--muted);
+}
+.search-pill:focus-visible,
+.auburn-menu__search:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+.auburn-menu__search {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: 999px;
+  color: rgb(255 255 255 / 0.85);
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+.auburn-menu__search:hover {
+  border-color: rgb(255 255 255 / 0.6);
+  background: rgb(255 255 255 / 0.06);
+  color: #ffffff;
+}
+@media (max-width: 53.99rem) {
+  .auburn-menu__search {
+    order: -2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-pill,
+  .auburn-menu__search {
+    transition: none;
+  }
+}
 /* Under 360px the pill slims down beside the smaller lockup (see the header block above). */
 @media (max-width: 22.49rem) {
   .menu-pill {

@@ -435,6 +435,21 @@ warning but "example text") and four templates rendered locally at 375 and 1280.
   lines for him to rewrite; the State Convention of Baptists in Ohio card is there for him to keep
   or remove.
 
+### 1q. Search and share on real sermons and news (opened 2026-10-18)
+
+**Blocker: the production dataset has no sermons or news posts yet.** Card 123 put visitor search and share buttons
+on the site. Verified on a local build of the live content plus a temporary sermon-shaped page (not committed): the
+dialog finds pages, the type filters, the date and passage line, the keyboard, axe, the night-menu row, the share links
+and Copy link. CI builds without content, so its search tests cover pages only and its share tests find nothing to
+check. Once the first sermon and news post are published and deployed:
+
+- Search the live site for a word from the sermon and for its passage ("Romans 8"); the result shows Sermon, the date
+  and the passage. Same for a news post (News, the date).
+- Under the sermon, the share buttons: Facebook and X open their share pages with the sermon's address, Email opens a
+  message, Copy link says "Link copied". On a phone, Share opens the phone's share sheet.
+- Build with the public identifiers (`PUBLIC_SANITY_PROJECT_ID=wdpzvn6m PUBLIC_SANITY_DATASET=production npm run build`)
+  and run `npx playwright test tests/search.spec.ts`: the share half finds the sermon and news pages by itself.
+
 ## Known gaps, deliberately open
 
 ### 2. `npm run parity compare` is not a CI step

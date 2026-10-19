@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-18: visitor site search and share buttons (PORTS card 123)._
+
+**Decision.** Visitor search is on for this site (`site.search.enabled`). Pagefind 1.5.2, pinned as a
+devDependency, indexes the built HTML straight after `astro build`, main content only, skipping noindex pages; the
+index ships as static files under `/pagefind/`. A round search button beside the Menu pill and a row at the top of
+the night menu open a native dialog styled from the theme tokens, with type filters, dates and sermon passages,
+keyboard movement, a live result count and friendly suggestions when nothing matches. Nothing loads until search is
+opened. Share buttons (Facebook, X, email, copy link, and the phone's share sheet) sit under every sermon, sermon
+series and news post in the outline button style, as plain links with no third-party code. Pagefind's own UI was
+left out: heavier, its own look.
+
 _2026-10-18: Studio brand polish._
 
 **What changed.** The stone icons fill their list tiles (inset 0 in brandIconArt.tsx; each file is already cropped to its art). The About page shows the church mark (aboutPage maps to the overview meaning, drawn with the full-colour mark). The Home banner strips draw the mark green run in a lighter #5E9B6B so it reads on navy; every other stone path keeps the mark six colours.
