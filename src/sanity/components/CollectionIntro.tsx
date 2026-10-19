@@ -10,13 +10,29 @@
 // exist yet, a button adds the usual five (Staff, Deacons, Teachers,
 // Missionaries, Volunteers). That is a write HE makes in his own Studio, with
 // fixed ids so pressing it twice cannot make doubles.
+//
+// Card 132: drawn in the kit's design language, like the rest of the Studio:
+// the rule and the type's stone art over a display-font title, the count as a
+// display-font figure on a white card with the colour edge, one strong pill,
+// callouts for the groups offer and the result, and the stone path along the
+// foot. Everything comes from src/sanity/kit/ui and brand.config.json
+// studio.look.
 // =============================================================================
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useClient } from 'sanity';
-import { IntentLink } from 'sanity/router';
-import { Box, Button, Card, Container, Heading, Stack, Text } from '@sanity/ui';
-import { AddIcon } from '@sanity/icons/Add';
+import { useIntentLink } from 'sanity/router';
+import type { BrandIconKey } from '../../lib/studio-icons';
+import {
+  ColourEdge,
+  Figure,
+  KitAction,
+  KitLoading,
+  KitNotice,
+  KitScope,
+  Sill,
+  ToolHead,
+} from '../kit/ui';
 
 interface IntroConfig {
   title: string;
@@ -29,6 +45,8 @@ interface IntroConfig {
   /** What the first-time line says when the count is 0. */
   empty: string;
   create: { type: string; label: string };
+  /** The art drawn beside the title (a meaning in the icon registry). */
+  meaning: BrandIconKey;
   /** Offer to add the usual people groups when there are none. */
   seedGroups?: boolean;
 }
@@ -55,6 +73,7 @@ export function makeCollectionIntro(config: IntroConfig) {
           .catch(() => setGroups(null));
       }
     }, [client]);
+    const create = useIntentLink({ intent: 'create', params: { type: config.create.type } });
     useEffect(load, [load]);
 
     const addGroups = async () => {
@@ -81,73 +100,68 @@ export function makeCollectionIntro(config: IntroConfig) {
 
     const [one, many] = config.noun;
     return (
-      <Container width={1} padding={4}>
-        <Stack gap={4}>
-          <Heading as="h2" size={2}>
-            {config.title}
-          </Heading>
-          {config.lines.map((line) => (
-            <Text key={line} size={2} muted>
-              {line}
-            </Text>
-          ))}
-          <Card padding={4} radius={3} tone={count === 0 ? 'primary' : 'transparent'} border>
-            <Stack gap={4}>
-              <Text size={2} weight="semibold">
-                {count === null
-                  ? 'Counting...'
-                  : count === 0
-                    ? config.empty
-                    : `${count} ${count === 1 ? one : many} so far.`}
-              </Text>
-              <Box>
-                <Button
-                  as={IntentLink}
-                  intent="create"
-                  params={{ type: config.create.type }}
-                  icon={AddIcon}
-                  text={config.create.label}
-                  tone="primary"
-                  mode="default"
-                  fontSize={2}
-                  padding={4}
-                />
-              </Box>
-            </Stack>
-          </Card>
+      <KitScope>
+        <div
+          style={{
+            maxWidth: 720,
+            margin: '0 auto',
+            padding: '28px 20px 32px',
+            display: 'grid',
+            gap: 22,
+          }}
+        >
+          <ToolHead
+            title={config.title}
+            meaning={config.meaning}
+            lead={
+              <>
+                {config.lines.map((line, i) => (
+                  <span key={line} style={{ display: 'block', marginTop: i ? 10 : 0 }}>
+                    {line}
+                  </span>
+                ))}
+              </>
+            }
+          />
+          <section className="ui-box" aria-label={`${config.title}: how many`}>
+            <ColourEdge />
+            <div className="ui-box__body" style={{ paddingTop: 24, gap: 18 }}>
+              {count === null ? (
+                <KitLoading label="Counting" />
+              ) : count === 0 ? (
+                <p className="ui-clear__title" style={{ fontSize: 24 }}>
+                  {config.empty}
+                </p>
+              ) : (
+                <Figure value={count} label={`${count === 1 ? one : many} so far`} />
+              )}
+              <div>
+                <KitAction strong href={create.href} onClick={create.onClick}>
+                  {config.create.label}
+                </KitAction>
+              </div>
+            </div>
+          </section>
           {config.seedGroups && groups === 0 && (
-            <Card padding={4} radius={3} border tone="caution">
-              <Stack gap={3}>
-                <Text size={2} weight="semibold">
-                  There are no groups yet.
-                </Text>
-                <Text size={2} muted>
-                  Each person goes in a group, like Staff or Deacons. Add the usual five now, then
-                  rename or add to them under Groups whenever you like.
-                </Text>
-                <Box>
-                  <Button
-                    text={busy ? 'Adding...' : `Add ${USUAL_GROUPS.join(', ')}`}
-                    onClick={addGroups}
-                    disabled={busy}
-                    mode="ghost"
-                    fontSize={2}
-                    padding={3}
-                  />
-                </Box>
-              </Stack>
-            </Card>
+            <KitNotice tone="tip" title="There are no groups yet.">
+              <p>
+                Each person goes in a group, like Staff or Deacons. Add the usual five now, then
+                rename or add to them under Groups whenever you like.
+              </p>
+              <div style={{ marginTop: 12 }}>
+                <KitAction onClick={() => void addGroups()} disabled={busy}>
+                  {busy ? 'Adding...' : `Add ${USUAL_GROUPS.join(', ')}`}
+                </KitAction>
+              </div>
+            </KitNotice>
           )}
-          {note && (
-            <Text size={1} muted>
-              {note}
-            </Text>
-          )}
-          <Text size={1} muted>
+          {note && <KitNotice tone="plain">{note}</KitNotice>}
+          <p className="ui-muted" style={{ fontSize: 15 }}>
             Step-by-step help is in Site Guide, in the bar at the top.
-          </Text>
-        </Stack>
-      </Container>
+          </p>
+          <Sill />
+        </div>
+      </KitScope>
     );
   }
   CollectionIntro.displayName = `CollectionIntro(${config.create.type})`;
@@ -164,6 +178,7 @@ export const SermonsIntro = makeCollectionIntro({
   noun: ['sermon', 'sermons'],
   empty: 'No sermons yet. The first one takes about two minutes.',
   create: { type: 'sermon', label: "Add Sunday's sermon" },
+  meaning: 'scripture',
 });
 
 export const PeopleIntro = makeCollectionIntro({
@@ -176,6 +191,7 @@ export const PeopleIntro = makeCollectionIntro({
   noun: ['person', 'people'],
   empty: 'Nobody on the list yet.',
   create: { type: 'person', label: 'Add someone' },
+  meaning: 'people',
   seedGroups: true,
 });
 
@@ -189,4 +205,5 @@ export const DownloadsIntro = makeCollectionIntro({
   noun: ['file', 'files'],
   empty: 'Nothing uploaded yet.',
   create: { type: 'download', label: "Put up this week's bulletin" },
+  meaning: 'download',
 });

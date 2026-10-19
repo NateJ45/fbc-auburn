@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-19: the Studio design pass, part two: Home, Post a photo, the tour, the splash and offline page (PORTS card 132)._
+
+**Decision.** A finished step is laid only in the calm mark colours (`look.calm`), so "On the website" is never the
+warning colour, and a step not yet done is the same hand-laid stone outlined in its colour rather than a circle. Home's
+ways in are tiles with the colour edge and the site's art; Coming up rows carry a date on a stone; Recent edits and
+Pick up rows carry the type's art; Visitors is a display-font figure over bars in the calm colours; the newsletter and
+RSVP cards match. Post a photo is a three-stone path, the tour has a stone trail and a lettered banner, the splash lays
+the path while the Studio loads and the offline page shares it (with the last stone not yet laid). `restore` is a
+meaning of its own. The Section Look radio draws each look as a small section in the site's devices. The last kit spinners are the
+laid-stones loader.
+
 _2026-10-19: eight more stone icons for the Studio (help, restore, quick, mail, settings, trash, calendar, palette)._
 
 **Decision.** Six more meanings now draw stone art in `src/sanity/brandIconArt.tsx`: help, quickUpdate (the quick-update tool), message (messages and the newsletter), settings (Site settings and the settings and meta groups), trash (the Trash) and publishing (the scheduling group, drawn as the calendar), plus brandKit as the palette. They were generated in Gemini and vectorised faithfully. The restore (undo arrow) stone is in `src/assets/brand/` but not mapped: no meaning key stands for it yet, because the guides' `restore` and `bolt` are glyph names, not meanings.

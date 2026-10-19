@@ -40,6 +40,7 @@ import settingsUrl from '../assets/brand/stone-icon-settings.svg?url';
 import trashUrl from '../assets/brand/stone-icon-trash.svg?url';
 import calendarUrl from '../assets/brand/stone-icon-calendar.svg?url';
 import paletteUrl from '../assets/brand/stone-icon-palette.svg?url';
+import restoreUrl from '../assets/brand/stone-icon-restore.svg?url';
 import markUrl from '../assets/brand/fbc-auburn-icon-full-color.svg?url';
 
 // Inset 0: each file's viewBox is already cropped to its art, so the default 10% margin only made
@@ -67,6 +68,7 @@ const SettingsIcon = artIcon(settingsUrl, 'Gear', 0);
 const TrashIcon = artIcon(trashUrl, 'Bin', 0);
 const CalendarIcon = artIcon(calendarUrl, 'Calendar', 0);
 const PaletteIcon = artIcon(paletteUrl, 'Paint palette', 0);
+const RestoreIcon = artIcon(restoreUrl, 'Turning back arrow', 0);
 // The church's own mark: who we are (the About page, mapped in brand.config.json).
 const Mark = artIcon(markUrl, 'The church mark', 0);
 
@@ -120,6 +122,8 @@ export const BRAND_ICON_ART: Partial<Record<BrandIconKey, BrandIcon>> = {
   message: MailIcon,
   settings: SettingsIcon,
   trash: TrashIcon,
+  // Undo a change, Earlier versions (card 132).
+  restore: RestoreIcon,
   // Scheduling and publishing, and the Brand kit.
   publishing: CalendarIcon,
   brandKit: PaletteIcon,
