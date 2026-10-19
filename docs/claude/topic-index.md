@@ -30,6 +30,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | Custom code: the trust model (pasted widgets, the box, the opt-outs)                                     | `docs/agent/custom-code.md`                                          |
 | Deployment + env vars + rebuild model                                                                    | `docs/agent/deployment.md`                                           |
 | Studio kit (Home, Site Guide, Checkup, staff view, Trash)                                                | `docs/agent/studio-kit.md`                                           |
+| Studio plan (who edits, weekly jobs, which surface)                                                      | `docs/agent/studio-plan.md`                                          |
 | Hidden pages, password pages (security note), Checkup link and heading checks                            | `docs/agent/private-pages.md`                                        |
 | Church facts, This Sunday, This week, YouTube replay, weather (drop-in components)                       | `docs/agent/church-data.md`                                          |
 | Editor-driven vs hardcoded                                                                               | `docs/agent/editor-vs-hardcoded.md`                                  |

@@ -1,5 +1,9 @@
 # Change history
 
+_2026-10-19: the Studio covers the pastor's whole week (studio-plan.md)._
+
+**Decision.** `docs/agent/studio-plan.md` maps each weekly, monthly and seasonal job to the Studio surface that serves it. Quick update gained three phone jobs (an event notice, a short news post, starting the week's newsletter, which is saved and never sent from there); the bulletin, which needs a file box Quick update does not have, replaced "Edit the menus" on Home's big buttons. The Site Guide opens on a new "Every week" category with four new guides and six more "How to" field chips. New screenshots and videos wait for launch, when the content is real; tours and video scripts are written as data in `src/sanity/guides/tours.ts` for the shared tour pieces (starter card 137). Sermon, post and newsletter web addresses now always keep their date (`datedSlug`), so a long title can no longer make two the same.
+
 _2026-10-19: Home's banner look is a style slot, not site CSS (PORTS card 135)._
 
 **Decision.** Five sites restyled Home's banner with CSS files that selected the kit's class names and Sanity's `data-ui` markup, so a kit rename would have switched their looks off without a failing test. The look is now data in `kitConfig.homeBanner.style` (eyebrow, greeting, title, the button's shape and colours, the background, the motif's place, a stamp), checked for contrast and for anything that could break a stylesheet, and the only markup a site may select is a short documented set (`data-hb-part` names, `data-hb-*` attributes, `--hb-*` variables) that a unit test holds. It lives in `kit.config.ts` beside the banner's other fields, not in `brand.config.json`, because a banner's fonts and button are not devices the whole Studio shares and a TypeScript type catches a wrong key. With no style set the banner is unchanged. The five sites' rules are written as migration recipes in studio-kit.md.
