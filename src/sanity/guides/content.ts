@@ -38,6 +38,8 @@
 
 import { collectionGuides } from './collections.ts';
 
+import { phoneGuides } from './phoneGuides.ts';
+
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
 /** Where a "Where in the Studio" breadcrumb can link to. */
@@ -572,6 +574,48 @@ export const guides: Guide[] = [
         text: 'That is the point, but check which pages use it before you rewrite it. If one page needs different words, remove the synced section from that page and add a copy instead.',
       },
       { kind: 'seealso', items: ['Reuse a section on other pages'] },
+    ],
+  },
+
+  {
+    slug: 'section-looks',
+    category: 'Pages and words',
+    title: 'Change how a section looks',
+    icon: 'blocks',
+    lead: 'Make one section stand out in the church blue or on the pale stones, without picking colours.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'Text, picture and text, photo gallery, quote and video sections each have a **Look**. Most sections sit on the plain white page and never need changing. The look is for the few that should stand apart.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Standard** is the plain white page. Every section starts here.',
+          '**Feature** puts the section on the church blue with white text. Use it once or twice a page, for the part that matters most, like a welcome or a verse.',
+          '**Stone** puts the section on a pale blue band of stepping stones, with dark text. A gentler way to set something apart.',
+        ],
+      },
+      { kind: 'h', text: 'Change one' },
+      {
+        kind: 'steps',
+        items: [
+          'Open the page and click the section.',
+          'Scroll to `Look` near the bottom and pick one. The little picture beside each shows the band.',
+          'Check it in the preview, then `Publish`.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Two sections with the same look never sit side by side.',
+        text: 'If two Stone sections (or two Feature sections) come one after the other, the website shows the second one as Standard, so they do not run together into one long band. A Feature next to a banner with a photo shows as Standard too. Move one, or pick a different look.',
+      },
+      {
+        kind: 'p',
+        text: '_There is no colour picker on purpose. The looks use the church colours the design was made with, and they are checked for easy reading._',
+      },
     ],
   },
 
@@ -1589,6 +1633,11 @@ guides.push(
     ],
   },
 );
+
+// ── The Studio app and earlier versions (PORTS.md card 125) ──────────────────
+// Shared by every site (src/sanity/guides/phoneGuides.ts, PORTABLE): keep this
+// line when rewriting the guides above.
+guides.push(...phoneGuides(SITE.contactName));
 
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
