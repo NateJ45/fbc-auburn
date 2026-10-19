@@ -14,6 +14,8 @@ import { seriesSpan, sortSermons } from '@/lib/sermons';
 import { breadcrumbSchema } from '@/lib/schemas';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 import { site } from '@/data/site';
+import ShareButtons from '@/components/ShareButtons.astro';
+import SearchMeta from '@/components/search/SearchMeta.astro';
 
 export async function getStaticPaths() {
   const series = await getAllSeries();
@@ -57,7 +59,9 @@ const schemas = [
   {siteSettings}
   seoImage={art ?? undefined}
   ogImage={art ? undefined : '/og/sermons.png'}
+  searchType="series"
 >
+  <SearchMeta date={span || undefined} passage={series.book} />
   <Hero
     eyebrow="Sermon series"
     headline={series.title ?? 'Sermon series'}
@@ -110,6 +114,14 @@ const schemas = [
           Every sermon
         </a>
       </p>
+      {/* Pass it on (card 126): plain share links, no third-party scripts. */}
+      <ShareButtons
+        title={series.title ?? title}
+        path={`/sermons/series/${slug}/`}
+        heading="Share this series"
+        buttonClass="btn-auburn btn-auburn--secondary press-tactile gap-2"
+        class="mt-section-md"
+      />
     </div>
   </section>
 </BaseLayout>

@@ -114,6 +114,8 @@ const secondary = block.secondaryCta;
                 {primary.label}
               </a>
             )}
+            {/* A space between the buttons so site search does not read "visitMeet" (card 126);
+                the row is flex, so it changes nothing on screen. */}{' '}
             {secondary?.label && (
               <a class="hb-textlink" href={ctaHref(secondary, '/about/')}>
                 {secondary.label}

@@ -38,6 +38,7 @@ import logoDarkAsset from '@/assets/logo-dark.svg';
 import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings';
 import { telHref } from '@/lib/phone';
 import { urlFor } from '@/lib/sanity';
+import SiteSearch from './search/SiteSearch.astro';
 
 // SVG logos are passed through Astro's image pipeline for cache-busted URLs.
 // SVGs are resolution-independent so no 1x/2x variants are needed — one URL
@@ -533,9 +534,12 @@ function isGroupActive(items: { href: string }[]) {
       logoDarkUrl={logoDarkWebpMobile.src}
       sunday={menuSunday}
       current={pathname}
+      search={site.search.enabled || undefined}
       {...mobileCtaProps}
     />
   </div>
+  {/* Visitor search (card 126): the dialog the search pill and the menu row open. */}
+  {site.search.enabled && <SiteSearch />}
 </header>
 
 <style>
