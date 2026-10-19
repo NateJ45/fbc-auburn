@@ -43,6 +43,7 @@ import { collectionGuides } from './collections.ts';
 
 import type { KitGuideBlock } from '../kit/guide/GuidePage';
 import { phoneGuides } from './phoneGuides.ts';
+import type { FieldGuideMap } from '../../lib/studio-kit';
 
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
@@ -1782,4 +1783,33 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   personGroup: ['add-person'],
   download: ['bulletin'],
   redirect: ['rename-a-page'],
+};
+
+/**
+ * Which guide section explains a field (kit.config.ts guide.forField, PORTS.md
+ * card 134). A field named here, or of a type named here, gets a quiet "How to"
+ * chip after its description that opens the guide at that heading (`section`
+ * is the text of one of the guide's `{ kind: 'h' }` blocks; leave it out to
+ * open at the top). Name fields that mean one thing everywhere: `seoTitle`, not
+ * `title`. src/lib/studio-guides.test.ts checks every guide and heading exists.
+ */
+export const GUIDE_FOR_FIELD: FieldGuideMap = {
+  fields: {
+    seoTitle: { guide: 'seo-fields' },
+    seoDescription: { guide: 'seo-fields' },
+    alt: { guide: 'images-and-alt', section: 'What the description is for' },
+    pageBuilder: { guide: 'edit-a-page', section: 'How a page is built' },
+    slug: { guide: 'rename-a-page' },
+    look: { guide: 'section-looks', section: 'Change one' },
+    // Church facts > service times, and a notice's "How important is it?".
+    serviceTimes: { guide: 'church-facts' },
+    urgency: { guide: 'snow-sunday' },
+    publishAt: { guide: 'schedule-publish' },
+    password: {
+      guide: 'make-a-page-private',
+      section: 'Private: only people with the password can see it',
+    },
+  },
+  // Schema type name -> section, for a type used in many places (none yet).
+  types: {},
 };
