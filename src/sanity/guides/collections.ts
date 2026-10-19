@@ -44,6 +44,16 @@ export const collectionGuides: Guide[] = [
         title: 'The home page looks after itself.',
         text: 'For eight days after the date it was preached, the "Last Sunday" card on the home page names the sermon and links to it. After that it steps aside by itself.',
       },
+      { kind: 'h', text: 'Copying the video link' },
+      {
+        kind: 'bullets',
+        items: [
+          '**YouTube on a phone:** open the video, tap `Share`, then `Copy link`. On a computer, click `Share` under the video, then `Copy`.',
+          '**Facebook:** open the video itself (not the post), tap the three dots and `Copy link`.',
+          'Paste it with a long press in the box, then `Paste`. The link starts with https:// and has no spaces.',
+          'A live stream keeps the same link after it ends, so you can add the sermon while it is still live.',
+        ],
+      },
       { kind: 'h', text: 'Putting Sermons in the menu (once)' },
       {
         kind: 'steps',
@@ -204,10 +214,20 @@ export const collectionGuides: Guide[] = [
       {
         kind: 'steps',
         items: [
-          "Open `Downloads`, then `Start here`, and click `Put up this week's bulletin`.",
+          "On `Home`, click `Put up this week's bulletin` (or open `Downloads`, then `Start here`, and click the same button).",
           'Type a `Title`, like "Bulletin for October 18". `Kind` is already Bulletin, and the `Date` is already today: set it to the Sunday the bulletin is for.',
           'Upload the PDF in `File`.',
           'Publish.',
+        ],
+      },
+      { kind: 'h', text: 'From your phone' },
+      {
+        kind: 'steps',
+        items: [
+          'Save the bulletin PDF to your phone first: from the email it came in, tap it and choose `Save to Files` (iPhone) or `Download` (Android).',
+          "Open the Studio, tap `Put up this week's bulletin` on `Home`, and type the title.",
+          'Tap `Upload` under `File`, then `Browse` or `Files`, and pick the PDF.',
+          'Tap `Publish`.',
         ],
       },
       {
