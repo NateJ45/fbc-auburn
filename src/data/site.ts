@@ -69,6 +69,20 @@ export const site = {
     favicon: '/favicon.svg',
   },
 
+  // Visitor site search (PORTS.md card 126, docs/agent/site-search.md). On for
+  // FBC Auburn: a search button in the header and the mobile menu, a /search/
+  // page, and a Pagefind index of every page's main content, written after
+  // `astro build` by scripts/build-search-index.mjs. `suggestions` are the
+  // friendly links shown before a search and when nothing matches.
+  search: {
+    enabled: true as boolean,
+    placeholder: 'Search sermons, news and pages',
+    suggestions: [
+      { label: 'Plan your visit', href: '/plan-your-visit/' },
+      { label: 'Contact us', href: '/contact/' },
+    ],
+  },
+
   // Public repo URL (used in footer credit if shown)
   repo: '',
 };

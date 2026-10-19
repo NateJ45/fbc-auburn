@@ -26,6 +26,8 @@ import {
 import { breadcrumbSchema } from '@/lib/schemas';
 import { urlFor } from '@/lib/sanity';
 import { site } from '@/data/site';
+import ShareButtons from '@/components/ShareButtons.astro';
+import SearchMeta from '@/components/search/SearchMeta.astro';
 
 export async function getStaticPaths() {
   const sermons = await getAllSermons();
@@ -76,7 +78,16 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} {ogImage} ogType="article">
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  {ogImage}
+  ogType="article"
+  searchType="sermon"
+>
+  <SearchMeta date={s.date ? longDate(s.date) : undefined} passage={s.passage} />
   <Hero
     eyebrow={s.series?.title || 'Sermon'}
     headline={title}
@@ -147,6 +158,14 @@ const schemas = [
             </a>
           </p>
         )}
+        {/* Pass it on (card 126): plain share links, no third-party scripts. */}
+        <ShareButtons
+          title={title}
+          path={`/sermons/${slug}/`}
+          heading="Share this sermon"
+          buttonClass="btn-auburn btn-auburn--secondary press-tactile gap-2"
+          class="mt-section-md"
+        />
       </div>
     </div>
   </section>
