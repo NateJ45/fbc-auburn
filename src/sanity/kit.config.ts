@@ -14,6 +14,7 @@
 
 import type { KitConfig } from './kit/types';
 import { genericRules, unconfirmedRule, plural, type CheckupRule } from '../lib/studio-checkup';
+import { qualityRules } from '../lib/studio-checkup-quality';
 import { guides, GUIDE_CATEGORIES, GUIDES_FOR_TYPE } from './guides/content';
 import { makeGuideView } from './components/GuideView';
 import { envVal } from './urls';
@@ -296,6 +297,32 @@ export const kitConfig: KitConfig = {
       expiredNotices,
       // Sermons with nothing to watch or hear, people without a photo (2026-10-18).
       ...collectionRules,
+      // Links, headings, long Google text, pages nobody can reach, private
+      // pages (PORTS.md card 122). fixedPaths are this site's built routes;
+      // routes maps each slugged type to its address.
+      ...qualityRules({
+        seoTypes: SEO_TYPES,
+        fixedPaths: [
+          '/',
+          '/about/', // scaffold: about
+          '/faq/', // scaffold: faq
+          '/journal/', // scaffold: journal
+          '/contact/',
+          '/privacy/',
+          '/give/',
+          '/bulletin/',
+          '/sermons/',
+          '/sermons/podcast.xml',
+          '/sunday.ics',
+        ],
+        routes: {
+          page: (slug) => `/${slug}/`,
+          privatePage: (slug) => `/private/${slug}/`,
+          journalEntry: (slug) => `/journal/${slug}/`, // scaffold: journal
+          sermon: (slug) => `/sermons/${slug}/`,
+          sermonSeries: (slug) => `/sermons/series/${slug}/`,
+        },
+      }),
     ],
     ignoreTypes: ['sectionPreset', 'studioGuide', 'redirect'],
   },
@@ -336,6 +363,8 @@ export const kitConfig: KitConfig = {
       ],
     },
     { title: 'Other pages you built', listType: 'page' },
+    // Password pages (card 122), listed by name like the pages above.
+    { title: 'Private pages', listType: 'privatePage' },
     {
       title: 'Sermons, people and more',
       links: [
