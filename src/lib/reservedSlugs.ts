@@ -48,6 +48,8 @@ export const RESERVED_SLUGS = new Set([
   'studio',
   'preview',
   'api',
+  // Visitor search (PORTS.md card 126): src/pages/search/[...search].astro.
+  'search',
   // Private pages live under /private/<slug>/ (card 122, server-rendered).
   'private',
 ]);
