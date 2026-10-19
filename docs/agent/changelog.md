@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-19: real Studio screenshots in the Site Guide (PORTS card 130)._
+
+**Decision.** The guides that most need a picture now show the church's own Studio, captured signed in on the live site,
+with numbered stones, rings and arrows on the real controls. A guide asks for a picture by key and
+`src/sanity/guides/shots.ts` holds the eight captures (`studio-tabs`, `home-tiles`, `home-live`, `edit-page`,
+`publish-button`, `quick-update`, `live-preview`, `checkup`) as WebP files in `public/guide-shots/`, each cropped, with
+the account avatar and the greeting name covered. They sit in "Start here: how this all works", "Change the words on a
+page", "What Home in the Studio shows you", "Quick update from your phone" and "Before you publish". Those last three also
+gained a few lines of text so the words match what the pictures show (the tiles, the Sunday checklist and "Is it live?",
+the fourth Quick update job, the Checkup). The unit test `guide-shots.test.ts` checks the files, the alt text and the marks.
+
 _2026-10-19: the Studio design pass, part two: Home, Post a photo, the tour, the splash and offline page (PORTS card 132)._
 
 **Decision.** A finished step is laid only in the calm mark colours (`look.calm`), so "On the website" is never the

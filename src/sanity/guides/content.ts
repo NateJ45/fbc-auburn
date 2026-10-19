@@ -124,6 +124,7 @@ export const guides: Guide[] = [
           'Wait two or three minutes. The website rebuilds itself and your change appears.',
         ],
       },
+      { kind: 'shot', key: 'publish-button' },
       {
         kind: 'callout',
         tone: 'primary',
@@ -140,6 +141,7 @@ export const guides: Guide[] = [
           '`Site Guide`, where you are now, has the step-by-step help. `Help for this page` brings the right part of it up beside whatever you are editing.',
         ],
       },
+      { kind: 'shot', key: 'studio-tabs' },
       { kind: 'seealso', items: ['Change the words on a page'] },
     ],
   },
@@ -157,6 +159,7 @@ export const guides: Guide[] = [
         kind: 'p',
         text: 'A page is a stack of **sections**, one on top of the other. You edit what is inside a section. You do not have to think about colors or spacing: the design decides those from where the section sits on the page, which is why the site stays consistent no matter who edits it.',
       },
+      { kind: 'shot', key: 'edit-page' },
       { kind: 'h', text: 'Seeing it as you type' },
       {
         kind: 'steps',
@@ -168,12 +171,19 @@ export const guides: Guide[] = [
           'Publish when it reads right.',
         ],
       },
+      { kind: 'shot', key: 'live-preview' },
       {
         kind: 'callout',
         tone: 'primary',
         title: 'The preview shows your draft.',
         text: 'What you see in Live preview is your unpublished draft, not the live site. That is the point: you see the change before anyone else does.',
       },
+      { kind: 'h', text: 'Publishing it' },
+      {
+        kind: 'p',
+        text: 'The `Publish` button is at the bottom right of every page you edit. Press it when the words read right.',
+      },
+      { kind: 'shot', key: 'publish-button' },
       { kind: 'h', text: 'Adding something to Contact, Questions, News and notes or Privacy' },
       {
         kind: 'p',
@@ -1169,6 +1179,19 @@ guides.push(
         kind: 'p',
         text: 'Home is a dashboard: it changes nothing by itself. Every card points somewhere, and the buttons take you straight there.',
       },
+      { kind: 'h', text: 'The tiles at the top' },
+      {
+        kind: 'p',
+        text: "Under the welcome banner are the jobs people do most, each one a tile: adding Sunday's sermon, changing the service times, adding a page, editing the menus. `Quick update` and `How do I...?` are here too.",
+      },
+      { kind: 'shot', key: 'home-tiles' },
+      { kind: 'h', text: 'The Sunday checklist and "Is it live?"' },
+      {
+        kind: 'p',
+        text: 'The checklist is the week\'s jobs in order, with a button on each that goes straight to the place to do it. Done jobs are ticked for you, and the list starts fresh every Monday. "Is it live?" sits beside it and shows where your last change has got to: saved, building, then on the website.',
+      },
+      { kind: 'shot', key: 'home-live' },
+      { kind: 'h', text: 'Further down' },
       {
         kind: 'bullets',
         items: [
@@ -1327,16 +1350,18 @@ guides.push(
     category: 'Start here',
     title: 'Quick update from your phone',
     icon: 'bolt',
-    lead: 'Three jobs made small enough for a phone.',
+    lead: 'Four jobs made small enough for a phone.',
     diy: 'self',
     body: [
       {
         kind: 'p',
         text: 'Open the Studio on your phone, tap the menu at the top and choose `Quick update` (on Home it is also a button). Pick one:',
       },
+      { kind: 'shot', key: 'quick-update' },
       {
         kind: 'bullets',
         items: [
+          '**Post a photo**: from your camera or your photos, into a gallery or a new post. It is saved as a draft for you to publish.',
           '**Put up a notice**: a short line across the top of every page, until the last day you pick.',
           "**Add Sunday's sermon link**: the title and the YouTube or Facebook link. The date fills itself in as last Sunday.",
           '**Cancel or change something this week**: a notice in red that comes down by itself after Sunday.',
@@ -1691,6 +1716,18 @@ guides.push(
         kind: 'p',
         text: 'Click `Show me` to jump to the box that needs a look. The list updates as you type. None of it stops you publishing: it is there to catch what is easy to miss.',
       },
+      { kind: 'h', text: 'The same list for the whole website' },
+      {
+        kind: 'p',
+        text: '`Checkup` in the bar at the top gives the list for every page at once, in three groups: **Needs doing**, **Worth a look** and **Good to know**. `Open it` jumps to the page that needs the fix, and `Check again` looks the website over once more. Nothing is changed there. It only points the way.',
+      },
+      { kind: 'shot', key: 'checkup' },
+      { kind: 'h', text: 'Then publish' },
+      {
+        kind: 'p',
+        text: 'When the list is clear, or you have decided what is left can wait, press `Publish`.',
+      },
+      { kind: 'shot', key: 'publish-button' },
       { kind: 'seealso', items: ['Help for this page', 'Get help with the words'] },
     ],
   },
