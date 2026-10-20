@@ -123,7 +123,7 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 10  | Embedded-studio live-preview stack                                             | yes     | yes         | yes      | yes              | staged        | no             | yes                | n/a                 | yes            |
 | 11  | Preview click interceptor                                                      | yes     | yes         | yes      | yes              | staged        | no             | yes                | n/a                 | yes            |
 | 12  | Parity-gated page-builder conversion                                           | partial | yes         | partial  | partial          | no            | no             | no                 | no                  | partial        |
-| 13  | react/react-dom exact pin                                                      | no      | yes         | yes      | yes              | staged        | no             | yes                | no                  | yes            |
+| 13  | react/react-dom exact pin                                                      | no      | yes         | yes      | yes              | yes           | no             | yes                | yes                 | yes            |
 | 14  | wrangler legacy_env pin                                                        | no      | yes         | yes      | yes              | staged        | no             | yes                | no                  | yes            |
 | 15  | PENDING.md / TESTING.md docs registry                                          | yes     | yes         | yes      | yes              | yes           | yes            | yes                | yes                 | yes            |
 | 16  | Quarterly slop sweep                                                           | no      | no          | no       | no               | no            | no             | no                 | no                  | no             |
@@ -170,7 +170,7 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 50  | Production deploy workflow                                                     | partial | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
 | 51  | Compressed static server for Lighthouse                                        | no      | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
 | 52  | Radix islands hydrate at client:idle, not client:only                          | n/a     | partial     | yes      | yes              | no            | no             | n/a                | yes                 | partial        |
-| 53  | One accent splitter (heading-accent absorbs scriptAccent)                      | no      | no          | yes      | no               | no            | no             | n/a                | no                  | no             |
+| 53  | One accent splitter (heading-accent absorbs scriptAccent)                      | no      | no          | yes      | no               | no            | no             | n/a                | no                  | yes            |
 | 54  | Analytics component (GA4 + Cloudflare beacon, canonical)                       | no      | no          | yes      | yes              | no            | no             | n/a                | yes                 | yes            |
 | 55  | Build reads always use the Sanity CDN; a PROD fetch error throws               | no      | no          | yes      | yes              | no            | no             | no                 | n/a                 | yes            |
 | 56  | No page-level `.catch()` swallows the PROD throw                               | no      | no          | yes      | yes              | no            | no             | no                 | n/a                 | partial        |
@@ -223,20 +223,67 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 103 | Sanity phase 2: `@sanity/ui` 4, `@sanity/icons` 5 (sanity 6.19.0)              | n/a     | yes         | yes      | yes              | yes           | no             | n/a                | n/a                 | yes            |
 | 104 | Reskin-safe forks: default fields and hrefs, layout gate, OG theme file        | n/a     | no          | yes      | n/a              | no            | no             | n/a                | n/a                 | no             |
 | 105 | A text hero (no photo, or editorial) still renders its buttons                 | n/a     | no          | yes      | no               | no            | no             | n/a                | n/a                 | no             |
-| 109 | Authoring kit: page templates, picture picker, patterns, synced sections       | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
-| 110 | Studio looks like the site: name, mark, colours, status line, help panel       | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
-| 127 | Email backbone: Cloudflare/Resend sender, newsletter (opt-in), RSVPs           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
-| 130 | Real screenshots in the Site Guide: per-site shot registry                     | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
-| 131 | Every Studio surface in the design language (first pass)                       | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
-| 134 | Field "How to" chip to the Site Guide; icons on every field group              | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
-| 135 | Home banner style slot (`homeBanner.style`) and documented hooks, no site CSS  | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
+| 106 | Studio kit: Home, Site Guide, Checkup, staff view, Trash                       | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | no             |
+| 107 | Hidden reveal states wait for `html.motion`, so no-JS shows the finished page  | n/a     | yes         | yes      | yes              | partial       | n/a            | n/a                | partial             | yes            |
+| 108 | The header logo renders with JS off (`<noscript>` light variant)               | n/a     | n/a         | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | yes            |
+| 109 | Authoring kit: page templates, picture picker, patterns, synced sections       | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | no                  | yes            |
+| 110 | Studio looks like the site: name, mark, colours, status line, help panel       | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | no             |
+| 111 | The Studio remembers: failed deploys, weekly ticks, Quick update, restore-doc  | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | n/a                 | no             |
+| 112 | React 19.3.1, one copy in the tree                                             | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | yes                 | yes            |
+| 113 | SanityImage aims CSS crops at the hotspot; Church type, no priceRange for it   | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | no                  | no             |
+| 114 | publish-due.mjs takes the write gate (scripts/lib/write-gate.mjs)              | n/a     | yes         | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | yes            |
+| 115 | Studio Home dashboard: Coming up, Fix-it list, visitors, pages map, videos     | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | n/a                 | no             |
+| 116 | Studio as the site's admin: paper, navy chrome, fonts, text in site type       | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | n/a                 | no             |
+| 117 | Studio workflow: change note, expiring preview links, Messages, table panes    | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | n/a                 | no             |
+| 118 | Studio Home banner: navy welcome, mark, motif, the site's lettering            | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | n/a                 | yes            |
+| 119 | Studio icons by meaning, a picture on every list row                           | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | n/a                 | no             |
+| 120 | Studio edges: own /studio page and splash, site words, navbar wordmark         | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | n/a                 | yes            |
+| 121 | Custom code in its own box; opt-in on-page and site-wide code                  | n/a     | yes         | yes      | no               | yes           | n/a            | n/a                | no                  | no             |
+| 122 | Hidden and password pages; Checkup link, heading and orphan checks             | n/a     | no          | yes      | no               | yes           | n/a            | n/a                | n/a                 | no             |
+| 123 | Studio writing help (Claude API), Before you publish panel, AI visitors        | n/a     | no          | yes      | no               | yes           | n/a            | n/a                | n/a                 | no             |
+| 124 | Section looks (Standard, Quiet, Feature) instead of colours; photo viewer      | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | yes            |
+| 125 | Studio on a phone (PWA), Post a photo, Earlier versions from backups           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | yes            |
+| 126 | Visitor site search (Pagefind, opt-in) and share buttons, no third-party code  | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | yes            |
+| 127 | Email backbone: Cloudflare/Resend sender, newsletter (opt-in), RSVPs           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | yes            |
+| 128 | Studio design language (studio.look), shared UI pieces, Site Guide redesign    | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 129 | Studio signs in by token (kit routes need it); recentIgnoreTypes               | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 130 | Real screenshots in the Site Guide: per-site shot registry                     | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 131 | Every Studio surface in the design language (first pass)                       | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 132 | Studio design pass two: Home, Post a photo, tour, splash, offline page         | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 133 | Studio polish from a signed-in review: Home's ways-in tiles                    | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 134 | Field "How to" chip to the Site Guide; icons on every field group              | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 135 | Home banner style slot (`homeBanner.style`) and documented hooks, no site CSS  | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
 | 136 | Visitors card reads GA4 via studio-status; Search Console card on Home         | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 137 | Spotlight tours, welcome, What's new, own clips, Quick update jobs as data     | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
+| 138 | CI builds from a pinned content snapshot; scheduled live-watch (non-blocking)  | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+
+Rows 106 to 135 (2026-10-19) are recorded from the five-site rollout report. fbcm is not a column, so its rollout is on the card status lines only. A cell becomes `yes` only where the report names that card for that site. A broad round or a sync alone leaves the cell as it was, and the card says "synced, not individually verified". Rows 132 and 133 were missing from the matrix and are added here. PRs: fbcm #74 to #81, presacademy #107 to #116, reid-design-site #157 to #165, mas-monograms #117 to #126, stonesteps-50k #131 to #140 (#136 is its design-language PR).
 
 Row 73 (2026-10-03) is a workflow plus three scripts, not a drift-checked behaviour: a site takes it by running `npm run sync-check` and copying the marked files; every cell but the starter is `no` until that site does.
 
-Rows 109 and 110 (2026-10-18): first-baptist-auburn (no matrix column) took both in one PR, branch
-`feat/authoring-kit`, with its own templates (Simple page, Ministry, Event, Sermon series, Blank page), thumbnails
-shot in its own brand including its five church blocks, and quick actions for the pastor's jobs. See the cards.
+Row 110 (2026-10-18): needs card 106 (the kit) and card 103 (`@sanity/ui` 4) first; the sites without a Studio for staff
+are `n/a` as in row 106. first-baptist-auburn has no column.
+
+Row 111 (2026-10-18): needs cards 106 and 110 first, so the same cells as row 110. first-baptist-auburn has no column; it
+took the card on branch `feat/studio-remembers` the same day.
+
+Row 116 (2026-10-18): needs card 110 first, so the same cells as row 110; first-baptist-auburn has no column (branch
+`feat/studio-branded-look`, PR opened after the starter merges).
+
+Row 113 (2026-10-18): the hotspot half suits every site with `SanityImage.astro`; the JSON-LD half only matters to a
+site whose Site settings `businessType` feeds `localBusinessSchema()`. first-baptist-auburn and fbcm have no column;
+see the card.
+
+Row 117 (2026-10-18): needs cards 106 and 111 (the kit and `studio-auth.ts`), so the same cells as row 111.
+first-baptist-auburn has no column; it took the card on branch `feat/studio-workflow-tools` the same day.
+
+Row 107 (2026-10-17): mas-monograms (`html.reveal-ready`) and nixoncreativestudio (`.js`) already gate
+their reveal on a head-script class, a divergent form of the same idea, hence `partial`; neither was changed. presacademy
+(#104), reid-design-site (#155) and stonesteps-50k (#125) took the change on 2026-10-17, hence `yes`. first-baptist-auburn
+and fbcm have no column; see the card.
+
+Row 106 (2026-10-17): first-baptist-auburn has no column; it is the origin and resyncs to the marked copies right
+after the starter merges. 2ndpreschicago, ncs-church-starter and nixoncreativestudio have no Studio for staff, hence `n/a`.
 
 Row 105 (2026-10-17): every site with the starter's `Hero.astro` text branch is `no` until it copies the change;
 nixoncreativestudio has no Sanity hero, hence `n/a`.
@@ -435,7 +482,7 @@ and the checksum is deliberately a change detector, not a security primitive: it
 written out inline so the file stays dependency-free.
 
 **Proof, 2026-09-18, in the starter.** Temporarily set `inlineStylesheets: 'always'`
-(121KB of CSS per page), capture, change `--color-tertiary` by one hex digit, rebuild,
+(122KB of CSS per page), capture, change `--color-tertiary` by one hex digit, rebuild,
 compare: ten of eleven pages report DIFF with a single changed line each,
 `- <style>/* CSS 121864B abec36b4 */</style>` against
 `+ <style>/* CSS 121864B ccd4b458 */</style>`. Config reverted, rebuilt, recaptured,
@@ -953,6 +1000,15 @@ unexplainable, read the lines **above** the `MiniflareCoreError`.
 **Starter status:** pinned exact 2026-08-28 with the Astro 7 upgrade: `react`,
 `react-dom` and `react-is` all `19.2.7`, no caret. `react-is` was added at the same time
 (the Sanity stack needs it, and it drifts the same way).
+
+**Note, 2026-10-18 (now card 112):** branch `exp/react-19.3` moves all three
+to `19.3.1` exact. The bump removes five nested 19.3.1 copies the Sanity 6.19 tree had
+already pulled in (`sanity`, `@sanity/ui`, `@sanity/visual-editing`, `@sanity/cli-build`)
+and clears the `npm ci` ERESOLVE warning (`@portabletext/editor@8.2.4` peers
+`react@^19.2.8`); scheduler goes 0.27.0 to 0.28.0. Gates, Playwright, build, `wrangler dev`
+and the dev Studio were unchanged. It also makes `@sanity/themer` installable (peers
+`react ^19.3.0`). Merged as PR #140; card 112 has the site rollout (react, react-dom,
+react-is to 19.3.1 exact, `npm install` on the committed lockfile, `npm ls react` single).
 
 **Adjacent, learned in that session:** a stale `package-lock.json` can hide the fix. An
 `overrides` entry added to collapse a nested duplicate did nothing on `npm install`
@@ -5479,6 +5535,8 @@ came from, and two of them were rewritten to record the deliberate behaviour cha
 rather than dropped. 74 assertions before, 83 after. A refactor that comes out with
 fewer assertions than it went in with has lost coverage, not gained simplicity.
 
+**Adopted in stonesteps-50k, 2026-10-18** (with card 114): three call sites, the test moved, `npm run parity compare` 32/32 unchanged.
+
 **Porting it.** Delete `src/lib/scriptAccent.ts` and its test, point every
 `splitScriptAccent(` call at `splitHeadingAccent(`, drop the now-redundant `?? ''`
 guards at the call sites, and move the test cases. Check each repo's own content for a
@@ -8364,6 +8422,124 @@ has buttons, and regenerate visual baselines if the home hero has no photo.
 
 **Status, 2026-10-17.** Starter `yes`.
 
+## Card 106: the Studio kit: Home, Site Guide, Checkup, staff view, Trash (2026-10-17)
+
+**Origin:** the family's WordPress sites give staff a plain admin (a Home page, a printable guide, a fix-it list, a
+staff menu with no permanent deletes, a safer trash). The Sanity sites had pieces of it scattered across client repos
+(mas-monograms' Checkup, Trash and publish note; presacademy's tour) and nothing shared. first-baptist-auburn built the
+kit first (fbc-auburn#23), with every generic file free of site names and one site file, so it could come back here
+unchanged.
+**Canonical:** PORTABLE: `src/sanity/kit/` (`index.tsx`, `types.ts`, `shared.tsx`, `HomeTool.tsx`, `GuideTool.tsx`,
+`CheckupTool.tsx`, `StudioTour.tsx`, `trash.tsx`, `publishNote.tsx`), `src/lib/studio-kit.ts`,
+`src/lib/studio-checkup.ts`, `src/lib/studio-trash.ts` and their three `.test.ts` files, `src/pages/build-info.json.ts`,
+`docs/agent/studio-kit.md`. Per site (NOT portable): `src/sanity/kit.config.ts`, the `structure.ts` desk changes, the
+`astro.config.mjs` define, and the plugin line in `sanity.config.ts`.
+
+**What it adds.** `ncsStudioKit(kitConfig)`, LAST in `plugins`: Home (first tool, so the Studio opens on it: welcome,
+This week, Is it live?, Site health, Recent edits, Visitors placeholder, Ask), Site Guide (the existing guides, searched
+and printable), Checkup (pure rules over one fetch, unit-tested), plain tool names ("Content", "Live preview"), the
+staff view (listed Sanity user ids, or non-administrators when the list is empty: fewer tools, no Delete, no perspective
+menu or Releases link), Move to Trash with a `trashedItem` type and "Bring it back", a note after Publish, and a
+first-run tour. Detail: `docs/agent/studio-kit.md`.
+
+**Desk changes in `structure.ts`** (take them with the kit): singleton items get `.id(schemaType)` (an intent link from
+Home or the Checkup resolves to `pages;aboutPage`, and a title-derived id opened a blank pane); `.id('start-here')` and
+`.id('content')` so `staffHiddenPanes` can name them; a Trash list item with id `trash` (the Checkup links to it); the
+safety net filters every `media.*` type (sanity-plugin-media 6 added `media.folder`, which leaked a "Media Folder" list
+into the desk root); and the desk is wrapped as `staffDesk(fullDesk(S, context), context, kitConfig)`.
+
+**The bug fixed on the way.** `/build-info.json` read `process.env.GITHUB_SHA` in the route. The route prerenders inside
+workerd, which cannot see the build machine's environment, so Auburn's deployed file always said `"commit": null`.
+`astro.config.mjs` now reads the SHA in Node (`GITHUB_SHA`, then `git rev-parse --short=7 HEAD`, else null) and hands it
+to the route as the Vite define `__NCS_BUILD_COMMIT__`. Verified with a local `npm run build`: `dist/client/build-info.json`
+carried the short HEAD SHA.
+
+**Starter defaults.** `kit.config.ts` is neutral: `staff: []`, `thisWeek: []`, `genericRules()` with the starter's SEO page
+types, trash types for the everyday lists, tour words with no site in them, helper "your web designer". Entries tied to
+a capability carry scaffold markers, so `npm run scaffold -- --remove` keeps the file compiling; the PORTABLE kit files
+carry none (card 99).
+
+**Adopting it in a site.** Copy the PORTABLE files, write `kit.config.ts` from the starter's, take the four
+`structure.ts` changes and the define, add the plugin last, run `npm run typegen` (new `trashedItem` type), then open
+`/studio`, check Home opens first and read the console. Follow the marked-file order: starter first, then the site PR.
+`@sanity/ui` 4 only (card 103).
+
+**Status, 2026-10-17.** Starter `yes`. first-baptist-auburn (no matrix column) is the origin and swaps its copies for the
+marked ones in the PR that follows this card. Every other site `no`; the Worker half (visitors, Ask form, deploy status,
+monthly report) is `docs/PENDING.md` item 14.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 107: hidden reveal states wait for `html.motion`, so no-JS shows the finished page (2026-10-17)
+
+**Origin:** found on first-baptist-auburn while checking reported "blank sections" on the home page. The blanks were only
+the 600ms reveal fade, but the check showed that `globals.css` set `[data-reveal] { opacity: 0 }` (and the same for
+`[data-stagger-grid] > *` and a covering `.img-curtain`) unconditionally, and only BaseLayout's IntersectionObserver
+ever adds the class that shows them. With JavaScript off, blocked or failed to load, most sections of every page stayed
+invisible for good. Only reduced-motion visitors were safe, because the reduced-motion block forces the end state.
+**Canonical:** `src/styles/globals.css` and `src/layouts/BaseLayout.astro` (both foundation files, not PORTABLE).
+
+**The fix.** The inline theme bootstrap in BaseLayout's `<head>` now also toggles `motion` on `<html>` (on unless the
+visitor prefers reduced motion). It runs before first paint and again on `astro:after-swap`, because the view-transition
+swap resets `<html>`'s className. In `globals.css` every hidden START state moved under that class:
+`html.motion [data-reveal]`, `html.motion [data-stagger-grid] > *` and `html.motion .img-curtain` (the curtain now
+defaults to `scaleY(0)`, open). The matching end states took the same prefix
+(`html.motion [data-reveal].is-visible`, `html.motion [data-stagger-grid].is-staggered > *`,
+`html.motion .img-curtain.is-revealed`) so they still outrank the start states. The transition declarations stay on the
+unprefixed selectors, so nothing that overrides their timing (`[data-stagger-grid] > .card-lift-slow`,
+`.is-filtered-out`) changes specificity. With JS on, the picture and timing are unchanged; with JS off the page renders
+finished. Any new hidden-until-JS state goes under `html.motion` too. Not covered: a page whose inline head script runs but
+whose bundled module fails, which still waits on the observer.
+
+**Adopting it in a site.** Where `globals.css` still has `[data-reveal] {` with `opacity: 0` at top level (grep it with
+one line of context): copy the three CSS blocks and the head-script toggle. A site that already sets a class like this
+(`js`, `motion`, `reveal-ready`) can scope to that class instead of adding a second. Verify in a real browser with
+JavaScript disabled (Playwright `javaScriptEnabled: false`: no element under `[data-reveal]`, `[data-stagger-grid]` or
+`.img-curtain` should compute to opacity 0 or cover the image), then with JS on, scrolling a long page, to check the fade
+still plays. Visual baselines should not move, since the Playwright settle helper adds the end classes anyway.
+
+**Status, 2026-10-17.** Starter `yes`. mas-monograms and nixoncreativestudio `partial` (already gated on their own head
+class). presacademy, reid-design-site and stonesteps-50k `yes` (2026-10-17). first-baptist-auburn (no column) already sets
+`html.motion` for its own `motion.css` and scopes its `globals.css` copies in the PR that follows this card. fbcm (no column)
+took it too (fbcm#70).
+
+**Watch for site variants when adopting.** `html.motion [data-reveal]` is (0,2,1), so a site rule such as
+`[data-reveal='arch'] { opacity: 1 }` or `[data-reveal].reveal-l { translate: -1.5rem 0 }` now LOSES to the base start
+state: with JS on the figure fades as a whole box, or the directional slide becomes a plain rise. Prefix those variants
+with `html.motion` too (fbcm did its whole arch/mark/draw/ink/sign block, presacademy its `.reveal-l`/`.reveal-r`,
+`.reveal-rise` and eyebrow rules). Descendant start states that hide content (`[data-reveal] .wx__bar { scaleY(0) }`, a
+clipped `.reveal-rise` headline) take it as well, start AND end, or the prefixed start outranks the old end. In an Astro
+scoped `<style>`, write `:global(html.motion) .x[data-reveal] ...`.
+
+**Rolled out, 2026-10-19.** The rollout report does not name this card per site. All five sites are synced to starter a837dc3 (synced, not individually verified).
+
+## Card 108: the header logo renders with JavaScript off (2026-10-17)
+
+**Origin:** found on first-baptist-auburn while verifying card 107 with JavaScript off. Every section showed, but the
+header logo was only its alt text. The theme-aware header `<img data-theme-logo>` ships with no `src` or `srcset` on
+purpose, so the browser fetches nothing until the inline script after it picks the light or dark variant from
+`html.dark`. That keeps one logo fetch per page load, and it also means no JS, no logo.
+**Canonical:** `src/components/Header.astro` (foundation, not PORTABLE).
+
+**The fix.** Right after the swap img, and only when no Site Settings logo is uploaded, the header renders a
+`<noscript>` copy of the logo with the light variant's `src` (a no-JS visitor never gets `html.dark`, so light is the
+right one). A scoped rule in the header's `<style>`, `img[data-theme-logo]:not([src]) { display: none; }`, hides the
+src-less swap img, which only stays src-less when the inline script never ran. With JS on, `<noscript>` content is not
+parsed as markup, so nothing extra is fetched and the single-fetch behaviour is unchanged. The footer logo already
+carries the light `src` (it is lazy, so the swap lands before it loads) and needs nothing. The uploaded-logo branch
+always had a `src`.
+
+**Adopting it in a site.** Where `Header.astro` has an `img` with `data-theme-logo` and no `src` attribute: copy the
+`<noscript>` block (match the swap img's width, height and class) and the scoped CSS rule. Verify with Playwright
+`javaScriptEnabled: false`: the visible header logo has `naturalWidth > 0` and the src-less img computes to
+`display: none`. Then with JS on, in light and dark: one logo request per load and the right variant shown.
+
+**Status, 2026-10-17.** Starter `yes`. stonesteps-50k had the same src-less header logo and took it the same day
+(stonesteps-50k#126), hence `yes`. The other matrix sites have no theme-aware header logo (`n/a`). first-baptist-auburn
+(no column) took it in fbc-auburn#31.
+
+**Rolled out, 2026-10-19.** The rollout report does not name this card per site. All five sites are synced to starter a837dc3 (synced, not individually verified).
+
 ## Card 109: the authoring kit: page templates, a picture picker, patterns, synced sections, guardrails (2026-10-18)
 
 **Origin:** the starter, so a client can build pages themselves the way a WordPress block-editor handover allows. The
@@ -8410,13 +8586,7 @@ each template, open "+ Add item" in grid view, insert a pattern as a copy and as
 (archived), wcp `n/a` (retired). Not yet verified logged in to a Studio: the picker grid, the insert dialog and the
 template menu were type-checked and built, not clicked.
 
-**In first-baptist-auburn (2026-10-18, no matrix column).** Taken in full. Auburn's templates are Simple page, Ministry,
-Event, Sermon series and Blank page (`src/sanity/pageTemplates.ts`; only blocks a Custom page accepts, including its own
-`iconCardsSection` and `watchSection`). The sections wall carries fixtures for its five church blocks (`iconCardsSection`,
-`thisWeekSection`, `watchSection`, `stepsRailSection`, `walkSection`) and drops the four the scaffold removed;
-`authoring.test.ts` reads `auburnSections.ts` and `auburnMotionSections.ts` too, so those need a thumbnail. The kit's
-input and warnings are also spread into the Extra sections zones on Contact, FAQ, News and notes and Privacy. The
-Studio paths read "Pages, then Saved sections", where Auburn's desk puts them. Signed-in click-through: `docs/PENDING.md`.
+**Rolled out, 2026-10-19.** Applied on presacademy, reid-design-site, mas-monograms, stonesteps-50k. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
 
 ## Card 110: the Studio looks like the site: name, mark, colours, status line, help panel, Home round two (2026-10-18)
 
@@ -8474,11 +8644,642 @@ item 15). Follow the marked-file order: starter first, then the site PR.
 **Status, 2026-10-18.** Starter `yes` (login screen verified in a dev server; the signed-in views are unverified, see
 PENDING item 15). Every other site `no`.
 
-**In first-baptist-auburn (2026-10-18, no matrix column).** Taken in full. The Studio is titled "First Baptist Church
-of Auburn" with the stone mark (`public/favicon.svg`) and the navy primary as accent (no `studio.accent`); the colour
-gate passes in both schemes. Quick actions: name last Sunday's message, change the service times, add a page, edit the
-menus. `GUIDES_FOR_TYPE` lists Auburn's own guides first. Login screen checked in a dev server in light and dark; the
-signed-in views wait on the pastor (`docs/PENDING.md`).
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 111: the Studio remembers: failed deploys, weekly ticks, Quick update, empty lists, restore-doc (2026-10-18)
+
+**Origin:** first-baptist-auburn, where the pastor edits alone on Sanity's free plan (three days of history,
+administrators only). Five gaps, each a support call waiting to happen. The status line compared only the build time with
+the last publish, so a FAILED build said "taking longer than usual" for ever. "This week" could only tick what GROQ could
+prove, so the jobs done outside the Studio (the church calendar, the bulletin printout) had nowhere to go. A phone edit
+meant the full document form with the page builder in it. An empty desk list said "No documents of this type" and
+nothing else. And "put the page back the way it was on Tuesday" had no answer at all once the history window closed.
+
+**Canonical (PORTABLE):** `src/lib/deploy-status.ts` + `deploy-status.test.ts` (which also tests `studio-auth.ts`),
+`src/lib/studio-auth.ts`, `src/pages/api/studio/deploy-status.ts`, `src/sanity/kit/weekType.ts`,
+`src/sanity/kit/QuickUpdateTool.tsx`, `src/sanity/kit/emptyList.tsx`, `scripts/restore-doc.mjs`,
+`scripts/lib/restore-doc.mjs` + `restore-doc.test.mjs`, and the card-111 changes to `kit/HomeTool.tsx`,
+`kit/NavbarStatus.tsx`, `kit/shared.tsx`, `kit/index.tsx`, `kit/types.ts`, `src/lib/studio-kit.ts` (+ test) and
+`docs/agent/studio-kit.md`. Per site (NOT portable): `kit.config.ts` (`thisWeek` hand and Checkup jobs,
+`thisWeekTitle`, `quickUpdate` forms, `'quick-update'` in `staffTools`), `structure.ts` (`WEEK_TYPE` in the default-list hidden set, `emptyAwareList` on the
+editor's lists), `wrangler.jsonc` (`vars.GITHUB_REPO`), `deploy.yml` and `publish-due.yml` (template changes below,
+copied by hand), `package.json` (`restore:doc`), and the publish webhook's filter.
+
+**What it adds.**
+
+- **"The last update didn't go through."** `GET /api/studio/deploy-status/` reads the deploy workflow's newest runs
+  from GitHub with a Worker secret (`GITHUB_DEPLOY_TOKEN`, Actions read and write on one repo), cached 60 seconds, and
+  hands the Studio one word (`deployStatusFromRuns()`). A failure outranks the build-time comparison in the status line
+  and Home's card, with "<helper> has been told" and **Try again**, a `POST` that needs the site's own origin and a
+  Sanity session token checked against `/users/me` (`studio-auth.ts`), refuses while a deploy runs and within five
+  minutes of the last, then dispatches the workflow. No token: `configured: false`, old behaviour.
+- **"Has been told" is true:** the template `deploy.yml` now opens one `deploy-failed` issue on a failed run (or
+  comments on the open one) and closes it on the next green run, so the owner gets GitHub's email.
+- **Scheduled publishing rebuilds the site:** the template `publish-due.yml` reads `SANITY_API_WRITE_TOKEN` (not
+  `SANITY_AUTH_TOKEN`, which the backup uses as a READ token) and, when a run published anything, starts `deploy.yml`
+  with its own `GITHUB_TOKEN`. Its schedule stays commented out in the starter.
+- **Weekly checklist.** `thisWeek` jobs can be `check: 'checkup'` (done when the Checkup has no "Needs doing") or
+  `manual` (ticked by hand). Hand ticks are stored on one `studioWeek` document per week (`studioWeek-<first day>`),
+  written straight to the dataset, skipped by Home's lists, the Checkup and the live check. Pure logic: `checklist()`,
+  `weekKey()`, `weekDocId()`, tested. **The publish webhook's deny-list must add `"studioWeek"`**, or a tick rebuilds
+  the site.
+- **Quick update**, a tool for phones: `kitConfig.quickUpdate` forms (a few plain fields and a `build()` returning the
+  whole document), opened one at a time with nothing else on screen, checked by `quickFormErrors()`, then created
+  PUBLISHED. `build` (it may be async, and gets the client) must return a valid document because the Studio's
+  validation is skipped.
+- **Empty lists** say what goes there: `emptyAwareList()` for `structure.ts` (counts first; empty shows an explaining
+  pane with "Create the first one"), and `EMPTY_LIST_BUNDLE` replacing Sanity's default empty words everywhere.
+- **restore-doc.mjs**: one document from the newest (or a dated) nightly backup, via `gh`, decrypted in memory, a
+  field-by-field summary, and with `--apply` (plus `NCS_PRODUCTION_WRITE=yes` on production) written back as a DRAFT.
+
+**Adopting it in a site.** Needs cards 106 and 110. Copy the PORTABLE files, run `npm run typegen` (`studioWeek` is
+new), add the `kit.config.ts` keys and the `structure.ts` wrappers, `vars.GITHUB_REPO` in `wrangler.jsonc`, the two
+workflow changes, `"studioWeek"` in the webhook filter, then `npx wrangler secret put GITHUB_DEPLOY_TOKEN` and the
+`SANITY_API_WRITE_TOKEN` repo secret. Follow the marked-file order: starter first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes` (unit-tested; the kit's signed-out `/studio` checked in a dev server; signed-in
+views unverified, PENDING item 17). first-baptist-auburn took it the same day. Every other site `no`.
+
+**Follow-up, 2026-10-18 (signed-in walkthrough on first-baptist-auburn).** Quick update's submit button uses
+`tone="primary"` (the positive tone drew a neon green that was off-brand on a reskinned theme; the green "saved"
+card stays). `_seoFields.ts` titles read "Google title" and "Google description" instead of "SEO ..." (titles only,
+field names unchanged). Both files are PORTABLE: copy them into a site that has card 111.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 112: React 19.3.1, one copy in the tree (2026-10-18)
+
+**Origin:** the starter, PR #140 (`exp/react-19.3`, merged 2026-10-18 as `b5138b7`). Sanity 6.19 had already pulled
+nested React 19.3.1 copies in under the family's exact 19.2.7 pin (`sanity`, `@sanity/ui`, `@sanity/visual-editing`,
+`@sanity/cli-build`), so every site shipped two Reacts in its install tree, and `npm ci` printed an ERESOLVE warning
+because `@portabletext/editor` 8.2.4 peers `react ^19.2.8`. Moving the pin to 19.3.1 collapses the tree to one copy.
+
+**Canonical:** `package.json` and `package-lock.json` (NOT PORTABLE; each site moves its own pins). `react`,
+`react-dom` and `react-is` exact at `19.3.1`, no caret. `@types/react` and `@types/react-dom` stay on their carets
+(`^19.2.x` resolves the current types; nothing to move). The rule text is `.claude/rules/dependencies.md` rule 8 and
+card 13 (the exact-pin card this updates).
+
+**What changed, measured in the starter:** gates, Playwright (120/120), `npm run build`, `wrangler dev` and the dev
+Studio unchanged, same warnings. `scheduler` goes 0.27.0 to 0.28.0. The nested copies and the ERESOLVE warning are
+gone. It also makes `@sanity/themer` installable (peers `react ^19.3.0`); the starter has it as a proof test only
+(`src/lib/sanity-themer.test.ts`), not wired into the Studio, so sites do NOT take `@sanity/themer` with this card.
+
+**Adopting it in a site.**
+
+1. Worktree off `origin/main`. `npm install react@19.3.1 react-dom@19.3.1 react-is@19.3.1 --save-exact` on the
+   committed lockfile (never delete or regenerate `package-lock.json`), then `npm ci`.
+2. `npm ls react react-dom react-is` shows one version, every other line `deduped`.
+3. Gates as separate commands: `npm run check`, `npm run build:full`, `npm run test:unit`, `npm run sync-check`,
+   `npm test`. One PR; merge when `build` and `test` are green; check the deployed site.
+
+**Known, not caused by this card:** `astro dev` SSR logs `Invalid hook call` about seven times on first render, on
+19.2.7 and 19.3.1 alike. It does not appear in `astro build` or the deployed site. Not investigated; leave it unless it
+starts breaking a page.
+
+**Status, 2026-10-18.** Starter `yes`. Rolled out the same day, one PR per site, each merged green and checked live
+(the deployed bundles report React 19.3.1; Studio sign-in renders with a clean console): first-baptist-auburn #54,
+fbcm #71, presacademy #105, reid-design-site #156, mas-monograms #116, stonesteps-50k #127, nixoncreativestudio #134
+(no Sanity; it was on `^19.3.0` and is now exact, so card 13 is `yes` there too). `npm ls` showed one React in every
+tree. presacademy and reid-design-site also took the starter's card-110 `checkPage.tsx` refactor in the same PR, because
+their CI runs sync-check against the live starter and it had drifted that morning.
+
+**Gotcha from the rollout:** two `astro build`s at once on one machine fail with `EADDRINUSE 127.0.0.1:9230` (the
+workerd inspector port the prerender server opens). Run builds, and any Playwright config whose `webServer` builds,
+one at a time.
+
+**Rolled out, 2026-10-19.** The rollout report does not name this card per site. All five sites are synced to starter a837dc3 (synced, not individually verified).
+
+## Card 113: SanityImage aims CSS crops at the hotspot; Church business type without a price range (2026-10-18)
+
+**Origin:** first-baptist-auburn's Home audit (2026-10-17). Two small faults that every site in the family has.
+
+1. **Faces cut off in CSS-cropped slots.** Many slots crop with `object-fit: cover` (a fixed-ratio card, a hero band)
+   rather than asking Sanity for a cropped image, and CSS crops from the centre, so the head at the top of a phone
+   photo is the part that goes. The editor's hotspot already says where the subject is; nothing read it.
+2. **A church told Google it was a "$$" local business.** Site settings > Business type had no `Church`, and
+   `localBusinessSchema()` emitted `priceRange: '$$'` for every type, which is noise for a church, a charity or a
+   school.
+
+**Canonical (not PORTABLE; copy by hand):**
+
+- `src/components/SanityImage.astro`: when the image has a hotspot, an inline `style="object-position: X% Y%"` from
+  `hotspot.x` / `hotspot.y`. A no-op for images not cropped by CSS, and an image without a hotspot renders exactly as
+  before. A class that sets `object-position` loses to the inline style, so a slot that must pin its own position
+  needs `!important` or a wrapper.
+- `src/lib/schemas.ts`: `NON_SELLING_TYPES` (`Church`, `PlaceOfWorship`, `NGO`, `EducationalOrganization`) get no
+  `priceRange`; every other type keeps `'$$'`.
+- `src/sanity/schemaTypes/siteSettings.ts`: `Church` and `Place of Worship` added to the `businessType` list (the
+  default stays `LocalBusiness`). A list change only, no data moves; run `npm run typegen` after copying it.
+
+**Adopting it in a site.** Copy the three hunks, `npm run typegen`, build. A church site then sets Business type to
+Church in the Studio (first-baptist-auburn went further: it defaults the field to Church and hides it). A site with its
+own church JSON-LD (fbcm's `church-schema.ts` already emits `['Church', 'Organization']` with no price range) needs
+only the SanityImage half.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn has both (branch `claude/home-before-jacob`, PR #35).
+fbcm: SanityImage half to adopt; JSON-LD half n/a. Crestview has no site repo, so n/a. Every other site `no`
+(SanityImage half worth taking; the JSON-LD half changes nothing for a business).
+
+**Rolled out, 2026-10-19.** Applied on presacademy, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 114: publish-due.mjs takes the production write gate (2026-10-18)
+
+**Origin:** stonesteps-50k, 2026-10-13 (its card 86 rollout, PR #117). Its `scripts/publish-due.mjs` gained the
+second factor before the starter's did, so sync-check reported the site copy AHEAD of the starter. Ported back here.
+
+**What was wrong.** Card 86 put the production second factor into `sanity-lib.mjs`, but `publish-due.mjs` cannot
+import `sanity-lib` (that pulls in `@sanity/client`, and the publish-due workflow runs without `npm ci`). So a
+local `node scripts/publish-due.mjs --apply` still published every due document in production on one flag.
+
+**Canonical (PORTABLE):**
+
+- `scripts/lib/write-gate.mjs` (new): `writeGate({ dataset, flag, ci, ciBare })` and `gateClient()`, node builtins
+  only. Dry by default; on `production` a write needs the flag AND `NCS_PRODUCTION_WRITE=yes` in the process
+  environment as it was when the module loaded; a `.env` that names the variable is refused. A script that opts in
+  with `ci: true` may write inside GitHub Actions on its flag alone (the scheduled job has no person present, and
+  its workflow file is reviewed code). The code is byte-for-byte stonesteps-50k's; only the header is generic.
+- `scripts/publish-due.mjs`: `const APPLY = writeGate({ dataset, ci: true, quiet: true })`. In Actions the
+  workflow's `--apply` still publishes, so no workflow changes. By hand, `--apply` alone now exits 2:
+  `NCS_PRODUCTION_WRITE=yes node scripts/publish-due.mjs --apply`.
+
+**Not PORTABLE:** `scripts/lib/write-gate.test.mjs`. Its `GATED` list is the site's own (the starter's names only
+`publish-due.mjs`; stonesteps-50k lists 24 scripts). It runs in `test:scripts`, so CI and deploy cover it. The test
+needs `@sanity/client` installed for its dummy-host probe; every site has it.
+
+**Adopting it in a site.** Copy both PORTABLE files and the test (trim `GATED` to the scripts the site gates), run
+`npm run test:scripts` and `node scripts/sync-check.mjs`. A site that checks against the live starter `main` in CI
+(presacademy, first-baptist-auburn) goes red on its next run until it takes the copy, so per the Projects
+`CLAUDE.md` order: this card's PR merges first, then each site's.
+
+**Status, 2026-10-18.** Starter `yes`. stonesteps-50k `yes` (origin; it now takes the starter's header). fbcm (fbcm#73),
+presacademy (presacademy#106) and first-baptist-auburn (fbc-auburn#58) took it the same day, each merged green. Sites with no `publish-due.mjs`
+(reid-design-site, mas-monograms, nixoncreativestudio) `n/a`.
+
+**Rolled out, 2026-10-19.** The rollout report does not name this card per site. All five sites are synced to starter a837dc3 (synced, not individually verified).
+
+## Card 115: the Studio Home dashboard: Coming up, Fix-it list, visitors, pages map, guide videos (2026-10-18)
+
+**Origin:** first-baptist-auburn, measured against the Theology Matters WordPress admin dashboard, which the same studio
+built: a dated greeting, "Coming up", a Fix-it list with names and Edit buttons, "What readers do" (visitors chart,
+most read, how people found the site), a "Your pages" map and "Watch how it is done" videos. The kit's Home had a
+greeting, quick actions, the weekly checklist, Is it live?, Site health (counts only), Recent edits and a Visitors
+placeholder. Counts say something is wrong without saying where; a placeholder says nothing at all.
+
+**Canonical (PORTABLE):** `src/lib/studio-home.ts` + `studio-home.test.ts`, `src/lib/studio-analytics.ts` +
+`studio-analytics.test.ts`, `src/pages/api/studio/visitors.ts`, `src/sanity/kit/HomeCards.tsx`,
+`src/sanity/kit/GuideVideos.tsx`, and the card-115 changes to `kit/HomeTool.tsx`, `kit/GuideTool.tsx`,
+`kit/shared.tsx` (`studioToken` exported), `kit/types.ts`, `src/lib/studio-checkup.ts` and
+`docs/agent/studio-kit.md`. Per site (NOT portable): `kit.config.ts` (`pages`, `features.visitors: true`),
+`guides/content.ts` (`video?` on `Guide`, the "What the Home page shows you" guide), `wrangler.jsonc` vars, the
+Worker secret, OPERATIONS.md.
+
+**What it adds.**
+
+- **Fix-it list** (replaces Site health): the Checkup's findings one row per page, by name, with Edit (at the field).
+  The Checkup's generic rules now return `items` and an `itemLabel` (`itemsOf()`); `fixItList()` flattens them. Same
+  rules, same run (`useCheckup`), nothing duplicated. A site rule without items still shows as one row.
+- **Coming up**: drafts with card 111's `publishAt`, soonest first, "Tomorrow at 9:00 AM" (`comingUp()`,
+  `whenWords()`). Shown only where the schema has a `publishAt` field.
+- **Visitors**: `GET /api/studio/visitors/` (same origin AND a Sanity session checked with `/users/me`, else 403/401;
+  fail closed) asks Cloudflare Web Analytics' GraphQL API with a Worker secret `CF_ANALYTICS_TOKEN` (Account Analytics:
+  Read only) plus vars `CF_ACCOUNT_ID` and `CF_WEB_ANALYTICS_SITE_TAG`, caches ten minutes, and returns the last 7 days
+  against the 7 before, 28 daily points, the top five pages and referrer groups (search, direct, social, other). The
+  card draws the chart in plain SVG; no chart dependency. No settings: "Not set up yet".
+- **Your pages**: `kitConfig.pages`, groups of one-click links; `listType` lists every custom page by name
+  (`resolvePageMap()`).
+- **Watch how it is done**: a guide's optional `video` (a file in `public/`, YouTube, Vimeo, or a link) shows on Home
+  and in the Site Guide, in a dialog on demand (`videoSource()`); hidden when no guide has one.
+- A dated greeting line ("Sunday, October 18", `todayLine()`) and a "Need help? Site Guide or Ask <helper>" footer.
+
+**Adopting it in a site.** Needs cards 106, 110 and 111. Copy the PORTABLE files, add `video?: string` to the `Guide`
+interface in `guides/content.ts`, write `pages` in `kit.config.ts` and set `features.visitors: true`, then follow
+OPERATIONS.md "Visitor numbers" for the token and the two vars. Marked-file order: starter first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes` (unit-tested; the route's 403/401 checked under `wrangler dev`; signed-in views and
+real numbers unverified, PENDING item 18). first-baptist-auburn: branch pushed, PR after this card merges. Every other
+site `no`.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 116: the Studio reads as the site's own admin: paper, navy chrome, fonts, text in the site's type (2026-10-18)
+
+**Origin:** the Theology Matters WordPress admin, which looks like the site it runs (cream ground, navy chrome, a brand
+accent, serif headings). The family's Studio, after card 110, still opened in Sanity's dark default on a laptop set to
+dark, named the brand fonts without loading them (so it drew in system fonts), and edited rich text in Sanity's small UI
+type. Built in the starter, then first-baptist-auburn.
+
+**Canonical:** PORTABLE: `src/lib/studio-theme.ts` (+ `studio-theme.test.ts`), `src/sanity/studioTheme.ts`,
+`src/sanity/components/StudioLook.tsx`, the `docs/agent/studio-kit.md` "The look" section. Per site (NOT portable):
+`src/sanity/studioFonts.css` (generated by `apply-brand` from `fonts.display.imports` and `fonts.body.imports`), the
+`sanity.config.ts` lines, and `apply-brand.mjs`'s `rewriteStudioFonts` step. Optional `brand.config.json` keys:
+`studio.paper`, `studio.chrome` (hex).
+
+**What it adds.** All of it is `@sanity/ui`'s own `buildTheme` and Sanity's documented extension points; no package
+changes and no CSS aimed at Sanity's class names. `@sanity/themer` was weighed (installable since card 112) and not
+used: sites do not carry it, and nothing here needs it.
+
+- **Light by default.** `seedLightScheme()` writes "light" into Sanity's appearance key once per browser, before the
+  Studio reads it, when nothing (or "system") is stored. A marker key makes it once only, so a later pick of System or
+  Dark sticks. An editor who had "system" stored gets light once.
+- **A warm paper.** Palette white is `studio.paper`, else the site's light background mixed 60% toward `#F4EEE1`.
+  The greys keep Sanity's luminance per step (so every contrast Sanity tuned holds) but take the paper's hue on 50 to
+  400 and the dark background's on 500 to 950, chroma capped so a grey stays a grey.
+- **Navy chrome.** `studioLook(fonts)` is a navbar middleware wrapping `renderDefault` in a `ThemeProvider` with a
+  second theme (`buildChromeTheme`), always `scheme="dark"`. Its background is `studio.chrome`, else
+  `--color-primary-dark`, else `--primary`, darkened until white text reaches 8:1. Every hue in that theme is
+  re-laddered (`relativeTo`): each step gets the contrast against the navbar that Sanity's step has against its own
+  dark page, so hovers, muted text, focus rings and the release-perspective tones still work on a mid-dark colour.
+- **Deeper status buttons.** In light mode the solid positive, caution and critical buttons use steps 600/700/800
+  instead of 500/600/700, so Publish's white label reads at AA (Sanity's own green Publish is 2.6:1). Dark unchanged.
+- **Fonts, radius, weight.** `studioFonts.css` loads the site's @fontsource files (sanity.config.ts imports it; the
+  Sanity CLI and `load-schema.mjs` both take a CSS import). Heading weights are capped at the heaviest weight the
+  display face ships (`displayWeight`: Young Serif 400 only, so never a faked bold). Sanity's radius scale is scaled by
+  `brand.radius` against 8px (0.5x to 2x).
+- **Text in the site's type.** `withEditorTypography(schemaTypes, fonts)` walks the schema and gives each Portable Text
+  style without a `component` one from `EDITOR_STYLES`: body 17px/1.6 in the body font, H1 to H4 in the display font
+  (32, 26, 21, 18px), a quote with a 3px rule in the link colour. Spacing between blocks stays Sanity's. A block with
+  no `styles` list is left on Sanity's defaults. The style menu shows the same faces, capped at 20px.
+- **The gate.** `studio-theme.test.ts` builds the real themes for the site's brand and three awkward ones and asserts,
+  in both schemes and on the navbar: text at 4.5:1, muted text at 4.5:1 or within 10% of Sanity's own where Sanity is
+  under it (the paper is not white), the solid button of every tone (default, primary, positive, caution, critical) at
+  4.5:1, links, focus rings, hover visible on the navbar, white on the navbar at 8:1, status hues Sanity's. It also
+  fails when `studioFonts.css` misses a font file the brand names.
+
+**Measured (first-baptist-auburn, #235E93 accent, #1B4A75 chrome):** paper #F8F5ED; light text 13.4:1, muted 6.4:1,
+Publish 5.0:1; dark text 14.0:1; navbar white 9.2:1, muted 6.5:1, primary button 6.5:1, focus ring 3.7:1.
+
+**Signed out only, so far.** Verified in a dev server on the login and "project not found" screens, light and dark, 1280
+and 390, and in first-baptist-auburn on its real login screen. The navbar and the editor typography were also rendered in a
+throwaway page using the same themes and components. In a real signed-in Studio they are still unchecked
+(`docs/PENDING.md` item 19).
+
+**Known, Sanity's own:** the small "Sanity" wordmark under the login box follows the computer's light or dark setting,
+not the Studio's, so a light Studio on a dark-mode computer shows it white on the paper. Leave it; fixing it means
+styling Sanity's internals.
+
+**Adopting it in a site.** Needs card 110. Copy the three PORTABLE source files and the test, take the
+`sanity.config.ts` lines (`import './src/sanity/studioFonts.css'`, `STUDIO_FONTS`, `buildStudioTheme`,
+`seedLightScheme()`, `studioLook(STUDIO_FONTS)` before the kit, `withEditorTypography(schemaTypes, STUDIO_FONTS)`),
+take apply-brand's `rewriteStudioFonts` step, run `npm run apply-brand` (or write `studioFonts.css` by hand from the
+brand's imports), then `npm run test:unit`. Marked-file order: the starter merges first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-branded-look`, PR after this
+merges. Other sites `no`.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 117: the Studio's safety net: morning change note, expiring preview links, Messages, table panes (2026-10-18)
+
+**Origin:** first-baptist-auburn, modelled on what the Theology Matters WordPress admin already gives its editors: a
+morning email of what changed, private preview links that expire, a form inbox with triage, and long lists as
+scannable tables. Four pieces, three of them generic kit and one generic component with per-site columns.
+
+**Canonical (PORTABLE):** `scripts/change-note.mjs`, `scripts/lib/change-summary.mjs` + `.test.mjs`,
+`src/lib/preview-share.ts` + `.test.ts`, `src/lib/preview-share-server.ts`, `src/pages/api/studio/share-preview.ts`,
+`src/lib/studio-messages.ts` + `.test.ts`, `src/pages/api/studio/messages.ts`, `src/lib/studio-table.ts` + `.test.ts`,
+and `src/sanity/workflow/` (`index.tsx`, `studioApi.ts`, `previewShareType.ts`, `SharePreviewAction.tsx`,
+`MessagesTool.tsx`, `DocumentTable.tsx`). Per site (NOT portable): `.github/workflows/change-note.yml` (template;
+the schedule is commented out in the starter), `migrations/*_message_status.sql` (numbered after the site's own),
+`src/sanity/tables.config.ts` (which tables, which columns), the `ncsWorkflowTools({ shareTypes })` line in
+`sanity.config.ts` (before `ncsStudioKit`), `'messages'` in `kit.config.ts` `staffTools` / `toolOrder`,
+`structure.ts` (`'previewShare'` in the default-list hidden set, a `tableListItem()` beside each normal list), and
+the ~20-line `?share=` block in `src/pages/preview/[...slug].astro`.
+
+**What it adds.**
+
+- **Morning change note.** `change-note.yml` runs at 10:00 UTC (6 AM Eastern in summer). `change-note.mjs` reads
+  the last 24 hours from Sanity with the READ token (`_updatedAt` in the raw perspective, the kit's `trashedItem`
+  records for deletions, the history API for authors, `/projects/<id>/users` for names) and, when anything changed,
+  opens or updates the issue "What changed on <date>": who, what, which page, a Studio link and a live link.
+  GitHub's issue email is the delivery. Quiet days post nothing. Dependency-free; no `npm ci` in the job.
+  `buildChangeSummary()` is pure and tested. A permanent delete from outside the kit's Trash is not reported.
+- **Share a preview.** A document action on the `shareTypes` (types whose own page `/preview` renders). The editor
+  picks 1, 3, 7 or 14 days; the dialog writes a `previewShare.<nonce>` record (a path id, served to signed-in
+  requests only), `POST /api/studio/share-preview/` checks the caller (same origin + Sanity session, as card 111)
+  and the record, and signs `{nonce, doc id, path, expiry}` with HMAC-SHA256 under `SHARE_PREVIEW_SECRET`. The link
+  is `/preview/<page>/?share=<token>`. The preview route checks the signature, expiry, path and record (not revoked,
+  same doc) on every load, fetches drafts WITHOUT stega and WITHOUT turning on draftMode (no overlay, no live
+  channel), sends `Referrer-Policy: no-referrer`, keeps `no-store` and `noindex`, shows a banner with the end
+  date, and falls back to the published page when anything fails. "Stop this link" sets `revoked`. No Sanity
+  token is ever in a URL. The older one-hour "Copy share link" (card 19) stays.
+- **Messages.** A Studio tool listing `contact_submissions` and (where present) `form_submissions` from D1 through
+  `/api/studio/messages/`, protected like the deploy route on every method (GET included), failing closed.
+  Columns: from, which form, received, a status pill (New, Needs a person, Replied, Spam); a detail view with "Mark
+  as". Status lives in D1 (`message_status`, the test checks the migration matches the DDL); unmarked is New, or
+  Needs a person when the email did not go out. Prayer-mode messages never show a name, email or words, only that
+  one arrived. No binding: "Forms are not set up yet". Nothing personal is written to Sanity.
+- **Table panes.** `tableListItem(S, config)` opens a sortable table (click a heading; blanks sink) with a status
+  pill (Published / Changes not published / Draft) and an Open button. Added BESIDE the normal list, never instead.
+
+**Worker settings.** `SHARE_PREVIEW_SECRET` (32+ random characters, `npx wrangler secret put`; rotating it stops
+every link). Messages needs the `CONTACT_DB` binding (forms switched on) and the status migration applied. The change
+note needs the `SANITY_AUTH_TOKEN` repo secret, the `SANITY_PROJECT_ID` variable, optionally `SITE_URL`, the
+schedule uncommented, and the owner watching the repo.
+
+**Adopting it in a site.** Needs cards 106 and 111. Copy the PORTABLE files byte-identically, add the per-site pieces
+above, run `npm run typegen` (`previewShare` is new), add `"previewShare"` to the publish webhook's deny-list so a
+new link does not rebuild the site, and follow the marked-file order (starter PR first, then the site PR).
+
+**Status, 2026-10-18.** Starter `yes` (unit-tested; built; endpoints checked under `wrangler dev` signed out; the
+signed-in Studio views are unverified). first-baptist-auburn took it the same day. Every other site `no`.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 118: the Studio Home banner: navy welcome, the site's mark, motif and lettering (2026-10-18)
+
+**Origin:** the Theology Matters WordPress dashboard, whose welcome is a deep navy banner holding the date, a warm
+greeting with an accent, a one-line intro and a "View the website" button. The family's Studio Home, after cards
+110 and 115, opened on plain text on the paper. Built in the starter, then first-baptist-auburn.
+
+**Canonical:** PORTABLE: `src/sanity/kit/HomeBanner.tsx` (new), `src/lib/studio-banner.ts` (+
+`studio-banner.test.ts`), and the kit files it touches: `src/sanity/kit/HomeTool.tsx` (Welcome now renders the
+banner) and `src/sanity/kit/types.ts` (`HomeBannerConfig`, `KitConfig.homeBanner`). Per site (NOT portable):
+`kitConfig.homeBanner` in `src/sanity/kit.config.ts` and the files it names in `public/`.
+
+**What it does.**
+
+- The banner is drawn in card 116's chrome theme (`buildChromeTheme`, the navbar's own dark theme on
+  `studio.chrome`), so it is the top bar's colour exactly, in light and dark appearance, and every text colour on it
+  is one the colour gate already checks. The fonts come from the Studio's root theme, so nothing new is configured.
+- Contents: the date, "Good afternoon, <first name>" at 24px with the name in `homeBanner.accent`, the site's name
+  (the workspace title) as the H1 in the heading font, the reassurance line, and **View the website** (a new tab; by
+  default the address the Studio is open on, since the Studio is `/studio` on the site; `siteUrl` overrides).
+- `mark` is drawn on a light disc in the paper colour; `markOnDark` (a white or reversed mark) is drawn bare
+  instead. `motif` is a decorative strip along the foot, full width at its own proportions; `motifNarrow` is the
+  phone version used under 600px. Both are `alt=""`.
+- `lettering: { text, family, src, colors }` sets the last match of `text` in the name in the site's own display
+  font, letters cycling `colors` (spaces take none, as the family's mosaic headings do). The @font-face points at
+  the site's own file (a same-origin path; anything else is refused) with `swap`, falling back to the heading font.
+  The H1 then carries the whole name as its `aria-label`.
+- **The kit guards the colours, not the config:** an accent under 3:1 on the banner (the greeting is large text),
+  or a lettering colour under 3:1, is dropped. Measured on first-baptist-auburn's #1B4A75: gold #E8A93A 4.4:1 (fine
+  as large text, not as body text), white 9.2:1, water #96C3EA 4.9:1; green #2C5B3A would vanish and is dropped.
+- Layout: stacked on a phone; mark beside the words from 600px; the button on the right from 900px. No animation,
+  so reduced motion has nothing to switch off. No new dependency.
+
+**Auburn's dressing (for reference).** The full-colour mark on the disc (the white mark loses the story colours),
+the stone path from the water to the red cross along the foot (two new presets in its `scripts/lib/stone-mosaic.mjs`,
+`banner` and `bannerPhone`, with the share card's stricter filters so every stone is rounded; `npm run gen:stones`
+writes `public/studio-banner/stone-path{,-phone}.svg`), the name in gold, and "Auburn" in Auburn Stone in the footer
+signature's on-navy colours (white, water, gold).
+
+**Verified.** Unit tests for the pure half. The banner rendered in a throwaway page with the real Studio theme, light
+and dark appearance, 1280 and 375 (no horizontal scroll), for the starter and for first-baptist-auburn. Not yet seen
+in a signed-in Studio (the same gap as card 116, `docs/PENDING.md`).
+
+**Adopting it in a site.** Needs cards 110, 115 and 116. Copy the four PORTABLE kit and lib files and the test
+byte-identically, add `homeBanner` to `kit.config.ts` (at least `mark`), put any files it names in `public/` (not
+under `public/studio/`, the Studio's own address), then `npm run test:unit` and `npm run sync-check`. Marked-file
+order: starter PR first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-home-banner`, PR after this
+merges. Other sites `no`.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, mas-monograms, stonesteps-50k. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 119: Studio icons by meaning, and a picture on every list row (2026-10-18)
+
+**Origin:** the studio-branding research (2026-10-18, items 1 and 2 of its ranked list): after cards 110 and 116 the
+Studio's colours, fonts and chrome were the site's, but every list row, desk item, group tab and tool still wore
+Sanity's generic line icons, and a row with no photo showed a bare glyph or nothing. Built in the starter, then
+first-baptist-auburn with its eight stone icons.
+
+**Canonical:** PORTABLE: `src/sanity/brandIcons.tsx` (new), `src/sanity/artIcon.tsx` (new), `src/lib/studio-icons.ts`
+(+ `studio-icons.test.ts`), `docs/agent/studio-kit.md` (new section), `brand/brand.config.schema.json`
+(`studio.icons`). Per site (NOT portable): `src/sanity/brandIconArt.tsx` (the art), `brand/brand.config.json`
+`studio.icons` (which type, group and tool means what), the two lines in `sanity.config.ts`, `structure.ts` calls,
+and each type's `preview.prepare` subtitle.
+
+**What it does.**
+
+- **Icons are named by meaning, not by look:** `times`, `give`, `scripture`, `sections`, `place`, `people`,
+  `download`, `question`, `post`... (`BRAND_ICON_KEYS`). `brandIcon(key)` draws one with `@sanity/icons` unless the
+  site's `brandIconArt.tsx` supplies art for it. `typeIcon(type)` is the icon a document type means.
+- **Art from the brand kit, as drawn:** `artIcon(url, title)` places an SVG file (a Vite `?url` import) inside a 1em
+  `<svg data-sanity-icon>`, the shape of `@sanity/icons`, so Sanity sizes it like its own icons in every slot. A
+  bare `<img>` does not work: Sanity's preview media box stretches any `img` to fill it. Nothing redraws or recolours
+  the art; full-colour icons keep their colours.
+- **Where they land:** `withBrandPreviews()` around the schema types in `sanity.config.ts` sets each document type's
+  `icon` (lists, search, references, the create menu) and an icon on every field group whose name is mapped;
+  `brandIcons()`, registered after the kit, does the same for plugin types and puts an icon on every tool (shown in
+  the phone's sidebar; the top bar draws none). `structure.ts` asks the registry instead of importing icons; page
+  templates take `typeIcon('page')`. Singleton editors name their one view "Edit".
+- **Every list row has a picture:** the decorator wraps each document type's `prepare` and fills a missing `media`
+  with `IconTile`: the type's icon centred on a square of the brand's tint, colours read from the theme's scheme.
+  The document's own image still wins. Tile colours: a wash of the accent on the paper (light) and on the dark ground
+  (dark), or `studio.icons.tile.light` / `.dark`; a one-colour icon on it is kept at 3:1.
+- **Plain subtitles:** `previewDate()` ("Sun, Nov 9, 2026") and `previewSubtitle()` (joins the non-empty parts with
+  " · "). Starter posts read "Featured · Sun, Nov 9, 2026"; announcements "Off", "Starts ..." or "Shows until ...".
+- **The gate:** `studio-icons.test.ts` parses every document type in `src/sanity/schemaTypes/` plus the kit's and the
+  workflow's, and fails if one has no meaning or no `preview`; it checks the config wiring (decorator present,
+  plugin after the kit), the tile contrast for awkward accents and the site's own, and the art file's keys.
+
+**Auburn's dressing (for reference).** The eight stone icons in `src/assets/brand/stone-icon-*.svg`, unchanged:
+Bible for sermons, series and downloads; clock for service times and the church facts group; coffee for notices,
+events and news; giving hand for giving and people; map pin for the address, plan a visit and the questions; music
+for the podcast group; praying hands for prayer and forms; blocks for pages and sections. The accent-on-navy dark tile
+sank the stones' navy and green, so the dark tile is a warm stone tone (`#CDC3AF`); the light tile is the default
+wash. They read at 16, 20 and 24px in both schemes.
+
+**Verified.** Unit tests (49). A throwaway page rendering Sanity's own `DefaultPreview` rows from the real decorated
+schema, and every meaning at 16, 20 and 24px, under the real Studio theme in light and dark, for the starter and for
+first-baptist-auburn. `npm run typegen` loads the `?url` imports fine. Not yet seen in a signed-in Studio (desk, group
+tabs, create menu, phone sidebar): the same gap as cards 116 and 118.
+
+**Adopting it in a site.** Needs cards 110 and 116 (`STUDIO_COLORS`). Copy the four PORTABLE files and the test, the
+schema file, and the doc; write `brandIconArt.tsx` (empty is fine); add `studio.icons.types` for every document type
+the starter does not know; in `sanity.config.ts` wrap the schema types in `withBrandPreviews(...)` and add
+`brandIcons()` after `ncsStudioKit(kitConfig)`; swap `structure.ts`'s icon imports for `typeIcon` / `brandIcon`;
+make each `prepare` return `media: image?.asset ? image : undefined` rather than an icon. Then `npm run typegen`,
+`npm run test:unit` and `npm run sync-check`. Marked-file order: starter PR first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-brand-icons`, PR after this merges.
+Other sites `no`.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 120: the Studio's edges: its own /studio page and splash, the site's words, a wordmark (2026-10-18)
+
+**Origin:** the research pass on branding the embedded Studio (first-baptist-auburn, 2026-10-18). After cards 110 and
+116 the Studio itself looked like the site's, but its edges did not: @sanity/astro served `/studio` from node_modules
+with "Sanity Studio" in the tab, Sanity's red icon and no background, so every load opened on a blank white page (a
+white flash in dark mode) until React arrived; the sign-in card and Sanity's notices spoke in Sanity's words; the top
+bar showed only the square mark. Built in the starter, then first-baptist-auburn.
+
+**Canonical:** PORTABLE: `src/pages/studio/index.astro`, `src/lib/studio-route.ts`, `src/sanity/studioWording.ts`,
+`src/lib/studio-edges.test.ts`, `tests/studio-boot.spec.ts`, `StudioWordmarkNavbar` in
+`src/sanity/components/StudioLook.tsx`, `applySiteFavicon` marked deprecated in `StudioIdentity.tsx`, the
+`docs/agent/studio-kit.md` "The edges" section. Per site (NOT portable): `src/sanity/studioEdges.config.ts` (wordmark
+logo and crop, sign-in subtitle, word overrides), `src/sanity/StudioSplashMotif.astro` (optional art), the
+`astro.config.mjs` lines, the `sanity.config.ts` lines, and `'studio'` in the reserved slugs (both copies and the test).
+
+**What it adds.**
+
+- **The page.** `src/pages/studio/index.astro` (prerendered, `/studio/`): the brand name as `<title>`, the site's icon
+  set, `theme-color` in the navbar colour, `noindex`. An inline script picks the scheme the Studio is about to use
+  (Sanity's stored Appearance; else light, because `seedLightScheme` seeds a first visit; else the computer's) and the
+  CSS paints the Studio's own paper or dark background from `STUDIO_COLORS`, so the hand-over to React does not flash.
+  The splash (mark, name in the display font, "Opening the editor", optional motif) is the island's `slot="fallback"`,
+  so Astro swaps it out when React mounts; no script of ours removes it.
+- **The plumbing.** The page renders @sanity/astro's public `StudioComponentHash`, which imports its config from the
+  `sanity:studio` module. The integration only provides that module when `studioBasePath` is set, and that option also
+  injects Sanity's own page at the same address. So astro.config drops `studioBasePath` and adds
+  `studioConfigModule()` (`enforce: 'pre'`) to `vite.plugins`, which serves exactly what the integration did for one
+  workspace in hash mode: sanity.config with `basePath: '/'`. Hash routing, deep links and Presentation are unchanged;
+  `sanity.cli.ts`'s `basePath` stays.
+- **The words.** `studioWording(brand.name, studioEdges)` returns the workspace `subtitle` (shown under the name on the
+  sign-in card) and an `i18n.bundles` entry in Sanity's `studio` namespace for the signed-out notice
+  (`login.logged-out.*`) and user-menu labels (Manage project, Invite members, Help and resources). Appearance and Sign
+  out stay Sanity's. `studio-edges.test.ts` reads the installed sanity's English bundle and fails if any key we reword
+  has gone, because Sanity would otherwise fall back to its own text without a sound.
+- **The wordmark.** `StudioWordmarkNavbar` puts the `logoPaths` entry named by `studioEdges.wordmark.logo` beside the
+  square icon, inside a Card that takes the bar's navy and rule from the chrome theme; hidden under 600px. An optional
+  `view` crops an SVG lockup to its words with an `#svgView(viewBox(...))` fragment, since the square mark is already
+  right beside it. It is registered at the ROOT of sanity.config: Sanity nests navbar middleware with the earliest
+  plugin outermost and the root innermost, so only the root wraps Sanity's bar alone (inside `studioLook` it would also
+  wrap the kit's status line). The page resolves the built URL at build time into `#ncs-studio-boot`.
+- **`/studio` reserved** as a page slug, now that a src/pages route serves it.
+
+**Weighed and left out.** A branded heading inside the sign-in card through a custom `auth` store (`createAuthStore`
+plus our `LoginComponent`): Sanity's `getAuthStore` uses a custom store as-is, so it loses the request handler Sanity
+wires into its own (invalid-session handling, the CORS and project-not-found screens, request diagnostics). Not worth
+that for a heading; the subtitle does the job. Also left alone: "Choose login provider", the "Not authorized" dialog and
+the request-access form (hard-coded English in sanity 6.19, no i18n key), and Sanity's wordmark and links under the
+card.
+
+**Verified, signed out.** `astro dev` and `wrangler dev` on the built output: title and icons in the HTML, the splash
+before hydration in light and dark at 1280 and 375 and on a throttled first paint, React replacing it, the sign-in card
+with the subtitle, the "project not found" diagnostics screen still appearing (the request handler is intact), and
+`#/structure` and `#/presentation` deep links keeping their hash. Signed-in checks: `docs/PENDING.md` item 23.
+
+**Adopting it in a site.** Needs cards 110 and 116. Copy the PORTABLE files, write `studioEdges.config.ts` (and
+optionally `StudioSplashMotif.astro`), remove `studioBasePath` from the `sanity()` integration and add
+`studioConfigModule()` to `vite.plugins`, take the `sanity.config.ts` lines (`studioWording`, `subtitle`,
+`i18n.bundles`, `studio.components.navbar: StudioWordmarkNavbar`, drop `applySiteFavicon`), reserve `'studio'`, then
+`npm run build`, `npm run test:unit` and open `/studio`. Marked-file order: the starter merges first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-edges`, PR after this merges. Other
+sites `no`.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, mas-monograms, stonesteps-50k. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 121: custom code, safe by default: pasted widgets in their own box, opt-in on-page and site-wide code (2026-10-18)
+
+**Origin:** first-baptist-auburn, 2026-10-18. The pastor may ask an AI for a widget (a VBS countdown, a sign-up
+gadget, a map, a calculator) and paste it in, Squarespace-style. The `embedSection` rendered pasted code with
+`set:html` straight into the page, and the Studio is embedded at `/studio` on the SAME origin, so any pasted script
+could read a signed-in editor's Sanity session token from localStorage. Built in the starter, then first-baptist-auburn.
+
+**Canonical:** PORTABLE: `src/lib/custom-code.ts`, `src/lib/custom-code.test.ts`, `src/components/CustomCodeFrame.astro`,
+`src/sanity/components/CodeTextInput.tsx`, `tests/custom-code.spec.ts`, and the two rules in `src/lib/studio-checkup.ts`
+(with their tests in `studio-checkup.test.ts`). Per site (NOT portable, hand-merged): the `embedSection` schema
+(`src/sanity/schemaTypes/sections.ts`), `EmbedSection.astro`, the `runsOnPage` prop in `SectionRenderer.astro` and
+`pageBuilder.types.ts`, `siteSettings.ts` (the "Code on every page" group), `getSiteCode()` in `queries.ts`, the
+BaseLayout lines, `embedCode`/`runsOnPage` in `NON_STEGA_FIELDS` (`cms-preview.ts`), the `/_astro/*` rule in
+`public/_headers`, the styleguide wall fixture and probes, the Site Guide recipe (`add-a-widget`), the thumbnail.
+
+**What it adds.**
+
+- **The box (default).** Pasted code renders in `CustomCodeFrame`: an iframe from `srcdoc` with
+  `allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals` and NO `allow-same-origin`
+  (opaque origin: no cookies, no localStorage, no `parent.document`). `buildFrameDocument()` wraps the code in a
+  document with `<base target="_blank">`, a base stylesheet in the site's fonts and light colours (from
+  brand.config.json and `studioFonts.css?inline`), reduced motion honoured, and a resize script that posts
+  `{ type: 'ncs-custom-code-height', height }`. The parent accepts it only from one of its frames' `contentWindow`,
+  origin `"null"`, exact shape, then clamps to 40..5000 px. Dark mode: a light panel around the frame.
+- **The switch.** `runsOnPage` (boolean, default off, shown once there is code, in NON_STEGA_FIELDS) keeps the old
+  `set:html` path for trusted provider snippets. Caution in its description.
+- **Code on every page.** Site settings group "Code on every page": `headCode` and `bodyEndCode`, rendered by
+  BaseLayout on public routes only (`isSiteCodeRoute`: never `/studio`, `/preview`, `/api`), fetched by their own
+  query so the preview shell never sees them.
+- **Checkup.** Two generic rules, "For information": `code-runs-on-page` (every page with the switch on, deep-linked to
+  it) and `code-on-every-page`.
+- **Studio UX.** Block renamed "Custom code or embed" (name unchanged, rule 1); `CodeTextInput` (monospace, no
+  spellcheck, a character and line count); a warning (not an error) when code uses `document.cookie`, `localStorage`,
+  `top.location` or `parent.`; the "not both URL and code" check now reads `context.parent` (it read the document
+  before, so it never fired). Insert-menu thumbnail reshot from a countdown fixture.
+- **Fonts across the sandbox.** Root-relative font URLs resolve against the embedding page; the opaque origin makes each
+  a CORS fetch, so `public/_headers` adds `/_astro/*` with `Access-Control-Allow-Origin: *` and the immutable cache
+  line (trap 2). The thumbnail script's server sends the header too.
+
+**Weighed and left out.** Pinning font URLs to `Astro.site`: breaks every other host (workers.dev before cutover, local,
+preview). A full CSP: it would not stop same-origin script from reading localStorage, which is the real risk, and the
+box already removes it. A parent-to-frame theme message for dark mode: the frame would have to accept messages, and
+pasted widgets assume light backgrounds anyway.
+
+**Verified.** Unit tests (srcdoc builder escaping, base stylesheet, resize script, message shape, clamp, warnings, route
+guard, Checkup rules). Playwright `tests/custom-code.spec.ts` on `/styleguide/sections/`: the boxed probe reports
+`parent-dom:blocked storage:blocked cookie:blocked` and the page's `<body>` is unmarked while a secret sits in the
+page's localStorage; the frame sizes itself; the on-page probe reads the secret. Under `wrangler dev`: `/_astro/*`
+sends the CORS header and the frame's fonts load; light and dark at 375 and 1280, no horizontal overflow. Signed-in
+Studio checks: `docs/PENDING.md` item 24.
+
+**Adopting it in a site.** Copy the PORTABLE files; merge the per-site lines above into the site's own schema, renderer,
+types, queries, BaseLayout, NON_STEGA_FIELDS and `_headers`; add the wall fixture and the two probes to
+`/styleguide/sections/` (the spec needs them); add the guide; `npm run typegen`, `npm run build`, `npm run thumbnails`
+(commit only `embedSection.jpg`), `npm run test:unit`, `npm test`. Needs `brand/brand.config.json` and
+`src/sanity/studioFonts.css` (cards 110 and 116). Marked-file order: the starter merges first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/custom-code`, PR after this merges. Other
+
+**Rolled out, 2026-10-19.** Applied on presacademy, mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 122: hidden pages, password pages, and the Checkup's link and accessibility checks (2026-10-18)
+
+**Origin:** first-baptist-auburn (2026-10-18): a church needs pages for some people only (a members page, a trip
+sign-up), and an editor needs to hear about broken links and muddled headings before a visitor does. Built in the
+starter, then first-baptist-auburn. Full design and the security note: `docs/agent/private-pages.md`.
+
+**Canonical:** PORTABLE: `src/lib/private-pages.ts` (+ test), `src/lib/private-pages-server.ts`,
+`src/lib/studio-checkup-quality.ts` (+ test), `src/lib/sitemap-filter.ts` (+ test),
+`src/sanity/components/PrivatePasswordInput.tsx`, `tests/private-pages.spec.ts`, `scripts/lib/link-report.test.mjs`,
+and the marked files it edits: `_seoFields.ts` (the switch's wording), `studio-checkup.ts` (`REPORT_TYPES`,
+`ctx.reports`), `HomeCards.tsx` ("(hidden)" in Your pages), `check-live-links.mjs` (`--write-report`),
+`change-summary.mjs` (ignores `linkReport` and `privatePage`), the guides. Per site: `src/pages/private/[slug].astro`,
+`src/sanity/schemaTypes/privatePage.ts`, the `structure.ts`, `sanity.config.ts`, `kit.config.ts`, `queries.ts`
+(`getNavPages`), `navLink.ts`, `page.ts`, `BaseLayout.astro` (`data-pagefind-ignore` on `<main>` when noindex),
+`astro.config.mjs` (`isSitemapPage`), `robots.txt.ts`, `link-health.yml` and `'private'` in both reserved-slug copies
+and their test.
+
+**What it adds.**
+
+- **Hidden** ("Hide this page from Google and the menus", the existing `hideFromSearch` field reworded): noindex, out
+  of the sitemap (as before), and now out of the automatic menus, the menu link picker, site search and the "nobody
+  can click through" check; "(hidden)" on Home's Your pages and in the list subtitle.
+- **Private** (`privatePage`, Pages, Private pages): built from the section library, served at `/private/<slug>/` by a
+  server-rendered route behind a password. Stored under the `privatePage.` id path, which the public API never serves
+  (the dataset is public, so a password on an ordinary page would leave its words one query away); never built; a
+  PBKDF2 hash made in the editor's browser, never the password; an HMAC-signed, page-scoped, 14-day cookie that a new
+  password revokes; a per-isolate rate limit; noindex and no-store on every answer; fails closed.
+- **Checkup**: dead external links (the weekly link check now saves `linkReport.latest` when the repo has
+  `SANITY_API_WRITE_TOKEN`), typed internal links to missing pages, skipped heading levels, vague link words and bare
+  web addresses, Google titles and descriptions that get cut off, pages nothing links to, and two private-page guards.
+  Each names the page with an Edit button. Report documents stay out of the content rules.
+- **Site Guide**: "Make a page private", "Keep links working".
+- **Sitemap filter** now matches whole path segments (a page called `studio-tour` used to be dropped by the `/studio`
+  rule's `includes()`), and drops `/private/`.
+
+**Weighed and left out.** A password switch on an ordinary custom page (unsafe on a public dataset, above). A second,
+private dataset (a plan question, and a second Studio workspace for editors). A hard global rate limit (needs KV or a
+Durable Object; a Cloudflare rate limiting rule does it without code). Presentation preview for private pages.
+Pictures on private pages are not private (public CDN); the Studio and the guide say so.
+
+**Verified.** `npm run check`, `npm run build` (no `dist/client/private`), `npm run test:unit`, `npm test`, and
+`tests/private-pages.spec.ts` part 2 against `wrangler dev` with the fixture page (form, wrong 401, right 303 + cookie
+
+- page, forged cookie, cross-site 403, 429), the gate in light and dark at 375 and 1280 with no overflow, and a real
+  browser opening the page after the right password. Not yet seen in a signed-in Studio: making a private page from the
+  list (the id path), the password input, the new Checkup rules on real data (`docs/PENDING.md` item 25).
+
+**Adopting it in a site.** Copy the PORTABLE files and the per-site pieces above, `npm run typegen`, add
+`qualityRules({...})` to `kit.config.ts` with the site's fixed routes and slugged types, and the "Private pages" group
+to `pages`. Set `PRIVATE_PAGE_SECRET` (`wrangler secret put`), check `SANITY_TOKEN` is set, add
+`SANITY_API_WRITE_TOKEN` to the repo secrets for the link report, and add `"privatePage"` and `"linkReport"` to the
+publish webhook's deny-list. Marked-file order: the starter merges first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/private-pages`, PR after this merges.
+
+**Rolled out, 2026-10-19.** Applied on mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
 
 ## Card 123: Studio writing help (Claude API), a "Before you publish" panel, AI assistants on the Visitors card (2026-10-18)
 
@@ -8540,7 +9341,215 @@ API (needs the key; `docs/PENDING.md` item 26).
 help" for the key and spend limit. Marked-file order: the starter merges first, then the site PR.
 
 **Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-ai`, PR after this merges. Other
+
+**Rolled out, 2026-10-19.** Applied on mas-monograms. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 124: section looks instead of colours, and a photo viewer for galleries (2026-10-18)
+
+**Origin:** the Squarespace-parity pass on first-baptist-auburn (2026-10-18). Editors wanted what Squarespace gives
+them, a per-section background choice and photos that open full screen, without the design drift a free colour picker
+causes. Built in the starter, then first-baptist-auburn (which adds a Stone look).
+
+**Canonical:** PORTABLE: `src/lib/lightbox.ts` (+ test), `src/components/Lightbox.astro`,
+`src/components/LightboxLink.astro`, `src/styles/lightbox.css`, `tests/lightbox.spec.ts`. Per site (NOT portable, the
+look vocabulary and palette differ): `src/lib/section-looks.ts`, the `look` handling in `src/lib/sectionCadence.ts`
+(+ tests), the `feature` pair in `src/lib/surfaces.ts` (+ the gate's `accentToken` branch in `surfaces.test.ts`),
+`.surface-feature` and the `--feature*` tokens in `globals.css`, `lookField()` in `_appearanceFields.ts`,
+`src/sanity/components/SectionLookInput.tsx`, the `look` gate in `section-fields.test.ts`, `'look'` in
+`NON_STEGA_FIELDS`, the five section components (surface through `surfaceClass`), `src/pages/styleguide/looks.astro`
+and the Site Guide entry.
+
+**What it adds.**
+
+- **Looks, not colours (rule 9 amended).** The five content blocks (text, image + text, gallery, quote, video) get a
+  `look` radio: Standard (follow the cadence; unset means this), Quiet (always the plain page surface; the rhythm
+  restarts after it, so the next Standard is soft) and Feature (the brand's deep band, `--color-primary-dark` with
+  paper text, theme-static like the Ink CTA band). `classifySections()` resolves the look with the neighbours in view:
+  Feature sits outside the alternation and takes no divider, and a Feature that would touch another dark band (a
+  Feature, a photo hero, the CTA band) renders as Standard. Each row now carries its resolved `look`.
+- **No component dark styles.** `.surface-feature` re-points the page tokens (`--background`, `--foreground`,
+  `--link`, `--muted-foreground`, `--primary`, `--border`, `--section-accent`, ...) inside the band, so every section
+  component paints it through `surfaceClass()` with no per-component classes. The contrast gate measures the pair and
+  the accent word on it.
+- **The Studio.** `lookField(type)` takes its options from the registry; `SectionLookInput` draws each as a small card
+  with a band picture (from the surface swatches) and one line of plain words. Choosing Standard clears the field.
+- **The gate.** `section-fields.test.ts` allows `look` only through `lookField()`, only on blocks the cadence paints,
+  with 2 to 4 registered looks including Standard; it still fails on `tone`, `surface`, `background`, `accent`,
+  `bandColor` and now also `color`, `backgroundColor`, `bgColor` and any `type: 'color'`.
+- **The photo viewer.** Gallery photos and journal post photos (inline images and image galleries) open a native
+  `<dialog>`: caption and "3 of 8" in a polite live region, arrow keys, buttons and swipe (wrapping, within one
+  `data-lightbox-group`), Escape or a click on the surround to close, Tab kept to the viewer's buttons, focus back on
+  the photo, page scroll locked, fade only without reduced motion. The full-size picture is `fit=max` from Sanity's
+  CDN with a srcset ladder capped at the photo's own width, so the crop is kept and nothing the hotspot marks is cut.
+  With JavaScript off each photo is a link to that picture. No dependency. The styles ride in `globals.css` via
+  `@import './lightbox.css'`, so pages without a gallery get no extra inline `<style>` (parity).
+- **The looks wall.** `/styleguide/looks/` stacks every look through the real renderer; `tests/lightbox.spec.ts` drives
+  the viewer there (keyboard, focus trap and return, swipe, JS off, two galleries) and runs axe on the wall and the
+  open viewer.
+
+**Weighed and left out.** A Squarespace-style background picker (any colour, per section): it is how a site drifts, and
+it would trade the reorder guarantee. Looks on the self-contained blocks (they draw their own band) and on the business
+blocks (story, service area, guarantee). Lightbox on the image + text block's single picture (one photo beside its own
+words; a zoom there reads as an accident).
+
+**Verified.** Parity: every existing page byte-identical; the sections wall differs only by the gallery's viewer links.
+Unit: cadence with looks, the contrast gate (feature pair, accent), the amended rule 9 gate, the viewer's helpers.
+Playwright on the looks wall; screenshots of each look and the open viewer, light and dark, 375 and 1280.
+
+**Adopting it in a site.** Copy the PORTABLE files and add `@import './lightbox.css';` to `globals.css`. Wrap gallery
+photos in `<LightboxLink>`, mark the grid `data-lightbox-group`, and render `<Lightbox />` once in the component. For
+looks: write the site's `section-looks.ts` (its looks and which blocks offer them), give each look's surface a measured
+pair in `surfaces.ts`, teach `sectionCadence.ts` the resolution, add `lookField('<type>')` to the eligible blocks, add
+`'look'` to `NON_STEGA_FIELDS`, run `npm run typegen`, and amend rule 9 in CLAUDE.md and `.claude/rules/sanity-schema.md`.
+Marked-file order: the starter merges first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/section-looks`, PR after this merges. Other
 sites `no`.
+
+**Rolled out, 2026-10-19.** Applied on stonesteps-50k. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 125: the Studio on a phone, "Post a photo", and earlier versions from the nightly backups (2026-10-18)
+
+**Origin:** two editor needs: quick edits from a phone, photos included, and going back further than Sanity's three
+days of history. Quick update (card 111) already covered text on a phone, and `restore-doc.mjs` (card 111) already put
+one document back from a backup, but only the developer could run it. Built
+in the starter, then first-baptist-auburn.
+
+**Canonical (PORTABLE):** `src/lib/studio-app.ts`, `src/pages/studio/manifest.webmanifest.ts`,
+`src/pages/studio/offline.astro`, `public/studio/sw.js`, the manifest link and worker registration in
+`src/pages/studio/index.astro`, the maskable icon in `scripts/generate-favicons.mjs`; `src/lib/photo-post.ts`,
+`src/sanity/kit/PostPhoto.tsx`, the photo button in `QuickUpdateTool.tsx`, `PostPhotoConfig` and
+`features.earlierVersions` in `kit/types.ts`, the inspector wiring in `kit/index.tsx`;
+`src/lib/earlier-versions.ts`, `src/pages/api/studio/earlier-versions.ts`, `src/sanity/kit/EarlierVersions.tsx`,
+`.github/workflows/restore-doc.yml`, `--scan`/`--run`/`--no-values` in `scripts/restore-doc.mjs` and
+`changeSummary`/`restoreRefusal`/`markerLine` in `scripts/lib/restore-doc.mjs`, `roles` on `StudioUser` in
+`src/lib/studio-auth.ts`; `src/sanity/guides/phoneGuides.ts`; tests `studio-app.test.ts`, `photo-post.test.ts`,
+`earlier-versions.test.ts`, `restore-doc.test.mjs`, `tests/studio-app.spec.ts`. Per site (NOT portable):
+`studioEdges.app` (short name, start page), `kitConfig.postPhoto` (gallery types, the post builder, a photo note),
+the one `guides.push(...phoneGuides(...))` line in `guides/content.ts`, and `public/icon-maskable-512.png`.
+
+**What it adds.**
+
+- **The Studio installs.** `/studio/manifest.webmanifest` (prerendered): `id` and `scope` `/studio/`,
+  standalone, the brand name and an optional short name, the navy chrome as `theme_color` and the paper as
+  `background_color`, the 192 and 512 icons and a maskable 512 (the mark at 60% on its own plate colour, or white; a site's own drawn one is kept). Only the boot
+  page links it, with the iOS app-title metas; the public site's `/site.webmanifest` stays `display: browser`.
+- **A service worker that stays out of the way.** `/studio/sw.js`, scope `/studio/`, registered by the boot page in
+  production builds only. The boot page is fetched fresh (network first) and falls back to `/studio/offline/` ("You're
+  offline. Your changes are saved when you're back online"); hashed `/_astro/*` files are kept and served first; icons,
+  the manifest and the offline page are served kept and refreshed behind. It NEVER keeps anything from another origin
+  (every Sanity API call, the realtime channel, cdn.sanity.io), `/api/**`, `/preview/**`, a non-GET, a request
+  carrying `Authorization`, or a range request. A unit test runs the file in a sandbox against those URLs.
+- **Post a photo.** The first Quick update button when `kitConfig.postPhoto` is set (and enough on its own to give
+  the tool): `<input type=file accept="image/*" capture>` for the camera plus a plain one for the phone's photos, a
+  required description (a file name or a number is refused), an optional caption, and a choice of every gallery on
+  `galleryTypes` (drafts perspective, labelled "Page: Gallery (n photos)") or a new post. The photo is redrawn at 2560px
+  at most as a JPEG, which also drops its EXIF (including where it was taken); GIFs and SVGs go up as they are. It is
+  appended to the page's DRAFT (made from the published copy when there is none) in one transaction and checked after,
+  or created as `drafts.<uuid>`. Nothing publishes: the done screen opens it in the full editor for the Studio's own
+  Publish and its validation.
+- **Earlier versions.** A document inspector on every document but the Trash. `GET /api/studio/earlier-versions/`
+  lists the backups GitHub keeps (artifact list, one per night, 14 at most); a scan or a restore POST dispatches
+  `restore-doc.yml` with a request id in the run's title; the panel polls, and the route reads the finished job's log
+  for the script's marker line. The scan reports, per night, whether the document is there and which fields differ
+  from now (names and list lengths only); the restore runs `restore-doc.mjs --run <id> --no-values` as a dry run and
+  then with `--apply`, `NCS_PRODUCTION_WRITE=yes` set on that one step. The route requires the same origin and a
+  signed-in member who is not only a viewer, refuses a backup run it did not list, rate-limits (20 seconds between
+  starts per editor, 10 an hour each, 30 in all per Worker instance), logs who asked, and fails closed without its
+  settings; the workflow re-checks every input and only ever sees them as environment variables. Without the settings
+  the panel offers "Ask <helper> to restore this".
+- **Site Guide.** "Put the Studio on your phone's home screen" (iPhone and Android steps), "Post a photo from your
+  phone" and "Go back to an earlier version", shared through `phoneGuides()`.
+
+**Safety calls.** The passphrase never leaves GitHub: the Worker holds only the deploy token it already had, and
+decrypting a backup in a Worker would also run into its memory limit on a full export. The run log is public on a public
+repository, so CI output is value-free by flag and by test. Sanity's own documents (ids starting `_`, `sanity.*` and
+`system.*` types) are never restored. Restores write drafts only.
+
+**Weighed and left out.** A network-first-with-timeout or cache-first boot page (faster on a weak signal, but a copy
+from before a deploy can point at code files that deploy removed, and the Studio would half-load). Offline editing: the
+Studio needs Sanity to edit, so the offline page says so rather than pretending. Lighthouse's PWA audit: removed in
+Lighthouse 12; `tests/studio-app.spec.ts` asks Chrome itself (`Page.getInstallabilityErrors`) instead.
+
+**Adopting it in a site.** Needs cards 106, 111 and 120. Copy the PORTABLE files, run
+`npm run favicon -- --maskable-only` (it keeps an existing file; `--force-maskable` redraws it) and look at `public/icon-maskable-512.png`, set `studioEdges.app` and
+`kitConfig.postPhoto`, add the `phoneGuides` line to the guides, build, `npm run test:unit`, `npm test`. For
+Earlier versions: the backup running, `SANITY_API_WRITE_TOKEN` and `SANITY_PROJECT_ID` in the repo, and the Worker's
+`GITHUB_DEPLOY_TOKEN` with Actions: Read and write (OPERATIONS.md). Marked-file order: the starter merges first.
+
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-pwa`, PR after this merges. Other
+sites `no`. Signed-in and on-device checks: `docs/PENDING.md` item 27.
+
+**Rolled out, 2026-10-19.** Applied on stonesteps-50k. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
+
+## Card 126: visitor site search (Pagefind) and share buttons with no third-party code (2026-10-18)
+
+**Origin:** first-baptist-auburn wanted visitors to find a sermon, a news post or "where do I park" without knowing
+which page it is on, and to pass a sermon on to a friend. Built in the starter, opt-in, then switched on in
+first-baptist-auburn.
+
+**Canonical:** PORTABLE: `scripts/build-search-index.mjs`, `src/lib/site-search.ts` (+ `.test.ts`),
+`src/lib/site-search-client.ts`, `src/lib/share-links.ts` (+ `.test.ts`), `src/components/search/SiteSearch.astro`,
+`SearchPanel.astro`, `SearchButton.astro`, `SearchMeta.astro`, `src/components/ShareButtons.astro`,
+`src/pages/search/[...search].astro`, `tests/search.spec.ts`. Per site (NOT portable): `src/data/site.ts` `search`
+(the switch, placeholder, suggestions), where Header and MobileNav put the button, which templates pass `searchType`
+and carry `<SearchMeta>` / `<ShareButtons>`, the `package.json` lines, and
+`'search'` in the reserved slugs (both copies and the test).
+
+**What it adds.**
+
+- **One switch.** `site.search.enabled` (off in the starter). Off builds no button, no dialog, no `/search/` page and no
+  index: `[...search].astro` returns no paths, Header renders `<SiteSearch>` only when on, and the index script finds no
+  marked page and exits 0 without importing pagefind.
+- **The index.** `pagefind` 1.5.2, exact pin, devDependency (outside the matched set of rule 8). `npm run build` is now
+  `with-workerd astro build && node scripts/build-search-index.mjs`, so CI, Lighthouse and deploy all ship
+  `dist/client/pagefind/`, served by the Worker as static assets. BaseLayout puts `data-pagefind-body` on `<main>` when
+  search is on and the page is not `noindex`: header, footer and nav are never indexed, and 404, `/search/`, the
+  styleguide walls and any page kept out of Google stay out of search too. The Studio and `/preview` are SSR and never
+  reach `dist/client`. Each page's type is a Pagefind filter from BaseLayout's new `searchType` prop (default `page`;
+  `question` on the FAQ, `journal` on posts; a church site adds `sermon`, `series`, `news`). `<SearchMeta date passage>`
+  adds the date and a sermon's passage as metadata, written as element text so "John 3:16-18, 21" survives.
+- **The dialog.** A native `<dialog>` with `showModal()`: focus trapped, page inert, Escape closes (handled first, as
+  Chrome otherwise spends one Escape clearing `type=search`), focus returns. Opened by anything with
+  `data-site-search-open` (a real link to `/search/`, so no-JS and Ctrl-click still work), by `/` and Ctrl/Cmd+K, and
+  by the mobile menu's "Search the site" row through a `site-search:open` event fired from Radix's `onCloseAutoFocus`, so
+  the two modals never fight over focus. The trigger listener is on the capture phase: Astro's ClientRouter also
+  listens for link clicks on `document` and otherwise navigates to `/search/` first. Full screen under 640px. A short
+  fade and rise, none under reduced motion.
+- **Lazy.** First load carries the dialog markup and a small trigger script only. The panel code is a separate chunk and
+  Pagefind's JS and index arrive on first open; text typed while they load is searched as soon as they land.
+- **The panel.** Labelled `role="search"` form, type filter buttons (`aria-pressed`, shown when a term matches two or
+  more types), one polite live region ("6 results for "grace" in Sermons."), results with type, date and passage, Down
+  and Up arrows between the box and the results, "Show more results" in tens, and friendly suggestion links (from
+  `site.search.suggestions`) before a search and when nothing matches. Excerpts are split into text runs by
+  `excerptParts()` and drawn with `textContent`, never `innerHTML`. Styled from the theme tokens (`--background`,
+  `--foreground`, `--border`, `--muted`, `--link`, `--ring`, `--font-display`), so a reskin restyles it.
+- **Share buttons.** `<ShareButtons title path>`: Facebook and X share pages, a `mailto:` and Copy link, as plain links
+  in the outline button style; a "Share" button for the device share sheet appears only where `navigator.share` exists
+  and the pointer is coarse. No SDKs, no pixels, nothing from Facebook or X until a visitor clicks. In the starter it
+  sits under each journal post.
+
+**Weighed and left out.** Pagefind's own UI (`pagefind-ui.js`): heavier, its own look, and harder to fit the site's
+grammar; the JS API plus our panel is smaller and themed by tokens. Pagefind writes its UI files into
+`dist/client/pagefind/` anyway; nothing loads them. A share count or any network SDK: tracking, weight, and a
+third-party script on a church's sermon page.
+
+**Verified.** Starter with the switch on: `npm run build` (index written), `tests/search.spec.ts` green (header button
+finds `/contact/`, keyboard `/`, arrows, Escape; no results shows suggestions; `/search/?q=`; axe clean on the open
+dialog and the page; the mobile menu row), screenshots at 375 and 1280 in light and dark; then switched back off.
+
+**Adopting it in a site.** Copy the PORTABLE files, `npm install --save-dev --save-exact pagefind@1.5.2` then `npm ci`,
+add the `search` block to `src/data/site.ts`, chain `node scripts/build-search-index.mjs` onto `build`, add the
+`searchType` prop and the two `<main>` attributes to BaseLayout, put `<SearchButton>` in the header (desktop and
+mobile), `{site.search.enabled && <SiteSearch />}` once in Header, the MobileNav `search` prop, `searchType` and
+`<SearchMeta>` on the templates, `<ShareButtons>` where wanted, reserve `'search'`, keep `/search/` out of the sitemap,
+then build and run `npx playwright test tests/search.spec.ts`. Marked-file order: the starter
+merges first, then the site PR.
+
+**Status, 2026-10-18.** Starter `yes` (switch off). first-baptist-auburn on branch `feat/site-search`, on, PR after
+this merges. Other sites `no`.
+
+**Rolled out, 2026-10-19.** Applied on stonesteps-50k. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
 
 ## Card 127: the email backbone: one sender (Cloudflare or Resend), a newsletter with double opt-in, RSVPs (2026-10-18)
 
@@ -8625,77 +9634,110 @@ in the tool order; reserve `email` and `newsletter`; `npm run typegen`, `build`,
 **Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/email-backbone`, PR after this merges.
 Other sites `no`.
 
-## Card 125: the Studio on a phone, "Post a photo", and earlier versions from the nightly backups (2026-10-18)
+**Rolled out, 2026-10-19.** Applied on stonesteps-50k. On the other sites it is synced to starter a837dc3 only (synced, not individually verified).
 
-**Origin:** two editor needs: quick edits from a phone, photos included, and going back further than Sanity's three
-days of history. Quick update (card 111) already covered text on a phone, and `restore-doc.mjs` (card 111) already put
-one document back from a backup, but only the developer could run it. Built
-in the starter, then first-baptist-auburn.
+## Card 128: the Studio's design language, shared UI pieces, and a Site Guide worth reading (2026-10-18)
 
-**Canonical (PORTABLE):** `src/lib/studio-app.ts`, `src/pages/studio/manifest.webmanifest.ts`,
-`src/pages/studio/offline.astro`, `public/studio/sw.js`, the manifest link and worker registration in
-`src/pages/studio/index.astro`, the maskable icon in `scripts/generate-favicons.mjs`; `src/lib/photo-post.ts`,
-`src/sanity/kit/PostPhoto.tsx`, the photo button in `QuickUpdateTool.tsx`, `PostPhotoConfig` and
-`features.earlierVersions` in `kit/types.ts`, the inspector wiring in `kit/index.tsx`;
-`src/lib/earlier-versions.ts`, `src/pages/api/studio/earlier-versions.ts`, `src/sanity/kit/EarlierVersions.tsx`,
-`.github/workflows/restore-doc.yml`, `--scan`/`--run`/`--no-values` in `scripts/restore-doc.mjs` and
-`changeSummary`/`restoreRefusal`/`markerLine` in `scripts/lib/restore-doc.mjs`, `roles` on `StudioUser` in
-`src/lib/studio-auth.ts`; `src/sanity/guides/phoneGuides.ts`; tests `studio-app.test.ts`, `photo-post.test.ts`,
-`earlier-versions.test.ts`, `restore-doc.test.mjs`, `tests/studio-app.spec.ts`. Per site (NOT portable):
-`studioEdges.app` (short name, start page), `kitConfig.postPhoto` (gallery types, the post builder, a photo note),
-the one `guides.push(...phoneGuides(...))` line in `guides/content.ts`, and `public/icon-maskable-512.png`.
+**Origin:** first-baptist-auburn, 2026-10-18. The Site Guide was the part of the Studio an editor reads most and it
+looked like documentation pasted into a form: emoji icons, one flat list, tinted boxes. The Studio had a look (cards
+116, 118, 119) but no vocabulary a surface could draw in, so each new screen rebuilt its own. This card gives the
+Studio a small design language driven by the site's brand, then redraws the guide in it. Pick (design note and three
+mockups in the Auburn repo, `docs/design-directions/2026-10-18-studio-guide/`): A, the board page: a banner, a rule
+and marker opening each section, stones for steps, callouts in three tones. Built in the starter, then
+first-baptist-auburn.
+
+**Canonical (PORTABLE, new):** `src/lib/studio-look.ts` and `studio-look.test.ts`; `src/sanity/kit/ui/` (`look.ts`,
+`css.ts`, `primitives.tsx`, `GuideShot.tsx`, `index.ts`); `src/sanity/kit/guide/GuidePage.tsx` and `GuideIndex.tsx`;
+`src/sanity/kit/harness/Harness.tsx` and `src/pages/kit-harness/[name].astro` (dev-only bench, see below).
+**PORTABLE, existing, changed:** `src/sanity/kit/GuideTool.tsx` (rewritten on the new pieces),
+`src/sanity/kit/HelpPanel.tsx` (passes `variant="panel"` and `onOpen`), `src/sanity/kit/NavbarStatus.tsx` (text wraps and
+never clips), `src/sanity/kit/types.ts` (`KitGuide` gains optional `icon` and `diy`; `GuideViewProps`),
+`src/sanity/guides/phoneGuides.ts` (its three guide icons become meanings, from card 125),
+`docs/agent/studio-kit.md` ("The design language"). Not marked but kept identical: `brand/brand.config.schema.json`
+(`studio.look`). Per site: `brand.config.json` `studio.look`, `src/sanity/guides/content.ts`,
+`src/sanity/components/GuideView.tsx` (a thin wrapper), `src/sanity/structure.ts` (desk icons via `guideMeaning`),
+`public/guide-shots/`, and any marker art.
 
 **What it adds.**
 
-- **The Studio installs.** `/studio/manifest.webmanifest` (prerendered): `id` and `scope` `/studio/`,
-  standalone, the brand name and an optional short name, the navy chrome as `theme_color` and the paper as
-  `background_color`, the 192 and 512 icons and a maskable 512 (the mark at 60% on its own plate colour, or white; a site's own drawn one is kept). Only the boot
-  page links it, with the iOS app-title metas; the public site's `/site.webmanifest` stays `display: browser`.
-- **A service worker that stays out of the way.** `/studio/sw.js`, scope `/studio/`, registered by the boot page in
-  production builds only. The boot page is fetched fresh (network first) and falls back to `/studio/offline/` ("You're
-  offline. Your changes are saved when you're back online"); hashed `/_astro/*` files are kept and served first; icons,
-  the manifest and the offline page are served kept and refreshed behind. It NEVER keeps anything from another origin
-  (every Sanity API call, the realtime channel, cdn.sanity.io), `/api/**`, `/preview/**`, a non-GET, a request
-  carrying `Authorization`, or a range request. A unit test runs the file in a sandbox against those URLs.
-- **Post a photo.** The first Quick update button when `kitConfig.postPhoto` is set (and enough on its own to give
-  the tool): `<input type=file accept="image/*" capture>` for the camera plus a plain one for the phone's photos, a
-  required description (a file name or a number is refused), an optional caption, and a choice of every gallery on
-  `galleryTypes` (drafts perspective, labelled "Page: Gallery (n photos)") or a new post. The photo is redrawn at 2560px
-  at most as a JPEG, which also drops its EXIF (including where it was taken); GIFs and SVGs go up as they are. It is
-  appended to the page's DRAFT (made from the published copy when there is none) in one transaction and checked after,
-  or created as `drafts.<uuid>`. Nothing publishes: the done screen opens it in the full editor for the Studio's own
-  Publish and its validation.
-- **Earlier versions.** A document inspector on every document but the Trash. `GET /api/studio/earlier-versions/`
-  lists the backups GitHub keeps (artifact list, one per night, 14 at most); a scan or a restore POST dispatches
-  `restore-doc.yml` with a request id in the run's title; the panel polls, and the route reads the finished job's log
-  for the script's marker line. The scan reports, per night, whether the document is there and which fields differ
-  from now (names and list lengths only); the restore runs `restore-doc.mjs --run <id> --no-values` as a dry run and
-  then with `--apply`, `NCS_PRODUCTION_WRITE=yes` set on that one step. The route requires the same origin and a
-  signed-in member who is not only a viewer, refuses a backup run it did not list, rate-limits (20 seconds between
-  starts per editor, 10 an hour each, 30 in all per Worker instance), logs who asked, and fails closed without its
-  settings; the workflow re-checks every input and only ever sees them as environment variables. Without the settings
-  the panel offers "Ask <helper> to restore this".
-- **Site Guide.** "Put the Studio on your phone's home screen" (iPhone and Android steps), "Post a photo from your
-  phone" and "Go back to an earlier version", shared through `phoneGuides()`.
+- **A look, resolved from the brand.** `resolveLook()` reads `brand.config.json` `studio.look` (marker kind or art,
+  stone shape, connector, motion verb, motif, texture, edge colours, lettering, three callout hues, heading colour) plus
+  the Studio's colours, and returns light and dark tokens. Every text pair is AA and every mark 3:1, moved toward black
+  or white until it passes; `contrastPairs()` is the gate, run over the real brand and six awkward ones. An unknown
+  value is ignored with a note, not an error. The decorative connector colour is the site's own and is deliberately not
+  guarded.
+- **Callout markers keep the brand gold.** A tone has `fill` (the hue exactly as the brand names it) and `mark` (an
+  outline darkened to 3:1 on the callout ground). The first build darkened the fill itself and the tip callout went a
+  dull brown. `studio-look.test.ts` pins both: the fill equals the brand hue in light and dark, the outline is at 3:1.
+- **Shared pieces.** `kit/ui`: `KitScope`, `Marker`, `SectionRule`, `KitPanel`, `Stone`, `SeverityStone`, `StepPath`
+  (down or across, laid or drawn, still under reduced motion), `KitNotice`, `UiChip` (the real Studio buttons drawn
+  true), `InlineText`, `StoneTag`, `StatusBadge`, `ArtTile`, `KitCard`, `PullQuote`, `ColourEdge`, `Sill`, `Lettering`,
+  `PageBanner`, `KitLoading`, `GuideShot`. Later cards build the other Studio surfaces from these.
+- **The guide.** `GuideIndex` (banner, search, a featured "Start here" on the texture with a colour edge, groups as
+  cards) and `GuidePage` (banner, a rule and marker per section, stones for steps, three callout tones note, tip and
+  careful, optional quote and annotated screenshot blocks). Old block kinds and tones still render. Guide icons are
+  meanings (`guideMeaning()` maps the old icon names, and an emoji, to a registry meaning), so the desk's guide rows
+  and the guide agree.
+- **GuideShot.** An image with numbered, clamped marks and a caption list; `public/guide-shots/example-editor.svg` is a
+  wireframe placeholder until real captures replace it.
+- **The bench.** `/kit-harness/<name>/` renders the real Studio on a mock auth store (`/kit-harness/studio/`) or the guide
+  views (`/kit-harness/guide/?view=index|page|panel|ui&g=<slug>&scheme=light|dark`). `getStaticPaths` returns nothing
+  in a build, so check `dist` has no `kit-harness` page; start dev with `PUBLIC_SANITY_PROJECT_ID` set.
 
-**Safety calls.** The passphrase never leaves GitHub: the Worker holds only the deploy token it already had, and
-decrypting a backup in a Worker would also run into its memory limit on a full export. The run log is public on a public
-repository, so CI output is value-free by flag and by test. Sanity's own documents (ids starting `_`, `sanity.*` and
-`system.*` types) are never restored. Restores write drafts only.
+**Weighed and left out.** A fixed set of themes (the look is derived, so a new brand needs a few lines of config, not a
+skin). Redrawing every Studio surface in this card (about twenty are queued for the next card). The navbar status line
+clipping a user saw: not reproduced in the mock-auth Studio at 320 to 1440 wide, so only the defensive wrap shipped.
 
-**Weighed and left out.** A network-first-with-timeout or cache-first boot page (faster on a weak signal, but a copy
-from before a deploy can point at code files that deploy removed, and the Studio would half-load). Offline editing: the
-Studio needs Sanity to edit, so the offline page says so rather than pretending. Lighthouse's PWA audit: removed in
-Lighthouse 12; `tests/studio-app.spec.ts` asks Chrome itself (`Page.getInstallabilityErrors`) instead.
+**Verified.** `studio-look.test.ts` (tokens, contrast gate, awkward brands, stones and paths, guide helpers),
+`astro check`, build (no `kit-harness` page in `dist`), `test:unit`, `npm test`; screenshots at 1280 and 375, light
+and dark, in both repos (Auburn `docs/design-directions/2026-10-18-studio-guide/shots/build/`). Signed-in checks and
+real captures: `docs/PENDING.md`.
 
-**Adopting it in a site.** Needs cards 106, 111 and 120. Copy the PORTABLE files, run
-`npm run favicon -- --maskable-only` (it keeps an existing file; `--force-maskable` redraws it) and look at `public/icon-maskable-512.png`, set `studioEdges.app` and
-`kitConfig.postPhoto`, add the `phoneGuides` line to the guides, build, `npm run test:unit`, `npm test`. For
-Earlier versions: the backup running, `SANITY_API_WRITE_TOKEN` and `SANITY_PROJECT_ID` in the repo, and the Worker's
-`GITHUB_DEPLOY_TOKEN` with Actions: Read and write (OPERATIONS.md). Marked-file order: the starter merges first.
+**Adopting it in a site.** Needs cards 116, 118 and 119. Copy the PORTABLE files, take the `studio.look` schema, write a
+`studio.look` block (or leave it out for neutral defaults), make `GuideView.tsx` the thin wrapper, convert guide icons
+to names, run `npm run typegen`, `npm run test:unit` and open `/studio`. Marked-file order: the starter merges first, then
+the site PR.
 
-**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-pwa`, PR after this merges. Other
-sites `no`. Signed-in and on-device checks: `docs/PENDING.md` item 26.
+**Status, 2026-10-18.** Starter `yes`. first-baptist-auburn on branch `feat/studio-guide-design`, PR after this merges.
+Other sites `no`.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms, stonesteps-50k.
+
+## Card 129: the Studio signs in by token, says so plainly when it cannot, and Home can skip imported documents (2026-10-19)
+
+**Origin:** the 2026-10-19 signed-in checks on mas-monograms and stonesteps-50k. Live routes were fine (a valid Sanity
+token with the site's Origin got 200 from `/api/studio/messages/` and `/visitors/`), but the same Chrome that worked on
+Auburn and presacademy got 401 on those two. `studioToken()` reads only localStorage `__studio_auth_token_<projectId>`; a
+Studio signed in by cookie (Sanity's default `dual` login) has none, sends no Bearer header, and every kit route answers 401. Whether a browser held a token or a cookie depended on when and how it signed in.
+
+**Canonical (PORTABLE):** `src/lib/studio-signin.ts` and `studio-signin.test.ts` (new); `src/sanity/kit/shared.tsx`
+(`useTryAgain` uses `signInNote`), `src/sanity/workflow/studioApi.ts` (a 401 with no token says the one-time switch),
+`src/sanity/kit/HomeTool.tsx` and `src/sanity/kit/types.ts` (`recentIgnoreTypes`), `docs/agent/studio-kit.md`. Per site:
+the `auth` line in `sanity.config.ts` (not marked), and `recentIgnoreTypes` in `src/sanity/kit.config.ts` if wanted.
+
+**What it does.**
+
+- `sanity.config.ts` sets `auth: { loginMethod: 'token' }`, so every Studio session holds the token the kit's routes
+  verify.
+- When a kit call gets 401 and this browser sent no token, the editor reads: sign out from the menu, sign in again, once.
+  A 401 that did carry a token keeps the route's own words.
+- Optional `recentIgnoreTypes` hides types from Home's Recent edits and Pick up without taking them out of the Checkup
+  (Stone Steps' nightly-imported `result` documents showed as eight identical rows).
+
+**Weighed and left out.** Making the routes accept a cookie: the Worker cannot read Sanity's cookie for another origin.
+Result previews without a title is a per-site schema fix.
+
+**Verified.** `studio-signin.test.ts`, `astro check`, build, `test:unit`, `npm test`. Signed-in check: a browser signed in
+by cookie sees the new sentence on a failed "Try again", and after one sign-out and in the Home cards load.
+
+**Adopting it in a site.** Add the one `auth` line to `sanity.config.ts`; copy the PORTABLE files (marked-file order:
+the starter merges first, then the site PR); run `npm run typegen` and `npm run test:unit`. Every editor signs out and in
+once after the site deploys. stonesteps-50k#135 and mas-monograms#121 carry the config line already.
+
+**Status, 2026-10-19.** Starter `yes` (on merge). first-baptist-auburn on branch `fix/studio-token-login`. Others `no`
+except the config line on stonesteps-50k and mas-monograms.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms, stonesteps-50k.
 
 ## Card 130: real Studio screenshots in the Site Guide, with a per-site shot registry (2026-10-19)
 
@@ -8735,6 +9777,8 @@ own guide showing the wireframe.
 
 **Status, 2026-10-19.** Starter `yes`. first-baptist-auburn on branch `feat/guide-shots`, PR after this merges.
 Other sites `no`.
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms, stonesteps-50k.
 
 ## Card 131: every Studio surface in the design language, first pass (2026-10-19)
 
@@ -8781,6 +9825,8 @@ tiles, Visitors in mark colours, the splash and offline page, Section Look thumb
 sign-in heading.
 
 **Applied to:** ncs-astro-sanity-starter (canonical), first-baptist-auburn (branch, 2026-10-19).
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms, stonesteps-50k.
 
 ## Card 132: the Studio design pass, part two: Home, Post a photo, the tour, the splash and offline page (2026-10-19)
 
@@ -8837,6 +9883,8 @@ sign-in heading; PreviewNavigator's spinner (preview stack, left on purpose).
 
 **Applied to:** ncs-astro-sanity-starter (canonical), first-baptist-auburn (branch, 2026-10-19).
 
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms, stonesteps-50k.
+
 ## Card 133: Studio polish from a signed-in review: Home's ways-in tiles (2026-10-19)
 
 **Origin:** first-baptist-auburn, 2026-10-19, a live signed-in review of the Studio. At 1280 the Home grid put four
@@ -8860,6 +9908,8 @@ imports against its `BaseLayout.astro`.
 **Gates.** Kit harness at 375 and 1280 (`?view=surfaces&part=home`): no horizontal overflow, no title over two lines.
 
 **Applied to:** ncs-astro-sanity-starter (canonical), first-baptist-auburn (branch, 2026-10-19).
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms, stonesteps-50k.
 
 ## Card 134: a "How to" beside fields, and icons on every field group (2026-10-19)
 
@@ -8892,6 +9942,8 @@ inherited keys, cached). Kit harness `/kit-harness/studio/`: a page's Google tit
 section, Escape closes it, at 1280 and 375.
 
 **Applied to:** ncs-astro-sanity-starter (canonical), first-baptist-auburn (branch, 2026-10-19).
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms, stonesteps-50k.
 
 ## Card 135: Home's banner look is a style slot, and the hooks a site may select are documented and tested (2026-10-19)
 
@@ -8935,6 +9987,8 @@ at 1280 and 375: no horizontal scroll, each look draws.
 splash). docs/PENDING.md item 31.
 
 **Applied to:** ncs-astro-sanity-starter (canonical), first-baptist-auburn (branch, 2026-10-19; Auburn sets no style).
+
+**Rolled out, 2026-10-19.** Applied on fbcm (no matrix column), presacademy, reid-design-site, mas-monograms, stonesteps-50k.
 
 ## Card 136: Home's Visitors card reads Google Analytics 4, and a Search Console card, through studio-status (2026-10-19)
 
@@ -9047,3 +10101,39 @@ harness cannot open signed out. docs/PENDING.md item 32.
 
 **Applied to:** ncs-astro-sanity-starter (canonical), first-baptist-auburn (branch `feat/tours-videos`, 2026-10-19; a
 minimal config, the site agent writes Auburn's own).
+
+## Card 138: CI builds from a pinned content snapshot, and a scheduled live-watch checks the real site (2026-10-19)
+
+**Origin:** the church (fbcm) renamed its Staff page slug to `ministers` in the Studio. fbcm CI built against the LIVE
+dataset and its tests named `/staff`, so `build`, `test`, the e2e shards and the link check all went red on a docs-only
+PR. Sites are handed to clients; an editor renaming a page must never turn CI red or block a merge or a deploy. fbcm's
+earlier attempt (rewriting 24 specs to be content-agnostic plus an `@content` watch) was set aside: it touches every test
+in every repo and still reads live content. Pinning the content removes the coupling for all of them at once.
+
+**PORTABLE, new:** `scripts/snapshot.mjs` (`export`, `serve`, `run -- <cmd>`; a groq-js query server over a committed
+`ci/sanity-snapshot.ndjson.gz`, answering `/v<ver>/data/query/<dataset>` GET and POST; `snapshotClientOptions(env)`),
+`scripts/lib/snapshot.test.mjs`, `scripts/live-watch.mjs`, `.github/workflows/live-watch.yml`. `groq-js` 2.0.0 is a
+devDependency (already in the tree through `sanity`; pinned to that version).
+
+**Per site, not portable:** `ci/sanity-snapshot.ndjson.gz` (the data); a one-line spread in `src/lib/sanity.ts`
+(`snapshotUrl`), in `cmsQuery` of `astro.config.mjs` where it exists, and in every build-time script that calls
+`createClient`; `ci.yml`, `lighthouse.yml`, `visual.yml` wrap their build in `node scripts/snapshot.mjs run --`;
+the `SITE_URL` repo variable and the `live-watch.yml` schedule; `CLAUDE.md` / tests rules and the test inventory.
+
+**What it changes.** CI reads the published documents as of the last `export`, through a local server, with no token and
+no network to Sanity for documents. `deploy.yml` is untouched: production builds live. Required checks keep their names;
+nothing in the shape of `ci.yml` changes except the build command. A tests-name-a-page fixture is now stable until the
+snapshot is refreshed, and the refresh is a deliberate PR of ours. `live-watch` is the replacement for noticing a break:
+daily, not required, never on a PR, and a red scheduled run mails the owner.
+
+**Gates.** `scripts/lib/snapshot.test.mjs` (options, ndjson, params, a GET and POST round trip, a bad query is a 400).
+Proof per site: build from the snapshot, then `npm run parity compare` where a parity baseline exists, and a throwaway
+rename (snapshot copy with a page slug changed in the editor's way) that leaves `build` and `test` green.
+
+**Not covered, and why:** images and files are still fetched from cdn.sanity.io (a deleted asset could 404 in a
+screenshot test); the snapshot can go stale, which only matters when a deliberate refresh is needed; Studio-side
+behaviour is not content-dependent. Detail: `docs/claude/build-and-scripts.md`.
+
+**Follow-up (2026-10-19):** `live-watch.mjs` treats a missing `<h1>` as a warning, not a failure. The first live run on fbcm found `/visitor/` without one, and a daily red run for a nicety would have been muted.
+
+**Applied to:** ncs-astro-sanity-starter (canonical), stonesteps-50k, reid-design-site, fbcm (2026-10-19). Measured and not coupled (CI already builds on the empty placeholder, nothing to pin): presacademy, mas-monograms, first-baptist-auburn (only its non-required visual workflow reads live ids).
