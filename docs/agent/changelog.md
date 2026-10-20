@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-19: CI builds from a pinned content snapshot (starter card 138): `ci/sanity-snapshot.ndjson.gz`, `scripts/snapshot.mjs`, a daily non-blocking `live-watch.yml`._
+
 _2026-10-19: Auburn's own tours and Quick update jobs on card 137._
 
 **Decision.** The Phase A tour data became `src/sanity/studio-tours.ts` (pastor and staff first-run tours, Home and Quick update screen tours, three editor walk-throughs, a What's new entry), using the kit's anchors in place of the `needsHook` stops. Quick update gained a bulletin job (a `create` job with a PDF box, since the bulletin is a new download each week), Messages and RSVPs link tiles and a Send the newsletter tile that opens the Newsletter list, so the test-first send is unchanged. `guides/tours.ts` keeps only the video scripts. No new pictures or videos: Auburn is not launched.
