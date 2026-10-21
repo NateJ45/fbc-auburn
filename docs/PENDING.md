@@ -149,6 +149,13 @@ so on the warm ground it reads best large or on a white card. `npm run favicon` 
 
 DONE 2026-10-21: the auburn-and-navy palette is applied site-wide (DESIGN.md "Colors").
 
+DONE 2026-10-21: the pebble art is replaced by brick (`docs/design-directions/2026-10-21-brick-path/`):
+the section marker, the hero path (a low wall of three courses under the This Sunday card), the
+walk's numbered bricks, the card, sermon and panel tiles, the sill, the Studio banner strips and the
+share cards, all from `scripts/lib/brick-courses.mjs` via `npm run gen:stones`. Still stone: the
+Auburn Stone letterforms (the masthead and footer "Auburn", `StoneHeading.astro`), and the two
+layered pieces named above (`mark-layered.svg`, `baptism-layered.svg`).
+
 ### 1c. Finish the reskin: the rest of the mockups
 
 **Blocker: none; queued work.** The pick is recorded (A blended with B and C). The first pass
