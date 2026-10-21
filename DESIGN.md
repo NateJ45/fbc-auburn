@@ -90,7 +90,7 @@ ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the t
 - **Familjen Grotesk** for body, UI, labels and the tracked caps of the place line ("FIRST BAPTIST
   CHURCH OF").
 - **Auburn Stone** for stone headings only, 40 px and up: the page H1 in mosaic (letters cycle
-  green, deep sky, red, water; gold left out on light) or an H2 in one colour. Real text, so it
+  navy mid, navy, auburn, navy mid; light auburn left out on light) or an H2 in one colour. Real text, so it
   wraps and is searchable; falls back to Young Serif with identical metrics.
 - Body 18 px minimum, line length 60 to 72 characters.
 
@@ -117,6 +117,6 @@ floating element (a sticky "Plan your visit" bar on mobile).
 - Do mark unconfirmed facts (service times, the verse) until the church confirms them.
 - Don't put mosaic colour on H2s, borders, dividers or backgrounds.
 - Don't set Auburn Stone below 40 px.
-- Don't use gold or sky as text on white.
+- Don't use light auburn or light navy as text on the ground.
 - Don't use stock photography, crowd shots or anything that makes the church look bigger than it is.
 - Don't reuse the Muncie site's paper-and-ink ground, titling masthead or indigo bands.
