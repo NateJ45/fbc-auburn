@@ -28,6 +28,7 @@ import ChurchOverview from './components/ChurchOverview';
 import BrandKit from './components/BrandKit';
 import { DownloadsIntro, PeopleIntro, SermonsIntro } from './components/CollectionIntro';
 import { staffDesk } from './kit/shared';
+import { trashListItem } from './kit/trash';
 import { brandIcon, typeIcon, type BrandIcon } from './brandIcons';
 import { emptyAwareList } from './kit/emptyList';
 import { WEEK_TYPE } from '../lib/studio-kit';
@@ -487,16 +488,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
       // The Studio kit's Trash: "Move to Trash" keeps a copy here, and "Bring
       // it back" puts it where it was (src/sanity/kit/trash.tsx). The id is
       // load-bearing: the Checkup's "Open the Trash" links to it.
-      S.listItem()
-        .id('trash')
-        .title('Trash (bring things back)')
-        .icon(brandIcon('trash'))
-        .child(
-          S.documentTypeList(TRASH_TYPE)
-            .id('trash-list')
-            .title('Trash')
-            .defaultOrdering([{ field: 'deletedAt', direction: 'desc' }]),
-        ),
+      trashListItem(S, context, brandIcon('trash')),
 
       // Safety net: surface any document type we have NOT explicitly placed above
       // (and keep the hidden set out of the desk root). Every media.* type

@@ -12,8 +12,15 @@ import type { ComponentType } from 'react';
 import type { SanityClient } from 'sanity';
 import type { CheckGroup } from '../../lib/page-checks';
 import type { CheckupRule } from '../../lib/studio-checkup';
-import type { QuickFieldKind, StudioTarget } from '../../lib/studio-kit';
+import type { FieldGuideMap, QuickFieldKind, StudioTarget } from '../../lib/studio-kit';
+import type { BrandIconKey } from '../../lib/studio-icons';
+import type { HomeBannerStyle } from '../../lib/studio-banner-style';
 import type { GallerySpec } from '../../lib/photo-post';
+import type { QuickJob, QuickSeason } from '../../lib/studio-quick-jobs';
+import type { TourDef, WelcomeConfig, WhatsNewEntry } from '../../lib/studio-tour';
+
+export type { QuickJob, QuickSeason } from '../../lib/studio-quick-jobs';
+export type { TourDef, TourStop, WelcomeConfig, WhatsNewEntry } from '../../lib/studio-tour';
 
 /**
  * One recurring job on Home's "This week" card. It is ticked one of three ways
@@ -53,6 +60,14 @@ export interface QuickField {
   max?: number;
   /** A starting value ("2026-10-18"), worked out when the form opens. */
   initial?: (now: Date) => string;
+  /** Card 137 jobs: where the answer goes, dot-separated. Default: name. */
+  path?: string;
+  /** Card 137 jobs: 'blocks' stores text as Portable Text, 'slug' as a slug. */
+  as?: 'blocks' | 'slug';
+  /** For 'select': the choices. */
+  options?: { title: string; value: string }[];
+  /** For 'file' and 'image': the picker's accept ("application/pdf"). */
+  accept?: string;
 }
 
 /** What a Quick update form saves: a whole document, without its id. */
@@ -70,19 +85,31 @@ export interface QuickForm {
   title: string;
   detail?: string;
   icon?: ComponentType;
-  fields: QuickField[];
+  /** Card 131: the site's art for the tile (its stone icon); the icon is the fallback. */
+  meaning?: BrandIconKey;
+  /** Card 137: show this job only between these days (race week, Advent). */
+  when?: QuickSeason;
+  /** The form's fields. Not needed by 'toggle', 'upload' and 'link' jobs. */
+  fields?: QuickField[];
+  /**
+   * Card 137: a job declared as data (create, edit, append, upload, toggle,
+   * schedule; src/lib/studio-quick-jobs.ts). Use this OR build.
+   */
+  job?: QuickJob;
   /** The button at the bottom of the form ("Put it on the website"). */
   submitLabel?: string;
   /**
    * The answers (trimmed; a datetime as ISO) to a whole document. May be async, to look
    * something up with the client (the pastor's person id, say).
    */
-  build: (
+  build?: (
     values: Record<string, string>,
     ctx: { now: Date; client: SanityClient },
   ) => QuickDoc | Promise<QuickDoc>;
   /** One sentence after it is saved ("The notice shows until the day you picked."). */
   doneMessage?: string;
+  /** The done screen's heading. Default "Done. It is published." (a draft: "Saved."). */
+  doneTitle?: string;
 }
 
 /**
@@ -95,6 +122,22 @@ export interface PostPhotoConfig {
   galleryTypes: string[];
   /** Where a gallery and its photos live. Default: pageBuilder / gallerySection / images / alt / caption. */
   gallery?: Partial<GallerySpec>;
+  /**
+   * Card 143: documents with a photo list of their own (a room story's gallery),
+   * offered as places for the photo beside the page galleries. Draft only, like the rest.
+   */
+  stories?: {
+    types: string[];
+    field?: string;
+    altField?: string;
+    captionField?: string | null;
+    /** "Room story": the word before each name in the list. */
+    noun?: string;
+  };
+  /** Card 144: the example in "Describe the photo" ("The oak dresser against the sage wall"). */
+  altExample?: string;
+  /** Card 144: the line shown when there is nowhere to put a photo yet. Default: says so for the site's `stories` or galleries. */
+  emptyNote?: string;
   /** A new post made from the photo, saved as a draft. Missing: galleries only. */
   post?: {
     /** "A new journal post", as the choice reads. */
@@ -113,6 +156,13 @@ export interface PostPhotoConfig {
       now: Date;
     }) => QuickDoc;
   };
+  /**
+   * Card 137: the words for "it is a draft", on the Quick update tile and at the top of the
+   * form. Default: "Saved as a draft for you to publish." / "It is saved as a draft for you to
+   * check and publish."
+   */
+  tileLead?: string;
+  draftNote?: string;
   /** One line above the picker, for a site rule ("Only post children with a parent's permission."). */
   note?: string;
 }
@@ -160,6 +210,10 @@ export interface PageMapGroup {
 export interface TourStep {
   title: string;
   body: string;
+  /** A word or two for the stone trail across the top ("Publish"). Default: the title. */
+  short?: string;
+  /** The art on the step's stone (card 132). Default: the guide's. */
+  meaning?: BrandIconKey;
 }
 
 /** What the kit hands a site's GuideView (card 128). */
@@ -168,6 +222,11 @@ export interface GuideViewProps {
   variant?: 'page' | 'panel';
   /** Opens another guide in place (See also). Without it the view decides. */
   onOpen?: (slug: string) => void;
+  /**
+   * A heading of this guide to open at (card 134, the field "How to" chip):
+   * the view scrolls to it and moves focus there. Unknown text is ignored.
+   */
+  section?: string;
 }
 
 /** The help guides, as the site's Help & Guide data already holds them. */
@@ -226,6 +285,12 @@ export interface HomeBannerConfig {
   lettering?: { text: string; family: string; src: string; colors?: string[] };
   /** Where "View the website" goes. Default: the address the Studio is open on. */
   siteUrl?: string;
+  /**
+   * The banner's look (card 135): eyebrow, greeting, title, the button, the background, the
+   * motif's place and a stamp, as data. A site never styles the banner by class name; see
+   * `HomeBannerStyle` and docs/agent/studio-kit.md, "Home's banner style".
+   */
+  style?: HomeBannerStyle;
 }
 
 export interface KitConfig {
@@ -298,6 +363,12 @@ export interface KitConfig {
      * (card 110). The key '*' is the fallback for any type not listed.
      */
     forType?: Record<string, string[]>;
+    /**
+     * Which guide section explains a field, by field name or schema type
+     * (card 134). A mapped field gets a quiet "How to" chip after its
+     * description; every other field is drawn exactly as Sanity draws it.
+     */
+    forField?: FieldGuideMap;
   };
 
   /**
@@ -330,7 +401,17 @@ export interface KitConfig {
   /** How long a rebuild usually takes, for the navbar countdown. Default 3. */
   typicalUpdateMinutes?: number;
 
+  /** Card 106's single tour. Still works; with `tours` set it is ignored. */
   tourSteps: TourStep[];
+
+  /** Card 137: spotlight tours (first run, per role, on demand, per tool). */
+  tours?: TourDef[];
+
+  /** Card 137: the welcome modal, once per person. Missing: the first-run tour opens by itself. */
+  welcome?: WelcomeConfig;
+
+  /** Card 137: the dated changelog behind "What's new". */
+  whatsNew?: WhatsNewEntry[];
 
   /** After this many minutes, "on its way" becomes "taking longer than usual". */
   liveSlowAfterMinutes: number;
@@ -363,6 +444,8 @@ export interface KitConfig {
     navbarStatus?: boolean;
     /** The "Help for this page" document panel (card 110). Missing counts as on. */
     helpPanel?: boolean;
+    /** The "How to" chip on fields named in guide.forField (card 134). Missing counts as on. */
+    fieldHelp?: boolean;
     /**
      * The "Before you publish" document panel (card 123): the Checkup's
      * findings for the open document. Missing counts as on.

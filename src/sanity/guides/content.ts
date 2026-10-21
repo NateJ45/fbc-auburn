@@ -40,9 +40,11 @@
 // =============================================================================
 
 import { collectionGuides } from './collections.ts';
+import { EVERY_WEEK, WEEKLY_CATEGORY, weeklyGuides } from './weekly.ts';
 
 import type { KitGuideBlock } from '../kit/guide/GuidePage';
 import { phoneGuides } from './phoneGuides.ts';
+import type { FieldGuideMap } from '../../lib/studio-kit';
 
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
@@ -65,6 +67,8 @@ export const SITE = {
 
 export const GUIDE_CATEGORIES = [
   'Start here',
+  // FBC Auburn, 2026-10-19: the pastor's weekly jobs first (guides/weekly.ts).
+  WEEKLY_CATEGORY,
   'Pages and words',
   // FBC Auburn, 2026-10-18: one guide per group of page templates (src/sanity/pageTemplates.ts).
   'Page templates',
@@ -124,6 +128,7 @@ export const guides: Guide[] = [
           'Wait two or three minutes. The website rebuilds itself and your change appears.',
         ],
       },
+      { kind: 'shot', key: 'publish-button' },
       {
         kind: 'callout',
         tone: 'primary',
@@ -140,6 +145,7 @@ export const guides: Guide[] = [
           '`Site Guide`, where you are now, has the step-by-step help. `Help for this page` brings the right part of it up beside whatever you are editing.',
         ],
       },
+      { kind: 'shot', key: 'studio-tabs' },
       { kind: 'seealso', items: ['Change the words on a page'] },
     ],
   },
@@ -157,6 +163,7 @@ export const guides: Guide[] = [
         kind: 'p',
         text: 'A page is a stack of **sections**, one on top of the other. You edit what is inside a section. You do not have to think about colors or spacing: the design decides those from where the section sits on the page, which is why the site stays consistent no matter who edits it.',
       },
+      { kind: 'shot', key: 'edit-page' },
       { kind: 'h', text: 'Seeing it as you type' },
       {
         kind: 'steps',
@@ -168,12 +175,19 @@ export const guides: Guide[] = [
           'Publish when it reads right.',
         ],
       },
+      { kind: 'shot', key: 'live-preview' },
       {
         kind: 'callout',
         tone: 'primary',
         title: 'The preview shows your draft.',
         text: 'What you see in Live preview is your unpublished draft, not the live site. That is the point: you see the change before anyone else does.',
       },
+      { kind: 'h', text: 'Publishing it' },
+      {
+        kind: 'p',
+        text: 'The `Publish` button is at the bottom right of every page you edit. Press it when the words read right.',
+      },
+      { kind: 'shot', key: 'publish-button' },
       { kind: 'h', text: 'Adding something to Contact, Questions, News and notes or Privacy' },
       {
         kind: 'p',
@@ -1091,14 +1105,14 @@ export const guides: Guide[] = [
     slug: 'send-the-newsletter',
     category: 'Housekeeping',
     title: 'Send the weekly newsletter',
-    icon: '✉',
+    icon: 'mail',
     lead: 'Write it, publish it, send yourself a test, then send it to everyone.',
     diy: 'self',
     body: [
       {
         kind: 'steps',
         items: [
-          "Open `Newsletter` in the list on the left and press `+` for a new issue, or duplicate last week's.",
+          "From your phone, tap `Start this week's newsletter` in `Quick update`. At a desk, open `Newsletter` in the list on the left and press `+`, or duplicate last week's.",
           'Write the subject line and a few opening words, then pick what goes in. Leave out anything you do not need this week.',
           'Press `Publish`. Only the published issue is ever sent, so publish again after any change.',
           'Press `Send a test to me` (under the arrow beside Publish). Read it in your own inbox, on your phone too.',
@@ -1125,7 +1139,7 @@ export const guides: Guide[] = [
     slug: 'rsvps',
     category: 'Housekeeping',
     title: 'Let people RSVP',
-    icon: '✓',
+    icon: 'event',
     lead: 'Add an RSVP section to an event page and see who is coming.',
     diy: 'self',
     body: [
@@ -1169,6 +1183,19 @@ guides.push(
         kind: 'p',
         text: 'Home is a dashboard: it changes nothing by itself. Every card points somewhere, and the buttons take you straight there.',
       },
+      { kind: 'h', text: 'The tiles at the top' },
+      {
+        kind: 'p',
+        text: "Under the welcome banner are the jobs people do most, each one a tile: adding Sunday's sermon, changing the service times, adding a page, editing the menus. `Quick update` and `How do I...?` are here too.",
+      },
+      { kind: 'shot', key: 'home-tiles' },
+      { kind: 'h', text: 'The Sunday checklist and "Is it live?"' },
+      {
+        kind: 'p',
+        text: 'The checklist is the week\'s jobs in order, with a button on each that goes straight to the place to do it. Done jobs are ticked for you, and the list starts fresh every Monday. "Is it live?" sits beside it and shows where your last change has got to: saved, building, then on the website.',
+      },
+      { kind: 'shot', key: 'home-live' },
+      { kind: 'h', text: 'Further down' },
       {
         kind: 'bullets',
         items: [
@@ -1327,26 +1354,35 @@ guides.push(
     category: 'Start here',
     title: 'Quick update from your phone',
     icon: 'bolt',
-    lead: 'Three jobs made small enough for a phone.',
+    lead: 'The weekly jobs, made small enough for a phone.',
     diy: 'self',
     body: [
       {
         kind: 'p',
         text: 'Open the Studio on your phone, tap the menu at the top and choose `Quick update` (on Home it is also a button). Pick one:',
       },
+      { kind: 'shot', key: 'quick-update' },
       {
         kind: 'bullets',
         items: [
+          '**Post a photo**: from your camera or your photos, into a gallery or a new post. It is saved as a draft for you to publish.',
           '**Put up a notice**: a short line across the top of every page, until the last day you pick.',
           "**Add Sunday's sermon link**: the title and the YouTube or Facebook link. The date fills itself in as last Sunday.",
           '**Cancel or change something this week**: a notice in red that comes down by itself after Sunday.',
+          '**Tell people about an event**: a notice with the day and time that comes down after the event.',
+          '**Write a short news post**: a headline and a few lines for News and notes.',
+          "**Start this week's newsletter**: the subject and opening words. It is saved, not sent, until you send it from the full editor.",
         ],
       },
       {
         kind: 'p',
         text: 'Fill in the boxes and press the green button. It is published straight away and the website updates in a few minutes. To add more later (a summary, the audio), open it from `Content` as usual.',
       },
-      { kind: 'seealso', items: ['The Sunday checklist'] },
+      {
+        kind: 'p',
+        text: "The bulletin needs a file, so it has its own button on Home: `Put up this week's bulletin`.",
+      },
+      { kind: 'seealso', items: ['The Sunday checklist', 'Your week on the website'] },
     ],
   },
   {
@@ -1424,7 +1460,7 @@ guides.push(
     slug: 'messages',
     category: 'Housekeeping',
     title: 'Read messages from the website',
-    icon: '@',
+    icon: 'mail',
     lead: 'Everything people send through the forms, in one list.',
     diy: 'self',
     body: [
@@ -1691,6 +1727,18 @@ guides.push(
         kind: 'p',
         text: 'Click `Show me` to jump to the box that needs a look. The list updates as you type. None of it stops you publishing: it is there to catch what is easy to miss.',
       },
+      { kind: 'h', text: 'The same list for the whole website' },
+      {
+        kind: 'p',
+        text: '`Checkup` in the bar at the top gives the list for every page at once, in three groups: **Needs doing**, **Worth a look** and **Good to know**. `Open it` jumps to the page that needs the fix, and `Check again` looks the website over once more. Nothing is changed there. It only points the way.',
+      },
+      { kind: 'shot', key: 'checkup' },
+      { kind: 'h', text: 'Then publish' },
+      {
+        kind: 'p',
+        text: 'When the list is clear, or you have decided what is left can wait, press `Publish`.',
+      },
+      { kind: 'shot', key: 'publish-button' },
       { kind: 'seealso', items: ['Help for this page', 'Get help with the words'] },
     ],
   },
@@ -1701,6 +1749,11 @@ guides.push(
 // line when rewriting the guides above.
 guides.push(...phoneGuides(SITE.contactName));
 
+// The pastor's week (guides/weekly.ts, 2026-10-19), then every weekly job, wherever it
+// was written, filed under "Every week" so the Site Guide opens on them.
+guides.push(...weeklyGuides);
+for (const g of guides) if (EVERY_WEEK.includes(g.slug)) g.category = WEEKLY_CATEGORY;
+
 /**
  * Which guides "Help for this page" shows for each document type (kit.config.ts
  * guide.forType, PORTS.md card 110). '*' is the fallback for anything unlisted.
@@ -1708,8 +1761,8 @@ guides.push(...phoneGuides(SITE.contactName));
  */
 export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   '*': ['edit-a-page', 'help-panel', 'before-you-publish', 'undo-earlier'],
-  announcement: ['schedule-publish', 'quick-update', 'undo-earlier'],
-  journalEntry: ['schedule-publish', 'writing-help', 'undo-earlier'],
+  announcement: ['put-up-a-notice', 'tell-about-an-event', 'snow-sunday', 'schedule-publish'],
+  journalEntry: ['news-post', 'post-a-photo', 'schedule-publish', 'writing-help', 'undo-earlier'],
   // FBC Auburn: the church's own guides first where they fit.
   page: [
     'edit-a-page',
@@ -1728,7 +1781,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   privatePage: ['make-a-page-private', 'edit-a-page'],
   form: ['make-a-form', 'prayer-requests', 'messages'],
   homePage: ['home-page', 'add-sermon', 'images-and-alt', 'seo-fields'],
-  newsletter: ['send-the-newsletter'],
+  newsletter: ['send-the-newsletter', 'tell-about-an-event', 'your-week'],
   siteSettings: [
     'church-facts',
     'contact-give-live',
@@ -1743,6 +1796,44 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   sermonsPage: ['podcast', 'add-sermon'],
   person: ['add-person'],
   personGroup: ['add-person'],
-  download: ['bulletin'],
+  download: ['bulletin', 'your-week'],
   redirect: ['rename-a-page'],
+};
+
+/**
+ * Which guide section explains a field (kit.config.ts guide.forField, PORTS.md
+ * card 134). A field named here, or of a type named here, gets a quiet "How to"
+ * chip after its description that opens the guide at that heading (`section`
+ * is the text of one of the guide's `{ kind: 'h' }` blocks; leave it out to
+ * open at the top). Name fields that mean one thing everywhere: `seoTitle`, not
+ * `title`. src/lib/studio-guides.test.ts checks every guide and heading exists.
+ */
+export const GUIDE_FOR_FIELD: FieldGuideMap = {
+  fields: {
+    seoTitle: { guide: 'seo-fields' },
+    seoDescription: { guide: 'seo-fields' },
+    alt: { guide: 'images-and-alt', section: 'What the description is for' },
+    pageBuilder: { guide: 'edit-a-page', section: 'How a page is built' },
+    slug: { guide: 'rename-a-page' },
+    look: { guide: 'section-looks', section: 'Change one' },
+    // Church facts > service times, and a notice's "How important is it?".
+    serviceTimes: { guide: 'church-facts' },
+    urgency: { guide: 'snow-sunday' },
+    publishAt: { guide: 'schedule-publish' },
+    password: {
+      guide: 'make-a-page-private',
+      section: 'Private: only people with the password can see it',
+    },
+    // Shown on the fields owners get wrong most (2026-10-19, docs/agent/studio-plan.md).
+    // file is only the download's PDF; videoUrl is the same link on a sermon and on the
+    // Watch and replay sections.
+    file: { guide: 'bulletin', section: 'From your phone' },
+    videoUrl: { guide: 'add-sermon', section: 'Copying the video link' },
+    excerpt: { guide: 'news-post', section: 'A longer post, at a desk' },
+    givingUrl: { guide: 'contact-give-live' },
+    preheader: { guide: 'send-the-newsletter' },
+    capacity: { guide: 'rsvps' },
+  },
+  // Schema type name -> section, for a type used in many places (none yet).
+  types: {},
 };

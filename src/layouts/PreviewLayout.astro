@@ -18,6 +18,10 @@
    editable surface and a click opens Site settings in the edit panel.
    ============================================================================ */
 import '../styles/globals.css';
+// The brand layer BaseLayout loads, in the same order (card 133). Without it the preview drew
+// the This Sunday pill white on white (--auburn-red-dark undefined) and the buttons plain.
+import '@/styles/starwind.css';
+import '@/styles/auburn.css';
 import VisualEditingOverlay from '@/components/preview/VisualEditingOverlay.tsx';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';

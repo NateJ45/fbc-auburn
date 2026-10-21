@@ -23,6 +23,8 @@
 //   - Card 111: the weekly tick document (Home's hand-ticked jobs), the Quick
 //     update tool (kitConfig.quickUpdate) and plain words in empty lists
 //     (EMPTY_LIST_BUNDLE; emptyAwareList() is for structure.ts).
+//   - Card 134: a quiet "How to" chip after the description of each field
+//     that guide.forField maps to a Site Guide section (FieldGuide.tsx).
 // =============================================================================
 
 import { definePlugin, type LayoutProps } from 'sanity';
@@ -34,6 +36,7 @@ import { WEEK_TYPE } from '../../lib/studio-kit';
 import { TRASH_TYPE } from '../../lib/studio-trash';
 import { makeCheckupTool } from './CheckupTool';
 import { EMPTY_LIST_BUNDLE } from './emptyList';
+import { makeFieldGuide } from './FieldGuide';
 import { makeGuideTool } from './GuideTool';
 import { makeHelpPanel } from './HelpPanel';
 import { makeHomeTool } from './HomeTool';
@@ -43,7 +46,8 @@ import { withPublishNote } from './publishNote';
 import { makeQuickUpdateTool } from './QuickUpdateTool';
 import { makeEarlierVersions } from './EarlierVersions';
 import { staffViewFor, useStaffView } from './shared';
-import { StudioTour } from './StudioTour';
+import { StudioTour, registerTours } from './StudioTour';
+import { allTours } from '../../lib/studio-tour';
 import {
   DeleteForeverAction,
   makeMoveToTrashAction,
@@ -95,13 +99,20 @@ export function ncsStudioKit(config: KitConfig) {
   const earlierVersions =
     config.features.earlierVersions === false ? null : makeEarlierVersions(config);
 
+  // Card 134: a quiet "How to" after the description of each field the
+  // guides config maps to a Site Guide section. Null when nothing is mapped.
+  const FieldGuideField = makeFieldGuide(config);
+
+  // Card 137: the tours, known before any tool draws its "How this screen works".
+  if (config.features.tour) registerTours(allTours(config.tours, config.tourSteps));
+
   function KitLayout(props: LayoutProps) {
     const { staffView } = useStaffView(config);
     return (
       <>
         {staffView && <style>{STAFF_CSS}</style>}
         {props.renderDefault(props)}
-        {config.features.tour && <StudioTour steps={config.tourSteps} />}
+        {config.features.tour && <StudioTour config={config} />}
       </>
     );
   }
@@ -121,6 +132,8 @@ export function ncsStudioKit(config: KitConfig) {
     studio: {
       components: { layout: KitLayout, ...(KitNavbar ? { navbar: KitNavbar } : {}) },
     },
+
+    ...(FieldGuideField ? { form: { components: { field: FieldGuideField } } } : {}),
 
     tools: (prev, { currentUser }) => {
       const kitTools = [

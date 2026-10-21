@@ -13,6 +13,7 @@
 //           checking the chrome: the navbar status line, the Site Guide tool.
 //   guide   the Guide's pieces on a bare page in the Studio theme:
 //           ?view=index|page|panel|ui, &g=<guide slug>, &scheme=light|dark.
+//           ?view=surfaces&part=all|tool|checkup|clear|loading|failed|home (card 131).
 //
 // Screenshots: scripts/studio-harness-shots.mjs (run with the dev server up).
 // =============================================================================
@@ -39,25 +40,16 @@ import {
   StepPath,
   UiChip,
 } from '../ui';
-import type { GuideShotData } from '../../../lib/studio-look';
+import { PLACEHOLDER_SHOT, type GuideShotData } from '../../../lib/studio-look';
+import { SurfacesBench } from './Surfaces';
+import { HomeBanner } from '../HomeBanner';
+import { BANNER_LOOKS } from './bannerLooks';
 
 /** The Studio's two font stacks, as sanity.config.ts uses them. */
 const fonts = (brand as { studio: { fonts: { display: string; body: string } } }).studio.fonts;
 
-/** An illustrative shot: a drawing of the editor, kept in public/guide-shots/. */
-export const EXAMPLE_SHOT: GuideShotData = {
-  src: '/guide-shots/example-editor.svg',
-  alt: 'A drawing of the editor: the page form on the left and the Publish button at the bottom right.',
-  width: 1280,
-  height: 760,
-  marks: [
-    { kind: 'ring', x: 80.5, y: 88.5, w: 17, h: 8, label: 'The Publish button' },
-    { kind: 'stone', x: 34, y: 33, label: 'Type in the boxes. It saves as a draft.' },
-    { kind: 'stone', x: 89, y: 80, label: 'Publish when it reads right.' },
-    { kind: 'arrow', x: 66, y: 64, toX: 79, toY: 87 },
-  ],
-  caption: 'An illustration, not a screenshot. Real captures replace it later.',
-};
+/** The wireframe a guide shows for a shot key the site has no capture for (card 130). */
+export const EXAMPLE_SHOT: GuideShotData = PLACEHOLDER_SHOT;
 
 function mockStudioConfig(): Config {
   const base = config as Config & { projectId: string; dataset: string };
@@ -92,6 +84,31 @@ function StudioBench() {
   );
 }
 
+/**
+ * Card 135: Home's banner with a style from bannerLooks.ts (?look=fbcm|presacademy|reid|mas|stonesteps),
+ * or the site's own (?look=site, the default) or none (?look=none), so each shape and the
+ * stamp can be looked at without a signed-in Studio.
+ */
+function BannerBench({ look }: { look: string }) {
+  const site = kitConfig.homeBanner ?? {};
+  const banner =
+    look === 'site'
+      ? site
+      : look === 'none'
+        ? { ...site, style: undefined }
+        : { ...site, style: BANNER_LOOKS[look]?.style };
+  return (
+    <HomeBanner
+      now={new Date('2026-10-19T09:30:00')}
+      hello="Good morning"
+      firstName="Ann"
+      title={brand.name}
+      intro="You cannot break the website by editing. Nothing goes live until you press Publish."
+      banner={banner}
+    />
+  );
+}
+
 function GuideBench() {
   const q = new URLSearchParams(window.location.search);
   const scheme = q.get('scheme') === 'dark' ? 'dark' : 'light';
@@ -109,13 +126,21 @@ function GuideBench() {
       siteName={kitConfig.siteName}
       onOpen={setSlug}
       variant={view === 'panel' ? 'panel' : 'page'}
+      // Card 134: &s=<heading> opens at that section, as a field's "How to" does.
+      section={q.get('s') ?? undefined}
       linkTo={() => ({ href: '#', onClick: (e) => e.preventDefault() })}
     />
   );
   return (
     <ThemeProvider theme={theme} scheme={scheme}>
       <Card style={{ minHeight: '100vh' }} padding={[3, 4, 5]}>
-        <div style={{ maxWidth: view === 'panel' ? 380 : 820, margin: '0 auto' }}>
+        <div
+          style={{
+            maxWidth:
+              view === 'panel' ? 380 : view === 'surfaces' || view === 'banner' ? 1100 : 820,
+            margin: '0 auto',
+          }}
+        >
           {view === 'index' && (
             <GuideIndex
               guides={guides}
@@ -127,6 +152,8 @@ function GuideBench() {
             />
           )}
           {(view === 'page' || view === 'panel') && page}
+          {view === 'surfaces' && <SurfacesBench part={q.get('part') ?? 'all'} />}
+          {view === 'banner' && <BannerBench look={q.get('look') ?? 'none'} />}
           {view === 'ui' && (
             <KitScope>
               <div style={{ display: 'grid', gap: 36 }}>

@@ -1,5 +1,85 @@
 # Change history
 
+_2026-10-19: CI builds from a pinned content snapshot (starter card 138): `ci/sanity-snapshot.ndjson.gz`, `scripts/snapshot.mjs`, a daily non-blocking `live-watch.yml`._
+
+_2026-10-19: Auburn's own tours and Quick update jobs on card 137._
+
+**Decision.** The Phase A tour data became `src/sanity/studio-tours.ts` (pastor and staff first-run tours, Home and Quick update screen tours, three editor walk-throughs, a What's new entry), using the kit's anchors in place of the `needsHook` stops. Quick update gained a bulletin job (a `create` job with a PDF box, since the bulletin is a new download each week), Messages and RSVPs link tiles and a Send the newsletter tile that opens the Newsletter list, so the test-first send is unchanged. `guides/tours.ts` keeps only the video scripts. No new pictures or videos: Auburn is not launched.
+
+_2026-10-19: the Studio teaches itself: tours, clips, Quick update jobs as data (PORTS card 137)._
+
+**Decision.** The card 106 tour becomes a spotlight engine whose steps are plain data in each site's `src/sanity/studio-tours.ts`, anchored to the kit's own `data-tour` hooks and to a short, documented list of Sanity selectors; a missing anchor centres the popover rather than failing, so a Sanity rename degrades a tour instead of breaking it. A welcome and a dated What's new open once per person from localStorage and open nothing when storage is blocked. Quick update gains six job kinds declared as data, so a site covers its weekly jobs without writing save code; edits write the published copy and any open draft together so they never drift. Guides play the site's own clips from a registry by key, poster first. The recorder and the screenshot script drive the local kit harness with writes refused and the avatar and names covered. Background music is optional, mixed at a quiet bed, and never committed: the repos are public and the track's licence is not theirs.
+
+_2026-10-19: Home's Visitors card reads Google Analytics 4, and a Search Console card (PORTS card 136)._
+
+**Decision.** No Google key in any site Worker: the studio's own Worker, studio-status, already holds the read-only
+service account, so it gains a `SiteData` RPC entrypoint and each site binds to it (`SITE_DATA`, `SITE_DATA_KEY`). The
+site builds the report bodies and maps the answers onto the same shape the Cloudflare source makes, so the card draws
+either. `ANALYTICS_PROVIDER` picks the source; unset, Cloudflare wins when it is set up, so no existing site moves.
+GA4's own AI Assistant channel feeds the AI assistants group, with the source names as a fallback. Search Console is
+its own card under Visitors, hidden until set up, reading 28 days that end three days ago because Google's search
+figures lag. A refused key says "finish connecting Google" and nothing more. The in-Worker JWT sign-in, built first,
+stays as a tested optional fallback for a site outside the studio's account. Fixtures, a mock binding and a throwaway
+key in the tests; nothing calls Google.
+
+_2026-10-19: the Studio covers the pastor's whole week (studio-plan.md)._
+
+**Decision.** `docs/agent/studio-plan.md` maps each weekly, monthly and seasonal job to the Studio surface that serves it. Quick update gained three phone jobs (an event notice, a short news post, starting the week's newsletter, which is saved and never sent from there); the bulletin, which needs a file box Quick update does not have, replaced "Edit the menus" on Home's big buttons. The Site Guide opens on a new "Every week" category with four new guides and six more "How to" field chips. New screenshots and videos wait for launch, when the content is real; tours and video scripts are written as data in `src/sanity/guides/tours.ts` for the shared tour pieces (starter card 137). Sermon, post and newsletter web addresses now always keep their date (`datedSlug`), so a long title can no longer make two the same.
+
+_2026-10-19: Home's banner look is a style slot, not site CSS (PORTS card 135)._
+
+**Decision.** Five sites restyled Home's banner with CSS files that selected the kit's class names and Sanity's `data-ui` markup, so a kit rename would have switched their looks off without a failing test. The look is now data in `kitConfig.homeBanner.style` (eyebrow, greeting, title, the button's shape and colours, the background, the motif's place, a stamp), checked for contrast and for anything that could break a stylesheet, and the only markup a site may select is a short documented set (`data-hb-part` names, `data-hb-*` attributes, `--hb-*` variables) that a unit test holds. It lives in `kit.config.ts` beside the banner's other fields, not in `brand.config.json`, because a banner's fonts and button are not devices the whole Studio shares and a TypeScript type catches a wrong key. With no style set the banner is unchanged. The five sites' rules are written as migration recipes in studio-kit.md.
+
+_2026-10-19: a "How to" beside fields, and icons on every field group (PORTS card 134)._
+
+**Decision.** A field the guides config names (by field name, or by schema type) gets a quiet "How to" chip after its
+description that opens that Site Guide section in a dialog; every other field is left exactly as Sanity draws it, and
+the lookup is cached so the form does not slow. Field-group tabs take their icons from `brand.config.json` alone. The
+branded heading inside the sign-in card stays undone: sanity 6.19 offers it only through a custom auth store, which
+loses Sanity's own expired-session and CORS screens.
+
+_2026-10-19: Studio polish, Home's ways-in tiles (PORTS card 133)._
+
+**Decision.** Home's job tiles use a 260px minimum so the dashboard column holds three across at most, and a tile's art sits top left beside its title instead of floating at the middle. A title wraps to two lines, not three.
+
+_2026-10-19: real Studio screenshots in the Site Guide (PORTS card 130)._
+
+**Decision.** The guides that most need a picture now show the church's own Studio, captured signed in on the live site,
+with numbered stones, rings and arrows on the real controls. A guide asks for a picture by key and
+`src/sanity/guides/shots.ts` holds the eight captures (`studio-tabs`, `home-tiles`, `home-live`, `edit-page`,
+`publish-button`, `quick-update`, `live-preview`, `checkup`) as WebP files in `public/guide-shots/`, each cropped, with
+the account avatar and the greeting name covered. They sit in "Start here: how this all works", "Change the words on a
+page", "What Home in the Studio shows you", "Quick update from your phone" and "Before you publish". Those last three also
+gained a few lines of text so the words match what the pictures show (the tiles, the Sunday checklist and "Is it live?",
+the fourth Quick update job, the Checkup). The unit test `guide-shots.test.ts` checks the files, the alt text and the marks.
+
+_2026-10-19: the Studio design pass, part two: Home, Post a photo, the tour, the splash and offline page (PORTS card 132)._
+
+**Decision.** A finished step is laid only in the calm mark colours (`look.calm`), so "On the website" is never the
+warning colour, and a step not yet done is the same hand-laid stone outlined in its colour rather than a circle. Home's
+ways in are tiles with the colour edge and the site's art; Coming up rows carry a date on a stone; Recent edits and
+Pick up rows carry the type's art; Visitors is a display-font figure over bars in the calm colours; the newsletter and
+RSVP cards match. Post a photo is a three-stone path, the tour has a stone trail and a lettered banner, the splash lays
+the path while the Studio loads and the offline page shares it (with the last stone not yet laid). `restore` is a
+meaning of its own. The Section Look radio draws each look as a small section in the site's devices. The last kit spinners are the
+laid-stones loader.
+
+_2026-10-19: eight more stone icons for the Studio (help, restore, quick, mail, settings, trash, calendar, palette)._
+
+**Decision.** Six more meanings now draw stone art in `src/sanity/brandIconArt.tsx`: help, quickUpdate (the quick-update tool), message (messages and the newsletter), settings (Site settings and the settings and meta groups), trash (the Trash) and publishing (the scheduling group, drawn as the calendar), plus brandKit as the palette. They were generated in Gemini and vectorised faithfully. The restore (undo arrow) stone is in `src/assets/brand/` but not mapped: no meaning key stands for it yet, because the guides' `restore` and `bolt` are glyph names, not meanings.
+
+_2026-10-19: every Studio surface in the design language, first pass (PORTS card 131)._
+
+**Decision.** The Studio's middle now draws in card 128's language instead of plain @sanity/ui. Tool headings carry the
+site's rule, art and display type; Home's cards are white cards with a marker and a display-font title; findings are
+white cards with their severity along the left edge, grouped "Needs doing / Worth a look / Good to know", with an
+all-clear that lays three stones over the motif; the weekly checklist is a path whose stones are the checkboxes; "Is
+it live?" and the navbar line are three stones (Saved, Building, On the website); Quick update has art tiles and a
+done screen that shows the path laid so far; a prayer request in Messages is a gentle sky callout. The pieces are
+presentational (`kit/ui/surfaces.tsx`) so a dev-only bench can draw them with made-up data. The kit stylesheet now
+goes into the page once instead of once per card. Severity is always words as well as colour; every new colour pair
+is in the contrast gate.
+
 _2026-10-19: eight stone icons for the Studio (guide, page, camera, home, eye, search, link, checkup)._
 
 **Decision.** Eight more meanings now draw the brand's stone art in the Studio: guide, page, image, home, preview, search, link and checkup, in `src/sanity/brandIconArt.tsx` and `src/assets/brand/stone-icon-*.svg`. They were generated in Gemini and vectorised faithfully, with no redrawing. `page` replaces the building-blocks stone it used before; `pages` and the section meanings keep theirs.

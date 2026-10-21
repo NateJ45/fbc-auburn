@@ -16,6 +16,25 @@ sequence).
 
 ## Waiting on a human
 
+### 1z. Card 136: Search Console on Home, once the church's domain is chosen (opened 2026-10-19)
+
+**Blocker: the domain cutover, then a Google service account.** Card 136 came in with the starter: the Visitors card can
+read GA4 and a "Found on Google" card can show Search Console. Auburn stays on Cloudflare Web Analytics
+(`ANALYTICS_PROVIDER` unset, Cloudflare picked first), so nothing changed on its Home. Once the church's own domain is
+live and verified in Search Console, add Auburn to studio-status's `SITE_DATA` (and give its service account access), then
+bind `SITE_DATA` and set `SITE_DATA_KEY` here (`docs/agent/studio-kit.md`, "Google Analytics and Search Console").
+
+### 1y. Studio complete: pictures, videos and tours at launch (opened 2026-10-19)
+
+The weekly jobs are mapped in `docs/agent/studio-plan.md`. Held until launch, when the content is real: the eight
+"shot to capture at launch" pictures listed there, retaking `quick-update` and `home-tiles` (both now out of date),
+and recording the six videos scripted in `src/sanity/guides/tours.ts`. Signed in, try each Quick update job once on
+a phone (event, news post, newsletter, bulletin, and the Messages, RSVPs and newsletter tiles).
+
+### 1x. Card 133 (Studio polish): check it signed in on the live Studio (opened 2026-10-19)
+
+Home's ways-in tiles now fit three across with the art top left, and Live preview loads the brand layer (`auburn.css`, `starwind.css`) so the This Sunday pill shows its words instead of white on white. Both were checked on the kit bench and by build output, not on the live Studio (the preview needs the Worker token). After the deploy: open Live preview on Home and confirm the pill, and the tiles at the dashboard width. Then delete this entry.
+
 ### 1w. Card 129 (token sign-in): every editor signs in once (opened 2026-10-19)
 
 **Blocker: each editor signs out and in once after this deploys.** `sanity.config.ts` now sets `auth: { loginMethod: 'token' }`
@@ -317,7 +336,7 @@ edit in Site settings > Church facts, then a publish.
 2026-10-17 (`docs/agent/studio-kit.md`): Home, Site Guide, Checkup, the staff view, Trash, the note after Publish
 and the tour, checked signed in at `/studio` in light and dark. Still to do:
 
-- **Nathan to review the new stone icons; alternatives in the overnight scratchpad.** Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`.
+- **Nathan to review the new stone icons; alternatives in the overnight scratchpad.** Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`; eight more (help, restore, quick, mail, settings, trash, calendar, palette) followed. The restore stone has no meaning key yet (a `restore` meaning in the starter's `BRAND_ICON_KEYS` would use it).
 - **The editor's Sanity user id in `kitConfig.staff`** once he has accepted the invitation. Until then the staff
   view goes by role, and he is an administrator, so he would see the full Studio.
 - **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its
@@ -452,7 +471,7 @@ Sanity session (401), and the Studio loads with the plugin, signed out, no conso
 
 ### 1t. Card 128 (Studio design language, Site Guide): captures, art, the signed-in checks (opened 2026-10-18)
 
-Unit-tested, checked, built and Playwright-clean, and seen in the dev bench (`/kit-harness/guide/`, `/kit-harness/studio/`) at 375 and 1280, light and dark. Still open: (a) real Studio screenshots for `GuideShot` in place of the wireframe `public/guide-shots/example-editor.svg`; (b) art for the eight guide meanings that have only a placeholder glyph on a stone (the Gemini brief is drafted; liked art goes into Figma as it is); (c) the navbar status line: a signed-in check on the live Studio, since the clipping seen once did not reproduce under mock auth (the text now wraps; ask for a screenshot with the exact width if it persists); (d) the next card: redraw the remaining roughly twenty Studio surfaces from `src/sanity/kit/ui/`.
+Unit-tested, checked, built and Playwright-clean, and seen in the dev bench (`/kit-harness/guide/`, `/kit-harness/studio/`) at 375 and 1280, light and dark. Still open: (a) DONE by card 130: eight real captures in `public/guide-shots/` with the marks in `src/sanity/guides/shots.ts`; recapture a picture (and move its marks) whenever the Studio screen it shows changes; (b) art for the eight guide meanings that have only a placeholder glyph on a stone (the Gemini brief is drafted; liked art goes into Figma as it is); (c) the navbar status line: a signed-in check on the live Studio, since the clipping seen once did not reproduce under mock auth (the text now wraps; ask for a screenshot with the exact width if it persists); (d) the next card: redraw the remaining roughly twenty Studio surfaces from `src/sanity/kit/ui/`.
 
 ### 1h. Sermons, people and downloads: the human half (opened 2026-10-18)
 
@@ -532,6 +551,26 @@ check. Once the first sermon and news post are published and deployed:
   and run `npx playwright test tests/search.spec.ts`: the share half finds the sermon and news pages by itself.
 
 ## Known gaps, deliberately open
+
+### Card 137 on Auburn: map the tours and record the clips (opened 2026-10-19)
+
+The tour engine, the clip player, the job kinds and the capture scripts are in (PORTS.md card 137). `src/sanity/studio-tours.ts` now holds Auburn's own tours (mapped 2026-10-19). Still to do at launch: try each tour signed in (the anchors on documents and the newsletter's send step were not checked against the live Studio), then record the clips (`tools/tutorial-videos/`), fill `src/sanity/guides/videos.ts`, and capture the shots (`tools/guide-shots/shots.json`). Detail: `docs/agent/studio-kit.md` "Spotlight tours".
+
+### 17. Card 135: Home's banner style slot (2026-10-19)
+
+Home's banner takes its look from `kitConfig.homeBanner.style` when the site sets one; Auburn sets none and its banner is unchanged. Nothing to do here unless the banner is restyled: do it in the slot, never in CSS by class name (docs/agent/studio-kit.md, "Home's banner style").
+
+### 16. Cards 131 and 132: the Studio surfaces still in plain @sanity/ui (opened 2026-10-19)
+
+Cards 131 and 132 redrew tool headings, Home (every card), the findings, the weekly checklist, "Is it live?", Quick
+update, Post a photo, the tour, the Section Look radio, Messages, the empty lists, CollectionIntro (Sermons, People, Downloads), the splash and the offline page in the design language.
+The Section Look radio now draws each look as a small section in the site's devices. Card 134 added the field "How to"
+chip (ten fields mapped in `GUIDE_FOR_FIELD`, guides/content.ts) and icons on every document field group. The sign-in
+heading is blocked in sanity 6.19: `AuthConfig` has no login component slot, and a custom `AuthStore` drops the
+Studio's request handler (studio-kit.md "The edges"). Revisit on each Sanity upgrade. A chip on the sermon's video
+link waits on field keys scoped by document type (`videoUrl` is also a section field). PreviewNavigator keeps its Spinner (preview stack; change it only with the
+preview rules in hand). Also: check the new surfaces signed in on the live Studio (the bench uses made-up data).
+Detail: `docs/agent/studio-kit.md` "Every surface in the language".
 
 ### 1u. Section looks and the photo viewer: the signed-in check (opened 2026-10-18)
 

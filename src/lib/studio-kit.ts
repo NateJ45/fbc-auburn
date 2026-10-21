@@ -374,7 +374,18 @@ export function checklist(
 // Quick update forms (PORTS.md card 111)
 // -----------------------------------------------------------------------------
 
-export type QuickFieldKind = 'string' | 'text' | 'date' | 'datetime' | 'url';
+/** Card 111's five kinds, plus card 137's number, boolean, select, file and image. */
+export type QuickFieldKind =
+  | 'string'
+  | 'text'
+  | 'date'
+  | 'datetime'
+  | 'url'
+  | 'number'
+  | 'boolean'
+  | 'select'
+  | 'file'
+  | 'image';
 
 export interface QuickFieldRule {
   name: string;
@@ -383,6 +394,8 @@ export interface QuickFieldRule {
   required?: boolean;
   /** For 'string' and 'text': the most characters allowed. */
   max?: number;
+  /** For 'select' (card 137): the choices. */
+  options?: { title: string; value: string }[];
 }
 
 /** Plain-words problems with a quick form's answers, by field name. Empty means good to go. */
@@ -405,7 +418,84 @@ export function quickFormErrors(
       errors[f.name] = 'Pick a date.';
     } else if (f.kind === 'datetime' && Number.isNaN(Date.parse(v))) {
       errors[f.name] = 'Pick a date and time.';
+    } else if (f.kind === 'number' && !Number.isFinite(Number(v))) {
+      errors[f.name] = 'Type a number.';
+    } else if (f.kind === 'select' && f.options && !f.options.some((o) => o.value === v)) {
+      errors[f.name] = 'Pick one of the choices.';
     }
   }
   return errors;
+}
+
+// -----------------------------------------------------------------------------
+// "How to" beside a field (card 134)
+// -----------------------------------------------------------------------------
+// A small map in the site's guides config says which Site Guide section
+// explains a field: by the field's NAME (`seoTitle`, `alt`) or by its schema
+// TYPE (`seo`, `image`), the name winning. The Studio draws a quiet "How to"
+// chip after the field's description that opens that section. A field the map
+// does not name is left exactly as Sanity draws it.
+
+/** Where a field's "How to" opens: a guide, and optionally one of its headings. */
+export interface FieldGuideLink {
+  /** The guide's slug. */
+  guide: string;
+  /** The text of one of the guide's headings (a `{ kind: 'h' }` block). */
+  section?: string;
+}
+
+/** The map, in the site's guides config (`GUIDE_FOR_FIELD`). */
+export interface FieldGuideMap {
+  /** Field name -> guide section. Use names that mean one thing (`seoTitle`, not `title`). */
+  fields?: Record<string, FieldGuideLink>;
+  /** Schema type name -> guide section, for a type used in many places. */
+  types?: Record<string, FieldGuideLink>;
+}
+
+/**
+ * A lookup for the field wrapper: `(name, typeNames) => link | null`. Built
+ * once per Studio; answers are cached by name and type chain, because the
+ * wrapper runs for every field on every render and must cost next to nothing.
+ * An empty map gives a lookup that always answers null.
+ */
+export function fieldGuideLookup(
+  map: FieldGuideMap | undefined | null,
+): (name: string, typeNames: readonly string[]) => FieldGuideLink | null {
+  const fields = map?.fields ?? {};
+  const types = map?.types ?? {};
+  const own = (o: Record<string, FieldGuideLink>, k: string) =>
+    Object.prototype.hasOwnProperty.call(o, k) ? o[k] : undefined;
+  if (!Object.keys(fields).length && !Object.keys(types).length) return () => null;
+  const cache = new Map<string, FieldGuideLink | null>();
+  return (name, typeNames) => {
+    const key = `${name}|${typeNames.join('>')}`;
+    const hit = cache.get(key);
+    if (hit !== undefined) return hit;
+    let found: FieldGuideLink | null = own(fields, name) ?? null;
+    for (const t of typeNames) {
+      if (found) break;
+      found = own(types, t) ?? null;
+    }
+    cache.set(key, found);
+    return found;
+  };
+}
+
+/**
+ * Card 142: Sanity 6's date and datetime inputs draw their own header (title,
+ * description, time zone) from the schema type, so a "How to" chip in the field's
+ * description slot never shows. True when the type chain says the field is one of
+ * them, and the chip goes under the input instead.
+ */
+export function drawsOwnHeader(typeNames: readonly string[]): boolean {
+  return typeNames.some((n) => n === 'date' || n === 'datetime');
+}
+
+/** The anchor id of a guide section ("What alt text is" -> "what-alt-text-is"). */
+export function guideSectionId(slug: string, heading: string): string {
+  const s = heading
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return `guide-${slug}--${s || 'section'}`;
 }

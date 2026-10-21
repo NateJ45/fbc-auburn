@@ -22,6 +22,9 @@
 // The buttons ask /api/studio/ai/ once per Studio visit whether the site has
 // writing help set up (the ANTHROPIC_API_KEY secret). Until it has, they do
 // not appear, so a site without the key looks exactly as it did before.
+//
+// Card 132: waiting is the kit's laid-stones loader and a failed request is a
+// careful callout (src/sanity/kit/ui), not a spinner and a grey line.
 // =============================================================================
 
 import { useCallback, useEffect, useState } from 'react';
@@ -36,7 +39,8 @@ import {
   type InputProps,
   type Path,
 } from 'sanity';
-import { Box, Button, Card, Dialog, Flex, Spinner, Stack, Text, TextArea } from '@sanity/ui';
+import { Box, Button, Dialog, Flex, Stack, Text, TextArea } from '@sanity/ui';
+import { KitLoading, KitNotice, KitScope } from '../kit/ui';
 import { AI_PATH, documentText, type AiInput, type AiTask } from '../../lib/studio-ai';
 import { studioApi, WORKFLOW_API_VERSION } from '../workflow/studioApi';
 
@@ -152,48 +156,50 @@ export function SuggestionCard({
   useEffect(() => setDraft(text), [text]);
   const [copied, setCopied] = useState(false);
   return (
-    <Card padding={3} radius={2} border tone="primary">
-      <Stack gap={3}>
-        <Text size={1} muted>
-          A suggestion. Change any of it before you use it, and check the facts.
-        </Text>
-        <TextArea
-          value={draft}
-          rows={Math.min(8, Math.max(2, Math.ceil(draft.length / 70)))}
-          onChange={(e) => setDraft(e.currentTarget.value)}
-          aria-label="Suggested words"
-        />
-        {note && (
+    <KitScope>
+      <KitNotice tone="note" title="A suggestion">
+        <Stack gap={3}>
           <Text size={1} muted>
-            {note}
+            Change any of it before you use it, and check the facts.
           </Text>
-        )}
-        <Flex gap={2} wrap="wrap">
-          {onUse ? (
-            <Button
-              text={useLabel}
-              tone="primary"
-              fontSize={1}
-              padding={2}
-              disabled={!draft.trim()}
-              onClick={() => onUse(draft.trim())}
-            />
-          ) : (
-            <Button
-              text={copied ? 'Copied' : 'Copy the words'}
-              tone="primary"
-              fontSize={1}
-              padding={2}
-              onClick={() => {
-                void navigator.clipboard?.writeText(draft).then(() => setCopied(true));
-              }}
-            />
+          <TextArea
+            value={draft}
+            rows={Math.min(8, Math.max(2, Math.ceil(draft.length / 70)))}
+            onChange={(e) => setDraft(e.currentTarget.value)}
+            aria-label="Suggested words"
+          />
+          {note && (
+            <Text size={1} muted>
+              {note}
+            </Text>
           )}
-          <Button text="Try again" mode="ghost" fontSize={1} padding={2} onClick={onAgain} />
-          <Button text="No thanks" mode="bleed" fontSize={1} padding={2} onClick={onClose} />
-        </Flex>
-      </Stack>
-    </Card>
+          <Flex gap={2} wrap="wrap">
+            {onUse ? (
+              <Button
+                text={useLabel}
+                tone="primary"
+                fontSize={1}
+                padding={2}
+                disabled={!draft.trim()}
+                onClick={() => onUse(draft.trim())}
+              />
+            ) : (
+              <Button
+                text={copied ? 'Copied' : 'Copy the words'}
+                tone="primary"
+                fontSize={1}
+                padding={2}
+                onClick={() => {
+                  void navigator.clipboard?.writeText(draft).then(() => setCopied(true));
+                }}
+              />
+            )}
+            <Button text="Try again" mode="ghost" fontSize={1} padding={2} onClick={onAgain} />
+            <Button text="No thanks" mode="bleed" fontSize={1} padding={2} onClick={onClose} />
+          </Flex>
+        </Stack>
+      </KitNotice>
+    </KitScope>
   );
 }
 
@@ -208,16 +214,23 @@ function AskButton({ task, busy, onClick }: { task: AiTask; busy: boolean; onCli
         disabled={busy}
         onClick={onClick}
       />
-      {busy && <Spinner muted />}
+      {busy && (
+        // The button already says "Thinking of something...": the stones alone.
+        <KitScope>
+          <KitLoading label="" />
+        </KitScope>
+      )}
     </Flex>
   );
 }
 
 function ErrorLine({ message }: { message: string }) {
   return (
-    <Text size={1} muted role="status">
-      {message}
-    </Text>
+    <KitScope>
+      <div role="status">
+        <KitNotice tone="careful">{message}</KitNotice>
+      </div>
+    </KitScope>
   );
 }
 
@@ -385,12 +398,9 @@ function ParagraphHelp({
                 </Text>
               </Stack>
               {state.kind === 'busy' && (
-                <Flex align="center" gap={2}>
-                  <Spinner muted />
-                  <Text size={1} muted>
-                    Thinking of something...
-                  </Text>
-                </Flex>
+                <KitScope>
+                  <KitLoading label="Thinking of something..." />
+                </KitScope>
               )}
               {state.kind === 'error' && <ErrorLine message={state.message} />}
               {state.kind === 'ready' && (
