@@ -133,6 +133,27 @@ domain and their mail.
 
 ---
 
+### 1x. Logo: the brick cross candidate (opened 2026-10-21)
+
+**Blocker: a human decision.** The logo direction is being reconsidered against the church's
+real building (brick, white trim, a plain red cross by the road). Candidate masters live in
+`brand/logo/` (drawn by `npm run logo`, geometry hand-set in `scripts/brand-logo.mjs`):
+seven stepped brick courses in five auburn tones with the cross cut out as negative space,
+chisel-cut edges, plus mono, reversed, a five-course favicon and the Young Serif lockups.
+They are NOT wired in: the header still imports `src/assets/logo-*.svg` and the tab icon is
+`public/favicon.svg`. To do once a direction wins: a solid-cross fallback under 16 px, swap
+the header, favicons, OG card and Studio mark (`apply-brand` paths), retire the old masters,
+and update DESIGN.md "Components". Until then nothing on the live site changes.
+
+Same day, the second colour: navy beside auburn on a warm white ground (DESIGN.md "Colors",
+decision paragraph). The sixteen stone icons recoloured into the two families are candidates
+in `brand/icons/` (`npm run icons:recolour`), the shipped ones in `src/assets/brand/` are
+unchanged. Applying the palette is its own planned pass, because the current palette is
+hardwired across `src/styles/auburn.css`, `home-board.css`, `globals.css` (`--feature*`,
+`--stone*`, card 124), the textures, the Studio banner and the OG card, and `theme-tokens`
+gates `brand.config.json` against `globals.css`: config, `apply-brand`, those files, the
+surfaces test, then the 375 and 1280 sweep, in one session.
+
 ### 1c. Finish the reskin: the rest of the mockups
 
 **Blocker: none; queued work.** The pick is recorded (A blended with B and C). The first pass
