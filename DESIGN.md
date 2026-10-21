@@ -58,6 +58,21 @@ generous white space, honest about size. Must not look like the First Baptist Ch
 
 ## Colors
 
+Decision 2026-10-21, not yet applied to the site: the brand moves to **two families and a
+warm ground**. Auburn (`#9A3B2A`, dark `#7E2E20`, light `#B5503A`; the colour the church is
+named after and the colour of its brick) for the mark, the subject of each stone icon and at
+most one call to action per page. Navy (`#1F3A5F`, mid `#2C4F7C`, light `#7F98B8`; the
+lettering on the church's own sign) for text, links, buttons, H2s and the supporting pieces
+of each icon. Ground is a warm white, not paper white, with the light navy as the tinted band.
+The exact ground value is open: the sheet that won used `#F4EDE2`, which is close to the
+cream this brief rules out below, so the applied value should be lighter (`#FBF8F3` or
+near) and checked against the Muncie site. Candidate masters: `brand/logo/` (the mark and
+lockups) and `brand/icons/` (the sixteen stone icons recoloured). Applying it is a reskin
+pass: `brand.config.json` and `apply-brand`, `src/styles/auburn.css`, `home-board.css`, the
+textures and Studio banner, the `--feature*` and `--stone*` literals in `globals.css` (card
+124, `surfaces.test.ts`), the OG card, then the 375 and 1280 sweep. Until that lands the
+seven-colour palette below is what the site renders.
+
 - Seven brand colours, each with a role. **Deep sky** is the everyday one colour (links, buttons,
   H2s, the avatar ground). **Green** is the second structural colour. **Red** is reserved for the
   cross and at most one call to action per page. **Gold** and **sky** are accents only (stepping
