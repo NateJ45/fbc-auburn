@@ -35,7 +35,7 @@
   background: var(--hb-line, var(--border));
 }
 .hb-band .hb-label::after {
-  background: rgb(23 26 38 / 0.14);
+  background: rgb(22 38 61 / 0.14);
 }
 .hb-marker {
   flex: none;

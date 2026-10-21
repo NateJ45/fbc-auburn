@@ -13,16 +13,16 @@ const base: LookBase = {
   paper: '#fbfbfa',
   dark: '#15171a',
   chrome: '#1e2a3a',
-  accent: '#586577',
+  accent: '#4A5A73',
   accentOnDark: '#aab0b8',
 };
 
 // A look like a real church site's: art marker, pebbles, dashes, lettering made for a dark banner.
 const church: StudioLookInput = {
-  markColors: ['#2C5B3A', '#235E93', '#C4401F', '#3B83AA'],
+  markColors: ['#2C4F7C', '#1F3A5F', '#9A3B2A', '#2C4F7C'],
   stone: 'pebble',
-  connector: { kind: 'dashes', color: '#E8A93A' },
-  lettering: { family: 'Site Stone', src: '/fonts/stone.woff2', colors: ['#FFFFFF', '#96C3EA'] },
+  connector: { kind: 'dashes', color: '#B5503A' },
+  lettering: { family: 'Site Stone', src: '/fonts/stone.woff2', colors: ['#FFFFFF', '#7F98B8'] },
   motion: 'lay',
 };
 
@@ -45,7 +45,7 @@ describe('splashPath', () => {
     const b = splashPath(look);
     assert.deepEqual(a, b, 'seeded');
     assert.equal(a.connector, 'dashes');
-    assert.equal(a.connectorLight, '#e8a93a');
+    assert.equal(a.connectorLight, '#b5503a');
     assert.equal(a.stones[0].light, look.light.stones[0].fill);
     assert.equal(a.stones[4].light, look.light.stones[0].fill, 'colours cycle');
     // Stones sit inside the view box and do not overlap their neighbours.

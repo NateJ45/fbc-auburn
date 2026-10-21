@@ -31,12 +31,12 @@ export function lcg(seed) {
 
 /** The mark's six colours, and nothing else. */
 export const MARK = {
-  deep: '#235E93',
-  green: '#2C5B3A',
-  sky: '#3B83AA',
-  water: '#96C3EA',
-  red: '#C4401F',
-  gold: '#E8A93A',
+  deep: '#1F3A5F',
+  green: '#2C4F7C',
+  sky: '#2C4F7C',
+  water: '#7F98B8',
+  red: '#9A3B2A',
+  gold: '#B5503A',
 };
 
 // Keep a*x + b*y <= c (Sutherland-Hodgman against one half-plane).

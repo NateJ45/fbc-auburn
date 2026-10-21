@@ -37,29 +37,29 @@ export const TILES = {
   deep: {
     size: 420,
     // A grout close to the stones, so the texture stays behind the card's white text (Home critic).
-    grout: '#205890',
-    fills: ['#235E93', '#24609A', '#225B8E', '#26639B'],
+    grout: '#1B3354',
+    fills: ['#1F3A5F', '#213D64', '#1D3659', '#23405F'],
     seed: 7,
   },
   // The sermon and series art with no picture (SermonArt.astro, block polish 2026-10-18): three
   // grounds for the book name, picked per series. Grout close to the stones, as above.
   green: {
     size: 420,
-    grout: '#285236',
-    fills: ['#2C5B3A', '#2E5F3D', '#2A5737', '#306240'],
+    grout: '#274874',
+    fills: ['#2C4F7C', '#2E527F', '#2A4B77', '#305581'],
     seed: 13,
   },
   navy: {
     size: 420,
-    grout: '#1A2B3F',
-    fills: ['#1D2F44', '#1F3249', '#1B2C40', '#21354C'],
+    grout: '#11294A',
+    fills: ['#16304D', '#18334F', '#142C47', '#1A3552'],
     seed: 17,
   },
   // A pale sky ground: a person with no photo (PersonCard.astro) and the library's quiet panels.
   sky: {
     size: 420,
-    grout: '#D3E3F3',
-    fills: ['#E6F0FA', '#E9F2FB', '#E1ECF8', '#EDF4FC'],
+    grout: '#D3DCE8',
+    fills: ['#E6EBF2', '#E9EEF5', '#E1E8F1', '#EDF1F7'],
     seed: 19,
   },
 };
@@ -89,9 +89,9 @@ const svgOf = ({ width, height }, stones) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">` +
   stones.map((st) => `<path d="${st.d}" fill="${st.fill}"/>`).join('') +
   '</svg>\n';
-// On the navy Home banner the mark's green (#2C5B3A) nearly disappears into the ground, so the
+// On the navy Home banner the mark's green (#2C4F7C) nearly disappears into the ground, so the
 // banner strips (and only they) draw that run in a lighter green of the same hue (2026-10-18).
-const BANNER_GREEN = '#5E9B6B';
+const BANNER_GREEN = '#D98A74';
 const onNavy = (stones) =>
   stones.map((st) => (st.fill === MARK.green ? { ...st, fill: BANNER_GREEN } : st));
 const banner = onNavy(stonePath(PATHS.banner));

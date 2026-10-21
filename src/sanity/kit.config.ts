@@ -615,12 +615,12 @@ export const kitConfig: KitConfig = {
     mark: '/studio-banner/mark.svg',
     motif: '/studio-banner/stone-path.svg',
     motifNarrow: '/studio-banner/stone-path-phone.svg',
-    accent: '#E8A93A',
+    accent: '#B5503A',
     lettering: {
       text: 'Auburn',
       family: 'Auburn Stone',
       src: '/fonts/auburn-stone.woff2',
-      colors: ['#FFFFFF', '#96C3EA', '#E8A93A'],
+      colors: ['#FFFFFF', '#7F98B8', '#D98A74'],
     },
   },
 

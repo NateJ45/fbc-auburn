@@ -71,14 +71,14 @@
   justify-items: start;
   gap: 0.4rem;
   padding: clamp(0.9rem, 2.4vw, 1.5rem);
-  background: #1d2f44 url('/textures/tile-navy.svg') 0 0 / 420px 420px;
+  background: #16304d url('/textures/tile-navy.svg') 0 0 / 420px 420px;
   color: #fff;
 }
 .c-art--deep {
-  background: #235e93 url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+  background: #1f3a5f url('/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
 .c-art--green {
-  background: #2c5b3a url('/textures/tile-green.svg') 0 0 / 420px 420px;
+  background: #2c4f7c url('/textures/tile-green.svg') 0 0 / 420px 420px;
 }
 .c-art--blank svg {
   width: clamp(52px, 16cqi, 96px);
@@ -101,10 +101,10 @@
   color: #ffffff;
 }
 .c-art__word .w1 {
-  color: #96c3ea;
+  color: #7f98b8;
 }
 .c-art__word .w2 {
-  color: #e8a93a;
+  color: #b5503a;
 }
 .c-art__play {
   position: absolute;
@@ -337,7 +337,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-card > a:hover .c-art,
 .c-card > a:focus-visible .c-art {
   transform: translateY(-4px);
-  box-shadow: 0 26px 48px -30px rgb(23 26 38 / 0.5);
+  box-shadow: 0 26px 48px -30px rgb(22 38 61 / 0.5);
 }
 @media (prefers-reduced-motion: reduce) {
   .c-card .c-art {
@@ -394,7 +394,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-photo--blank {
   display: grid;
   place-items: center;
-  background: #e9f2fb url('/textures/tile-sky.svg') 0 0 / 420px 420px;
+  background: #e9eef5 url('/textures/tile-sky.svg') 0 0 / 420px 420px;
   font-family: 'Auburn Stone', 'Young Serif', serif;
   font-size: clamp(3rem, 8vw, 4.5rem);
   line-height: 1;
@@ -467,7 +467,7 @@ a:focus-visible > .c-art .c-art__play,
   border: 1px solid var(--border);
   border-radius: 20px;
   background: var(--background);
-  box-shadow: 0 24px 48px -36px rgb(23 26 38 / 0.45);
+  box-shadow: 0 24px 48px -36px rgb(22 38 61 / 0.45);
 }
 .c-feature__label {
   display: flex;
@@ -498,7 +498,7 @@ a:focus-visible > .c-art .c-art__play,
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 14px;
-  background: #1d2f44;
+  background: #16304d;
 }
 .c-player__frame > a {
   position: absolute;

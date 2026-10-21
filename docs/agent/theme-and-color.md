@@ -4,6 +4,10 @@
 >
 > **FBC Auburn is light only (decided 2026-10-17, CLAUDE.md rule 3).** The theme toggle is removed and the bootstrap in `BaseLayout.astro` defaults to light and ignores the system setting; only a stored `dark` (seeded by the shared dark test suites) turns dark on. The rest of this page describes the starter's three-state system, which is still in the code underneath.
 
+## FBC Auburn palette (applied 2026-10-21)
+
+Two families on a warm ground: navy `#1F3A5F` (primary, links, buttons, H2s, the Feature band), auburn `#9A3B2A` (the mark, icon subjects, at most one call to action per page), ground `#FBF8F3`, soft band `#F4EFE7`, ink `#16263D`. Roles, contrast numbers and the full list are in `DESIGN.md` "Colors". Change colours in `brand/brand.config.json`, run `npm run apply-brand` (the `theme-tokens` gate fails if config and `globals.css` disagree), then update the hexes hardwired in `src/styles/*.css`, the `--feature*` / `--stone*` literals and the swatches in `src/lib/surfaces.ts` (`surfaces.test.ts` measures them), `npm run gen:stones` for the ribbon, `public/textures` and `public/studio-banner`, then `npm run build`, `npm run og` and `npm run thumbnails`. The table below is the starter's generic default, kept for reference.
+
 ## Default palette
 
 The starter ships a neutral Slate/Ink/Paper palette. These are the defaults to build on and test against; a consuming project re-skins by editing the design seam described at the end of this document.

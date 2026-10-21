@@ -91,7 +91,7 @@ describe('studio look: the tip callout keeps the brand gold', () => {
 });
 
 describe('studio look: awkward brands still read', () => {
-  const awkward = ['#E8C547', '#C9D8C5', '#000000', '#808080', '#D62828', '#1D4ED8'];
+  const awkward = ['#C96A52', '#C8D2E0', '#000000', '#808080', '#D62828', '#1D4ED8'];
   for (const accent of awkward) {
     it(accent, () => {
       const colors = studioColors({ accent, chrome: accent, lightBackground: '#FFFFFF' }, stock);
@@ -239,17 +239,17 @@ describe('calm stones (card 132)', () => {
   it('leaves the warning hue out of the colours that say done', () => {
     // Auburn: green, blue, brick, sky; careful is the same brick.
     assert.deepEqual(
-      calmStones(['#2c5b3a', '#235e93', '#c4401f', '#3b83aa'], '#c4401f'),
+      calmStones(['#2C4F7C', '#1F3A5F', '#9A3B2A', '#2C4F7C'], '#9A3B2A'),
       [0, 1, 3],
     );
   });
   it('keeps every stone when none is near the warning hue, or all are', () => {
-    assert.deepEqual(calmStones(['#235e93', '#2c5b3a'], '#c2410c'), [0, 1]);
-    assert.deepEqual(calmStones(['#c4401f'], '#c4401f'), [0]);
+    assert.deepEqual(calmStones(['#1F3A5F', '#2C4F7C'], '#c2410c'), [0, 1]);
+    assert.deepEqual(calmStones(['#9A3B2A'], '#9A3B2A'), [0]);
   });
   it('is on every resolved scheme', () => {
     const look = resolveLook(
-      { markColors: ['#2C5B3A', '#C4401F'], tones: { careful: '#C4401F' } },
+      { markColors: ['#2C4F7C', '#9A3B2A'], tones: { careful: '#9A3B2A' } },
       lookBase(studioColors({}, stock), {}),
     );
     assert.deepEqual(look.light.calm, [0]);
@@ -266,7 +266,7 @@ describe('studio look: neutral warnings (card 139)', () => {
       neutralLookWarnings({
         marker: 'steps',
         stone: 'pebble',
-        markColors: ['#2C5B3A', '#235E93'],
+        markColors: ['#2C4F7C', '#1F3A5F'],
         connector: { kind: 'dashes' },
       }),
       [],

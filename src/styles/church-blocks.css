@@ -197,7 +197,7 @@
   background-color: var(--auburn-deep);
   background-image: url('/textures/tile-deep.svg');
   background-size: 420px 420px;
-  box-shadow: 0 30px 60px -36px rgb(23 26 38 / 0.7);
+  box-shadow: 0 30px 60px -36px rgb(22 38 61 / 0.7);
   color: #ffffff;
 }
 
@@ -238,7 +238,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #dbeaf8;
+  color: #dbe3ee;
 }
 /* One time column for the whole card: the rows share the list's grid (display: contents), so
    9:45 and 11:00 line up whatever their width. */
@@ -284,7 +284,7 @@
   border: 1px solid var(--border);
   border-radius: 20px;
   background: var(--background);
-  box-shadow: 0 24px 48px -36px rgb(23 26 38 / 0.45);
+  box-shadow: 0 24px 48px -36px rgb(22 38 61 / 0.45);
 }
 .cb-board {
   display: grid;
@@ -512,7 +512,7 @@
   transition: box-shadow 160ms ease;
 }
 .cb-accordion details[open] {
-  box-shadow: 0 24px 48px -36px rgb(23 26 38 / 0.45);
+  box-shadow: 0 24px 48px -36px rgb(22 38 61 / 0.45);
 }
 .cb-accordion summary {
   display: flex;
@@ -548,7 +548,7 @@
 .cb-accordion details[open] summary::after {
   content: '\2212';
   background: var(--auburn-gold);
-  color: #171a26;
+  color: #16263d;
 }
 .cb-accordion__answer {
   padding: 0 1.5rem 1.25rem;
@@ -618,7 +618,7 @@
   background-color: var(--auburn-green);
   background-image: url('/textures/tile-green.svg');
   background-size: 420px 420px;
-  box-shadow: 0 30px 60px -36px rgb(23 26 38 / 0.6);
+  box-shadow: 0 30px 60px -36px rgb(22 38 61 / 0.6);
   color: #ffffff;
 }
 .cb-verse__mark {
@@ -645,7 +645,7 @@
   font-style: normal;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #e1efe5;
+  color: #e9eef5;
 }
 .cb-verse .cb-link {
   color: #ffffff;
@@ -661,7 +661,7 @@
 }
 .cb-notice--urgent {
   border-color: #e9b4a6;
-  background: #fbe9e4;
+  background: #f6e4df;
 }
 .cb-notice__inner {
   display: flex;
@@ -680,7 +680,7 @@
   font-weight: 700;
 }
 .cb-notice--urgent .cb-notice__tag {
-  background: #8f2c14;
+  background: #7e2e20;
   color: #ffffff;
 }
 .cb-notice__message {
@@ -695,7 +695,7 @@
   color: #5e1d0d;
 }
 .cb-notice--urgent .cb-link {
-  color: #8f2c14;
+  color: #7e2e20;
 }
 
 /* ---- Countdown: the words, and the number on the deep stone card beside them ---- */
@@ -736,7 +736,7 @@
   font-family: var(--font-display);
   font-size: clamp(1.4rem, 3vw, 1.9rem);
   line-height: 1.2;
-  color: #dbeaf8;
+  color: #dbe3ee;
 }
 .cb-count__now {
   margin: 0;
@@ -753,8 +753,8 @@
   gap: 0.4rem;
   padding: 0.2rem 0.7rem;
   border-radius: 999px;
-  background: #fbe9e4;
-  color: #8f2c14;
+  background: #f6e4df;
+  color: #7e2e20;
   font-size: 0.9rem;
   font-weight: 700;
 }
@@ -784,7 +784,7 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 14px;
-  background: #1d2f44;
+  background: #16304d;
 }
 .cb-player iframe {
   position: absolute;
@@ -804,7 +804,7 @@
   height: 100%;
   padding: clamp(1rem, 3vw, 1.5rem);
   border: 0;
-  background: #1d2f44 url('/textures/tile-navy.svg') 0 0 / 420px 420px;
+  background: #16304d url('/textures/tile-navy.svg') 0 0 / 420px 420px;
   color: #ffffff;
   font: inherit;
   text-align: left;
@@ -830,7 +830,7 @@
 .cb-play .cb-small {
   display: block;
   margin-top: 0.15rem;
-  color: #dbeaf8;
+  color: #dbe3ee;
 }
 .cb-play__icon {
   position: absolute;
@@ -917,14 +917,14 @@
 /* ---- The pale sky stone panel: a sign-up beside its heading. Light tokens pinned, so the
    form inside reads the same whatever theme a test forces. ---- */
 .cb-sky {
-  --foreground: #171a26;
-  --muted-foreground: #3f4452;
+  --foreground: #16263d;
+  --muted-foreground: #3f4d63;
   --background: #ffffff;
-  --link: #235e93;
-  --border: #c9d6e4;
+  --link: #1f3a5f;
+  --border: #d3dce8;
   padding: clamp(1.5rem, 4vw, 2.25rem);
   border-radius: 20px;
-  background-color: #e9f2fb;
+  background-color: #e9eef5;
   background-image: url('/textures/tile-sky.svg');
   background-size: 420px 420px;
   color: var(--foreground);
@@ -936,7 +936,7 @@
   background: #ffffff;
 }
 .cb-sky .btn-auburn--secondary:hover {
-  background: #f3f7fc;
+  background: #eef1f6;
 }
 .cb-sky .cb-actions {
   margin-top: 0;
@@ -979,7 +979,7 @@
     var(--auburn-gold) calc(var(--laid, 0) * 100%),
     var(--muted) calc(var(--laid, 0) * 100%)
   );
-  box-shadow: inset 0 0 0 1px rgb(23 26 38 / 0.08);
+  box-shadow: inset 0 0 0 1px rgb(22 38 61 / 0.08);
 }
 .cb-progress__stone:nth-child(3n + 2) {
   height: 84%;
@@ -1040,7 +1040,7 @@
   align-content: start;
   gap: 0.35rem;
   height: 100%;
-  box-shadow: 0 18px 40px -32px rgb(23 26 38 / 0.4);
+  box-shadow: 0 18px 40px -32px rgb(22 38 61 / 0.4);
   text-decoration: none;
   transition:
     transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
@@ -1059,7 +1059,7 @@
 .cb-linkcard:focus-visible {
   transform: translateY(-4px);
   border-color: var(--link);
-  box-shadow: 0 26px 48px -30px rgb(23 26 38 / 0.5);
+  box-shadow: 0 26px 48px -30px rgb(22 38 61 / 0.5);
 }
 .cb-linkcard__label {
   font-family: var(--font-display);
@@ -1172,14 +1172,14 @@
 }
 .cb-error {
   margin: 0;
-  color: #8f2c14;
+  color: #7e2e20;
   font-size: 0.95rem;
   font-weight: 600;
 }
 .cb-field[data-invalid] input,
 .cb-field[data-invalid] select,
 .cb-field[data-invalid] textarea {
-  border-color: #8f2c14;
+  border-color: #7e2e20;
 }
 .cb-hp {
   position: absolute;

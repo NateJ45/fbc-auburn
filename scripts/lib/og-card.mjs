@@ -39,7 +39,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
-const INK = '#171A26';
+const INK = '#16263D';
 /** The mosaic letter colours on white (StoneHeading.astro): green, deep sky, red, water. */
 const MOSAIC = [MARK.green, MARK.deep, MARK.red, MARK.sky];
 

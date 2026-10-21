@@ -22,14 +22,14 @@ import {
 } from './studio-banner-style.ts';
 import { BANNER_LOOKS } from '../sanity/kit/harness/bannerLooks.ts';
 
-const GROUND = '#1b4a75';
+const GROUND = '#16304D';
 const read = (p: string) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const banner = read('../sanity/kit/HomeBanner.tsx');
 const docs = read('../../docs/agent/studio-kit.md');
 
 /** Every key the slot has, set to a value that passes, so every hook is emitted. */
 const MAXIMAL: HomeBannerStyle = {
-  background: { color: '#14233a', texture: '/textures/tile.svg', rule: '#e8a93a' },
+  background: { color: '#14233a', texture: '/textures/tile.svg', rule: '#B5503A' },
   eyebrow: {
     text: 'Today, {date}',
     font: "'Inter Variable', sans-serif",
@@ -38,7 +38,7 @@ const MAXIMAL: HomeBannerStyle = {
     tracking: '0.14em',
     case: 'upper',
     color: '#ffffff',
-    mark: { kind: 'rule', color: '#e8a93a' },
+    mark: { kind: 'rule', color: '#B5503A' },
   },
   greeting: { font: 'Georgia, serif', italic: true, weight: 400 },
   title: {
@@ -49,18 +49,18 @@ const MAXIMAL: HomeBannerStyle = {
     tracking: '0.01em',
     case: 'upper',
     color: '#ffffff',
-    echo: { color: '#a83c26', offset: '0.05em' },
-    lastLetterOutline: '#fed89b',
+    echo: { color: '#8A3223', offset: '0.05em' },
+    lastLetterOutline: '#E9C4B8',
   },
   chip: {
     shape: 'square',
-    bg: '#a83c26',
-    fg: '#ffebbb',
+    bg: '#8A3223',
+    fg: '#f3ddd5',
     hoverBg: '#8f3323',
     hoverFg: '#ffffff',
     edge: '#000000',
-    ring: '#fed89b',
-    halo: '#e8a93a',
+    ring: '#E9C4B8',
+    halo: '#B5503A',
     font: 'Georgia, serif',
     size: '1rem',
     weight: 700,
@@ -68,7 +68,7 @@ const MAXIMAL: HomeBannerStyle = {
     case: 'upper',
   },
   motif: { place: 'behind-right' },
-  stamp: { text: 'A claim', color: '#fed89b', font: 'Georgia, serif' },
+  stamp: { text: 'A claim', color: '#E9C4B8', font: 'Georgia, serif' },
 };
 
 describe('no style, no change', () => {
@@ -163,11 +163,11 @@ describe('the five sites are covered', () => {
 describe('guards', () => {
   it('drops text colours that do not read on the banner', () => {
     const r = resolveBannerStyle(
-      { eyebrow: { color: '#2c5b3a' }, title: { color: '#2c5b3a' } },
+      { eyebrow: { color: '#2C4F7C' }, title: { color: '#2C4F7C' } },
       GROUND,
     );
     assert.equal(r.notes.length, 2);
-    assert.ok(!r.css.includes('#2c5b3a'));
+    assert.ok(!r.css.includes('#2C4F7C'));
   });
   it('leaves the chip as Sanity draws it when fg on bg is under 4.5:1', () => {
     const r = resolveBannerStyle({ chip: { shape: 'pill', bg: '#ffffff', fg: '#dddddd' } }, GROUND);
@@ -188,15 +188,15 @@ describe('guards', () => {
       {
         chip: {
           shape: 'pill',
-          bg: '#a83c26',
-          fg: '#ffebbb',
+          bg: '#8A3223',
+          fg: '#f3ddd5',
           hoverBg: '#ffffff',
           hoverFg: '#fafafa',
         },
       },
       GROUND,
     );
-    assert.ok(r.css.includes('--hb-chip-fg-hover:#ffebbb'));
+    assert.ok(r.css.includes('--hb-chip-fg-hover:#f3ddd5'));
   });
   it('nothing in a value can close the rule or break out of the stylesheet', () => {
     const evil = 'x;}</style><script>alert(1)</script>{';
