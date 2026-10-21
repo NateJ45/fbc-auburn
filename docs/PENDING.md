@@ -114,6 +114,18 @@ domain and their mail.
 
 ---
 
+### 1x. Logo: the brick cross candidate (opened 2026-10-21)
+
+**Blocker: a human decision.** The logo direction is being reconsidered against the church's
+real building (brick, white trim, a plain red cross by the road). Candidate masters live in
+`brand/logo/` (drawn by `npm run logo`, geometry hand-set in `scripts/brand-logo.mjs`):
+seven stepped brick courses in five auburn tones with the cross cut out as negative space,
+chisel-cut edges, plus mono, reversed, a five-course favicon and the Young Serif lockups.
+They are NOT wired in: the header still imports `src/assets/logo-*.svg` and the tab icon is
+`public/favicon.svg`. To do once a direction wins: a solid-cross fallback under 16 px, swap
+the header, favicons, OG card and Studio mark (`apply-brand` paths), retire the old masters,
+and update DESIGN.md "Components". Until then nothing on the live site changes.
+
 ### 1c. Finish the reskin: the rest of the mockups
 
 **Blocker: none; queued work.** The pick is recorded (A blended with B and C). The first pass
