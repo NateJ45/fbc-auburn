@@ -56,8 +56,8 @@ const EDGE = {
   light: '#9A3B2A',
   pale: '#A8453A',
 };
-const INK = '#171A26';
-const DARK_GROUND = '#171A26';
+const INK = '#16263D';
+const DARK_GROUND = '#0F2238';
 
 // ---------------------------------------------------------------------------
 // The mark. Drawn on a 100 x 120 box.
@@ -300,7 +300,7 @@ function wordmark(fill, muted, x, y, size) {
 
 function lockupHorizontal(mode) {
   const ground = mode === 'reversed' ? DARK_GROUND : '#FFFFFF';
-  const ink = mode === 'reversed' ? '#F3F6F9' : INK;
+  const ink = mode === 'reversed' ? '#F4EFE7' : INK;
   const muted = mode === 'reversed' ? '#B4B8C4' : '#4A4F5E';
   const size = 44;
   const markH = 100,
@@ -323,7 +323,7 @@ function lockupHorizontal(mode) {
 
 function lockupStacked(mode) {
   const ground = mode === 'reversed' ? DARK_GROUND : '#FFFFFF';
-  const ink = mode === 'reversed' ? '#F3F6F9' : INK;
+  const ink = mode === 'reversed' ? '#F4EFE7' : INK;
   const muted = mode === 'reversed' ? '#B4B8C4' : '#4A4F5E';
   const size = 36;
   const markH = 120,

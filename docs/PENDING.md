@@ -133,25 +133,21 @@ domain and their mail.
 
 ---
 
-### 1x. Logo: the brick cross candidate (opened 2026-10-21)
+### 1x. Logo: the brick cross follow-ups (wired in 2026-10-21)
 
-**Blocker: a human decision.** The logo direction is being reconsidered against the church's
-real building (brick, white trim, a plain red cross by the road). Candidate masters live in
-`brand/logo/` (drawn by `npm run logo`, geometry hand-set in `scripts/brand-logo.mjs`):
-seven stepped brick courses in five auburn tones with the cross cut out as negative space,
-chisel-cut edges, plus mono, reversed, a five-course favicon and the Young Serif lockups.
-They are NOT wired in: the header still imports `src/assets/logo-*.svg` and the tab icon is
-`public/favicon.svg`. To do once a direction wins: a solid-cross fallback under 16 px, swap
-the header, favicons, OG card and Studio mark (`apply-brand` paths), retire the old masters,
-and update DESIGN.md "Components". Until then nothing on the live site changes.
+**Blocker: none; small leftovers.** The brick cross is the logo: `brand/logo/` (drawn by
+`npm run logo`, geometry in `scripts/brand-logo.mjs`) feeds `src/assets/logo-light.svg` (the
+horizontal lockup), `logo-dark.svg` (reversed), `src/assets/brand/fbc-auburn-icon-full-color.svg`
+(the mark, in a square view box so square slots centre it; also the OG card and the Studio icon),
+`public/favicon.svg` (five courses) with the icons `npm run favicon` renders from it, and
+`public/studio-banner/mark.svg`. The header lockup sits 44 to 56 px high and shrinks on phones.
+Still on the old art: the animated `MarkBuild.astro` (`mark-layered.svg`, used by the Image and
+text and Steps rail blocks) and `baptism-layered.svg`, which need a layered redraw; a solid-cross
+fallback under 16 px is not drawn (the favicon is the smallest size). The cut-out cross is white,
+so on the warm ground it reads best large or on a white card. `npm run favicon` rewrites
+`site.webmanifest` and drops its maskable entry and short name: restore those by hand.
 
-DONE 2026-10-21: the auburn-and-navy palette is applied site-wide (DESIGN.md "Colors"):
-`brand.config.json` and `apply-brand`, the style sheets, `--feature*` and `--stone*`
-(`surfaces.ts` swatches, card 124), the textures, Studio banner, stone icons (now
-`brand/icons/` copied over `src/assets/brand/`), `gen:stones`, the OG card and thumbnails.
-The header logo, favicons and the `mark-layered` and `baptism-layered` art still carry the old
-colours until the logo decision above. `public/textures/tile-green|sky|navy.svg` keep their old
-file names.
+DONE 2026-10-21: the auburn-and-navy palette is applied site-wide (DESIGN.md "Colors").
 
 ### 1c. Finish the reskin: the rest of the mockups
 
