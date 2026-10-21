@@ -26,6 +26,20 @@ Nathan picked, 2026-10-21:
 Out of scope, on purpose: the Auburn Stone letterforms (`StoneHeading.astro`, the masthead and
 footer "Auburn"), the icons, the logo and the palette.
 
+## The letterforms (added the same evening)
+
+`sheet-13-auburn-letterforms.png`: the Auburn Stone letterforms (Young Serif split into pebble
+stones, a webfont) redone in brick three ways: A, brick-filled letters (the glyph edge clean, running
+bond inside); B, the word cut out of a brick wall, as the cross is cut out of the mark; C, coursed
+letters with nudged joints. Nathan picked **A for the letterforms** (masthead, footer signature,
+page H1s) **with B for a few places** where a wall makes sense: the 404 headline ("Off the path"),
+the sermon and series art with no picture (the book name cut out of the navy brick ground), and a
+social tile. Carry forward: a brick treatment cannot be a plain font (several colours and joints per
+letter), so the headings become build-time SVG drawn from the heading text, one SVG per word so
+lines still wrap, with the words kept as real text for search and screen readers (`aria-label`
+plus the live-preview stega run). The Studio banner lettering keeps Auburn Stone until the Studio
+kit gets the same generator.
+
 ## Where it lives
 
 `scripts/lib/brick-courses.mjs` (the generators), `scripts/gen-stones.mjs` (`npm run gen:stones`

@@ -156,6 +156,22 @@ share cards, all from `scripts/lib/brick-courses.mjs` via `npm run gen:stones`. 
 Auburn Stone letterforms (the masthead and footer "Auburn", `StoneHeading.astro`), and the two
 layered pieces named above (`mark-layered.svg`, `baptism-layered.svg`).
 
+QUEUED 2026-10-21, its own session: the letterforms go brick (decision and sheet 13 in
+`docs/design-directions/2026-10-21-brick-path/README.md`, "The letterforms"). Treatment A
+(brick-filled letters) for the masthead "Auburn" (`home-board.css` `.hb-word`), the page H1s
+(`StoneHeading.astro`, used by `ArchHero`, `BoardPageHead` and the 404) and the footer signature
+(`auburn.css` `.sf-signature`); treatment B (the word cut out of a wall) for the 404 headline, the
+sermon and series art with no picture (`SermonArt.astro`, `collections.css` `.c-art__word`) and
+one social tile. Build it as a build-time SVG generator: fontkitten draws the Young Serif
+outlines (see `scripts/brand-logo.mjs` for the parse, and why opentype.js is kerning-only), the
+`brick-courses.mjs` field fills them, one SVG per word so lines wrap on phones, the words kept as
+real text (`aria-label`, and the live-preview stega run put back after, as `StoneHeading` does
+now). The person initials (`collections.css` `.p-card` no-photo) can drop to plain Young Serif.
+Leave the Studio banner lettering on Auburn Stone (`kit.config.ts` lettering, `studio-banner.test.ts`)
+until the kit gets the generator; keep the font files until nothing on the site uses them, then
+drop the preload in `BaseLayout.astro` and the `@font-face` in `auburn.css`. Gates plus the 375
+and 1280 sweep on Home, About, Sermons, a blank series, Contact and the 404.
+
 ### 1c. Finish the reskin: the rest of the mockups
 
 **Blocker: none; queued work.** The pick is recorded (A blended with B and C). The first pass
