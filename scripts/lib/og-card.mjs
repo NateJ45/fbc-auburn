@@ -32,7 +32,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MARK, stonePath, stoneMarkers } from './stone-mosaic.mjs';
+import { MARK } from './stone-mosaic.mjs';
+import { brickMarker, brickPath } from './brick-courses.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -51,14 +52,14 @@ const FONTS = {
 };
 const MARK_SVG = `data:image/svg+xml;base64,${b64('src/assets/brand/fbc-auburn-icon-full-color.svg')}`;
 
-/** The path across the foot of the card, generated once (seeded, so always the same stones). */
+/** The brick wall across the foot of the card, generated once (seeded, so always the same). */
 const PATH_H = 210;
 const PATH_SVG = (() => {
-  const stones = stonePath({ width: OG_WIDTH, height: PATH_H, preset: 'og', seed: 4 });
+  const stones = brickPath({ width: OG_WIDTH, height: PATH_H, preset: 'og', seed: 4 });
   const paths = stones.map((s) => `<path d="${s.d}" fill="${s.fill}"/>`).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${OG_WIDTH} ${PATH_H}" width="${OG_WIDTH}" height="${PATH_H}">${paths}</svg>`;
 })();
-const STEPS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 78 36" width="52" height="24">${stoneMarkers()
+const STEPS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 78 36" width="52" height="24">${brickMarker()
   .map((s) => `<path d="${s.d}" fill="${s.fill}"/>`)
   .join('')}</svg>`;
 

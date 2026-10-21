@@ -1,5 +1,6 @@
-// Tests for the board E stone generators (scripts/lib/stone-mosaic.mjs) and the committed output
-// of scripts/gen-stones.mjs. Run by `npm run test:scripts`.
+// Tests for the 2026-10-17 pebble generators (scripts/lib/stone-mosaic.mjs; kept for the record,
+// the site now draws brick from brick-courses.mjs) and the committed output of
+// scripts/gen-stones.mjs. Run by `npm run test:scripts`.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
