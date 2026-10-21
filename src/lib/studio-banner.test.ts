@@ -13,13 +13,13 @@ import {
   splitName,
 } from './studio-banner.ts';
 
-const NAVY = '#16304D';
+const NAVY = '#1B4A75';
 
 describe('readableOn', () => {
   it('keeps a colour that reads at the bar and drops one that does not', () => {
-    assert.equal(readableOn('#C96A52', NAVY), null); // light auburn on navy, about 3.4:1: not body text
-    assert.equal(readableOn('#C96A52', NAVY, 3), '#C96A52'); // but fine as large text
-    assert.equal(readableOn('#2C4F7C', NAVY), null); // green on navy vanishes
+    assert.equal(readableOn('#E8A93A', NAVY), null); // gold on navy, about 4.4:1: not body text
+    assert.equal(readableOn('#E8A93A', NAVY, 3), '#E8A93A'); // but fine as large text
+    assert.equal(readableOn('#2C5B3A', NAVY), null); // green on navy vanishes
     assert.equal(readableOn('#FFFFFF', NAVY), '#FFFFFF');
   });
   it('drops anything that is not a hex colour', () => {
@@ -31,10 +31,10 @@ describe('readableOn', () => {
 
 describe('readableColors', () => {
   it('keeps large-text colours at 3:1 in order', () => {
-    assert.deepEqual(readableColors(['#FFFFFF', '#2C4F7C', '#7F98B8', '#C96A52'], NAVY), [
+    assert.deepEqual(readableColors(['#FFFFFF', '#2C5B3A', '#96C3EA', '#E8A93A'], NAVY), [
       '#FFFFFF',
-      '#7F98B8',
-      '#C96A52',
+      '#96C3EA',
+      '#E8A93A',
     ]);
   });
   it('is empty for no colours', () => {

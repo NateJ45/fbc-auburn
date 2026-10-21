@@ -73,7 +73,7 @@ describe('iconMaps', () => {
 });
 
 describe('iconTileColors', () => {
-  const accents = ['#4A5A73', '#9A3B2A', '#1F3A5F', '#B5503A', '#2C4F7C', '#7A1F5C', '#111111'];
+  const accents = ['#586577', '#C4401F', '#235E93', '#E8A93A', '#2C5B3A', '#7A1F5C', '#111111'];
   for (const accent of accents) {
     it(`a one-colour icon reads on its tile in both schemes (accent ${accent})`, () => {
       const colors = studioColors(

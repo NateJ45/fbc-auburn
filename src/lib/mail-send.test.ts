@@ -182,7 +182,7 @@ describe('the email template', () => {
   const brand = brandFromConfig(
     {
       palette: {
-        light: { '--primary': '#1F3A5F', '--foreground': '#16263D', '--border': 'oklch(1 0 0)' },
+        light: { '--primary': '#235E93', '--foreground': '#171A26', '--border': 'oklch(1 0 0)' },
         dark: { '--background': '#141823' },
       },
       fonts: { display: { familyValue: '"Young Serif", Georgia, serif' } },
@@ -191,7 +191,7 @@ describe('the email template', () => {
     'https://example.org/',
   );
   it('keeps only hex colours and the fonts an inbox has', () => {
-    assert.equal(brand.accent, '#1F3A5F');
+    assert.equal(brand.accent, '#235E93');
     assert.equal(brand.siteUrl, 'https://example.org');
     assert.equal(brand.headingStack, 'Georgia, serif');
     assert.equal(emailFontStack('"Familjen Grotesk Variable"', 'Arial'), 'Arial');
