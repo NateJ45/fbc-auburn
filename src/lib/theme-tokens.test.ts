@@ -85,7 +85,7 @@ test('contrast math matches the WCAG reference points', () => {
   // Shorthand hex expands.
   assert.equal(contrastRatio('#fff', '#000'), 21);
   // Luminance is symmetric in the ratio, order must not matter.
-  assert.equal(contrastRatio('#586577', '#fbfbfa'), contrastRatio('#fbfbfa', '#586577'));
+  assert.equal(contrastRatio('#4A5A73', '#fbfbfa'), contrastRatio('#fbfbfa', '#4A5A73'));
   assert.throws(() => hexToRgb('not-a-colour'));
   assert.ok(relativeLuminance(hexToRgb('#ffffff')) > relativeLuminance(hexToRgb('#000000')));
 });
@@ -95,7 +95,7 @@ test('flatten composites a translucent colour over its backdrop', () => {
   const composited = flatten(hexToRgb('#ffffff'), 0.12, hexToRgb('#000000'));
   assert.equal(rgbToHex(composited), '#1f1f1f');
   // Fully opaque returns the foreground untouched.
-  assert.deepEqual(flatten(hexToRgb('#586577'), 1, hexToRgb('#ffffff')), hexToRgb('#586577'));
+  assert.deepEqual(flatten(hexToRgb('#4A5A73'), 1, hexToRgb('#ffffff')), hexToRgb('#4A5A73'));
 });
 
 // ---------------------------------------------------------------------------

@@ -13,14 +13,14 @@
 
 .hb {
   --hb-radius: 20px;
-  --hb-ink: #171a26;
-  --hb-body: #343846;
-  --hb-muted: #4a4f5e;
-  --hb-line: #d9dee6;
+  --hb-ink: #16263d;
+  --hb-body: #24344d;
+  --hb-muted: #4a5a73;
+  --hb-line: #e6ded2;
   --hb-label-color: var(--auburn-deep);
   --hb-gutter: var(--spacing-l);
   /* Light in every case (rule 3); pinned so a forced dark theme cannot turn links pale here. */
-  --link: #235e93;
+  --link: #1f3a5f;
   background: #ffffff;
   color: var(--hb-ink);
   font-size: 1.125rem;
@@ -119,16 +119,16 @@
 /* Fixed light values, not the theme's --mosaic tokens: Home's board is a light surface in every
    case (rule 3), so the forced-dark test suite must not swap them for the dark set. */
 .hb-word .s0 {
-  color: #2c5b3a;
+  color: #2c4f7c;
 }
 .hb-word .s1 {
-  color: #235e93;
+  color: #1f3a5f;
 }
 .hb-word .s2 {
-  color: #c4401f;
+  color: #9a3b2a;
 }
 .hb-word .s3 {
-  color: #3b83aa;
+  color: #2c4f7c;
 }
 
 /* ---- Lead row: the welcome beside the This Sunday card -------------------------------------- */
@@ -192,7 +192,7 @@
   background-color: var(--auburn-deep);
   background-image: url('/textures/tile-deep.svg');
   background-size: 420px 420px;
-  box-shadow: 0 30px 60px -36px rgb(23 26 38 / 0.7);
+  box-shadow: 0 30px 60px -36px rgb(22 38 61 / 0.7);
   color: #ffffff;
 }
 .hb-sunday__top {
@@ -209,7 +209,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #dbeaf8;
+  color: #dbe3ee;
 }
 .hb-pill {
   padding: 2px 9px;
@@ -236,7 +236,7 @@
 .hb-sunday .sunday-weather .sunday-weather__line {
   margin: 0;
   font-size: 15px;
-  color: #f1f7fd;
+  color: #f4efe7;
 }
 .hb-sunday__times {
   display: grid;
@@ -271,7 +271,7 @@
 }
 /* Jacob's "how to find us" line: parking, the door (Church facts > address; empty hides it). */
 .hb-sunday__findus {
-  color: #dbeaf8;
+  color: #dbe3ee;
 }
 .hb-sunday__where p {
   margin: 0;
@@ -347,10 +347,10 @@ html.motion .hb-path.is-laid .hb-stone {
    and the stone icons carry the bands. */
 .hb-band--sky {
   margin: 0 0 40px;
-  background-color: #eaf2fb;
+  background-color: #e9eef5;
 }
 .hb-band--green {
-  background-color: #ebf3ed;
+  background-color: #f1e8e2;
 }
 
 /* Through the week: a three-column board on a white panel. */
@@ -360,7 +360,7 @@ html.motion .hb-path.is-laid .hb-stone {
   padding: 10px 34px 26px;
   border-radius: var(--hb-radius);
   background: #ffffff;
-  box-shadow: 0 24px 48px -36px rgb(23 26 38 / 0.45);
+  box-shadow: 0 24px 48px -36px rgb(22 38 61 / 0.45);
 }
 .hb-board > div {
   padding: 26px 28px 8px;
@@ -403,7 +403,7 @@ html.motion .hb-path.is-laid .hb-stone {
   padding: 22px 24px;
   border-radius: var(--hb-radius);
   background: #ffffff;
-  box-shadow: 0 18px 40px -32px rgb(23 26 38 / 0.4);
+  box-shadow: 0 18px 40px -32px rgb(22 38 61 / 0.4);
   color: var(--hb-ink);
   text-decoration: none;
 }
@@ -432,7 +432,7 @@ html.motion .hb-path.is-laid .hb-stone {
 .hb-lift:hover,
 .hb-lift:focus-visible {
   transform: translateY(-4px);
-  box-shadow: 0 26px 48px -30px rgb(23 26 38 / 0.5);
+  box-shadow: 0 26px 48px -30px rgb(22 38 61 / 0.5);
 }
 .hb-lift:focus-visible {
   outline: 3px solid var(--auburn-gold);
@@ -489,21 +489,21 @@ html.motion .hb-path.is-laid .hb-stone {
 /* Each stone its own hand-laid shape, in the story's order. */
 .hb-walk__stone--0 {
   border-radius: 44% 56% 48% 52% / 54% 46% 56% 44%;
-  background: #96c3ea;
-  color: #1d4f7c;
+  background: #7f98b8;
+  color: #16304d;
 }
 .hb-walk__stone--1 {
   border-radius: 54% 46% 56% 44% / 46% 54% 44% 56%;
-  background: #2c5b3a;
+  background: #2c4f7c;
 }
 .hb-walk__stone--2 {
   border-radius: 48% 52% 42% 58% / 56% 48% 52% 44%;
-  background: #e8a93a;
-  color: #171a26;
+  background: #b5503a;
+  color: #16263d;
 }
 .hb-walk__stone--3 {
   border-radius: 56% 44% 52% 48% / 44% 56% 46% 54%;
-  background: #c4401f;
+  background: #9a3b2a;
 }
 /* Gold stepping-stone dashes from each stone to the next. */
 .hb-walk__step:not(:last-child)::after {
@@ -514,7 +514,7 @@ html.motion .hb-path.is-laid .hb-stone {
   right: -20px;
   height: 7px;
   border-radius: 4px;
-  background: repeating-linear-gradient(90deg, #e8a93a 0 12px, transparent 12px 22px);
+  background: repeating-linear-gradient(90deg, #b5503a 0 12px, transparent 12px 22px);
 }
 .hb-walk__when {
   margin: 0 0 6px;
@@ -581,7 +581,7 @@ html.motion .hb-path.is-laid .hb-stone {
     right: auto;
     width: 7px;
     height: auto;
-    background: repeating-linear-gradient(180deg, #e8a93a 0 12px, transparent 12px 22px);
+    background: repeating-linear-gradient(180deg, #b5503a 0 12px, transparent 12px 22px);
   }
   .hb-walk__when {
     margin-top: 4px;
@@ -608,7 +608,7 @@ html.motion .hb-path.is-laid .hb-stone {
   margin: 0;
   overflow: hidden;
   border-radius: var(--hb-radius);
-  background: #e5e8ee;
+  background: #e6ebf2;
 }
 .hb-ph img {
   position: absolute;
@@ -623,7 +623,7 @@ html.motion .hb-path.is-laid .hb-stone {
   bottom: 12px;
   padding: 3px 9px;
   border-radius: 999px;
-  background: #171a26;
+  background: #16263d;
   color: #ffffff;
   font-size: 12px;
   font-weight: 600;
@@ -688,7 +688,7 @@ html.motion .hb-path.is-laid .hb-stone {
   font-family: var(--font-display);
   font-size: 64px;
   line-height: 0.9;
-  color: #cfe3d5;
+  color: #d3dce8;
 }
 .hb-note__by {
   display: flex;
@@ -706,7 +706,7 @@ html.motion .hb-path.is-laid .hb-stone {
 .hb-note__sign {
   margin: 0;
   font-size: 15px;
-  color: #cfe3d5;
+  color: #d3dce8;
 }
 .hb-note__sign a {
   color: #ffffff;
@@ -762,9 +762,9 @@ html.motion .hb-path.is-laid .hb-stone {
   inset: 0;
   background: linear-gradient(
     to top,
-    rgb(23 26 38 / 0.85),
-    rgb(23 26 38 / 0.35) 50%,
-    rgb(23 26 38 / 0) 78%
+    rgb(22 38 61 / 0.85),
+    rgb(22 38 61 / 0.35) 50%,
+    rgb(22 38 61 / 0) 78%
   );
 }
 .hb-watch__text {
@@ -775,7 +775,7 @@ html.motion .hb-path.is-laid .hb-stone {
   margin-bottom: 4px;
   padding: 2px 9px;
   border-radius: 999px;
-  background: #c4401f;
+  background: #9a3b2a;
   color: #ffffff;
   font-size: 12px;
   font-weight: 700;
@@ -980,14 +980,14 @@ html.motion .hb-path.is-laid .hb-stone {
     border-top: 3px solid transparent;
     border-image: linear-gradient(
         90deg,
-        #96c3ea 0 25%,
-        #2c5b3a 25% 50%,
-        #e8a93a 50% 75%,
-        #c4401f 75% 100%
+        #7f98b8 0 25%,
+        #2c4f7c 25% 50%,
+        #b5503a 50% 75%,
+        #9a3b2a 75% 100%
       )
       1;
     background: #ffffff;
-    box-shadow: 0 -12px 30px -24px rgb(23 26 38 / 0.45);
+    box-shadow: 0 -12px 30px -24px rgb(22 38 61 / 0.45);
   }
   .hb-sundaybar__times {
     flex: 1;

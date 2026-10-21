@@ -1,24 +1,23 @@
 ---
 name: First Baptist Church of Auburn
-description: A warm, steady church site built from the stone-mosaic brand, with one stone moment per page and one colour everywhere else.
+description: A warm, steady church site built from the stone-mosaic brand, with one stone moment per page, navy as the everyday colour and auburn for the mark and one call to action.
 colors:
-  green: '#2C5B3A'
-  deep-sky: '#235E93'
-  water: '#3B83AA'
-  red: '#C4401F'
-  gold: '#E8A93A'
-  sky: '#96C3EA'
-  ink: '#171A26'
+  navy: '#1F3A5F'
+  navy-dark: '#16304D'
+  navy-mid: '#2C4F7C'
+  navy-light: '#7F98B8'
+  auburn: '#9A3B2A'
+  auburn-dark: '#7E2E20'
+  auburn-light: '#B5503A'
+  ink: '#16263D'
   white: '#FFFFFF'
-  ground: '#FFFFFF'
-  ground-soft: '#F3F6F9'
-  ink-muted: '#4A4F5E'
-  dark-ground: '#171A26'
-  dark-ground-raised: '#20283A'
-  dark-text: '#F3F6F9'
-  dark-muted: '#B4B8C4'
-  dark-red: '#E5735A'
-  dark-green: '#8FC7A0'
+  ground: '#FBF8F3'
+  ground-soft: '#F4EFE7'
+  ink-muted: '#4A5A73'
+  dark-ground: '#141823'
+  dark-ground-raised: '#1C2333'
+  dark-text: '#F4EFE7'
+  dark-muted: '#B6C0CF'
 typography:
   stone:
     fontFamily: "'Auburn Stone', 'Young Serif', serif"
@@ -58,32 +57,31 @@ generous white space, honest about size. Must not look like the First Baptist Ch
 
 ## Colors
 
-Decision 2026-10-21, not yet applied to the site: the brand moves to **two families and a
-warm ground**. Auburn (`#9A3B2A`, dark `#7E2E20`, light `#B5503A`; the colour the church is
-named after and the colour of its brick) for the mark, the subject of each stone icon and at
-most one call to action per page. Navy (`#1F3A5F`, mid `#2C4F7C`, light `#7F98B8`; the
-lettering on the church's own sign) for text, links, buttons, H2s and the supporting pieces
-of each icon. Ground is a warm white, not paper white, with the light navy as the tinted band.
-The exact ground value is open: the sheet that won used `#F4EDE2`, which is close to the
-cream this brief rules out below, so the applied value should be lighter (`#FBF8F3` or
-near) and checked against the Muncie site. Candidate masters: `brand/logo/` (the mark and
-lockups) and `brand/icons/` (the sixteen stone icons recoloured). Applying it is a reskin
-pass: `brand.config.json` and `apply-brand`, `src/styles/auburn.css`, `home-board.css`, the
-textures and Studio banner, the `--feature*` and `--stone*` literals in `globals.css` (card
-124, `surfaces.test.ts`), the OG card, then the 375 and 1280 sweep. Until that lands the
-seven-colour palette below is what the site renders.
+Decision 2026-10-21, applied the same day: the brand is **two families on a warm ground**.
+Auburn (`#9A3B2A`, dark `#7E2E20`, light `#B5503A`; the colour the church is named after and
+the colour of its brick) is the mark, the subject of each stone icon and at most one call to
+action per page. Navy (`#1F3A5F`, dark `#16304D`, mid `#2C4F7C`, light `#7F98B8`; the
+lettering on the church's own sign) is text, links, buttons, H2s, the Feature band and the
+supporting pieces of each icon. Ink for body text is a deeper navy, `#16263D`. The ground is a
+warm white, `#FBF8F3`, deliberately lighter than the `#F4EFE7` soft band (`--muted`) and far from
+the FBC Muncie cream paper this brief rules out below; borders are `#E6DED2`. The Stone look is
+the light navy tinted (`#E9EEF5`, gaps `#D3DCE8`). Cards stay pure white. Masters: `brand/logo/`
+(the mark and lockups, not yet wired in) and `brand/icons/` (the sixteen stone icons, now the
+ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the textures
+(`public/textures/tile-*.svg`, file names kept), the Studio banner and the OG card.
 
-- Seven brand colours, each with a role. **Deep sky** is the everyday one colour (links, buttons,
-  H2s, the avatar ground). **Green** is the second structural colour. **Red** is reserved for the
-  cross and at most one call to action per page. **Gold** and **sky** are accents only (stepping
-  stones, highlights, fills behind ink text), never text on white. **Water** is text on white only
-  at 24 px and up. **Ink** is body text.
-- Ground is white with a cool soft tint (`ground-soft`) for alternating sections; no cream. Home
-  is plain white: the ribbon and the photos carry its colour.
-- Measured contrast on white: ink 17.3, green 7.9, deep sky 6.8, red 5.1, water 4.2 (large only),
-  gold 2.1 and sky 1.9 (never text). White text on deep sky 6.8, on green 7.9, on red 5.1. Ink on
-  gold 8.4 and on sky 9.3.
-- Light only (decided 2026-10-17): the site has no dark mode. The `dark-*` values above are kept as
+- Roles: **navy** is the everyday colour (links, buttons, H2s). **Auburn** is the cross and at
+  most one call to action per page. **Light auburn** and **light navy** are accents only (stepping
+  stones, the mosaic, lettering on a navy band), never text on the ground. **Navy mid** is the
+  second structural colour. **Ink** is body text.
+- Measured contrast on the ground `#FBF8F3`: ink 14.4, navy 10.8, navy mid 7.9, auburn dark 8.6,
+  auburn 6.5, muted text `#4A5A73` 6.6, light auburn 4.7 (large text and icons only), light navy
+  2.8 (never text). White on navy 11.5, white on auburn 6.9. Ground on the ink band 15.2. Ink on
+  the Stone band 11.0, navy on it 8.3. On the navy band: Feature captions `#E9EEF5` 9.9, light
+  navy 3.9 (accent and large only), light auburn 2.3 (decoration only, never text). No text pair
+  fell under 4.5:1; the two Studio lettering colours that would not read at 3:1 on the Studio
+  tile were lifted (`#B5503A` to `#D98A74`).
+- Light only (decided 2026-10-17): the site has no dark mode. The dark values in `brand.config.json` (primary lifted to `#7F98B8`) are kept as
   the palette for a dark band or a printed piece on ink, not a site theme.
 
 ## Typography
@@ -92,7 +90,7 @@ seven-colour palette below is what the site renders.
 - **Familjen Grotesk** for body, UI, labels and the tracked caps of the place line ("FIRST BAPTIST
   CHURCH OF").
 - **Auburn Stone** for stone headings only, 40 px and up: the page H1 in mosaic (letters cycle
-  green, deep sky, red, water; gold left out on light) or an H2 in one colour. Real text, so it
+  navy mid, navy, auburn, navy mid; light auburn left out on light) or an H2 in one colour. Real text, so it
   wraps and is searchable; falls back to Young Serif with identical metrics.
 - Body 18 px minimum, line length 60 to 72 characters.
 
@@ -119,6 +117,6 @@ floating element (a sticky "Plan your visit" bar on mobile).
 - Do mark unconfirmed facts (service times, the verse) until the church confirms them.
 - Don't put mosaic colour on H2s, borders, dividers or backgrounds.
 - Don't set Auburn Stone below 40 px.
-- Don't use gold or sky as text on white.
+- Don't use light auburn or light navy as text on the ground.
 - Don't use stock photography, crowd shots or anything that makes the church look bigger than it is.
 - Don't reuse the Muncie site's paper-and-ink ground, titling masthead or indigo bands.

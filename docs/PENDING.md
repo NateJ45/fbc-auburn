@@ -145,14 +145,13 @@ They are NOT wired in: the header still imports `src/assets/logo-*.svg` and the 
 the header, favicons, OG card and Studio mark (`apply-brand` paths), retire the old masters,
 and update DESIGN.md "Components". Until then nothing on the live site changes.
 
-Same day, the second colour: navy beside auburn on a warm white ground (DESIGN.md "Colors",
-decision paragraph). The sixteen stone icons recoloured into the two families are candidates
-in `brand/icons/` (`npm run icons:recolour`), the shipped ones in `src/assets/brand/` are
-unchanged. Applying the palette is its own planned pass, because the current palette is
-hardwired across `src/styles/auburn.css`, `home-board.css`, `globals.css` (`--feature*`,
-`--stone*`, card 124), the textures, the Studio banner and the OG card, and `theme-tokens`
-gates `brand.config.json` against `globals.css`: config, `apply-brand`, those files, the
-surfaces test, then the 375 and 1280 sweep, in one session.
+DONE 2026-10-21: the auburn-and-navy palette is applied site-wide (DESIGN.md "Colors"):
+`brand.config.json` and `apply-brand`, the style sheets, `--feature*` and `--stone*`
+(`surfaces.ts` swatches, card 124), the textures, Studio banner, stone icons (now
+`brand/icons/` copied over `src/assets/brand/`), `gen:stones`, the OG card and thumbnails.
+The header logo, favicons and the `mark-layered` and `baptism-layered` art still carry the old
+colours until the logo decision above. `public/textures/tile-green|sky|navy.svg` keep their old
+file names.
 
 ### 1c. Finish the reskin: the rest of the mockups
 

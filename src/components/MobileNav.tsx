@@ -123,9 +123,9 @@ function StonesIcon() {
       viewBox="0 0 20 18"
       aria-hidden="true"
     >
-      <rect x="1" y="1" width="18" height="4" rx="2" fill="#3b83aa" />
-      <rect x="1" y="7" width="13" height="4" rx="2" fill="#2c5b3a" />
-      <rect x="1" y="13" width="16" height="4" rx="2" fill="#e8a93a" />
+      <rect x="1" y="1" width="18" height="4" rx="2" fill="#2C4F7C" />
+      <rect x="1" y="7" width="13" height="4" rx="2" fill="#2C4F7C" />
+      <rect x="1" y="13" width="16" height="4" rx="2" fill="#B5503A" />
     </svg>
   );
 }
