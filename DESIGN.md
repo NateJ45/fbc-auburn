@@ -41,7 +41,7 @@ Status 2026-10-17: direction picked, A blended with B and C (`docs/design-direct
 the photo session. Home opens with the masthead ("First Baptist Church of" over a huge colour
 mosaic "Auburn") beside an arched photo; inner pages lead with a big stone icon and a mosaic H1
 beside an arched photo. Density airy. Imagery: arched photos (`ArchHero.astro`, the
-text-and-picture band); with no photo yet the arch holds the stone mark or a soft sky fill, never
+text-and-picture band); with no photo yet the arch holds the brick-cross mark or a soft navy tint, never
 a grey box. In the code: `src/styles/auburn.css` (the brand layer), `StoneHeading.astro`,
 `ArchHero.astro`; the three stepping stones are the section divider on inner pages.
 
@@ -66,7 +66,7 @@ supporting pieces of each icon. Ink for body text is a deeper navy, `#16263D`. T
 warm white, `#FBF8F3`, deliberately lighter than the `#F4EFE7` soft band (`--muted`) and far from
 the FBC Muncie cream paper this brief rules out below; borders are `#E6DED2`. The Stone look is
 the light navy tinted (`#E9EEF5`, gaps `#D3DCE8`). Cards stay pure white. Masters: `brand/logo/`
-(the mark and lockups, not yet wired in) and `brand/icons/` (the sixteen stone icons, now the
+(the brick cross mark and lockups, wired in 2026-10-21) and `brand/icons/` (the sixteen stone icons, now the
 ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the textures
 (`public/textures/tile-*.svg`, file names kept), the Studio banner and the OG card.
 
@@ -101,7 +101,7 @@ floating element (a sticky "Plan your visit" bar on mobile).
 
 ## Components
 
-- Logo: horizontal lockup in the header (small mark under 48 px), Auburn-led lockup where the place
+- Logo: the brick cross (seven auburn courses, the cross cut out), horizontal lockup in the header (the five-course favicon under 24 px), Auburn-led lockup where the place
   name should lead (footer, a sign-like hero).
 - Stone icons for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
   praying hands, giving hand); one size per page, never mixed with line icons.
