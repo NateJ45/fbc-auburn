@@ -1,5 +1,9 @@
 # Change history
 
+_2026-10-21: the letterforms went brick (docs/design-directions/2026-10-21-brick-path/, sheet 13)._
+
+**Decision.** The Auburn Stone letterforms (Young Serif split into pebbles, a webfont) are replaced by build-time SVG. `scripts/lib/brick-letters.mjs` draws a word as treatment A (each Young Serif glyph clips a running-bond field, every fourth letter in auburn) or treatment B (the word cut out of a stepped wall). The glyph outlines and kerning are baked into `scripts/lib/brick-font.generated.mjs` (`npm run gen:letters`), so the generator reads no files and runs in the Worker too. `StoneHeading` draws one SVG per word so a title still wraps, keeps the clean text in an aria-label plus a hidden copy, and puts the preview's stega run back after. The masthead, footer signature and share cards use A; the 404 headline and the sermon art with no picture use B. The Auburn Stone preload and `@font-face` are gone; the font file stays for the Studio banner lettering.
+
 _2026-10-19: CI builds from a pinned content snapshot (starter card 138): `ci/sanity-snapshot.ndjson.gz`, `scripts/snapshot.mjs`, a daily non-blocking `live-watch.yml`._
 
 _2026-10-19: Auburn's own tours and Quick update jobs on card 137._

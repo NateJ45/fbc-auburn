@@ -111,24 +111,11 @@
   grid-row: 2;
   display: block;
   margin: 0.06em 0 0 -0.04em;
-  font-family: 'Auburn Stone', 'Young Serif', serif;
+  /* The brick word (an inline SVG sized in em, scripts/lib/brick-letters.mjs): the font-size here
+     is its size. */
   font-size: calc(clamp(70px, 13.2vw, 200px) * var(--hb-word-scale, 1));
   line-height: 0.84;
   letter-spacing: -0.035em;
-}
-/* Fixed light values, not the theme's --mosaic tokens: Home's board is a light surface in every
-   case (rule 3), so the forced-dark test suite must not swap them for the dark set. */
-.hb-word .s0 {
-  color: #2c4f7c;
-}
-.hb-word .s1 {
-  color: #1f3a5f;
-}
-.hb-word .s2 {
-  color: #9a3b2a;
-}
-.hb-word .s3 {
-  color: #2c4f7c;
 }
 
 /* ---- Lead row: the welcome beside the This Sunday card -------------------------------------- */

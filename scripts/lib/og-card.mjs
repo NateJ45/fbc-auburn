@@ -15,7 +15,7 @@
 //           well: the type steps down from 120px to 64px and wraps to three lines at most.
 //   kicker  optional small line above the title (a date, "Sermon series", "News and notes").
 //   home    true draws the home card instead: the masthead (mark, "First Baptist Church of",
-//           Auburn in mosaic) and `title` as the line under it (the Site settings tagline).
+//           Auburn in brick letters) and `title` as the line under it (the Site settings tagline).
 //   brand   optional { name, place } for the lockup; defaults to the church's name.
 //
 // DETERMINISTIC: no clock, no randomness (the stones are seeded, stone-mosaic.mjs), fonts come
@@ -23,8 +23,8 @@
 // generators leaves git clean unless a title or the design changed.
 //
 // The design (picked 2026-10-18 from three directions, comparison in the PR): white ground, the
-// church lockup top left, the title in Auburn Stone with the mosaic letter colours (the site's own
-// H1), and the stone path rising across the foot of the card from the water to the red cross.
+// church lockup top left, the title in brick letters (the site's own H1, treatment A of the brick
+// letterforms: navy brick with every fourth letter in auburn), and the brick wall across the foot.
 //
 // Playwright is already a devDependency (the test suite); the PNGs are committed, so CI never
 // runs this. If it ever does, the workflow needs `npx playwright install chromium`.
@@ -34,6 +34,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MARK } from './stone-mosaic.mjs';
 import { brickMarker, brickPath } from './brick-courses.mjs';
+import { brickWord, LETTER_TONES } from './brick-letters.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -41,12 +42,8 @@ export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
 const INK = '#16263D';
-/** The mosaic letter colours on white (StoneHeading.astro): green, deep sky, red, water. */
-const MOSAIC = [MARK.green, MARK.deep, MARK.red, MARK.sky];
-
 const b64 = (rel) => readFileSync(resolve(root, rel)).toString('base64');
 const FONTS = {
-  stone: b64('public/fonts/auburn-stone.woff2'),
   serif: b64('public/fonts/young-serif-latin-400.woff2'),
   sans: b64('public/fonts/familjen-grotesk-latin-wght.woff2'),
 };
@@ -77,17 +74,33 @@ export const cleanText = (s) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-/** Each letter takes the next mosaic colour; spaces take none (as StoneHeading.astro does). */
-function mosaic(text) {
+/**
+ * The title as brick letters, one SVG per word so it wraps (as StoneHeading.astro does): sized in
+ * em, so the fit loop below scales it with font-size like text. Every fourth letter, counted
+ * across the title, is auburn.
+ */
+function brickLine(text, tracking = -0.015) {
   let k = 0;
-  return [...text]
-    .map((c) => (/\s/.test(c) ? ' ' : `<span style="color:${MOSAIC[k++ % 4]}">${esc(c)}</span>`))
-    .join('');
+  return text
+    .split(' ')
+    .filter(Boolean)
+    .map((word, n) => {
+      const accent = [];
+      [...word].forEach((_, i) => {
+        if (k++ % 4 === 2) accent.push(i);
+      });
+      return brickWord(word, {
+        tones: LETTER_TONES.navy,
+        accent: { letters: accent, tones: LETTER_TONES.auburn },
+        seed: 3 + n * 11,
+        tracking,
+      });
+    })
+    .join(' ');
 }
 
 function cardHtml({ title, kicker, home, brand }) {
   const head = `<!doctype html><html><head><meta charset="utf-8"><style>
-  @font-face{font-family:AuburnStone;src:url(data:font/woff2;base64,${FONTS.stone}) format('woff2');font-display:block}
   @font-face{font-family:YoungSerif;src:url(data:font/woff2;base64,${FONTS.serif}) format('woff2');font-display:block}
   @font-face{font-family:Familjen;src:url(data:font/woff2;base64,${FONTS.sans}) format('woff2');font-weight:400 700;font-display:block}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -102,19 +115,22 @@ function cardHtml({ title, kicker, home, brand }) {
   .body{position:absolute;left:72px;right:72px;top:190px;height:250px;display:flex;flex-direction:column;justify-content:center}
   .kicker{display:flex;align-items:center;gap:14px;margin-bottom:14px;font-weight:700;font-size:24px;
     letter-spacing:.14em;text-transform:uppercase;color:${MARK.deep}}
-  .title{font-family:AuburnStone,YoungSerif,serif;line-height:1.02;letter-spacing:-.01em;text-wrap:balance}
+  .title{font-family:YoungSerif,serif;line-height:1.02;letter-spacing:-.01em;text-wrap:balance}
+  .title .plain{display:none}
+  .title.is-plain .bk{display:none} .title.is-plain .plain{display:inline}
+  .bl-word{display:inline-block}
   /* Home: the masthead, as the site's home hero sets it. */
   .mast{position:absolute;left:64px;right:64px;top:50px;display:flex;align-items:center;gap:40px}
   .mast img{width:250px;height:250px;flex:none}
   .mast .place{font-weight:700;font-size:28px;letter-spacing:.16em;text-transform:uppercase;color:${MARK.deep}}
-  .mast .auburn{font-family:AuburnStone,YoungSerif,serif;font-size:184px;line-height:.98;letter-spacing:-.01em;margin-top:4px}
+  .mast .auburn{font-family:YoungSerif,serif;font-size:184px;line-height:.98;letter-spacing:-.01em;margin-top:4px}
   .tagline{position:absolute;left:72px;right:72px;top:340px;font-family:YoungSerif,serif;font-size:50px;line-height:1.1;color:${INK}}
   </style></head><body><div class="card">`;
   const path = `<div class="path">${PATH_SVG}</div>`;
   if (home) {
     return `${head}
     <div class="mast"><img src="${MARK_SVG}" alt="">
-      <div><div class="place">${esc(brand.lead)}</div><div class="auburn">${mosaic(brand.place)}</div></div></div>
+      <div><div class="place">${esc(brand.lead)}</div><div class="auburn">${brickLine(brand.place, -0.035)}</div></div></div>
     <div class="tagline" id="fit">${esc(title)}</div>
     ${path}</div></body></html>`;
   }
@@ -123,7 +139,7 @@ function cardHtml({ title, kicker, home, brand }) {
     <div><div class="n1">${esc(brand.line1)}</div><div class="n2">${esc(brand.line2)}</div></div></div>
   <div class="body">
     ${kicker ? `<div class="kicker">${STEPS_SVG}<span>${esc(kicker)}</span></div>` : ''}
-    <div class="title" id="fit">${mosaic(title)}</div>
+    <div class="title" id="fit"><span class="bk">${brickLine(title)}</span><span class="plain">${esc(title)}</span></div>
   </div>
   ${path}</div></body></html>`;
 }
@@ -194,11 +210,11 @@ export async function renderCard({ title, kicker, home = false, outPath, brand =
         if (el.scrollWidth <= box.w && el.offsetHeight <= room && lines <= maxLines) break;
       }
       el.style.fontSize = `${s}px`;
-      // A title that needs three lines is set in one colour (StoneHeading's "solid" tone): the
-      // letter-by-letter mosaic gets busy across three lines at thumbnail size.
+      // A title that needs three lines is set as plain navy type (StoneHeading's "solid" tone): the
+      // brick letters get busy across three lines at thumbnail size.
       const lh = parseFloat(getComputedStyle(el).lineHeight);
       if (!isHome && Math.round(el.offsetHeight / lh) >= 3) {
-        for (const span of el.querySelectorAll('span')) span.style.color = '';
+        el.classList.add('is-plain');
         el.style.color = solid;
       }
       return s;
