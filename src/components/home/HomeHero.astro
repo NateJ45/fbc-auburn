@@ -25,6 +25,7 @@ import { getChurchFacts } from '@/lib/church-data';
 import { timesPhrase } from '@/lib/church-facts';
 import { ctaHref } from '@/lib/cta-href';
 import { splitStega } from '@/lib/preview-stega';
+import { brickWord, LETTER_TONES } from '../../../scripts/lib/brick-letters.mjs';
 import type { ProjectedHeroSection } from '@/lib/pageBuilder.types';
 
 interface Props {
@@ -32,11 +33,26 @@ interface Props {
 }
 const { block } = Astro.props;
 
-// The mosaic word: each letter takes the next brand colour (green, deep sky, red, water). Built
-// from the visible text only; a preview's invisible stega run is put back after the letters.
+// The brick word (treatment A of the brick letterforms): navy brick letters, every fourth letter
+// (the "b" of Auburn) in auburn, one SVG per word. Built from the visible text only; a preview's
+// invisible stega run is put back after the letters.
 const { cleaned: word, encoded } = splitStega(block.headline || 'Auburn');
 let k = 0;
-const letters = [...word].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k++ % 4 }));
+const wordSvgs = word
+  .split(/\s+/)
+  .filter(Boolean)
+  .map((w, n) => {
+    const accent: number[] = [];
+    [...w].forEach((_, i) => {
+      if (k++ % 4 === 2) accent.push(i);
+    });
+    return brickWord(w, {
+      tones: LETTER_TONES.navy,
+      accent: { letters: accent, tones: LETTER_TONES.auburn },
+      seed: 3 + n * 11,
+      tracking: -0.035,
+    });
+  });
 // The masthead is set for a word of up to 7 letters ("Auburn" is 6). A longer word, should an
 // editor type one, scales the type down so it never runs off the screen.
 const longest = Math.max(1, ...word.split(/\s+/).map((w) => w.length));
@@ -84,15 +100,12 @@ const secondary = block.secondaryCta;
       <h1 class="hb-h1" id="hb-h1" aria-label={name}>
         {block.eyebrow && <span class="hb-eyebrow">{block.eyebrow}</span>}{' '}
         <span class="hb-word" style={`--hb-word-scale: ${wordScale}`}>
-          {letters.map(({ c, i }) =>
-            i < 0 ? (
-              ' '
-            ) : (
-              <span aria-hidden="true" class={`s${i}`}>
-                {c}
-              </span>
-            ),
-          )}
+          {wordSvgs.map((svg, i) => (
+            <>
+              {i > 0 && ' '}
+              <Fragment set:html={svg} />
+            </>
+          ))}
           {encoded}
         </span>
       </h1>

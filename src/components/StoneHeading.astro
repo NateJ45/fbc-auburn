@@ -1,20 +1,23 @@
 ---
 // Safe to edit by hand
-// StoneHeading: a page heading set in Auburn Stone (Young Serif split into stones, the church's
-// own heading face; public/fonts/auburn-stone.woff2, OFL, licence beside it).
+// StoneHeading: a page heading drawn in brick (2026-10-21; it was Auburn Stone, Young Serif split
+// into pebbles). Direction: docs/design-directions/2026-10-21-brick-path/ ("The letterforms").
 //
-// Real text: selectable, searchable, wraps on a phone. It falls back to Young Serif, which has the
-// same advance widths and kerning, so nothing shifts while the font loads.
+// tone="mosaic" (default for an H1)  treatment A: every letter is clean Young Serif filled with
+//                  running-bond brick in navy, and every fourth letter (the third of each four,
+//                  the rhythm the old s0..s3 colours had) in auburn. Drawn at build time by
+//                  scripts/lib/brick-letters.mjs: ONE inline SVG per word, with real spaces
+//                  between them, so a long title still wraps on a phone.
+// tone="solid" (default for an H2)   plain Young Serif text in deep navy, no drawing.
 //
-//   tone="mosaic"  each letter takes the next brand colour in turn (green, deep sky, red, water;
-//                  gold is left out on white because it fails 3:1). Default for an H1.
-//   tone="solid"   one colour, deep sky. Default for an H2.
+// Real words stay real: the heading carries aria-label with the clean text, the drawn letters are
+// aria-hidden, and a visually hidden copy of the text sits inside for search and copy. Keep the
+// brick version to 40px and up (the brick needs height to read); H3 and smaller are plain text.
 //
-// Keep it to 40px and up; H3 and smaller use plain Young Serif (the display font).
-//
-// Live preview: a Sanity string can carry an invisible stega run (click-to-edit). The mosaic is
-// built from the visible text only and the run is put back after the letters, so the overlay
-// still finds the field and no colour is spent on an invisible character.
+// Live preview: a Sanity string can carry an invisible stega run (click-to-edit). The drawing is
+// built from the visible text only and the run is put back after the words, so the overlay still
+// finds the field and no brick is spent on an invisible character.
+import { brickWord, LETTER_TONES } from '../../scripts/lib/brick-letters.mjs';
 import { splitStega } from '@/lib/preview-stega';
 
 interface Props {
@@ -32,8 +35,28 @@ const {
   class: cls,
 } = Astro.props;
 const { cleaned, encoded } = splitStega(text ?? '');
+
+// One SVG per word. The auburn letter is every fourth letter counted across the whole title
+// (spaces take no turn), so a two-word title keeps one rhythm.
 let k = 0;
-const letters = [...cleaned].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k++ % 4 }));
+const words =
+  tone === 'mosaic'
+    ? cleaned
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((word, w) => {
+          const accent: number[] = [];
+          [...word].forEach((_, i) => {
+            if (k++ % 4 === 2) accent.push(i);
+          });
+          return brickWord(word, {
+            tones: LETTER_TONES.navy,
+            accent: { letters: accent, tones: LETTER_TONES.auburn },
+            seed: 3 + w * 11,
+            tracking: -0.015,
+          });
+        })
+    : [];
 ---
 
 <Tag
@@ -43,15 +66,13 @@ const letters = [...cleaned].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k
 >
   {tone === 'mosaic' ? (
     <>
-      {letters.map(({ c, i }) =>
-        i < 0 ? (
-          ' '
-        ) : (
-          <span aria-hidden="true" class={`s${i}`}>
-            {c}
-          </span>
-        ),
-      )}
+      {words.map((svg, i) => (
+        <>
+          {i > 0 && ' '}
+          <Fragment set:html={svg} />
+        </>
+      ))}
+      <span class="sr-only">{cleaned}</span>
       {encoded}
     </>
   ) : (

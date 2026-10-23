@@ -38,7 +38,9 @@ social tile. Carry forward: a brick treatment cannot be a plain font (several co
 letter), so the headings become build-time SVG drawn from the heading text, one SVG per word so
 lines still wrap, with the words kept as real text for search and screen readers (`aria-label`
 plus the live-preview stega run). The Studio banner lettering keeps Auburn Stone until the Studio
-kit gets the same generator.
+kit gets the same generator. Built 2026-10-21: `scripts/lib/brick-letters.mjs` (`brickWord` is
+treatment A, `wallWord` is B), used by `StoneHeading.astro`, `HomeHero.astro`, `Footer.astro`, the 404,
+`SermonArt.astro` and the share cards.
 
 ## Where it lives
 

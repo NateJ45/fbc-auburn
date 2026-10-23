@@ -156,7 +156,16 @@ share cards, all from `scripts/lib/brick-courses.mjs` via `npm run gen:stones`. 
 Auburn Stone letterforms (the masthead and footer "Auburn", `StoneHeading.astro`), and the two
 layered pieces named above (`mark-layered.svg`, `baptism-layered.svg`).
 
-QUEUED 2026-10-21, its own session: the letterforms go brick (decision and sheet 13 in
+DONE 2026-10-21: the letterforms went brick (the queued item below, as built). `scripts/lib/brick-letters.mjs`
+(`brickWord` treatment A, `wallWord` treatment B; outlines in `scripts/lib/brick-font.generated.mjs`,
+rebuilt by `npm run gen:letters`) draws the Home masthead, the footer signature, the page H1s
+(`StoneHeading.astro`) and the share cards as A, and the 404 headline and the sermon and series art
+with no picture as B; the person initials (`.c-photo--blank`) are plain Young Serif. The Auburn Stone
+preload and `@font-face` are gone. What still uses the Auburn Stone font: only the Studio banner
+lettering (`src/sanity/kit.config.ts`, `studio-banner.test.ts`, `public/fonts/auburn-stone.woff2`), until the
+Studio kit gets the generator. One social tile in brick-wall letters is not drawn yet.
+
+Original brief (kept for the record): the letterforms go brick (decision and sheet 13 in
 `docs/design-directions/2026-10-21-brick-path/README.md`, "The letterforms"). Treatment A
 (brick-filled letters) for the masthead "Auburn" (`home-board.css` `.hb-word`), the page H1s
 (`StoneHeading.astro`, used by `ArchHero`, `BoardPageHead` and the 404) and the footer signature

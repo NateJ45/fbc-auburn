@@ -2,17 +2,11 @@
    First Baptist Church of Auburn: the brand layer on top of globals.css (imported after it in
    BaseLayout, so a tie goes to this file). Palette, fonts and radius come from
    brand/brand.config.json through apply-brand; this file holds what the config cannot say:
-   the Auburn Stone heading face, the mosaic letter colours, the arched hero and the button shape.
+   the brick heading letters (.bl-word), the mosaic letter colours, the arched hero and the button shape.
    Design source: DESIGN.md and docs/design-directions/2026-10-17-fbc-auburn/ (A blended with B and C). */
 
 /* The sermon archive, people list and downloads shelf (2026-10-18). */
 @import './collections.css';
-
-@font-face {
-  font-family: 'Auburn Stone';
-  src: url('/fonts/auburn-stone.woff2') format('woff2');
-  font-display: swap;
-}
 
 /* The two text fonts' Latin faces, served from /fonts at a fixed path so BaseLayout can preload
    them (the @fontsource copies get hashed names that cannot be preloaded). Same family, style,
@@ -79,9 +73,20 @@ h6 {
   font-weight: 400;
 }
 
-/* ---- Stone headings (StoneHeading.astro) ---- */
+/* ---- Brick letterforms (scripts/lib/brick-letters.mjs, 2026-10-21) ----
+   A drawn word is an inline SVG sized in em, so it scales with the font-size of whatever holds it
+   and sits on the line's baseline (the vertical-align is inline). Capped at the line's width, it
+   keeps its shape (height auto) so a long word shrinks rather than pokes out. */
+.bl-word {
+  display: inline-block;
+  max-width: 100%;
+  height: auto !important;
+  overflow: visible;
+}
+
+/* ---- Brick headings (StoneHeading.astro) ---- */
 .stone-heading {
-  font-family: 'Auburn Stone', 'Young Serif', serif;
+  font-family: 'Young Serif', serif;
   font-weight: 400;
   line-height: 1.02;
   letter-spacing: -0.01em;
@@ -89,18 +94,6 @@ h6 {
 }
 .stone-solid {
   color: var(--heading-solid);
-}
-.stone-heading .s0 {
-  color: var(--mosaic-0);
-}
-.stone-heading .s1 {
-  color: var(--mosaic-1);
-}
-.stone-heading .s2 {
-  color: var(--mosaic-2);
-}
-.stone-heading .s3 {
-  color: var(--mosaic-3);
 }
 
 /* ---- Arched hero (ArchHero.astro): words on the left, an arched photo on the right ---- */
@@ -1283,29 +1276,21 @@ html.motion .sill.is-laid path {
 /* The signature: the name in mosaic letters, full width, running off the bottom edge. */
 .sf-signature {
   overflow: hidden;
-  height: 0.6em;
-  font-family: 'Auburn Stone', 'Young Serif', serif;
-  /* Six letters at about 0.6em each: 26vw keeps the whole word on screen at every width. */
+  /* The brick word is about 0.86em tall; showing 0.72em of it lets the serifs run off the bottom. */
+  height: 0.72em;
+  /* The word is a brick SVG sized in em; six letters at about 0.6em each: 26vw keeps the whole
+     word on screen at every width. */
   font-size: min(26vw, 500px);
   line-height: 0.82;
   text-align: center;
   user-select: none;
 }
 .sf-signature__word {
-  letter-spacing: -0.035em;
-  transform: translateY(0.06em);
+  line-height: 0;
 }
-.sf-signature .s0 {
-  color: #7f98b8;
-}
-.sf-signature .s1 {
-  color: #d98a74;
-}
-.sf-signature .s2 {
-  color: #c96a52;
-}
-.sf-signature .s3 {
-  color: #9fb2cc;
+.sf-signature .bl-word {
+  display: block;
+  margin-inline: auto;
 }
 
 .sf-bottom {

@@ -52,6 +52,7 @@ import { sundayIcs, thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import Sill from '@/components/Sill.astro';
+import { brickWord, LETTER_TONES } from '../../scripts/lib/brick-letters.mjs';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -103,6 +104,14 @@ const chrome = resolveSiteSettings(siteSettings);
 const visible = getSectionVisibility(siteSettings?.sectionVisibility);
 
 const brandName = siteSettings?.title ?? site.name;
+// The signature: "Auburn" in brick letters on the dark ground (the pale navy and pale auburn
+// sets, treatment A of the brick letterforms; the "b" in auburn as on Home).
+const signature = brickWord('Auburn', {
+  tones: LETTER_TONES.paleNavy,
+  accent: { letters: [2], tones: LETTER_TONES.paleAuburn },
+  seed: 9,
+  tracking: -0.035,
+});
 
 // Social links: prefer the new socialLinks array; fall back to the legacy
 // socialInstagram / socialFacebook fields so existing datasets keep working.
@@ -598,11 +607,7 @@ const hasCalendar =
   {/* The signature: the church's name in the mosaic letters at full width, running off the bottom
       edge. Decorative (the name is in the bottom bar as text). */}
   <div class="sf-signature" aria-hidden="true">
-    <div class="sf-signature__word">
-      {['A', 'u', 'b', 'u', 'r', 'n'].map((c, i) => (
-        <span class={`s${i % 4}`}>{c}</span>
-      ))}
-    </div>
+    <div class="sf-signature__word" set:html={signature} />
   </div>
 
   <div class="sf-bottom">

@@ -1,14 +1,15 @@
 ---
 // Safe to edit by hand
 // Custom 404, "Off the path" (FBC Auburn mockups): the stepping-stone path breaks off, the title
-// is an Auburn Stone mosaic, and two buttons lead back. No search (there isn't one).
+// is cut out of a brick wall, and two buttons lead back. No search (there isn't one).
 //
 // The words and buttons can be set in the Studio (Not Found Page); these are the fallbacks.
 // The starter's photo column is gone: the broken path is the picture.
 import { getImage } from 'astro:assets';
 import { withTrailingSlash } from '@/lib/href';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import StoneHeading from '@/components/StoneHeading.astro';
+import { wallWord, LETTER_TONES } from '../../scripts/lib/brick-letters.mjs';
+import { splitStega } from '@/lib/preview-stega';
 import { getNotFoundPage, getSiteSettings } from '@/lib/queries';
 import stoneA from '@/assets/brand/stone-a.svg';
 import stoneB from '@/assets/brand/stone-b.svg';
@@ -24,6 +25,16 @@ const headline = notFoundPage?.headline ?? 'Off the path';
 const body =
   notFoundPage?.body ??
   "This page has wandered off, or the link was mistyped. Let's get you back on the path.";
+
+// The headline is cut out of a brick wall (treatment B), one block per word so it wraps; the words
+// stay real text in the heading's aria-label.
+const { cleaned: headlineText, encoded: headlineStega } = splitStega(headline);
+const headlineWalls = headlineText
+  .split(/\s+/)
+  .filter(Boolean)
+  .map((w, i) =>
+    wallWord(w, { tones: LETTER_TONES.auburn, letter: '#FBF8F3', seed: 5 + i * 7, pad: 0.16 }),
+  );
 
 const primaryLabel = notFoundPage?.primaryCtaLabel ?? 'Back to the home page';
 const primaryHref = withTrailingSlash(notFoundPage?.primaryCtaHref) ?? '/';
@@ -42,7 +53,16 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
       <span class="lost__gone"></span>
       <span class="lost__gone"></span>
     </div>
-    <StoneHeading text={headline} id="not-found-heading" class="lost__h1" />
+    <h1 id="not-found-heading" class="lost__h1" aria-label={headlineText}>
+      {headlineWalls.map((svg, i) => (
+        <>
+          {i > 0 && ' '}
+          <Fragment set:html={svg} />
+        </>
+      ))}
+      <span class="sr-only">{headlineText}</span>
+      {headlineStega}
+    </h1>
     <p class="mx-auto mt-m max-w-xl text-lg leading-relaxed text-muted-foreground">{body}</p>
     <div class="mt-l flex flex-wrap justify-center gap-s">
       <a href={primaryHref} class="btn-auburn btn-auburn--primary press-tactile">

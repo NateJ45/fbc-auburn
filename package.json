@@ -55,6 +55,7 @@
     "audit:studio": "node scripts/audit-studio.mjs",
     "audit:data": "node scripts/audit-data-vs-schema.mjs",
     "gen:stones": "node scripts/gen-stones.mjs",
+    "gen:letters": "node scripts/gen-brick-font.mjs",
     "search:index": "node scripts/build-search-index.mjs"
   },
   "dependencies": {

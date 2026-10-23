@@ -1,6 +1,6 @@
 // Foundation, edit with care
 // Generates one share image per page at public/og/<route-slug>.png, drawn by
-// scripts/lib/og-card.mjs (the Auburn card: the lockup, the title in Auburn Stone, the stone
+// scripts/lib/og-card.mjs (the Auburn card: the lockup, the title in brick letters, the stone
 // path), matching the per-route convention in BaseLayout (the pathname with slashes turned into
 // dashes; falls back to og-default.png when a route has no matching file).
 //
