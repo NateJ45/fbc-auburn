@@ -193,14 +193,36 @@ export function brickWord(text, o = {}) {
   const top = Math.min(...glyphs.map((q) => q.yMin)) - pad;
   const bottom = Math.max(0, ...glyphs.map((q) => q.yMax)) + pad;
   const id = idFor(['A', text, size, tones, accent, seed, course, tracking, unit, edge]);
-  const seen = new Set();
-  const bricks = [];
-  glyphs.forEach((q, i) => {
-    const set = accent?.letters.includes(i) ? accent.tones : tones;
-    bricks.push(...bricksIn(q.x, q.x + q.adv, q.yMin, q.yMax, g, seen, set, seed));
-  });
-  const clip = glyphs.map((q) => placePath(q.d, q.x, s)).join('');
-  const body = `<defs><clipPath id="${id}"><path d="${clip}"/></clipPath></defs><g clip-path="url(#${id})">${paint(bricks, edge)}</g>`;
+  // One brick field across the whole word, laid twice with the same geometry (so the joints line
+  // up from letter to letter): once in the base tones, clipped to the other letters' outlines, and
+  // once in the accent tones, clipped to the accent letters only. A running-bond brick straddles
+  // letter boundaries, so laying bricks per letter box let the "b" carry its auburn into the
+  // following "u" (fixed 2026-10-23).
+  const acc = new Set(accent?.letters ?? []);
+  const fx0 = Math.min(...glyphs.map((q) => q.x)) - g.L;
+  const fx1 = width + g.L;
+  const outlines = (keep) =>
+    glyphs
+      .filter((_, i) => keep(i))
+      .map((q) => placePath(q.d, q.x, s))
+      .join('');
+  const layer = (lid, set, d) =>
+    d
+      ? `<defs><clipPath id="${lid}"><path d="${d}"/></clipPath></defs><g clip-path="url(#${lid})">${paint(bricksIn(fx0, fx1, top, bottom, g, null, set, seed), edge)}</g>`
+      : '';
+  const body =
+    layer(
+      id,
+      tones,
+      outlines((i) => !acc.has(i)),
+    ) +
+    (acc.size && accent
+      ? layer(
+          `${id}-a`,
+          accent.tones,
+          outlines((i) => acc.has(i)),
+        )
+      : '');
   return svg({ x: 0, y: top, w: width, h: bottom - top, body, size, unit, descent: bottom });
 }
 

@@ -40,6 +40,30 @@ test('brickWord uses only the given tones, their shades and the accent tones', (
   assert.ok(used.some((c) => tones.map((t: string) => t.toLowerCase()).includes(c)));
 });
 
+test('the accent tones stay inside the accent letter (no bleed into the next letter)', () => {
+  // 2026-10-23: bricks laid per letter box carried the "b"'s auburn into the "u" after it. Now
+  // the base tones and the accent tones are separate layers, each clipped to its own letters.
+  const tones = LETTER_TONES.navy;
+  const accent = { letters: [2], tones: LETTER_TONES.auburn };
+  const out = brickWord('Auburn', { tones, accent });
+  const layers = [
+    ...out.matchAll(
+      /<clipPath id="([^"]+)"><path d="([^"]+)"\/><\/clipPath><\/defs><g clip-path="url\(#\1\)">([\s\S]*?)<\/g>/g,
+    ),
+  ];
+  assert.equal(layers.length, 2, 'one base layer and one accent layer');
+  const [base, acc] = layers;
+  const lower = (xs: string[]) => xs.map((c) => c.toLowerCase());
+  const accentSet = new Set(lower([...accent.tones, ...accent.tones.map((c: string) => shade(c))]));
+  const baseSet = new Set(lower([...tones, ...tones.map((c: string) => shade(c))]));
+  for (const c of lower(fills(base[3])))
+    assert.ok(!accentSet.has(c), `accent colour ${c} in the base layer`);
+  for (const c of lower(fills(acc[3])))
+    assert.ok(!baseSet.has(c), `base colour ${c} in the accent layer`);
+  // The accent clip is the "b" alone: one glyph's worth of outline, far shorter than the rest.
+  assert.ok(acc[2].length < base[2].length / 3, 'the accent clip holds more than one letter');
+});
+
 test('wallWord uses only the given tones, their shades and the letter colour', () => {
   const tones = LETTER_TONES.paleNavy;
   const allowed = new Set([
