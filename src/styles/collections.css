@@ -66,8 +66,8 @@
   object-fit: cover;
 }
 /* No picture: series art made of the church's own stones (SermonArt.astro, block polish
-   2026-10-18). A stone tile ground in one of three colours, the gold steps, and the book or title cut
-   out of a brick wall, one wall per word. The word is sized in
+   2026-10-18). A stone tile ground in one of three colours, the gold steps, and the book or title in
+   plain cream type. The word is sized in
    container units, so it fills a small card and a wide player alike. */
 .c-art--blank {
   container-type: inline-size;
@@ -91,13 +91,14 @@
 }
 .c-art__word {
   max-width: 100%;
-  /* Each word is a brick wall with the word cut out of it (an SVG sized in em, from SermonArt.astro),
-     so the font-size here is the word's size and the walls wrap like words. */
+  /* The series' word in plain cream Young Serif on the stone ground (it was cut out of brick walls
+     until 2026-10-24); the font-size is set from the word's length in SermonArt.astro. */
+  font-family: var(--font-display);
   font-size: var(--word, 2rem);
-  line-height: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.12em 0.2em;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: #fbf8f3;
+  text-wrap: balance;
 }
 /* With the play stone in the middle, the word stays small enough to sit under it. */
 .c-art--blank:has(.c-art__play) .c-art__word {

@@ -4,7 +4,7 @@ _2026-10-24: page headings are plain type, not brick._
 
 **Decision.** Nathan found the brick-letter H1s too busy. `StoneHeading.astro` (every inner page head through
 `BoardPageHead`, and `ArchHero`) now renders plain Young Serif in deep navy, and the 404's brick-wall headline went the
-same way. The generator (`scripts/lib/brick-letters.mjs`) stays for the share cards and the sermon and series art.
+same way. Then the rest: the share cards (`scripts/lib/og-card.mjs`, all 19 regenerated, plus first cards for events, next steps and prayer) set the title and the Home "Auburn" in plain navy, and the sermon and series art with no picture sets its word in plain cream type (`SermonArt.astro`, `.c-art__word`). The generator (`scripts/lib/brick-letters.mjs`), its tests and the flow layer's `lay` kind stay, unused.
 
 _2026-10-24: every Studio icon is brick._
 

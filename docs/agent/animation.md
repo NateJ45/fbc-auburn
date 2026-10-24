@@ -169,7 +169,7 @@ bottom course first, brick by brick along it, back the other way on the next cou
 set down with a small tap (`brick-set`: drops from 70% of its height above, lands 5% low and
 squashed, settles).
 
-- Brick-letter titles (`StoneHeading` mosaic) are flow unit kind `lay`, not `lines`. The
+- Brick-letter titles (`StoneHeading` mosaic, retired 2026-10-24, so nothing on the site uses `lay` today) are flow unit kind `lay`, not `lines`. The
   generator (`scripts/lib/brick-letters.mjs`, `paintCourses`) groups each word's bricks by
   course: `<g class="bl-c">` with `--o` (its turn, bottom course first; courses are numbered
   from the baseline so every word on a line shares them) and `--b` (its brick count); odd

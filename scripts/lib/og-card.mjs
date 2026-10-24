@@ -15,7 +15,7 @@
 //           well: the type steps down from 120px to 64px and wraps to three lines at most.
 //   kicker  optional small line above the title (a date, "Sermon series", "News and notes").
 //   home    true draws the home card instead: the masthead (mark, "First Baptist Church of",
-//           Auburn in brick letters) and `title` as the line under it (the Site settings tagline).
+//           Auburn in plain navy type) and `title` as the line under it (the Site settings tagline).
 //   brand   optional { name, place } for the lockup; defaults to the church's name.
 //
 // DETERMINISTIC: no clock, no randomness (the stones are seeded, stone-mosaic.mjs), fonts come
@@ -23,8 +23,8 @@
 // generators leaves git clean unless a title or the design changed.
 //
 // The design (picked 2026-10-18 from three directions, comparison in the PR): white ground, the
-// church lockup top left, the title in brick letters (the site's own H1, treatment A of the brick
-// letterforms: navy brick with every fourth letter in auburn), and the brick wall across the foot.
+// church lockup top left, the title in plain navy Young Serif (as the site's own H1; it was brick
+// letters until 2026-10-24), and the brick wall across the foot.
 //
 // Playwright is already a devDependency (the test suite); the PNGs are committed, so CI never
 // runs this. If it ever does, the workflow needs `npx playwright install chromium`.
@@ -35,7 +35,6 @@ import { fileURLToPath } from 'node:url';
 import { MARK } from './stone-mosaic.mjs';
 import { BRICK_PATH_PRESETS, brickMarker, brickPath } from './brick-courses.mjs';
 import { printMask } from './brick-print.mjs';
-import { brickWord, LETTER_TONES } from './brick-letters.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -84,31 +83,6 @@ export const cleanText = (s) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-/**
- * The title as brick letters, one SVG per word so it wraps: sized in
- * em, so the fit loop below scales it with font-size like text. Every fourth letter, counted
- * across the title, is auburn.
- */
-function brickLine(text, tracking = -0.015) {
-  let k = 0;
-  return text
-    .split(' ')
-    .filter(Boolean)
-    .map((word, n) => {
-      const accent = [];
-      [...word].forEach((_, i) => {
-        if (k++ % 4 === 2) accent.push(i);
-      });
-      return brickWord(word, {
-        tones: LETTER_TONES.navy,
-        accent: { letters: accent, tones: LETTER_TONES.auburn },
-        seed: 3 + n * 11,
-        tracking,
-      });
-    })
-    .join(' ');
-}
-
 function cardHtml({ title, kicker, home, brand }) {
   const head = `<!doctype html><html><head><meta charset="utf-8"><style>
   @font-face{font-family:YoungSerif;src:url(data:font/woff2;base64,${FONTS.serif}) format('woff2');font-display:block}
@@ -125,22 +99,20 @@ function cardHtml({ title, kicker, home, brand }) {
   .body{position:absolute;left:72px;right:72px;top:190px;height:250px;display:flex;flex-direction:column;justify-content:center}
   .kicker{display:flex;align-items:center;gap:14px;margin-bottom:14px;font-weight:700;font-size:24px;
     letter-spacing:.14em;text-transform:uppercase;color:${MARK.deep}}
-  .title{font-family:YoungSerif,serif;line-height:1.02;letter-spacing:-.01em;text-wrap:balance}
-  .title .plain{display:none}
-  .title.is-plain .bk{display:none} .title.is-plain .plain{display:inline}
-  .bl-word{display:inline-block}
+  /* Plain navy Young Serif, as the site's page headings (the brick letters were dropped 2026-10-24). */
+  .title{font-family:YoungSerif,serif;line-height:1.02;letter-spacing:-.01em;text-wrap:balance;color:${MARK.deep}}
   /* Home: the masthead, as the site's home hero sets it. */
   .mast{position:absolute;left:64px;right:64px;top:50px;display:flex;align-items:center;gap:40px}
   .mast img{width:250px;height:250px;flex:none}
   .mast .place{font-weight:700;font-size:28px;letter-spacing:.16em;text-transform:uppercase;color:${MARK.deep}}
-  .mast .auburn{font-family:YoungSerif,serif;font-size:184px;line-height:.98;letter-spacing:-.01em;margin-top:4px}
+  .mast .auburn{font-family:YoungSerif,serif;font-size:184px;line-height:.98;letter-spacing:-.02em;margin-top:4px;color:${MARK.deep}}
   .tagline{position:absolute;left:72px;right:72px;top:340px;font-family:YoungSerif,serif;font-size:50px;line-height:1.1;color:${INK}}
   </style></head><body><div class="card">`;
   const path = `<div class="path">${PATH_SVG}</div>`;
   if (home) {
     return `${head}
     <div class="mast"><img src="${MARK_SVG}" alt="">
-      <div><div class="place">${esc(brand.lead)}</div><div class="auburn">${brickLine(brand.place, -0.035)}</div></div></div>
+      <div><div class="place">${esc(brand.lead)}</div><div class="auburn">${esc(brand.place)}</div></div></div>
     <div class="tagline" id="fit">${esc(title)}</div>
     ${path}</div></body></html>`;
   }
@@ -149,7 +121,7 @@ function cardHtml({ title, kicker, home, brand }) {
     <div><div class="n1">${esc(brand.line1)}</div><div class="n2">${esc(brand.line2)}</div></div></div>
   <div class="body">
     ${kicker ? `<div class="kicker">${STEPS_SVG}<span>${esc(kicker)}</span></div>` : ''}
-    <div class="title" id="fit"><span class="bk">${brickLine(title)}</span><span class="plain">${esc(title)}</span></div>
+    <div class="title" id="fit">${esc(title)}</div>
   </div>
   ${path}</div></body></html>`;
 }
@@ -204,7 +176,7 @@ export async function renderCard({ title, kicker, home = false, outPath, brand =
   // fewer (two for the home tagline). Measured in the browser with the real font, so the result
   // is the same on every run.
   const size = await page.evaluate(
-    ({ home: isHome, solid }) => {
+    ({ home: isHome }) => {
       const el = document.getElementById('fit');
       const box = isHome ? { w: 1056, h: 120 } : { w: 1056, h: el.parentElement.clientHeight };
       const kick = el.previousElementSibling?.classList.contains('kicker')
@@ -220,16 +192,9 @@ export async function renderCard({ title, kicker, home = false, outPath, brand =
         if (el.scrollWidth <= box.w && el.offsetHeight <= room && lines <= maxLines) break;
       }
       el.style.fontSize = `${s}px`;
-      // A title that needs three lines is set as plain navy type (StoneHeading's "solid" tone): the
-      // brick letters get busy across three lines at thumbnail size.
-      const lh = parseFloat(getComputedStyle(el).lineHeight);
-      if (!isHome && Math.round(el.offsetHeight / lh) >= 3) {
-        el.classList.add('is-plain');
-        el.style.color = solid;
-      }
       return s;
     },
-    { home, solid: MARK.deep },
+    { home },
   );
   const type = /\.jpe?g$/i.test(outPath) ? 'jpeg' : 'png';
   const buf = await page.screenshot({ type, ...(type === 'jpeg' ? { quality: 88 } : {}) });
