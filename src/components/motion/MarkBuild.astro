@@ -2,27 +2,85 @@
 // Safe to edit by hand
 // The church mark, large (the "mark" picture choice on an Image and text block, and the Steps rail).
 // Since 2026-10-23 the mark is the linocut print (brand/logo/mark.svg), shown from its raster
-// (src/assets/brand/mark-print.png, as WebP) because the SVG is about 900 KB of grain. The old
-// stone mark that built itself stone by stone (mark-layered.svg) is retired; the class name stays
-// so the blocks' layout CSS still applies.
+// (src/assets/brand/mark-print.png, as WebP) because the SVG is about 900 KB of grain.
+//
+// It builds itself (2026-10-24): when it scrolls into view the wall is laid one brick at a time,
+// bottom course first, each brick dropping into place with weight, until the last course seals the
+// top of the cross. Each brick is the print clipped to that brick's outline
+// (mark-bricks.generated.ts, from `npm run gen:mark`), so the grain is the real print. When the
+// last brick lands the whole print is shown underneath, so the finished mark is pixel for pixel
+// the logo. Styles: src/styles/motion.css ("The mark build"). No JS, `?still` or reduced motion:
+// the finished mark, no build. The cross itself never moves; it is the space the bricks leave.
 import { getImage } from 'astro:assets';
 import markPrint from '@/assets/brand/mark-print.png';
+import { MARK_BRICKS, MARK_COURSES, MARK_VIEWBOX } from './mark-bricks.generated';
 
 interface Props {
   class?: string;
 }
 const { class: extraClass = '' } = Astro.props as Props;
 const img = await getImage({ src: markPrint, width: 720, format: 'webp', quality: 82 });
+const [, , vw, vh] = MARK_VIEWBOX.split(' ').map(Number);
+// Ids must be unique if the mark appears twice on a page.
+const uid = `mk${Math.random().toString(36).slice(2, 7)}`;
+
+// Timing: a steady beat between bricks and a breath between courses, so it reads as a wall being
+// laid by hand rather than a ripple. About five seconds start to finish.
+const BRICK_MS = 120;
+const COURSE_MS = 240;
+const bricks = MARK_BRICKS.map((b, i) => ({ ...b, delay: i * BRICK_MS + b.course * COURSE_MS }));
+const total = bricks[bricks.length - 1].delay;
 ---
 
 <div class:list={['mark-build-wrap', extraClass]}>
-  <img
-    src={img.src}
-    width={markPrint.width}
-    height={markPrint.height}
-    alt="The church's mark: a wall of red-brown brick with a plain cross cut out of it"
-    loading="lazy"
-    decoding="async"
-    style="display:block;width:100%;height:auto"
-  />
+  <svg
+    class="mark-lay"
+    viewBox={MARK_VIEWBOX}
+    role="img"
+    aria-label="The church's mark: a wall of red-brown brick with a plain cross cut out of it"
+    data-courses={MARK_COURSES}
+    style={`--mark-total:${total}ms`}
+  >
+    <defs>
+      {bricks.map((b, i) => (
+        <clipPath id={`${uid}-${i}`}>
+          <path d={b.d} />
+        </clipPath>
+      ))}
+    </defs>
+    <image class="mark-lay__whole" href={img.src} width={vw} height={vh} />
+    {bricks.map((b, i) => (
+      <g class="mark-lay__brick" style={`--t:${b.delay}ms`}>
+        <image href={img.src} width={vw} height={vh} clip-path={`url(#${uid}-${i})`} />
+      </g>
+    ))}
+  </svg>
 </div>
+
+<script>
+  // Lay the wall once, when most of the mark is on screen. Re-binds after each View Transitions
+  // swap. Without html.motion the CSS already shows the finished mark, so there is nothing to do.
+  function initMarkLay() {
+    const marks = document.querySelectorAll<SVGSVGElement>('.mark-lay:not(.is-laying)');
+    if (!marks.length || !document.documentElement.classList.contains('motion')) return;
+    const finish = (svg: SVGSVGElement) => svg.classList.add('is-laid');
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const svg = e.target as SVGSVGElement;
+          io.unobserve(svg);
+          svg.classList.add('is-laying');
+          const last = svg.querySelector('.mark-lay__brick:last-of-type');
+          last?.addEventListener('animationend', () => finish(svg), { once: true });
+          // Backstop in case animationend never fires (tab hidden, animations disabled).
+          const total = parseFloat(getComputedStyle(svg).getPropertyValue('--mark-total')) || 0;
+          setTimeout(() => finish(svg), total + 2000);
+        }
+      },
+      { threshold: 0.45 },
+    );
+    marks.forEach((m) => io.observe(m));
+  }
+  document.addEventListener('astro:page-load', initMarkLay);
+</script>

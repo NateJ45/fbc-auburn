@@ -220,29 +220,52 @@ html.motion .reveal:not(.in) {
   width: min(520px, 100%);
 }
 
-/* The mark builds itself, stone by stone, in story order (ring, water, steps, cross, heart). */
-.mark-build path {
-  transform-box: fill-box;
-  transform-origin: center;
+/* The mark build (MarkBuild.astro, 2026-10-24): the brick print is laid one brick at a time,
+   bottom course first, until the last course closes over the top of the cross. Each brick drops
+   with weight (accelerating, a small settle on impact); --t is its turn, set at build time. When
+   the last brick lands the script adds .is-laid: the whole print shows underneath (identical
+   pixels, so nothing visibly changes) and the mark gives one slow swell. Lengths inside the SVG
+   are viewBox units (762 wide), so -110 is about a seventh of the mark. The old stone mark's
+   .mark-build rules below are retired and match nothing. */
+.mark-lay {
+  transform-origin: 50% 60%;
 }
-html.motion .mark-build path {
-  transition:
-    opacity 0.5s ease-out calc(var(--i) * 55ms),
-    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i) * 55ms);
-}
-html.motion .mark-build:not(.in) path {
+html.motion .mark-lay:not(.is-laid) .mark-lay__whole,
+html.motion .mark-lay:not(.is-laying) .mark-lay__brick {
   opacity: 0;
-  transform: translateY(18px) scale(0.92);
 }
-/* ...then the three wave bands drift a few pixels apart as the page scrolls. */
-html.motion .mark-build.in [data-wave='sky'] {
-  transform: translateX(calc(var(--drift, 0) * 16px));
+html.motion .mark-lay.is-laying .mark-lay__brick {
+  animation: mark-brick-lay 760ms var(--t, 0ms) both;
 }
-html.motion .mark-build.in [data-wave='water'] {
-  transform: translateX(calc(var(--drift, 0) * -11px));
+html.motion .mark-lay.is-laid {
+  animation: mark-swell 1100ms cubic-bezier(0.3, 0, 0.2, 1) both;
 }
-html.motion .mark-build.in [data-wave='deep'] {
-  transform: translateX(calc(var(--drift, 0) * 7px));
+@keyframes mark-brick-lay {
+  0% {
+    opacity: 0;
+    transform: translateY(-110px);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.45);
+  }
+  30% {
+    opacity: 1;
+  }
+  68% {
+    transform: translateY(4px);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes mark-swell {
+  0%,
+  100% {
+    transform: none;
+  }
+  45% {
+    transform: scale(1.025);
+  }
 }
 
 /* Baptism: the outer ring turns, the ripples swell from where the cross meets the water.
@@ -613,6 +636,8 @@ html.motion .walk-plan .stop.here .stop-ring {
 @media (prefers-reduced-motion: reduce) {
   .reveal,
   .mark-build path,
+  .mark-lay,
+  .mark-lay__brick,
   .bgstone,
   .walk-steps li {
     transition: none !important;

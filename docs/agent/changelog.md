@@ -1,5 +1,12 @@
 # Change history
 
+_2026-10-24: the mark lays itself, brick by brick._
+
+**Decision.** Nathan asked for the mark to build up slowly into the cross, one brick at a time. `MarkBuild.astro` now
+draws the print as 32 clipped bricks (`npm run gen:mark` splits them out of `brand/logo/mark.svg`) and lays them
+bottom course first when the mark scrolls into view, about five seconds, ending in one slow swell. About's "The story
+in our mark" and the Steps rail both use it; no JS, `?still` and reduced motion show the finished mark.
+
 _2026-10-24: the "night" share card._
 
 **Decision.** With the brick letters gone the share cards were plain, so five directions were drawn

@@ -214,8 +214,14 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   elsewhere. Used by the rail's icons and stones and the stone dividers; the icon cards and page icons can opt in with
   the same class.
 - **The rail** (`stepsRailSection`): three gold stones in each gap, then the mark building itself in story order.
-- **The mark build** (`MarkBuild.astro`, the inlined `mark-layered.svg`): stones land in order on a named view
-  timeline, then the three wave bands drift a few pixels apart across the scroll. In a text-and-picture band, pick
+- **The mark build** (`MarkBuild.astro`, 2026-10-24): once 45% of the brick print is on screen the wall is laid
+  one brick at a time, bottom course first and back and forth like a mason, each brick dropping with weight and
+  settling, about five seconds in all, until the last course seals the top of the cross; then the mark gives one
+  slow swell. Each brick is the raster print clipped to that brick's outline (`mark-bricks.generated.ts`, from
+  `npm run gen:mark`, which splits `brand/logo/mark.svg`; re-run only if the mark changes), and the whole print is
+  shown underneath once it is laid, so the finished picture is exactly the logo. Timer, not scroll-scrubbed: it plays
+  once. Styles in `motion.css` (`.mark-lay`); the old `.mark-build` stone rules there match nothing. In a
+  text-and-picture band, pick
   "The church mark" under Picture (`imageTextSection.art = mark`); About uses it for "The story in our mark".
 - **Baptism** (`BaptismGraphic.astro`, `art = baptism`): the green ring turns about 14 degrees across the scroll
   and the ripples swell; `#cross` is never transformed.

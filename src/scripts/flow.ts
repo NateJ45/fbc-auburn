@@ -46,7 +46,7 @@ const LINE_UNITS = 'h1, h2, blockquote > p, [data-flow="lines"]';
 
 // Things that already move in their own way, and everything inside them.
 const SKIP =
-  '[data-flow="off"], .reveal, .mark-build, .hb-photo, .hb-path, .bgpath, .sr-only, ' +
+  '[data-flow="off"], .reveal, .mark-build, .mark-lay, .hb-photo, .hb-path, .bgpath, .sr-only, ' +
   '[data-sundaybar], .fj, .shot__example';
 
 const EASE_STAGGER_MS = 90;
