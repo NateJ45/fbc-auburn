@@ -171,8 +171,10 @@ once hashes are present. Helpers and tests: `scripts/lib/csp.mjs`.
 - **Only scripts are restricted.** No `default-src`, so images, frames (YouTube, Facebook, maps),
   styles, fonts and fetches (the weather) are untouched.
 - **What can still break:** a script that pasted code adds AT RUNTIME from an origin not in the
-  HTML (a widget whose loader pulls a second script from another host). Add that origin to
-  `RUNTIME_ORIGINS` in `scripts/build-csp.mjs`. GA4's tag is already handled that way.
+  HTML (a widget whose loader pulls a second script from another host). List that origin in
+  `scripts/csp-origins.json` (this site's own file, not PORTABLE; a JSON array such as
+  `["https://widget.example.com"]`). GA4's tag is handled inside the script. The script and
+  `scripts/lib/csp.mjs` are PORTABLE copies from the starter (PORTS.md card 153).
 - **Lighthouse still notes "Host allowlists can frequently be bypassed"** (unscored; Best
   Practices stays 100). That comes from the Cloudflare beacon's origin in the list. The cure,
   `'strict-dynamic'`, makes browsers ignore every origin in `script-src`, which would block any
