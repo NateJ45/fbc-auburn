@@ -96,7 +96,7 @@ const items = [
     'faqcat-church',
     1,
     'What kind of church is this?',
-    'We are a small Southern Baptist church in Ross Township. You can read what we believe on the What we believe page.',
+    'We are a close-knit Southern Baptist church in Ross Township. You can read what we believe on the What we believe page.',
   ),
 ];
 
