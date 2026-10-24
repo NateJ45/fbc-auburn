@@ -610,7 +610,7 @@ export const kitConfig: KitConfig = {
   // church's own brand. The full-colour mark on a light disc (it carries the story colours the
   // white mark loses), the stone path from the water to the red cross along the foot
   // (npm run gen:stones writes it), the editor's name in gold, and "Auburn" in Auburn Stone with
-  // the footer signature's on-navy letter colours (white, water, gold).
+  // on-navy letter colours (white, water, gold).
   homeBanner: {
     mark: '/studio-banner/mark.svg',
     motif: '/studio-banner/stone-path.svg',

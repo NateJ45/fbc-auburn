@@ -41,7 +41,7 @@ export const siteSettings = defineType({
       name: 'tagline',
       title: 'Tagline',
       type: 'string',
-      description: 'Short tagline shown under the logo in the footer.',
+      description: 'A short line about the church, shown in the menu.',
       validation: (Rule) => Rule.required().max(140),
     }),
     defineField({
@@ -454,11 +454,14 @@ export const siteSettings = defineType({
     }),
     // FBC Auburn (2026-10-18): the footer's own words, so the pastor can change them himself.
     // Each falls back to the built-in wording when left empty.
+    // Hidden since 2026-10-24: the compact footer has no big heading or line under it. Kept in the
+    // schema (not removed) so the Studio never offers "Remove field" on the stored value (rule 1).
     defineField({
       name: 'footerInvite',
       title: 'Footer: the line under the big heading',
       type: 'string',
       group: 'social',
+      hidden: true,
       description:
         'One short sentence under "A close-knit church with the door open." (the tagline above). Leave empty for "Come along on a Sunday, or ask us anything first."',
       validation: (Rule) => Rule.max(120),

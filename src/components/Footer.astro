@@ -53,8 +53,6 @@ import { sundayIcs, thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import Sill from '@/components/Sill.astro';
-import BuildingSketch from '@/components/church/BuildingSketch.astro';
-import { brickWord, LETTER_TONES } from '../../scripts/lib/brick-letters.mjs';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -106,14 +104,6 @@ const chrome = resolveSiteSettings(siteSettings);
 const visible = getSectionVisibility(siteSettings?.sectionVisibility);
 
 const brandName = siteSettings?.title ?? site.name;
-// The signature: "Auburn" in brick letters on the dark ground (the pale navy and pale auburn
-// sets, treatment A of the brick letterforms; the "b" in auburn as on Home).
-const signature = brickWord('Auburn', {
-  tones: LETTER_TONES.paleNavy,
-  accent: { letters: [2], tones: LETTER_TONES.paleAuburn },
-  seed: 9,
-  tracking: -0.035,
-});
 
 // Social links: prefer the new socialLinks array; fall back to the legacy
 // socialInstagram / socialFacebook fields so existing datasets keep working.
@@ -194,8 +184,6 @@ const hasTouch = !!(email || phone || liveUrl || facebookText || socialLinksToRe
 // goes where the header's button goes, so a build without Sanity never links to a missing page.
 const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
 // The footer's own words (Site settings > Social & footer), each with the built-in fallback.
-const footerInvite =
-  siteSettings?.footerInvite || 'Come along on a Sunday, or ask us anything first.';
 const footerAbout = siteSettings?.footerAbout || 'A Southern Baptist church in Ross Township, Ohio';
 const secondaryCta = siteSettings?.footerSecondaryCta?.label
   ? { label: siteSettings.footerSecondaryCta.label, href: ctaHref(siteSettings.footerSecondaryCta) }
@@ -207,13 +195,13 @@ const hasCalendar =
 ---
 
 <footer class="site-footer bg-muted text-foreground">
-  {/* FBC Auburn footer (2026-10-18): the last screen of every page, built as a doorstep.
-      1. The sill: a band of the mark's stones across the top edge, in the story's colours.
-      2. The closing invitation (the tagline at display size, two next steps) beside a live
+  {/* FBC Auburn footer, compact since 2026-10-24 (it was 1,523px on desktop, 1.7 screens: a
+      display-size tagline, a building sketch and a full-width brick "Auburn" signature, all gone).
+      1. The sill: a band of the mark's bricks across the top edge.
+      2. Left: the mark, the two next steps (the closing invite on pages with no band of their own)
+         and the link rows (Sanity footer columns; Get in touch only when filled). Right: the live
          This Sunday panel: date, times, address, Directions, all from Church facts.
-      3. The link row (Sanity footer columns; Follow and Get in touch only when filled).
-      4. The signature: a giant mosaic "Auburn" across the full width, running off the bottom.
-      5. A slim bottom bar.
+      3. A slim bottom bar.
       The whole footer is ink: .site-footer redefines the colour tokens (src/styles/auburn.css),
       so the starter's link grid below turns light-on-ink without touching its classes. */}
   <Sill class="site-footer__sill" />
@@ -229,8 +217,6 @@ const hasCalendar =
         loading="lazy"
         decoding="async"
       />
-      {siteSettings?.tagline && <p class="sf-invite__tagline">{siteSettings.tagline}</p>}
-      <p class="sf-invite__line">{footerInvite}</p>
       <div class="sf-invite__actions">
         {visitCta && (
           <a class="btn-auburn btn-auburn--primary" href={visitCta.href}>
@@ -240,6 +226,324 @@ const hasCalendar =
         <a class="btn-auburn btn-auburn--secondary" href={secondaryCta.href}>
           {secondaryCta.label}
         </a>
+      </div>
+
+      {/* Link grid. FBC Auburn (Home audit, 2026-10-17): it takes the brand row's own columns
+           (.site-footer__links in src/styles/auburn.css), so Visit, Belong and Connect line up under
+           the tagline, Sundays and Find us; two columns on phones. When siteSettings.footerColumns is
+           non-empty, the custom Sanity columns replace the built-in ones. Get in touch renders only
+           when there is an email, a phone or a social link to show. */}
+      <div class="site-footer__links mx-auto grid max-w-content gap-l px-l pt-l pb-m text-left">
+        {/* --- Editor-managed columns (from Sanity siteSettings.footerColumns) --- */}
+        {useCustomFooterColumns ? (
+          sanityFooterColumns.map((col, colIdx) => (
+            <nav aria-labelledby={`footer-custom-${colIdx}`}>
+              <p
+                id={`footer-custom-${colIdx}`}
+                class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
+              >
+                {col.title}
+              </p>
+              <ul class="list-none p-0 text-sm">
+                {col.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))
+        ) : (
+          <>
+            {/* --- Built-in columns (default when footerColumns is empty) --- */}
+
+            {/* STUDIO */}
+            <nav aria-labelledby="footer-studio">
+              <p
+                id="footer-studio"
+                class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
+              >
+                Our church
+              </p>
+              <ul class="list-none p-0 text-sm">
+                {/* scaffold: about */}
+                <li>
+                  <a
+                    href="/about/"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                  >
+                    About
+                  </a>
+                </li>
+                {/* scaffold:end */}
+                {/* scaffold: faq */}
+                <li>
+                  <a
+                    href="/faq/"
+                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                  >
+                    FAQ
+                  </a>
+                </li>
+                {/* scaffold:end */}
+                {visible.press && (
+                  <li>
+                    <a
+                      href="/press/"
+                      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                    >
+                      Press
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </nav>
+
+            {/* WORK */}
+            <nav aria-labelledby="footer-work">
+              <p
+                id="footer-work"
+                class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
+              >
+                Read
+              </p>
+              <ul class="list-none p-0 text-sm">
+                {visible.portfolio && (
+                  <li>
+                    <a
+                      href="/portfolio/"
+                      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                    >
+                      Portfolio
+                    </a>
+                  </li>
+                )}
+                {visible.portfolio && (
+                  <li>
+                    <a
+                      href="/portfolio/before-after/"
+                      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                    >
+                      Before &amp; After
+                    </a>
+                  </li>
+                )}
+                {/* scaffold: journal */}
+                {visible.journal && (
+                  <li>
+                    <a
+                      href="/journal/"
+                      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                    >
+                      Journal
+                    </a>
+                  </li>
+                )}
+                {/* scaffold:end */}
+                {visible.shop && (
+                  <li>
+                    <a
+                      href="/shop/"
+                      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                    >
+                      Shop
+                    </a>
+                  </li>
+                )}
+                {visible.giftCertificates && (
+                  <li>
+                    <a
+                      href="/gift-certificates/"
+                      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                    >
+                      Gift Certificates
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </nav>
+
+            {/* FREE TOOLS & GUIDES: only when one of its modules is switched on (FBC Auburn has none). */}
+            {(visible.styleQuiz ||
+              visible.budgetCalculator ||
+              visible.guides ||
+              visible.resources) && (
+              <nav aria-labelledby="footer-tools">
+                <p
+                  id="footer-tools"
+                  class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
+                >
+                  Free tools &amp; guides
+                </p>
+                <ul class="list-none p-0 text-sm">
+                  {visible.styleQuiz && (
+                    <li>
+                      <a
+                        href="/quiz/"
+                        class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                      >
+                        Style Quiz
+                      </a>
+                    </li>
+                  )}
+                  {visible.budgetCalculator && (
+                    <li>
+                      <a
+                        href="/calculator/"
+                        class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                      >
+                        Cost Calculator
+                      </a>
+                    </li>
+                  )}
+                  {visible.guides && (
+                    <li>
+                      <a
+                        href="/guides/"
+                        class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                      >
+                        Guides
+                      </a>
+                    </li>
+                  )}
+                  {visible.resources && (
+                    <li>
+                      <a
+                        href="/resources/"
+                        class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                      >
+                        Resources
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </nav>
+            )}
+          </>
+        )}
+
+        {/* LATEST PROJECTS — only when portfolio is visible. */}
+        {visible.portfolio ? (
+          <nav aria-labelledby="footer-latest">
+            <p
+              id="footer-latest"
+              class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
+            >
+              Latest projects
+            </p>
+            {latestProjects.length > 0 ? (
+              <ul class="list-none p-0 text-sm">
+                {latestProjects.map((p) => (
+                  <li>
+                    <a
+                      href={`/portfolio/${p.slug?.current ?? ''}/`}
+                      class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
+                    >
+                      {p.title}
+                    </a>
+                  </li>
+                ))}
+                <li class="pt-xs">
+                  <a
+                    href="/portfolio/"
+                    class="inline-flex min-h-[44px] items-center gap-xs text-xs font-semibold tracking-eyebrow text-link uppercase transition-colors hover:text-primary-dark"
+                  >
+                    View all <span aria-hidden="true">→</span>
+                  </a>
+                </li>
+              </ul>
+            ) : (
+              <p class="text-sm text-foreground/85 italic">
+                Case studies are coming soon.{' '}
+                <a
+                  href="/portfolio/"
+                  class="text-link underline underline-offset-2 hover:text-primary-dark"
+                >
+                  See the portfolio →
+                </a>
+              </p>
+            )}
+          </nav>
+        ) : null}
+
+        {/* GET IN TOUCH: email, phone, the live stream, Facebook, socials. Skipped when there is none. */}
+        {hasTouch && (
+          <div>
+            <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Get in touch</p>
+            <div class="space-y-1 text-sm">
+              {email && (
+                <p>
+                  <CopyEmailButton client:visible email={email.display} variant="link" />
+                  <NotConfirmed confirmed={email.confirmed} />
+                </p>
+              )}
+              {phone && (
+                <p>
+                  <a
+                    href={phone.tel}
+                    class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+                  >
+                    <Phone size={14} aria-hidden="true" />
+                    {phone.display}
+                  </a>
+                  <NotConfirmed confirmed={phone.confirmed} />
+                </p>
+              )}
+              {liveUrl && (
+                <p>
+                  <a
+                    href={liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+                  >
+                    <IconPlayerPlay size={14} stroke={1.75} aria-hidden="true" />
+                    Watch live on Sunday<span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </p>
+              )}
+              {facebookText && (
+                <p>
+                  <a
+                    href={facebookText}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+                  >
+                    <IconBrandFacebook size={14} stroke={1.75} aria-hidden="true" />
+                    Facebook<span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </p>
+              )}
+            </div>
+            {socialLinksToRender.length > 0 && (
+              <ul class="mt-m flex list-none justify-start gap-s p-0 text-sm">
+                {socialLinksToRender.map((link) => {
+                  const Icon = socialIcon(link.platform);
+                  const ariaLabel = link.label ?? link.platform ?? 'Social link';
+                  return (
+                    <li>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={ariaLabel}
+                        class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
+                      >
+                        <Icon size={20} stroke={1.5} />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
     </div>
 
@@ -301,323 +605,6 @@ const hasCalendar =
       </div>
     </div>
   )}
-
-  {/* Link grid. FBC Auburn (Home audit, 2026-10-17): it takes the brand row's own columns
-       (.site-footer__links in src/styles/auburn.css), so Visit, Belong and Connect line up under
-       the tagline, Sundays and Find us; two columns on phones. When siteSettings.footerColumns is
-       non-empty, the custom Sanity columns replace the built-in ones. Get in touch renders only
-       when there is an email, a phone or a social link to show. */}
-  <div class="site-footer__links mx-auto grid max-w-content gap-l px-l pt-l pb-m text-left">
-    {/* --- Editor-managed columns (from Sanity siteSettings.footerColumns) --- */}
-    {useCustomFooterColumns ? (
-      sanityFooterColumns.map((col, colIdx) => (
-        <nav aria-labelledby={`footer-custom-${colIdx}`}>
-          <p
-            id={`footer-custom-${colIdx}`}
-            class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
-          >
-            {col.title}
-          </p>
-          <ul class="list-none p-0 text-sm">
-            {col.links.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      ))
-    ) : (
-      <>
-        {/* --- Built-in columns (default when footerColumns is empty) --- */}
-
-        {/* STUDIO */}
-        <nav aria-labelledby="footer-studio">
-          <p id="footer-studio" class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-            Our church
-          </p>
-          <ul class="list-none p-0 text-sm">
-            {/* scaffold: about */}
-            <li>
-              <a
-                href="/about/"
-                class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-              >
-                About
-              </a>
-            </li>
-            {/* scaffold:end */}
-            {/* scaffold: faq */}
-            <li>
-              <a
-                href="/faq/"
-                class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-              >
-                FAQ
-              </a>
-            </li>
-            {/* scaffold:end */}
-            {visible.press && (
-              <li>
-                <a
-                  href="/press/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                >
-                  Press
-                </a>
-              </li>
-            )}
-          </ul>
-        </nav>
-
-        {/* WORK */}
-        <nav aria-labelledby="footer-work">
-          <p id="footer-work" class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-            Read
-          </p>
-          <ul class="list-none p-0 text-sm">
-            {visible.portfolio && (
-              <li>
-                <a
-                  href="/portfolio/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                >
-                  Portfolio
-                </a>
-              </li>
-            )}
-            {visible.portfolio && (
-              <li>
-                <a
-                  href="/portfolio/before-after/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                >
-                  Before &amp; After
-                </a>
-              </li>
-            )}
-            {/* scaffold: journal */}
-            {visible.journal && (
-              <li>
-                <a
-                  href="/journal/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                >
-                  Journal
-                </a>
-              </li>
-            )}
-            {/* scaffold:end */}
-            {visible.shop && (
-              <li>
-                <a
-                  href="/shop/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                >
-                  Shop
-                </a>
-              </li>
-            )}
-            {visible.giftCertificates && (
-              <li>
-                <a
-                  href="/gift-certificates/"
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                >
-                  Gift Certificates
-                </a>
-              </li>
-            )}
-          </ul>
-        </nav>
-
-        {/* FREE TOOLS & GUIDES: only when one of its modules is switched on (FBC Auburn has none). */}
-        {(visible.styleQuiz || visible.budgetCalculator || visible.guides || visible.resources) && (
-          <nav aria-labelledby="footer-tools">
-            <p id="footer-tools" class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-              Free tools &amp; guides
-            </p>
-            <ul class="list-none p-0 text-sm">
-              {visible.styleQuiz && (
-                <li>
-                  <a
-                    href="/quiz/"
-                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                  >
-                    Style Quiz
-                  </a>
-                </li>
-              )}
-              {visible.budgetCalculator && (
-                <li>
-                  <a
-                    href="/calculator/"
-                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                  >
-                    Cost Calculator
-                  </a>
-                </li>
-              )}
-              {visible.guides && (
-                <li>
-                  <a
-                    href="/guides/"
-                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                  >
-                    Guides
-                  </a>
-                </li>
-              )}
-              {visible.resources && (
-                <li>
-                  <a
-                    href="/resources/"
-                    class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                  >
-                    Resources
-                  </a>
-                </li>
-              )}
-            </ul>
-          </nav>
-        )}
-      </>
-    )}
-
-    {/* LATEST PROJECTS — only when portfolio is visible. */}
-    {visible.portfolio ? (
-      <nav aria-labelledby="footer-latest">
-        <p id="footer-latest" class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-          Latest projects
-        </p>
-        {latestProjects.length > 0 ? (
-          <ul class="list-none p-0 text-sm">
-            {latestProjects.map((p) => (
-              <li>
-                <a
-                  href={`/portfolio/${p.slug?.current ?? ''}/`}
-                  class="inline-flex min-h-[44px] min-w-[44px] items-center justify-start text-foreground/85 transition-colors hover:text-link"
-                >
-                  {p.title}
-                </a>
-              </li>
-            ))}
-            <li class="pt-xs">
-              <a
-                href="/portfolio/"
-                class="inline-flex min-h-[44px] items-center gap-xs text-xs font-semibold tracking-eyebrow text-link uppercase transition-colors hover:text-primary-dark"
-              >
-                View all <span aria-hidden="true">→</span>
-              </a>
-            </li>
-          </ul>
-        ) : (
-          <p class="text-sm text-foreground/85 italic">
-            Case studies are coming soon.{' '}
-            <a
-              href="/portfolio/"
-              class="text-link underline underline-offset-2 hover:text-primary-dark"
-            >
-              See the portfolio →
-            </a>
-          </p>
-        )}
-      </nav>
-    ) : null}
-
-    {/* GET IN TOUCH: email, phone, the live stream, Facebook, socials. Skipped when there is none. */}
-    {hasTouch && (
-      <div>
-        <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Get in touch</p>
-        <div class="space-y-1 text-sm">
-          {email && (
-            <p>
-              <CopyEmailButton client:visible email={email.display} variant="link" />
-              <NotConfirmed confirmed={email.confirmed} />
-            </p>
-          )}
-          {phone && (
-            <p>
-              <a
-                href={phone.tel}
-                class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
-              >
-                <Phone size={14} aria-hidden="true" />
-                {phone.display}
-              </a>
-              <NotConfirmed confirmed={phone.confirmed} />
-            </p>
-          )}
-          {liveUrl && (
-            <p>
-              <a
-                href={liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
-              >
-                <IconPlayerPlay size={14} stroke={1.75} aria-hidden="true" />
-                Watch live on Sunday<span class="sr-only"> (opens in a new tab)</span>
-              </a>
-            </p>
-          )}
-          {facebookText && (
-            <p>
-              <a
-                href={facebookText}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
-              >
-                <IconBrandFacebook size={14} stroke={1.75} aria-hidden="true" />
-                Facebook<span class="sr-only"> (opens in a new tab)</span>
-              </a>
-            </p>
-          )}
-        </div>
-        <p class="mt-s text-sm text-foreground/75">{site.name}</p>
-        {socialLinksToRender.length > 0 && (
-          <ul class="mt-m flex list-none justify-start gap-s p-0 text-sm">
-            {socialLinksToRender.map((link) => {
-              const Icon = socialIcon(link.platform);
-              const ariaLabel = link.label ?? link.platform ?? 'Social link';
-              return (
-                <li>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={ariaLabel}
-                    class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
-                  >
-                    <Icon size={20} stroke={1.5} />
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
-    )}
-  </div>
-
-  {/* The building (2026-10-23): the pen-and-pencil sketch of the church, faint and pale, standing
-      on the right just above the name, as the Muncie site's footer carries its 1927 rendering.
-      Decorative; CSS in src/styles/auburn.css (.sf-building). */}
-  <div class="sf-building mx-auto max-w-content px-l" aria-hidden="true">
-    <BuildingSketch ink="#7F98B8" class="sf-building__sketch" />
-  </div>
-
-  {/* The signature: the church's name in the mosaic letters at full width, running off the bottom
-      edge. Decorative (the name is in the bottom bar as text). */}
-  <div class="sf-signature" aria-hidden="true">
-    <div class="sf-signature__word" set:html={signature} />
-  </div>
 
   <div class="sf-bottom">
     <div class="sf-bottom__inner mx-auto max-w-content px-l">

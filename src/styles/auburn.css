@@ -1274,40 +1274,26 @@ html.motion .sill.is-laid .sill-brick {
   }
 }
 
+/* The compact footer (2026-10-24): left, the mark, the two next steps and the link rows; right,
+   the This Sunday panel. It was 1,523px on desktop with a display-size tagline, a building sketch
+   and a full-width brick "Auburn" signature. */
 .sf-top {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: clamp(40px, 6vw, 96px);
-  align-items: center;
-  padding-top: clamp(56px, 7vw, 96px);
-  padding-bottom: clamp(48px, 6vw, 80px);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+  padding-top: clamp(40px, 5vw, 64px);
+  padding-bottom: clamp(40px, 5vw, 64px);
 }
 .sf-invite__mark {
-  width: 72px;
+  width: 56px;
   height: auto;
-}
-.sf-invite__tagline {
-  max-width: 13ch;
-  margin: 22px 0 18px;
-  font-family: var(--font-display);
-  font-size: clamp(44px, 5.4vw, 80px);
-  line-height: 1;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
-  color: #ffffff;
-}
-.sf-invite__line {
-  max-width: 28rem;
-  margin: 0;
-  font-size: var(--fs-lead);
-  line-height: 1.55;
-  color: #d5dae3;
 }
 .sf-invite__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 /* The This Sunday panel: a lighter ink card, its top edge in the story's four colours. */
@@ -1409,15 +1395,13 @@ html.motion .sill.is-laid .sill-brick {
    unchanged; only its layout is. */
 .site-footer__links {
   grid-template-columns: minmax(0, 1fr);
-  row-gap: 18px;
-  padding-top: 36px;
-  padding-bottom: 40px;
+  row-gap: 12px;
   border-top: 1px solid #24344d;
 }
 .site-footer__links > nav,
 .site-footer__links > div {
   display: grid;
-  grid-template-columns: 9rem minmax(0, 1fr);
+  grid-template-columns: 7.5rem minmax(0, 1fr);
   align-items: baseline;
   gap: 4px 24px;
 }
@@ -1443,26 +1427,6 @@ html.motion .sill.is-laid .sill-brick {
 }
 .site-footer__links > nav ul a:hover {
   background-size: 100% 2px;
-}
-
-/* The signature: the name in mosaic letters, full width, running off the bottom edge. */
-.sf-signature {
-  overflow: hidden;
-  /* The brick word is about 0.86em tall; showing 0.72em of it lets the serifs run off the bottom. */
-  height: 0.72em;
-  /* The word is a brick SVG sized in em; six letters at about 0.6em each: 26vw keeps the whole
-     word on screen at every width. */
-  font-size: min(26vw, 500px);
-  line-height: 0.82;
-  text-align: center;
-  user-select: none;
-}
-.sf-signature__word {
-  line-height: 0;
-}
-.sf-signature .bl-word {
-  display: block;
-  margin-inline: auto;
 }
 
 .sf-bottom {
@@ -1542,6 +1506,33 @@ html.motion .sill.is-laid .sill-brick {
     padding-inline: 20px;
   }
 }
+/* The link rows sit in the footer's left column, under the buttons, not in a band of their own. */
+.sf-invite .site-footer__links {
+  max-width: none;
+  margin: 28px 0 0;
+  padding: 24px 0 0;
+}
+/* On one column the This Sunday panel comes straight after the buttons and the links follow it:
+   times and the address are what a phone visitor came to the footer for. */
+@media (max-width: 960px) {
+  .sf-invite {
+    display: contents;
+  }
+  .sf-invite__mark {
+    order: 1;
+  }
+  .sf-invite__actions {
+    order: 2;
+    margin-top: -12px;
+  }
+  .sf-top > .sf-sunday {
+    order: 3;
+  }
+  .sf-invite .site-footer__links {
+    order: 4;
+    margin-top: 0;
+  }
+}
 
 /* ---- The building band (2026-10-23): ImageText art "building" -------------------------------
    The sketch runs across the column under the words and stands on a brick sill, its ground line
@@ -1552,25 +1543,6 @@ html.motion .sill.is-laid .sill-brick {
 }
 .building-band__sill {
   margin-top: -6px;
-}
-
-/* The building sketch in the footer (2026-10-23): right-aligned, faint, its ground line resting on
-   the top of the brick "Auburn" below. Hidden on narrow phones, where it would only be a smudge. */
-.sf-building {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: clamp(8px, 2vw, 24px);
-  margin-bottom: calc(-1 * clamp(10px, 2vw, 28px));
-  pointer-events: none;
-}
-.sf-building__sketch {
-  width: min(560px, 52%);
-  opacity: 0.42;
-}
-@media (max-width: 640px) {
-  .sf-building {
-    display: none;
-  }
 }
 
 /* Plan your visit: the walk's opener (2026-10-23), the building sketch with the front door pinned. */

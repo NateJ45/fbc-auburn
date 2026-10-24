@@ -710,7 +710,7 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: "The footer's own words (the line under the big heading, the second button and the line in the bottom bar) are on the `Social and footer` tab. Leave one empty and the website uses its built-in wording.",
+        text: "The footer's own words (the second button and the line in the bottom bar) are on the `Social and footer` tab. Leave one empty and the website uses its built-in wording.",
       },
       {
         kind: 'callout',
