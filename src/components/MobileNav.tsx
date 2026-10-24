@@ -20,25 +20,37 @@
 // PreviewLayout.astro uses it for that kind of reason.
 //
 //
-// Layout (FBC Auburn, rebuilt 2026-10-18): a full-screen night panel that comes alive as it opens.
-// - Left: every menu link in large serif type, numbered in gold, arriving one after another. A
-//   stone in the story's next colour (water, green, gold, red) slides in on hover and focus; the
-//   page you are on keeps its stone (aria-current).
-// - Right (first on phones): the This Sunday card (date, times, address, Directions, the visit
-//   button), then the tagline, email, phone and socials when set.
-// - Along the bottom: the sill, the same stones as the footer's, laying itself left to right.
-// Motion is CSS only (src/styles/auburn.css, keyed on the panel's data-state="open"), and none of it
-// runs under reduced motion. The trigger is a "Menu" pill at every width, its icon three stones; on
-// a wide screen the header also shows the first four links.
+// Layout (FBC Auburn, rebuilt 2026-10-24 after hppres.org): a full-screen sheet on the light page
+// ground, a stack of big serif rows.
+// - Top: the lockup on the left and the close button on the right, where the header's own sit, so
+//   opening the menu reads as the page turning over rather than a panel arriving.
+// - Search (when on) as a field-shaped row, then one full-width row per menu item: the label in
+//   Young Serif, a long thin arrow at the right, hairlines between. A row with children is a button
+//   (aria-expanded): open, it fills auburn red, its arrow turns down and its pages list beneath it
+//   in a smaller size. One group is open at a time. The page you are on is marked with a red stone.
+// - Below the rows: the This Sunday card (date, times, address, Directions, the watch row, the
+//   visit button), then the tagline, email, phone and socials, then the sill along the bottom.
+// - From 64rem the rows take the left column and the card and contact details the right.
+// Motion is CSS only (src/styles/auburn.css, keyed on the sheet's data-state="open"): the rows rise
+// in 40ms apart, and none of it runs under reduced motion. Focus trap, Escape, the scroll lock and
+// focus return all come from Radix Dialog. The trigger is a "Menu" pill at every width, its icon
+// three stones; on a wide screen the header also shows the first four links.
 //
 // Data: the links, tagline, email, socials and the Sunday facts all come from the Header (Sanity
 // Site settings and Church facts), with sensible defaults so the menu renders before content does.
 
-import { useEffect, useRef, useState } from 'react';
-import { Mail, Phone, Search } from 'lucide-react';
+import { useEffect, useId, useRef, useState } from 'react';
+import { Mail, Phone, Search, XIcon } from 'lucide-react';
 import { socialLabel, type SocialLink } from '@/lib/social-links';
 import { socialIcon } from '@/lib/social-icons';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { telHref } from '@/lib/phone';
 import { SILL, SILL_PRINT, SILL_VIEWBOX } from '@/components/home/stones.generated';
 
@@ -107,7 +119,7 @@ interface Props {
   current?: string;
   /**
    * Visitor search is on (src/data/site.ts search.enabled, PORTS.md card 126): a round search
-   * button beside the Menu pill at every width, and a "Search the site" row at the top of the night
+   * button beside the Menu pill at every width, and a "Search the site" row at the top of the
    * menu. Both are real links to /search/ that open the header's search dialog
    * (src/components/search/SiteSearch.astro). Header.astro passes it only when search is on.
    */
@@ -137,13 +149,36 @@ function StonesIcon() {
   );
 }
 
+/** The long thin arrow at the right of every row. A group's turns down when it opens (CSS). */
+function RowArrow() {
+  return (
+    <svg
+      className="auburn-menu__arrow"
+      viewBox="0 0 48 14"
+      width="48"
+      height="14"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M0 7h46M40 1l6 6-6 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 // ---- Component --------------------------------------------------------------
 
 export default function MobileNav({
   links,
   siteSettings,
-  // logoLightUrl is still passed by Header.astro; the night menu uses the white logo only.
-  logoDarkUrl,
+  // logoDarkUrl is still passed by Header.astro; the light sheet uses the light logo.
+  logoLightUrl,
   cta = DEFAULT_CTA,
   sunday,
   watch,
@@ -151,6 +186,13 @@ export default function MobileNav({
   search = false,
 }: Props) {
   const [open, setOpen] = useState(false);
+  // The group that is open, by its label. The one holding the current page starts open, so the
+  // visitor sees where they are; the rest start closed.
+  const currentGroup = links.find(
+    (item) => item.kind === 'dropdown' && item.items.some((sub) => isCurrent(sub.href, current)),
+  )?.label;
+  const [expanded, setExpanded] = useState<string | undefined>(currentGroup);
+  const baseId = useId();
   // The live state, kept in step with live-client.ts while the island is on the page.
   const [live, setLive] = useState<{ live: boolean; href?: string } | undefined>(undefined);
   useEffect(() => {
@@ -159,6 +201,13 @@ export default function MobileNav({
       setLive((e as CustomEvent<{ live: boolean; href?: string }>).detail);
     document.addEventListener('church:live', onLive);
     return () => document.removeEventListener('church:live', onLive);
+  }, []);
+  // Close as a View Transitions navigation starts (a link inside the menu, Back or Forward), so
+  // the scroll lock is released before the router swaps the page.
+  useEffect(() => {
+    const onNavigate = () => setOpen(false);
+    document.addEventListener('astro:before-preparation', onNavigate);
+    return () => document.removeEventListener('astro:before-preparation', onNavigate);
   }, []);
   // Set when the visitor picks "Search the site" inside the menu: the menu closes first, and the
   // search dialog opens once Radix has handed focus back (onCloseAutoFocus below), so the two
@@ -171,17 +220,15 @@ export default function MobileNav({
   const socials = siteSettings?.socials ?? [];
 
   const close = () => setOpen(false);
-  // One running number across flat links and grouped ones, so the stagger and the colours flow.
+  const onOpenChange = (next: boolean) => {
+    setOpen(next);
+    // Each opening starts from the same place: the current page's group, or none.
+    if (next) setExpanded(currentGroup);
+  };
+
+  // The stagger index runs on past the rows, so the card and contact details follow them in.
   let n = 0;
-  const linkBody = (label: string, i: number) => (
-    <>
-      <span className="auburn-menu__num" aria-hidden="true">
-        {String(i + 1).padStart(2, '0')}
-      </span>
-      <span className={`auburn-menu__stone auburn-menu__stone--${i % 4}`} aria-hidden="true" />
-      <span className="auburn-menu__label">{label}</span>
-    </>
-  );
+  const step = () => ({ '--i': n++ }) as React.CSSProperties;
 
   return (
     <div className="site-header__menu">
@@ -195,7 +242,7 @@ export default function MobileNav({
           <Search size={20} strokeWidth={2} aria-hidden="true" />
         </a>
       )}
-      <Sheet open={open} onOpenChange={setOpen}>
+      <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetTrigger asChild>
           <button type="button" aria-label="Open the menu" className="menu-pill">
             <StonesIcon />
@@ -205,6 +252,7 @@ export default function MobileNav({
         <SheetContent
           side="right"
           className="auburn-menu"
+          showCloseButton={false}
           aria-describedby={undefined}
           onCloseAutoFocus={(e) => {
             if (!searchNext.current) return;
@@ -214,57 +262,32 @@ export default function MobileNav({
           }}
         >
           <SheetHeader className="auburn-menu__head">
-            <SheetTitle className="auburn-menu__eyebrow">Menu</SheetTitle>
+            {logoLightUrl ? (
+              <img
+                src={logoLightUrl}
+                alt=""
+                width={496}
+                height={100}
+                className="auburn-menu__logo"
+                decoding="async"
+              />
+            ) : (
+              <span />
+            )}
+            <SheetTitle className="sr-only">Menu</SheetTitle>
+            <SheetClose className="auburn-menu__close">
+              <XIcon size={22} strokeWidth={1.75} aria-hidden="true" />
+              <span className="sr-only">Close the menu</span>
+            </SheetClose>
           </SheetHeader>
 
           <div className="auburn-menu__grid">
-            <nav aria-label="All pages" className="auburn-menu__nav">
-              <ul className="auburn-menu__main">
-                {links.map((item) => {
-                  if (item.kind === 'flat') {
-                    const i = n++;
-                    return (
-                      <li key={item.href} style={{ '--i': i } as React.CSSProperties}>
-                        <a
-                          href={item.href}
-                          onClick={close}
-                          aria-current={isCurrent(item.href, current) ? 'page' : undefined}
-                        >
-                          {linkBody(item.label, i)}
-                        </a>
-                      </li>
-                    );
-                  }
-                  return (
-                    <li key={item.label} style={{ '--i': n } as React.CSSProperties}>
-                      <p className="auburn-menu__group">{item.label}</p>
-                      <ul className="auburn-menu__sub">
-                        {item.items.map((sub) => {
-                          const i = n++;
-                          return (
-                            <li key={sub.href}>
-                              <a
-                                href={sub.href}
-                                onClick={close}
-                                aria-current={isCurrent(sub.href, current) ? 'page' : undefined}
-                              >
-                                {linkBody(sub.label, i)}
-                              </a>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
-
-            <div className="auburn-menu__side">
+            <div className="auburn-menu__primary">
               {search && (
                 <a
                   href="/search/"
                   className="auburn-menu__search"
+                  style={step()}
                   onClick={(e) => {
                     if (e.ctrlKey || e.metaKey || e.shiftKey) return;
                     e.preventDefault();
@@ -272,12 +295,75 @@ export default function MobileNav({
                     close();
                   }}
                 >
-                  <Search size={18} aria-hidden="true" />
+                  <Search size={20} aria-hidden="true" />
                   Search the site
                 </a>
               )}
+              <nav aria-label="All pages" className="auburn-menu__nav">
+                <ul className="auburn-menu__rows">
+                  {links.map((item) => {
+                    if (item.kind === 'flat') {
+                      const here = isCurrent(item.href, current);
+                      return (
+                        <li key={item.href} className="auburn-menu__item" style={step()}>
+                          <a
+                            href={item.href}
+                            onClick={close}
+                            className="auburn-menu__row"
+                            aria-current={here ? 'page' : undefined}
+                          >
+                            <span className="auburn-menu__label">{item.label}</span>
+                            <RowArrow />
+                          </a>
+                        </li>
+                      );
+                    }
+                    const isOpen = expanded === item.label;
+                    const panelId = `${baseId}-group-${item.label.replace(/\W+/g, '-')}`;
+                    return (
+                      <li
+                        key={item.label}
+                        className="auburn-menu__item"
+                        data-open={isOpen ? '' : undefined}
+                        style={step()}
+                      >
+                        <button
+                          type="button"
+                          className="auburn-menu__row"
+                          aria-expanded={isOpen}
+                          aria-controls={panelId}
+                          onClick={() => setExpanded(isOpen ? undefined : item.label)}
+                        >
+                          <span className="auburn-menu__label">{item.label}</span>
+                          <RowArrow />
+                        </button>
+                        <ul id={panelId} className="auburn-menu__sub" hidden={!isOpen}>
+                          {item.items.map((sub, j) => (
+                            <li key={sub.href} style={{ '--j': j } as React.CSSProperties}>
+                              <a
+                                href={sub.href}
+                                onClick={close}
+                                aria-current={isCurrent(sub.href, current) ? 'page' : undefined}
+                              >
+                                {sub.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </nav>
+            </div>
+
+            <div className="auburn-menu__side">
               {sunday && (
-                <section className="auburn-menu__card" aria-label={sunday.title || 'This Sunday'}>
+                <section
+                  className="auburn-menu__card"
+                  aria-label={sunday.title || 'This Sunday'}
+                  style={step()}
+                >
                   <div className="auburn-menu__card-top">
                     <p className="auburn-menu__card-eyebrow">{sunday.title || 'This Sunday'}</p>
                     {sunday.confirmed === false && (
@@ -333,56 +419,52 @@ export default function MobileNav({
                 </section>
               )}
               {cta.show && !sunday && (
-                <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary">
+                <a
+                  href={cta.href}
+                  onClick={close}
+                  className="btn-auburn btn-auburn--primary"
+                  style={step()}
+                >
                   {cta.label}
                 </a>
               )}
-              <p className="auburn-menu__tagline">{tagline}</p>
-              {(email || phone) && (
-                <div className="auburn-menu__contact">
-                  {email && (
-                    <a href={`mailto:${email}`}>
-                      <Mail size={16} aria-hidden="true" />
-                      {email}
-                    </a>
-                  )}
-                  {phone && (
-                    <a href={telHref(phone)}>
-                      <Phone size={16} aria-hidden="true" />
-                      {phone}
-                    </a>
-                  )}
-                </div>
-              )}
-              {socials.length > 0 && (
-                <div className="auburn-menu__social">
-                  {socials.map((link) => {
-                    const Icon = socialIcon(link.platform);
-                    return (
-                      <a
-                        key={link.url}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={socialLabel(link)}
-                      >
-                        <Icon size={20} stroke={1.5} />
+              <div className="auburn-menu__about" style={step()}>
+                <p className="auburn-menu__tagline">{tagline}</p>
+                {(email || phone) && (
+                  <div className="auburn-menu__contact">
+                    {email && (
+                      <a href={`mailto:${email}`}>
+                        <Mail size={16} aria-hidden="true" />
+                        {email}
                       </a>
-                    );
-                  })}
-                </div>
-              )}
-              {logoDarkUrl && (
-                <img
-                  src={logoDarkUrl}
-                  alt="First Baptist Church of Auburn"
-                  width={280}
-                  height={100}
-                  className="auburn-menu__logo"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
+                    )}
+                    {phone && (
+                      <a href={telHref(phone)}>
+                        <Phone size={16} aria-hidden="true" />
+                        {phone}
+                      </a>
+                    )}
+                  </div>
+                )}
+                {socials.length > 0 && (
+                  <div className="auburn-menu__social">
+                    {socials.map((link) => {
+                      const Icon = socialIcon(link.platform);
+                      return (
+                        <a
+                          key={link.url}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={socialLabel(link)}
+                        >
+                          <Icon size={20} stroke={1.5} />
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
