@@ -817,7 +817,7 @@ export const guides: Guide[] = [
         kind: 'bullets',
         items: [
           '**Phone and email** are typed under `Identity & contact`. They show in the menu, the footer and on Contact. Tick `Confirmed by the church` for each under `Church facts` once it is right; until then they carry a "To confirm" tag and are kept away from Google.',
-          '**Online giving link**: paste the giving page address and every Give link goes straight there. Leave it empty and Give opens the site’s own page about giving on Sunday or by mail.',
+          '**Online giving link** (on the `Church Trac` tab): paste the giving page address and every Give link goes straight there. Leave it empty and Give opens the site’s own page about giving on Sunday or by mail.',
           '**Live stream link**: where people watch on Sunday. It shows on Watch and in the footer, and the home page’s "Live now" card goes there during worship. Empty uses the Facebook link.',
           '**Facebook**: add it under `Social & footer`, `Social links`, platform Facebook.',
         ],
@@ -837,16 +837,19 @@ export const guides: Guide[] = [
     body: [
       {
         kind: 'path',
-        items: ['Site Settings', 'Church facts'],
+        items: ['Site Settings', 'Church Trac'],
         link: { doc: 'siteSettings' },
       },
       {
         kind: 'bullets',
         items: [
+          '**Church Trac address** (like https://yourchurch.churchtrac.com): needed for the `Church Trac page` section, which shows a page you keep in Church Trac, like a bulletin, and updates every morning.',
           '**Connection card**: once it is set, Contact shows it in place of the website’s own form, and every "Tell us you are coming" button goes straight to it.',
           '**Contact form** (optional): a Church Trac form for general questions. If it is set, Contact shows this one instead of the connection card.',
           '**Prayer request form**: once it is set, the Prayer requests page shows it in place of the website’s own form.',
-          '**Church Trac address** (like https://yourchurch.churchtrac.com): needed for the `Church Trac page` section, which shows a page you keep in Church Trac, like a bulletin, and updates every morning.',
+          '**Online giving link**: every Give link goes straight there.',
+          '**Calendar feed** (Calendar > Share > iCal link in Church Trac): the events you add there show on Home and Events.',
+          '**Member sign-in link**: shown in the footer as "Members: sign in".',
         ],
       },
       {

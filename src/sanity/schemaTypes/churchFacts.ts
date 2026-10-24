@@ -163,7 +163,7 @@ export const churchFactsFields = [
     ],
   }),
   confirmedField('phoneConfirmed', 'the phone number (Identity & contact)'),
-  // Newcomer and member audit (2026-10-24): "Call or text" beside the number, and a member sign-in link.
+  // Newcomer and member audit (2026-10-24): "Call or text" beside the number.
   defineField({
     name: 'phoneTakesTexts',
     title: 'This number takes texts',
@@ -173,63 +173,7 @@ export const churchFactsFields = [
     description:
       'Tick if people can text the church phone. The site then says "Call or text" and adds a Text link on phones.',
   }),
-  defineField({
-    name: 'memberLoginUrl',
-    title: 'Member sign-in link',
-    type: 'url',
-    group: 'church',
-    description:
-      'Where members sign in to Church Trac (the member portal or app page). Shown in the footer as "Members: sign in". Leave empty to leave it out.',
-    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
-  }),
   confirmedField('emailConfirmed', 'the email address (Identity & contact)'),
-  defineField({
-    name: 'givingUrl',
-    title: 'Online giving link',
-    type: 'url',
-    group: 'church',
-    description:
-      'The page where people give online (from Church Trac or another giving service). When it is set, every "Give" link goes straight there. Leave empty and Give opens the site’s own page about giving on Sunday or by mail.',
-    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
-  }),
-  // Church Trac (2026-10-24, PORTS.md card 152; docs/agent/church-trac.md). Each box is optional;
-  // a link box anywhere on the site can point at one with a placeholder such as {connect}.
-  defineField({
-    name: 'churchTracUrl',
-    title: 'Church Trac address',
-    type: 'url',
-    group: 'church',
-    description:
-      'The church’s own Church Trac address, like https://yourchurch.churchtrac.com. A "Church Trac page" section reads its pages from here.',
-    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
-  }),
-  defineField({
-    name: 'connectCardUrl',
-    title: 'Connection card',
-    type: 'url',
-    group: 'church',
-    description:
-      'The Church Trac connection card. Once it is set, Contact shows it in place of the site’s own form, and every "Tell us you are coming" button goes straight to it. Links can use {connect}.',
-    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
-  }),
-  defineField({
-    name: 'contactFormUrl',
-    title: 'Contact form (optional)',
-    type: 'url',
-    group: 'church',
-    description:
-      'A Church Trac form for general questions. Contact shows it in place of the site’s own form; leave empty to use the connection card there. Links can use {contact-form}.',
-    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
-  }),
-  defineField({
-    name: 'prayerFormUrl',
-    title: 'Prayer request form',
-    type: 'url',
-    group: 'church',
-    description:
-      'The Church Trac prayer request form. Once it is set, the Prayer requests page shows it in place of the site’s own form. Links can use {prayer}.',
-    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
-  }),
   defineField({
     name: 'liveStreamUrl',
     title: 'Live stream link',
@@ -268,13 +212,92 @@ export const churchFactsFields = [
     validation: (Rule) =>
       Rule.regex(/^UC[\w-]{22}$/, { name: 'channel ID starting with UC' }).warning(),
   }),
+];
+
+// ── The Church Trac tab (2026-10-24) ─────────────────────────────────────────
+// The seven addresses the church pastes in from Church Trac, in the order it would set them up,
+// on a tab of their own in Site settings (docs/agent/church-trac.md, PORTS.md card 152). Moving a
+// field to another tab is display only: the names and the data are unchanged. Each box is optional;
+// a link box anywhere on the site can point at one with a placeholder such as {connect}.
+export const CHURCH_TRAC_GROUP = { name: 'churchTrac', title: 'Church Trac' };
+
+export const CHURCH_TRAC_FIELDSET = {
+  name: 'churchTrac',
+  title: 'Paste these in from Church Trac',
+  description:
+    'Each one switches part of the website over to Church Trac on the next update: forms, giving, the calendar and member sign-in. Leave a box empty and the website keeps its own page for it. For a form to open inside the website, its "Embed Domain" setting in Church Trac must hold this website’s address.',
+  options: { collapsible: false },
+};
+
+export const churchTracFields = [
+  defineField({
+    name: 'churchTracUrl',
+    title: 'Church Trac address',
+    type: 'url',
+    group: 'churchTrac',
+    fieldset: 'churchTrac',
+    description:
+      'The church’s own Church Trac address, like https://yourchurch.churchtrac.com. A "Church Trac page" section reads its pages from here.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
+    name: 'connectCardUrl',
+    title: 'Connection card',
+    type: 'url',
+    group: 'churchTrac',
+    fieldset: 'churchTrac',
+    description:
+      'The Church Trac connection card. Once it is set, Contact shows it in place of the site’s own form, and every "Tell us you are coming" button goes straight to it. Links can use {connect}.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
+    name: 'contactFormUrl',
+    title: 'Contact form (optional)',
+    type: 'url',
+    group: 'churchTrac',
+    fieldset: 'churchTrac',
+    description:
+      'A Church Trac form for general questions. Contact shows it in place of the site’s own form; leave empty to use the connection card there. Links can use {contact-form}.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
+    name: 'prayerFormUrl',
+    title: 'Prayer request form',
+    type: 'url',
+    group: 'churchTrac',
+    fieldset: 'churchTrac',
+    description:
+      'The Church Trac prayer request form. Once it is set, the Prayer requests page shows it in place of the site’s own form. Links can use {prayer}.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
+    name: 'givingUrl',
+    title: 'Online giving link',
+    type: 'url',
+    group: 'churchTrac',
+    fieldset: 'churchTrac',
+    description:
+      'The page where people give online (from Church Trac or another giving service). When it is set, every "Give" link goes straight there. Leave empty and Give opens the site’s own page about giving on Sunday or by mail.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
   defineField({
     name: 'churchTracIcalUrl',
     title: 'Church Trac calendar feed (iCal address)',
     type: 'url',
-    group: 'church',
+    group: 'churchTrac',
+    fieldset: 'churchTrac',
     description:
       'In Church Trac: Calendar > Share > iCal link. The "This week" list reads upcoming events from it every morning. Leave blank to show the service times only.',
     validation: (Rule) => Rule.uri({ scheme: ['https', 'webcal'] }),
+  }),
+  defineField({
+    name: 'memberLoginUrl',
+    title: 'Member sign-in link',
+    type: 'url',
+    group: 'churchTrac',
+    fieldset: 'churchTrac',
+    description:
+      'Where members sign in to Church Trac (the member portal or app page). Shown in the footer as "Members: sign in". Leave empty to leave it out.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
   }),
 ];

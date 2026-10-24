@@ -7,19 +7,21 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
 
 ## Where the data lives
 
-| Fact                 | Field (Site settings, group "Church facts")                                                      | Confirmed flag                 |
-| -------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------ |
-| Address              | `churchAddress` { street, city, state, zip }                                                     | `churchAddress.confirmed`      |
-| How to find us       | `churchAddress.findUs` (one optional sentence)                                                   | n/a (Jacob's own words)        |
-| Service times        | `serviceTimes[]` { label, day, time (24h), note }                                                | each row's `confirmed`         |
-| Phone                | `phone` (Identity & contact)                                                                     | `phoneConfirmed`               |
-| Takes texts          | `phoneTakesTexts` ("Call or text", an sms: link)                                                 | n/a (rides on the phone's)     |
-| Church Trac          | `churchTracUrl`, `connectCardUrl`, `contactFormUrl`, `prayerFormUrl` (docs/agent/church-trac.md) | n/a                            |
-| Member sign-in       | `memberLoginUrl` (https, footer "Members")                                                       | n/a                            |
-| Year founded         | `foundedYear`                                                                                    | `foundedConfirmed`             |
-| YouTube channel      | `youtubeChannelId` (UC..., 24 characters)                                                        | n/a                            |
-| Church Trac calendar | `churchTracIcalUrl` (the iCal link)                                                              | n/a (the church's own entries) |
+| Fact            | Field (Site settings, group "Church facts")       | Confirmed flag             |
+| --------------- | ------------------------------------------------- | -------------------------- |
+| Address         | `churchAddress` { street, city, state, zip }      | `churchAddress.confirmed`  |
+| How to find us  | `churchAddress.findUs` (one optional sentence)    | n/a (Jacob's own words)    |
+| Service times   | `serviceTimes[]` { label, day, time (24h), note } | each row's `confirmed`     |
+| Phone           | `phone` (Identity & contact)                      | `phoneConfirmed`           |
+| Takes texts     | `phoneTakesTexts` ("Call or text", an sms: link)  | n/a (rides on the phone's) |
+| Year founded    | `foundedYear`                                     | `foundedConfirmed`         |
+| YouTube channel | `youtubeChannelId` (UC..., 24 characters)         | n/a                        |
 
+- **The Church Trac tab** (2026-10-24): the seven Church Trac addresses (`churchTracUrl`,
+  `connectCardUrl`, `contactFormUrl`, `prayerFormUrl`, `givingUrl`, `churchTracIcalUrl`,
+  `memberLoginUrl`) sit on their own Site settings tab, in setup order with an intro
+  (`churchTracFields` in `churchFacts.ts`; `docs/agent/church-trac.md`). They still resolve
+  through `resolveChurchFacts` like every fact; only the tab they show under moved.
 - Schema: `src/sanity/schemaTypes/churchFacts.ts`, spread into `siteSettings.ts`.
 - Resolver: `src/lib/church-facts.ts` (`resolveChurchFacts`, `thisSunday`, `thisWeek`,
   `churchJsonLd`), pure and unit-tested. Components call `getChurchFacts()` from

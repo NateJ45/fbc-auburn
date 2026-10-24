@@ -623,19 +623,19 @@ export type SiteSettings = {
   }>;
   phoneConfirmed?: boolean;
   phoneTakesTexts?: boolean;
-  memberLoginUrl?: string;
   emailConfirmed?: boolean;
-  givingUrl?: string;
-  churchTracUrl?: string;
-  connectCardUrl?: string;
-  contactFormUrl?: string;
-  prayerFormUrl?: string;
   liveStreamUrl?: string;
   officeHours?: string;
   foundedYear?: number;
   foundedConfirmed?: boolean;
   youtubeChannelId?: string;
+  churchTracUrl?: string;
+  connectCardUrl?: string;
+  contactFormUrl?: string;
+  prayerFormUrl?: string;
+  givingUrl?: string;
   churchTracIcalUrl?: string;
+  memberLoginUrl?: string;
   formRecipients?: Array<{
     name?: string;
     key?: string;

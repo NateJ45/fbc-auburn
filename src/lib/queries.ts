@@ -45,7 +45,7 @@ function warnBlank(token: LinkToken) {
   warned.add(token);
   const box = CHURCH_LINKS.find((l) => l.token === token)!.box;
   console.warn(
-    `[church-links] ${token} is used but Church facts > ${box} is empty; it links to the site's own page.`,
+    `[church-links] ${token} is used but Site settings > ${box} is empty; it links to the site's own page.`,
   );
 }
 const sanityFetch = (async (
