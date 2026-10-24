@@ -4,8 +4,9 @@
 // docs/design-directions/2026-10-21-brick-path/ ("The letterforms").
 //
 //   brickWord(text, opts)  treatment A: each letter is a clean Young Serif glyph that clips a
-//                          running-bond field (a hairline joint, a darker band along each brick's
-//                          bottom edge). `accent` re-tones chosen letters (the auburn "b").
+//                          running-bond field (a hairline joint that wanders, a darker rim along
+//                          each brick's bottom edge, and the logo print's flecks punched through as
+//                          a mask, brick-print.mjs, 2026-10-23). `accent` re-tones chosen letters (the auburn "b").
 //   wallWord(text, opts)   treatment B: the word cut out of a block of brick whose course ends
 //                          step in and out like the mark; the letters are the negative space.
 //
@@ -25,6 +26,7 @@
 // Accessibility is the caller's job: the SVG is decorative (aria-hidden); keep the words as text
 // in an aria-label (StoneHeading.astro does).
 import { UPM, GLYPHS, KERN } from './brick-font.generated.mjs';
+import { printMask } from './brick-print.mjs';
 
 /** Navy (letters on the warm ground), auburn (the accent letter), and the pale sets for the dark footer. */
 export const LETTER_TONES = {
@@ -45,7 +47,7 @@ function hash(a, b, seed) {
   return (x >>> 0) / 4294967296;
 }
 
-/** A darker shade of a #rrggbb colour (the band along a brick's bottom edge). */
+/** A darker shade of a #rrggbb colour (the printed rim along a brick's bottom edge). */
 export function shade(hex, f = 0.8) {
   if (!/^#[0-9a-f]{6}$/i.test(hex)) return hex;
   const n = parseInt(hex.slice(1), 16);
@@ -111,8 +113,12 @@ function bricksIn(x0, x1, y0, y1, g, seen, tones, seed, ends = null) {
       const t = hash(r, c, seed + 7);
       const i = t < 0.5 ? 0 : t < 0.7 ? 1 : t < 0.85 ? 2 : t < 0.95 ? 3 : 4;
       const fill = tones[Math.min(tones.length - 1, i)];
-      let x = off + c * Lr;
-      let w = Lr - g.m;
+      // Uneven mortar (2026-10-23, the linocut finish): each brick gives up a little of each end
+      // and of its top, so the joints wander like hand-cut brick. No extra bytes.
+      const nudge = g.m * 0.9;
+      let x = off + c * Lr + hash(r, c, seed + 11) * nudge;
+      let w = Lr - g.m - (x - off - c * Lr) - hash(r, c, seed + 12) * nudge;
+      const dy = hash(r, c, seed + 13) * g.m * 0.6;
       if (ends) {
         const [l, rr] = ends(r);
         if (x < l) {
@@ -122,7 +128,7 @@ function bricksIn(x0, x1, y0, y1, g, seen, tones, seed, ends = null) {
         if (x + w > rr) w = rr - x;
         if (w < g.m * 2) continue;
       }
-      out.push({ x, y: r * g.H, w, h: g.H - g.m, fill });
+      out.push({ x, y: r * g.H + dy, w, h: g.H - g.m - dy, fill });
     }
   }
   return out;
@@ -183,7 +189,7 @@ export function brickWord(text, o = {}) {
     course = 0.075,
     tracking = -0.01,
     unit = 'em',
-    edge = 0.8,
+    edge = 0.72,
   } = o;
   const { glyphs, width } = layout(text, size, tracking);
   if (!glyphs.length) return '';
@@ -206,9 +212,20 @@ export function brickWord(text, o = {}) {
       .filter((_, i) => keep(i))
       .map((q) => placePath(q.d, q.x, s))
       .join('');
+  const flecks = (lid) =>
+    printMask(`${lid}-m`, {
+      x: fx0,
+      y: top,
+      w: fx1 - fx0,
+      h: bottom - top,
+      u: g.H,
+      seed: seed + 29,
+      density: 3,
+      tile: [5, 4],
+    });
   const layer = (lid, set, d) =>
     d
-      ? `<defs><clipPath id="${lid}"><path d="${d}"/></clipPath></defs><g clip-path="url(#${lid})">${paint(bricksIn(fx0, fx1, top, bottom, g, null, set, seed), edge)}</g>`
+      ? `<defs><clipPath id="${lid}"><path d="${d}"/></clipPath></defs>${flecks(lid)}<g clip-path="url(#${lid})"><g mask="url(#${lid}-m)">${paint(bricksIn(fx0, fx1, top, bottom, g, null, set, seed), edge)}</g></g>`
       : '';
   const body =
     layer(
@@ -244,7 +261,7 @@ export function wallWord(text, o = {}) {
     pad = 0.2,
     letter = null,
     unit = 'em',
-    edge = 0.8,
+    edge = 0.72,
   } = o;
   const { glyphs, width } = layout(text, size, tracking);
   if (!glyphs.length) return '';
@@ -265,7 +282,17 @@ export function wallWord(text, o = {}) {
   const glyphD = glyphs.map((q) => placePath(q.d, q.x, s)).join('');
   const block = `M${f1(x0)} ${f1(top)}H${f1(x1)}V${f1(bot)}H${f1(x0)}Z`;
   const behind = letter ? `<path fill="${letter}" d="${glyphD}"/>` : '';
-  const body = `<defs><clipPath id="${id}"><path clip-rule="evenodd" d="${block}${glyphD}"/></clipPath></defs>${behind}<g clip-path="url(#${id})">${paint(bricks, edge)}</g>`;
+  const mask = printMask(`${id}-m`, {
+    x: x0,
+    y: top,
+    w: x1 - x0,
+    h: bot - top,
+    u: g.H,
+    seed: seed + 29,
+    density: 3,
+    tile: [5, 4],
+  });
+  const body = `<defs><clipPath id="${id}"><path clip-rule="evenodd" d="${block}${glyphD}"/></clipPath></defs>${mask}${behind}<g clip-path="url(#${id})"><g mask="url(#${id}-m)">${paint(bricks, edge)}</g></g>`;
   return svg({ x: x0, y: top, w: x1 - x0, h: bot - top, body, size, unit, descent: bot });
 }
 

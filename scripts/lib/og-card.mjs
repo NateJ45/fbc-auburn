@@ -33,7 +33,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MARK } from './stone-mosaic.mjs';
-import { brickMarker, brickPath } from './brick-courses.mjs';
+import { BRICK_PATH_PRESETS, brickMarker, brickPath } from './brick-courses.mjs';
+import { printMask } from './brick-print.mjs';
 import { brickWord, LETTER_TONES } from './brick-letters.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -54,7 +55,16 @@ const PATH_H = 210;
 const PATH_SVG = (() => {
   const stones = brickPath({ width: OG_WIDTH, height: PATH_H, preset: 'og', seed: 4 });
   const paths = stones.map((s) => `<path d="${s.d}" fill="${s.fill}"/>`).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${OG_WIDTH} ${PATH_H}" width="${OG_WIDTH}" height="${PATH_H}">${paths}</svg>`;
+  // The linocut flecks (scripts/lib/brick-print.mjs), punched through the wall.
+  const defs = printMask('og-print', {
+    x: 0,
+    y: 0,
+    w: OG_WIDTH,
+    h: PATH_H,
+    u: BRICK_PATH_PRESETS.og.h,
+    seed: 53,
+  });
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${OG_WIDTH} ${PATH_H}" width="${OG_WIDTH}" height="${PATH_H}">${defs}<g mask="url(#og-print)">${paths}</g></svg>`;
 })();
 const STEPS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 78 36" width="52" height="24">${brickMarker()
   .map((s) => `<path d="${s.d}" fill="${s.fill}"/>`)

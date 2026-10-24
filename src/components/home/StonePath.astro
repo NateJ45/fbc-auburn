@@ -9,7 +9,14 @@
 // Motion lives in src/styles/home-board.css and the small script in HomeHero.astro: the hidden
 // starting state needs html.motion AND the script's is-armed class, so with no JS, ?still or
 // reduced motion the path is simply finished.
-import { PATH_PHONE, PATH_PHONE_VIEWBOX, PATH_WIDE, PATH_WIDE_VIEWBOX } from './stones.generated';
+import {
+  PATH_PHONE,
+  PATH_PHONE_PRINT,
+  PATH_PHONE_VIEWBOX,
+  PATH_WIDE,
+  PATH_WIDE_PRINT,
+  PATH_WIDE_VIEWBOX,
+} from './stones.generated';
 
 interface Props {
   variant: 'wide' | 'phone';
@@ -17,6 +24,12 @@ interface Props {
 const { variant } = Astro.props;
 const stones = variant === 'wide' ? PATH_WIDE : PATH_PHONE;
 const viewBox = variant === 'wide' ? PATH_WIDE_VIEWBOX : PATH_PHONE_VIEWBOX;
+// The linocut flecks (scripts/lib/brick-print.mjs): a mask punched through every brick.
+const maskId = `hb-print-${variant}`;
+const printDefs = (variant === 'wide' ? PATH_WIDE_PRINT : PATH_PHONE_PRINT).replaceAll(
+  '__ID__',
+  maskId,
+);
 ---
 
 <svg
@@ -26,7 +39,10 @@ const viewBox = variant === 'wide' ? PATH_WIDE_VIEWBOX : PATH_PHONE_VIEWBOX;
   focusable="false"
   data-stone-path
 >
-  {stones.map((s, i) => (
-    <path class="hb-stone" style={`--i: ${i}`} d={s.d} fill={s.fill} />
-  ))}
+  <Fragment set:html={printDefs} />
+  <g mask={`url(#${maskId})`}>
+    {stones.map((s, i) => (
+      <path class="hb-stone" style={`--i: ${i}`} d={s.d} fill={s.fill} />
+    ))}
+  </g>
 </svg>

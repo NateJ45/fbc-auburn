@@ -97,11 +97,19 @@ ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the t
 - **Young Serif** for display and H3 and below where a serif heading is wanted; one weight (400).
 - **Familjen Grotesk** for body, UI, labels and the tracked caps of the place line ("FIRST BAPTIST
   CHURCH OF").
+- **Brick finish** (2026-10-23): every brick on the site is printed like the logo, the linocut
+  print traced from Gemini. Each brick has chipped edges and an uneven darker rim, heavier along the
+  bottom, and white flecks and scratches show the ground through it (a mask of one repeating fleck
+  pattern per drawing; painted pale flecks on the navy and sky tiles, where a hole would show the
+  darker grout; a fleck texture on the CSS bricks). One module draws it:
+  `scripts/lib/brick-print.mjs`, used by the path, sill, tiles, markers, share cards, Studio
+  strips and the letterforms.
 - **Brick letterforms** for the big headings, 40 px and up (decided 2026-10-21, sheet 13 in
   `docs/design-directions/2026-10-21-brick-path/`; they replaced "Auburn Stone", Young Serif split into
   pebbles). Treatment A, brick-filled letters: each letter is a clean Young Serif glyph filled with a
-  running-bond field in navy tones (the pale navy set on the dark footer), joints a hairline, a
-  darker band along each brick's bottom edge, and every fourth letter (the "b" of Auburn) in auburn
+  running-bond field in navy tones (the pale navy set on the dark footer), joints a hairline that
+  wanders a little, a darker rim along each brick's bottom edge, the linocut flecks punched through
+  (see "Brick finish" below), and every fourth letter (the "b" of Auburn) in auburn
   tones. It sets the page H1, the Home masthead "Auburn" and the footer signature. Treatment B, cut
   out of a wall: the word as negative space in a block of auburn brick whose course ends step in
   and out like the mark; the 404 headline and the sermon and series art with no picture. Both are

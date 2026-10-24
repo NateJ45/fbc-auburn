@@ -980,7 +980,7 @@ h6 {
   .auburn-menu[data-state='open'] .auburn-menu__side > * + * {
     animation-delay: 300ms;
   }
-  .auburn-menu[data-state='open'] .auburn-menu__sill path {
+  .auburn-menu[data-state='open'] .auburn-menu__sill .sill-brick {
     transform-box: fill-box;
     transform-origin: center;
     animation: sill-lay 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -1076,10 +1076,10 @@ h6 {
 .site-footer__sill {
   margin-top: -32px;
 }
-html.motion .sill.is-armed:not(.is-laid) path {
+html.motion .sill.is-armed:not(.is-laid) .sill-brick {
   opacity: 0;
 }
-html.motion .sill.is-laid path {
+html.motion .sill.is-laid .sill-brick {
   animation: sill-lay 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   animation-delay: calc(var(--i) * 6ms);
   transform-box: fill-box;
@@ -1096,7 +1096,7 @@ html.motion .sill.is-laid path {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sill path {
+  .sill .sill-brick {
     animation: none !important;
     opacity: 1 !important;
   }

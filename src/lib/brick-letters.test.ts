@@ -14,6 +14,8 @@ import {
 
 const fills = (svg: string) => [...svg.matchAll(/fill="(#[0-9a-fA-F]{6})"/g)].map((m) => m[1]);
 const clipId = (svg: string) => svg.match(/<clipPath id="([^"]+)"/)?.[1];
+// The rim each brick is printed with (2026-10-23, the linocut finish): its face colour darkened.
+const RIM = 0.72;
 const viewBox = (svg: string) => (svg.match(/viewBox="([^"]+)"/)?.[1] ?? '').split(' ').map(Number);
 
 test('brickWord is deterministic for the same inputs and differs by seed', () => {
@@ -30,7 +32,10 @@ test('brickWord uses only the given tones, their shades and the accent tones', (
   const tones = LETTER_TONES.navy;
   const accent = { letters: [2], tones: LETTER_TONES.auburn };
   const allowed = new Set(
-    [...tones, ...accent.tones].flatMap((c: string) => [c.toLowerCase(), shade(c).toLowerCase()]),
+    [...tones, ...accent.tones].flatMap((c: string) => [
+      c.toLowerCase(),
+      shade(c, RIM).toLowerCase(),
+    ]),
   );
   const used = fills(brickWord('Auburn', { tones, accent })).map((c) => c.toLowerCase());
   assert.ok(used.length > 0);
@@ -48,14 +53,16 @@ test('the accent tones stay inside the accent letter (no bleed into the next let
   const out = brickWord('Auburn', { tones, accent });
   const layers = [
     ...out.matchAll(
-      /<clipPath id="([^"]+)"><path d="([^"]+)"\/><\/clipPath><\/defs><g clip-path="url\(#\1\)">([\s\S]*?)<\/g>/g,
+      /<clipPath id="([^"]+)"><path d="([^"]+)"\/><\/clipPath><\/defs><defs>[\s\S]*?<\/defs><g clip-path="url\(#\1\)"><g mask="url\(#\1-m\)">([\s\S]*?)<\/g><\/g>/g,
     ),
   ];
   assert.equal(layers.length, 2, 'one base layer and one accent layer');
   const [base, acc] = layers;
   const lower = (xs: string[]) => xs.map((c) => c.toLowerCase());
-  const accentSet = new Set(lower([...accent.tones, ...accent.tones.map((c: string) => shade(c))]));
-  const baseSet = new Set(lower([...tones, ...tones.map((c: string) => shade(c))]));
+  const accentSet = new Set(
+    lower([...accent.tones, ...accent.tones.map((c: string) => shade(c, RIM))]),
+  );
+  const baseSet = new Set(lower([...tones, ...tones.map((c: string) => shade(c, RIM))]));
   for (const c of lower(fills(base[3])))
     assert.ok(!accentSet.has(c), `accent colour ${c} in the base layer`);
   for (const c of lower(fills(acc[3])))
@@ -68,10 +75,25 @@ test('wallWord uses only the given tones, their shades and the letter colour', (
   const tones = LETTER_TONES.paleNavy;
   const allowed = new Set([
     '#fbf8f3',
-    ...tones.flatMap((c: string) => [c.toLowerCase(), shade(c).toLowerCase()]),
+    ...tones.flatMap((c: string) => [c.toLowerCase(), shade(c, RIM).toLowerCase()]),
   ]);
   for (const c of fills(wallWord('Mark', { tones, letter: '#FBF8F3' })))
     assert.ok(allowed.has(c.toLowerCase()), `unexpected colour ${c}`);
+});
+
+test('the linocut finish: every brick layer is masked by flecks, one mask per layer', () => {
+  // 2026-10-23: the bricks take the logo print's white flecks and scratches, punched through as a
+  // mask (scripts/lib/brick-print.mjs), so they show the page behind and cost one pattern per word.
+  for (const out of [
+    brickWord('Auburn', { accent: { letters: [2], tones: LETTER_TONES.auburn } }),
+    wallWord('Mark'),
+  ]) {
+    const masks = [...out.matchAll(/<mask id="([^"]+)"/g)].map((m) => m[1]);
+    const uses = [...out.matchAll(/mask="url\(#([^)]+)\)"/g)].map((m) => m[1]);
+    assert.ok(masks.length > 0, 'no fleck mask');
+    assert.deepEqual([...uses].sort(), [...masks].sort(), 'each mask is used by its own layer');
+    assert.match(out, /<pattern id="[^"]+-p" patternUnits="userSpaceOnUse"/);
+  }
 });
 
 test('the viewBox is sane: positive size, baseline inside, the word wider than tall', () => {
