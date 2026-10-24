@@ -157,6 +157,9 @@ goes here" note with a "How to take yours" toggle, so the preview looks finished
 which photos are Jacob's. Files and credits: `public/shot-examples/` (`CREDITS.md`). The Home hero's
 example is the page's LCP element, so it ships an 800 and a 1280 copy beside the 2000px file (`heroSrcset`
 in `shot-list.ts`); a new full-width example needs both copies made too, or Lighthouse's LCP gate goes red.
+Every other example has 480, 640 and 800 copies for its srcset (`exampleSrcset`, 2026-10-24, from a
+Lighthouse "Improve image delivery" flag); a new one needs those three made too. The Last Sunday clip
+loads nothing until its card is on screen.
 The shots wanted:
 
 - Home: the hero (Sunday morning from the back of the room, landscape, left side calm for the words);

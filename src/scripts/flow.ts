@@ -68,7 +68,7 @@ export function initFlow() {
   // ---- 1. Pick the units -----------------------------------------------------------------
   // An element is a unit only if no ancestor already is, so a card fades as one piece and the
   // words inside it do not fade again.
-  const units: { el: HTMLElement; kind: 'lines' | 'up' | 'photo' | 'side' }[] = [];
+  const units: { el: HTMLElement; kind: 'lines' | 'up' | 'photo' | 'side'; par?: boolean }[] = [];
   const taken = new Set<Element>();
   const isInsideTaken = (el: Element) => {
     for (let p = el.parentElement; p && p !== main; p = p.parentElement) {
@@ -84,7 +84,11 @@ export function initFlow() {
     let kind: (typeof units)[number]['kind'] = 'up';
     if (el.matches(LINE_UNITS)) kind = 'lines';
     else if (el.matches('img, picture, .shot') && clipsChild(el)) kind = 'photo';
-    units.push({ el, kind });
+    // A big photo in a cropping frame also drifts inside it with the scroll (flow.css), unless it
+    // is a link's picture, whose hover zoom owns its transform. Measured here, with the other
+    // reads, so arming below only writes.
+    const par = kind === 'photo' && el.parentElement!.offsetHeight >= 200 && !el.closest('a');
+    units.push({ el, kind, par });
     taken.add(el);
   }
   // The This Sunday card slides in from the side on Home as one piece, like a photo arriving.
@@ -96,14 +100,10 @@ export function initFlow() {
   }
 
   // ---- 2. Arm them: each holds its first frame until it reaches the reader ----------------
-  for (const { el, kind } of units) {
+  for (const { el, kind, par } of units) {
     el.dataset.flowOn = kind;
     el.classList.add('flow', `flow--${kind}`);
-    // A big photo in a cropping frame also drifts inside it with the scroll (flow.css), unless
-    // it is a link's picture, whose hover zoom owns its transform.
-    if (kind === 'photo' && el.parentElement!.offsetHeight >= 200 && !el.closest('a')) {
-      el.classList.add('flow-par');
-    }
+    if (par) el.classList.add('flow-par');
   }
   // The first screen's hold (flow.css) can let go now: everything is armed.
   html.classList.add('flow-armed');
@@ -160,8 +160,9 @@ export function initFlow() {
   ready.then(() => {
     if (teardown !== stop) return; // a newer page took over while the fonts loaded
     const fontsIn = !document.fonts || document.fonts.status === 'loaded';
+    const split = preview || !fontsIn ? new Set<HTMLElement>() : splitAll(lineUnits);
     for (const el of lineUnits) {
-      if (preview || !fontsIn || !splitLines(el)) {
+      if (!split.has(el)) {
         // Live preview keeps its text nodes whole (click-to-edit reads them); a heading that
         // will not split cleanly, or whose font is still loading, fades up instead.
         el.classList.replace('flow--lines', 'flow--up');
@@ -181,13 +182,15 @@ export function initFlow() {
     lastWidth = innerWidth;
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => {
+      const again: HTMLElement[] = [];
       for (const [el, restore] of [...lineRestorers]) {
         restore();
         lineRestorers.delete(el);
-        if (el.classList.contains('flow--lines') && !el.classList.contains('flow-go')) {
-          if (!splitLines(el)) el.classList.replace('flow--lines', 'flow--up');
-        }
+        if (el.classList.contains('flow--lines') && !el.classList.contains('flow-go'))
+          again.push(el);
       }
+      const split = splitAll(again);
+      for (const el of again) if (!split.has(el)) el.classList.replace('flow--lines', 'flow--up');
     }, 150);
   };
   addEventListener('resize', onResize, { passive: true });
@@ -257,76 +260,96 @@ function clipsChild(el: HTMLElement) {
 // the width changes or the page is left.
 const lineRestorers = new Map<HTMLElement, () => void>();
 
-function splitLines(el: HTMLElement): boolean {
-  if (lineRestorers.has(el)) return true;
-  const original = [...el.childNodes];
-  const before = el.getBoundingClientRect().height;
-  const pieces: Node[] = [];
-  for (const node of original) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      for (const part of (node.textContent ?? '').split(/(\s+)/)) {
-        if (!part) continue;
-        if (/^\s+$/.test(part)) pieces.push(document.createTextNode(part));
-        else {
-          const w = document.createElement('span');
-          w.className = 'flow-word';
-          w.textContent = part;
-          pieces.push(w);
+// Batched so the browser lays the page out three times for all of a page's headings, not three
+// times for each one (Lighthouse's "forced reflow"): every read of one phase happens before any
+// write of the next. Returns the headings that split cleanly.
+function splitAll(els: HTMLElement[]): Set<HTMLElement> {
+  const done = new Set<HTMLElement>();
+  // Phase 1, read: the heights before anything changes.
+  const work = els
+    .filter((el) => {
+      if (lineRestorers.has(el)) done.add(el);
+      return !lineRestorers.has(el);
+    })
+    .map((el) => ({
+      el,
+      original: [...el.childNodes],
+      before: el.getBoundingClientRect().height,
+      pieces: [] as Node[],
+      lines: [] as Node[][],
+    }));
+  // Phase 2, write: words become spans.
+  for (const w of work) {
+    for (const node of w.original) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        for (const part of (node.textContent ?? '').split(/(s+)/)) {
+          if (!part) continue;
+          if (/^s+$/.test(part)) w.pieces.push(document.createTextNode(part));
+          else {
+            const span = document.createElement('span');
+            span.className = 'flow-word';
+            span.textContent = part;
+            w.pieces.push(span);
+          }
         }
-      }
-    } else pieces.push(node);
+      } else w.pieces.push(node);
+    }
+    w.el.replaceChildren(...w.pieces);
   }
-  el.replaceChildren(...pieces);
-
-  const restore = () => el.replaceChildren(...original);
-  // A piece starts a new line when it begins below the bottom of the line so far. Grouping by
-  // overlap, not by equal tops: StoneHeading's word drawings differ in height, so words on one
-  // line do not share a top edge.
-  const lines: Node[][] = [];
-  let lineBottom = Number.NEGATIVE_INFINITY;
-  for (const piece of pieces) {
-    if (piece.nodeType !== Node.ELEMENT_NODE) {
-      lines[lines.length - 1]?.push(piece);
+  // Phase 3, read: group the pieces into lines. A piece starts a new line when it begins below the
+  // bottom of the line so far. Grouping by overlap, not by equal tops: StoneHeading's word
+  // drawings differ in height, so words on one line do not share a top edge.
+  const split = work.filter((w) => {
+    let lineBottom = Number.NEGATIVE_INFINITY;
+    for (const piece of w.pieces) {
+      if (piece.nodeType !== Node.ELEMENT_NODE) {
+        w.lines[w.lines.length - 1]?.push(piece);
+        continue;
+      }
+      const rects = (piece as Element).getClientRects();
+      // A link or phrase that itself breaks across two lines: leave this heading alone.
+      if (rects.length > 1) return false;
+      const r = rects[0];
+      if (!w.lines.length || (r && r.top >= lineBottom - 2)) {
+        w.lines.push([]);
+        lineBottom = Number.NEGATIVE_INFINITY;
+      }
+      w.lines[w.lines.length - 1].push(piece);
+      if (r) lineBottom = Math.max(lineBottom, r.bottom);
+    }
+    return w.lines.length > 0;
+  });
+  // Phase 4, write: the masks go in; headings that would not split get their own nodes back.
+  for (const w of work) {
+    if (!split.includes(w)) {
+      w.el.replaceChildren(...w.original);
       continue;
     }
-    const rects = (piece as Element).getClientRects();
-    if (rects.length > 1) {
-      // A link or phrase that itself breaks across two lines: leave this heading alone.
-      restore();
-      return false;
+    w.el.replaceChildren(
+      ...w.lines.map((nodes, i) => {
+        const mask = document.createElement('span');
+        mask.className = 'flow-line';
+        const inner = document.createElement('span');
+        inner.className = 'flow-line__in';
+        inner.style.setProperty('--flow-i', String(i));
+        inner.append(...nodes);
+        mask.append(inner);
+        return mask;
+      }),
+    );
+  }
+  // Phase 5, read: the split must not move anything. A heading that came out a different height
+  // is put back (after the reads, below) and fades up instead.
+  const moved = split.filter((w) => Math.abs(w.el.getBoundingClientRect().height - w.before) > 1);
+  for (const w of split) {
+    if (moved.includes(w)) {
+      w.el.replaceChildren(...w.original);
+      continue;
     }
-    const r = rects[0];
-    if (!lines.length || (r && r.top >= lineBottom - 2)) {
-      lines.push([]);
-      lineBottom = Number.NEGATIVE_INFINITY;
-    }
-    lines[lines.length - 1].push(piece);
-    if (r) lineBottom = Math.max(lineBottom, r.bottom);
+    lineRestorers.set(w.el, () => w.el.replaceChildren(...w.original));
+    done.add(w.el);
   }
-  if (!lines.length) {
-    restore();
-    return false;
-  }
-  el.replaceChildren(
-    ...lines.map((nodes, i) => {
-      const mask = document.createElement('span');
-      mask.className = 'flow-line';
-      const inner = document.createElement('span');
-      inner.className = 'flow-line__in';
-      inner.style.setProperty('--flow-i', String(i));
-      inner.append(...nodes);
-      mask.append(inner);
-      return mask;
-    }),
-  );
-  // The split must not move anything. If the heading came out a different height, put it back
-  // and let it fade up instead.
-  if (Math.abs(el.getBoundingClientRect().height - before) > 1) {
-    restore();
-    return false;
-  }
-  lineRestorers.set(el, restore);
-  return true;
+  return done;
 }
 
 // ---- The footer verse --------------------------------------------------------------------

@@ -53,6 +53,16 @@ export const heroSrcset = (file: string) =>
   [800, 1280].map((w) => `/shot-examples/${file}-${w}.webp ${w}w`).join(', ') +
   `, ${exampleSrc(file)} 2000w`;
 
+/**
+ * The srcset for an example drawn in a picture slot (ShotRequest). Every example except the hero
+ * (above) and the video poster has 480, 640 and 800 copies beside it as `<file>-480.webp` and so
+ * on (sharp, quality 62); a new example needs all three made too. The original is
+ * declared at 900w, the narrowest original, so a wider one is only ever sharper than asked for.
+ */
+export const exampleSrcset = (file: string) =>
+  [480, 640, 800].map((w) => `/shot-examples/${file}-${w}.webp ${w}w`).join(', ') +
+  `, ${exampleSrc(file)} 900w`;
+
 const SHOTS: Record<string, Shot[]> = {
   '/|hero': [
     {
