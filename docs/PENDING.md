@@ -194,7 +194,7 @@ picking another icon on the card in the Studio, or redraw it (masters in `brand/
 
 **Blocker: Jacob sends the addresses.** The Church Trac pieces from fbcm are in (`docs/agent/church-trac.md`, PORTS.md card
 152), all empty-safe: Contact, Prayer and the "Tell us you are coming" buttons keep the site's own forms until Site settings >
-Church facts holds the Church Trac contact form or connection card and the prayer form. Open:
+Church Trac (its own tab since 2026-10-24) holds the contact form or connection card and the prayer form. Open:
 
 - Fill `churchTracUrl`, `connectCardUrl`, `contactFormUrl` (optional) and `prayerFormUrl` once Jacob sends them (a small
   backup-first data script, or by hand in the Studio), then rebuild and check each page shows the frame.

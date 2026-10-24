@@ -7,7 +7,12 @@ import { ChevronDownIcon } from '@sanity/icons/ChevronDown';
 import { ListIcon } from '@sanity/icons/List';
 import { CodeTextInput } from '../components/CodeTextInput';
 import { codeWarningMessage } from '../../lib/custom-code';
-import { churchFactsFields } from './churchFacts';
+import {
+  churchFactsFields,
+  churchTracFields,
+  CHURCH_TRAC_FIELDSET,
+  CHURCH_TRAC_GROUP,
+} from './churchFacts';
 import { formSettingsFields } from './form';
 import { imageWithAlt } from './_imageWithAlt';
 
@@ -19,6 +24,7 @@ export const siteSettings = defineType({
   options: { canvasApp: { exclude: true } },
   groups: [
     { name: 'church', title: 'Church facts' },
+    CHURCH_TRAC_GROUP,
     { name: 'identity', title: 'Name and contact' },
     { name: 'navigation', title: 'Menus' },
     { name: 'visibility', title: 'Parts of the site' },
@@ -28,6 +34,7 @@ export const siteSettings = defineType({
     // PORTS.md card 121: site-wide extra code, rendered by BaseLayout only.
     { name: 'code', title: 'Code on every page' },
   ],
+  fieldsets: [CHURCH_TRAC_FIELDSET],
   fields: [
     defineField({
       name: 'title',
@@ -735,6 +742,8 @@ export const siteSettings = defineType({
     }),
     // Church facts (address, service times, YouTube, calendar): ./churchFacts.ts.
     ...churchFactsFields,
+    // The Church Trac tab: ./churchFacts.ts (churchTracFields).
+    ...churchTracFields,
     // Forms (the form builder): who a form can go to, as names and codes only (./form.ts).
     ...formSettingsFields,
 

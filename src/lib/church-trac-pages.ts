@@ -10,7 +10,7 @@
 // pastor can add one without code.
 //
 // THE ADDRESS. The page lives at <the church's Church Trac address>/<page name>. The address is
-// Site settings > Church facts > Church Trac address (`churchTracUrl`). There is no default: with
+// Site settings > Church Trac > Church Trac address (`churchTracUrl`). There is no default: with
 // the box empty nothing is fetched and the band says so.
 //
 // ONE FETCH PER PAGE PER BUILD, two tries, every failure LOGGED and turned into null, so the band

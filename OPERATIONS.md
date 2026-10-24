@@ -817,7 +817,7 @@ Never change the feed address after submitting: both directories follow it.
 All empty-safe; each lights up after a publish. Phone and email are typed under Identity & contact
 (`phone`, `email`) and confirmed with `phoneConfirmed` / `emailConfirmed`: they show in the menu,
 the footer and Contact with a "To confirm" tag, and join the JSON-LD only once confirmed. `givingUrl`
-(https) makes every menu link to `/give/` go there instead (`src/lib/give.ts`). `liveStreamUrl`
+(https, on the Church Trac tab with the other Church Trac addresses, `docs/agent/church-trac.md`) makes every menu link to `/give/` go there instead (`src/lib/give.ts`). `liveStreamUrl`
 is the Watch band's and footer's live link, and the Home "Live now" card's target during worship;
 empty falls back to the Facebook row in Social links. `churchAddress.lat` / `lng` add the map pin
 to the JSON-LD with a confirmed address. All are resolved once in `src/lib/church-facts.ts`.

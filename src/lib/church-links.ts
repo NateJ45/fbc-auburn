@@ -4,7 +4,7 @@
 // addresses at build time.
 //
 // WHY. The church runs on Church Trac: giving, the connection card, its forms, the calendar, the
-// member portal. Each address is typed ONCE in Site settings > Church facts (rule 15), and any link
+// member portal. Each address is typed ONCE in Site settings > Church Trac (rule 15), and any link
 // box on the site can hold a token such as {connect} instead of the address, so moving a form or
 // a system is one edit there and a rebuild.
 //
@@ -31,17 +31,21 @@ import type { ChurchFacts } from './church-facts.ts';
  * own page it falls back to. The order is the order the Site Guide lists them.
  */
 export const CHURCH_LINKS = [
-  { token: '{giving}', box: 'Online giving link', fallback: '/give/' },
-  { token: '{connect}', box: 'Connection card', fallback: '/contact/' },
+  { token: '{giving}', box: 'Church Trac > Online giving link', fallback: '/give/' },
+  { token: '{connect}', box: 'Church Trac > Connection card', fallback: '/contact/' },
   {
     token: '{contact-form}',
-    box: 'Contact form (else the connection card)',
+    box: 'Church Trac > Contact form (else the connection card)',
     fallback: '/contact/',
   },
-  { token: '{prayer}', box: 'Prayer request form', fallback: '/prayer/' },
-  { token: '{calendar}', box: 'Church Trac calendar feed (its public page)', fallback: '/events/' },
-  { token: '{members}', box: 'Member sign-in link', fallback: '/contact/' },
-  { token: '{watch}', box: 'Live stream link (else Facebook)', fallback: '/watch/' },
+  { token: '{prayer}', box: 'Church Trac > Prayer request form', fallback: '/prayer/' },
+  {
+    token: '{calendar}',
+    box: 'Church Trac > Church Trac calendar feed (its public page)',
+    fallback: '/events/',
+  },
+  { token: '{members}', box: 'Church Trac > Member sign-in link', fallback: '/contact/' },
+  { token: '{watch}', box: 'Church facts > Live stream link (else Facebook)', fallback: '/watch/' },
 ] as const;
 
 export type LinkToken = (typeof CHURCH_LINKS)[number]['token'];

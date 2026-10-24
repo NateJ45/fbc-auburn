@@ -7,16 +7,18 @@ site in four ways, and every one of them is empty-safe, so nothing changes until
 | Feed     | How                                                                                | Code                                                         |
 | -------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | Calendar | The iCal feed, read every build (This week, Events)                                | `src/lib/church-calendar.ts`, `docs/agent/church-data.md`    |
-| Links    | Church facts boxes plus `{token}` links filled at build time                       | `src/lib/church-links.ts`, `src/lib/queries.ts`              |
+| Links    | Church Trac tab boxes plus `{token}` links filled at build time                    | `src/lib/church-links.ts`, `src/lib/queries.ts`              |
 | Forms    | Contact and Prayer swap to Church Trac forms; a "Church Trac form" band for others | `church-trac-form.ts`, `church-blocks/ChurchTracFrame.astro` |
 | Pages    | A "Church Trac page" band reads a published Church Trac page at build time         | `church-trac-page.ts`, `church-trac-pages.ts`                |
 
-## The boxes (Site settings > Church facts)
+## The boxes (Site settings > Church Trac tab)
 
-`churchTracUrl` (the church's own `https://<church>.churchtrac.com`), `connectCardUrl`,
-`contactFormUrl`, `prayerFormUrl`, alongside the existing `givingUrl`, `memberLoginUrl`,
-`churchTracIcalUrl` and `liveStreamUrl`. All optional, all https, resolved in
-`src/lib/church-facts.ts`.
+Seven boxes on their own tab (since 2026-10-24), in setup order under an intro fieldset: `churchTracUrl`
+(the church's own `https://<church>.churchtrac.com`), `connectCardUrl`, `contactFormUrl`, `prayerFormUrl`,
+`givingUrl`, `churchTracIcalUrl`, `memberLoginUrl` (`churchTracFields` in
+`src/sanity/schemaTypes/churchFacts.ts`). All optional, all https (webcal too for the feed), resolved
+with the other facts in `src/lib/church-facts.ts`. The live stream link stays in Church facts. Moving a field
+between tabs is display only: names and data are unchanged.
 
 ## Link tokens
 
