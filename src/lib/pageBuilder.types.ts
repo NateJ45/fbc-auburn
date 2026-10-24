@@ -34,6 +34,7 @@ import type {
   // sanity.types yet; their projected types are fully defined below.
 } from './sanity.types';
 import type { DownloadDoc, PersonDoc, SeriesDoc, SermonDoc } from './sermons';
+import type { PortableTextBlock } from '@portabletext/types';
 import type { ChurchPageBlock } from './churchBlocks.types';
 
 // ---------------------------------------------------------------------------
@@ -396,6 +397,20 @@ export interface ProjectedFindYourPlaceSection {
   groups?: ProjectedFypGroup[];
 }
 
+/** letterSection (FBC Auburn, 2026-10-24): a letter from the pastor. Content block. */
+export interface ProjectedLetterSection {
+  _type: 'letterSection';
+  _key: string;
+  eyebrow?: string;
+  greeting?: string;
+  body?: PortableTextBlock[];
+  signOff?: string;
+  signature?: SanityImageObject | null;
+  name?: string;
+  role?: string;
+  link?: ProjectedCtaBlock | null;
+}
+
 /** thisWeekSection (FBC Auburn): the next seven days, derived. Content block. */
 export interface ProjectedThisWeekSection {
   _type: 'thisWeekSection';
@@ -542,6 +557,7 @@ export type PageBuilderBlock =
   // FBC Auburn
   | ProjectedIconCardsSection
   | ProjectedFindYourPlaceSection
+  | ProjectedLetterSection
   | ProjectedThisWeekSection
   | ProjectedWatchSection
   // FBC Auburn stone-path blocks

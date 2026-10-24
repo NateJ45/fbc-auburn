@@ -39,6 +39,10 @@ interface Props {
   icon?: string | null;
   /** Inner pages: the page has its own stone moment further down (BoardPageHead). */
   quiet?: boolean;
+  /** Inner pages: words of the title set in auburn (BoardPageHead, StoneHeading). */
+  headingAccent?: string;
+  /** Inner pages: the Sunday times band under the head (TimesBand.astro). */
+  showTimes?: boolean;
 }
 
 const {
@@ -52,6 +56,8 @@ const {
   size = 'short',
   icon,
   quiet = false,
+  headingAccent,
+  showTimes = false,
 } = Astro.props as Props;
 
 const masthead = size === 'tall';
@@ -89,6 +95,8 @@ const mark =
     {headingId}
     {icon}
     {quiet}
+    {headingAccent}
+    {showTimes}
   />
 ) : (
   <section

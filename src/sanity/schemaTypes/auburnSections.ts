@@ -6,6 +6,7 @@ import { ThLargeIcon } from '@sanity/icons/ThLarge';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { PlayIcon } from '@sanity/icons/Play';
 import { UsersIcon } from '@sanity/icons/Users';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { STONE_ICONS } from '../../lib/stone-icons';
 import { imageWithAlt } from './_imageWithAlt';
 
@@ -216,6 +217,75 @@ export const findYourPlaceSection = defineType({
     prepare: ({ title, groups }) => ({
       title: title || 'Find your place',
       subtitle: `Groups${Array.isArray(groups) ? ` (${groups.length})` : ''}`,
+    }),
+  },
+});
+
+// ── A letter ─────────────────────────────────────────────────────────────────
+// A letter from the pastor (2026-10-24, from the hppres.org audit): "Dear friends," in a narrow
+// column, a few paragraphs, the sign-off, a signature picture if there is one, the name and role,
+// and an optional button. Warm and personal, and cheap to write. Drawn by
+// src/components/sections/LetterSection.astro. A content block: no colour field (rule 9).
+export const letterSection = defineType({
+  name: 'letterSection',
+  title: 'A letter',
+  type: 'object',
+  icon: EnvelopeIcon,
+  fields: [
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the letter (optional)',
+      type: 'string',
+      initialValue: 'A letter from our pastor',
+    }),
+    defineField({
+      name: 'greeting',
+      title: 'Greeting',
+      type: 'string',
+      initialValue: 'Dear friends,',
+      validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'body',
+      title: 'The letter',
+      type: 'array',
+      validation: (R) => R.required(),
+      of: [
+        defineArrayMember({
+          type: 'block',
+          styles: [{ title: 'Normal', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Bold', value: 'strong' },
+              { title: 'Italic', value: 'em' },
+            ],
+            annotations: [],
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'signOff',
+      title: 'Sign-off',
+      type: 'string',
+      initialValue: 'In Christ,',
+    }),
+    imageWithAlt({
+      name: 'signature',
+      title: 'Signature (optional)',
+      description:
+        'A photo or scan of the signature in dark ink on white paper. Without one, the name is set in the heading font.',
+    }),
+    defineField({ name: 'name', title: 'Name', type: 'string', validation: (R) => R.required() }),
+    defineField({ name: 'role', title: 'Role (optional)', type: 'string' }),
+    defineField({ name: 'link', title: 'Button (optional)', type: 'ctaBlock' }),
+  ],
+  preview: {
+    select: { title: 'greeting', name: 'name' },
+    prepare: ({ title, name }) => ({
+      title: title || 'A letter',
+      subtitle: name ? `A letter from ${name}` : 'A letter',
     }),
   },
 });

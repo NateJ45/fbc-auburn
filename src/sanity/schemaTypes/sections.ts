@@ -38,6 +38,7 @@ import { sideOptions } from '../../lib/layout-variants';
 import {
   findYourPlaceSection,
   iconCardsSection,
+  letterSection,
   stoneIconField,
   thisWeekSection,
   watchSection,
@@ -117,6 +118,17 @@ export const heroSection = defineType({
       type: 'string',
       description:
         'One word from the headline to render in the script font. Must match exactly. Leave blank to skip.',
+    }),
+    // FBC Auburn (2026-10-24): two-tone page titles, words of the heading in auburn.
+    headingAccentField(),
+    // FBC Auburn (2026-10-24): the Sunday times band under an inner page head (TimesBand.astro).
+    defineField({
+      name: 'showTimes',
+      title: 'Show the Sunday times band',
+      type: 'boolean',
+      description:
+        'Inner pages only. A band under the heading with the Sunday times and the address, taken from Church facts.',
+      initialValue: false,
     }),
     // FBC Auburn Home (board E, 2026-10-17): the big red welcome line under the lockup. On Home
     // the eyebrow and headline draw the church's name as the lockup, so the welcome is its own field.
@@ -721,6 +733,7 @@ export const pageSectionSchemas = [
   embedSection,
   iconCardsSection, // FBC Auburn
   findYourPlaceSection, // FBC Auburn: the Ministries hub (2026-10-24)
+  letterSection, // FBC Auburn: a letter from the pastor (2026-10-24)
   thisWeekSection, // FBC Auburn
   watchSection, // FBC Auburn
   // FBC Auburn: the stepping-stone rail and the Walk in with us plan (auburnMotionSections.ts)
@@ -803,6 +816,7 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'imageTextSection',
         'iconCardsSection',
         'findYourPlaceSection',
+        'letterSection',
         'spacerSection',
       ],
     },

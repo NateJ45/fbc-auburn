@@ -12,10 +12,10 @@ test.describe('Sermons', () => {
     const rows = page.locator('[data-sermon]');
     if ((await rows.count()) === 0) {
       await expect(page.getByText('The first sermons are on their way.')).toBeVisible();
-      await expect(page.getByRole('link', { name: "watch Sunday's service" })).toHaveAttribute(
-        'href',
-        '/watch/',
-      );
+      // The link to Watch shows only while the Watch page is published (2026-10-24), so a build
+      // without it (CI builds no Studio pages) has the line alone. When it shows, it goes to /watch/.
+      const watch = page.getByRole('link', { name: "watch Sunday's service" });
+      if ((await watch.count()) > 0) await expect(watch.first()).toHaveAttribute('href', '/watch/');
       return;
     }
     // At most twelve rows show at first; the filters appear once the script runs.
