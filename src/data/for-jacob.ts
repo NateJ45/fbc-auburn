@@ -55,6 +55,11 @@ const NOTES: Record<string, JacobNote[]> = {
         'The page now opens with the good news in your words, then nine short topics, the order the largest SBC church sites use.',
     },
     {
+      title: 'The pictures beside each belief.',
+      detail:
+        'Each topic has a small brick picture: a crown for God, the cross, a dove, a cracked heart for sin, a broken chain for salvation, the cup and bread over water, the church, and light through the clouds. Tell us if any of them says the wrong thing.',
+    },
+    {
       title: 'The full statement of faith.',
       detail:
         'The page says, in yellow brackets, that the church affirms the Baptist Faith and Message 2000 and links to it. Confirm that, or send the church’s own statement instead.',
