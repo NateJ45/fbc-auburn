@@ -1,7 +1,8 @@
-// The church phone (2026-10-24): sets Site settings > phone to 937-620-8693, the number in the
-// church's TikTok bio (@auburn.pastor), with phoneConfirmed false, so the site shows it with the
-// "To confirm" tag and keeps it out of the JSON-LD until the church ticks the box. A phone that is
-// already set is left alone: this only fills an empty field.
+// The church phone (2026-10-24): sets Site settings > phone to (513) 863-3500, the church's own line
+// (on its earlier website and its local listings), with phoneConfirmed false, so the site shows it
+// with the "To confirm" tag and keeps it out of the JSON-LD until the church ticks the box. An
+// earlier run the same day set a personal number here by mistake; this replaces whatever is set
+// unless it is already this number.
 //
 // Dry by default. Production needs --apply AND NCS_PRODUCTION_WRITE=yes (.claude/rules/data-scripts.md):
 //   node scripts/content/church-phone.mjs <backup-folder>
@@ -13,7 +14,7 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { client, apply, done } from '../lib/sanity-lib.mjs';
 
-const PHONE = '937-620-8693';
+const PHONE = '(513) 863-3500';
 
 const dir = process.argv.slice(2).find((a) => !a.startsWith('--'));
 if (!dir) {
@@ -26,15 +27,15 @@ if (!settings) throw new Error('No siteSettings document; read the dataset first
 writeFileSync(join(dir, 'site-settings-before-phone.json'), JSON.stringify(settings, null, 2));
 console.log(`Backed up siteSettings to ${join(dir, 'site-settings-before-phone.json')}`);
 console.log(
-  `\nphone now: ${JSON.stringify(settings.phone ?? null)}, confirmed: ${settings.phoneConfirmed === true}`,
+  `\nphone set: ${settings.phone?.trim() ? 'yes' : 'no'}, confirmed: ${settings.phoneConfirmed === true}`,
 );
 
-if (settings.phone?.trim()) {
-  console.log('A phone is already set; nothing to do.');
+if (settings.phone?.trim() === PHONE) {
+  console.log('The church line is already set; nothing to do.');
   done(0);
 } else {
   console.log(`Setting:   "${PHONE}", confirmed: false\n`);
-  await apply('set siteSettings.phone and phoneConfirmed=false', async () => {
+  await apply('set siteSettings.phone (church line) and phoneConfirmed=false', async () => {
     await client.patch('siteSettings').set({ phone: PHONE, phoneConfirmed: false }).commit();
   });
   done(1);
