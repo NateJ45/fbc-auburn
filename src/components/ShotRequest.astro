@@ -71,6 +71,9 @@ const [pw, ph] = shot.orientation === 'landscape' ? [22, 14] : [14, 22];
     --shot-ink: #16263d;
     --shot-paper: #fffbe6;
     --shot-yellow: #ffe46b;
+    /* Fixed, not the theme heading colour: the paper is always light, so its ink must not follow the
+       stored dark tokens (contrast.spec.ts runs them). */
+    --shot-heading: #1f3a5f;
     color: var(--shot-ink);
     font-family: var(--font-body);
   }
@@ -91,7 +94,7 @@ const [pw, ph] = shot.orientation === 'landscape' ? [22, 14] : [14, 22];
     font-family: var(--font-display);
     font-size: var(--fs-title);
     line-height: var(--lh-title);
-    color: var(--heading-solid);
+    color: var(--shot-heading);
   }
   .shot__detail {
     font-size: var(--fs-small);
@@ -132,7 +135,7 @@ const [pw, ph] = shot.orientation === 'landscape' ? [22, 14] : [14, 22];
     position: absolute;
     inset: 14px;
     pointer-events: none;
-    --c: var(--heading-solid);
+    --c: var(--shot-heading);
     background:
       linear-gradient(var(--c), var(--c)) top left / 22px 2px,
       linear-gradient(var(--c), var(--c)) top left / 2px 22px,
