@@ -107,7 +107,7 @@ Facebook now and gets better by itself once the YouTube channel id is filled in.
   the clock decides. Facebook has no keyless live check, so on Facebook the clock always decides.
 - **The replay** (`LastSunday`) is unchanged: YouTube only, Facebook text in its fallback slot.
 
-Nothing live renders until Church facts has somewhere to watch (a Facebook link in Social links,
+Nothing live renders unless Church facts has somewhere to watch (a Facebook link in Social links,
 a Live stream link or a YouTube channel id).
 
 ## How it stays current

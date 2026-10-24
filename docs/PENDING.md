@@ -410,11 +410,9 @@ edit in Site settings > Church facts, then a publish.
 - The church phone (Identity & contact > Phone) and `phoneConfirmed`; there is none on file.
 - The church email (Identity & contact > Public email) and `emailConfirmed`; none on file, so no
   mailto: shows anywhere yet.
-- The Facebook page (Social & footer > Social links, platform Facebook) and, if it differs, the
-  Church facts `liveStreamUrl`. The church's public page is facebook.com/FirstAuburnHamilton
-  (confirm with the church before entering it). Until one is set, nothing live renders: no Live now
-  banner, no watch line on the This Sunday card or in the menu, no live link on /watch/ or in the
-  footer (2026-10-24, `docs/agent/church-data.md` "Live now and the livestream").
+- If the church streams somewhere other than its Facebook page (facebook.com/FirstAuburnHamilton,
+  in Social links since 2026-10-24), the Church facts `liveStreamUrl`. The Live now banner, the
+  This Sunday watch line and the menu row use the Facebook page until then.
 - `givingUrl` once online giving exists (Church Trac); until then Give opens /give/.
 - Optional `churchAddress.lat` / `lng` for the JSON-LD map pin.
 - The contact form's transport: the privacy policy (2026-10-18) describes the intended setup, the
