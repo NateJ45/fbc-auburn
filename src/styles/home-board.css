@@ -259,7 +259,11 @@
 .hb-belong {
   position: relative;
   isolation: isolate;
-  padding-bottom: var(--hb-rhythm); /* it ends on the navy ground, so it pads its own foot */
+}
+/* It ends on the navy ground, so it pads its own foot. Doubled class so it beats the later
+   `.hb-section` padding-block rule, which zeroed this and left the photos flush on the band's edge. */
+.hb-section.hb-belong {
+  padding-bottom: var(--hb-rhythm);
 }
 .hb-belong::before {
   content: '';
