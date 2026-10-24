@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-24: Ministries gets its own icons. Youth, Fellowship and Greeters all wore the coffee cup, Sunday School the clock and Workdays and grounds the map pin; round 24 drew seven new stone icons in the same style and five colours (backpack, chalkboard, plate and cutlery, handshake, open door, toolbox, grocery bag; masters in `brand/icons/`, printed by `node scripts/print-icons.mjs`, added to `STONE_ICONS`), and redrew the toy blocks with A, B, C under the same `blocks` name, so Kids, The children's room, the Ministries page head and the Studio's children icon all pick it up. `scripts/content/ministry-icons.mjs` set six cards: Youth (backpack), Sunday School (chalkboard), Fellowship (plate), Greeters (handshake), Food pantry and outreach (grocery bag), Workdays and grounds (toolbox). The open door is in the picker only._
+
 _2026-10-24: the livestream features from First Baptist Muncie._
 
 **Decision.** Auburn streams on Facebook and plans YouTube, so the live pieces work on Facebook now and

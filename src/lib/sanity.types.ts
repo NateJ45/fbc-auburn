@@ -1528,7 +1528,14 @@ export type IconCardsSection = {
       | 'broken-chain'
       | 'cup-and-loaf'
       | 'church'
-      | 'clouds-and-light';
+      | 'clouds-and-light'
+      | 'backpack'
+      | 'chalkboard'
+      | 'plate'
+      | 'handshake'
+      | 'open-door'
+      | 'toolbox'
+      | 'grocery-bag';
     image?: IconCardImage;
     title?: string;
     body?: string;
@@ -1749,7 +1756,14 @@ export type HeroSection = {
     | 'broken-chain'
     | 'cup-and-loaf'
     | 'church'
-    | 'clouds-and-light';
+    | 'clouds-and-light'
+    | 'backpack'
+    | 'chalkboard'
+    | 'plate'
+    | 'handshake'
+    | 'open-door'
+    | 'toolbox'
+    | 'grocery-bag';
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;
