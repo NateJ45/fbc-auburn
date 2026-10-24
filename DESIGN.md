@@ -104,6 +104,10 @@ ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the t
   darker grout; a fleck texture on the CSS bricks). One module draws it:
   `scripts/lib/brick-print.mjs`, used by the path, sill, tiles, markers, share cards, Studio
   strips and the letterforms.
+- **The building sketch** (2026-10-23): a pen-and-pencil rendering of the church, lifted off its
+  paper and painted in navy (pale navy in the footer) through `BuildingSketch.astro`. Used as the
+  About "Our building" band, faintly in the footer, and as the Plan your visit walk's opener with the
+  front door pinned. Master and notes: `brand/illustration/`.
 - **Brick letterforms** for the big headings, 40 px and up (decided 2026-10-21, sheet 13 in
   `docs/design-directions/2026-10-21-brick-path/`; they replaced "Auburn Stone", Young Serif split into
   pebbles). Treatment A, brick-filled letters: each letter is a clean Young Serif glyph filled with a
