@@ -121,7 +121,11 @@ floating element (a sticky "Plan your visit" bar on mobile).
 ## Components
 
 - Logo: the brick cross (seven auburn courses, the cross cut out), horizontal lockup in the header (the five-course favicon under 24 px), Auburn-led lockup where the place
-  name should lead (footer, a sign-like hero).
+  name should lead (footer, a sign-like hero). The cut-out cross is white, so on a white or
+  warm-white ground at large size the cross meets the page and the mark reads as two brick
+  columns: where the mark is shown large on a light ground, set it on a navy panel (the Home
+  hero does, 2026-10-23, after a three-seat brand review; `.hb-hero-mark` in `home-board.css`).
+  Small sizes (header, favicon) read fine as drawn.
 - Stone icons for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
   praying hands, giving hand); one size per page, never mixed with line icons.
 - Buttons: one family, 10 px radius, deep sky solid and deep sky outline; red only for the single
