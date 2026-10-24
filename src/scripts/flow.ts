@@ -127,11 +127,14 @@ export function initFlow() {
     disposers.push(() => window.clearTimeout(t));
   };
 
-  // Lines need the real fonts to know where a heading breaks; everything else can go now.
+  // Lines need the real fonts to know where a heading breaks. Wait for them, but never more than
+  // 600ms (a cold load on a slow phone must not sit blank): headings whose fonts are not in by
+  // then fade up whole instead, since splitting on a fallback font would rewrap after the swap.
   const lineUnits = units.filter((u) => u.kind === 'lines').map((u) => u.el);
-  // No timeout race: splitting with a fallback font and then swapping fonts would rewrap lines.
-  // fonts.ready settles whether the fonts load or fail.
-  const ready = document.fonts?.ready ?? Promise.resolve();
+  const ready = Promise.race([
+    document.fonts?.ready ?? Promise.resolve(),
+    new Promise((r) => window.setTimeout(r, 600)),
+  ]);
 
   let firstBatch = true;
   const io = new IntersectionObserver(
@@ -156,10 +159,11 @@ export function initFlow() {
 
   ready.then(() => {
     if (teardown !== stop) return; // a newer page took over while the fonts loaded
+    const fontsIn = !document.fonts || document.fonts.status === 'loaded';
     for (const el of lineUnits) {
-      if (preview || !splitLines(el)) {
+      if (preview || !fontsIn || !splitLines(el)) {
         // Live preview keeps its text nodes whole (click-to-edit reads them); a heading that
-        // will not split cleanly fades up instead.
+        // will not split cleanly, or whose font is still loading, fades up instead.
         el.classList.replace('flow--lines', 'flow--up');
         el.dataset.flowOn = 'up';
       }

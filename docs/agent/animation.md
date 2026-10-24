@@ -148,8 +148,10 @@ the units itself, so an editor's new section moves like the rest: a list of sele
 the background path). `data-flow="off"` opts a subtree out; `data-flow="lines"` or
 `data-flow-item` opts something in. One IntersectionObserver (bottom margin -12%) starts each unit
 once; units arriving together are staggered in document order, and the first screen waits 120ms so
-it rises with the page. Headings split only after the fonts load, and live preview never splits
-(click-to-edit reads the text nodes); a heading whose link breaks across lines fades up instead.
+it rises with the page. The observer starts once the fonts are in or 600ms have passed, whichever
+comes first; headings split only on the real fonts (a heading whose font is still loading fades up
+whole), live preview never splits (click-to-edit reads the text nodes), and a heading whose link
+breaks across lines, or whose split would change its height, fades up instead.
 
 **The safety rules.** Every hidden starting state is the first frame of a paused CSS animation
 (`both paused`), started by `.flow-go`. So with no `html.motion` (reduced motion, `?still`) none of
