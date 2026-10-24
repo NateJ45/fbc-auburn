@@ -172,6 +172,17 @@ const notes = PRE_LAUNCH_NOTES ? notesFor(Astro.url.pathname) : [];
       bottom: 84px;
     }
   }
+  /* Room under the footer's bottom bar while the pill is shown, so it never sits over the bar's
+     Privacy policy and Back to top links at the very end of the page (2026-10-24: it did once it
+     moved to the bottom right). */
+  body:has(.fj) .sf-bottom {
+    padding-bottom: 64px;
+  }
+  @media (max-width: 767px) {
+    body:has(.fj) .sf-bottom {
+      padding-bottom: 140px;
+    }
+  }
   @media print {
     .fj {
       display: none;
