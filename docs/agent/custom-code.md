@@ -82,5 +82,5 @@ An `srcdoc` frame inherits the page's Content-Security-Policy, and the public pa
 `script-src` (docs/agent/deployment.md, "Security headers"). The build hashes every inline script it
 finds inside a Custom code frame and allows every `<script src>` origin in it, so pasted code that
 was published before the build runs as before. A script the pasted code ADDS at runtime from a
-different origin is blocked: add that origin to `RUNTIME_ORIGINS` in `scripts/build-csp.mjs`.
+different origin is blocked: list that origin in `scripts/csp-origins.json` (a JSON array of origins; PORTS.md card 153).
 Pasted code reaches the live site only through a rebuild, which recomputes the policy.

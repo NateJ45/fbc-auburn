@@ -7,6 +7,7 @@
 // latest sermon"): the picture, a play button and the link, so the band never shows an empty box.
 // Under the words, the live stream and the church's Facebook page (visitor audit, 2026-10-18), both
 // from Site settings through Church facts and each hidden until it is filled in.
+import '@/styles/shapes.css';
 import CtaLink from '@/components/CtaLink.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
@@ -61,6 +62,12 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
 ---
 
 <section class:list={[surfaceClass(surface), 'watch-band']} aria-labelledby={headingId}>
+  {/* The ghost word (2026-10-24, from the hppres.org audit): "Last Sunday" huge in outline behind
+      the band, so the weekly message reads as an event. Decorative; the heading says it in words.
+      Use this device once or twice on the whole site. */}
+  <span class="watch-band__ghost" aria-hidden="true">
+    {sermonLabel}
+  </span>
   <div class="split mx-auto max-w-content items-center px-m py-section-lg" data-reveal>
     <div>
       {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
@@ -258,5 +265,30 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
     .watch-card__play {
       transition: none;
     }
+  }
+  .watch-band {
+    position: relative;
+    isolation: isolate;
+    /* Clipped both ways: the ghost word sits half off the band's bottom edge. */
+    overflow: clip;
+    /* Bigger bricks on the stepped media corner (src/styles/shapes.css). */
+    --step-u: clamp(14px, 0.6rem + 0.8vw, 24px);
+  }
+  .watch-band__ghost {
+    position: absolute;
+    z-index: -1;
+    bottom: -0.22em;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-size: clamp(4.5rem, 2rem + 12vw, 13rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--heading-solid);
+    opacity: 0.12;
+    pointer-events: none;
+    user-select: none;
   }
 </style>

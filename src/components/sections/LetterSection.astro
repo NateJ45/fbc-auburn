@@ -1,0 +1,150 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-24): a letter from the pastor, taken from the hppres.org
+// audit. One narrow column on a sheet of warm paper set slightly into the page: the greeting big in
+// Young Serif, the letter in a comfortable reading size, the sign-off, then the signature picture
+// (or the name in Young Serif when there is none), the role in small caps, and an optional button.
+// A content block: the surface comes from the cadence (rule 9).
+import PortableText from '@/components/PortableText';
+import SanityImage from '@/components/SanityImage.astro';
+import CtaLink from '@/components/CtaLink.astro';
+import { surfaceClass } from '@/lib/surfaces';
+import type { ProjectedCtaBlock, SanityImageObject } from '@/lib/pageBuilder.types';
+import type { PortableTextBlock } from '@portabletext/types';
+
+interface Props {
+  eyebrow?: string;
+  greeting?: string;
+  body?: PortableTextBlock[];
+  signOff?: string;
+  signature?: SanityImageObject | null;
+  name?: string;
+  role?: string;
+  link?: ProjectedCtaBlock | null;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const {
+  eyebrow,
+  greeting = 'Dear friends,',
+  body = [],
+  signOff,
+  signature,
+  name,
+  role,
+  link,
+  surface = 'background',
+  headingId,
+} = Astro.props;
+---
+
+<section class={surfaceClass(surface)} aria-labelledby={headingId}>
+  <div class="mx-auto max-w-content px-m py-section-lg">
+    <article class="letter">
+      {eyebrow && <p class="arch-hero__eyebrow letter__eyebrow">{eyebrow}</p>}
+      <h2 id={headingId} class="letter__greeting">
+        {greeting}
+      </h2>
+      <PortableText value={body} className="letter__body" />
+      <footer class="letter__sign">
+        {signOff && <p class="letter__off">{signOff}</p>}
+        {signature?.asset ? (
+          <SanityImage
+            source={signature}
+            width={440}
+            sizes="220px"
+            quality={80}
+            class="letter__signature"
+          />
+        ) : null}
+        {name && <p class:list={['letter__name', signature?.asset && 'sr-only']}>{name}</p>}
+        {role && <p class="letter__role">{role}</p>}
+      </footer>
+      {link?.label && (
+        <p class="letter__cta">
+          <CtaLink cta={link} variant="secondary" />
+        </p>
+      )}
+    </article>
+  </div>
+</section>
+
+<style>
+  /* The sheet: warm paper, square corners, a soft lift and a slight turn, like a page left on the
+     table. The turn is off for reduced motion users too (it is still, but some find it unsettling). */
+  .letter {
+    position: relative;
+    max-width: 40rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 6vw, 4.25rem);
+    background: #fffdf8;
+    box-shadow:
+      0 1px 0 rgb(31 58 95 / 0.06),
+      0 24px 48px -28px rgb(31 58 95 / 0.35);
+    rotate: -0.6deg;
+  }
+  /* The brick edge along the top of the sheet: the mark's red, one course deep. */
+  .letter::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 6px;
+    background: var(--auburn-red);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .letter {
+      rotate: none;
+    }
+  }
+  .letter__eyebrow {
+    margin-bottom: 1.5rem;
+  }
+  .letter__greeting {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.75rem);
+    line-height: 1.1;
+    color: var(--heading-solid);
+    margin-bottom: 1.5rem;
+  }
+  .letter :global(.letter__body) {
+    font-size: clamp(1.05rem, 1rem + 0.25vw, 1.2rem);
+    line-height: 1.75;
+    color: var(--foreground);
+  }
+  .letter :global(.letter__body p + p) {
+    margin-top: 1.1em;
+  }
+  .letter__sign {
+    margin-top: 2.25rem;
+  }
+  .letter__off {
+    font-style: italic;
+    color: var(--foreground);
+  }
+  .letter :global(.letter__signature) {
+    display: block;
+    width: 220px;
+    max-width: 70%;
+    height: auto;
+    margin: 0.5rem 0 0.25rem;
+    mix-blend-mode: multiply;
+  }
+  .letter__name {
+    margin-top: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    line-height: 1.2;
+    color: var(--heading-solid);
+  }
+  .letter__role {
+    margin-top: 0.3rem;
+    font-size: var(--fs-tag);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .letter__cta {
+    margin-top: 2rem;
+  }
+</style>

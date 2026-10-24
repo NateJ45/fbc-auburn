@@ -45,6 +45,7 @@ import { sundayIcs, thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import Sill from '@/components/Sill.astro';
+import WhereNext from '@/components/WhereNext.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
 
@@ -187,6 +188,9 @@ const hasCalendar =
       so the starter's link grid below turns light-on-ink without touching its classes. */}
   <Sill class="site-footer__sill" />
 
+  {/* Where next (2026-10-24): three big rows so no page is a dead end (WhereNext.astro). */}
+  <WhereNext path={Astro.url.pathname} />
+
   <figure class="sf-verse" data-flow-verse>
     <blockquote class="m-0">
       <p class="sf-verse__line">
@@ -200,7 +204,7 @@ const hasCalendar =
     {/* The building, faint, behind the footer's own content (2026-10-24): it takes no room of its
         own, so the compact footer stays compact. Decorative; CSS in auburn.css (.sf-sketch). */}
     <div class="sf-sketch" aria-hidden="true">
-      <BuildingSketch ink="#7F98B8" class="sf-sketch__art" />
+      <BuildingSketch ink="#7F98B8" class="sf-sketch__art" draw={false} />
     </div>
     <div class="sf-invite">
       {/* The mark with the church's name beside it (2026-10-24): the mark alone did not say whose

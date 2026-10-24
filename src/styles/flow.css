@@ -235,6 +235,61 @@ html.motion .flow-go .lay-brick {
   }
 }
 
+/* ---- The sketch draws itself in (2026-10-24) ----------------------------------------------
+   BuildingSketch.astro paints the drawing as two masks, the pen lines and the pencil shading.
+   Here each gets a second mask, a soft-edged sweep from the left, intersected with it; the sweep
+   follows the scroll as the sketch comes up the screen, the lines leading and the shading 35%
+   behind, so the outline goes down first and the hatching fills in after it. --sketch-draw rests
+   at 150% (every sweep past the right edge), so without the animation (reduced motion, ?still,
+   tests that settle, Firefox with no scroll timelines) it is the finished drawing. Opt out with
+   <BuildingSketch draw={false} /> (the faint footer copy). */
+@property --sketch-draw {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 150%;
+}
+@keyframes sketch-draw {
+  from {
+    --sketch-draw: -5%;
+  }
+  to {
+    --sketch-draw: 150%;
+  }
+}
+@supports (animation-timeline: view()) {
+  html.motion .building-sketch[data-draw] {
+    animation: sketch-draw linear both;
+    animation-timeline: view();
+    animation-range: entry 25% cover 55%;
+  }
+  html.motion .building-sketch[data-draw]::before {
+    -webkit-mask:
+      var(--sketch-shade) center / contain no-repeat,
+      linear-gradient(
+        100deg,
+        #000 calc(var(--sketch-draw) - 47%),
+        transparent calc(var(--sketch-draw) - 35%)
+      );
+    -webkit-mask-composite: source-in;
+    mask:
+      var(--sketch-shade) center / contain no-repeat intersect,
+      linear-gradient(
+        100deg,
+        #000 calc(var(--sketch-draw) - 47%),
+        transparent calc(var(--sketch-draw) - 35%)
+      );
+  }
+  html.motion .building-sketch[data-draw]::after {
+    -webkit-mask:
+      var(--sketch-lines) center / contain no-repeat,
+      linear-gradient(100deg, #000 calc(var(--sketch-draw) - 12%), transparent var(--sketch-draw));
+    -webkit-mask-composite: source-in;
+    mask:
+      var(--sketch-lines) center / contain no-repeat intersect,
+      linear-gradient(100deg, #000 calc(var(--sketch-draw) - 12%), transparent var(--sketch-draw));
+  }
+}
+
 /* ---- Home hero: the photo sinks and the words lift away as it scrolls off ----------------- */
 @keyframes flow-hero-photo {
   to {

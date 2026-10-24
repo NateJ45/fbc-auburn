@@ -5,6 +5,8 @@ import { defineType, defineField, defineArrayMember } from 'sanity';
 import { ThLargeIcon } from '@sanity/icons/ThLarge';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { PlayIcon } from '@sanity/icons/Play';
+import { UsersIcon } from '@sanity/icons/Users';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { STONE_ICONS } from '../../lib/stone-icons';
 import { imageWithAlt } from './_imageWithAlt';
 
@@ -82,6 +84,208 @@ export const iconCardsSection = defineType({
     prepare: ({ title, cards }) => ({
       title: title || 'Cards with stone icons',
       subtitle: `Cards${Array.isArray(cards) ? ` (${cards.length})` : ''}`,
+    }),
+  },
+});
+
+// ── Find your place ──────────────────────────────────────────────────────────
+// The Ministries hub (2026-10-24, from the hppres.org audit): groups of cards ("New here", "Kids
+// and youth", "Adults", "Serve", "Care") beside a sticky index that follows the scroll, chips on a
+// phone. Every group shows at once; the index jumps to one (/ministries/#serve). A card that
+// belongs in two groups is simply in both (Duplicate it in the Studio).
+// TIMES ARE NEVER TYPED: a card's "When" is a day ("Wednesdays"), and that day's times come from
+// Site settings > Church facts (src/lib/church-facts.ts, dayWithTimes).
+// Drawn by src/components/sections/FindYourPlace.astro. A content block: no colour field (rule 9).
+export const findYourPlaceSection = defineType({
+  name: 'findYourPlaceSection',
+  title: 'Find your place (groups of cards)',
+  type: 'object',
+  icon: UsersIcon,
+  fields: [
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the heading (optional)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'heading',
+      title: 'Heading (optional)',
+      type: 'string',
+      description: 'Leave it empty when the page title already says it.',
+    }),
+    defineField({ name: 'intro', title: 'Intro line (optional)', type: 'text', rows: 2 }),
+    defineField({
+      name: 'groups',
+      title: 'Groups',
+      type: 'array',
+      description:
+        'Each group gets a place in the list down the side. Keep the names short: "New here", "Kids and youth", "Adults", "Serve", "Care".',
+      validation: (R) => R.min(1).max(8),
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'fypGroup',
+          title: 'Group',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Group name',
+              type: 'string',
+              validation: (R) => R.required().max(24),
+            }),
+            defineField({
+              name: 'line',
+              title: 'One line about the group (optional)',
+              type: 'string',
+            }),
+            defineField({
+              name: 'cards',
+              title: 'Cards',
+              type: 'array',
+              validation: (R) => R.min(1).max(12),
+              of: [
+                defineArrayMember({
+                  type: 'object',
+                  name: 'fypCard',
+                  title: 'Card',
+                  fields: [
+                    imageWithAlt({
+                      name: 'image',
+                      title: 'Photo (optional)',
+                      description:
+                        'Shown with a stepped brick corner. Without a photo the card shows its stone icon on brick.',
+                    }),
+                    stoneIconField('Stone icon (shown when there is no photo)'),
+                    defineField({
+                      name: 'title',
+                      title: 'Title',
+                      type: 'string',
+                      validation: (R) => R.required(),
+                    }),
+                    defineField({
+                      name: 'forWho',
+                      title: 'Who it is for (optional)',
+                      type: 'string',
+                      description: 'A few words, like "Birth to 5th grade" or "Everyone".',
+                    }),
+                    defineField({
+                      name: 'day',
+                      title: 'When (optional)',
+                      type: 'string',
+                      description:
+                        'A day, like "Wednesdays". The times come from Church facts, so never type a time here.',
+                    }),
+                    defineField({
+                      name: 'place',
+                      title: 'Where (optional)',
+                      type: 'string',
+                      description: 'Like "Fellowship hall".',
+                    }),
+                    defineField({
+                      name: 'body',
+                      title: 'A sentence or two',
+                      type: 'text',
+                      rows: 3,
+                    }),
+                    defineField({ name: 'link', title: 'Link (optional)', type: 'ctaBlock' }),
+                  ],
+                  preview: {
+                    select: { title: 'title', day: 'day', forWho: 'forWho', media: 'image' },
+                    prepare: ({ title, day, forWho, media }) => ({
+                      title: title || 'Card',
+                      subtitle: [forWho, day].filter(Boolean).join(' · '),
+                      media,
+                    }),
+                  },
+                }),
+              ],
+            }),
+          ],
+          preview: {
+            select: { title: 'title', cards: 'cards' },
+            prepare: ({ title, cards }) => ({
+              title: title || 'Group',
+              subtitle: `Cards${Array.isArray(cards) ? ` (${cards.length})` : ''}`,
+            }),
+          },
+        }),
+      ],
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', groups: 'groups' },
+    prepare: ({ title, groups }) => ({
+      title: title || 'Find your place',
+      subtitle: `Groups${Array.isArray(groups) ? ` (${groups.length})` : ''}`,
+    }),
+  },
+});
+
+// ── A letter ─────────────────────────────────────────────────────────────────
+// A letter from the pastor (2026-10-24, from the hppres.org audit): "Dear friends," in a narrow
+// column, a few paragraphs, the sign-off, a signature picture if there is one, the name and role,
+// and an optional button. Warm and personal, and cheap to write. Drawn by
+// src/components/sections/LetterSection.astro. A content block: no colour field (rule 9).
+export const letterSection = defineType({
+  name: 'letterSection',
+  title: 'A letter',
+  type: 'object',
+  icon: EnvelopeIcon,
+  fields: [
+    defineField({
+      name: 'eyebrow',
+      title: 'Small line above the letter (optional)',
+      type: 'string',
+      initialValue: 'A letter from our pastor',
+    }),
+    defineField({
+      name: 'greeting',
+      title: 'Greeting',
+      type: 'string',
+      initialValue: 'Dear friends,',
+      validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'body',
+      title: 'The letter',
+      type: 'array',
+      validation: (R) => R.required(),
+      of: [
+        defineArrayMember({
+          type: 'block',
+          styles: [{ title: 'Normal', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Bold', value: 'strong' },
+              { title: 'Italic', value: 'em' },
+            ],
+            annotations: [],
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'signOff',
+      title: 'Sign-off',
+      type: 'string',
+      initialValue: 'In Christ,',
+    }),
+    imageWithAlt({
+      name: 'signature',
+      title: 'Signature (optional)',
+      description:
+        'A photo or scan of the signature in dark ink on white paper. Without one, the name is set in the heading font.',
+    }),
+    defineField({ name: 'name', title: 'Name', type: 'string', validation: (R) => R.required() }),
+    defineField({ name: 'role', title: 'Role (optional)', type: 'string' }),
+    defineField({ name: 'link', title: 'Button (optional)', type: 'ctaBlock' }),
+  ],
+  preview: {
+    select: { title: 'greeting', name: 'name' },
+    prepare: ({ title, name }) => ({
+      title: title || 'A letter',
+      subtitle: name ? `A letter from ${name}` : 'A letter',
     }),
   },
 });

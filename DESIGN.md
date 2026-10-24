@@ -108,7 +108,8 @@ printed into `src/assets/brand/`). The old seven colours are gone from the CSS, 
   `scripts/lib/brick-print.mjs`, used by the path, sill, tiles, markers, share cards, Studio
   strips and the letterforms.
 - **The building sketch** (2026-10-23, redrawn from the real site 2026-10-24, the building only): a pen-and-pencil rendering of the church, lifted off its
-  paper and painted in navy (pale navy in the footer) through `BuildingSketch.astro`. Used as the
+  paper and painted in navy (pale navy in the footer) through `BuildingSketch.astro`, as two masks
+  (pen lines, pencil shading) so it draws itself in on scroll, lines first (2026-10-24). Used as the
   About "Our building" band and as the Plan your visit walk's opener with the
   front door pinned. Master and notes: `brand/illustration/`.
 - **Brick letterforms: retired 2026-10-24.** Nathan dropped them everywhere as too busy: the page H1s and the 404 headline are plain navy Young Serif through `StoneHeading.astro`, the share cards set the title in cream Young Serif on the navy stone-tile ground (the "night" card, picked the same day, `docs/design-directions/2026-10-24-og-cards/`), and the sermon and series art with no picture sets its word in plain cream type. The generator and its tests stay in `scripts/lib/` unused, in case a single moment wants it back; what follows is the history. Decided 2026-10-21 for the big headings ( sheet 13 in

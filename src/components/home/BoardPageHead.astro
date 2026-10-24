@@ -18,6 +18,8 @@ import CtaLink from '@/components/CtaLink.astro';
 import StoneHeading from '@/components/StoneHeading.astro';
 import StoneIcon from '@/components/StoneIcon.astro';
 import SectionLabel from './SectionLabel.astro';
+import TimesBand from '@/components/church/TimesBand.astro';
+import { splitHeadingAccent } from '@/lib/heading-accent';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 import type { ComponentProps } from 'astro/types';
 
@@ -34,23 +36,52 @@ interface Props {
   icon?: string | null;
   /** The page has its own stone moment further down: set the title plain. */
   quiet?: boolean;
+  /** Two-tone title (2026-10-24): these words of the title in auburn, the rest navy. */
+  headingAccent?: string;
+  /** The Sunday times band across the bottom of the head (TimesBand.astro, 2026-10-24). */
+  showTimes?: boolean;
 }
-const { eyebrow, headline, subhead, image, primaryCta, secondaryCta, headingId, icon, quiet } =
-  Astro.props as Props;
+const {
+  eyebrow,
+  headline,
+  subhead,
+  image,
+  primaryCta,
+  secondaryCta,
+  headingId,
+  icon,
+  quiet,
+  headingAccent,
+  showTimes = false,
+} = Astro.props as Props;
+// The quiet (plain Young Serif) title takes the accent as a coloured span; the brick title draws it.
+const split = splitHeadingAccent(headline, headingAccent);
 const hasImage = !!image?.asset;
 const side = hasImage || !!icon;
 ---
 
-<section class="board-head" aria-labelledby={headingId} data-hero="board">
+<section
+  class:list={['board-head', showTimes && 'board-head--times']}
+  aria-labelledby={headingId}
+  data-hero="board"
+>
   <div class:list={['board-head__inner', side && 'board-head__inner--side']}>
     <div class="board-head__copy">
       {eyebrow && <SectionLabel text={eyebrow} as="p" />}
       {quiet ? (
         <h1 id={headingId} class="board-head__title">
-          {headline}
+          {split.found ? (
+            <>
+              {split.before}
+              <span class="board-head__accent">{split.word}</span>
+              {split.after}
+            </>
+          ) : (
+            headline
+          )}
         </h1>
       ) : (
-        <StoneHeading text={headline} id={headingId} />
+        <StoneHeading text={headline} id={headingId} accent={headingAccent} />
       )}
       {subhead && <p class="board-head__sub">{subhead}</p>}
       {(primaryCta || secondaryCta) && (
@@ -75,4 +106,5 @@ const side = hasImage || !!icon;
       icon && <StoneIcon name={icon} size={160} loading="eager" class="board-head__icon" />
     )}
   </div>
+  {showTimes && <TimesBand />}
 </section>

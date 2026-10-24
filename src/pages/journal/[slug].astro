@@ -1,15 +1,22 @@
 ---
 // scaffold-file: journal
 // Safe to edit by hand for copy + structure changes.
-// Journal post detail page. Hero (eyebrow with date + reading time + categories),
-// title + excerpt, cover image, body Portable Text (rich with custom blocks),
-// related posts grid, related project link if attached, prev/next navigation,
-// final CTA. BreadcrumbList + BlogPosting JSON-LD.
+// A News and notes post (layout 2026-10-24, from the hppres.org stories): a back link with a long
+// thin arrow, the title big in Young Serif, a wide cover cut with the stepped brick corner
+// (.shape-step--lg, src/styles/shapes.css), then the body in two columns on a wide screen: a
+// narrow sticky rail on the left (the date, reading time, author, categories, the headings and the
+// share buttons) and the text on the right at a reading measure. On a phone the rail is one row
+// above the text. "More from News and notes" closes it, its cards cut with the same corner.
+// Styles: src/styles/article.css. Docs: docs/agent/shapes.md ("The article page").
+// BreadcrumbList + BlogPosting JSON-LD, the reading progress bar and the Photo needed cover
+// (journalCoverShot) are unchanged.
 //
 // Static-site routing: getStaticPaths enumerates every journalEntry slug at
 // build time. The query is duplicated (once for paths, once for the full doc)
 // — Astro caches each call per slug, so the perf hit is just the static map.
 
+import '@/styles/shapes.css';
+import '@/styles/article.css';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
   getAllJournalEntries,
@@ -28,16 +35,18 @@ import SanityImage from '@/components/SanityImage.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
 import { journalCoverShot } from '@/data/shot-list';
 import JournalPortableText from '@/components/JournalPortableText';
-import JournalCard from '@/components/JournalCard.astro';
 import JournalCategoryChip from '@/components/JournalCategoryChip.astro';
 import ReadingProgress from '@/components/ReadingProgress.astro';
 import StickyCTAChip from '@/components/StickyCTAChip';
 import CaseStudyTOC from '@/components/CaseStudyTOC';
 import FinalCta from '@/components/FinalCta.astro';
 import Lightbox from '@/components/Lightbox.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
 import { formatDate } from '@/lib/format-date';
 import ShareButtons from '@/components/ShareButtons.astro';
 import SearchMeta from '@/components/search/SearchMeta.astro';
+import { Image } from 'astro:assets';
+import markPrint from '@/assets/brand/mark-print.png';
 
 // Enumerate slugs + carry prev/next refs (newest-first iteration).
 // Returns [] when journal is off — no detail pages build and they 404.
@@ -101,14 +110,23 @@ const coverOg = entry.coverImage?.asset
 
 // Derived
 const readMinutes = readingTimeFromPortableText(entry.body);
-// TOC headings: pulled from the body's h2/h3/h4 blocks. When there's nothing
-// to show, hasToc=false collapses the body grid to a single article column
-// so we don't reserve a phantom 260 px sidebar slot.
+// The headings list sits in the rail on a wide screen when the body has h2/h3/h4 headings.
 const headings = extractHeadings(entry.body);
 const hasToc = headings.length > 0;
 const dateLabel = formatDate(entry.publishedAt);
 const updatedLabel =
   entry.updatedAt && entry.updatedAt !== entry.publishedAt ? formatDate(entry.updatedAt) : '';
+const categories = Array.isArray(entry.categories) ? entry.categories : [];
+
+type RelatedPost = {
+  title?: string;
+  slug?: { current?: string };
+  publishedAt?: string;
+  coverImage?: any;
+};
+const related: RelatedPost[] = Array.isArray(entry.relatedPosts)
+  ? (entry.relatedPosts as RelatedPost[]).filter((p) => p?.slug?.current).slice(0, 3)
+  : [];
 
 const schemas = [
   breadcrumbSchema([
@@ -131,87 +149,109 @@ const schemas = [
   searchType="news"
 >
   <SearchMeta date={dateLabel} />
-  {/* Thin bronze progress bar tracking scroll through the article. */}
+  {/* Thin progress bar tracking scroll through the article. */}
   <ReadingProgress />
 
-  {/* ------- 1. Article header --------------------------------------------- */}
-  <article>
-    <header class="bg-background">
-      <div class="mx-auto max-w-3xl px-m pt-section-lg pb-l">
-        <p class="mb-s text-xs tracking-widest text-foreground/80 uppercase">
-          <a href="/journal/" class="transition-colors hover:text-primary-dark">
-            Journal
-          </a>
-          {dateLabel && <span class="mx-xs">·</span>}
-          {dateLabel && <time datetime={entry.publishedAt}>{dateLabel}</time>}
-          {readMinutes > 0 && <span class="mx-xs">·</span>}
-          {readMinutes > 0 && <span>{formatReadingTime(readMinutes)}</span>}
-        </p>
-        <h1 class="font-display text-h1 leading-tight text-foreground">{entry.title}</h1>
-        {entry.excerpt && (
-          <p class="mt-m text-xl leading-relaxed text-foreground/80">{entry.excerpt}</p>
-        )}
-        {Array.isArray(entry.categories) && entry.categories.length > 0 && (
-          <ul class="mt-l flex list-none flex-wrap gap-xs p-0">
-            {entry.categories.map((cat: any) => (
-              <li>
-                <JournalCategoryChip title={cat.title} tooltip={cat.description} />
-              </li>
-            ))}
-          </ul>
-        )}
-        {entry.author && (
-          <p class="mt-l text-sm text-muted-foreground">
-            By <span class="font-semibold text-foreground">{entry.author}</span>
-            {updatedLabel && <span> · Updated {updatedLabel}</span>}
-          </p>
-        )}
-      </div>
+  <article class="art">
+    {/* ------- 1. Back link, title, standfirst ----------------------------- */}
+    <header class="art-head mx-auto max-w-content px-m">
+      <a href="/journal/" class="art-back">
+        <svg
+          class="art-back__arrow"
+          viewBox="0 0 56 12"
+          width="56"
+          height="12"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M55 6H2M7 1 2 6l5 5" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+        </svg>
+        <span>News and notes</span>
+      </a>
+      <h1 class="art-title font-display">{entry.title}</h1>
+      {entry.excerpt && <p class="art-standfirst">{entry.excerpt}</p>}
     </header>
 
-    {/* ------- 2. Cover image ----------------------------------------------
-        Same editorial cap as the portfolio hero: max-w-4xl (~896 px) so the
-        photo reads as a feature image rather than a billboard. Sanity
-        request width matches at 1800 so we're not requesting a 1920 px
-        file for a slot that maxes around 900 px even at 2× retina. */}
+    {/* ------- 2. Cover: wide, the stepped brick corner -------------------- */}
     {coverShot && (
-      <div class="mx-auto max-w-4xl px-m">
-        <ShotRequest shot={coverShot} />
+      <div class="art-cover mx-auto max-w-content px-m">
+        <div class="art-cover__frame shape-step shape-step--lg">
+          <ShotRequest shot={coverShot} class="shot--fill" />
+        </div>
       </div>
     )}
     {entry.coverImage?.asset && !coverShot && (
-      <figure class="mx-auto max-w-4xl px-m">
-        <SanityImage
-          source={entry.coverImage}
-          width={1800}
-          loading="eager"
-          sizes="(min-width: 920px) 896px, 100vw"
-          class="h-auto w-full rounded-md"
-        />
+      <figure class="art-cover mx-auto max-w-content px-m">
+        <div class="art-cover__frame shape-step shape-step--lg">
+          <SanityImage
+            source={entry.coverImage}
+            width={2000}
+            height={1125}
+            loading="eager"
+            sizes="(min-width: 82.5rem) 1280px, 100vw"
+          />
+        </div>
         {entry.coverImage.caption && (
-          <figcaption class="mt-s text-center text-sm text-foreground/80 italic">
-            {entry.coverImage.caption}
-          </figcaption>
+          <figcaption class="art-cover__caption">{entry.coverImage.caption}</figcaption>
         )}
       </figure>
     )}
 
-    {/* ------- 3. Body + TOC ------------------------------------------------
-        Same grid structure as the portfolio case-study body: 260 px TOC
-        sidebar on lg+ when the post has h2/h3/h4 headings, single article
-        column otherwise. `lg:justify-center` centers the pair within the
-        section so empty space splits evenly. The article column is sized
-        at minmax(0, 48rem) which matches the previous max-w-3xl reading
-        width the posts were written for. */}
-    <div
-      class:list={[
-        'mx-auto grid max-w-content grid-cols-1 gap-section-md px-m py-section-lg lg:justify-center',
-        hasToc ? 'lg:grid-cols-[260px_minmax(0,48rem)]' : 'lg:grid-cols-[minmax(0,48rem)]',
-      ]}
-    >
-      {hasToc && <CaseStudyTOC client:idle headings={headings} />}
+    {/* ------- 3. The rail and the body ------------------------------------ */}
+    <div class="art-layout mx-auto max-w-content px-m">
+      <aside class="art-rail" aria-label="About this post">
+        <div class="art-rail__inner">
+          <dl class="art-meta">
+            {dateLabel && (
+              <div class="art-meta__item">
+                <dt>Posted</dt>
+                <dd class="art-meta__date">
+                  <time datetime={entry.publishedAt}>{dateLabel}</time>
+                </dd>
+              </div>
+            )}
+            {readMinutes > 0 && (
+              <div class="art-meta__item">
+                <dt>Reading time</dt>
+                <dd>{formatReadingTime(readMinutes)}</dd>
+              </div>
+            )}
+            {entry.author && (
+              <div class="art-meta__item">
+                <dt>Written by</dt>
+                <dd>
+                  {entry.author}
+                  {updatedLabel && <span class="art-meta__note">Updated {updatedLabel}</span>}
+                </dd>
+              </div>
+            )}
+          </dl>
+          {categories.length > 0 && (
+            <ul class="art-cats" role="list">
+              {categories.map((cat: any) => (
+                <li>
+                  <JournalCategoryChip title={cat.title} tooltip={cat.description} />
+                </li>
+              ))}
+            </ul>
+          )}
+          {hasToc && (
+            <div class="art-toc">
+              <CaseStudyTOC client:idle headings={headings} />
+            </div>
+          )}
+          {/* Pass it on (card 126): plain share links, no third-party scripts. */}
+          <ShareButtons
+            title={entry.title ?? title}
+            path={`/journal/${slug}/`}
+            heading="Share"
+            buttonClass="art-share__btn btn-auburn btn-auburn--secondary press-tactile gap-2"
+            class="art-share"
+          />
+        </div>
+      </aside>
 
-      <div>
+      <div class="art-body">
         {/* `client:visible` defers Sanity client + the journal-specific renderers
             (inline images, before/after slider, source cards, galleries) until
             the visitor scrolls the body into view. The article HTML is still
@@ -220,25 +260,11 @@ const schemas = [
         {/* The post's photos open full screen (inline images and galleries). */}
         <Lightbox />
 
-        {/* Pass it on (card 126): plain share links, no third-party scripts. */}
-        <ShareButtons
-          title={entry.title ?? title}
-          path={`/journal/${slug}/`}
-          heading="Share this news"
-          buttonClass="btn-auburn btn-auburn--secondary press-tactile gap-2"
-          class="mt-section-md border-t border-border-soft pt-l"
-        />
-
-        {/* Related project link (if this post walks through a specific portfolio piece).
-            Centered on mobile so the cross-link reads as a deliberate "go see
-            this project" affordance instead of a stray paragraph clinging to
-            the left edge. Desktop keeps left-aligned (still inside the
-            article column). */}
         {entry.relatedProject?.slug?.current && (
-          <aside class="mt-section-lg border-t border-border-soft pt-l text-center md:text-left">
-            <p class="mb-s text-xs tracking-widest text-foreground/80 uppercase">Related project</p>
+          <aside class="mt-section-md border-t border-border-soft pt-l">
+            <p class="art-eyebrow">Related project</p>
             <a
-              href={`/portfolio/${entry.relatedProject.slug.current}`}
+              href={`/portfolio/${entry.relatedProject.slug.current}/`}
               class="group inline-flex items-baseline gap-s text-foreground transition-colors hover:text-primary-dark"
             >
               <span class="font-display text-h3">{entry.relatedProject.title}</span>
@@ -249,42 +275,81 @@ const schemas = [
                 →
               </span>
             </a>
-            {(entry.relatedProject.location || entry.relatedProject.year) && (
-              <p class="mt-xs text-sm text-muted-foreground">
-                {entry.relatedProject.location}
-                {entry.relatedProject.location && entry.relatedProject.year && <span> · </span>}
-                {entry.relatedProject.year}
-              </p>
-            )}
           </aside>
         )}
       </div>
     </div>
   </article>
 
-  {/* ------- 4. Related posts --------------------------------------------- */}
-  {Array.isArray(entry.relatedPosts) && entry.relatedPosts.length > 0 && (
-    <section class="bg-muted" aria-labelledby="related-posts-heading">
-      <div class="mx-auto max-w-content px-m py-section-lg">
-        <h2 id="related-posts-heading" class="mb-l font-display text-h2 text-foreground">
-          Keep reading
-        </h2>
-        <div class="grid grid-cols-1 gap-l md:grid-cols-3">
-          {entry.relatedPosts.slice(0, 3).map((post: any) => (
-            <JournalCard entry={post} />
-          ))}
+  {/* ------- 4. More from News and notes ---------------------------------- */}
+  {related.length > 0 && (
+    <>
+      <BoardRule />
+      <section class="art-more bg-background" aria-labelledby="art-more-heading">
+        <div class="mx-auto max-w-content px-m py-section-lg">
+          <div class="art-more__head">
+            <div>
+              <p class="art-eyebrow">Keep reading</p>
+              <h2 id="art-more-heading" class="font-display text-h2 auburn-h2 leading-tight">
+                More from News and notes
+              </h2>
+            </div>
+            <a class="c-link art-more__all" href="/journal/">
+              Everything in News and notes
+            </a>
+          </div>
+          <ul class="art-cards" role="list">
+            {related.map((post) => {
+              const shot = journalCoverShot(post.coverImage);
+              const date = formatDate(post.publishedAt);
+              return (
+                <li class="art-card shape-card">
+                  <div class="art-card__pic shape-step">
+                    {shot ? (
+                      <ShotRequest shot={shot} inLink class="shot--fill" />
+                    ) : post.coverImage?.asset ? (
+                      <div class="shape-zoom">
+                        <SanityImage
+                          source={post.coverImage}
+                          width={720}
+                          height={540}
+                          sizes="(min-width: 64rem) 26rem, (min-width: 40rem) 45vw, 100vw"
+                          alt=""
+                          quality={70}
+                        />
+                      </div>
+                    ) : (
+                      <div class="shape-zoom shape-tile" aria-hidden="true">
+                        <Image src={markPrint} alt="" width={240} format="webp" quality={80} />
+                      </div>
+                    )}
+                  </div>
+                  {date && (
+                    <time class="art-card__date" datetime={post.publishedAt}>
+                      {date}
+                    </time>
+                  )}
+                  <h3 class="art-card__title font-display">
+                    <a class="art-card__link" href={`/journal/${post.slug?.current}/`}>
+                      {post.title}
+                    </a>
+                  </h3>
+                </li>
+              );
+            })}
+          </ul>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )}
 
   {/* ------- 5. Next / previous post -------------------------------------- */}
   {(prev || next) && (
-    <nav class="border-t border-border-soft bg-background" aria-label="More journal posts">
+    <nav class="border-t border-border-soft bg-background" aria-label="Newer and older posts">
       <div class="mx-auto grid max-w-content grid-cols-1 gap-m px-m py-l md:grid-cols-2">
         {prev ? (
-          <a href={`/journal/${prev.slug}`} class="group">
-            <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Newer post</p>
+          <a href={`/journal/${prev.slug}/`} class="group">
+            <p class="art-eyebrow">Newer post</p>
             <p class="font-display text-h4 text-foreground transition-colors group-hover:text-primary-dark">
               ← {prev.title}
             </p>
@@ -293,8 +358,8 @@ const schemas = [
           <div />
         )}
         {next ? (
-          <a href={`/journal/${next.slug}`} class="group md:text-right">
-            <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Older post</p>
+          <a href={`/journal/${next.slug}/`} class="group md:text-right">
+            <p class="art-eyebrow">Older post</p>
             <p class="font-display text-h4 text-foreground transition-colors group-hover:text-primary-dark">
               {next.title} →
             </p>

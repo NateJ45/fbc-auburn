@@ -31,6 +31,15 @@ export type IconCardImage = {
   _type: 'image';
 };
 
+export type FypCardImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "fypCard.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type LastMessage = {
   title?: string;
   passage?: string;
@@ -117,6 +126,12 @@ export type PrivatePage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -989,6 +1004,12 @@ export type SectionPreset = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -1541,6 +1562,86 @@ export type ThisWeekSection = {
   intro?: string;
 };
 
+export type LetterSection = {
+  _type: 'letterSection';
+  eyebrow?: string;
+  greeting?: string;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
+  signOff?: string;
+  signature?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  name?: string;
+  role?: string;
+  link?: CtaBlock;
+};
+
+export type FindYourPlaceSection = {
+  _type: 'findYourPlaceSection';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  groups?: Array<{
+    title?: string;
+    line?: string;
+    cards?: Array<{
+      image?: FypCardImage;
+      icon?:
+        | 'map-pin'
+        | 'clock'
+        | 'coffee'
+        | 'bible'
+        | 'praying-hands'
+        | 'blocks'
+        | 'music'
+        | 'giving-hand'
+        | 'crown'
+        | 'cross'
+        | 'dove'
+        | 'cracked-heart'
+        | 'broken-chain'
+        | 'cup-and-loaf'
+        | 'church'
+        | 'clouds-and-light'
+        | 'backpack'
+        | 'chalkboard'
+        | 'plate'
+        | 'handshake'
+        | 'open-door'
+        | 'toolbox'
+        | 'grocery-bag';
+      title?: string;
+      forWho?: string;
+      day?: string;
+      place?: string;
+      body?: string;
+      link?: CtaBlock;
+      _type: 'fypCard';
+      _key: string;
+    }>;
+    _type: 'fypGroup';
+    _key: string;
+  }>;
+};
+
 export type IconCardsSection = {
   _type: 'iconCardsSection';
   eyebrow?: string;
@@ -1802,6 +1903,8 @@ export type HeroSection = {
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;
+  headingAccent?: string;
+  showTimes?: boolean;
   welcome?: string;
   subhead?: string;
   backgroundImage?: {
@@ -1907,6 +2010,12 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -2051,6 +2160,12 @@ export type Page = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -2411,6 +2526,12 @@ export type SermonsPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -2721,6 +2842,12 @@ export type JournalPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -2923,6 +3050,12 @@ export type ContactPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -3103,6 +3236,12 @@ export type FaqPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -3243,6 +3382,12 @@ export type AboutPage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -3492,6 +3637,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -3858,6 +4009,7 @@ export type Geopoint = {
 export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | IconCardImage
+  | FypCardImage
   | LastMessage
   | TimelineEntryImage
   | Logo
@@ -3937,6 +4089,8 @@ export type AllSanitySchemaTypes =
   | StepsRailSection
   | WatchSection
   | ThisWeekSection
+  | LetterSection
+  | FindYourPlaceSection
   | IconCardsSection
   | EmbedSection
   | LogoStripSection

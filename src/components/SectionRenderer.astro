@@ -28,6 +28,8 @@ import FaqSection from '@/components/sections/FaqSection.astro'; // scaffold: fa
 import LogoStrip from '@/components/sections/LogoStrip.astro';
 import TeamGrid from '@/components/sections/TeamGrid.astro';
 import IconCards from '@/components/sections/IconCards.astro';
+import FindYourPlace from '@/components/sections/FindYourPlace.astro';
+import LetterSection from '@/components/sections/LetterSection.astro';
 import ThisWeekSection from '@/components/sections/ThisWeekSection.astro';
 import WatchSection from '@/components/sections/WatchSection.astro';
 import EmbedSection from '@/components/sections/EmbedSection.astro';
@@ -143,6 +145,8 @@ const editKeyOf = (block: unknown) => {
           primaryCta={s.primaryCta}
           secondaryCta={s.secondaryCta}
           scriptAccent={s.scriptAccent}
+          headingAccent={s.headingAccent}
+          showTimes={s.showTimes ?? false}
           size={s.size ?? 'short'}
           icon={s.icon}
           quiet={quietTitle}
@@ -290,6 +294,28 @@ const editKeyOf = (block: unknown) => {
           heading={s.heading}
           intro={s.intro}
           cards={s.cards ?? []}
+          surface={lightSurface(surface)}
+          headingId={headingId}
+        />
+      ) : s._type === 'letterSection' ? (
+        <LetterSection
+          eyebrow={s.eyebrow}
+          greeting={s.greeting}
+          body={s.body ?? []}
+          signOff={s.signOff}
+          signature={s.signature}
+          name={s.name}
+          role={s.role}
+          link={s.link}
+          surface={lightSurface(surface)}
+          headingId={headingId}
+        />
+      ) : s._type === 'findYourPlaceSection' ? (
+        <FindYourPlace
+          eyebrow={s.eyebrow}
+          heading={s.heading}
+          intro={s.intro}
+          groups={s.groups ?? []}
           surface={lightSurface(surface)}
           headingId={headingId}
         />

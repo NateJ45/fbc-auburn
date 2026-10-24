@@ -34,6 +34,7 @@ import type {
   // sanity.types yet; their projected types are fully defined below.
 } from './sanity.types';
 import type { DownloadDoc, PersonDoc, SeriesDoc, SermonDoc } from './sermons';
+import type { PortableTextBlock } from '@portabletext/types';
 import type { ChurchPageBlock } from './churchBlocks.types';
 
 // ---------------------------------------------------------------------------
@@ -365,6 +366,51 @@ export interface ProjectedIconCardsSection {
   cards?: ProjectedIconCard[];
 }
 
+/** findYourPlaceSection (FBC Auburn, 2026-10-24): the Ministries hub, groups of cards. Content block. */
+export interface ProjectedFypCard {
+  _key?: string;
+  _type?: 'fypCard';
+  image?: SanityImageObject | null;
+  icon?: string;
+  title?: string;
+  /** "Birth to 5th grade": a few words, set in small caps under the title. */
+  forWho?: string;
+  /** A day ("Wednesdays"); its times come from Church facts, never typed. */
+  day?: string;
+  place?: string;
+  body?: string;
+  link?: ProjectedCtaBlock | null;
+}
+export interface ProjectedFypGroup {
+  _key?: string;
+  _type?: 'fypGroup';
+  title?: string;
+  line?: string;
+  cards?: ProjectedFypCard[];
+}
+export interface ProjectedFindYourPlaceSection {
+  _type: 'findYourPlaceSection';
+  _key: string;
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  groups?: ProjectedFypGroup[];
+}
+
+/** letterSection (FBC Auburn, 2026-10-24): a letter from the pastor. Content block. */
+export interface ProjectedLetterSection {
+  _type: 'letterSection';
+  _key: string;
+  eyebrow?: string;
+  greeting?: string;
+  body?: PortableTextBlock[];
+  signOff?: string;
+  signature?: SanityImageObject | null;
+  name?: string;
+  role?: string;
+  link?: ProjectedCtaBlock | null;
+}
+
 /** thisWeekSection (FBC Auburn): the next seven days, derived. Content block. */
 export interface ProjectedThisWeekSection {
   _type: 'thisWeekSection';
@@ -510,6 +556,8 @@ export type PageBuilderBlock =
   | ProjectedDynamicListSection
   // FBC Auburn
   | ProjectedIconCardsSection
+  | ProjectedFindYourPlaceSection
+  | ProjectedLetterSection
   | ProjectedThisWeekSection
   | ProjectedWatchSection
   // FBC Auburn stone-path blocks

@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import {
   calendarPageFor,
   clockLabel,
+  dayWithTimes,
   FALLBACK_FACTS,
   parseClock,
   resolveChurchFacts,
@@ -328,4 +329,19 @@ test('earlierSundayLine names the gatherings before worship', async () => {
     ),
     null,
   );
+});
+
+test('dayWithTimes adds the times for that day from Church facts, other text stays', () => {
+  const times = [
+    { dayIndex: 0, minutes: 585, label: 'Sunday School for all ages' },
+    { dayIndex: 0, minutes: 660, label: 'Worship' },
+    { dayIndex: 3, minutes: 1080, label: 'Bible study and prayer' },
+  ];
+  assert.equal(dayWithTimes('Wednesdays', times), 'Wednesdays, 6:00 pm');
+  assert.equal(dayWithTimes('Sunday mornings', times), 'Sunday mornings, 9:45 and 11:00 am');
+  assert.equal(dayWithTimes('Saturdays', times), 'Saturdays');
+  assert.equal(dayWithTimes('Once a month', times), 'Once a month');
+  // A card named after one gathering gets that gathering's time only.
+  assert.equal(dayWithTimes('Sundays', times, 'Sunday School'), 'Sundays, 9:45 am');
+  assert.equal(dayWithTimes('Sundays', times, 'Kids'), 'Sundays, 9:45 and 11:00 am');
 });

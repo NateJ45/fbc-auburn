@@ -7,6 +7,16 @@ draws the print as 32 clipped bricks (`npm run gen:mark` splits them out of `bra
 bottom course first when the mark scrolls into view, about five seconds, ending in one slow swell. About's "The story
 in our mark" and the Steps rail both use it; no JS, `?still` and reduced motion show the finished mark.
 
+_2026-10-24: Dependabot sweep, wrangler to 4.151.3._
+
+**Decision.** Ten Dependabot PRs merged: eight single-package bumps (#104, #103, #99, #11, #10, #9, #8, #2), the
+17-package minor-and-patch group (#56, red only because its CI ran while `docs/agent/studio-kit.md` had drifted from the
+starter; green once updated from main), and #16, which moved `wrangler` off the `~4.129.0` pin to `~4.151.3` to take the
+undici 7.30.1 security fix. The group raises the Astro integrations' minimum Node to 22.22; CI and deploy use the latest
+22.x, so nothing changed there. The first production deploy on wrangler 4.151.3 succeeded with no config warnings and the
+static pages, `/preview/`, `/private/<slug>/` and `/studio` all answered. Rule 8's pin text in
+`.claude/rules/dependencies.md` is updated; the starter and the sibling sites stay on 4.129 until moved on purpose.
+
 _2026-10-24: the "night" share card._
 
 **Decision.** With the brick letters gone the share cards were plain, so five directions were drawn
@@ -20,6 +30,25 @@ _2026-10-24: page headings are plain type, not brick._
 **Decision.** Nathan found the brick-letter H1s too busy. `StoneHeading.astro` (every inner page head through
 `BoardPageHead`, and `ArchHero`) now renders plain Young Serif in deep navy, and the 404's brick-wall headline went the
 same way. Then the rest: the share cards (`scripts/lib/og-card.mjs`, all 19 regenerated, plus first cards for events, next steps and prayer) set the title and the Home "Auburn" in plain navy, and the sermon and series art with no picture sets its word in plain cream type (`SermonArt.astro`, `.c-art__word`). The generator (`scripts/lib/brick-letters.mjs`), its tests and the flow layer's `lay` kind stay, unused.
+
+_2026-10-24: the rest of the hppres.org audit._
+
+**Decision.** Everything else worth taking from hppres.org, in Auburn's own shapes: "where next" rows at the top of the
+footer on every page; two-tone page titles (headingAccent on the page head, set in auburn); a Sunday times
+band under inner page heads (from Church facts, one bar on a phone); fold-out questions restyled as hairline rows; a
+letter block for the pastor; an outlined ghost word and the stepped corner on the Watch band; a full-screen phone menu
+of big serif rows; a new News and notes article layout (sticky rail, stepped cover); and stepped people portraits with a
+brick stand-in. Plan your visit is headed with the visitor's own questions. Ministries moved onto the Find your place
+hub in the live dataset the same day. Detail: `docs/agent/shapes.md`.
+
+_2026-10-24: the shape system and Find your place._
+
+**Decision.** From an audit of hppres.org: pictures take two Auburn shapes instead of rounded rectangles (a stepped brick
+corner on cards; the building's gable over a navy brick slab on every ImageText photo), and Ministries becomes a "Find
+your place" hub: a new `findYourPlaceSection` block with groups (New here, Kids and youth, Adults, Serve, Care) stacked
+beside a sticky index that follows the scroll and the header, chips on a phone. Card times come from Church facts through
+the new `dayWithTimes` (Home's bands use it too). All groups show at once rather than as tabs, because a small church's
+groups would hold one card each. The CI snapshot pins the new Ministries page. Detail: `docs/agent/shapes.md`.
 
 _2026-10-24: every Studio icon is brick._
 
