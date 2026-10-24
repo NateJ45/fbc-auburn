@@ -74,7 +74,8 @@ const schemas = [
   />
 
   {/* ------- 2. Category chips (display-only for now) ----------------------- */}
-  {usedCategories.length > 0 && (
+  {/* Only when there is more than one: a single chip repeated the one on every card. */}
+  {usedCategories.length > 1 && (
     <section class="bg-background" aria-label="Journal categories">
       <div class="mx-auto max-w-content px-m pt-l">
         <ul class="flex list-none flex-wrap gap-xs p-0">

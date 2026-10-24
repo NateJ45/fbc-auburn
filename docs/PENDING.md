@@ -236,9 +236,12 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   `src/scripts/motion.ts`): reveals, the rail, the mark building itself with wave drift (About,
   "The story in our mark"), the baptism ring and ripples, the background path, stone dividers and
   nav stones. Waiting on the church: a rough plan of the building (which door guests use, where
-  the fellowship hall, children's room and sanctuary are). Until then the Walk's drawing is
-  placeholder geometry in `src/lib/walk-plan.ts` (ROOMS, STOPS, ROUTE); only those change.
-- Still open: Events in the menu once the church's Church Trac links exist; Give is in the menu
+  the fellowship hall, children's room and sanctuary are). Since 2026-10-24 the outside of the
+  Walk's plan follows the aerial and street photos (lot, drive, sign, doors, annex); the rooms inside
+  (`src/lib/walk-plan.ts` ROOMS, STOPS, ROUTE) are still a guess until he shares a plan.
+- Events and Prayer requests are in the menu (2026-10-24, Studio pages `/events/` and `/prayer/`);
+  Events fills from Church Trac once the calendar link is set, and the prayer form sends once a
+  church email is connected. Still open: Give is in the menu
   (2026-10-17) but goes to Contact until there is a giving link (swap it in Site settings >
   Navigation); the deacons' team grid once names and permissions exist.
 - Waiting on Pastor Jacob (Home, 2026-10-17): the four "Your first Sunday" steps (Studio: Home,

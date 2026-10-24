@@ -133,6 +133,30 @@
   font-weight: 600;
   color: #ffffff;
 }
+/* A dot between the name and the town, so the two caps runs do not read as one (2026-10-24). */
+.hb-way .stone-icon {
+  transition: transform 0.25s ease;
+}
+.hb-way:hover .stone-icon,
+.hb-way:focus-visible .stone-icon {
+  transform: scale(1.06);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hb-way .stone-icon {
+    transition: none;
+  }
+}
+.hb-name__town::before {
+  content: '·';
+  margin-right: 14px;
+  font-weight: 700;
+}
+/* On a phone the town wraps to its own line, where a leading dot would dangle. */
+@media (max-width: 600px) {
+  .hb-name__town::before {
+    display: none;
+  }
+}
 .hb-h1 {
   margin: 0 0 18px;
   font-family: var(--font-display);
@@ -239,7 +263,7 @@
 }
 .hb-belong .hb-ph,
 .hb-belong .hb-note {
-  box-shadow: 0 24px 48px -28px rgb(15 34 56 / 0.6);
+  box-shadow: var(--shadow-raised);
 }
 
 /* ---- This Sunday card ------------------------------------------------------------------------ */
@@ -251,7 +275,7 @@
   background-color: var(--auburn-deep);
   background-image: url('/textures/tile-deep.svg');
   background-size: 420px 420px;
-  box-shadow: 0 30px 60px -36px rgb(22 38 61 / 0.7);
+  box-shadow: var(--shadow-raised);
   color: #ffffff;
 }
 .hb-sunday__top {
@@ -370,7 +394,7 @@
   padding: 10px 34px 26px;
   border-radius: var(--hb-radius);
   background: #ffffff;
-  box-shadow: 0 24px 48px -36px rgb(22 38 61 / 0.45);
+  box-shadow: var(--shadow-card);
 }
 .hb-board > div {
   padding: 26px 28px 8px;
@@ -413,7 +437,7 @@
   padding: var(--pad-card);
   border-radius: var(--hb-radius);
   background: #ffffff;
-  box-shadow: 0 18px 40px -32px rgb(22 38 61 / 0.4);
+  box-shadow: var(--shadow-card);
   color: var(--hb-ink);
   text-decoration: none;
 }

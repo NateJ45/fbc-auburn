@@ -98,9 +98,13 @@ const CardTitle = heading ? 'h3' : 'h2';
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
+  /* One height for every icon (2026-10-24): the icons differ in shape, so a fixed width left the
+     titles up to 12px apart across a row. The box is square and the art is contained in it. */
   .icon-card :global(.icon-card__icon) {
     width: clamp(76px, 7vw, 96px);
-    height: auto;
+    height: clamp(76px, 7vw, 96px);
+    object-fit: contain;
+    object-position: left bottom;
     margin-bottom: 1.1rem;
   }
   .icon-card__photo {

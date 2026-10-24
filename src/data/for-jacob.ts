@@ -29,7 +29,7 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'A welcome photo for the top of the page.',
       detail:
-        'People, not the building: the church greeting each other, worship, or the front door on a Sunday. Wide and sharp (a phone is fine). The one there now is a borrowed stand-in.',
+        'The sanctuary photo there now is from your Facebook page. People would be even better: the church greeting each other, worship, or the front door on a Sunday. Wide and sharp (a phone is fine).',
     },
     {
       title: 'Your welcome, in your words.',
@@ -150,6 +150,30 @@ const NOTES: Record<string, JacobNote[]> = {
       title: 'Where would the recordings come from?',
       detail:
         'A YouTube link, an audio file, or both. Whoever posts them would add each one in the editor.',
+    },
+  ],
+  '/prayer/': [
+    {
+      title: 'Who should prayer requests go to?',
+      detail:
+        'Right now they would go to you alone, and the website keeps no copy. Should a prayer team see them too?',
+    },
+    {
+      title: 'May people share a request with the church?',
+      detail:
+        'The form has a tick box for "You may share this with the church family". Keep it, or keep every request private?',
+    },
+  ],
+  '/events/': [
+    {
+      title: 'Your Church Trac calendar link.',
+      detail:
+        'Send us the calendar (iCal) link from Church Trac and every event you add there shows up here, with a button to add it to a phone.',
+    },
+    {
+      title: 'Confirm the weekly times.',
+      detail:
+        'The Sunday and Wednesday times here come from the same list as the rest of the site.',
     },
   ],
   '/give/': [

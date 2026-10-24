@@ -9,6 +9,8 @@ import MarkBuild from '@/components/motion/MarkBuild.astro';
 import BaptismGraphic from '@/components/motion/BaptismGraphic.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import Sill from '@/components/Sill.astro';
+// With no photo yet, the slot holds the church's mark, not an empty grey shape (2026-10-24).
+import markPrint from '@/assets/brand/mark-print.png';
 
 interface Props {
   /** FBC Auburn: a photo, or one of the church's drawings with its scroll motion. */
@@ -109,7 +111,17 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
             class="auburn-arch h-auto w-full object-cover"
           />
         ) : (
-          <div class="auburn-arch auburn-arch--empty" aria-hidden="true" />
+          <div class="auburn-arch auburn-arch--empty" aria-hidden="true">
+            <img
+              class="auburn-arch__mark"
+              src={markPrint.src}
+              width="720"
+              height="703"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
         )}
       </div>
 

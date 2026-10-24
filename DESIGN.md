@@ -148,8 +148,10 @@ Give, Sermons, Bulletin and Privacy end with no closing band of their own.
 
 ## Elevation
 
-Flat. Sections separate by ground tint and space, not shadows. One soft shadow at most for a
-floating element (a sticky "Plan your visit" bar on mobile).
+Flat. Sections separate by ground tint and space, not shadows. Three soft navy-tinted shadows, as
+tokens (2026-10-24): a card on the page, a panel raised over another layer (the This Sunday card,
+the welcome note), and a round play button on a photo. A picture slot with no photo yet shows the
+brick-cross print on the Stone tint, never a grey box.
 
 ## Components
 
