@@ -192,6 +192,44 @@ export const churchFactsFields = [
       'The page where people give online (from Church Trac or another giving service). When it is set, every "Give" link goes straight there. Leave empty and Give opens the site’s own page about giving on Sunday or by mail.',
     validation: (Rule) => Rule.uri({ scheme: ['https'] }),
   }),
+  // Church Trac (2026-10-24, PORTS.md card 152; docs/agent/church-trac.md). Each box is optional;
+  // a link box anywhere on the site can point at one with a placeholder such as {connect}.
+  defineField({
+    name: 'churchTracUrl',
+    title: 'Church Trac address',
+    type: 'url',
+    group: 'church',
+    description:
+      'The church’s own Church Trac address, like https://yourchurch.churchtrac.com. A "Church Trac page" section reads its pages from here.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
+    name: 'connectCardUrl',
+    title: 'Connection card',
+    type: 'url',
+    group: 'church',
+    description:
+      'The Church Trac connection card. Once it is set, Contact shows it in place of the site’s own form, and every "Tell us you are coming" button goes straight to it. Links can use {connect}.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
+    name: 'contactFormUrl',
+    title: 'Contact form (optional)',
+    type: 'url',
+    group: 'church',
+    description:
+      'A Church Trac form for general questions. Contact shows it in place of the site’s own form; leave empty to use the connection card there. Links can use {contact-form}.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
+    name: 'prayerFormUrl',
+    title: 'Prayer request form',
+    type: 'url',
+    group: 'church',
+    description:
+      'The Church Trac prayer request form. Once it is set, the Prayer requests page shows it in place of the site’s own form. Links can use {prayer}.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
   defineField({
     name: 'liveStreamUrl',
     title: 'Live stream link',

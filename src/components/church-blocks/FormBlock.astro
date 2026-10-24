@@ -13,6 +13,8 @@
 // Spam: a hidden honeypot box and a timing check (shared with the Contact form), and Cloudflare
 // Turnstile when PUBLIC_TURNSTILE_SITE_KEY is set at build and TURNSTILE_SECRET in the Worker.
 import ChurchBand from './ChurchBand.astro';
+import ChurchTracFrame from './ChurchTracFrame.astro';
+import { churchTracFormFor } from '@/lib/church-links';
 import { getChurchFacts } from '@/lib/church-data';
 import { normalizeForm } from '@/lib/church-form';
 import type { ProjectedFormSection } from '@/lib/churchBlocks.types';
@@ -24,13 +26,30 @@ interface Props {
 }
 const { block, surface, headingId } = Astro.props;
 const form = normalizeForm(block.form);
-const { email, phone } = await getChurchFacts();
+const facts = await getChurchFacts();
+const { email, phone } = facts;
+// Church Trac (2026-10-24, docs/agent/church-trac.md): a prayer form gives way to the Church Trac
+// prayer request form once Church facts has one, so requests land in Church Trac.
+const churchTracForm = form?.mode === 'prayer' ? churchTracFormFor('prayer', facts) : null;
 const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
 const fid = (s: string) => `${headingId}-${s}`;
 const who = form?.recipientName || 'the church office';
 ---
 
-{form && (
+{form && churchTracForm && (
+  <ChurchBand
+    type={block._type}
+    heading={form.title}
+    intro={form.intro}
+    headingId={headingId}
+    surface={surface}
+    label={form.title}
+    beside
+  >
+    <ChurchTracFrame src={churchTracForm} title={form.title} size="medium" />
+  </ChurchBand>
+)}
+{form && !churchTracForm && (
   <ChurchBand
     type={block._type}
     heading={form.title}

@@ -1,0 +1,92 @@
+---
+// Safe to edit by hand
+// One Church Trac form in the site's own frame (2026-10-24, from fbcm's ChurchTracForm.astro,
+// PORTS.md card 152; docs/agent/church-trac.md). Shared by the "Church Trac form" band
+// (ChurchTracFormBlock.astro), the Contact page and the Prayer requests form (FormBlock.astro), so
+// the three look and behave the same.
+//
+// ONLY A CHURCH TRAC ADDRESS REACHES THE PAGE. `src` is whatever the caller has (pasted embed code
+// or a Church facts box); src/lib/church-trac-form.ts keeps it only when it is an https address
+// on churchtrac.com, and this file draws its own <iframe> around it. Anything else draws nothing.
+//
+// CHURCH TRAC CHECKS WHERE IT IS SHOWN. Its "Form/Giving Embed Domain" setting only lets a form
+// open on the address typed there, read from the page's origin (sent by Referrer-Policy
+// strict-origin-when-cross-origin in public/_headers). So that setting holds this site's address,
+// and it changes at the domain cutover (docs/PENDING.md).
+//
+// THE WAY OUT. Under the frame, "Open the form in a new tab" goes to the same address, for a
+// browser that blocks the frame or a visitor who would rather have the whole screen.
+import { formHeight, formSrc } from '@/lib/church-trac-form';
+import { splitStega } from '@/lib/preview-stega';
+
+interface Props {
+  /** Pasted embed code or a bare https://<church>.churchtrac.com/... address. */
+  src?: string | null;
+  /** The form's name, what a screen reader announces for the frame. */
+  title?: string | null;
+  /** short | medium | long (the Studio's "Form size"); medium when unset. */
+  size?: string | null;
+}
+const { src: raw, title, size } = Astro.props;
+const src = formSrc(raw);
+const height = formHeight(size);
+const name = splitStega(String(title ?? '')).cleaned.trim() || 'Church Trac form';
+---
+
+{src && (
+  <div class="ctf" data-church-trac-form>
+    <div class="ctf__frame">
+      <iframe
+        src={src}
+        title={name}
+        loading="lazy"
+        allow="payment"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style={`--ctf-h:${height}px`}
+      ></iframe>
+    </div>
+    <p class="ctf__out">
+      <a href={src} target="_blank" rel="noopener noreferrer">
+        Open the form in a new tab<span class="sr-only">: {name}</span>
+      </a>
+    </p>
+  </div>
+)}
+
+<style>
+  .ctf {
+    width: 100%;
+    min-width: 0;
+  }
+  .ctf__frame {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: #fff;
+  }
+  .ctf__frame iframe {
+    display: block;
+    width: 100%;
+    height: var(--ctf-h, 820px);
+    border: 0;
+  }
+  /* Church Trac's frame does not size itself to its form, and a phone stacks the fields: a quarter
+     more height (fbcm measured its connection card at 1167px tall at 320 wide). */
+  @media (max-width: 639px) {
+    .ctf__frame iframe {
+      height: calc(var(--ctf-h, 820px) * 1.25);
+    }
+  }
+  .ctf__out {
+    margin: 0.75rem 0 0;
+    font-size: var(--text-sm);
+  }
+  .ctf__out a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

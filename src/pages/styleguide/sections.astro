@@ -701,6 +701,22 @@ const SECTIONS: Record<string, unknown>[] = [
     caption: 'A caption under the photo.',
   },
   { _type: 'formSection', _key: 'cb-form', form: FIXTURE_FORMS['fixture-signup'] },
+  // Church Trac (docs/agent/church-trac.md): a made-up form address, and fbcm's saved newsletter page
+  // (drawn from tests/fixtures under CHURCH_TRAC_PAGES_FIXTURE=1; otherwise the band's empty state).
+  {
+    _type: 'churchTracFormSection',
+    _key: 'cb-ct-form',
+    heading: 'Tell us you are coming',
+    intro: 'A form from Church Trac, in the site’s own frame.',
+    embed: '<iframe src="https://example.churchtrac.com/connectcard"></iframe>',
+    size: 'short',
+  },
+  {
+    _type: 'churchTracPageSection',
+    _key: 'cb-ct-page',
+    heading: 'This week’s bulletin',
+    page: 'children',
+  },
   // The email backbone (card 127): the made-up event in mail-fixtures.ts.
   { ...FIXTURE_RSVP_BLOCK, _type: 'rsvpSection' },
 ];

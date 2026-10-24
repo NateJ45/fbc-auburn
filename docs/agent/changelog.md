@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-24: Church Trac on the site, from fbcm (PORTS.md card 152)._
+
+**Decision.** The church will run on Church Trac, and the site's own forms could not deliver. fbcm's three Church Trac pieces
+came over, adapted to Auburn: Church facts boxes for the Church Trac address, connection card, contact form and prayer form;
+`{token}` links filled in `queries.ts` (not `sanity.ts`, which is PORTABLE); a shared frame that replaces the Contact and
+Prayer forms once a box is set (and sends the visit buttons to the connection card); a "Church Trac form" band; and a "Church
+Trac page" band that reads a named Church Trac page at build time. Code stays in the church sites by decision (no starter
+code); the card maps it. `docs/agent/church-trac.md`.
+
 _2026-10-24: Ministries gets its own icons. Youth, Fellowship and Greeters all wore the coffee cup, Sunday School the clock and Workdays and grounds the map pin; round 24 drew seven new stone icons in the same style and five colours (backpack, chalkboard, plate and cutlery, handshake, open door, toolbox, grocery bag; masters in `brand/icons/`, printed by `node scripts/print-icons.mjs`, added to `STONE_ICONS`), and redrew the toy blocks with A, B, C under the same `blocks` name, so Kids, The children's room, the Ministries page head and the Studio's children icon all pick it up. `scripts/content/ministry-icons.mjs` set six cards: Youth (backpack), Sunday School (chalkboard), Fellowship (plate), Greeters (handshake), Food pantry and outreach (grocery bag), Workdays and grounds (toolbox). The open door is in the picker only._
 
 _2026-10-24: the livestream features from First Baptist Muncie._

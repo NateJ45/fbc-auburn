@@ -206,6 +206,12 @@ export type PrivatePage = {
       } & FormSection)
     | ({
         _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
       } & RsvpSection)
     | ({
         _key: string;
@@ -620,6 +626,10 @@ export type SiteSettings = {
   memberLoginUrl?: string;
   emailConfirmed?: boolean;
   givingUrl?: string;
+  churchTracUrl?: string;
+  connectCardUrl?: string;
+  contactFormUrl?: string;
+  prayerFormUrl?: string;
   liveStreamUrl?: string;
   officeHours?: string;
   foundedYear?: number;
@@ -1062,6 +1072,12 @@ export type SectionPreset = {
       } & FormSection)
     | ({
         _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
       } & RsvpSection)
     | ({
         _key: string;
@@ -1090,6 +1106,21 @@ export type RsvpSection = {
     } & FormQuestion
   >;
   confirmationNote?: string;
+};
+
+export type ChurchTracPageSection = {
+  _type: 'churchTracPageSection';
+  heading?: string;
+  intro?: string;
+  page?: string;
+};
+
+export type ChurchTracFormSection = {
+  _type: 'churchTracFormSection';
+  heading?: string;
+  intro?: string;
+  embed?: string;
+  size?: 'short' | 'medium' | 'long';
 };
 
 export type FormReference = {
@@ -1961,6 +1992,12 @@ export type PrivacyPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
       } & RsvpSection)
     | ({
         _key: string;
@@ -2097,6 +2134,12 @@ export type Page = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -2451,6 +2494,12 @@ export type SermonsPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
       } & RsvpSection)
     | ({
         _key: string;
@@ -2755,6 +2804,12 @@ export type JournalPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
       } & RsvpSection)
     | ({
         _key: string;
@@ -2951,6 +3006,12 @@ export type ContactPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
       } & RsvpSection)
     | ({
         _key: string;
@@ -3125,6 +3186,12 @@ export type FaqPage = {
       } & FormSection)
     | ({
         _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
       } & RsvpSection)
     | ({
         _key: string;
@@ -3259,6 +3326,12 @@ export type AboutPage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -3502,6 +3575,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -3819,6 +3898,8 @@ export type AllSanitySchemaTypes =
   | SyncedSection
   | SectionPreset
   | RsvpSection
+  | ChurchTracPageSection
+  | ChurchTracFormSection
   | FormReference
   | FormSection
   | Form

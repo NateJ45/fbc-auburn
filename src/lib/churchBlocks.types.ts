@@ -158,6 +158,19 @@ export interface ProjectedFormSection {
   form?: Record<string, unknown> | null;
 }
 
+/** A Church Trac form pasted into a band (docs/agent/church-trac.md). */
+export interface ProjectedChurchTracFormSection extends Base {
+  _type: 'churchTracFormSection';
+  embed?: string;
+  size?: string;
+}
+
+/** A Church Trac page read at build time (docs/agent/church-trac.md). */
+export interface ProjectedChurchTracPageSection extends Base {
+  _type: 'churchTracPageSection';
+  page?: string;
+}
+
 /** An RSVP form for one event (card 127). `pageId` comes from the projection (^._id). */
 export interface ProjectedRsvpSection {
   _type: 'rsvpSection';
@@ -198,6 +211,8 @@ export type ChurchPageBlock =
   | ProjectedColumnsSection
   | ProjectedPhotoSection
   | ProjectedFormSection
+  | ProjectedChurchTracFormSection
+  | ProjectedChurchTracPageSection
   | ProjectedRsvpSection;
 
 export type ChurchBlockType = ChurchPageBlock['_type'];
@@ -225,6 +240,8 @@ export const CHURCH_BLOCK_TYPES: ReadonlySet<string> = new Set<ChurchBlockType>(
   'columnsSection',
   'photoSection',
   'formSection',
+  'churchTracFormSection',
+  'churchTracPageSection',
   'rsvpSection',
 ]);
 
