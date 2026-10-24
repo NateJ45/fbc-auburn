@@ -17,6 +17,10 @@
    does not, src/scripts/motion.ts adds `.in` with an IntersectionObserver and feeds `--drift` and
    `--turn` from a passive scroll listener. Same picture either way. */
 
+/* The flow layer (2026-10-24): line-by-line headings, fade-ups, photos, the hero drift, the
+   footer verse, page-to-page. */
+@import './flow.css';
+
 /* ======================================================================================
    Reveal: a stone or icon lands once as it scrolls in.
    Opt in with class="reveal"; --x, --y, --r, --s place it at rest, --d (observer) and --k

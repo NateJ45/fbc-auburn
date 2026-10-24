@@ -74,6 +74,7 @@ interface Props {
         footerCreditUrl?: string;
         footerInvite?: string;
         footerAbout?: string;
+        footerVerse?: { text?: string | null; reference?: string | null } | null;
         footerSecondaryCta?: CtaTarget & { label?: string };
         newsletter?: NewsletterConfig | null;
       })
@@ -153,6 +154,14 @@ const hasTouch = !!(
 const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
 // The footer's own words (Site settings > Social & footer), each with the built-in fallback.
 const footerAbout = siteSettings?.footerAbout || 'A Southern Baptist church in Ross Township, Ohio';
+// The verse across the top of the footer (2026-10-24), Site settings > Social and footer. The
+// default is Matthew 11:28 in the CSB until the church picks its own verse and translation.
+const verseText =
+  siteSettings?.footerVerse?.text?.trim() ||
+  'Come to me, all of you who are weary and burdened, and I will give you rest.';
+const verseRef = siteSettings?.footerVerse?.text?.trim()
+  ? siteSettings.footerVerse.reference?.trim() || ''
+  : 'Matthew 11:28';
 const secondaryCta = siteSettings?.footerSecondaryCta?.label
   ? { label: siteSettings.footerSecondaryCta.label, href: ctaHref(siteSettings.footerSecondaryCta) }
   : { label: 'Ask a question', href: '/contact/' };
@@ -170,10 +179,22 @@ const hasCalendar =
          and the link rows (Sanity footer columns; Get in touch only when filled). Right: the live
          This Sunday panel: date, times, address, Directions, all from Church facts.
       3. A slim bottom bar.
+      Under the sill, the verse: one line of scripture in big type that slides across as the
+      reader scrolls into the footer (src/scripts/flow.ts; at rest, or with reduced motion, it
+      simply wraps).
       Behind 2, the building sketch at low opacity, bottom right.
       The whole footer is ink: .site-footer redefines the colour tokens (src/styles/auburn.css),
       so the starter's link grid below turns light-on-ink without touching its classes. */}
   <Sill class="site-footer__sill" />
+
+  <figure class="sf-verse" data-flow-verse>
+    <blockquote class="m-0">
+      <p class="sf-verse__line">
+        <span class="sf-verse__text">&ldquo;{verseText}&rdquo;</span>
+        {verseRef && <cite class="sf-verse__ref">{verseRef}</cite>}
+      </p>
+    </blockquote>
+  </figure>
 
   <div class="sf-top mx-auto max-w-content px-l">
     {/* The building, faint, behind the footer's own content (2026-10-24): it takes no room of its

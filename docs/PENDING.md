@@ -285,6 +285,12 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
 - DONE 2026-10-17: the Menu (a full-screen panel at every width, the header shows the first four
   links) and the footer columns in Site settings; the contact form is a visit form (editor-written
   questions in the Contact page; `?visit=sunday-11` pre-fills it).
+- DONE 2026-10-24: the flow layer (`src/scripts/flow.ts`, `src/styles/flow.css`,
+  `docs/agent/animation.md` "The flow layer"): line-by-line headings, staggered fade-ups, photo
+  zoom and drift, the home hero drift, magnetic buttons, page-to-page lift and rise, and the footer
+  verse (Site settings > Social and footer). Waiting on Pastor Jacob: which verse and translation
+  for the footer (Matthew 11:28, CSB, until he picks). Open: the flow layer could go back to the
+  starter as a port card once it has run on the live preview for a while.
 - DONE 2026-10-17: the motion layer and "Walk in with us" (`src/styles/motion.css`,
   `src/scripts/motion.ts`): reveals, the rail, the mark building itself with wave drift (About,
   "The story in our mark"), the baptism ring and ripples, the background path, stone dividers and

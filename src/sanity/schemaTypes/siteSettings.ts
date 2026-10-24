@@ -475,6 +475,31 @@ export const siteSettings = defineType({
         'The outline button beside "Plan your visit". Leave the label empty for "Ask a question", which goes to the Contact page.',
     }),
     defineField({
+      name: 'footerVerse',
+      title: 'Footer: the verse',
+      type: 'object',
+      group: 'social',
+      description:
+        'One verse across the top of the footer on every page, in big type. It slides along as people scroll down to the footer. Leave empty for Matthew 11:28.',
+      options: { collapsible: false },
+      fields: [
+        defineField({
+          name: 'text',
+          title: 'The verse',
+          type: 'string',
+          description: 'The words only, without quotation marks. One verse reads best.',
+          validation: (Rule) => Rule.max(160),
+        }),
+        defineField({
+          name: 'reference',
+          title: 'Where it is from',
+          type: 'string',
+          description: 'For example "Matthew 11:28" or "Matthew 11:28 (CSB)".',
+          validation: (Rule) => Rule.max(40),
+        }),
+      ],
+    }),
+    defineField({
       name: 'footerAbout',
       title: 'Footer: the line in the bottom bar',
       type: 'string',

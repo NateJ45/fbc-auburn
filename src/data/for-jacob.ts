@@ -26,6 +26,11 @@ const NOTES: Record<string, JacobNote[]> = {
         'The line under "Come as you are." and the note signed by you are our drafts in brackets: rewrite them or tell us what to change.',
     },
     {
+      title: 'The verse in the footer.',
+      detail:
+        'Every page ends with Matthew 11:28 sliding across the footer. Is that the verse you want, and which translation does the church read from?',
+    },
+    {
       title: 'Confirm the Sunday and Wednesday times.',
       detail:
         'Your road sign says adult Bible study at 6:30 and youth at 6:00 on Wednesdays; the site says 6:00. Which is right today?',
