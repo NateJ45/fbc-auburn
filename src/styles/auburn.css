@@ -1097,6 +1097,30 @@ html .site-search-dialog {
   font-weight: 600;
   text-underline-offset: 3px;
 }
+/* Where Sunday streams (2026-10-24); "Live now" with a red dot while worship is on. */
+.auburn-menu__watch {
+  margin: -0.4rem 0 1.1rem;
+}
+.auburn-menu__watch a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.55rem;
+  color: #ffffff;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+.auburn-menu__live-dot {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.45);
+}
+.auburn-menu__watch a[data-live] .auburn-menu__live-dot {
+  background: #e5484d;
+  box-shadow: 0 0 0 4px rgb(229 72 77 / 0.25);
+}
 .auburn-menu__tagline {
   margin: 0;
   text-wrap: balance;

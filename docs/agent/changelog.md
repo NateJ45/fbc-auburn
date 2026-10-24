@@ -9,6 +9,18 @@ Prayer forms once a box is set (and sends the visit buttons to the connection ca
 Trac page" band that reads a named Church Trac page at build time. Code stays in the church sites by decision (no starter
 code); the card maps it. `docs/agent/church-trac.md`.
 
+_2026-10-24: Ministries gets its own icons. Youth, Fellowship and Greeters all wore the coffee cup, Sunday School the clock and Workdays and grounds the map pin; round 24 drew seven new stone icons in the same style and five colours (backpack, chalkboard, plate and cutlery, handshake, open door, toolbox, grocery bag; masters in `brand/icons/`, printed by `node scripts/print-icons.mjs`, added to `STONE_ICONS`), and redrew the toy blocks with A, B, C under the same `blocks` name, so Kids, The children's room, the Ministries page head and the Studio's children icon all pick it up. `scripts/content/ministry-icons.mjs` set six cards: Youth (backpack), Sunday School (chalkboard), Fellowship (plate), Greeters (handshake), Food pantry and outreach (grocery bag), Workdays and grounds (toolbox). The open door is in the picker only._
+
+_2026-10-24: the livestream features from First Baptist Muncie._
+
+**Decision.** Auburn streams on Facebook and plans YouTube, so the live pieces work on Facebook now and
+improve by themselves when a channel id is set. A Live now banner above the header on every page,
+Home's watch card tag and the phone menu row share one clock (`src/lib/live-service.ts`, worship from
+5 minutes before to 80 after, church time). The This Sunday card says where to watch, and names the
+coming Sunday's scheduled YouTube stream once there is one. `/api/live-status/` (YouTube Data API,
+needs `YOUTUBE_API_KEY`) is ported but dormant. The live link now prefers the YouTube channel's live
+page over Facebook when both exist. Detail: `docs/agent/church-data.md`.
+
 _2026-10-24: what visitors and members need, after an audit against two other church sites._
 
 **Decision.** Auburn's newcomer pages already answered more than either reference (a FAQ, service
@@ -18,6 +30,8 @@ Ministries with a leader and place ask on each card, When life happens on Contac
 Sermons in reach (the header shows five links: About, Ministries, Events, Watch, Give), and two
 Church facts: `phoneTakesTexts` for "Call or text" and `memberLoginUrl` for a footer member
 sign-in. Open items in PENDING.md 1x.
+
+_2026-10-24: examples in the shot list. Each "Photo needed" slot now shows a stock example of the shot it asks for (12 Unsplash photos, one Pexels clip for the Last Sunday card, all in `public/shot-examples/`, about 2 MB, credits in its CREDITS.md) under a pinned yellow note with a "How to take yours" toggle, so Jacob sees a finished-looking site and exactly which pictures are his to take. `Shot.example` / `Shot.video` in `src/data/shot-list.ts`; the hero and the watch card draw theirs behind the tag note. The clip respects reduced motion. Removed at launch with `PRE_LAUNCH_NOTES`.
 
 _2026-10-24: the shot list. Every photo slot that held a stand-in (the Facebook pantry, gift-table, building, sign and sanctuary photos; the Unsplash hero and Last Sunday poster) or sat empty now shows a yellow "Photo needed" box naming the photo we want, so the preview doubles as Pastor Jacob's shot list. Code-side only, no data written: `src/data/shot-list.ts` holds the shots (keyed by page and block heading) and decides when a slot shows one (before launch, while empty or a stand-in: an `fbca-fb-*` or `stand-in-*` upload or an Unsplash asset); `ShotRequest.astro` draws it (a frame in a picture slot, a pinned note over the hero and the Last Sunday card); the For Jacob pill lists the same shots. Open loop: PENDING 1x, the shot list._
 

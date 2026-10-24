@@ -146,8 +146,13 @@ export interface ChurchFacts {
   prayerFormUrl: string | null;
   /** The church's Facebook page (Social links), or null. */
   facebookUrl: string | null;
-  /** Where Sunday is watched live: the Live stream link, else the Facebook page, else null. */
+  /**
+   * Where Sunday is watched live: the Live stream link, else the YouTube channel's live page
+   * (once a channel id is set), else the Facebook page, else null (2026-10-24; live-service.ts).
+   */
   liveUrl: string | null;
+  /** Which service liveUrl is on, for the words ("Watch live on Facebook"), or null. */
+  liveVia: 'YouTube' | 'Facebook' | null;
   /** Online giving (Church facts > Online giving link), or null: Give stays on the site. */
   givingUrl: string | null;
   founded: { year: number; confirmed: boolean } | null;
@@ -313,6 +318,14 @@ export function httpsUrl(value?: string | null): string | null {
 }
 
 /** The church's Facebook page: the Facebook row in Social links, else the legacy field. */
+/** The service a live link is on, read from its host; null for anything else. */
+export function liveVia(url: string | null): 'YouTube' | 'Facebook' | null {
+  if (!url) return null;
+  if (/^https:\/\/([\w-]+\.)?(youtube\.com|youtu\.be)\//i.test(url)) return 'YouTube';
+  if (/^https:\/\/([\w-]+\.)?(facebook\.com|fb\.watch|fb\.com)\//i.test(url)) return 'Facebook';
+  return null;
+}
+
 function facebookFrom(s: RawChurchFacts): string | null {
   const row = (s.socialLinks ?? []).find((l) => plain(l?.platform) === 'Facebook' && l?.url);
   return httpsUrl(row?.url) ?? httpsUrl(s.socialFacebook);
@@ -389,6 +402,11 @@ export function resolveChurchFacts(raw?: RawChurchFacts | null): ChurchFacts {
   const email = s.email?.trim() ?? '';
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(plain(email));
   const facebookUrl = facebookFrom(s);
+  const channelId = /^UC[\w-]{22}$/.test(channel) ? channel : null;
+  const liveUrl =
+    httpsUrl(s.liveStreamUrl) ??
+    (channelId ? `https://www.youtube.com/channel/${channelId}/live` : null) ??
+    facebookUrl;
 
   return {
     address: resolveAddress(hasAddress ? s.churchAddress : FALLBACK_FACTS.churchAddress),
@@ -411,13 +429,14 @@ export function resolveChurchFacts(raw?: RawChurchFacts | null): ChurchFacts {
       ? { display: email, href: `mailto:${plain(email)}`, confirmed: s.emailConfirmed === true }
       : null,
     facebookUrl,
-    liveUrl: httpsUrl(s.liveStreamUrl) ?? facebookUrl,
+    liveUrl,
+    liveVia: liveVia(liveUrl),
     givingUrl: httpsUrl(s.givingUrl),
     founded:
       year !== null
         ? { year, confirmed: s.foundedConfirmed === true }
         : { year: FALLBACK_FACTS.foundedYear, confirmed: false },
-    youtubeChannelId: /^UC[\w-]{22}$/.test(channel) ? channel : null,
+    youtubeChannelId: channelId,
     icalUrl: /^(https|webcal):\/\//i.test(ical) ? ical.replace(/^webcal:/i, 'https:') : null,
     calendarPageUrl: calendarPageFor(ical || null),
     officeHours: plain(s.officeHours)

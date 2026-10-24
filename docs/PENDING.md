@@ -151,6 +151,10 @@ gift tables, the building, the sign and the sanctuary; the Unsplash hero and Las
 empty now shows a yellow "Photo needed" box naming the shot (`src/components/ShotRequest.astro`, list in
 `src/data/shot-list.ts`), and the For Jacob pill lists the same shots page by page. The stand-in assets
 stay in the dataset untouched; uploading the church's own photo in the Studio replaces the box at once.
+Since 2026-10-24 (later) each box also shows an example: a free Unsplash photo of the same kind of
+shot fills the slot (a Pexels clip plays in the Last Sunday card) under a yellow "Example photo, yours
+goes here" note with a "How to take yours" toggle, so the preview looks finished while still saying
+which photos are Jacob's. Files and credits: `public/shot-examples/` (`CREDITS.md`).
 The shots wanted:
 
 - Home: the hero (Sunday morning from the back of the room, landscape, left side calm for the words);
@@ -174,7 +178,7 @@ the round signer portrait in Who we are (hidden while empty; same photo as Meet 
 **Blocker: Jacob's answers.** Every page carries marked placeholder copy ("[Placeholder: ...]" drafts and
 "[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
 (`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Since 2026-10-24 every photo slot shows a
-"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, and grep the
+"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 
@@ -422,9 +426,9 @@ edit in Site settings > Church facts, then a publish.
 - The church phone (Identity & contact > Phone) and `phoneConfirmed`; there is none on file.
 - The church email (Identity & contact > Public email) and `emailConfirmed`; none on file, so no
   mailto: shows anywhere yet.
-- The Facebook page (Social & footer > Social links, platform Facebook) and, if it differs, the
-  Church facts `liveStreamUrl`. Until one is set, /watch/ and the footer have no live link and the
-  Home "Live now" card still goes to /watch/ (visitor audit, 2026-10-18).
+- If the church streams somewhere other than its Facebook page (facebook.com/FirstAuburnHamilton,
+  in Social links since 2026-10-24), the Church facts `liveStreamUrl`. The Live now banner, the
+  This Sunday watch line and the menu row use the Facebook page until then.
 - `givingUrl` once online giving exists (Church Trac); until then Give opens /give/.
 - Optional `churchAddress.lat` / `lng` for the JSON-LD map pin.
 - The contact form's transport: the privacy policy (2026-10-18) describes the intended setup, the
@@ -433,9 +437,11 @@ edit in Site settings > Church facts, then a publish.
 - The Home "Other ways in" Give card still links to Contact: a `ctaBlock` has no typed-path link
   type, so it cannot point at /give/ without a Give page document. Repoint it in the Studio once
   `givingUrl` is set (external link), or add a Give page document.
-- The YouTube channel id, if the church streams there (the Watch band shows its fallback until
-  then). If the public feed proves flaky, port First Baptist Muncie's Data API reader
-  (`youtube-feed-api.ts`, needs a key).
+- The YouTube channel id, once the church starts streaming there (planned). One edit turns on the
+  replay, the scheduled stream on the This Sunday card and the Watch live links to the channel's
+  live page. Then add the Worker secret `YOUTUBE_API_KEY` so Live now follows the real stream
+  rather than the clock (`docs/agent/church-data.md` says how). If the public feed proves flaky,
+  port First Baptist Muncie's Data API reader (`youtube-feed-api.ts`, same key).
 - The Church Trac calendar's iCal link (Calendar > Share), which fills This week with events and
   adds the "Full calendar" link.
 - Set Identity > business type to Church when the Studio kit allows it; the JSON-LD still says
