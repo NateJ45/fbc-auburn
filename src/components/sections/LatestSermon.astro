@@ -8,6 +8,11 @@
 import SermonArt from '@/components/collections/SermonArt.astro';
 import { surfaceClass } from '@/lib/surfaces';
 import { bibleGatewayUrl, longDate, preacherName, sermonHref, type SermonDoc } from '@/lib/sermons';
+import { getAllPageSlugs } from '@/lib/queries';
+
+// The Watch page is made in the Studio: link it only while it is published (2026-10-24), so a
+// build without the dataset (CI) or a renamed page never leaves a broken link.
+const hasWatch = (await getAllPageSlugs()).includes('watch');
 
 interface Props {
   heading?: string;
@@ -73,11 +78,17 @@ const after = [who, longDate(s?.date)].filter(Boolean).join(' · ');
         </>
       ) : (
         <p class="c-empty mt-m">
-          The first sermons are on their way. Until then, you can{' '}
-          <a class="c-link" href="/watch/">
-            watch Sunday's service
-          </a>
-          .
+          The first sermons are on their way.
+          {hasWatch && (
+            <>
+              {' '}
+              Until then, you can{' '}
+              <a class="c-link" href="/watch/">
+                watch Sunday's service
+              </a>
+              .
+            </>
+          )}
         </p>
       )}
     </div>
