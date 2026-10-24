@@ -19,7 +19,7 @@
 // <a> is not allowed, so the note keeps the request only.
 // Never indexed by site search.
 import type { Shot } from '@/data/shot-list';
-import { exampleSrc } from '@/data/shot-list';
+import { exampleSrc, exampleSrcset } from '@/data/shot-list';
 
 interface Props {
   shot: Shot;
@@ -47,9 +47,13 @@ const tag = shot.video ? 'Example video' : shot.example ? 'Example photo' : 'Pho
 >
   {example ? (
     <>
+      {/* sizes="auto": a lazy image is sized by its slot's real width where the browser can (Chrome);
+          the list after it is the fallback elsewhere. */}
       <img
         class="shot__example"
         src={exampleSrc(example.file)}
+        srcset={exampleSrcset(example.file)}
+        sizes="auto, (min-width: 768px) 40vw, 100vw"
         alt={`Example: ${shot.title}`}
         loading="lazy"
         decoding="async"

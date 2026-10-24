@@ -53,7 +53,7 @@ test('the accent tones stay inside the accent letter (no bleed into the next let
   const out = brickWord('Auburn', { tones, accent });
   const layers = [
     ...out.matchAll(
-      /<clipPath id="([^"]+)"><path d="([^"]+)"\/><\/clipPath><\/defs><defs>[\s\S]*?<\/defs><g clip-path="url\(#\1\)"><g mask="url\(#\1-m\)">([\s\S]*?)<\/g><\/g>/g,
+      /<clipPath id="([^"]+)"><path (?:id="[^"]+" )?d="([^"]+)"\/><\/clipPath><\/defs><defs>[\s\S]*?<\/defs>(?:<use [^>]*\/>)?<g clip-path="url\(#\1\)"><g mask="url\(#\1-m\)">([\s\S]*?)<\/g><\/g><\/g>/g,
     ),
   ];
   assert.equal(layers.length, 2, 'one base layer and one accent layer');
@@ -104,6 +104,26 @@ test('the viewBox is sane: positive size, baseline inside, the word wider than t
   assert.ok(Math.abs(w - wordWidth('Auburn', 200)) < 0.2);
   const [bx, , bw, bh] = viewBox(wallWord('Auburn', { size: 200 }));
   assert.ok(bx < 0 && bw > w && bh > h, 'the wall is a margin larger than the word');
+});
+
+test('the page version is laid in courses, bottom course first; the share card is flat', () => {
+  const em = brickWord('Auburn');
+  // Base layer only (no accent): one run of groups, bottom course (lowest turn) first.
+  const plain = brickWord('Auburn', { accent: null });
+  const orders = [...plain.matchAll(/class="bl-c(?: bl-c--r)?" style="--o:(\d+);--b:(\d+)"/g)].map(
+    (m) => [Number(m[1]), Number(m[2])],
+  );
+  assert.ok(orders.length > 8, 'one group per course');
+  for (let i = 1; i < orders.length; i++) {
+    assert.ok(orders[i][0] > orders[i - 1][0], 'each course is laid after the one below it');
+  }
+  assert.ok(
+    orders.every(([, b]) => b > 0),
+    'every course has bricks',
+  );
+  assert.match(em, /class="bl-ghost"[^>]*opacity="0"/, 'the chalk line is hidden at rest');
+  const px = brickWord('Auburn', { size: 184, unit: 'px' });
+  assert.doesNotMatch(px, /bl-c|bl-ghost/);
 });
 
 test('em sizing follows the font-size; px sizing is plain attributes', () => {

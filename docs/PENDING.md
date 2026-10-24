@@ -157,6 +157,9 @@ goes here" note with a "How to take yours" toggle, so the preview looks finished
 which photos are Jacob's. Files and credits: `public/shot-examples/` (`CREDITS.md`). The Home hero's
 example is the page's LCP element, so it ships an 800 and a 1280 copy beside the 2000px file (`heroSrcset`
 in `shot-list.ts`); a new full-width example needs both copies made too, or Lighthouse's LCP gate goes red.
+Every other example has 480, 640 and 800 copies for its srcset (`exampleSrcset`, 2026-10-24, from a
+Lighthouse "Improve image delivery" flag); a new one needs those three made too. The Last Sunday clip
+loads nothing until its card is on screen.
 The shots wanted:
 
 - Home: the hero (Sunday morning from the back of the room, landscape, left side calm for the words);
@@ -298,6 +301,8 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
 - DONE 2026-10-17: the Menu (a full-screen panel at every width, the header shows the first four
   links) and the footer columns in Site settings; the contact form is a visit form (editor-written
   questions in the Contact page; `?visit=sunday-11` pre-fills it).
+- DONE 2026-10-24: brick laid by brick: the brick-letter titles, the sill and the stepped markers
+  are laid course by course with a trowel tap (`docs/agent/animation.md`, "Brick, laid by brick").
 - DONE 2026-10-24: the flow layer (`src/scripts/flow.ts`, `src/styles/flow.css`,
   `docs/agent/animation.md` "The flow layer"): line-by-line headings, staggered fade-ups, photo
   zoom and drift, the home hero drift, magnetic buttons, page-to-page lift and rise, and the footer
@@ -462,7 +467,7 @@ edit in Site settings > Church facts, then a publish.
 2026-10-17 (`docs/agent/studio-kit.md`): Home, Site Guide, Checkup, the staff view, Trash, the note after Publish
 and the tour, checked signed in at `/studio` in light and dark. Still to do:
 
-- **Nathan to review the new stone icons; alternatives in the overnight scratchpad.** Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`; eight more (help, restore, quick, mail, settings, trash, calendar, palette) followed. The restore stone has no meaning key yet (a `restore` meaning in the starter's `BRAND_ICON_KEYS` would use it).
+- **Nathan to review the Studio icons, redrawn in brick on 2026-10-24 (round 25), plus seven new ones (padlock, signpost, compass, telephone, stack of pages, code, tag).** Older note: Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`; eight more (help, restore, quick, mail, settings, trash, calendar, palette) followed. The restore stone has no meaning key yet (a `restore` meaning in the starter's `BRAND_ICON_KEYS` would use it).
 - **The editor's Sanity user id in `kitConfig.staff`** once he has accepted the invitation. Until then the staff
   view goes by role, and he is an administrator, so he would see the full Studio.
 - **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its

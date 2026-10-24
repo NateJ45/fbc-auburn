@@ -161,11 +161,39 @@ and once a unit lands the script takes its classes off. A split heading keeps it
 (they change nothing in the layout, and the mask goes with the class) so nothing in the DOM moves
 after the page has settled; the spans come out, and the heading's own nodes go back, when the width
 changes or the page is left. The first screen is held (`flow-hold`) until the script arms it, and the hold lets go by
-itself after 1.6s, so a page whose script fails is never left blank. Only `opacity`, `translate`,
+itself after 1.6s, so a page whose script fails is never left blank. The hold is a real 1.6s animation
+at opacity 0 with no fill, not a zero-length one with a delay: the compositor refuses zero-length
+effects, which Lighthouse reports as "unsupported timing parameters". Headings are split in one
+batch (`splitAll` in `flow.ts`: every read of a phase before any write of the next), so the page is
+laid out a handful of times for all of them rather than three times per heading (Lighthouse's
+"forced reflow"). Only `opacity`, `translate`,
 `scale`, (for the parallax) `transform` and (for the sketch) a mask sweep move. The sketch's
 sweep, `--sketch-draw`, rests at 150%, every sweep past the right edge, so it too is the finished
 drawing whenever the animation does not run. The starter's `[data-reveal]`,
 `[data-stagger-grid]` and `.img-curtain` stand down once the flow layer has armed a page.
+
+**Brick, laid by brick (2026-10-24).** The brick pieces are laid the way a mason builds:
+bottom course first, brick by brick along it, back the other way on the next course, each brick
+set down with a small tap (`brick-set`: drops from 70% of its height above, lands 5% low and
+squashed, settles).
+
+- Brick-letter titles (`StoneHeading` mosaic) are flow unit kind `lay`, not `lines`. The
+  generator (`scripts/lib/brick-letters.mjs`, `paintCourses`) groups each word's bricks by
+  course: `<g class="bl-c">` with `--o` (its turn, bottom course first; courses are numbered
+  from the baseline so every word on a line shares them) and `--b` (its brick count); odd
+  courses carry `bl-c--r` and run right to left. About 200 bricks a word made one element per
+  brick too heavy, so a course is uncovered a brick's length at a time by a stepped clip
+  (`steps(var(--b))`). `layPlan()` in `flow.ts` tells each word its line and place on it, and
+  the title its time per line (`--tline`, 1.25s shared, at least 0.8s a line). A course takes four
+  slots to run the line and the next starts one slot later, so courses rack back like a wall
+  going up. A faint copy of the letters (`.bl-ghost`, `opacity="0"` at rest) shows while it is
+  laid, like a chalk line. The share card (unit `px`) keeps the flat markup.
+- The sill (`Sill.astro`) and the stepped section markers (`SectionLabel`, `BoardRule`, which
+  is now a flow unit through `data-flow-item`) have one path per brick, so each brick gets the
+  tap in turn; `src/lib/brick-lay.ts` works out the turns from the paths (a face and its rim
+  share one).
+- The clip on the letters is the one place this layer animates something other than a transform
+  or opacity: it steps a handful of times per course and never touches layout.
 
 **Rule change.** The stone path's "one moving moment per page" (below) still holds for the stone
 drawings (the mark build, the baptism ring, the walk). The flow layer is the page's general

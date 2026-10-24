@@ -77,8 +77,8 @@ supporting pieces of each icon. Ink for body text is a deeper navy, `#16263D`. T
 warm white, `#FBF8F3`, deliberately lighter than the `#F4EFE7` soft band (`--muted`) and far from
 the FBC Muncie cream paper this brief rules out below; borders are `#E6DED2`. The Stone look is
 the light navy tinted (`#E9EEF5`, gaps `#D3DCE8`). Cards stay pure white. Masters: `brand/logo/`
-(the linocut brick-cross mark and lockups, wired in 2026-10-23) and `brand/icons/` (the sixteen stone icons, now the
-ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the textures
+(the linocut brick-cross mark and lockups, wired in 2026-10-23) and `brand/icons/` (the stone icons, all drawn in brick courses since round 25 on 2026-10-24,
+printed into `src/assets/brand/`). The old seven colours are gone from the CSS, the textures
 (`public/textures/tile-*.svg`, file names kept), the Studio banner and the OG card.
 
 - Roles: **navy** is the everyday colour (links, buttons, H2s). **Auburn** is the cross and at
@@ -164,7 +164,8 @@ brick-cross print on the Stone tint, never a grey box.
   A roadside-red version, with the cross filled `#D9262E`, is kept ready in
   `brand/logo/alternates/roadside-red/` in case the church prefers it, for large uses only.
   Horizontal lockup in the header; Auburn-led lockup where the place name should lead.
-- Stone icons (2026-10-23: printed like the brick, rugged and lived in: chipped edges, a darker rim in each tile's colour, grain and white flecks, baked by `scripts/print-icons.mjs` from the masters in `brand/icons/`) for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
+- Stone icons (2026-10-24, round 25: every icon is drawn in brick courses, like the Ministries set, so the older pebble
+  mosaic is gone; 2026-10-23: printed like the brick, rugged and lived in: chipped edges, a darker rim in each tile's colour, grain and white flecks, baked by `scripts/print-icons.mjs` from the masters in `brand/icons/`) for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
   praying hands, giving hand); one size per page, never mixed with line icons.
 - Buttons: one family, 10 px radius, deep sky solid and deep sky outline; red only for the single
   most important action on a page.
