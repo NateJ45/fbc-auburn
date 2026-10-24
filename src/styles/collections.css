@@ -52,7 +52,9 @@
   display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: var(--radius-inner);
+  border-radius: var(
+    --radius-card
+  ); /* stands on its own (latest sermon, series), so the card corner */
   background: var(--muted);
 }
 .c-art img {

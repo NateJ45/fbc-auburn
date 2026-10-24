@@ -419,6 +419,12 @@ main [data-slot='accordion-trigger']:focus-visible {
   transform: translate(-50%, -50%);
 }
 
+/* The brand's cards: 'soft' layout gives every .card-lift card calc(var(--radius) + 0.25rem), 14px
+   (globals.css), so the journal cards came out at the inner corner. A card is a card: 20px. */
+html[data-cards='soft'] .card-lift {
+  border-radius: var(--radius-card);
+}
+
 /* The search dialog is a panel, so it takes the card corner. */
 html .site-search-dialog {
   border-radius: var(--radius-card);

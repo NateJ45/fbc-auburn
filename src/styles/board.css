@@ -3,7 +3,10 @@
    BoardRule and BoardPageHead (src/components/home/), so it ships on any page that uses them.
    Home's own layout stays in home-board.css.
 
-   The inner pages, in one place (main:has(.board-head), so Home is never touched):
+   The inner pages, in one place (main:has(.board-head)), and since 2026-10-24 the sections an editor
+   adds to Home below its board (main:has(> .hb)): a "Meet Pastor Jacob" text-and-picture band there
+   sat on a 24px gutter, on a cream ground, 140px under its rule, with the arch the inner pages had
+   dropped. Home's own board layout stays in home-board.css and uses none of these classes:
    - white ground: the content cadence's tinted bands are white, and sections are separated by a
      rule of three stepping stones and a hairline (BoardRule) instead of a change of colour;
    - one left edge: every section's container, the page head and the closing band sit on the
@@ -44,16 +47,16 @@
 }
 
 /* ---- The gutter: one value for the page head, the rules and every section's container ------- */
-main:has(.board-head) {
+main:is(:has(.board-head), :has(> .hb)) {
   --board-gutter: var(--spacing-l);
   background: var(--background);
 }
 @media (max-width: 960px) {
-  main:has(.board-head) {
+  main:is(:has(.board-head), :has(> .hb)) {
     --board-gutter: 20px;
   }
 }
-main:has(.board-head) :where(.max-w-content.px-m, .max-w-content.px-l) {
+main:is(:has(.board-head), :has(> .hb)) :where(.max-w-content.px-m, .max-w-content.px-l) {
   padding-inline: var(--board-gutter);
 }
 
@@ -172,21 +175,21 @@ main:has(.board-head) :where(.max-w-content.px-m, .max-w-content.px-l) {
   background: var(--border);
 }
 /* The section under a rule starts close to it: the rule is its label. */
-main:has(.board-head) .board-rule-wrap + section,
-main:has(.board-head) .board-rule-wrap + * > section {
+main:is(:has(.board-head), :has(> .hb)) .board-rule-wrap + section,
+main:is(:has(.board-head), :has(> .hb)) .board-rule-wrap + * > section {
   padding-top: 0;
 }
-main:has(.board-head) .board-rule-wrap + section > :first-child,
-main:has(.board-head) .board-rule-wrap + * > section > :first-child {
+main:is(:has(.board-head), :has(> .hb)) .board-rule-wrap + section > :first-child,
+main:is(:has(.board-head), :has(> .hb)) .board-rule-wrap + * > section > :first-child {
   padding-top: 28px;
 }
 /* A band from a section look (Feature, Stone; src/lib/section-looks.ts) has its own edge, so it
    keeps its full top padding rather than tucking up under the rule like a white section. */
-main:has(.board-head)
+main:is(:has(.board-head), :has(> .hb))
   .board-rule-wrap
   + section:is(.surface-feature, .surface-stone)
   > :first-child,
-main:has(.board-head)
+main:is(:has(.board-head), :has(> .hb))
   .board-rule-wrap
   + *
   > section:is(.surface-feature, .surface-stone)
@@ -195,27 +198,33 @@ main:has(.board-head)
 }
 
 /* ---- White ground: the cadence's tinted bands, the Walk and the closing band ------------------ */
-main:has(.board-head) section.bg-muted {
+main:is(:has(.board-head), :has(> .hb)) section.bg-muted {
   background-color: var(--background);
+}
+/* Home's ground is white (.hb), not the inner pages' warm white, so a section an editor adds there,
+   and its rule, paint no ground of their own. */
+.hb > section:is(.bg-background, .bg-muted),
+.hb > .board-rule-wrap {
+  background-color: transparent;
 }
 
 /* ---- Closing band: on the left edge, no second mark, the label rule above it -------------------- */
-main:has(.board-head) .final-cta--light {
+main:is(:has(.board-head), :has(> .hb)) .final-cta--light {
   border-top: 0;
 }
-main:has(.board-head) .final-cta--light > div {
+main:is(:has(.board-head), :has(> .hb)) .final-cta--light > div {
   text-align: left;
 }
-main:has(.board-head) .final-cta--light .final-cta__mark {
+main:is(:has(.board-head), :has(> .hb)) .final-cta--light .final-cta__mark {
   display: none;
 }
-main:has(.board-head) .final-cta--light p {
+main:is(:has(.board-head), :has(> .hb)) .final-cta--light p {
   margin-inline: 0;
 }
-main:has(.board-head) .final-cta--light .flex {
+main:is(:has(.board-head), :has(> .hb)) .final-cta--light .flex {
   justify-content: flex-start;
 }
-main:has(.board-head) .final-cta__h2 {
+main:is(:has(.board-head), :has(> .hb)) .final-cta__h2 {
   max-width: 22ch;
   margin-inline: 0;
   font-size: var(--text-h2);
@@ -223,35 +232,38 @@ main:has(.board-head) .final-cta__h2 {
 
 /* ---- One left edge for narrow columns: a rich text block's centred reading column moves onto the
    page's edge (the words keep their measure). ---- */
-main:has(.board-head) section > div.mx-auto.py-section-lg:not(.max-w-content) {
+main:is(:has(.board-head), :has(> .hb)) section > div.mx-auto.py-section-lg:not(.max-w-content) {
   max-width: var(--container-content);
   padding-inline: var(--board-gutter);
 }
-main:has(.board-head) section > div.mx-auto.py-section-lg:not(.max-w-content) > * {
+main:is(:has(.board-head), :has(> .hb))
+  section
+  > div.mx-auto.py-section-lg:not(.max-w-content)
+  > * {
   max-width: 48rem;
   margin-inline: 0;
   text-align: left;
 }
 
 /* ---- Pictures: board E's 20px frame, not the first pass's arch ------------------------------- */
-main:has(.board-head) .auburn-arch {
+main:is(:has(.board-head), :has(> .hb)) .auburn-arch {
   aspect-ratio: 4 / 3;
   max-height: 460px;
   border-radius: var(--radius-card);
 }
 
 /* ---- Centred heads (the Walk, the steps rail) move onto the page's edge ---------------------- */
-main:has(.board-head) .steps-rail__intro,
-main:has(.board-head) .steps-rail__intro.text-center {
+main:is(:has(.board-head), :has(> .hb)) .steps-rail__intro,
+main:is(:has(.board-head), :has(> .hb)) .steps-rail__intro.text-center {
   margin-inline: 0;
   text-align: left;
 }
-main:has(.board-head) .steps-rail__intro > * {
+main:is(:has(.board-head), :has(> .hb)) .steps-rail__intro > * {
   margin-inline: 0;
 }
 
 /* ---- The faint background path stays off the board pages: their stone moment is the page head
    or the mark, and its stones drifted under body text. (motion.ts still lays it; it is hidden.) */
-main:has(.board-head) > svg.bgpath {
+main:is(:has(.board-head), :has(> .hb)) > svg.bgpath {
   display: none;
 }
