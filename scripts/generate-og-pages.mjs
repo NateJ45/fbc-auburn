@@ -97,7 +97,9 @@ const longDate = (iso) =>
 
 // ---- Home: the masthead card, with the church's tagline (Site settings) under it ----------
 const settings = await client.fetch(`*[_type == "siteSettings"][0]{ tagline }`).catch(() => null);
-await render('home', settings?.tagline || 'A small church with the door open.', { home: true });
+await render('home', settings?.tagline || 'A close-knit church with the door open.', {
+  home: true,
+});
 
 // ---- Page singletons → /og/<slug>.png -----------------------------------
 // `defaultTitle` is the fallback when Sanity's seoTitle and heroHeadline are both empty.

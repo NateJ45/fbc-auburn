@@ -460,7 +460,7 @@ export const siteSettings = defineType({
       type: 'string',
       group: 'social',
       description:
-        'One short sentence under "A small church with the door open." (the tagline above). Leave empty for "Come along on a Sunday, or ask us anything first."',
+        'One short sentence under "A close-knit church with the door open." (the tagline above). Leave empty for "Come along on a Sunday, or ask us anything first."',
       validation: (Rule) => Rule.max(120),
     }),
     defineField({

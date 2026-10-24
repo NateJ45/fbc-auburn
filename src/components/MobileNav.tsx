@@ -148,7 +148,7 @@ export default function MobileNav({
   // modals never fight over focus.
   const searchNext = useRef(false);
 
-  const tagline = siteSettings?.tagline ?? 'A small church with the door open.';
+  const tagline = siteSettings?.tagline ?? 'A close-knit church with the door open.';
   const email = siteSettings?.email;
   const phone = siteSettings?.phone;
   const ig = siteSettings?.socialInstagram;

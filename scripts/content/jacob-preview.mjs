@@ -167,7 +167,7 @@ const plan = (label, id, fn) => writes.push([label, id, fn]);
     imageSide: 'left',
     heading: 'Who we are',
     body: blocks(
-      '[Placeholder: First Baptist Church of Auburn is a small Southern Baptist church on Hamilton-Scipio Road in Ross Township. We are ordinary people who gather on Sundays to worship, open the Bible together and look after each other through the week. Whoever you are, you are welcome here.]',
+      '[Placeholder: First Baptist Church of Auburn is a close-knit Southern Baptist church on Hamilton-Scipio Road in Ross Township. We are ordinary people who gather on Sundays to worship, open the Bible together and look after each other through the week. Whoever you are, you are welcome here.]',
       '[Jacob: two or three sentences on how the church began, and the season it is in now.]',
     ),
   };
@@ -353,7 +353,7 @@ const FAQ_UPDATES = {
     '.]',
   ),
   'faq-what-kind': answer(
-    '[Placeholder: We are a small Southern Baptist church in Ross Township. You can read what we believe on the What we believe page.]',
+    '[Placeholder: We are a close-knit Southern Baptist church in Ross Township. You can read what we believe on the What we believe page.]',
   ),
 };
 for (const [id, ans] of Object.entries(FAQ_UPDATES)) {
