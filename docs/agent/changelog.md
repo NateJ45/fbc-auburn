@@ -1,5 +1,18 @@
 # Change history
 
+_2026-10-24: the background stone path no longer stalls phones._
+
+**Decision.** The 362ms long task Lighthouse blamed on the Cloudflare beacon on Plan your visit was
+not the beacon: with the beacon blocked the same task stayed (359 and 361ms), booked to the site's
+own scripts instead. A CPU profile at 4x throttle put about 940ms of main thread per load in
+`layPath()` (`src/scripts/motion.ts`), the faint background stones on pages with a rail or a walk.
+It appended a stone and then asked an SVG path for the next point, and `getPointAtLength` needs fresh
+styles, so every stone forced a style recalculation of the page, twice per load (first lay and
+`fonts.ready`). It now reads the page once, works out the curve's points in plain arithmetic, and
+swaps all the stones in at once: about 45ms for both lays, the same stones within a fifth of a pixel
+(375 and 1280). Local Lighthouse mobile on Plan your visit: 99 and 99, TBT 0 and 6ms (live before:
+89 and 89, TBT 387 and 291ms). The beacon itself costs about 100ms of script and stays as it is.
+
 _2026-10-24: the mark lays itself, brick by brick._
 
 **Decision.** Nathan asked for the mark to build up slowly into the cross, one brick at a time. `MarkBuild.astro` now

@@ -236,7 +236,10 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
 - **Baptism** (`BaptismGraphic.astro`, `art = baptism`): the green ring turns about 14 degrees across the scroll
   and the ripples swell; `#cross` is never transformed.
 - **Background path**: on a page with a rail or a walk, faint stones on an S-curve behind `<main>`, laid just ahead
-  of the reader; it skips the hero and any `[data-no-bgpath]` section. Script only (it needs layout). Hidden on the
+  of the reader; it skips the hero and any `[data-no-bgpath]` section. Script only (it needs layout). `layPath()`
+  reads every rect first, computes the curve's points in plain arithmetic and adds the stones in one
+  write; never append inside the loop or go back to `getPointAtLength` (each call forced a page style
+  recalculation: about 940ms per load on a phone, 2026-10-24). Hidden on the
   board E inner pages since 2026-10-17 (`src/styles/board.css`): its stones drifted under body text.
 - **Walk in with us** (`walkSection`): the plan is drawn at BUILD time from `walk-plan.ts` (placeholder geometry:
   ROOMS, STOPS, ROUTE), pinned with `position: sticky` beside the stops; an IntersectionObserver on the middle tenth of
