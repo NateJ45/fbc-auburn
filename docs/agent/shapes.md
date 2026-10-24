@@ -44,3 +44,28 @@ A page-builder block, in the Studio as "Find your place (groups of cards)" under
 The Ministries content was moved onto the block by `scripts/content/ministries-find-your-place.mjs` (dry by default,
 backs the page up first, carries every card's words over, and writes the "after" page for a look). The page head reads
 "Find your place" and the closing band names Pastor Jacob.
+
+## The article page (News and notes posts)
+
+Added 2026-10-24, from the hppres.org stories. `src/pages/journal/[slug].astro`, styles `src/styles/article.css`.
+
+- **Head.** A back link ("News and notes" in small caps with a 56px thin arrow pointing left, which draws back a
+  little on hover), the title big in Young Serif (up to about 4.75rem, 20ch), the standfirst (the post's excerpt).
+- **Cover.** The full content width, 16:9 (4:3 on a phone), cut with `.shape-step.shape-step--lg`. A stand-in cover
+  still shows its Photo needed example (`journalCoverShot`), in the same shaped frame.
+- **Rail and body.** From 64rem: a 13rem rail on the left, sticky under the header, holding the date (Young Serif),
+  reading time, author, categories, the headings list (`CaseStudyTOC`) and the share buttons stacked full width; the
+  text sits beside it at 38rem. Below 64rem the rail is one band over the text: the meta in a row, the category, and
+  the share buttons as 44px icon squares (the words stay for screen readers), with a hairline under it.
+- **More from News and notes.** After a `BoardRule`: a small-caps "Keep reading" eyebrow, the heading, a link to the
+  whole list, and up to three cards (the related posts, or the latest in the same category). Each card is a
+  `.shape-card` whose title link covers it; the picture is `.shape-step` 4:3 with `.shape-zoom`, a Photo needed
+  example, or the church's mark on `.shape-tile` when the post has no cover.
+
+## People
+
+`PersonCard.astro` (in the People block, `PeopleSection.astro`): every portrait is a 4:5 `.shape-step` frame with the
+same `object-position` (centre, 30% down) so heads line up along a row. A person with no photo gets the same frame as a
+`.shape-tile` with the mark (`src/assets/brand/mark-print.png`), so a grid never breaks. The name is Young Serif, the
+role small caps grey. Two portraits a row on a phone (below 40rem), auto-fill from 14rem above. The block's intro (the
+existing `intro` field) is the place for "what this role is"; it already sits under the heading, before the faces.

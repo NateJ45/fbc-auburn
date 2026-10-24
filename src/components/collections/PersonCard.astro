@@ -1,9 +1,16 @@
 ---
 // Safe to edit by hand
-// One person on the people list: a square photo with the 14px corner (or their initials on a
-// soft sky ground), the name, the role, a few sentences, and the email or the place they serve
-// only when the Studio says so (the GROQ leaves them out otherwise; src/lib/collection-arms.ts).
+// One person on the people list (shape system, 2026-10-24): a 4:5 portrait cut with the stepped
+// brick corner (.shape-step, src/styles/shapes.css), every face framed the same way (object-position
+// centre, a third down, so heads line up across a row). Someone with no photo gets the same shape
+// in warm printed brick with the church's mark (.shape-tile), so a grid never breaks. Then the
+// name in Young Serif, the role in small caps grey, a few sentences, and the email or the place
+// they serve only when the Studio says so (the GROQ leaves them out otherwise;
+// src/lib/collection-arms.ts). Docs: docs/agent/shapes.md ("People").
+import '@/styles/shapes.css';
+import { Image } from 'astro:assets';
 import SanityImage from '@/components/SanityImage.astro';
+import markPrint from '@/assets/brand/mark-print.png';
 import type { PersonDoc } from '@/lib/sermons';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 
@@ -14,30 +21,23 @@ interface Props {
 }
 const { person: p, showBio = true, as: Name = 'h3' } = Astro.props;
 const photo = (p.photo as SanityImageObject | null)?.asset ? (p.photo as SanityImageObject) : null;
-const initials = (p.name ?? '')
-  .replace(/^(pastor|rev\.?|dr\.?|mr\.?|mrs\.?|ms\.?|brother|sister)\s+/i, '')
-  .split(/\s+/)
-  .filter(Boolean)
-  .map((w: string) => w[0]?.toUpperCase())
-  .slice(0, 2)
-  .join('');
 ---
 
 <li class="c-person">
   {photo ? (
-    <div class="c-photo">
+    <div class="c-photo shape-step">
       <SanityImage
         source={photo}
         width={480}
-        height={480}
+        height={600}
         sizes="(min-width: 64rem) 20vw, (min-width: 40rem) 40vw, 90vw"
         alt={photo.alt || (p.name ?? '')}
         quality={75}
       />
     </div>
   ) : (
-    <div class="c-photo c-photo--blank" aria-hidden="true">
-      {initials}
+    <div class="c-photo c-photo--blank shape-step shape-tile" aria-hidden="true">
+      <Image src={markPrint} alt="" width={240} format="webp" quality={80} />
     </div>
   )}
   <Name class="c-person__name">{p.name}</Name>
