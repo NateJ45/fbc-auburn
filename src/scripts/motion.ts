@@ -65,40 +65,23 @@ function initMotion() {
     });
   }
 
+  // Performance (2026-10-24): every read happens before any write. The first version appended a
+  // stone and then asked the path for the next point, and getPointAtLength needs fresh styles, so
+  // each stone forced a style recalculation of the whole page: about 450ms of main thread per lay
+  // on a mid-range phone, twice per load (here and on fonts.ready), which Lighthouse booked as one
+  // long task (and blamed on whatever third-party script shared it). Now: measure the page, work
+  // out every point in plain arithmetic, then swap all the stones in at once.
   function layPath() {
     if (!bg || stoneUrls.length < 3) return;
     const H = bg.offsetHeight;
     const W = bg.offsetWidth;
     if (!H || !W) return;
-    const NS = 'http://www.w3.org/2000/svg';
-    let svg = bg.querySelector<SVGSVGElement>(':scope > svg.bgpath');
-    if (!svg) {
-      svg = document.createElementNS(NS, 'svg');
-      svg.setAttribute('class', 'bgpath');
-      svg.setAttribute('aria-hidden', 'true');
-      bg.prepend(svg);
-    }
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.replaceChildren();
-    // The curve swings between the two outer gutters, wider on big screens.
-    const amp = Math.min(W * 0.42, 560);
-    const mid = W / 2;
-    const turns = Math.max(2, Math.round(H / 1100));
-    let d = `M ${mid - amp * 0.2} 0`;
-    for (let t = 1; t <= turns; t++) {
-      const y0 = ((t - 1) / turns) * H;
-      const y1 = (t / turns) * H;
-      const s = t % 2 ? 1 : -1;
-      d += ` C ${mid + s * amp} ${y0 + (y1 - y0) * 0.3}, ${mid + s * amp} ${y0 + (y1 - y0) * 0.7}, ${mid - s * amp * 0.1} ${y1}`;
-    }
-    const path = document.createElementNS(NS, 'path');
-    path.setAttribute('d', d);
-    path.setAttribute('fill', 'none');
-    svg.appendChild(path);
-    const len = path.getTotalLength();
-    const stepLen = W < 560 ? 76 : 104;
+
+    // 1. Read the page: where the path must not go.
+    const bgRect = bg.getBoundingClientRect();
+    const bgTop = bgRect.top + scrollY;
+    const bgLeft = bgRect.left;
     // No stones where a section has its own path (the rail, the walk) or over the hero.
-    const bgTop = bg.getBoundingClientRect().top + scrollY;
     const skip = [
       ...bg.querySelectorAll<HTMLElement>('[data-no-bgpath], .arch-hero, section:first-child'),
     ].map((el) => {
@@ -109,7 +92,6 @@ function initMotion() {
     // tinted bands), which put it on top of text too. A stone whose box, plus a small margin,
     // touches a heading, paragraph, list item, link or button is left out, so the path runs
     // through the gutters and the gaps between blocks and never across a sentence.
-    const bgLeft = bg.getBoundingClientRect().left;
     const words = [
       ...bg.querySelectorAll<HTMLElement>(
         'h1, h2, h3, h4, p, li, a, button, label, input, textarea, select, blockquote, figcaption',
@@ -122,6 +104,64 @@ function initMotion() {
         const left = r.left - bgLeft;
         return [left, top, left + r.width, top + r.height] as const;
       });
+
+    // 2. Sample the curve. It is never drawn (only the stones are), so it is walked here in plain
+    // arithmetic rather than through an SVG path: getPointAtLength re-measures the curve on every
+    // call, which was most of what was left of this function's cost.
+    const amp = Math.min(W * 0.42, 560);
+    const mid = W / 2;
+    const turns = Math.max(2, Math.round(H / 1100));
+    // The curve swings between the two outer gutters, wider on big screens: one cubic per turn.
+    const pts: [number, number][] = [];
+    let x0 = mid - amp * 0.2;
+    for (let t = 1; t <= turns; t++) {
+      const y0 = ((t - 1) / turns) * H;
+      const y1 = (t / turns) * H;
+      const side = t % 2 ? 1 : -1;
+      const c1: [number, number] = [mid + side * amp, y0 + (y1 - y0) * 0.3];
+      const c2: [number, number] = [mid + side * amp, y0 + (y1 - y0) * 0.7];
+      const x1 = mid - side * amp * 0.1;
+      for (let i = t === 1 ? 0 : 1; i <= 96; i++) {
+        const u = i / 96;
+        const v = 1 - u;
+        pts.push([
+          v * v * v * x0 + 3 * v * v * u * c1[0] + 3 * v * u * u * c2[0] + u * u * u * x1,
+          v * v * v * y0 + 3 * v * v * u * c1[1] + 3 * v * u * u * c2[1] + u * u * u * y1,
+        ]);
+      }
+      x0 = x1;
+    }
+    const lens = [0];
+    for (let i = 1; i < pts.length; i++) {
+      lens.push(lens[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    }
+    const len = lens[lens.length - 1];
+    const stepLen = W < 560 ? 76 : 104;
+    // Each stone's point, and the direction the curve runs there.
+    const points: { x: number; y: number; ang: number }[] = [];
+    let seg = 1;
+    for (let l = 40; l < len - 20; l += stepLen) {
+      while (seg < lens.length - 1 && lens[seg] < l) seg++;
+      const [ax, ay] = pts[seg - 1];
+      const [bx, by] = pts[seg];
+      const f = (l - lens[seg - 1]) / (lens[seg] - lens[seg - 1] || 1);
+      points.push({
+        x: ax + (bx - ax) * f,
+        y: ay + (by - ay) * f,
+        ang: (Math.atan2(by - ay, bx - ax) * 180) / Math.PI,
+      });
+    }
+    const NS = 'http://www.w3.org/2000/svg';
+    let svg = bg.querySelector<SVGSVGElement>(':scope > svg.bgpath');
+    if (!svg) {
+      svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('class', 'bgpath');
+      svg.setAttribute('aria-hidden', 'true');
+      bg.prepend(svg);
+    }
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+    // 3. Write: build the stones off-page and add them in one go.
     const w = W < 560 ? 40 : 58;
     const pad = 10;
     const onWords = (x: number, y: number) =>
@@ -132,13 +172,10 @@ function initMotion() {
           y + w * 0.3 + pad > t &&
           y - w * 0.3 - pad < b,
       );
-    let k = 0;
-    for (let l = 40; l < len - 20; l += stepLen, k++) {
-      const p = path.getPointAtLength(l);
-      const q = path.getPointAtLength(Math.min(len, l + 1));
-      if (skip.some(([a, b]) => p.y > a - 30 && p.y < b + 30)) continue;
-      if (onWords(p.x, p.y)) continue;
-      const ang = (Math.atan2(q.y - p.y, q.x - p.x) * 180) / Math.PI;
+    const stones = document.createDocumentFragment();
+    points.forEach((p, k) => {
+      if (skip.some(([a, b]) => p.y > a - 30 && p.y < b + 30)) return;
+      if (onWords(p.x, p.y)) return;
       const img = document.createElementNS(NS, 'image');
       img.setAttribute('href', stoneUrls[k % 3]);
       img.setAttribute('width', String(w));
@@ -147,13 +184,13 @@ function initMotion() {
       img.setAttribute('y', String(-w * 0.22));
       img.setAttribute(
         'transform',
-        `translate(${p.x} ${p.y}) rotate(${ang + 90 + (k % 2 ? 8 : -8)})`,
+        `translate(${p.x} ${p.y}) rotate(${p.ang + 90 + (k % 2 ? 8 : -8)})`,
       );
       img.setAttribute('class', 'bgstone');
       img.dataset.y = String(p.y);
-      svg.appendChild(img);
-    }
-    path.remove();
+      stones.appendChild(img);
+    });
+    svg.replaceChildren(stones);
     revealBg();
   }
 
