@@ -7,6 +7,17 @@ draws the print as 32 clipped bricks (`npm run gen:mark` splits them out of `bra
 bottom course first when the mark scrolls into view, about five seconds, ending in one slow swell. About's "The story
 in our mark" and the Steps rail both use it; no JS, `?still` and reduced motion show the finished mark.
 
+_2026-10-24: smoother phone scrolling; the footer verse reads on phones._
+
+**Decision.** Phones felt laggy as a scroll started: the sticky header compacted (8px less padding over
+300ms) the moment the page moved, and because it sits in the flow, every frame of that transition
+re-laid the whole page and nudged the content up under the thumb. The bar now compacts from `lg` up
+only; below that it keeps its height and just gains the white ground and shadow (`src/styles/auburn.css`).
+The footer verse slid as one line about four screens wide on a 375px phone, through about 630px of
+scroll, so only four or five words were ever visible. Under 768px it is now hidden, as on the
+reference site (Nathan's pick over a wrapped sentence); `scrubVerse()` in `flow.ts` does nothing
+there, and picks the slide up if a phone turns to landscape past 768px.
+
 _2026-10-24: Dependabot sweep, wrangler to 4.151.3._
 
 **Decision.** Ten Dependabot PRs merged: eight single-package bumps (#104, #103, #99, #11, #10, #9, #8, #2), the

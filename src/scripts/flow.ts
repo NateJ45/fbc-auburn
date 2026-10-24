@@ -414,10 +414,17 @@ function scrubVerse(): () => void {
   const wrap = document.querySelector<HTMLElement>('[data-flow-verse]');
   const line = wrap?.querySelector<HTMLElement>('.sf-verse__line');
   if (!wrap || !line) return () => {};
+  // Phones do not show it (flow.css), so there is nothing to slide there.
+  // Checked on every update, so a phone turned to landscape past 768px picks the slide up.
+  const wide = matchMedia('(min-width: 768px)');
   let frame = 0;
   let active = false;
   const update = () => {
     frame = 0;
+    if (!wide.matches) {
+      line.style.translate = '';
+      return;
+    }
     const travel = Math.max(0, line.scrollWidth - wrap.clientWidth);
     const top = wrap.getBoundingClientRect().top + scrollY;
     // From the verse's top entering at the bottom of the screen to it nearing the top (or the
