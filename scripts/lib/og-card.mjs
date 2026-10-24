@@ -85,7 +85,7 @@ export const cleanText = (s) =>
     .trim();
 
 /**
- * The title as brick letters, one SVG per word so it wraps (as StoneHeading.astro does): sized in
+ * The title as brick letters, one SVG per word so it wraps: sized in
  * em, so the fit loop below scales it with font-size like text. Every fourth letter, counted
  * across the title, is auburn.
  */

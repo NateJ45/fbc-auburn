@@ -1,5 +1,11 @@
 # Change history
 
+_2026-10-24: page headings are plain type, not brick._
+
+**Decision.** Nathan found the brick-letter H1s too busy. `StoneHeading.astro` (every inner page head through
+`BoardPageHead`, and `ArchHero`) now renders plain Young Serif in deep navy, and the 404's brick-wall headline went the
+same way. The generator (`scripts/lib/brick-letters.mjs`) stays for the share cards and the sermon and series art.
+
 _2026-10-24: every Studio icon is brick._
 
 **Decision.** The Studio's icons (desk lists, tabs, tools, templates, the Site Guide) mixed two styles: the newer

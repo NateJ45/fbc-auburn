@@ -41,7 +41,7 @@ rounded:
 
 Status 2026-10-17: direction picked, A blended with B and C (`docs/design-directions/2026-10-17-fbc-auburn/`,
 `## Decision`). Archetype: image-led, but airy and white, with the stone art carrying the page until
-the photo session. Home opens with the masthead ("First Baptist Church of" over a huge brick-letter "Auburn") beside an arched photo; inner pages lead with a big stone icon and a brick-letter H1
+the photo session. Home opens with the masthead ("First Baptist Church of" over a huge "Auburn") beside an arched photo; inner pages lead with a big stone icon and a plain navy Young Serif H1
 beside an arched photo. Density airy. Imagery: arched photos (`ArchHero.astro`, the
 text-and-picture band); with no photo yet the arch holds the brick-cross mark or a soft navy tint, never
 a grey box. In the code: `src/styles/auburn.css` (the brand layer), `StoneHeading.astro`,
@@ -111,7 +111,7 @@ printed into `src/assets/brand/`). The old seven colours are gone from the CSS, 
   paper and painted in navy (pale navy in the footer) through `BuildingSketch.astro`. Used as the
   About "Our building" band and as the Plan your visit walk's opener with the
   front door pinned. Master and notes: `brand/illustration/`.
-- **Brick letterforms** for the big headings, 40 px and up (decided 2026-10-21, sheet 13 in
+- **Brick letterforms**, now only for art and share cards (2026-10-24: Nathan dropped them from every page heading as too busy; the page H1s and the 404 headline are plain navy Young Serif through `StoneHeading.astro`, and what follows describes the generator as the share cards and sermon art still use it). Decided 2026-10-21 for the big headings ( sheet 13 in
   `docs/design-directions/2026-10-21-brick-path/`; they replaced "Auburn Stone", Young Serif split into
   pebbles). Treatment A, brick-filled letters: each letter is a clean Young Serif glyph filled with a
   running-bond field in navy tones (the pale navy set on the dark footer), joints a hairline that
