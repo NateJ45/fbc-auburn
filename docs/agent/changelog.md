@@ -8,7 +8,7 @@ _2026-10-24: a Church Trac tab in Site settings._
 giving, calendar feed, member sign-in) sat among the church's facts. They now have their own tab, in the order the church
 would set them up, under a short intro that says what each does and names Church Trac's Embed Domain setting. Display only:
 the field names and data are unchanged, so no migration and nothing for "Remove field" to touch. The live stream link and
-YouTube channel stay in Church facts (they are not Church Trac).
+YouTube channel stay in Church facts (they are not Church Trac). The tab wears the link icon (`brand/brand.config.json`, the Studio icon groups).
 
 _2026-10-24: Church Trac on the site, from fbcm (PORTS.md card 152)._
 
