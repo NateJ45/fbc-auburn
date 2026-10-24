@@ -17,7 +17,7 @@
 // names the shot we want (src/data/shot-list.ts, key "hero").
 import SanityImage from '@/components/SanityImage.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
-import { exampleSrc, shotFor } from '@/data/shot-list';
+import { exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
 import Sill from '@/components/Sill.astro';
 import { getChurchFacts } from '@/lib/church-data';
@@ -34,7 +34,12 @@ const { block } = Astro.props;
 const shot = shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
 const photo = !shot && block.backgroundImage?.asset ? block.backgroundImage : null;
 // Before launch the shot's example photo fills the hero behind its note, so Home reads as finished.
+// It is the page's LCP element, so phones get a smaller copy (29 KB, not the 2000px 166 KB file
+// that pushed Lighthouse's mobile LCP past 4.5 s; heroSrcset in shot-list.ts). On a phone the hero
+// is taller than wide and the landscape photo is cropped to cover it, so it is drawn about 1.5
+// times the screen width: `sizes` says so, or the browser would pick a copy too small and blur it.
 const example = shot?.example ? exampleSrc(shot.example.file) : null;
+const exampleSrcset = shot?.example ? heroSrcset(shot.example.file) : undefined;
 const isStandIn = (img: ProjectedImage | null | undefined) =>
   (img?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
 
@@ -57,6 +62,8 @@ const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
     {example && (
       <img
         src={example}
+        srcset={exampleSrcset}
+        sizes="(max-width: 767px) 150vw, 100vw"
         alt=""
         width="2000"
         height="1333"

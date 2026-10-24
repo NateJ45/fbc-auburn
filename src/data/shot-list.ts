@@ -44,6 +44,15 @@ export interface Shot {
 export const exampleSrc = (file: string, ext: 'webp' | 'mp4' = 'webp') =>
   `/shot-examples/${file}.${ext}`;
 
+/**
+ * The srcset for an example drawn full-width above the fold (the Home hero, its LCP element). The
+ * 800 and 1280 copies sit beside the 2000px file as `<file>-800.webp` and `<file>-1280.webp`
+ * (made with sharp, quality 60 and 62); a new full-width example needs both copies made too.
+ */
+export const heroSrcset = (file: string) =>
+  [800, 1280].map((w) => `/shot-examples/${file}-${w}.webp ${w}w`).join(', ') +
+  `, ${exampleSrc(file)} 2000w`;
+
 const SHOTS: Record<string, Shot[]> = {
   '/|hero': [
     {
