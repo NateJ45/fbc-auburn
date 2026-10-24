@@ -1370,3 +1370,47 @@ html.motion .sill.is-laid .sill-brick {
     padding-inline: 20px;
   }
 }
+
+/* ---- The building band (2026-10-23): ImageText art "building" -------------------------------
+   The sketch runs across the column under the words and stands on a brick sill, its ground line
+   just above the bricks. */
+.building-band__sketch {
+  max-width: 1120px;
+  margin: clamp(28px, 4vw, 52px) auto 0;
+}
+.building-band__sill {
+  margin-top: -6px;
+}
+
+/* The building sketch in the footer (2026-10-23): right-aligned, faint, its ground line resting on
+   the top of the brick "Auburn" below. Hidden on narrow phones, where it would only be a smudge. */
+.sf-building {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: clamp(8px, 2vw, 24px);
+  margin-bottom: calc(-1 * clamp(10px, 2vw, 28px));
+  pointer-events: none;
+}
+.sf-building__sketch {
+  width: min(560px, 52%);
+  opacity: 0.42;
+}
+@media (max-width: 640px) {
+  .sf-building {
+    display: none;
+  }
+}
+
+/* Plan your visit: the walk's opener (2026-10-23), the building sketch with the front door pinned. */
+.walk-opener {
+  max-width: 920px;
+  margin: clamp(24px, 4vw, 48px) auto clamp(16px, 2vw, 24px);
+}
+.walk-opener figcaption {
+  max-width: 36rem;
+  margin: 14px auto 0;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}

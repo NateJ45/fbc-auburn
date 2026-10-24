@@ -1,0 +1,94 @@
+---
+// Safe to edit by hand
+// The church building as an architect's pen-and-pencil sketch (2026-10-23): a three-quarter view
+// from the lot, with the ramp, the portico, the sign and the roadside cross. Drawn in Gemini from
+// the church's own photos, in the manner of a 1950s presentation rendering, then lifted off its
+// paper into src/assets/brand/building-sketch.webp: the lines only, as transparency in four steps
+// (the method of the Muncie site's footer rendering), about 47 KB.
+//
+// It is not an <img>: the file is a CSS MASK on a box filled with a colour, so the drawing takes
+// whatever ink the place needs (navy on the warm ground, pale navy on the ink footer) with no
+// colour in the file. Used by the About band (ImageText art "building"), the footer and the
+// Plan your visit walk's opener (`door`, which marks the front door). Original:
+// brand/illustration/README.md.
+import { getImage } from 'astro:assets';
+import sketch from '@/assets/brand/building-sketch.webp';
+
+interface Props {
+  /** The ink: a CSS colour. Defaults to the site's navy. */
+  ink?: string;
+  /** A description for screen readers; leave empty where the drawing is decoration. */
+  label?: string;
+  /** Mark the front door with a "Start here" pin (the Plan your visit walk). */
+  door?: boolean;
+  class?: string;
+}
+const { ink = 'var(--auburn-deep, #1F3A5F)', label, door = false, class: className } = Astro.props;
+const img = await getImage({ src: sketch, format: 'webp' });
+// Where the front door is in the drawing, as fractions of its width and height.
+const DOOR = { x: 0.482, y: 0.56 };
+const style = `--sketch: url(${img.src}); --sketch-ink: ${ink}; aspect-ratio: ${sketch.width} / ${sketch.height};`;
+---
+
+<div
+  class:list={['building-sketch', className]}
+  style={style}
+  role={label ? 'img' : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : 'true'}
+>
+  {door && (
+    <span
+      class="building-sketch__door"
+      style={`left: ${DOOR.x * 100}%; top: ${DOOR.y * 100}%`}
+      aria-hidden="true"
+    >
+      <span class="building-sketch__pin"></span>
+      <span class="building-sketch__tag">Start here: the front door</span>
+    </span>
+  )}
+</div>
+
+<style>
+  /* :where() keeps this at zero specificity, so a page's own sizing (the footer's narrower
+     sketch) wins over the scoped default. */
+  :where(.building-sketch) {
+    position: relative;
+    width: 100%;
+  }
+  .building-sketch::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--sketch-ink);
+    -webkit-mask: var(--sketch) center / contain no-repeat;
+    mask: var(--sketch) center / contain no-repeat;
+  }
+  .building-sketch__door {
+    position: absolute;
+    z-index: 1;
+    transform: translate(-50%, -100%);
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+  }
+  .building-sketch__pin {
+    width: 16px;
+    height: 16px;
+    border: 3px solid #ffffff;
+    border-radius: 999px;
+    background: #9a3b2a;
+    box-shadow: 0 0 0 6px rgb(154 59 42 / 0.22);
+  }
+  .building-sketch__tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #9a3b2a;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+</style>

@@ -97,7 +97,7 @@ export const imageText = (o: {
   heading: string;
   body: Rec[];
   side?: 'left' | 'right';
-  art?: 'photo' | 'mark' | 'baptism';
+  art?: 'photo' | 'mark' | 'baptism' | 'building';
   cta?: Rec;
 }): Rec => ({
   _type: 'imageTextSection',

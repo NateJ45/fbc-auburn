@@ -22,6 +22,7 @@ import type { ProjectedWalkSection } from '@/lib/pageBuilder.types';
 import { getChurchFacts } from '@/lib/church-data';
 import { earlierSundayLine } from '@/lib/church-facts';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import BuildingSketch from '@/components/church/BuildingSketch.astro';
 
 type Props = Omit<ProjectedWalkSection, '_type' | '_key'> & {
   surface?: 'background' | 'muted';
@@ -72,6 +73,19 @@ const earlier = earlierSundayLine(await getChurchFacts());
         <NotConfirmed confirmed={earlier.confirmed} />
       </p>
     )}
+
+    {/* The opener (2026-10-23): the building as you see it from the lot, the front door pinned,
+        so the walk below starts somewhere a first-time guest will recognise. */}
+    <figure class="walk-opener">
+      <BuildingSketch
+        door
+        label="A sketch of the church from the parking lot, with the front door at the top of the ramp marked as the place to start"
+      />
+      <figcaption>
+        [Placeholder: Park in the lot, follow the ramp to the white front porch, and someone will
+        meet you at the door.]
+      </figcaption>
+    </figure>
 
     <div class="walk-grid" data-walk>
       <div class="walk-stage" aria-hidden="true">

@@ -53,6 +53,7 @@ import { sundayIcs, thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import Sill from '@/components/Sill.astro';
+import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import { brickWord, LETTER_TONES } from '../../scripts/lib/brick-letters.mjs';
 
 interface NewsletterConfig {
@@ -603,6 +604,13 @@ const hasCalendar =
         )}
       </div>
     )}
+  </div>
+
+  {/* The building (2026-10-23): the pen-and-pencil sketch of the church, faint and pale, standing
+      on the right just above the name, as the Muncie site's footer carries its 1927 rendering.
+      Decorative; CSS in src/styles/auburn.css (.sf-building). */}
+  <div class="sf-building mx-auto max-w-content px-l" aria-hidden="true">
+    <BuildingSketch ink="#7F98B8" class="sf-building__sketch" />
   </div>
 
   {/* The signature: the church's name in the mosaic letters at full width, running off the bottom

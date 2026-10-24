@@ -86,6 +86,11 @@ const NOTES: Record<string, JacobNote[]> = {
   ],
   '/plan-your-visit/': [
     {
+      title: 'Is the front door at the top of the ramp the one guests use?',
+      detail:
+        'The sketch at the top of the walk pins it as the place to start. If guests come in another way, tell us which.',
+    },
+    {
       title: 'Check the walk-through of a first Sunday.',
       detail:
         'Parking, the greeter, coffee, children and worship: anything marked "to be confirmed" or in brackets is our guess.',
