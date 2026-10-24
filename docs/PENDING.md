@@ -154,7 +154,9 @@ stay in the dataset untouched; uploading the church's own photo in the Studio re
 Since 2026-10-24 (later) each box also shows an example: a free Unsplash photo of the same kind of
 shot fills the slot (a Pexels clip plays in the Last Sunday card) under a yellow "Example photo, yours
 goes here" note with a "How to take yours" toggle, so the preview looks finished while still saying
-which photos are Jacob's. Files and credits: `public/shot-examples/` (`CREDITS.md`).
+which photos are Jacob's. Files and credits: `public/shot-examples/` (`CREDITS.md`). The Home hero's
+example is the page's LCP element, so it ships an 800 and a 1280 copy beside the 2000px file (`heroSrcset`
+in `shot-list.ts`); a new full-width example needs both copies made too, or Lighthouse's LCP gate goes red.
 The shots wanted:
 
 - Home: the hero (Sunday morning from the back of the room, landscape, left side calm for the words);

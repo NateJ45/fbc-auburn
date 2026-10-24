@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-24: Lighthouse green again on Home. The "Photo needed" examples (#130) put a 2000px, 166 KB stock photo in the Home hero, which became the page's LCP element and took the mobile LCP past the 4.5 s gate (CI median 4656 ms; 5483 ms locally). The hero now has `srcset` with 800 and 1280 copies (16 and 29 KB, `heroSrcset` in `src/data/shot-list.ts`) and `sizes="(max-width: 767px) 150vw, 100vw"`, because on a phone the landscape photo is cropped to cover a taller box and is drawn about 1.5 times the screen width. Home's local median fell to 4001 ms (perf 0.78 to 0.87). The rest of the gap is the shared render-blocking CSS, unchanged._
+
 _2026-10-24: a Church Trac tab in Site settings._
 
 **Decision.** The seven Church Trac addresses (Church Trac address, connection card, contact form, prayer form, online

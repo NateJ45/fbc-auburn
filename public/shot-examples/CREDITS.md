@@ -9,7 +9,7 @@ free use without attribution, but the photographers are listed here anyway.
 
 | File | Photographer | Source |
 |---|---|---|
-| hero.webp | Christian Harb | https://unsplash.com/photos/e77txgeniiU |
+| hero.webp, hero-800.webp, hero-1280.webp | Christian Harb | https://unsplash.com/photos/e77txgeniiU |
 | worship-wide.webp | Natalya Ukolova | https://unsplash.com/photos/vNDoS3a7siM |
 | after-service.webp | Connor Olson | https://unsplash.com/photos/R_jWv5XkjYo |
 | bible-study.webp | Mitchell Leach | https://unsplash.com/photos/ZxewC5rq7B8 |
