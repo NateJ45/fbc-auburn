@@ -1,5 +1,13 @@
 # Change history
 
+_2026-10-24: the "night" share card._
+
+**Decision.** With the brick letters gone the share cards were plain, so five directions were drawn
+(`docs/design-directions/2026-10-24-og-cards/`) and Nathan picked "night": the navy stone-tile ground of the site's
+dark bands, the white mark and name, the page head's eyebrow as an auburn kicker, a cream title, the building sketch
+faint on the right and a two-course brick sill. `scripts/lib/og-card.mjs` draws it; `scripts/generate-og-pages.mjs`
+now reads each page's eyebrow for the kicker. Cards grew from about 90 KB to about 240 KB with the texture.
+
 _2026-10-24: page headings are plain type, not brick._
 
 **Decision.** Nathan found the brick-letter H1s too busy. `StoneHeading.astro` (every inner page head through

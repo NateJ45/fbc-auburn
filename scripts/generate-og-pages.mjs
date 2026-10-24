@@ -125,9 +125,12 @@ for (const r of STATIC_ROUTES) await render(r.slug, r.title);
 
 for (const page of SINGLETONS) {
   const doc = await client
-    .fetch(`*[_type == $type][0]{ seoTitle, heroHeadline }`, { type: page.type })
+    .fetch(`*[_type == $type][0]{ seoTitle, heroHeadline, heroEyebrow }`, { type: page.type })
     .catch(() => null);
-  await render(page.slug, doc?.seoTitle || doc?.heroHeadline || page.defaultTitle);
+  // The page head's eyebrow is the card's kicker (the night card, 2026-10-24).
+  await render(page.slug, doc?.seoTitle || doc?.heroHeadline || page.defaultTitle, {
+    kicker: doc?.heroEyebrow || undefined,
+  });
 }
 
 // ---- Dynamic collections → /og/<prefix>-<slug>.png ----------------------
@@ -139,8 +142,10 @@ const COLLECTIONS = [
   // Archived pages are not built, so they get no card.
   {
     prefix: '',
-    query: `*[_type=="page" && defined(slug.current) && archived != true]{ "slug": slug.current, seoTitle, title }`,
+    query: `*[_type=="page" && defined(slug.current) && archived != true]{ "slug": slug.current, seoTitle, title, "kicker": pageBuilder[_type == "heroSection"][0].eyebrow }`,
     pick: (d) => d.seoTitle || d.title,
+    // The opening banner's eyebrow ("Through the week") is the card's kicker.
+    kicker: (d) => d.kicker || undefined,
   },
   // News and notes posts carry their date as the kicker. A post with a cover photo shares the
   // photo instead (journal/[slug].astro passes ogImage); this card is its fallback.

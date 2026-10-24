@@ -111,7 +111,7 @@ printed into `src/assets/brand/`). The old seven colours are gone from the CSS, 
   paper and painted in navy (pale navy in the footer) through `BuildingSketch.astro`. Used as the
   About "Our building" band and as the Plan your visit walk's opener with the
   front door pinned. Master and notes: `brand/illustration/`.
-- **Brick letterforms: retired 2026-10-24.** Nathan dropped them everywhere as too busy: the page H1s and the 404 headline are plain navy Young Serif through `StoneHeading.astro`, the share cards set the title (and the Home card's "Auburn") in plain navy, and the sermon and series art with no picture sets its word in plain cream type. The generator and its tests stay in `scripts/lib/` unused, in case a single moment wants it back; what follows is the history. Decided 2026-10-21 for the big headings ( sheet 13 in
+- **Brick letterforms: retired 2026-10-24.** Nathan dropped them everywhere as too busy: the page H1s and the 404 headline are plain navy Young Serif through `StoneHeading.astro`, the share cards set the title in cream Young Serif on the navy stone-tile ground (the "night" card, picked the same day, `docs/design-directions/2026-10-24-og-cards/`), and the sermon and series art with no picture sets its word in plain cream type. The generator and its tests stay in `scripts/lib/` unused, in case a single moment wants it back; what follows is the history. Decided 2026-10-21 for the big headings ( sheet 13 in
   `docs/design-directions/2026-10-21-brick-path/`; they replaced "Auburn Stone", Young Serif split into
   pebbles). Treatment A, brick-filled letters: each letter is a clean Young Serif glyph filled with a
   running-bond field in navy tones (the pale navy set on the dark footer), joints a hairline that
