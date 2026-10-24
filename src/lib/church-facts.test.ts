@@ -69,8 +69,10 @@ test('settings resolve, times sorted Sunday first, half-filled rows skipped', ()
   assert.deepEqual(f.phone, {
     display: '(513) 555-0100',
     tel: 'tel:+15135550100',
+    sms: null,
     confirmed: true,
   });
+  assert.equal(f.memberLoginUrl, null);
   assert.deepEqual(f.founded, { year: 1960, confirmed: true });
   assert.equal(f.youtubeChannelId, 'UCabcdefghijklmnopqrstuv');
   assert.equal(f.icalUrl, 'https://www.churchtrac.com/ical?ui=ABC123');
@@ -78,6 +80,17 @@ test('settings resolve, times sorted Sunday first, half-filled rows skipped', ()
     f.calendarPageUrl,
     'https://www.churchtrac.com/public_calendar?ui=ABC123&view=listMonth',
   );
+});
+
+test('a number that takes texts gets an sms link; a member sign-in link must be https', () => {
+  const f = resolveChurchFacts({
+    phone: '(513) 555-0100',
+    phoneTakesTexts: true,
+    memberLoginUrl: 'https://example.churchtrac.com/portal',
+  });
+  assert.equal(f.phone?.sms, 'sms:+15135550100');
+  assert.equal(f.memberLoginUrl, 'https://example.churchtrac.com/portal');
+  assert.equal(resolveChurchFacts({ memberLoginUrl: 'http://example.com' }).memberLoginUrl, null);
 });
 
 test('an empty settings document falls back to the published facts, all unconfirmed', () => {

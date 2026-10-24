@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-24: what visitors and members need, after an audit against two other church sites._
+
+**Decision.** Auburn's newcomer pages already answered more than either reference (a FAQ, service
+length, dress, the first-Sunday walk), but the member side was thin. Added as placeholders with For
+Jacob notes (`scripts/content/next-steps-members.mjs`): a Next steps page, Youth and Ways to serve on
+Ministries with a leader and place ask on each card, When life happens on Contact, Events and
+Sermons in reach (the header shows five links: About, Ministries, Events, Watch, Give), and two
+Church facts: `phoneTakesTexts` for "Call or text" and `memberLoginUrl` for a footer member
+sign-in. Open items in PENDING.md 1x.
+
 _2026-10-24: the shot list. Every photo slot that held a stand-in (the Facebook pantry, gift-table, building, sign and sanctuary photos; the Unsplash hero and Last Sunday poster) or sat empty now shows a yellow "Photo needed" box naming the photo we want, so the preview doubles as Pastor Jacob's shot list. Code-side only, no data written: `src/data/shot-list.ts` holds the shots (keyed by page and block heading) and decides when a slot shows one (before launch, while empty or a stand-in: an `fbca-fb-*` or `stand-in-*` upload or an Unsplash asset); `ShotRequest.astro` draws it (a frame in a picture slot, a pinned note over the hero and the Last Sunday card); the For Jacob pill lists the same shots. Open loop: PENDING 1x, the shot list._
 
 _2026-10-24: eight belief icons for What we believe. Drawn in Gemini in the stone-icon style and the site's five icon colours (navy, navy mid, navy pale, auburn, auburn dark), traced as drawn into masters in `brand/icons/` (crown, cross, dove, cracked heart, broken chain, cup and loaf over waves, church, clouds with light), printed by `node scripts/print-icons.mjs`, and added to `STONE_ICONS` in `src/lib/stone-icons.ts`, so every stone-icon picker offers them. `scripts/content/belief-icons.mjs` set the icon on each of the page's nine cards (The Bible keeps the open Bible). The page's For Jacob note asks him to flag any picture that says the wrong thing._

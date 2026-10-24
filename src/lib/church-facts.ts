@@ -64,6 +64,8 @@ export interface RawChurchFacts {
   title?: string | null;
   phone?: string | null;
   phoneConfirmed?: boolean | null;
+  phoneTakesTexts?: boolean | null;
+  memberLoginUrl?: string | null;
   email?: string | null;
   emailConfirmed?: boolean | null;
   churchAddress?: {
@@ -128,8 +130,11 @@ export interface ChurchAddress {
 export interface ChurchFacts {
   address: ChurchAddress | null;
   serviceTimes: ServiceTime[];
-  phone: { display: string; tel: string; confirmed: boolean } | null;
+  /** `sms` is set only when Church facts says the number takes texts ("Call or text"). */
+  phone: { display: string; tel: string; sms: string | null; confirmed: boolean } | null;
   email: { display: string; href: string; confirmed: boolean } | null;
+  /** Church Trac member sign-in (Church facts > Member sign-in link), or null. */
+  memberLoginUrl: string | null;
   /** The church's Facebook page (Social links), or null. */
   facebookUrl: string | null;
   /** Where Sunday is watched live: the Live stream link, else the Facebook page, else null. */
@@ -379,7 +384,16 @@ export function resolveChurchFacts(raw?: RawChurchFacts | null): ChurchFacts {
   return {
     address: resolveAddress(hasAddress ? s.churchAddress : FALLBACK_FACTS.churchAddress),
     serviceTimes: times.length > 0 ? times : resolveServiceTimes(FALLBACK_FACTS.serviceTimes),
-    phone: phone && tel ? { display: phone, tel, confirmed: s.phoneConfirmed === true } : null,
+    phone:
+      phone && tel
+        ? {
+            display: phone,
+            tel,
+            sms: s.phoneTakesTexts === true ? tel.replace(/^tel:/, 'sms:') : null,
+            confirmed: s.phoneConfirmed === true,
+          }
+        : null,
+    memberLoginUrl: httpsUrl(s.memberLoginUrl),
     email: emailOk
       ? { display: email, href: `mailto:${plain(email)}`, confirmed: s.emailConfirmed === true }
       : null,

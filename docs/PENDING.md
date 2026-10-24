@@ -184,6 +184,25 @@ Jacob's, so the page's For Jacob note asks him to flag any picture that says the
 picking another icon on the card in the Studio, or redraw it (masters in `brand/icons/`, then
 `node scripts/print-icons.mjs`).
 
+### 1x. Next steps, Youth, serving and care: Jacob's answers, and the texts flag (2026-10-24)
+
+**Blocker: Jacob's answers, then one re-run after the deploy.** From the newcomer and member audit
+(2026-10-24), as placeholders with For Jacob notes, set by `scripts/content/next-steps-members.mjs`:
+a new `/next-steps/` page (know Jesus, baptism, membership, a group, serving), a Youth card and a
+"Ways to serve" section on Ministries plus a "who leads it, where it meets" ask on every card,
+"When life happens" (visits, funerals, weddings, help) in Contact's extra sections, and the menu led
+by About, Ministries, Events, Watch, Give (the header now shows five) with Next steps and Sermons
+added. Two new Church facts: `phoneTakesTexts` ("Call or text") and `memberLoginUrl` (footer
+"Members: sign in"; before launch an empty link shows a yellow ask). Open:
+
+- The script ran with `--skip-texts` so the Studio never saw an unknown field. After this deploys,
+  re-run it without the flag (backup, dry run, `--apply`) to tick "This number takes texts" as the
+  placeholder, then untick it if Jacob says the line cannot take texts.
+- The baptism step uses the praying hands; the belief icons (fbc-auburn#124) have since merged, so
+  `cup-and-loaf` (the ordinances over water) is there to swap in once Jacob has seen both pages.
+- Plan your visit's last step does not link to Next steps yet; add it once Jacob has filled the page.
+- Youth uses the coffee cup until a youth stone icon is drawn.
+
 ### 1x. Logo: the linocut print follow-ups (wired in 2026-10-23)
 
 **Blocker: the church has not seen it yet.** The mark is the linocut print (2026-10-23, replacing

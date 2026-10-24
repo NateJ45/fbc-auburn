@@ -106,7 +106,27 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Is this list right?',
       detail:
-        'Kids, Sunday School, Bible study, music, prayer and fellowship are our drafts. Add, remove or rename any of them, with days and times.',
+        'Kids, Youth, Sunday School, Bible study, music, prayer and fellowship are our drafts. Add, remove or rename any of them, with days and times.',
+    },
+    {
+      title: 'Who leads each one, and where it meets.',
+      detail:
+        'A name and a room on every card turns this into something members use week to week. Only names of people who have said yes.',
+    },
+    {
+      title: 'Youth on Wednesdays.',
+      detail:
+        'Your road sign mentions youth at 6:00, so we added a Youth card. What ages, what happens, and who leads it?',
+    },
+    {
+      title: 'Children: ages, nursery and safety.',
+      detail:
+        'Parents look for this first. Is there a nursery, from what age, and what is your child safety policy (background checks, two adults in every room)?',
+    },
+    {
+      title: 'Ways to serve.',
+      detail:
+        'Greeters, the children’s room, music, the food pantry, workdays and a prayer team are our guesses. Which teams are real, and who should people ask?',
     },
     {
       title: 'How the church serves its neighbours.',
@@ -171,7 +191,39 @@ const NOTES: Record<string, JacobNote[]> = {
       detail: 'If people can mail a check, who should it be made out to and where should it go?',
     },
   ],
+  '/next-steps/': [
+    {
+      title: 'A new page: what comes after a first Sunday.',
+      detail:
+        'Knowing Jesus, baptism, membership, a group and a place to serve, one step at a time. Most church sites have a page like this; it is in the menu and the footer.',
+    },
+    {
+      title: 'Baptism and membership, in your words.',
+      detail:
+        'How someone is baptised here, and how they join the church: a class, a talk with you, a vote? Two or three sentences each.',
+    },
+    {
+      title: 'Coffee with the pastor?',
+      detail:
+        'An easy first step some churches offer: a coffee to ask anything. Would you like to offer it? If not, we will drop the line.',
+    },
+  ],
   '/contact/': [
+    {
+      title: 'When life happens.',
+      detail:
+        'Hospital visits, funerals, weddings and a hand when someone is struggling: the drafts at the foot of this page are ours. Tell us how each works here, and how to reach you in an emergency.',
+    },
+    {
+      title: 'Can people text the church phone?',
+      detail:
+        'The site now says "Call or text" beside the number. If it cannot take texts, untick "This number takes texts" in Site settings > Church facts.',
+    },
+    {
+      title: 'A member sign-in link.',
+      detail:
+        'If members will use the Church Trac portal or app, send us the sign-in link and it goes in the footer as "Members: sign in".',
+    },
     {
       title: 'The church email address.',
       detail:

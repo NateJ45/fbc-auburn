@@ -163,6 +163,25 @@ export const churchFactsFields = [
     ],
   }),
   confirmedField('phoneConfirmed', 'the phone number (Identity & contact)'),
+  // Newcomer and member audit (2026-10-24): "Call or text" beside the number, and a member sign-in link.
+  defineField({
+    name: 'phoneTakesTexts',
+    title: 'This number takes texts',
+    type: 'boolean',
+    initialValue: false,
+    group: 'church',
+    description:
+      'Tick if people can text the church phone. The site then says "Call or text" and adds a Text link on phones.',
+  }),
+  defineField({
+    name: 'memberLoginUrl',
+    title: 'Member sign-in link',
+    type: 'url',
+    group: 'church',
+    description:
+      'Where members sign in to Church Trac (the member portal or app page). Shown in the footer as "Members: sign in". Leave empty to leave it out.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
   confirmedField('emailConfirmed', 'the email address (Identity & contact)'),
   defineField({
     name: 'givingUrl',

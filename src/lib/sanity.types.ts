@@ -616,6 +616,8 @@ export type SiteSettings = {
     _key: string;
   }>;
   phoneConfirmed?: boolean;
+  phoneTakesTexts?: boolean;
+  memberLoginUrl?: string;
   emailConfirmed?: boolean;
   givingUrl?: string;
   liveStreamUrl?: string;
