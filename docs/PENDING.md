@@ -200,9 +200,9 @@ Church facts holds the Church Trac contact form or connection card and the praye
   domain at cutover), or the frames refuse to open.
 - Not yet seen with a real Auburn form: the frame heights (`FORM_SIZES`) were measured on fbcm's connection card.
 
-### 1x. Next steps, Youth, serving and care: Jacob's answers, and the texts flag (2026-10-24)
+### 1x. Next steps, Youth, serving and care: Jacob's answers (2026-10-24)
 
-**Blocker: Jacob's answers, then one re-run after the deploy.** From the newcomer and member audit
+**Blocker: Jacob's answers.** From the newcomer and member audit
 (2026-10-24), as placeholders with For Jacob notes, set by `scripts/content/next-steps-members.mjs`:
 a new `/next-steps/` page (know Jesus, baptism, membership, a group, serving), a Youth card and a
 "Ways to serve" section on Ministries plus a "who leads it, where it meets" ask on every card,
@@ -211,9 +211,8 @@ by About, Ministries, Events, Watch, Give (the header now shows five) with Next 
 added. Two new Church facts: `phoneTakesTexts` ("Call or text") and `memberLoginUrl` (footer
 "Members: sign in"; before launch an empty link shows a yellow ask). Open:
 
-- The script ran with `--skip-texts` so the Studio never saw an unknown field. After this deploys,
-  re-run it without the flag (backup, dry run, `--apply`) to tick "This number takes texts" as the
-  placeholder, then untick it if Jacob says the line cannot take texts.
+- "This number takes texts" is ticked as a placeholder (set after the deploy, 2026-10-24); untick it
+  in Church facts if Jacob says the line cannot take texts.
 - The baptism step uses the praying hands; the belief icons (fbc-auburn#124) have since merged, so
   `cup-and-loaf` (the ordinances over water) is there to swap in once Jacob has seen both pages.
 - Plan your visit's last step does not link to Next steps yet; add it once Jacob has filled the page.
