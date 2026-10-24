@@ -78,6 +78,13 @@
   object-fit: cover;
 }
 
+/* A Photo needed example inside a shape (ShotRequest's frame has its own 20px corners, which would
+   round the bottom of the cut): square it. Doubled class to beat the component's scoped rule. */
+.shape-step .shot.shot,
+.shape-gable.shot.shot {
+  border-radius: 0;
+}
+
 /* The zoom lives on an inner wrapper, so the clip-path never moves. */
 .shape-zoom {
   width: 100%;
