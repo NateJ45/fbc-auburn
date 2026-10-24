@@ -69,19 +69,14 @@
   padding-top: 26px;
   border-top: 1px solid var(--hb-line);
 }
-/* The mark sits on a navy panel here (2026-10-23): its cross is cut out of the brick as white, and on
-   the white hero the cross met the page and the mark read as two brick columns. The navy is the This
-   Sunday card's, so the panel belongs to the same screen. Only the hero gets it; the header, footer,
-   favicon and share cards use the mark as drawn. */
+/* The mark is the full linocut print (2026-10-23). Its cross is enclosed in brick on every side, so it
+   reads on the white hero as drawn: no panel behind it (the old mark's cross ran to the edge and needed
+   one). */
 .hb-hero-mark {
   grid-row: 1 / span 2;
   align-self: center;
-  box-sizing: border-box;
   width: clamp(150px, 17vw, 250px);
   height: auto;
-  padding: 9% 11%;
-  border-radius: 14px;
-  background: var(--auburn-deep);
 }
 .hb-h1 {
   display: contents;

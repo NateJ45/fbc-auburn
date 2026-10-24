@@ -41,9 +41,10 @@ export interface StudioEdgesConfig extends StudioWordingInput {
 }
 
 export const studioEdges: StudioEdgesConfig = {
-  // The white lockup (src/assets/logo-dark.svg), cropped to "First Baptist /
-  // Church of Auburn": the stone-circle mark is the square icon beside it.
-  wordmark: { logo: 'dark', view: '975,224,1350,384' },
+  // The white lockup (src/assets/logo-dark.svg), cropped to its words "First
+  // Baptist Church / AUBURN, OHIO": the brick mark is the square icon beside it.
+  // npm run logo prints this crop when the lockup changes.
+  wordmark: { logo: 'dark', view: '132.42,10,474,104' },
   // Under "First Baptist Church of Auburn" on the sign-in card.
   loginSubtitle: 'Sign in to update the church website',
   words: {

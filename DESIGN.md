@@ -74,7 +74,7 @@ supporting pieces of each icon. Ink for body text is a deeper navy, `#16263D`. T
 warm white, `#FBF8F3`, deliberately lighter than the `#F4EFE7` soft band (`--muted`) and far from
 the FBC Muncie cream paper this brief rules out below; borders are `#E6DED2`. The Stone look is
 the light navy tinted (`#E9EEF5`, gaps `#D3DCE8`). Cards stay pure white. Masters: `brand/logo/`
-(the brick cross mark and lockups, wired in 2026-10-21) and `brand/icons/` (the sixteen stone icons, now the
+(the linocut brick-cross mark and lockups, wired in 2026-10-23) and `brand/icons/` (the sixteen stone icons, now the
 ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the textures
 (`public/textures/tile-*.svg`, file names kept), the Studio banner and the OG card.
 
@@ -120,12 +120,14 @@ floating element (a sticky "Plan your visit" bar on mobile).
 
 ## Components
 
-- Logo: the brick cross (seven auburn courses, the cross cut out), horizontal lockup in the header (the five-course favicon under 24 px), Auburn-led lockup where the place
-  name should lead (footer, a sign-like hero). The cut-out cross is white, so on a white or
-  warm-white ground at large size the cross meets the page and the mark reads as two brick
-  columns: where the mark is shown large on a light ground, set it on a navy panel (the Home
-  hero does, 2026-10-23, after a three-seat brand review; `.hb-hero-mark` in `home-board.css`).
-  Small sizes (header, favicon) read fine as drawn.
+- Logo (2026-10-23): the linocut print, a brick wall with a white cross cut out of it and enclosed
+  in brick on every side, traced as Gemini printed it (grain, flecks and the darker rim kept). The
+  full print shows at about 64 px and up (Home hero, page head, closing band), the small cut with no
+  flecks below that (header, favicon, share cards, Studio). The cross is enclosed, so it reads on
+  any light ground with no panel; on a dark ground the mark sits on its paper plate (the footer).
+  A roadside-red version, with the cross filled `#D9262E`, is kept ready in
+  `brand/logo/alternates/roadside-red/` in case the church prefers it, for large uses only.
+  Horizontal lockup in the header; Auburn-led lockup where the place name should lead.
 - Stone icons for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
   praying hands, giving hand); one size per page, never mixed with line icons.
 - Buttons: one family, 10 px radius, deep sky solid and deep sky outline; red only for the single
