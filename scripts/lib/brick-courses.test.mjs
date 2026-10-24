@@ -70,24 +70,26 @@ describe('brickTile', () => {
     const opts = { size: 420, grout: '#FFFFFF', fills: ['#000001', '#000002'], seed: 3 };
     const a = brickTile(opts);
     assert.equal(a, brickTile(opts));
+    // The grout, each face, and each face's printed rim and pale flecks (2026-10-23): three
+    // colours per face, nothing else.
     const fills = new Set([...a.matchAll(/fill="([^"]+)"/g)].map((m) => m[1]));
-    assert.deepEqual([...fills].sort(), ['#000001', '#000002', '#FFFFFF']);
-    // A brick crossing the right edge is drawn again one tile to the left.
-    const xs = [...a.matchAll(/d="M(-?[\d.]+) /g)].map((m) => +m[1]);
-    assert.ok(
-      xs.some((x) => x < 0),
-      'no wrapped brick on the left edge',
-    );
+    assert.ok(fills.has('#FFFFFF') && fills.has('#000001') && fills.has('#000002'));
+    assert.ok(fills.size <= 1 + 3 * opts.fills.length, `${fills.size} colours`);
+    // A brick crossing the right edge is drawn again, the same shapes moved one tile left.
+    assert.match(a, /<g transform="translate\(-420 0\)">/, 'no wrapped brick on the left edge');
   });
 });
 
 describe('brickMarker', () => {
   it('gives one marker: three bricks stepping up to the right, auburn tones', () => {
+    // Face then printed rim for each brick (2026-10-23).
     const m = brickMarker();
-    assert.equal(m.length, 3);
-    const tops = m.map((s) => Math.min(...pointsOf(s.d).map(([, y]) => y)));
+    assert.equal(m.length, 6);
+    const faces = m.filter((_, i) => i % 2 === 0);
+    const tops = faces.map((s) => Math.min(...pointsOf(s.d).map(([, y]) => y)));
     assert.ok(tops[0] > tops[1] && tops[1] > tops[2], 'the bricks do not step up');
-    for (const s of m) assert.ok(Object.values(BRICK).includes(s.fill));
+    for (const s of faces) assert.ok(Object.values(BRICK).includes(s.fill));
+    for (const [i, s] of m.entries()) if (i % 2) assert.equal(s.fill, BRICK_EDGE[m[i - 1].fill]);
   });
 });
 

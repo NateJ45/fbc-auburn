@@ -3,8 +3,8 @@
 // (scripts/gen-stones.mjs), the share card (og-card.mjs) and the tests share one copy. They
 // replaced the pebble generators in stone-mosaic.mjs when the brand moved to brick: the logo is
 // stepped horizontal courses with the cross cut out (scripts/brand-logo.mjs), and everything
-// decorative on the site now speaks the same grammar: running bond, a hairline joint, a thin
-// darker band along each brick's bottom edge, the five auburn tones (or a navy set on a navy
+// decorative on the site now speaks the same grammar: running bond, a hairline joint, the
+// linocut finish of the logo print (chipped edges, a darker rim, flecks; brick-print.mjs, 2026-10-23), the five auburn tones (or a navy set on a navy
 // ground), stepped ends. Direction: docs/design-directions/2026-10-21-brick-path/.
 //
 // - brickPath(): a low wall of two or three courses that steps up toward the right, where the
@@ -18,8 +18,9 @@
 // byte-identical output.
 
 import { lcg } from './stone-mosaic.mjs';
+import { printBrick } from './brick-print.mjs';
 
-/** The five auburn tones, from fired-dark to sun-faded, and the band each bottom edge is drawn in. */
+/** The five auburn tones, from fired-dark to sun-faded, and the rim each is printed with. */
 export const BRICK = {
   brick: '#9A3B2A',
   dark: '#7E2E20',
@@ -27,12 +28,14 @@ export const BRICK = {
   light: '#B5503A',
   pale: '#C0634C',
 };
+// The rim each tone is printed with: the squeezed ink at a linocut brick's edge, about a fifth
+// darker than the face (2026-10-23; was a lighter bottom band).
 export const BRICK_EDGE = {
-  '#9A3B2A': '#7E2E20',
-  '#7E2E20': '#66241A',
-  '#8A3526': '#70291E',
-  '#B5503A': '#9A3B2A',
-  '#C0634C': '#A8453A',
+  '#9A3B2A': '#702619',
+  '#7E2E20': '#5A1F15',
+  '#8A3526': '#63231A',
+  '#B5503A': '#8A3526',
+  '#C0634C': '#96402F',
 };
 
 /** The path's tone deck: lighter tones dominant (Nathan, 2026-10-21: "lower and lighter"). */
@@ -58,16 +61,13 @@ export function rectPath(x, y, w, h, r = 1.2) {
   );
 }
 
-/** One brick: its face and, when `edge` is set, the darker band along its bottom edge. */
-function brick(x, y, w, h, fill, rx, edge) {
-  const out = [{ d: rectPath(x, y, w, h, rx), fill }];
-  if (edge && h > 6) {
-    out.push({
-      d: rectPath(x + rx, y + h - edge, w - 2 * rx, edge, 0.4),
-      fill: BRICK_EDGE[fill] ?? fill,
-    });
-  }
-  return out;
+/**
+ * One brick with the linocut finish (scripts/lib/brick-print.mjs, 2026-10-23): a chipped face and
+ * an uneven darker rim, heavier along the bottom where the old flat band was. Flecks come from a
+ * mask over the whole drawing (printMask), not from each brick, to keep the inline SVG small.
+ */
+function brick(x, y, w, h, fill, rnd) {
+  return printBrick(x, y, w, h, { fill, rim: BRICK_EDGE[fill] ?? fill, rnd });
 }
 
 function pick(deck, rnd) {
@@ -117,8 +117,7 @@ export function brickPath({ width: W, height: H, preset, seed, deck = PATH_DECK 
       if (first && i % 2) len = P.len * 0.5;
       first = false;
       const xe = Math.min(W, x + len - P.joint);
-      if (xe - x > P.len * 0.22)
-        out.push(...brick(x, y, xe - x, P.h, pick(deck, rnd), P.rx, P.edge));
+      if (xe - x > P.len * 0.22) out.push(...brick(x, y, xe - x, P.h, pick(deck, rnd), rnd));
       x += len;
     }
   });
@@ -143,6 +142,16 @@ export function brickTile({ size: T, grout, fills, seed }) {
   const h = pitch - joint;
   const L = T / per;
   let paths = '';
+  // Each brick's rim is a darker shade of its face (the tiles use their own colours, not BRICK).
+  // Each fleck is a pale tint of the face: paper showing through, which a hole over the dark grout
+  // could not show.
+  const mix = (hex, f, to) => {
+    const n = parseInt(hex.slice(1), 16);
+    const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v + (to - v) * f));
+    return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('');
+  };
+  const rimOf = (hex) => mix(hex, 0.2, 0);
+  const fleckOf = (hex) => mix(hex, 0.32, 255);
   for (let r = 0; r < rows; r++) {
     const y = r * pitch;
     const base = (r % 2) * (L / 2);
@@ -154,9 +163,21 @@ export function brickTile({ size: T, grout, fills, seed }) {
       const x1 = k + 1 < per ? joints[k + 1] : joints[0] + T;
       const fill = fills[Math.floor(rnd() * fills.length)];
       const w = x1 - x0 - joint;
-      // Draw the brick, and again one tile to the left when it crosses the right edge.
-      paths += `<path d="${rectPath(x0, y, w, h, 1)}" fill="${fill}"/>`;
-      if (x0 + w > T) paths += `<path d="${rectPath(x0 - T, y, w, h, 1)}" fill="${fill}"/>`;
+      // Draw the brick, and again one tile to the left when it crosses the right edge (the same
+      // shapes, moved, so the seam matches). Flecks are cut into the face: the tile is a cached
+      // file, so they cost nothing per page, and the holes show the grout.
+      const one = printBrick(x0, y, w, h, {
+        fill,
+        rim: rimOf(fill),
+        rnd,
+        flecks: 3,
+        rough: 0.05,
+        fleckFill: fleckOf(fill),
+      })
+        .map((p) => `<path d="${p.d}" fill="${p.fill}"/>`)
+        .join('');
+      paths += one;
+      if (x0 + w > T) paths += `<g transform="translate(${-T} 0)">${one}</g>`;
     }
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${T} ${T}" width="${T}" height="${T}"><rect width="${T}" height="${T}" fill="${grout}"/>${paths}</svg>`;
@@ -167,13 +188,17 @@ export function brickTile({ size: T, grout, fills, seed }) {
 /**
  * The section marker: three bricks stepping up to the right, the corner of the mark. One marker
  * everywhere (the section labels, the sermon art, the live stream block, the downloads list, the
- * Studio). viewBox 0 0 78 36. Faces only: at this size an edge band reads as a stripe.
+ * Studio). viewBox 0 0 78 36. Face then rim for each brick.
  * @returns {{ d: string, fill: string }[]}
  */
 export function brickMarker() {
+  // Printed like the rest (2026-10-23): chipped edges, a rim, and a few flecks cut into each.
+  const rnd = lcg(21);
   return [
-    { d: rectPath(0, 24, 30, 11, 1.2), fill: BRICK.brick },
-    { d: rectPath(24, 12.5, 34, 11, 1.2), fill: BRICK.light },
-    { d: rectPath(52, 1, 26, 11, 1.2), fill: BRICK.dark },
-  ];
+    [0, 24, 30, 11, BRICK.brick],
+    [24, 12.5, 34, 11, BRICK.light],
+    [52, 1, 26, 11, BRICK.dark],
+  ].flatMap(([x, y, w, h, fill]) =>
+    printBrick(x, y, w, h, { fill, rim: BRICK_EDGE[fill], rnd, flecks: 3, rough: 0.07 }),
+  );
 }

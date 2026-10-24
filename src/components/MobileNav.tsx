@@ -39,7 +39,7 @@ import { Mail, Phone, Search } from 'lucide-react';
 import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { telHref } from '@/lib/phone';
-import { SILL, SILL_VIEWBOX } from '@/components/home/stones.generated';
+import { SILL, SILL_PRINT, SILL_VIEWBOX } from '@/components/home/stones.generated';
 
 // ---- Types ------------------------------------------------------------------
 
@@ -354,9 +354,23 @@ export default function MobileNav({
 
           <div className="auburn-menu__sill" aria-hidden="true">
             <svg viewBox={SILL_VIEWBOX} preserveAspectRatio="xMidYMid slice" focusable="false">
-              {SILL.map((s, i) => (
-                <path key={i} d={s.d} fill={s.fill} style={{ '--i': i } as React.CSSProperties} />
-              ))}
+              {/* The linocut flecks: a mask over the bricks (scripts/lib/brick-print.mjs). */}
+              <g
+                dangerouslySetInnerHTML={{
+                  __html: SILL_PRINT.replaceAll('__ID__', 'menu-sill-print'),
+                }}
+              />
+              <g mask="url(#menu-sill-print)">
+                {SILL.map((s, i) => (
+                  <path
+                    key={i}
+                    className="sill-brick"
+                    d={s.d}
+                    fill={s.fill}
+                    style={{ '--i': i } as React.CSSProperties}
+                  />
+                ))}
+              </g>
             </svg>
           </div>
         </SheetContent>
