@@ -120,7 +120,7 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'church-family', credit: 'Olek Buzunov on Unsplash' },
     },
   ],
-  '/plan-your-visit/|Bringing children': [
+  '/plan-your-visit/|What about my kids?': [
     {
       title: 'The nursery or children’s room, ready for Sunday',
       detail:
@@ -129,7 +129,7 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'nursery', credit: 'Atikah Akhtar on Unsplash' },
     },
   ],
-  '/plan-your-visit/|Getting here': [
+  '/plan-your-visit/|Where do I park?': [
     {
       title: 'The front door, as a guest arrives',
       detail:
@@ -138,7 +138,7 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'front-door', credit: 'Roger Starnes Sr on Unsplash' },
     },
   ],
-  '/plan-your-visit/|Look for the sign': [
+  '/plan-your-visit/|How will I find it?': [
     {
       title: 'The road sign, from a car',
       detail:

@@ -68,6 +68,7 @@ export const CONTENT_TYPES = new Set([
   // FBC Auburn
   'iconCardsSection',
   'findYourPlaceSection',
+  'letterSection',
   'thisWeekSection',
   'watchSection',
   // FBC Auburn stone-path blocks (auburnMotionSections.ts)

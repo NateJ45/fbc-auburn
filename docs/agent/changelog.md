@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-24: the rest of the hppres.org audit._
+
+**Decision.** Everything else worth taking from hppres.org, in Auburn's own shapes: "where next" rows at the top of the
+footer on every page; two-tone page titles (headingAccent on the page head, drawn in auburn brick); a Sunday times
+band under inner page heads (from Church facts, one bar on a phone); fold-out questions restyled as hairline rows; a
+letter block for the pastor; an outlined ghost word and the stepped corner on the Watch band; a full-screen phone menu
+of big serif rows; a new News and notes article layout (sticky rail, stepped cover); and stepped people portraits with a
+brick stand-in. Plan your visit is headed with the visitor's own questions. Ministries moved onto the Find your place
+hub in the live dataset the same day. Detail: `docs/agent/shapes.md`.
+
 _2026-10-24: the shape system and Find your place._
 
 **Decision.** From an audit of hppres.org: pictures take two Auburn shapes instead of rounded rectangles (a stepped brick

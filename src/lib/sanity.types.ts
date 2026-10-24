@@ -131,6 +131,9 @@ export type PrivatePage = {
       } & FindYourPlaceSection)
     | ({
         _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -1004,6 +1007,9 @@ export type SectionPreset = {
       } & FindYourPlaceSection)
     | ({
         _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -1556,6 +1562,38 @@ export type ThisWeekSection = {
   intro?: string;
 };
 
+export type LetterSection = {
+  _type: 'letterSection';
+  eyebrow?: string;
+  greeting?: string;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal';
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
+  signOff?: string;
+  signature?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  name?: string;
+  role?: string;
+  link?: CtaBlock;
+};
+
 export type FindYourPlaceSection = {
   _type: 'findYourPlaceSection';
   eyebrow?: string;
@@ -1865,6 +1903,8 @@ export type HeroSection = {
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;
+  headingAccent?: string;
+  showTimes?: boolean;
   welcome?: string;
   subhead?: string;
   backgroundImage?: {
@@ -1973,6 +2013,9 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -2120,6 +2163,9 @@ export type Page = {
     | ({
         _key: string;
       } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -2483,6 +2529,9 @@ export type SermonsPage = {
       } & FindYourPlaceSection)
     | ({
         _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -2796,6 +2845,9 @@ export type JournalPage = {
       } & FindYourPlaceSection)
     | ({
         _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -3001,6 +3053,9 @@ export type ContactPage = {
       } & FindYourPlaceSection)
     | ({
         _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -3184,6 +3239,9 @@ export type FaqPage = {
       } & FindYourPlaceSection)
     | ({
         _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -3327,6 +3385,9 @@ export type AboutPage = {
     | ({
         _key: string;
       } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -3579,6 +3640,9 @@ export type HomePage = {
     | ({
         _key: string;
       } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
     | ({
         _key: string;
       } & ThisWeekSection)
@@ -4025,6 +4089,7 @@ export type AllSanitySchemaTypes =
   | StepsRailSection
   | WatchSection
   | ThisWeekSection
+  | LetterSection
   | FindYourPlaceSection
   | IconCardsSection
   | EmbedSection

@@ -6,6 +6,11 @@
 import SeriesCard from '@/components/collections/SeriesCard.astro';
 import { surfaceClass } from '@/lib/surfaces';
 import { sortSeries, type SeriesDoc } from '@/lib/sermons';
+import { getAllPageSlugs } from '@/lib/queries';
+
+// The Watch page is made in the Studio: link it only while it is published, so a build without
+// the dataset (CI) or a renamed page never leaves a broken link (2026-10-24).
+const hasWatch = (await getAllPageSlugs()).includes('watch');
 
 interface Props {
   heading?: string;
@@ -52,11 +57,17 @@ const list = sortSeries((series ?? []).filter((s) => s?.title && s?.slug)).slice
       </>
     ) : (
       <p class="c-empty">
-        Sermon series will show here once the first one is added. In the meantime,{' '}
-        <a class="c-link" href="/watch/">
-          watch Sunday's service
-        </a>
-        .
+        Sermon series will show here once the first one is added.
+        {hasWatch && (
+          <>
+            {' '}
+            In the meantime,{' '}
+            <a class="c-link" href="/watch/">
+              watch Sunday's service
+            </a>
+            .
+          </>
+        )}
       </p>
     )}
   </div>

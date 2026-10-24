@@ -16,13 +16,15 @@ sequence).
 
 ## Waiting on a human
 
-### 1zy. Find your place: move the live Ministries page onto the hub (opened 2026-10-24)
+### 1zy. The hppres.org wayfinding: Jacob's words and the last content move (opened 2026-10-24)
 
-The block ships in the deploy; the content does not move until it is live, or the Studio would show an unknown block.
-After the deploy is green: back up, dry run, then
-`NCS_PRODUCTION_WRITE=yes node scripts/content/ministries-find-your-place.mjs <backup-folder> --apply`, rebuild, and
-check /ministries/ at 1280, 375 and 320. Then, from Jacob: the ages and leaders on each card, whether he offers coffee
-with the pastor, which serving teams exist, and photos for the cards on the shot list.
+Ministries moved onto the Find your place hub on 2026-10-24 (backup in the session scratchpad, write verified). After
+the deploy of the wayfinding PR: back up, dry run, then
+`NCS_PRODUCTION_WRITE=yes node scripts/content/hppres-wayfinding.mjs <backup-folder> --apply`, rebuild, and check Plan
+your visit, Leadership, Watch and Ministries at 1280, 375 and 320. Then, from Jacob: the ages and leaders on each
+Ministries card, whether he offers coffee with the pastor, which serving teams exist, the Good to know answers
+(what to wear, access, directions from Hamilton, Fairfield and Oxford), what is not streamed, his own letter (and a
+signature photo if he likes), and photos for the cards on the shot list.
 
 ### 1zz. The standardising pass: port the shared fixes, and see Live preview signed in (opened 2026-10-24)
 

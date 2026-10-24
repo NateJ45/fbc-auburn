@@ -1,0 +1,185 @@
+---
+// Safe to edit by hand
+// The Sunday times band (2026-10-24, from the hppres.org audit): a pale stone panel across the
+// bottom of an inner page head, starting a third of the way in and running off the right edge of
+// the window, so the most-asked fact sits on the first screen without crowding the title.
+// On a wide screen: "Sundays at Auburn", then one column per Sunday gathering (the time big, what
+// it is in small caps), then the address and Directions. On a phone it folds into one bar, the
+// times and "Directions", and the whole bar opens the map.
+// Everything comes from Site settings > Church facts (never typed here); a time not yet confirmed
+// carries the "To confirm" tag. Switched on per page by the page head's "Show the Sunday times
+// band" box (heroSection.showTimes), drawn by BoardPageHead.
+import NotConfirmed from './NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { timesPhrase } from '@/lib/church-facts';
+
+const facts = await getChurchFacts();
+const sundays = facts.serviceTimes.filter((t) => t.dayIndex === 0);
+const address = facts.address;
+const confirmed = sundays.every((t) => t.confirmed);
+const short = sundays.length ? `Sundays ${timesPhrase(sundays.map((t) => t.minutes))}` : '';
+---
+
+{sundays.length > 0 && (
+  <div class="times-band-wrap">
+    <aside class="times-band" aria-label="Sunday times">
+      <div class="times-band__wide">
+        <p class="times-band__title">
+          Sundays
+          <br />
+          at Auburn
+          {!confirmed && <NotConfirmed confirmed={false} class="times-band__tag" />}
+        </p>
+        <ul role="list" class="times-band__times">
+          {sundays.map((t) => (
+            <li>
+              <span class="times-band__time">{t.timeLabel}</span>
+              <span class="times-band__what">{t.label}</span>
+              {t.note && <span class="times-band__note">{t.note}</span>}
+            </li>
+          ))}
+        </ul>
+        {address && (
+          <p class="times-band__where">
+            {address.lines.map((l) => (
+              <span>{l}</span>
+            ))}
+            <a href={address.mapsUrl} class="times-band__directions">
+              Directions <span aria-hidden="true">→</span>
+            </a>
+          </p>
+        )}
+      </div>
+      <a
+        class="times-band__bar"
+        href={address?.mapsUrl ?? '/plan-your-visit/'}
+        aria-label={`${short}. Directions`}
+      >
+        <span>
+          {short}
+          {!confirmed && <NotConfirmed confirmed={false} class="times-band__bar-tag" />}
+        </span>
+        <span class="times-band__bar-go">
+          Directions <span aria-hidden="true">→</span>
+        </span>
+      </a>
+    </aside>
+  </div>
+)}
+
+<style>
+  .times-band-wrap {
+    max-width: var(--container-content);
+    margin-inline: auto;
+    padding-inline: var(--board-gutter, 1.25rem);
+  }
+  .times-band {
+    position: relative;
+    /* A flat pale sky, so the times read cleanly; a brick-red course along the top edge. */
+    background: #e9eef5;
+    border-top: 4px solid var(--auburn-red);
+    color: var(--heading-solid);
+  }
+  /* Wide: from a third of the way in out to the right edge of the window. */
+  @media (min-width: 64rem) {
+    .times-band {
+      margin-left: 30%;
+      margin-right: calc(50% - 50vw);
+      margin-top: -1.5rem;
+    }
+  }
+  .times-band__wide {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .times-band__wide {
+      display: grid;
+      grid-template-columns: auto auto 1fr;
+      align-items: start;
+      gap: 2.5rem;
+      padding: 2.25rem 2.5rem;
+      max-width: calc(var(--container-content) * 0.7);
+    }
+  }
+  .times-band__title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    line-height: 1.1;
+  }
+  .times-band__times {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .times-band__times li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .times-band__time {
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    line-height: 1;
+  }
+  .times-band__what {
+    font-size: var(--fs-tag);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    max-width: 12rem;
+  }
+  .times-band__note {
+    font-size: var(--fs-small);
+    color: var(--muted-foreground);
+  }
+  .times-band__where {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    line-height: 1.45;
+    color: var(--foreground);
+  }
+  .times-band__directions {
+    margin-top: 0.4rem;
+    font-weight: 600;
+    color: var(--link);
+  }
+  .times-band__bar-tag {
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  @media (min-width: 64rem) {
+    .times-band__tag {
+      display: table;
+      margin-top: 0.75rem;
+    }
+  }
+  /* Phone and tablet: one bar. */
+  .times-band__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 56px;
+    padding: 0.9rem 1.1rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--heading-solid);
+    text-decoration: none;
+  }
+  .times-band__bar-go {
+    flex: none;
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--link);
+  }
+  @media (min-width: 64rem) {
+    .times-band__bar {
+      display: none;
+    }
+  }
+</style>

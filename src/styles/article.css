@@ -1,0 +1,274 @@
+/* Safe to edit by hand
+   A News and notes post (src/pages/journal/[slug].astro, 2026-10-24, from the hppres.org stories).
+   One left edge for the back link, the title, the cover and the rail (rule 17); the text column
+   sits beside the rail at a reading measure. The cover and the "More from" cards take the stepped
+   brick corner from src/styles/shapes.css. Docs: docs/agent/shapes.md ("The article page"). */
+
+.art-head {
+  padding-top: clamp(2.25rem, 5vw, 4rem);
+  padding-bottom: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+/* The back link: a long thin arrow and the section's name in small caps. The arrow draws back a
+   little on hover, pointing the way. */
+.art-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 44px;
+  font-size: var(--fs-tag);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--link);
+  text-decoration: none;
+}
+.art-back__arrow {
+  flex: none;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.art-back:hover span {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .art-back:hover .art-back__arrow,
+  .art-back:focus-visible .art-back__arrow {
+    transform: translateX(-6px);
+  }
+}
+.art-back:focus-visible,
+.art-card__link:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.art-title {
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  max-width: 20ch;
+  font-size: clamp(2.35rem, 1.5rem + 3.6vw, 4.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--heading-solid);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+.art-standfirst {
+  margin-top: clamp(1rem, 2.5vw, 1.5rem);
+  max-width: 40rem;
+  font-size: var(--fs-lead);
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+
+/* The cover: the full content width, 16:9 on a wide screen and a little taller on a phone so
+   the stepped corner keeps its weight. */
+.art-cover__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+@media (max-width: 39.99rem) {
+  .art-cover__frame {
+    aspect-ratio: 4 / 3;
+  }
+}
+.art-cover__caption {
+  margin-top: 0.75rem;
+  font-size: var(--fs-small);
+  color: var(--muted-foreground);
+}
+
+/* The rail and the body. Phone: the rail is one row over the text, a hairline under it. */
+.art-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+  padding-top: clamp(2rem, 5vw, 3.75rem);
+  padding-bottom: clamp(3rem, 7vw, 5.5rem);
+}
+.art-rail__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.art-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  margin: 0;
+}
+.art-meta dt,
+.art-eyebrow,
+.art-card__date {
+  font-size: var(--fs-tag);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.art-eyebrow {
+  margin-bottom: 0.5rem;
+}
+.art-meta dd {
+  margin: 0.2rem 0 0;
+  font-size: var(--fs-small);
+  color: var(--foreground);
+}
+.art-meta__date {
+  font-family: var(--font-display);
+  font-size: var(--fs-title-sm) !important;
+  line-height: 1.25;
+  color: var(--heading-solid) !important;
+}
+.art-meta__note {
+  display: block;
+  color: var(--muted-foreground);
+}
+.art-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* The headings list belongs to a wide screen; a phone reads straight down. */
+.art-toc {
+  display: none;
+}
+.art-share .art-share__btn {
+  min-height: 40px;
+  padding: 0.45rem 0.8rem;
+  font-size: var(--fs-tag);
+}
+
+/* Phone and tablet: the rail reads as one band. The meta sits in a row, and the share buttons
+   are 44px squares with the icon only (the words stay for screen readers: font-size 0 hides
+   them from sight only, and each link carries its own aria-label). */
+@media (max-width: 63.99rem) {
+  .art-meta {
+    gap: 0.5rem 1.4rem;
+  }
+  .art-meta__date {
+    font-size: 1.1rem !important;
+  }
+  .art-share > p {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .art-share ul {
+    gap: 0.4rem;
+  }
+  .art-share .art-share__btn {
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+    justify-content: center;
+    font-size: 0;
+    gap: 0;
+  }
+  .art-share .art-share__btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.art-body {
+  min-width: 0;
+  max-width: 38rem;
+}
+
+/* Wide screen: a 13rem rail, sticky under the header, the text beside it. */
+@media (min-width: 64rem) {
+  .art-layout {
+    grid-template-columns: 13rem minmax(0, 38rem);
+    gap: clamp(3rem, 6vw, 6.5rem);
+  }
+  .art-rail__inner {
+    position: sticky;
+    top: 6.5rem;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 1.6rem;
+    padding: 1.4rem 0 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 0;
+  }
+  .art-meta {
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .art-toc {
+    display: block;
+  }
+  /* In the rail the share buttons stack, one full-width row each. */
+  .art-share ul {
+    flex-direction: column;
+  }
+  .art-share .art-share__btn {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* ---- More from News and notes -------------------------------------------------------------- */
+.art-more__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  margin-bottom: clamp(1.8rem, 4vw, 2.8rem);
+}
+.art-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 3vw, 2.25rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.art-card {
+  position: relative;
+}
+.art-card__pic {
+  position: relative;
+  aspect-ratio: 4 / 3;
+}
+.art-card__date {
+  display: block;
+  margin-top: 1rem;
+}
+.art-card__title {
+  margin-top: 0.35rem;
+  font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--heading-solid);
+  text-wrap: balance;
+}
+.art-card__link {
+  color: inherit;
+  text-decoration: none;
+}
+/* The whole card is the link: the title's link covers the card. */
+.art-card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.art-card:hover .art-card__link {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+}
