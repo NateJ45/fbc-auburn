@@ -3,7 +3,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { decodeXml, latestVideo, parseYoutubeFeed } from './church-video.ts';
+import {
+  decodeXml,
+  latestVideo,
+  parseYoutubeFeed,
+  sundayOnOrAfter,
+  upcomingStream,
+  type FeedEntry,
+} from './church-video.ts';
 import { fetchFeed, loadChurchEvents, loadLatestVideo, resetChurchFeeds } from './church-feeds.ts';
 
 const FEED = readFileSync(
@@ -30,6 +37,27 @@ test('the latest watched video, never the scheduled stream', () => {
   assert.equal(v.label, 'Last Sunday');
   assert.equal(v.watchUrl, 'https://www.youtube.com/watch?v=replayBBBBB');
   assert.match(v.embedUrl, /^https:\/\/www\.youtube-nocookie\.com\/embed\/replayBBBBB\?/);
+});
+
+test('the upcoming stream: the coming Sunday scheduled broadcast (2026-10-24)', () => {
+  const entries = parseYoutubeFeed(FEED);
+  const s = upcomingStream(entries, WEDNESDAY)!;
+  assert.equal(s.videoId, 'upcomingAAA');
+  assert.equal(s.sunday, '2026-10-25');
+  assert.equal(s.watchUrl, 'https://www.youtube.com/watch?v=upcomingAAA');
+  // On the Sunday itself it still names today's stream; the Monday after, nothing.
+  assert.equal(upcomingStream(entries, new Date('2026-10-25T13:00:00Z'))?.videoId, 'upcomingAAA');
+  assert.equal(upcomingStream(entries, new Date('2026-10-26T16:00:00Z')), null);
+  // Not yet published as of the build: nothing.
+  assert.equal(upcomingStream(entries, new Date('2026-10-20T16:00:00Z')), null);
+  // Two different titles for one Sunday: never guess.
+  const two: FeedEntry[] = [
+    ...entries,
+    { videoId: 'upcomingDDD', title: 'Another', published: '2026-10-21T14:00:00Z', views: 0 },
+  ];
+  assert.equal(upcomingStream(two, WEDNESDAY), null);
+  assert.equal(sundayOnOrAfter('2026-10-25'), '2026-10-25');
+  assert.equal(sundayOnOrAfter('2026-10-26'), '2026-11-01');
 });
 
 test('an old replay is "Latest message", not "Last Sunday"', () => {

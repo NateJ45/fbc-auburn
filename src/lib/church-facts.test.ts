@@ -238,6 +238,8 @@ test('email, Facebook, the live link and giving resolve, and stay null when empt
 
   const f = resolveChurchFacts({
     ...SETTINGS,
+    // No channel, so the live link falls through to Facebook (a channel would win, see below).
+    youtubeChannelId: null,
     email: 'office@example.org',
     emailConfirmed: true,
     socialLinks: [
@@ -266,6 +268,24 @@ test('email, Facebook, the live link and giving resolve, and stay null when empt
   assert.equal(live.liveUrl, 'https://www.facebook.com/fbcauburn/live');
   assert.equal(live.facebookUrl, null, 'only https addresses are linked');
   assert.equal(live.email, null, 'a malformed email is not linked');
+  assert.equal(live.liveVia, 'Facebook');
+});
+
+test('the live link: Live stream link, then the YouTube channel, then Facebook (2026-10-24)', () => {
+  const fb = { socialLinks: [{ platform: 'Facebook', url: 'https://www.facebook.com/fbcauburn' }] };
+  const channel = `UC${'a'.repeat(22)}`;
+  assert.equal(resolveChurchFacts(fb).liveVia, 'Facebook');
+  const yt = resolveChurchFacts({ ...fb, youtubeChannelId: channel });
+  assert.equal(yt.liveUrl, `https://www.youtube.com/channel/${channel}/live`);
+  assert.equal(yt.liveVia, 'YouTube');
+  const own = resolveChurchFacts({
+    ...fb,
+    youtubeChannelId: channel,
+    liveStreamUrl: 'https://stream.example.org/sunday',
+  });
+  assert.equal(own.liveUrl, 'https://stream.example.org/sunday');
+  assert.equal(own.liveVia, null);
+  assert.equal(resolveChurchFacts(null).liveVia, null);
 });
 
 test('structured data adds the email and the map pin only once confirmed', async () => {

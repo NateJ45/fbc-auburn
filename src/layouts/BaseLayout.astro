@@ -22,6 +22,7 @@ import { isSiteCodeRoute } from '@/lib/custom-code';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import ForJacob from '@/components/ForJacob.astro';
+import LiveBanner from '@/components/church/LiveBanner.astro';
 import Analytics from '@/components/Analytics.astro';
 import { Toaster } from '@/components/ui/sonner';
 import '@/styles/globals.css';
@@ -313,6 +314,10 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
   </head>
   <body class="min-h-screen flex flex-col">
     <a href="#main" class="skip-link">Skip to main content</a>
+
+    {/* Live now (2026-10-24): hidden until Sunday worship is streaming, then shown by
+        src/lib/live-client.ts. Renders nothing when Church facts has nowhere to watch. */}
+    <LiveBanner />
 
     {/* Optional announcement banner. Renders above the header when an active
         announcement exists in Sanity. Scrolls away with the page content.

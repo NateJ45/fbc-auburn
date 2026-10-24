@@ -411,8 +411,10 @@ edit in Site settings > Church facts, then a publish.
 - The church email (Identity & contact > Public email) and `emailConfirmed`; none on file, so no
   mailto: shows anywhere yet.
 - The Facebook page (Social & footer > Social links, platform Facebook) and, if it differs, the
-  Church facts `liveStreamUrl`. Until one is set, /watch/ and the footer have no live link and the
-  Home "Live now" card still goes to /watch/ (visitor audit, 2026-10-18).
+  Church facts `liveStreamUrl`. The church's public page is facebook.com/FirstAuburnHamilton
+  (confirm with the church before entering it). Until one is set, nothing live renders: no Live now
+  banner, no watch line on the This Sunday card or in the menu, no live link on /watch/ or in the
+  footer (2026-10-24, `docs/agent/church-data.md` "Live now and the livestream").
 - `givingUrl` once online giving exists (Church Trac); until then Give opens /give/.
 - Optional `churchAddress.lat` / `lng` for the JSON-LD map pin.
 - The contact form's transport: the privacy policy (2026-10-18) describes the intended setup, the
@@ -421,9 +423,11 @@ edit in Site settings > Church facts, then a publish.
 - The Home "Other ways in" Give card still links to Contact: a `ctaBlock` has no typed-path link
   type, so it cannot point at /give/ without a Give page document. Repoint it in the Studio once
   `givingUrl` is set (external link), or add a Give page document.
-- The YouTube channel id, if the church streams there (the Watch band shows its fallback until
-  then). If the public feed proves flaky, port First Baptist Muncie's Data API reader
-  (`youtube-feed-api.ts`, needs a key).
+- The YouTube channel id, once the church starts streaming there (planned). One edit turns on the
+  replay, the scheduled stream on the This Sunday card and the Watch live links to the channel's
+  live page. Then add the Worker secret `YOUTUBE_API_KEY` so Live now follows the real stream
+  rather than the clock (`docs/agent/church-data.md` says how). If the public feed proves flaky,
+  port First Baptist Muncie's Data API reader (`youtube-feed-api.ts`, same key).
 - The Church Trac calendar's iCal link (Calendar > Share), which fills This week with events and
   adds the "Full calendar" link.
 - Set Identity > business type to Church when the Studio kit allows it; the JSON-LD still says

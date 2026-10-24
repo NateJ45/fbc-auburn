@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-24: the livestream features from First Baptist Muncie._
+
+**Decision.** Auburn streams on Facebook and plans YouTube, so the live pieces work on Facebook now and
+improve by themselves when a channel id is set. A Live now banner above the header on every page,
+Home's watch card tag and the phone menu row share one clock (`src/lib/live-service.ts`, worship from
+5 minutes before to 80 after, church time). The This Sunday card says where to watch, and names the
+coming Sunday's scheduled YouTube stream once there is one. `/api/live-status/` (YouTube Data API,
+needs `YOUTUBE_API_KEY`) is ported but dormant. The live link now prefers the YouTube channel's live
+page over Facebook when both exist. Detail: `docs/agent/church-data.md`.
+
 _2026-10-24: what visitors and members need, after an audit against two other church sites._
 
 **Decision.** Auburn's newcomer pages already answered more than either reference (a FAQ, service

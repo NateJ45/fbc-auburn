@@ -78,6 +78,38 @@ Example, a Watch band that falls back to Facebook until there is a YouTube chann
 </LastSunday>
 ```
 
+## Live now and the livestream (2026-10-24, ported from First Baptist Muncie)
+
+The church streams on Facebook today and plans a YouTube channel. Everything below works on
+Facebook now and gets better by itself once the YouTube channel id is filled in.
+
+- **Where to watch** is Church facts `liveUrl`: the Live stream link, else the YouTube channel's
+  `/live` page once `youtubeChannelId` is set, else the Facebook page from Social links
+  (`liveVia` says which, for the words). Footer, Livestream block, the This Sunday card, the menu
+  and the banner all use it.
+- **The Live now banner** (`LiveBanner.astro`, in `BaseLayout` above the header on every page) is
+  built hidden. `src/lib/live-client.ts` shows it from 5 minutes before worship (the last Sunday
+  gathering) to 80 minutes after, on the church's clock (`src/lib/live-service.ts`). The same
+  script shows Home's "Live now" tag on the watch card, points that card at the stream, and turns
+  the phone menu's "Watch live on Facebook" row into "Live now" (via `window.__churchLive` and the
+  `church:live` event). Contract: `[data-live-show]` is shown while live, `a[data-live-link]` goes
+  to the stream while live, the first `[data-live-start]` carries the settings.
+- **The This Sunday card** says "Can't be there? Watch live on Facebook at 11:00." With a YouTube
+  channel it names the coming Sunday's scheduled stream instead ("Watch "<title>" live on
+  YouTube"), read from the channel feed at build time (`upcomingStream` in `church-video.ts`: a
+  zero-view upload published in the week ending on that Sunday; two different titles name none).
+- **A real "Live now" (YouTube only).** With a channel id, the browser also asks
+  `GET /api/live-status/` (SSR, `src/lib/live-status.ts`) around worship, at most once a minute;
+  a fresh answer overrides the clock and links straight to the live video. It needs the Worker
+  secret `YOUTUBE_API_KEY` (a Google Cloud API key restricted to the YouTube Data API v3):
+  `npx wrangler secret put YOUTUBE_API_KEY -c dist/server/wrangler.json`. Two quota units per
+  check, cached 90 seconds per isolate. Without the key or channel every answer is "unknown" and
+  the clock decides. Facebook has no keyless live check, so on Facebook the clock always decides.
+- **The replay** (`LastSunday`) is unchanged: YouTube only, Facebook text in its fallback slot.
+
+Nothing live renders until Church facts has somewhere to watch (a Facebook link in Social links,
+a Live stream link or a YouTube channel id).
+
 ## How it stays current
 
 The site is static, so the dates, the replay and the events move when it rebuilds: on every
@@ -103,6 +135,10 @@ The grid is cached in `src/lib/sunday-weather.ts` (ILN 28,51, resolved from the 
 
 ## Testing
 
+- Live now: `live-service.test.ts` (the window either side of daylight saving, the endpoint
+  override) and `live-status.test.ts` (the YouTube calls, mocked). To see the banner, set a
+  Facebook link and fake the clock in the browser console (replace `Date` with a class fixed at
+  a Sunday 15:10 UTC, then dispatch `astro:page-load`).
 - Unit: `church-facts.test.ts`, `church-video.test.ts`, `church-calendar.test.ts` (the parser,
   ported from First Baptist Muncie), `sunday-weather.test.ts`.
 - Fixture build: `CHURCH_DATA_FIXTURE=1 CHURCH_DATA_NOW=2026-10-21T16:00:00Z npm run dev` reads
