@@ -17,7 +17,9 @@
 // The path lays itself once, when it comes into view: the inline script below arms it before
 // first paint (only under html.motion), then lays it as soon as a third of it is on screen (at
 // once on a tall screen). See StonePath.astro.
-import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
+import { getImage } from 'astro:assets';
+// The full linocut print (brand/logo/mark.svg) as a raster: the SVG is about 900 KB of grain.
+import markPrint from '@/assets/brand/mark-print.png';
 import SundayCard from './SundayCard.astro';
 import SundayFacts from './SundayFacts.astro';
 import StonePath from './StonePath.astro';
@@ -74,6 +76,7 @@ const addr = facts.address;
 // three times above the fold).
 const place = addr ? addr.lines[1] : '';
 const secondary = block.secondaryCta;
+const heroMark = await getImage({ src: markPrint, width: 640, format: 'webp', quality: 82 });
 ---
 
 <!-- The This Sunday card is the largest thing on the first screen and its stone ground is a CSS
@@ -90,9 +93,9 @@ const secondary = block.secondaryCta;
     <div class="hb-masthead">
       <img
         class="hb-hero-mark"
-        src={markAsset.src}
-        width={markAsset.width}
-        height={markAsset.height}
+        src={heroMark.src}
+        width={markPrint.width}
+        height={markPrint.height}
         alt=""
         loading="eager"
         decoding="async"

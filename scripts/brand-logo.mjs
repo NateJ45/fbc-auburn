@@ -1,373 +1,242 @@
 // Safe to edit by hand
 //
-// Draws the First Baptist Church of Auburn logo masters into brand/logo/ as plain SVG.
+// Builds the First Baptist Church of Auburn logo set from its two traced masters, and copies the
+// site's files into place.
 //
-// The mark: seven horizontal brick courses in auburn tones, each stepping in and out
-// at the sides, with the cross cut out of them as negative space. Every edge of the
-// cut is a degree or two off square, as if cut by hand (the "chisel" cut picked on
-// 2026-10-21 from the working sheets). The geometry below is hand-set, not generated:
-// every course length, tone and cut point is a chosen number, so a change here is a
-// design decision and should be made on purpose.
+// The mark (picked 2026-10-23) is a linocut print: a brick wall with a cross cut out of it,
+// drawn by Gemini as a block print and traced as cut, with its leaning bricks, white scratches and
+// flecks, and the darker squeezed rim on each brick. The masters are artwork, not geometry:
+//   brand/logo/mark.svg              the full print (ink #8A3526, rim #5A1F15), 40 px and up
+//   brand/logo/mark-small.svg        the same outline with the flecks dropped, for 64 px and under
+//   brand/logo/source/cross-shape.svg  the exact shape of the cut cross (for the red alternate)
+//   brand/logo/source/gemini-linocut.png  the print the trace was made from
+// Edit the masters in Figma or by hand, never by reshaping them in code; then run npm run logo.
 //
-// Outputs (all deterministic; a file is rewritten only when its bytes change):
-//   brand/logo/mark.svg                  the mark in colour on a transparent ground
-//   brand/logo/mark-mono.svg             one colour (ink) for print, embroidery, stamps
-//   brand/logo/mark-reversed.svg         for dark grounds: lighter bricks, the cut is the ground
-//   brand/logo/favicon.svg               five courses, wider cut, for 16 to 32 px
-//   brand/logo/lockup-horizontal.svg     mark left, name right (site header, sign)
-//   brand/logo/lockup-stacked.svg        mark above the name (social avatar, print)
-//   brand/logo/lockup-horizontal-reversed.svg
+// Outputs (deterministic; a file is rewritten only when its bytes change):
+//   brand/logo/mark-mono.svg, mark-small-mono.svg      one colour (ink)
+//   brand/logo/mark-reversed.svg, mark-small-reversed.svg  on a paper plate, for dark grounds
+//   brand/logo/favicon.svg                             small cut on an opaque plate, square
+//   brand/logo/lockup-horizontal.svg                   small cut + name (site header)
+//   brand/logo/lockup-horizontal-print.svg             full print + name (print, signs)
+//   brand/logo/lockup-horizontal-reversed.svg          on the dark ground
+//   brand/logo/lockup-stacked.svg                      full print above the name
+//   brand/logo/seal.svg, seal-small.svg                the print in a navy ring, words on the arc
+//   brand/logo/alternates/roadside-red/*               the cross filled in the roadside red
+//   site copies: src/assets/logo-light.svg, src/assets/logo-dark.svg,
+//     src/assets/brand/fbc-auburn-icon-full-color.svg, src/assets/brand/fbc-auburn-icon-white.svg,
+//     src/assets/brand/mark-print.png (the hero's raster), public/favicon.svg,
+//     public/studio-banner/mark.svg
+// After it runs: npm run favicon, npm run og, npm run og:pages.
 //
-// The wordmark is Young Serif (the site's display face) converted to paths with
-// opentype.js, so the lockups need no font installed. Run: npm run logo
+// The words are Young Serif (the site's display face) as outlines via fontkitten, so nothing here
+// needs a font installed.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import opentype from 'opentype.js';
 import { create as createFont } from 'fontkitten';
+import sharp from 'sharp';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const outDir = path.join(root, 'brand', 'logo');
-fs.mkdirSync(outDir, { recursive: true });
+const logo = (f) => path.join(root, 'brand', 'logo', f);
 
-// Palette. Brick tones are auburn, the colour the church is named after. Ink is the
-// site's text colour; the reversed set is lifted so it reads on the dark ground.
-// Five brick tones, from fired-dark to sun-faded, and for each the shade its bottom
-// edge is drawn in (a thin band that gives the face a little depth without a gradient).
-const TONES = {
-  brick: '#9A3B2A',
-  dark: '#7E2E20',
-  deep: '#8A3526',
-  light: '#B5503A',
-  pale: '#C0634C',
-};
-const TONES_REVERSED = {
-  brick: '#B5503A',
-  dark: '#9A3B2A',
-  deep: '#A8453A',
-  light: '#C9654E',
-  pale: '#D47A62',
-};
-const EDGE = {
-  brick: '#7E2E20',
-  dark: '#66241A',
-  deep: '#70291E',
-  light: '#9A3B2A',
-  pale: '#A8453A',
-};
 const INK = '#16263D';
+const NAVY = '#1F3A5F';
 const DARK_GROUND = '#0F2238';
+const CREAM = '#F4EFE7';
+const PAPER = '#FBF8F3';
+const SLATE = '#4A4F5E';
+const REVERSED_SUB = '#B6C0CF';
+// The plain red of the cross by the road (sampled from the church's photo, held to the signal red
+// used in the 2026-10-23 study).
+const ROADSIDE_RED = '#D9262E';
+const n2 = (v) => Number(v.toFixed(2));
 
-// ---------------------------------------------------------------------------
-// The mark. Drawn on a 100 x 120 box.
-// ---------------------------------------------------------------------------
+// ---- The masters ----------------------------------------------------------------------------
+const read = (f) => fs.readFileSync(logo(f), 'utf8');
+const viewBoxOf = (svg) =>
+  svg
+    .match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/)
+    .slice(1)
+    .map(Number);
+const innerOf = (svg) =>
+  svg.replace(/^<svg[^>]*>(<title>.*?<\/title>)?/, '').replace(/<\/svg>\s*$/, '');
+const MASTER = { full: read('mark.svg'), small: read('mark-small.svg') };
+const [MW, MH] = viewBoxOf(MASTER.full);
+const CROSS_D = read('source/cross-shape.svg').match(/ d="([^"]+)"/)[1];
+const ink = { full: innerOf(MASTER.full), small: innerOf(MASTER.small) };
+const mono = (s) => s.replace(/fill="#[0-9A-Fa-f]{6}"/g, `fill="${INK}"`);
+const plate = `<rect width="${MW}" height="${MH}" rx="18" fill="${PAPER}"/>`;
+const red = `<path d="${CROSS_D}" fill="${ROADSIDE_RED}"/>`;
+const white = `<path d="${CROSS_D}" fill="#FFFFFF"/>`;
 
-// Seven courses. Each is {x0, x1, bricks}: the left and right ends step a little,
-// chosen so no two neighbours step the same way and the arm course (index 2) is
-// the widest, which keeps brick either side of the arm ends. `bricks` lists the
-// bricks in the course left to right as [rightEdge, tone]; the last right edge is
-// the course's own. Joints are placed well clear of the cut (nothing between x 34
-// and 66 except under the stem, where the cut hides it), so no sliver is left
-// beside the cross, and the bond staggers from course to course.
-const MARK = {
-  box: [100, 120],
-  top: 4,
-  mortar: 1.0,
-  edge: 1.3,
-  courses: [
-    {
-      x0: 5,
-      x1: 93,
-      bricks: [
-        [30, 'brick'],
-        [72, 'light'],
-        [93, 'dark'],
-      ],
-    },
-    {
-      x0: 2,
-      x1: 97,
-      bricks: [
-        [25, 'dark'],
-        [78, 'brick'],
-        [97, 'deep'],
-      ],
-    },
-    {
-      x0: 6,
-      x1: 94,
-      bricks: [
-        [50, 'pale'],
-        [94, 'brick'],
-      ],
-    }, // the arm course; the joint is under the cut
-    {
-      x0: 3,
-      x1: 96,
-      bricks: [
-        [22, 'light'],
-        [74, 'brick'],
-        [96, 'dark'],
-      ],
-    },
-    {
-      x0: 7,
-      x1: 92,
-      bricks: [
-        [32, 'brick'],
-        [68, 'deep'],
-        [92, 'pale'],
-      ],
-    },
-    {
-      x0: 2,
-      x1: 95,
-      bricks: [
-        [27, 'dark'],
-        [80, 'light'],
-        [95, 'brick'],
-      ],
-    },
-    {
-      x0: 4,
-      x1: 97,
-      bricks: [
-        [33, 'brick'],
-        [67, 'pale'],
-        [97, 'deep'],
-      ],
-    },
-  ],
-  // The chisel cut, clockwise from the top-left of the stem. The arm occupies the
-  // third course plus half a mortar line each side (35.8 to 51.9), and every edge
-  // leans by 1 to 3 units. The stem is 13 wide at the top and 17 at the base.
-  cut: 'M 43.5 2 L 57 3.6 L 56 36.2 L 82 35.3 L 80.6 52.3 L 56.6 51.7 L 59.6 118 L 41.6 116.4 L 43.4 52.1 L 18.8 52.9 L 20.2 35.6 L 44.2 36.4 Z',
-  rx: 0.8,
-};
+const TITLE = 'First Baptist Church of Auburn';
+const doc = ([w, h], body, title = TITLE, x = 0, y = 0) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${n2(x)} ${n2(y)} ${n2(w)} ${n2(h)}"><title>${title}</title>${body}</svg>\n`;
+const markDoc = (body) => doc([MW, MH], body);
+// The mark in a square view box, centred (the site's icon slots are square).
+const S = Math.max(MW, MH);
+const squareDoc = (body) => doc([S, S], body, TITLE, -(S - MW) / 2, -(S - MH) / 2);
+// The mark placed inside another drawing at height h.
+const place = (body, x, y, h) =>
+  `<svg x="${n2(x)}" y="${n2(y)}" width="${n2((h * MW) / MH)}" height="${n2(h)}" viewBox="0 0 ${MW} ${MH}">${body}</svg>`;
 
-// The favicon is the same idea with five courses and a wider cut, because at 16 px
-// seven courses and a 13-unit stem turn to noise.
-const FAVICON = {
-  box: [100, 120],
-  top: 4,
-  mortar: 1.4,
-  edge: 0,
-  courses: [
-    {
-      x0: 4,
-      x1: 95,
-      bricks: [
-        [28, 'brick'],
-        [95, 'light'],
-      ],
-    },
-    { x0: 6, x1: 93, bricks: [[93, 'brick']] }, // the arm course
-    {
-      x0: 2,
-      x1: 97,
-      bricks: [
-        [72, 'dark'],
-        [97, 'brick'],
-      ],
-    },
-    {
-      x0: 5,
-      x1: 94,
-      bricks: [
-        [30, 'light'],
-        [94, 'brick'],
-      ],
-    },
-    {
-      x0: 3,
-      x1: 96,
-      bricks: [
-        [70, 'brick'],
-        [96, 'dark'],
-      ],
-    },
-  ],
-  cut: 'M 41 2 L 59 3.8 L 58 26.4 L 84 25.9 L 82.4 48.9 L 58.4 48.4 L 62 118 L 39.4 116.2 L 41.4 48.7 L 16.6 49.2 L 18.2 26.2 L 42 26.6 Z',
-  rx: 1.2,
-};
-
-const n2 = (n) => Number(n.toFixed(2)).toString();
-
-// tones: the face colours by tone name; edges: the bottom-edge colours (null for
-// mono, where the faces are one ink and an edge band would read as a stripe).
-function courseRects(spec, tones, edges) {
-  const [, h] = spec.box;
-  const n = spec.courses.length;
-  const H = (h - spec.top * 2 - (n - 1) * spec.mortar) / n;
-  let s = '';
-  spec.courses.forEach((c, i) => {
-    const y = spec.top + i * (H + spec.mortar);
-    let x = c.x0;
-    c.bricks.forEach(([right, tone], j) => {
-      const last = j === c.bricks.length - 1;
-      const w = (last ? c.x1 : right - spec.mortar / 2) - x;
-      s += `<rect x="${n2(x)}" y="${n2(y)}" width="${n2(w)}" height="${n2(H)}" rx="${spec.rx}" fill="${tones[tone]}"/>`;
-      if (edges && spec.edge) {
-        s += `<rect x="${n2(x + spec.rx)}" y="${n2(y + H - spec.edge)}" width="${n2(w - spec.rx * 2)}" height="${n2(spec.edge)}" fill="${edges[tone]}"/>`;
-      }
-      x = right + spec.mortar / 2;
-    });
-  });
-  return s;
-}
-
-const monoTones = () => Object.fromEntries(Object.keys(TONES).map((k) => [k, INK]));
-
-// mode: 'colour' | 'mono' | 'reversed'. The cut is a filled path over the courses in
-// the ground colour (white, or the dark ground), so the files stay simple shapes
-// that any tool can open and recolour. On a transparent ground the cut is white; the
-// reversed file paints its own dark ground.
-function markSvg(spec, mode, { title, size, ground }) {
-  const [w, h] = spec.box;
-  const tones = mode === 'mono' ? monoTones() : mode === 'reversed' ? TONES_REVERSED : TONES;
-  const edges = mode === 'mono' ? null : EDGE;
-  const cutFill = mode === 'reversed' ? DARK_GROUND : (ground ?? '#FFFFFF');
-  const bg = mode === 'reversed' ? `<rect width="${w}" height="${h}" fill="${DARK_GROUND}"/>` : '';
-  const dims = size ? ` width="${size}" height="${Math.round((size * h) / w)}"` : '';
-  return (
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}"${dims}>` +
-    `<title>${title}</title>` +
-    bg +
-    courseRects(spec, tones, edges) +
-    `<path d="${spec.cut}" fill="${cutFill}"/>` +
-    `</svg>`
-  );
-}
-
-// Inner markup of the mark, for placing inside a lockup at (x, y) with a scale.
-function markGroup(spec, mode, x, y, scale, ground) {
-  const tones = mode === 'mono' ? monoTones() : mode === 'reversed' ? TONES_REVERSED : TONES;
-  const edges = mode === 'mono' ? null : EDGE;
-  const cutFill = mode === 'reversed' ? DARK_GROUND : ground;
-  return `<g transform="translate(${n2(x)} ${n2(y)}) scale(${n2(scale)})">${courseRects(spec, tones, edges)}<path d="${spec.cut}" fill="${cutFill}"/></g>`;
-}
-
-// ---------------------------------------------------------------------------
-// The wordmark. Young Serif, from the fontsource package, as paths.
-// ---------------------------------------------------------------------------
-
-const fontFile = path.join(
-  root,
-  'node_modules/@fontsource/young-serif/files/young-serif-latin-400-normal.woff',
+// ---- Young Serif outlines -------------------------------------------------------------------
+const font = createFont(
+  fs.readFileSync(
+    path.join(root, 'node_modules/@fontsource/young-serif/files/young-serif-latin-400-normal.woff'),
+  ),
 );
-const fontBuf = fs.readFileSync(fontFile);
-// Two readers of the same file: fontkitten draws the outlines (opentype.js drops a
-// control point in a few of this font's CFF glyphs and writes NaN into the path),
-// and opentype.js supplies the kerning pairs, which fontkitten does not expose.
-const outlines = createFont(fontBuf);
-const font = opentype.parse(
-  fontBuf.buffer.slice(fontBuf.byteOffset, fontBuf.byteOffset + fontBuf.byteLength),
-);
-
-// Returns {d, width} for a line of text at a size, with tracking in em.
-function textPath(text, size, tracking = 0) {
-  const scale = size / outlines.unitsPerEm;
+const UPM = font.unitsPerEm;
+function glyphRun(text, size, tracking = 0) {
+  const sc = size / UPM;
   let x = 0;
-  let d = '';
-  const chars = [...text];
-  chars.forEach((ch, i) => {
-    const glyph = outlines.glyphForCodePoint(ch.codePointAt(0));
-    if (ch !== ' ') d += glyph.path.scale(scale, -scale).translate(x, 0).toSVG();
-    x += glyph.advanceWidth * scale;
-    if (i < chars.length - 1) {
-      const kern = font.getKerningValue(font.charToGlyph(ch), font.charToGlyph(chars[i + 1]));
-      x += (kern / font.unitsPerEm) * size + tracking * size;
-    }
-  });
-  return { d, width: x };
+  const glyphs = [];
+  for (const ch of text) {
+    const g = font.glyphForCodePoint(ch.codePointAt(0));
+    const adv = g.advanceWidth * sc;
+    glyphs.push({ d: ch === ' ' ? '' : g.path.scale(sc, -sc).toSVG(), x, adv });
+    x += adv + tracking * size;
+  }
+  return { glyphs, width: x - tracking * size };
+}
+function textPath(text, size, tracking, x, y, fill) {
+  const run = glyphRun(text, size, tracking);
+  const svg = run.glyphs
+    .filter((g) => g.d)
+    .map((g) => `<path transform="translate(${n2(x + g.x)} ${n2(y)})" d="${g.d}" fill="${fill}"/>`)
+    .join('');
+  return { svg, width: run.width };
 }
 
-// Two lines: "First Baptist Church" then "AUBURN, OHIO" in spaced small caps.
-function wordmark(fill, muted, x, y, size) {
-  const l1 = textPath('First Baptist Church', size, 0.005);
-  const l2 = textPath('AUBURN, OHIO', size * 0.4, 0.22);
-  const gap = size * 0.42;
+// ---- Lockups --------------------------------------------------------------------------------
+// Horizontal: the mark 100 tall; the name's caps sit level with the top courses and the place
+// line on the lower ones.
+function horizontal(markBody, { reversed = false } = {}) {
+  const markH = 100,
+    markW = (markH * MW) / MH,
+    pad = 12,
+    gap = 22;
+  const tx = pad + markW + gap;
+  const l1 = textPath('First Baptist Church', 44, 0.004, tx, pad + 52, reversed ? '#FFFFFF' : INK);
+  const l2 = textPath(
+    'AUBURN, OHIO',
+    17.5,
+    0.22,
+    tx + 2,
+    pad + 88,
+    reversed ? REVERSED_SUB : SLATE,
+  );
+  const w = tx + Math.max(l1.width, l2.width) + pad,
+    h = markH + 2 * pad;
+  const ground = reversed ? `<rect width="${n2(w)}" height="${h}" fill="${DARK_GROUND}"/>` : '';
   return {
-    svg:
-      `<path transform="translate(${n2(x)} ${n2(y)})" d="${l1.d}" fill="${fill}"/>` +
-      `<path transform="translate(${n2(x)} ${n2(y + gap + size * 0.4)})" d="${l2.d}" fill="${muted}"/>`,
-    width: Math.max(l1.width, l2.width),
-    height: gap + size * 0.4,
-    ascent: size * 0.72,
+    svg: doc([w, h], ground + place(markBody, pad, pad, markH) + l1.svg + l2.svg),
+    // The words' box as x, y, width, height (the Studio navbar's svgView crop).
+    text: [tx - 4, pad - 2, w - tx + 4 - pad + 4, h - 2 * pad + 4],
   };
 }
-
-function lockupHorizontal(mode) {
-  const ground = mode === 'reversed' ? DARK_GROUND : '#FFFFFF';
-  const ink = mode === 'reversed' ? '#F4EFE7' : INK;
-  const muted = mode === 'reversed' ? '#B4B8C4' : '#4A4F5E';
-  const size = 44;
-  const markH = 100,
-    markW = (markH * 100) / 120;
-  const pad = 12;
-  const wm = wordmark(ink, muted, markW + pad + 18, pad + 46, size);
-  const w = markW + pad + 18 + wm.width + pad;
-  const h = markH + pad * 2;
-  const bg =
-    mode === 'reversed' ? `<rect width="${n2(w)}" height="${h}" fill="${DARK_GROUND}"/>` : '';
-  return (
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n2(w)} ${h}">` +
-    `<title>First Baptist Church of Auburn</title>` +
-    bg +
-    markGroup(MARK, mode, pad, pad, markH / 120, ground) +
-    wm.svg +
-    `</svg>`
+// Stacked: the mark above the name, centred.
+function stacked(markBody) {
+  const markH = 220,
+    markW = (markH * MW) / MH,
+    pad = 16;
+  const r1 = glyphRun('First Baptist Church', 44, 0.004).width;
+  const r2 = glyphRun('AUBURN, OHIO', 17.5, 0.22).width;
+  const w = Math.max(markW, r1, r2) + 2 * pad;
+  const l1 = textPath('First Baptist Church', 44, 0.004, (w - r1) / 2, pad + markH + 60, INK);
+  const l2 = textPath('AUBURN, OHIO', 17.5, 0.22, (w - r2) / 2, pad + markH + 96, SLATE);
+  return doc(
+    [w, pad + markH + 96 + pad + 4],
+    place(markBody, (w - markW) / 2, pad, markH) + l1.svg + l2.svg,
   );
 }
 
-function lockupStacked(mode) {
-  const ground = mode === 'reversed' ? DARK_GROUND : '#FFFFFF';
-  const ink = mode === 'reversed' ? '#F4EFE7' : INK;
-  const muted = mode === 'reversed' ? '#B4B8C4' : '#4A4F5E';
-  const size = 36;
-  const markH = 120,
-    markW = 100;
-  const pad = 16;
-  const probe = wordmark(ink, muted, 0, 0, size);
-  const w = Math.max(probe.width, markW) + pad * 2;
-  const wm = wordmark(ink, muted, (w - probe.width) / 2, pad + markH + 14 + size * 0.72, size);
-  const h = pad + markH + 14 + size * 0.72 + wm.height + pad;
-  const bg =
-    mode === 'reversed' ? `<rect width="${n2(w)}" height="${n2(h)}" fill="${DARK_GROUND}"/>` : '';
-  return (
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n2(w)} ${n2(h)}">` +
-    `<title>First Baptist Church of Auburn</title>` +
-    bg +
-    markGroup(MARK, mode, (w - markW) / 2, pad, 1, ground) +
-    wm.svg +
-    `</svg>`
-  );
+// ---- The seal -------------------------------------------------------------------------------
+// 1000 x 1000: cream disc, navy rule at r 484, navy inner rule at r 330, navy disc r 318, and the
+// print on its paper plate in the middle. Words run round the ring in Young Serif caps, the top
+// clockwise and the bottom anticlockwise so both stay upright; a navy dot at 9 and 3 o'clock.
+function arcText(text, { size, tracking, r, top }) {
+  const run = glyphRun(text, size, tracking);
+  const capH = size * 0.71; // Young Serif's cap height, about 0.71 em
+  let s = '';
+  for (const g of run.glyphs) {
+    if (!g.d) continue;
+    const mid = g.x + g.adv / 2 - run.width / 2;
+    const rb = top ? r - capH / 2 : r + capH / 2;
+    const a = top ? -Math.PI / 2 + mid / rb : Math.PI / 2 - mid / rb;
+    const rot = ((top ? a + Math.PI / 2 : a - Math.PI / 2) * 180) / Math.PI;
+    s += `<path transform="translate(${n2(500 + rb * Math.cos(a))} ${n2(500 + rb * Math.sin(a))}) rotate(${n2(rot)}) translate(${n2(-g.adv / 2)} 0)" d="${g.d}" fill="${NAVY}"/>`;
+  }
+  return s;
+}
+function seal(markBody) {
+  const markH = 400,
+    markW = (markH * MW) / MH; // the plate's corners clear the disc
+  const body =
+    `<circle cx="500" cy="500" r="490" fill="${CREAM}"/>` +
+    `<circle cx="500" cy="500" r="484" fill="none" stroke="${NAVY}" stroke-width="7"/>` +
+    `<circle cx="500" cy="500" r="330" fill="none" stroke="${NAVY}" stroke-width="5"/>` +
+    `<circle cx="500" cy="500" r="318" fill="${NAVY}"/>` +
+    place(plate + markBody, 500 - markW / 2, 500 - markH / 2, markH) +
+    arcText('FIRST BAPTIST CHURCH', { size: 56, tracking: 0.12, r: 404, top: true }) +
+    arcText('AUBURN, OHIO', { size: 56, tracking: 0.2, r: 404, top: false }) +
+    `<circle cx="96" cy="500" r="10" fill="${NAVY}"/><circle cx="904" cy="500" r="10" fill="${NAVY}"/>`;
+  return doc([1000, 1000], body, 'First Baptist Church, Auburn, Ohio: seal');
 }
 
-// ---------------------------------------------------------------------------
-// Write
-// ---------------------------------------------------------------------------
-
+// ---- Write ----------------------------------------------------------------------------------
+const lockupLight = horizontal(ink.small);
+const lockupDark = horizontal(plate + ink.small, { reversed: true });
 const files = {
-  'mark.svg': markSvg(MARK, 'colour', { title: 'First Baptist Church of Auburn' }),
-  'mark-mono.svg': markSvg(MARK, 'mono', { title: 'First Baptist Church of Auburn' }),
-  'mark-reversed.svg': markSvg(MARK, 'reversed', { title: 'First Baptist Church of Auburn' }),
-  'favicon.svg': markSvg(FAVICON, 'colour', { title: 'First Baptist Church of Auburn' }),
-  'lockup-horizontal.svg': lockupHorizontal('colour'),
-  'lockup-horizontal-reversed.svg': lockupHorizontal('reversed'),
-  'lockup-stacked.svg': lockupStacked('colour'),
+  'brand/logo/mark-mono.svg': markDoc(mono(ink.full)),
+  'brand/logo/mark-small-mono.svg': markDoc(mono(ink.small)),
+  'brand/logo/mark-reversed.svg': markDoc(plate + ink.full),
+  'brand/logo/mark-small-reversed.svg': markDoc(plate + ink.small),
+  'brand/logo/favicon.svg': squareDoc(plate + white + ink.small),
+  'brand/logo/lockup-horizontal.svg': lockupLight.svg,
+  'brand/logo/lockup-horizontal-print.svg': horizontal(ink.full).svg,
+  'brand/logo/lockup-horizontal-reversed.svg': lockupDark.svg,
+  'brand/logo/lockup-stacked.svg': stacked(ink.full),
+  'brand/logo/seal.svg': seal(ink.full),
+  'brand/logo/seal-small.svg': seal(ink.small),
+  // The roadside-red alternate: the cut cross filled red, behind the ink so the hand-cut edge
+  // stays. Large uses only: red on brick loses the cross below about 48 px, so small uses keep
+  // the plain mark even if the church picks red.
+  'brand/logo/alternates/roadside-red/mark.svg': markDoc(red + ink.full),
+  'brand/logo/alternates/roadside-red/mark-reversed.svg': markDoc(plate + red + ink.full),
+  'brand/logo/alternates/roadside-red/lockup-horizontal-print.svg': horizontal(red + ink.full).svg,
+  'brand/logo/alternates/roadside-red/lockup-stacked.svg': stacked(red + ink.full),
+  'brand/logo/alternates/roadside-red/seal.svg': seal(red + ink.full),
+  // Site copies.
+  'src/assets/logo-light.svg': lockupLight.svg,
+  'src/assets/logo-dark.svg': lockupDark.svg,
+  'src/assets/brand/fbc-auburn-icon-full-color.svg': squareDoc(white + ink.small),
+  'src/assets/brand/fbc-auburn-icon-white.svg': squareDoc(plate + ink.small),
+  'public/favicon.svg': squareDoc(plate + white + ink.small),
+  'public/studio-banner/mark.svg': squareDoc(white + ink.small),
 };
-
 let changed = 0;
-for (const [name, svg] of Object.entries(files)) {
-  const file = path.join(outDir, name);
-  const body = svg + '\n';
-  if (fs.existsSync(file) && fs.readFileSync(file, 'utf8') === body) continue;
-  fs.writeFileSync(file, body);
+for (const [rel, body] of Object.entries(files)) {
+  const p = path.join(root, rel);
+  fs.mkdirSync(path.dirname(p), { recursive: true });
+  if (fs.existsSync(p) && fs.readFileSync(p, 'utf8') === body) continue;
+  fs.writeFileSync(p, body);
   changed++;
-  console.log('wrote', path.relative(root, file), `${body.length} bytes`);
 }
+// The hero raster: the full print is about 900 KB as SVG, so the pages that show it large use a
+// PNG of it (Astro turns it into WebP at build). 720 px wide covers 250 css px at 2.5x.
+const png = path.join(root, 'src/assets/brand/mark-print.png');
+const pngBuf = await sharp(Buffer.from(MASTER.full), { density: 200 })
+  .resize(720)
+  .png({ compressionLevel: 9 })
+  .toBuffer();
+if (!fs.existsSync(png) || !fs.readFileSync(png).equals(pngBuf)) {
+  fs.writeFileSync(png, pngBuf);
+  changed++;
+}
+console.log(changed ? `[logo] ${changed} file(s) written` : '[logo] already up to date');
+// The Studio navbar crops the dark lockup to its words (src/sanity/studioEdges.config.ts).
 console.log(
-  changed ? `${changed} file(s) written to brand/logo/` : 'brand/logo/ already up to date',
+  `[logo] dark lockup words crop (studioEdges view): ${lockupDark.text.map(n2).join(',')}`,
 );

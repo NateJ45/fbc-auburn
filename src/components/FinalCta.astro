@@ -17,7 +17,8 @@ import { hasInlineRich } from '@/lib/inline-rich';
 import InlineRich from '@/components/InlineRich.astro';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 import { getImage } from 'astro:assets';
-import markLight from '@/assets/brand/fbc-auburn-icon-full-color.svg';
+// The full linocut print as a raster (brand/logo/mark.svg is about 900 KB of grain).
+import markLight from '@/assets/brand/mark-print.png';
 
 interface CtaBlock {
   label?: string;
@@ -103,7 +104,9 @@ const colour = scriptFound
   : splitHeadingAccent(headline, headingAccent);
 
 const richSubhead = hasInlineRich(subheadRich);
-const mark = hasBackground ? null : await getImage({ src: markLight });
+const mark = hasBackground
+  ? null
+  : await getImage({ src: markLight, width: 640, format: 'webp', quality: 82 });
 ---
 
 <section

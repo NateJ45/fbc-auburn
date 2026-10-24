@@ -133,19 +133,24 @@ domain and their mail.
 
 ---
 
-### 1x. Logo: the brick cross follow-ups (wired in 2026-10-21)
+### 1x. Logo: the linocut print follow-ups (wired in 2026-10-23)
 
-**Blocker: none; small leftovers.** The brick cross is the logo: `brand/logo/` (drawn by
-`npm run logo`, geometry in `scripts/brand-logo.mjs`) feeds `src/assets/logo-light.svg` (the
-horizontal lockup), `logo-dark.svg` (reversed), `src/assets/brand/fbc-auburn-icon-full-color.svg`
-(the mark, in a square view box so square slots centre it; also the OG card and the Studio icon),
-`public/favicon.svg` (five courses) with the icons `npm run favicon` renders from it, and
-`public/studio-banner/mark.svg`. The header lockup sits 44 to 56 px high and shrinks on phones.
-Still on the old art: the animated `MarkBuild.astro` (`mark-layered.svg`, used by the Image and
-text and Steps rail blocks) and `baptism-layered.svg`, which need a layered redraw; a solid-cross
-fallback under 16 px is not drawn (the favicon is the smallest size). The cut-out cross is white,
-so on the warm ground it reads best large or on a white card. `npm run favicon` rewrites
-`site.webmanifest` and drops its maskable entry and short name: restore those by hand.
+**Blocker: the church has not seen it yet.** The mark is the linocut print (2026-10-23, replacing
+the 2026-10-21 drawn brick cross): `brand/logo/mark.svg` and `mark-small.svg` are the traced
+masters, and `npm run logo` builds the lockups, seal, favicon, red alternates and site copies from
+them (`brand/logo/README.md`). The full print shows large (Home hero, arch page head, closing band,
+via `src/assets/brand/mark-print.png`), the small cut elsewhere, and the ink footer uses the small
+cut on its paper plate. Open:
+
+- Show the church the plain print and the roadside-red alternate
+  (`brand/logo/alternates/roadside-red/`); if they pick red, swap the large slots to it and keep the
+  white cross at small sizes.
+- `brand/illustration/church.svg` (the traced church drawing) is not used yet, and its door frames
+  have two red slivers to clean up by hand.
+- Still on the old stone art: the animated `MarkBuild.astro` (`mark-layered.svg`, used by the Image
+  and text and Steps rail blocks) and `baptism-layered.svg`, which need a layered redraw.
+- `npm run favicon` rewrites `site.webmanifest` and drops its maskable entry and short name:
+  `git checkout` it after.
 
 DONE 2026-10-21: the auburn-and-navy palette is applied site-wide (DESIGN.md "Colors").
 
