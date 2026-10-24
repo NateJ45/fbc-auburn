@@ -67,7 +67,8 @@ const schemas = [
   {/* ------- 2. FAQ accordion (grouped by category) ------------------------- */}
   <section class="bg-background" aria-label="Frequently asked questions">
     <div class="mx-auto max-w-content px-m py-section-lg">
-      <div class="mx-auto max-w-3xl">
+      {/* On the page's left edge like every other band (rule 17); it was centred, off the heading line. */}
+      <div class="max-w-3xl">
         {faqs.length > 0 ? (
           <FaqAccordion
             client:visible

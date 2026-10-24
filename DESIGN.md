@@ -31,7 +31,10 @@ typography:
     fontSize: '1.125rem'
     lineHeight: 1.6
 rounded:
-  md: '10px'
+  tag: '4px'
+  control: '10px'
+  inner: '14px'
+  card: '20px'
 ---
 
 ## Overview
@@ -124,6 +127,14 @@ ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the t
   Young Serif. The Studio banner lettering still uses the old Auburn Stone font until the Studio
   kit gets the generator.
 - Body 18 px minimum, line length 60 to 72 characters.
+
+## Scale
+
+One scale, set 2026-10-24 after a measured pass over every route found about a hundred font sizes, five card
+corners and four section H2 sizes. Tokens at the top of `src/styles/auburn.css`; the list is in
+`docs/agent/design-tokens.md`. Text 13 / 15 / 18 / 19 to 21 px (tag, small, body, lead), buttons 17 px; card titles
+24 px, row titles 20 px, times and dates 28 to 36 px; corners 4 / 10 / 14 / 20 px and round pills; card padding 20 to
+28 px, cards 16 to 24 px apart.
 
 ## Elevation
 

@@ -66,88 +66,93 @@ const hasSanityBody = Boolean(page?.body);
       give a screen-reader user two identically named stops in the landmark
       list with no way to tell them apart. */}
   <section class="bg-background" aria-label="Policy text">
-    <div class="mx-auto max-w-3xl px-m py-section-lg">
-      {lastUpdated && (
-        <p class="mb-l text-xs tracking-eyebrow text-foreground/80 uppercase">
-          Last updated: {lastUpdated}
-        </p>
-      )}
+    {/* The text column sits on the page's left edge like every other band (rule 17). */}
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <div class="max-w-3xl">
+        {lastUpdated && (
+          <p class="mb-l text-xs tracking-eyebrow text-foreground/80 uppercase">
+            Last updated: {lastUpdated}
+          </p>
+        )}
 
-      {hasSanityBody ? (
-        <PortableTextStatic value={page!.body} className="prose-friendly" />
-      ) : (
-        /* The church's policy, kept in step with scripts/content/visitor-audit.mjs, which wrote the
+        {hasSanityBody ? (
+          <PortableTextStatic value={page!.body} className="prose-friendly" />
+        ) : (
+          /* The church's policy, kept in step with scripts/content/visitor-audit.mjs, which wrote the
            same words into the Studio (visitor audit, 2026-10-18). Measurement still branches on what
            this build really ships (analytics-config), so the page never claims what is not true. */
-        <div class="space-y-l leading-relaxed text-foreground">
-          <p class="text-foreground/80">
-            This page explains what the {site.name} website collects and why. The short version:
-            very little, and none of it is sold, shared for advertising or used to follow you around
-            the web.
-          </p>
+          <div class="space-y-l leading-relaxed text-foreground">
+            <p class="text-foreground/80">
+              This page explains what the {site.name} website collects and why. The short version:
+              very little, and none of it is sold, shared for advertising or used to follow you
+              around the web.
+            </p>
 
-          <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">Counting visits</h2>
-            {!hasGa && !hasCfAnalytics && (
+            <div>
+              <h2 class="mb-s font-display text-h3 text-foreground">Counting visits</h2>
+              {!hasGa && !hasCfAnalytics && (
+                <p class="text-foreground/80">
+                  This site runs no analytics at all. Visits are not counted, and nothing is stored
+                  on your device for measurement.
+                </p>
+              )}
+              {hasCfAnalytics && (
+                <p class="text-foreground/80">
+                  We count page visits with Cloudflare Web Analytics. It sets no cookies, does not
+                  identify you and does not track you from one site to another.
+                </p>
+              )}
+              {hasGa && (
+                <p class="mt-s text-foreground/80">
+                  Page visits are {hasCfAnalytics ? 'also ' : ''}measured with Google Analytics,
+                  which sets cookies (named <code>_ga</code> and <code>_ga_</code> followed by a
+                  stream id) so returning visits are recognised. It is not used for advertising. You
+                  can block these cookies in your browser and the site works the same.
+                </p>
+              )}
+            </div>
+
+            <div>
+              <h2 class="mb-s font-display text-h3 text-foreground">When you write to us</h2>
               <p class="text-foreground/80">
-                This site runs no analytics at all. Visits are not counted, and nothing is stored on
-                your device for measurement.
+                The contact form asks for your name, your email address and your message. Your
+                message is kept in the website's own database, hosted by Cloudflare, and a copy is
+                emailed to the church so someone can reply. We use it only to answer you, and we
+                never sell it or pass it on. If you would like a message you sent deleted,{' '}
+                <a href="/contact/" class="text-link underline underline-offset-2">
+                  ask us
+                </a>{' '}
+                and we will remove it.
               </p>
-            )}
-            {hasCfAnalytics && (
+            </div>
+
+            <div>
+              <h2 class="mb-s font-display text-h3 text-foreground">
+                Calendar, videos and Facebook
+              </h2>
               <p class="text-foreground/80">
-                We count page visits with Cloudflare Web Analytics. It sets no cookies, does not
-                identify you and does not track you from one site to another.
+                The events calendar comes from Church Trac, the system the church uses to keep its
+                calendar. Sermon videos come from YouTube. The page shows the video's picture from
+                YouTube's image server, and the player itself only loads when you press play, in
+                YouTube's privacy-enhanced mode. Links to the church's Facebook page take you to
+                Facebook. Once you play a video or visit Facebook, that company's own privacy policy
+                applies.
               </p>
-            )}
-            {hasGa && (
-              <p class="mt-s text-foreground/80">
-                Page visits are {hasCfAnalytics ? 'also ' : ''}measured with Google Analytics, which
-                sets cookies (named <code>_ga</code> and <code>_ga_</code> followed by a stream id)
-                so returning visits are recognised. It is not used for advertising. You can block
-                these cookies in your browser and the site works the same.
+            </div>
+
+            <div>
+              <h2 class="mb-s font-display text-h3 text-foreground">Questions</h2>
+              <p class="text-foreground/80">
+                If anything here is unclear, or you want to know what we hold about you,{' '}
+                <a href="/contact/" class="text-link underline underline-offset-2">
+                  send us a message
+                </a>
+                .
               </p>
-            )}
+            </div>
           </div>
-
-          <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">When you write to us</h2>
-            <p class="text-foreground/80">
-              The contact form asks for your name, your email address and your message. Your message
-              is kept in the website's own database, hosted by Cloudflare, and a copy is emailed to
-              the church so someone can reply. We use it only to answer you, and we never sell it or
-              pass it on. If you would like a message you sent deleted,{' '}
-              <a href="/contact/" class="text-link underline underline-offset-2">
-                ask us
-              </a>{' '}
-              and we will remove it.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">Calendar, videos and Facebook</h2>
-            <p class="text-foreground/80">
-              The events calendar comes from Church Trac, the system the church uses to keep its
-              calendar. Sermon videos come from YouTube. The page shows the video's picture from
-              YouTube's image server, and the player itself only loads when you press play, in
-              YouTube's privacy-enhanced mode. Links to the church's Facebook page take you to
-              Facebook. Once you play a video or visit Facebook, that company's own privacy policy
-              applies.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="mb-s font-display text-h3 text-foreground">Questions</h2>
-            <p class="text-foreground/80">
-              If anything here is unclear, or you want to know what we hold about you,{' '}
-              <a href="/contact/" class="text-link underline underline-offset-2">
-                send us a message
-              </a>
-              .
-            </p>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   </section>
   {/* Extra sections (2026-10-18): anything the editor adds from the section library, Studio:

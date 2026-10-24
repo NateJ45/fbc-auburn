@@ -37,7 +37,7 @@ const {
 const bg = surfaceClass(surface);
 const widthClass = width === 'narrow' ? 'max-w-prose' : 'max-w-content';
 const alignClass = align === 'center' ? 'text-center' : '';
-const proseClass = ['text-foreground/85 text-lg leading-relaxed', heading ? 'mt-l' : '', alignClass]
+const proseClass = ['text-foreground/85 text-lg leading-relaxed', heading ? 'mt-m' : '', alignClass]
   .filter(Boolean)
   .join(' ');
 ---

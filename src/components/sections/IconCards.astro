@@ -76,14 +76,14 @@ const CardTitle = heading ? 'h3' : 'h2';
   }
   .icon-cards__intro {
     margin-top: 0.8rem;
-    font-size: 1.2rem;
+    font-size: var(--fs-lead);
     line-height: 1.55;
     color: var(--muted-foreground);
   }
   .icon-cards {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2.2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3.5rem);
+    gap: var(--gap-open-row) var(--gap-open-col);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -106,7 +106,7 @@ const CardTitle = heading ? 'h3' : 'h2';
   .icon-card__photo {
     aspect-ratio: 16 / 11;
     overflow: hidden;
-    border-radius: 14px;
+    border-radius: var(--radius-inner);
     margin-bottom: 1.1rem;
     background: var(--muted);
   }
@@ -116,7 +116,7 @@ const CardTitle = heading ? 'h3' : 'h2';
     object-fit: cover;
   }
   .icon-card__title {
-    font-size: 1.6rem;
+    font-size: var(--fs-title);
     line-height: 1.2;
     color: var(--heading-solid);
     margin-bottom: 0.5rem;
@@ -127,7 +127,7 @@ const CardTitle = heading ? 'h3' : 'h2';
   }
   .icon-card__note {
     margin-top: 0.6rem;
-    font-size: 0.95rem;
+    font-size: var(--fs-small);
     color: var(--muted-foreground);
   }
   .icon-card__link {
