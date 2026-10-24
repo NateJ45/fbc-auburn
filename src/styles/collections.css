@@ -16,11 +16,14 @@
   line-height: 1.55;
   color: var(--muted-foreground);
 }
+/* An empty state is a quiet card (2026-10-24): it drew two rules of its own, three lines stacked
+   under the section's rule. */
 .c-empty {
   max-width: 40rem;
-  padding: clamp(1.25rem, 3vw, 1.75rem) 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  padding: var(--pad-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
   font-size: var(--fs-body);
   line-height: 1.6;
   color: var(--muted-foreground);
@@ -111,7 +114,7 @@
   border-radius: 999px;
   background: rgb(255 255 255 / 0.94);
   color: var(--auburn-red);
-  box-shadow: 0 10px 24px -12px rgb(15 25 38 / 0.6);
+  box-shadow: var(--shadow-button);
   transition: transform 0.2s ease;
 }
 .c-art__play svg {
@@ -461,7 +464,7 @@ a:focus-visible > .c-art .c-art__play,
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--background);
-  box-shadow: 0 24px 48px -36px rgb(22 38 61 / 0.45);
+  box-shadow: var(--shadow-card);
 }
 .c-feature__label {
   display: flex;

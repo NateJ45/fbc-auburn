@@ -34,8 +34,8 @@ const dateLabel = formatDate(entry.publishedAt);
 // Resting shadow matches the rest of the card grammar (ServiceCard,
 // ProjectCard, TestimonialCard) — soft warm 4px ambient depth.
 const wrapperClass = featured
-  ? 'card-lift card-lift-slow group block bg-card border border-border-soft rounded-[var(--radius-card)] overflow-hidden hover:border-primary/40 transition-colors lg:col-span-2 shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)]'
-  : 'card-lift card-lift-slow group block bg-card border border-border-soft rounded-[var(--radius-card)] overflow-hidden hover:border-primary/40 transition-colors shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)]';
+  ? 'card-lift card-lift-slow group block bg-card border border-border-soft rounded-[var(--radius-card)] overflow-hidden hover:border-primary/40 transition-colors lg:col-span-2 shadow-[var(--shadow-card)]'
+  : 'card-lift card-lift-slow group block bg-card border border-border-soft rounded-[var(--radius-card)] overflow-hidden hover:border-primary/40 transition-colors shadow-[var(--shadow-card)]';
 const aspectClass = featured ? 'aspect-[16/9]' : 'aspect-[4/3]';
 const titleClass = featured
   ? 'font-display text-h2 text-foreground'

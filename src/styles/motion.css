@@ -401,6 +401,8 @@ html.motion .baptism-motion #ripples {
   --t-hall: #f3ddd5;
   --t-kids: #e1e8f1;
   --t-door: #9a3b2a;
+  --t-drive: #ece6dc;
+  --t-sign: #7e2e20;
   --label: #4a5a73;
   --tag-bg: #16263d;
   --tag-fg: #ffffff;
@@ -508,6 +510,12 @@ html.motion .walk-steps li.active {
 }
 .walk-plan .r-door rect {
   fill: var(--t-door);
+}
+.walk-plan .r-drive rect {
+  fill: var(--t-drive);
+}
+.walk-plan .r-sign rect {
+  fill: var(--t-sign);
 }
 .walk-plan .room-label {
   font: 600 15px var(--font-body);

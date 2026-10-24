@@ -111,8 +111,10 @@ const notes = PRE_LAUNCH_NOTES ? notesFor(Astro.url.pathname) : [];
     border-radius: 3px;
   }
   .fj {
+    /* Bottom right and compact (2026-10-24): at the bottom left it sat over the page's left-edge
+       text (the Watch intro, the Give card, the Contact form's labels). */
     position: fixed;
-    left: 12px;
+    right: 12px;
     bottom: 12px;
     z-index: 60;
     max-width: min(420px, calc(100vw - 24px));
@@ -123,12 +125,12 @@ const notes = PRE_LAUNCH_NOTES ? notesFor(Astro.url.pathname) : [];
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    padding: 8px 16px;
+    padding: 6px 14px;
     border: 2px solid #16263d;
     border-radius: 999px;
     background: #ffe46b;
     box-shadow: 0 8px 24px -10px rgb(22 38 61 / 0.5);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     list-style: none;
@@ -168,6 +170,17 @@ const notes = PRE_LAUNCH_NOTES ? notesFor(Astro.url.pathname) : [];
   @media (max-width: 767px) {
     .fj {
       bottom: 84px;
+    }
+  }
+  /* Room under the footer's bottom bar while the pill is shown, so it never sits over the bar's
+     Privacy policy and Back to top links at the very end of the page (2026-10-24: it did once it
+     moved to the bottom right). */
+  body:has(.fj) .sf-bottom {
+    padding-bottom: 64px;
+  }
+  @media (max-width: 767px) {
+    body:has(.fj) .sf-bottom {
+      padding-bottom: 140px;
     }
   }
   @media print {

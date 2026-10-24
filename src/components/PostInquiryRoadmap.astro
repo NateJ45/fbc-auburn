@@ -48,7 +48,7 @@ if (validSteps.length === 0) return null;
       and resting shadow so it reads as part of the design system. */}
   <ol class="mt-l space-y-m" role="list">
     {validSteps.map((step, idx) => (
-      <li class="card-lift flex gap-m overflow-hidden rounded-md border border-border-soft bg-card shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)]">
+      <li class="card-lift flex gap-m overflow-hidden rounded-md border border-border-soft bg-card shadow-[var(--shadow-card)]">
         {/* Bronze brand stripe on the left edge (vertical orientation for list items). */}
         <div class="w-0.5 shrink-0 bg-primary" aria-hidden="true" />
 
