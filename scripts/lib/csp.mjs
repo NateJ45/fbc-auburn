@@ -1,5 +1,6 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// csp.mjs - the pieces of the site's script-src policy (2026-10-24)
+// csp.mjs - the pieces of the site's script-src policy (PORTS.md card 153)
 // =============================================================================
 // Pure helpers for scripts/build-csp.mjs, tested in csp.test.mjs. They read
 // built HTML and answer: which inline scripts run (hashed), which external
