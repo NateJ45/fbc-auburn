@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-24: Dependabot sweep, wrangler to 4.151.3._
+
+**Decision.** Ten Dependabot PRs merged: eight single-package bumps (#104, #103, #99, #11, #10, #9, #8, #2), the
+17-package minor-and-patch group (#56, red only because its CI ran while `docs/agent/studio-kit.md` had drifted from the
+starter; green once updated from main), and #16, which moved `wrangler` off the `~4.129.0` pin to `~4.151.3` to take the
+undici 7.30.1 security fix. The group raises the Astro integrations' minimum Node to 22.22; CI and deploy use the latest
+22.x, so nothing changed there. The first production deploy on wrangler 4.151.3 succeeded with no config warnings and the
+static pages, `/preview/`, `/private/<slug>/` and `/studio` all answered. Rule 8's pin text in
+`.claude/rules/dependencies.md` is updated; the starter and the sibling sites stay on 4.129 until moved on purpose.
+
 _2026-10-24: the rest of the hppres.org audit._
 
 **Decision.** Everything else worth taking from hppres.org, in Auburn's own shapes: "where next" rows at the top of the

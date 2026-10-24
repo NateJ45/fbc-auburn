@@ -743,8 +743,9 @@ Drop it during a slop sweep (card 16) if it is still unused then.
 ### 4. The adapter and wrangler pins are tighter than the bug requires
 
 `@astrojs/cloudflare` is pinned exact at 14.4.0 (with `astro` ^7.4.0 since 2026-10-17, card 97)
-and `wrangler` at `~4.129.0` (moved from 14.2.4 and `~4.110.0` on 2026-10-13, card 94, with a
-real `wrangler deploy`). Verified that 14.3.4 and 14.4.0 do **not** emit `legacy_env` into the
+and `wrangler` at `~4.151.3` (from `~4.129.0` on 2026-10-24 through Dependabot PR #16, the
+undici security fix, checked by a real production deploy; `~4.129.0` itself came from 14.2.4
+and `~4.110.0` on 2026-10-13, card 94, with a real `wrangler deploy`). Verified that 14.3.4 and 14.4.0 do **not** emit `legacy_env` into the
 generated config, so card 14's
 original failure does not reproduce here; the pin holds the pair together because the
 adapter peers `wrangler ^4.125.0` and every wrangler from 4.126 bundles a miniflare 5 alpha.
@@ -796,9 +797,11 @@ not through the Studio code the browser loads. The three roots:
 
 **What would actually change this.** Upstream releases, nothing else. The Sanity set moves
 as one planned set (phase 2 was taken on 2026-10-17, PORTS.md card 103), which is a
-deliberate piece of work and not an audit fix. `wrangler` and `sharp` clear when a wrangler
-release inside the `~4.129.0` line picks up a patched `sharp` and `undici`, or when rule 8's
-pin is revisited on purpose. Lighthouse CI clears when `@lhci/cli` ships a 0.15.x that drops
+deliberate piece of work and not an audit fix. `undici` moved to the patched 7.30.1 on
+2026-10-24 with wrangler 4.151.3 (PR #16); `sharp` clears when a wrangler release inside the
+`~4.151` line picks up a patched one. Several of the others (`proxy-addr`, `compression`,
+`postcss-selector-parser`, `body-parser`, `@modelcontextprotocol/sdk`) were taken from
+Dependabot PRs the same day, so rerun `npm audit` before trusting the counts here. Lighthouse CI clears when `@lhci/cli` ships a 0.15.x that drops
 the old `puppeteer-core` and `tmp`.
 
 **To check whether anything has changed since this was written:** run `npm audit`. If the
