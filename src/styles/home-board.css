@@ -96,7 +96,10 @@
       rgb(15 34 56 / 0.55) 42%,
       rgb(15 34 56 / 0.15) 75%
     ),
-    linear-gradient(to right, rgb(15 34 56 / 0.7) 0%, rgb(15 34 56 / 0) 62%);
+    linear-gradient(to right, rgb(15 34 56 / 0.7) 0%, rgb(15 34 56 / 0) 62%),
+    /* An even wash under both, so the small name line over the upper photo holds 4.5:1 on a
+       bright picture too (contrast.spec.ts, 2026-10-23). */
+    rgb(15 34 56 / 0.28);
 }
 .hb-hero[data-photo='no'] .hb-photo__shade {
   display: none;
@@ -125,7 +128,7 @@
 }
 .hb-name__town {
   font-weight: 600;
-  color: #dbe3ee;
+  color: #ffffff;
 }
 .hb-h1 {
   margin: 0 0 18px;
@@ -194,7 +197,10 @@
   letter-spacing: 0.04em;
   color: #ffffff;
 }
-.hb-hero__sill {
+/* Under the hero's content (layer 2), so the hanging This Sunday card covers it. Scoped to the hero
+   so it outranks the general .sill rule in auburn.css (also layer 2, and loaded later), which let
+   the bricks paint across the card's lower lines (contrast.spec.ts, 2026-10-23). */
+.hb-hero .hb-hero__sill {
   position: relative;
   z-index: 1;
 }

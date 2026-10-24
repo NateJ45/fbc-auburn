@@ -60,7 +60,11 @@ const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
     )}
     <div class="hb-photo__shade"></div>
   </div>
-  {isStandIn(photo) && <p class="hb-standin">Stand-in photograph</p>}
+  {isStandIn(photo) && (
+    <p class="hb-standin">
+      <span>Stand-in photograph</span>
+    </p>
+  )}
 
   <div class="hb-wrap hb-hero__inner">
     <div class="hb-hero__copy">
