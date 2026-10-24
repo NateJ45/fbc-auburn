@@ -68,7 +68,7 @@ export function initFlow() {
   // ---- 1. Pick the units -----------------------------------------------------------------
   // An element is a unit only if no ancestor already is, so a card fades as one piece and the
   // words inside it do not fade again.
-  const units: { el: HTMLElement; kind: 'lines' | 'up' | 'photo' | 'side' }[] = [];
+  const units: { el: HTMLElement; kind: 'lines' | 'lay' | 'up' | 'photo' | 'side' }[] = [];
   const taken = new Set<Element>();
   const isInsideTaken = (el: Element) => {
     for (let p = el.parentElement; p && p !== main; p = p.parentElement) {
@@ -82,7 +82,9 @@ export function initFlow() {
     // Hidden things (a closed accordion's answer, an empty slot) have nothing to show.
     if (!el.getClientRects().length) continue;
     let kind: (typeof units)[number]['kind'] = 'up';
-    if (el.matches(LINE_UNITS)) kind = 'lines';
+    // A brick-letter title is laid brick by brick rather than raised (layPlan below).
+    if (el.matches('.stone-mosaic') && el.querySelector('.bl-c')) kind = 'lay';
+    else if (el.matches(LINE_UNITS)) kind = 'lines';
     else if (el.matches('img, picture, .shot') && clipsChild(el)) kind = 'photo';
     units.push({ el, kind });
     taken.add(el);
@@ -105,6 +107,8 @@ export function initFlow() {
       el.classList.add('flow-par');
     }
   }
+  const layUnits = units.filter((u) => u.kind === 'lay').map((u) => u.el);
+  layUnits.forEach(layPlan);
   // The first screen's hold (flow.css) can let go now: everything is armed.
   html.classList.add('flow-armed');
 
@@ -112,7 +116,15 @@ export function initFlow() {
   // in the layout) so the DOM never shifts under a reader, or under a test measuring the page, a
   // second after it has settled; the spans come out when the width changes (below).
   const land = (el: HTMLElement) => {
-    el.classList.remove('flow', 'flow--lines', 'flow--up', 'flow--photo', 'flow--side', 'flow-go');
+    el.classList.remove(
+      'flow',
+      'flow--lines',
+      'flow--lay',
+      'flow--up',
+      'flow--photo',
+      'flow--side',
+      'flow-go',
+    );
     el.style.removeProperty('--flow-delay');
   };
 
@@ -122,7 +134,9 @@ export function initFlow() {
     // Take the classes off once the last piece has landed. A timer, not animationend, so a tab in
     // the background (where animations may not run) still finishes.
     const lines = el.querySelectorAll('.flow-line__in').length;
-    const total = delayMs + (lines ? (lines - 1) * LINE_STAGGER_MS + 1250 : 1400);
+    const laid = Number(el.dataset.layMs ?? 0);
+    const total =
+      delayMs + (laid ? laid + 250 : lines ? (lines - 1) * LINE_STAGGER_MS + 1250 : 1400);
     const t = window.setTimeout(() => land(el), total + 80);
     disposers.push(() => window.clearTimeout(t));
   };
@@ -181,6 +195,7 @@ export function initFlow() {
     lastWidth = innerWidth;
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => {
+      for (const el of layUnits) if (!el.classList.contains('flow-go')) layPlan(el);
       for (const [el, restore] of [...lineRestorers]) {
         restore();
         lineRestorers.delete(el);
@@ -240,6 +255,41 @@ export function initFlow() {
     teardown = null;
   };
   teardown = stop;
+}
+
+// ---- Laying a brick-letter title ---------------------------------------------------------------
+// StoneHeading draws each word as one SVG whose bricks are grouped by course (bl-c, with --o its
+// turn and --b its brick count; scripts/lib/brick-letters.mjs). Words that sit on one line share a
+// bond, so a course runs across the whole line: each word learns its place on the line (--lw of
+// --ln) and the line its place in the title (--line), and flow.css times every course from that.
+// Each line is laid bottom course first in --tline; a longer title gets a little less per line
+// so the whole thing never drags. Only custom properties change: nothing moves in the layout.
+const LAY_TOTAL_MS = 1250;
+const LAY_LINE_MIN_MS = 800;
+
+function layPlan(el: HTMLElement) {
+  const words = [...el.querySelectorAll<SVGSVGElement>('svg.bl-word')];
+  const lines: SVGSVGElement[][] = [];
+  let bottom = Number.NEGATIVE_INFINITY;
+  for (const w of words) {
+    const r = w.getBoundingClientRect();
+    if (!lines.length || r.top >= bottom - 2) {
+      lines.push([]);
+      bottom = Number.NEGATIVE_INFINITY;
+    }
+    lines[lines.length - 1].push(w);
+    bottom = Math.max(bottom, r.bottom);
+  }
+  const tline = Math.max(LAY_LINE_MIN_MS, LAY_TOTAL_MS / Math.max(1, lines.length));
+  el.style.setProperty('--tline', `${Math.round(tline)}ms`);
+  el.dataset.layMs = String(Math.round(tline * lines.length));
+  lines.forEach((line, li) =>
+    line.forEach((w, k) => {
+      w.style.setProperty('--line', String(li));
+      w.style.setProperty('--lw', String(k));
+      w.style.setProperty('--ln', String(line.length));
+    }),
+  );
 }
 
 /** True when the element's parent crops it, so a zoom stays inside its frame. */

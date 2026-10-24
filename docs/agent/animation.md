@@ -164,6 +164,29 @@ itself after 1.6s, so a page whose script fails is never left blank. Only `opaci
 `scale` and (for the parallax) `transform` move. The starter's `[data-reveal]`,
 `[data-stagger-grid]` and `.img-curtain` stand down once the flow layer has armed a page.
 
+**Brick, laid by brick (2026-10-24).** The brick pieces are laid the way a mason builds:
+bottom course first, brick by brick along it, back the other way on the next course, each brick
+set down with a small tap (`brick-set`: drops from 70% of its height above, lands 5% low and
+squashed, settles).
+
+- Brick-letter titles (`StoneHeading` mosaic) are flow unit kind `lay`, not `lines`. The
+  generator (`scripts/lib/brick-letters.mjs`, `paintCourses`) groups each word's bricks by
+  course: `<g class="bl-c">` with `--o` (its turn, bottom course first; courses are numbered
+  from the baseline so every word on a line shares them) and `--b` (its brick count); odd
+  courses carry `bl-c--r` and run right to left. About 200 bricks a word made one element per
+  brick too heavy, so a course is uncovered a brick's length at a time by a stepped clip
+  (`steps(var(--b))`). `layPlan()` in `flow.ts` tells each word its line and place on it, and
+  the title its time per line (`--tline`, 1.25s shared, at least 0.8s a line). A course takes four
+  slots to run the line and the next starts one slot later, so courses rack back like a wall
+  going up. A faint copy of the letters (`.bl-ghost`, `opacity="0"` at rest) shows while it is
+  laid, like a chalk line. The share card (unit `px`) keeps the flat markup.
+- The sill (`Sill.astro`) and the stepped section markers (`SectionLabel`, `BoardRule`, which
+  is now a flow unit through `data-flow-item`) have one path per brick, so each brick gets the
+  tap in turn; `src/lib/brick-lay.ts` works out the turns from the paths (a face and its rim
+  share one).
+- The clip on the letters is the one place this layer animates something other than a transform
+  or opacity: it steps a handful of times per course and never touches layout.
+
 **Rule change.** The stone path's "one moving moment per page" (below) still holds for the stone
 drawings (the mark build, the baptism ring, the walk). The flow layer is the page's general
 movement and runs everywhere.

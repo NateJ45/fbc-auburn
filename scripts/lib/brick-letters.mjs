@@ -128,7 +128,7 @@ function bricksIn(x0, x1, y0, y1, g, seen, tones, seed, ends = null) {
         if (x + w > rr) w = rr - x;
         if (w < g.m * 2) continue;
       }
-      out.push({ x, y: r * g.H + dy, w, h: g.H - g.m - dy, fill });
+      out.push({ x, y: r * g.H + dy, w, h: g.H - g.m - dy, fill, r });
     }
   }
   return out;
@@ -153,6 +153,30 @@ function paint(bricks, edgeF) {
   let s = '';
   for (const [fill, d] of faces) s += `<path fill="${fill}" d="${d}"/>`;
   for (const [fill, d] of bands) s += `<path fill="${fill}" d="${d}"/>`;
+  return s;
+}
+
+/**
+ * Treatment A's bricks, one group per course (2026-10-24, the laying animation): each
+ * <g class="bl-c"> holds one course's faces and bands, with --o (its turn, bottom course first)
+ * and --b (how many bricks it has), so src/styles/flow.css can lay the wall course by course and
+ * brick by brick along each course. Odd courses carry bl-c--r and are laid right to left, the way
+ * a mason works back along the next course. Inert without that CSS: the picture is unchanged.
+ */
+function paintCourses(bricks, edgeF) {
+  const rows = new Map();
+  for (const b of bricks) {
+    if (!rows.has(b.r)) rows.set(b.r, []);
+    rows.get(b.r).push(b);
+  }
+  let s = '';
+  for (const r of [...rows.keys()].sort((a, b) => b - a)) {
+    const row = rows.get(r);
+    // Courses are anchored to the baseline (r = 0 sits on it), so every word of a line shares
+    // the numbering; r = 4 is the deepest descender course.
+    const o = Math.max(0, 4 - r);
+    s += `<g class="bl-c${r & 1 ? ' bl-c--r' : ''}" style="--o:${o};--b:${row.length}">${paint(row, edgeF)}</g>`;
+  }
   return s;
 }
 
@@ -193,6 +217,9 @@ export function brickWord(text, o = {}) {
   } = o;
   const { glyphs, width } = layout(text, size, tracking);
   if (!glyphs.length) return '';
+  // Pages (unit 'em') get the course groups the laying animation needs; the share card (unit
+  // 'px', rendered to a picture) keeps the flat markup.
+  const lay = unit === 'em';
   const g = geometry(size, course);
   const s = size / UPM;
   const pad = size * 0.03;
@@ -225,7 +252,7 @@ export function brickWord(text, o = {}) {
     });
   const layer = (lid, set, d) =>
     d
-      ? `<defs><clipPath id="${lid}"><path d="${d}"/></clipPath></defs>${flecks(lid)}<g clip-path="url(#${lid})"><g mask="url(#${lid}-m)">${paint(bricksIn(fx0, fx1, top, bottom, g, null, set, seed), edge)}</g></g>`
+      ? `<defs><clipPath id="${lid}"><path id="${lid}-o" d="${d}"/></clipPath></defs>${flecks(lid)}${lay ? `<use href="#${lid}-o" class="bl-ghost" fill="${set[0]}" opacity="0"/>` : ''}<g clip-path="url(#${lid})"><g mask="url(#${lid}-m)">${(lay ? paintCourses : paint)(bricksIn(fx0, fx1, top, bottom, g, null, set, seed), edge)}</g></g>`
       : '';
   const body =
     layer(
