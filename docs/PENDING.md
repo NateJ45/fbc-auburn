@@ -133,6 +133,16 @@ domain and their mail.
 
 ---
 
+### 1x. The preview for Jacob (2026-10-23)
+
+**Blocker: Jacob's answers.** Every page carries marked placeholder copy ("[Placeholder: ...]" drafts and
+"[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
+(`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Real photos from the church's Facebook page
+are in place where they fit, pending his OK; the Home hero keeps a labelled stand-in until he sends a
+Sunday photo of people. At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, and grep the
+dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
+Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
+
 ### 1x. Logo: the linocut print follow-ups (wired in 2026-10-23)
 
 **Blocker: the church has not seen it yet.** The mark is the linocut print (2026-10-23, replacing

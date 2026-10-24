@@ -55,122 +55,185 @@
 
 /* Section labels (.hb-label, .hb-marker) live in board.css: the inner pages use them too. */
 
-/* ---- Hero: the Auburn-wide lockup ---------------------------------------------------------- */
+/* ---- Hero: the photograph with the welcome over it (2026-10-23) --------------------------------
+   The photo fills the hero; a navy shade, darkest at the lower left where the words sit, keeps the
+   white text above 4.5:1 on any picture. The This Sunday card sits at the right from 961px and
+   follows the words below that. A printed brick sill runs along the foot. */
 .hb-hero {
-  padding: 12px 0 96px;
-  overflow-x: clip; /* the path runs in from past the left edge */
-}
-.hb-masthead {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: clamp(20px, 3vw, 44px);
-  align-items: end;
-  margin: 0 0 32px;
-  padding-top: 26px;
-  border-top: 1px solid var(--hb-line);
-}
-/* The mark is the full linocut print (2026-10-23). Its cross is enclosed in brick on every side, so it
-   reads on the white hero as drawn: no panel behind it (the old mark's cross ran to the edge and needed
-   one). */
-.hb-hero-mark {
-  grid-row: 1 / span 2;
-  align-self: center;
-  width: clamp(150px, 17vw, 250px);
-  height: auto;
-}
-.hb-h1 {
-  display: contents;
-  margin: 0;
-  font-weight: 400;
-}
-.hb-eyebrow {
-  grid-column: 2;
-  grid-row: 1;
-  display: block;
-  font-family: var(--font-body);
-  font-size: clamp(15px, 1.25vw, 18px);
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--auburn-deep);
-}
-/* The place line, top right of the masthead: road, town, state (from Church facts). */
-.hb-place {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: end;
-  align-self: center;
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--hb-body);
-}
-.hb-word {
-  grid-column: 2;
-  grid-row: 2;
-  display: block;
-  margin: 0.06em 0 0 -0.04em;
-  /* The brick word (an inline SVG sized in em, scripts/lib/brick-letters.mjs): the font-size here
-     is its size. */
-  font-size: calc(clamp(70px, 13.2vw, 200px) * var(--hb-word-scale, 1));
-  line-height: 0.84;
-  letter-spacing: -0.035em;
-}
-
-/* ---- Lead row: the welcome beside the This Sunday card -------------------------------------- */
-.hb-lead {
   position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: 64px;
-  align-items: start;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: min(86vh, 780px);
+  padding: 120px 0 0;
+  color: #ffffff;
+  background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
-.hb-welcome {
-  margin: 0 0 18px;
-  font-family: var(--font-display);
-  font-size: clamp(36px, 4.2vw, 60px);
-  line-height: 1.04;
-  letter-spacing: -0.01em;
-  color: var(--auburn-red);
+.hb-photo,
+.hb-photo__shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
 }
-/* The phone fact line (SundayFacts.astro): hidden at desktop, where the header note says it. */
-.hb-facts {
+.hb-photo {
+  overflow: hidden;
+}
+.hb-photo picture,
+.hb-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+.hb-photo__shade {
+  z-index: 0;
+  background:
+    linear-gradient(
+      to top,
+      rgb(15 34 56 / 0.92) 0%,
+      rgb(15 34 56 / 0.55) 42%,
+      rgb(15 34 56 / 0.15) 75%
+    ),
+    linear-gradient(to right, rgb(15 34 56 / 0.7) 0%, rgb(15 34 56 / 0) 62%);
+}
+.hb-hero[data-photo='no'] .hb-photo__shade {
   display: none;
 }
+.hb-hero__inner {
+  position: relative;
+  z-index: 2; /* above the sill, so the hanging card covers it */
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 56px;
+  align-items: end;
+  padding-bottom: 64px;
+}
+.hb-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 0 0 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+.hb-name__town {
+  font-weight: 600;
+  color: #dbe3ee;
+}
+.hb-h1 {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: #ffffff;
+  text-shadow: 0 2px 24px rgb(15 34 56 / 0.35);
+}
 .hb-intro {
-  max-width: 31rem;
-  margin: 0 0 30px;
+  max-width: 34rem;
+  margin: 0 0 18px;
   font-size: 21px;
-  line-height: 1.55;
-  color: var(--hb-body);
+  line-height: 1.5;
+  color: #f4efe7;
 }
 .hb-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px 16px;
+  gap: 12px 14px;
 }
 .hb-actions .btn-auburn {
   min-height: 52px;
   padding: 10px 26px;
 }
-.hb-textlink {
+/* The second action: a white outline button on the photo. */
+.hb-ghost {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 52px;
-  padding: 10px 0;
+  padding: 10px 24px;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
   font-weight: 600;
-  color: var(--link);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  color: #ffffff;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
-.hb-textlink:hover {
+.hb-ghost:hover {
+  background: #ffffff;
   color: var(--hb-ink);
+}
+.hb-ghost:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+/* The stand-in label, top right of the photo, until the church's own picture replaces it. */
+.hb-standin {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgb(15 34 56 / 0.72);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+}
+.hb-hero__sill {
+  position: relative;
+  z-index: 1;
+}
+/* Breaking the grid (2026-10-23): from 961px the This Sunday card hangs past the hero's foot, over
+   the brick sill and into the next section, like a door standing on its step. The section after
+   the hero keeps its heading clear of it. */
+@media (min-width: 961px) {
+  .hb-hero__card {
+    position: relative;
+    z-index: 3;
+    margin-bottom: -230px;
+  }
+  .hb-hero + .hb-section,
+  .hb-hero + * + .hb-section {
+    padding-top: 40px;
+  }
+  .hb-walk > .hb-wrap > :first-child,
+  .hb-walk h2 {
+    max-width: 52%;
+  }
+}
+
+/* "A place to belong" (2026-10-23): a band of the printed navy brick starts partway down, so the
+   photos and the welcome note straddle its top edge. */
+.hb-belong {
+  position: relative;
+  isolation: isolate;
+  padding-bottom: 72px;
+}
+.hb-belong::before {
+  content: '';
+  position: absolute;
+  inset: 220px 0 0;
+  z-index: -1;
+  background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+}
+.hb-belong .hb-ph,
+.hb-belong .hb-note {
+  box-shadow: 0 24px 48px -28px rgb(15 34 56 / 0.6);
 }
 
 /* ---- This Sunday card ------------------------------------------------------------------------ */
@@ -274,64 +337,6 @@
   text-underline-offset: 3px;
 }
 
-/* ---- The stone path ------------------------------------------------------------------------ */
-/* Desktop: drawn at its own size (960x240, never scaled, so the stones keep the mark's
-   proportions) with its right edge on the This Sunday card's left side, so the red end
-   meets the card. The card is the right 5/12 of the lead row after a 64px gap, so its width is
-   (100% - 64px) * 5/12. The path runs out past the left edge (the hero clips it) and fades in.
-   The welcome column keeps room under its buttons so the path never meets text. */
-.hb-lead > :first-child {
-  padding-bottom: 170px;
-}
-.hb-path-wide {
-  position: absolute;
-  z-index: 1;
-  right: calc((100% - 64px) * 5 / 12 - 16px);
-  /* The brick wall's courses fill the bottom 108px of the 240px box, so the box sits higher than
-     the old pebble curve did: the top course tucks under the card's lower edge. */
-  bottom: -20px;
-  display: block;
-  width: 960px;
-  max-width: none;
-  height: 240px;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%);
-  mask-image: linear-gradient(to right, transparent, #000 6%);
-}
-.hb-path-phone {
-  display: none;
-}
-.hb-stone {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-/* Hidden starting state ONLY under html.motion and only once the page script arms the path,
-   so no JS, ?still and reduced motion all show the finished path. */
-html.motion .hb-path.is-armed:not(.is-laid) .hb-stone {
-  opacity: 0;
-}
-/* Bricks are laid, not scattered (2026-10-21): each one settles straight down into its course,
-   bottom course first and left to right (the generated order), 24ms apart. */
-html.motion .hb-path.is-laid .hb-stone {
-  animation: hb-lay 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: calc(var(--i) * 24ms);
-}
-@keyframes hb-lay {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hb-stone {
-    animation: none !important;
-    opacity: 1 !important;
-  }
-}
-
 /* ---- Bands: pale mosaic texture, white panels ------------------------------------------------ */
 /* One rhythm between sections (Home audit, 2026-10-17: the gaps had stacked to 160 to 250px). */
 .hb-band {
@@ -341,10 +346,11 @@ html.motion .hb-path.is-laid .hb-stone {
    and the stone icons carry the bands. */
 .hb-band--sky {
   margin: 0 0 40px;
-  background-color: #e9eef5;
+  background: #e9eef5 url('/textures/tile-sky.svg') 0 0 / 420px 420px;
 }
+/* Printed brick in the band's own warm tint (2026-10-23), so the white cards sit on a wall. */
 .hb-band--green {
-  background-color: #f1e8e2;
+  background: #f1e8e2 url('/textures/tile-warm.svg') 0 0 / 420px 420px;
 }
 
 /* Through the week: a three-column board on a white panel. */
@@ -823,73 +829,43 @@ html.motion .hb-path.is-laid .hb-stone {
   .hb {
     --hb-gutter: 20px;
   }
-  .hb-lead,
+  .hb-hero__inner,
   .hb-pair {
     grid-template-columns: minmax(0, 1fr);
     gap: 36px;
   }
-  .hb-path-wide {
-    display: none;
-  }
+  /* The photo hero on a phone: the words on the photo (it fills the first screen), then the This
+     Sunday card on the navy ground under it, then the sill. */
   .hb-hero {
+    min-height: 0;
+    padding-top: 0;
+  }
+  .hb-hero .hb-photo,
+  .hb-hero .hb-photo__shade {
+    bottom: auto;
+    height: min(78vh, 620px);
+  }
+  .hb-hero__inner {
+    gap: 28px;
     padding-bottom: 32px;
   }
-  .hb-lead > :first-child {
-    padding-bottom: 0;
-  }
-  /* The card follows the welcome directly (time and place on the first phone screen); the path
-     comes after it, 24px clear above and below, full bleed past the gutter. */
-  .hb-lead {
-    gap: 28px;
-  }
-  .hb-facts {
+  .hb-hero__copy {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    margin: -4px 0 18px;
-    font-size: 16px;
-    line-height: 1.4;
+    justify-content: flex-end;
+    min-height: min(78vh, 620px);
+    padding: 96px 0 28px;
   }
-  .hb-facts__times {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--auburn-deep);
+  .hb-photo__shade {
+    background: linear-gradient(
+      to top,
+      rgb(15 34 56 / 0.95) 0%,
+      rgb(15 34 56 / 0.6) 45%,
+      rgb(15 34 56 / 0.2) 80%
+    );
   }
-  .hb-facts__where {
-    color: var(--hb-body);
-  }
-  .hb-facts a {
-    font-weight: 600;
-  }
-  .hb-path-phone {
-    display: block;
-    width: calc(100% + 2 * var(--hb-gutter));
-    max-width: none;
-    height: auto;
-    margin: -4px calc(-1 * var(--hb-gutter)) 0;
-  }
-  .hb-masthead {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 10px;
-    align-items: center;
-  }
-  .hb-hero-mark {
-    display: none;
-  }
-  .hb-eyebrow,
-  .hb-word,
-  .hb-place {
-    grid-column: 1;
-  }
-  /* On phones the fact line under the welcome names the road a moment later, so the place line
-     would only repeat it. */
-  .hb-place {
-    display: none;
-  }
-  .hb-word {
-    font-size: calc(21vw * var(--hb-word-scale, 1));
+  .hb-intro {
+    font-size: 18px;
   }
   .hb-band {
     padding: 48px 0 56px;
@@ -934,6 +910,12 @@ html.motion .hb-path.is-laid .hb-stone {
     height: 48px;
   }
 }
+/* Phones: the navy band behind "A place to belong" starts under the first photo. */
+@media (max-width: 960px) {
+  .hb-belong::before {
+    inset: 160px 0 0;
+  }
+}
 /* Phones: the two hero buttons stack full width, the usual pattern on the best church sites. */
 @media (max-width: 520px) {
   .hb-actions {
@@ -943,8 +925,8 @@ html.motion .hb-path.is-laid .hb-stone {
   .hb-actions .btn-auburn {
     width: 100%;
   }
-  .hb-textlink {
-    justify-content: center;
+  .hb-ghost {
+    width: 100%;
   }
 }
 @media (max-width: 420px) {

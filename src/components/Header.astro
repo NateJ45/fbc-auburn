@@ -15,11 +15,11 @@
 // even before Sanity content is wired up.
 //
 // FBC Auburn, board E (2026-10-17). The lockup is 84px tall from 1280px, 64px below that and on the
-// compact bar once the page scrolls (data-scrolled; CSS in src/styles/auburn.css). On HOME from 1280px the logo
-// slot first shows a Sunday note (the Sunday times, the address and Directions, all derived from
-// Site settings > Church facts) while the hero's own big lockup is on screen, and swaps to the logo
-// once that lockup passes under the header (data-past). Home has no eyebrow strip and the bar never
-// hides on scroll there. Phones and inner pages always show the logo.
+// compact bar once the page scrolls (data-scrolled; CSS in src/styles/auburn.css). HOME has no
+// eyebrow strip and the bar never hides on scroll there. Since the photo hero (2026-10-23) Home has
+// no big lockup of its own, so the header renders data-past from the start and shows the logo, as on
+// every page; the older Sunday-note swap (the logo slot showing the times until a hero lockup passed
+// under the bar) still works for a Home that brings back a .hb-masthead.
 
 import { getImage } from 'astro:assets';
 import { site } from '@/data/site';
@@ -194,7 +194,11 @@ function isGroupActive(items: { href: string }[]) {
 }
 ---
 
-<header class="site-header bg-background" data-home={isHome ? '' : undefined}>
+<header
+  class="site-header bg-background"
+  data-home={isHome ? '' : undefined}
+  data-past={isHome ? '' : undefined}
+>
   {/* Brand accent stripe — same visual signature used at the top of the
       mobile menu drawer. Visible on every viewport. */}
   <div class="site-header__stripe h-1 bg-primary" aria-hidden="true"></div>
@@ -687,9 +691,11 @@ function isGroupActive(items: { href: string }[]) {
     header.toggleAttribute('data-scrolled', window.scrollY > 8);
     if (!header.hasAttribute('data-home')) return;
     const masthead = document.querySelector<HTMLElement>('.hb-masthead');
+    // Home opens on a photo hero since 2026-10-23, with no big lockup of its own, so the bar shows
+    // the logo from the start (data-past is also rendered on the server, so nothing flashes).
     const past = masthead
       ? masthead.getBoundingClientRect().bottom < header.getBoundingClientRect().height
-      : window.scrollY > 420;
+      : true;
     header.toggleAttribute('data-past', past);
   };
   const hw = window as typeof window & { __headerStateBound?: boolean };

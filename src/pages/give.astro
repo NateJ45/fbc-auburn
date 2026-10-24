@@ -17,6 +17,7 @@ import { getSiteSettings } from '@/lib/queries';
 import { getChurchFacts } from '@/lib/church-data';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
+import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
 
 const [siteSettings, facts] = await Promise.all([getSiteSettings(), getChurchFacts()]);
 const worship = facts.serviceTimes.filter((s) => s.dayIndex === 0).at(-1) ?? null;
@@ -79,7 +80,12 @@ const schemas = [
       {address && (
         <div class="give-way">
           <h3 class="give-way__title">By mail</h3>
-          <p>Make a check out to {site.name} and mail it to:</p>
+          <p>
+            Make a check out to {site.name}{' '}
+            {/* Pre-launch: the payee is our guess until Jacob confirms it (src/data/for-jacob.ts). */}
+            {PRE_LAUNCH_NOTES && '[Jacob: is this the name checks should be made out to?] '}
+            and mail it to:
+          </p>
           <address class="give-way__address">
             {site.name}
             <br />
