@@ -19,6 +19,7 @@
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { ArrowDownIcon } from '@sanity/icons/ArrowDown';
 import { PinIcon } from '@sanity/icons/Pin';
+import { checkLinkBox, isUnknownToken, linkTokenOf } from '../../lib/church-links.ts';
 
 /**
  * The eight stone icons in src/assets/brand/stone-icon-*.svg. The field that picks one is named
@@ -38,7 +39,10 @@ export const STONE_ICONS = [
 
 export type StoneIconName = (typeof STONE_ICONS)[number]['value'];
 
-/** An address field: a site path starting with / or a full https:// URL. */
+/**
+ * An address field: a site path starting with /, a full https:// URL, or a Church systems
+ * placeholder such as {connect} (2026-10-24, docs/agent/church-trac.md).
+ */
 const linkHrefField = (name: string, title: string, description: string) =>
   defineField({
     name,
@@ -48,9 +52,10 @@ const linkHrefField = (name: string, title: string, description: string) =>
     validation: (R) =>
       R.custom((value) => {
         if (!value) return true;
+        if (linkTokenOf(value) || isUnknownToken(value)) return checkLinkBox(value);
         return /^(\/|https:\/\/)/.test(String(value))
           ? true
-          : 'Start with / for a page on this site, or https:// for another site.';
+          : 'Start with / for a page on this site, or https:// for another site, or use a placeholder like {connect}.';
       }),
   });
 

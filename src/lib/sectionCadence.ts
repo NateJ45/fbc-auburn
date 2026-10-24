@@ -98,6 +98,8 @@ export const CONTENT_TYPES = new Set([
   'columnsSection',
   'photoSection',
   'formSection',
+  'churchTracFormSection',
+  'churchTracPageSection',
   // The email backbone (card 127)
   'rsvpSection',
 ]);

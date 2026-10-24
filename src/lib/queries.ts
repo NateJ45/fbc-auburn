@@ -6,9 +6,58 @@
 // Types: until `sanity typegen generate` runs, return types are `any`.
 // Run `npm run typegen` after schema changes to regenerate src/lib/sanity.types.ts.
 
-import { sanityFetch } from './sanity';
+import { sanityFetch as rawFetch } from './sanity';
+import { resolveChurchFacts } from './church-facts';
+import {
+  fillLinkTokens,
+  linkValues,
+  CHURCH_LINKS,
+  type LinkToken,
+  type LinkValues,
+} from './church-links';
 // The sermon, people and downloads blocks (FBC Auburn, 2026-10-18).
 import { COLLECTION_SECTION_ARMS, LATEST_SERMON_FIELD } from './collection-arms';
+
+// ---- Church systems link tokens (2026-10-24, docs/agent/church-trac.md) ----------------------
+// Every read below goes through this local sanityFetch, which fills whole-string link tokens such
+// as {giving} or {connect} from Site settings > Church facts (src/lib/church-links.ts). The settings
+// that feed it are read once, unfilled, through the real sanityFetch (src/lib/sanity.ts, PORTABLE
+// and untouched), so the fill never calls itself.
+let _rawSettingsPromise: Promise<Record<string, unknown> | null> | null = null;
+function rawSettings() {
+  _rawSettingsPromise ??= rawFetch<Record<string, unknown> | null>(
+    `*[_type == "siteSettings"][0]${SITE_SETTINGS_PROJECTION}`,
+    {},
+    null,
+  );
+  return _rawSettingsPromise;
+}
+let _linkValuesPromise: Promise<LinkValues> | null = null;
+function churchLinkValues(): Promise<LinkValues> {
+  _linkValuesPromise ??= rawSettings()
+    .catch(() => null)
+    .then((raw) => linkValues(resolveChurchFacts(raw)));
+  return _linkValuesPromise;
+}
+const warned = new Set<LinkToken>();
+function warnBlank(token: LinkToken) {
+  if (warned.has(token)) return;
+  warned.add(token);
+  const box = CHURCH_LINKS.find((l) => l.token === token)!.box;
+  console.warn(
+    `[church-links] ${token} is used but Church facts > ${box} is empty; it links to the site's own page.`,
+  );
+}
+const sanityFetch = (async (
+  query: string,
+  params: Record<string, unknown> | undefined,
+  fallback: unknown,
+) =>
+  fillLinkTokens(
+    await rawFetch(query, params, fallback as never),
+    await churchLinkValues(),
+    warnBlank,
+  )) as typeof rawFetch;
 
 // Common Portable Text + image projection shorthand
 export const IMAGE_PROJECTION = `{
@@ -281,6 +330,10 @@ export const SITE_SETTINGS_PROJECTION = `{
     memberLoginUrl,
     emailConfirmed,
     givingUrl,
+    churchTracUrl,
+    connectCardUrl,
+    contactFormUrl,
+    prayerFormUrl,
     liveStreamUrl,
     officeHours,
     foundedYear,
@@ -319,10 +372,9 @@ export async function getSiteCode() {
 
 export async function getSiteSettings() {
   if (_siteSettingsPromise) return _siteSettingsPromise;
-  _siteSettingsPromise = sanityFetch(
-    `*[_type == "siteSettings"][0]${SITE_SETTINGS_PROJECTION}`,
-    {},
-    null,
+  // The same read the link tokens come from, filled (the menus can hold tokens too).
+  _siteSettingsPromise = Promise.all([rawSettings(), churchLinkValues()]).then(([raw, values]) =>
+    fillLinkTokens(raw, values, warnBlank),
   );
   return _siteSettingsPromise;
 }

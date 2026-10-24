@@ -14,6 +14,12 @@ export interface JacobNote {
   detail?: string;
 }
 
+const CHURCH_TRAC: JacobNote = {
+  title: 'Your Church Trac address and forms.',
+  detail:
+    'Send us your Church Trac address and the links to your connection card, a general contact form if you have one, and your prayer request form. Each goes in one box and the website swaps its own form for yours, so every message lands in Church Trac. In Church Trac, each form’s "Embed Domain" setting needs this website’s address.',
+};
+
 const NOTES: Record<string, JacobNote[]> = {
   '/': [
     {
@@ -82,6 +88,11 @@ const NOTES: Record<string, JacobNote[]> = {
     },
   ],
   '/plan-your-visit/': [
+    {
+      title: 'Tell us you are coming: your connection card.',
+      detail:
+        'Once we have your Church Trac connection card link, every "Tell us you are coming" button goes straight to it.',
+    },
     {
       title: 'Is the front door at the top of the ramp the one guests use?',
       detail:
@@ -159,6 +170,11 @@ const NOTES: Record<string, JacobNote[]> = {
   ],
   '/prayer/': [
     {
+      title: 'A Church Trac prayer form?',
+      detail:
+        'If you take prayer requests in Church Trac, send us that form’s link and this page shows it instead, so requests land with your prayer list there.',
+    },
+    {
       title: 'Who should prayer requests go to?',
       detail:
         'Right now they would go to you alone, and the website keeps no copy. Should a prayer team see them too?',
@@ -209,6 +225,7 @@ const NOTES: Record<string, JacobNote[]> = {
     },
   ],
   '/contact/': [
+    CHURCH_TRAC,
     {
       title: 'When life happens.',
       detail:

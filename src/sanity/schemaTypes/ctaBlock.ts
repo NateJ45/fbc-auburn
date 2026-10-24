@@ -2,6 +2,7 @@
 // Embedded by page singletons wherever a primary/secondary CTA appears.
 
 import { defineType, defineField } from 'sanity';
+import { linkRule, LINK_TOKEN_HINT } from './_linkRule';
 
 export const ctaBlock = defineType({
   name: 'ctaBlock',
@@ -51,6 +52,9 @@ export const ctaBlock = defineType({
       name: 'externalUrl',
       title: 'Full URL',
       type: 'url',
+      // Church systems placeholders such as {giving} (2026-10-24, docs/agent/church-trac.md).
+      description: LINK_TOKEN_HINT,
+      validation: linkRule(),
       hidden: ({ parent }) => parent?.linkType !== 'external',
     }),
     defineField({

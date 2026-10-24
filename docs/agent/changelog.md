@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-24: Church Trac on the site, from fbcm (PORTS.md card 152)._
+
+**Decision.** The church will run on Church Trac, and the site's own forms could not deliver. fbcm's three Church Trac pieces
+came over, adapted to Auburn: Church facts boxes for the Church Trac address, connection card, contact form and prayer form;
+`{token}` links filled in `queries.ts` (not `sanity.ts`, which is PORTABLE); a shared frame that replaces the Contact and
+Prayer forms once a box is set (and sends the visit buttons to the connection card); a "Church Trac form" band; and a "Church
+Trac page" band that reads a named Church Trac page at build time. Code stays in the church sites by decision (no starter
+code); the card maps it. `docs/agent/church-trac.md`.
+
 _2026-10-24: what visitors and members need, after an audit against two other church sites._
 
 **Decision.** Auburn's newcomer pages already answered more than either reference (a FAQ, service

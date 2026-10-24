@@ -184,6 +184,18 @@ Jacob's, so the page's For Jacob note asks him to flag any picture that says the
 picking another icon on the card in the Studio, or redraw it (masters in `brand/icons/`, then
 `node scripts/print-icons.mjs`).
 
+### 1x. Church Trac: the church's addresses, and the Embed Domain (2026-10-24)
+
+**Blocker: Jacob sends the addresses.** The Church Trac pieces from fbcm are in (`docs/agent/church-trac.md`, PORTS.md card
+152), all empty-safe: Contact, Prayer and the "Tell us you are coming" buttons keep the site's own forms until Site settings >
+Church facts holds the Church Trac contact form or connection card and the prayer form. Open:
+
+- Fill `churchTracUrl`, `connectCardUrl`, `contactFormUrl` (optional) and `prayerFormUrl` once Jacob sends them (a small
+  backup-first data script, or by hand in the Studio), then rebuild and check each page shows the frame.
+- In Church Trac, set each form's "Form/Giving Embed Domain" to this site's address (the workers.dev address now, the church's
+  domain at cutover), or the frames refuse to open.
+- Not yet seen with a real Auburn form: the frame heights (`FORM_SIZES`) were measured on fbcm's connection card.
+
 ### 1x. Next steps, Youth, serving and care: Jacob's answers, and the texts flag (2026-10-24)
 
 **Blocker: Jacob's answers, then one re-run after the deploy.** From the newcomer and member audit

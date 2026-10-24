@@ -77,3 +77,6 @@ docs/references
 src/components/home/stones.generated.ts
 scripts/lib/brick-font.generated.mjs
 public/textures/
+
+# Saved real Church Trac pages (docs/agent/church-trac.md): kept byte-for-byte as Church Trac served them.
+tests/fixtures/churchtrac-*.html

@@ -47,6 +47,12 @@ async function openWall(page: Page, formReady = true): Promise<void> {
       ? r.fulfill({ contentType: 'application/json', body: JSON.stringify({ ready: formReady }) })
       : r.fulfill({ contentType: 'application/json', body: '{"ok":true}' }),
   );
+  // The Church Trac form band frames a churchtrac.com address; keep the wall offline.
+  await page.route(/churchtrac\.com/, (r) =>
+    r.request().resourceType() === 'image'
+      ? r.fulfill({ path: IMAGE, contentType: 'image/jpeg' })
+      : r.fulfill({ contentType: 'text/html', body: '<html><body>stand-in</body></html>' }),
+  );
   await page.goto(WALL, { waitUntil: 'domcontentloaded' });
   await settle(page);
 }

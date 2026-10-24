@@ -12,6 +12,8 @@ import Hero from '@/components/Hero.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import ContactForm from '@/components/ContactForm';
+import ChurchTracFrame from '@/components/church-blocks/ChurchTracFrame.astro';
+import { churchTracFormFor } from '@/lib/church-links';
 import CopyEmailButton from '@/components/CopyEmailButton';
 import CalendlyInline from '@/components/CalendlyInline';
 import ChurchAddress from '@/components/church/ChurchAddress.astro';
@@ -55,7 +57,11 @@ const schedulingLinkLabel = page?.schedulingLinkLabel ?? 'Book a time to talk.';
 const availability = page?.availabilityNote ?? siteSettings?.availabilityStatus;
 // The church's phone and email, from Site settings through Church facts (src/lib/church-facts.ts):
 // each is null until it is filled in, and carries its "To confirm" tag until confirmed.
-const { email, phone } = await getChurchFacts();
+const contactFacts = await getChurchFacts();
+const { email, phone } = contactFacts;
+// Church Trac (2026-10-24, docs/agent/church-trac.md): once Church facts has a contact form or a
+// connection card, it takes the site form's place, so messages land in Church Trac.
+const churchTracForm = churchTracFormFor('contact', contactFacts);
 
 // Satisfaction guarantee — renders near the form CTA when set in siteSettings.
 const satisfactionGuarantee = siteSettings?.satisfactionGuarantee;
@@ -100,15 +106,19 @@ const schemas = [
         </p>
       )}
 
-      <ContactForm
-        client:visible
-        projectTypes={page?.formProjectTypeOptions}
-        locations={page?.formLocationOptions}
-        budgets={page?.formBudgetOptions}
-        timelines={page?.formTimelineOptions}
-        sources={page?.formSourceOptions}
-        {...questionProps}
-      />
+      {churchTracForm ? (
+        <ChurchTracFrame src={churchTracForm} title="Contact the church" size="long" />
+      ) : (
+        <ContactForm
+          client:visible
+          projectTypes={page?.formProjectTypeOptions}
+          locations={page?.formLocationOptions}
+          budgets={page?.formBudgetOptions}
+          timelines={page?.formTimelineOptions}
+          sources={page?.formSourceOptions}
+          {...questionProps}
+        />
+      )}
 
       {/* Email failsafe — surfaced right after the form so visitors who hit
           a submission error or just prefer email have a clear alternate path
