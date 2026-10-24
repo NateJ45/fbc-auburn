@@ -10,7 +10,7 @@ calendar, palette, clock, map pin, music, open Bible, praying hands, giving hand
 fell back to `@sanity/icons` got their own: padlock (password pages), signpost (redirects), compass (the not-found page),
 telephone (Contact), stack of pages (the Content tool), code brackets (custom code) and a label tag (categories), wired in
 `src/sanity/brandIconArt.tsx`. The undo arrow was mirrored so it turns back. The trace now gives each brick its majority
-colour, which removed Gemini's navy speckle. The toy blocks and the clouds stay as they were.
+colour, which removed Gemini's navy speckle. The toy blocks and the clouds stay as they were. The Home tile "Add a page" opens a pane, which has no document type to take art from, so `kit.config.ts` names its icon outright (`brandIcon('pages')`).
 
 _2026-10-24: Lighthouse green again on Home. The "Photo needed" examples (#130) put a 2000px, 166 KB stock photo in the Home hero, which became the page's LCP element and took the mobile LCP past the 4.5 s gate (CI median 4656 ms; 5483 ms locally). The hero now has `srcset` with 800 and 1280 copies (16 and 29 KB, `heroSrcset` in `src/data/shot-list.ts`) and `sizes="(max-width: 767px) 150vw, 100vw"`, because on a phone the landscape photo is cropped to cover a taller box and is drawn about 1.5 times the screen width. Home's local median fell to 4001 ms (perf 0.78 to 0.87). The rest of the gap is the shared render-blocking CSS, unchanged._
 

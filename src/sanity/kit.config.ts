@@ -21,7 +21,7 @@ import { guides, GUIDE_CATEGORIES, GUIDE_FOR_FIELD, GUIDES_FOR_TYPE } from './gu
 import { makeGuideView } from './components/GuideView';
 import { envVal } from './urls';
 import type { PageRules } from '../lib/page-guardrails';
-import { AddDocumentIcon } from '@sanity/icons/AddDocument';
+import { brandIcon } from './brandIcons';
 import { ClockIcon } from '@sanity/icons/Clock';
 import { DownloadIcon } from '@sanity/icons/Download';
 import { EnvelopeIcon } from '@sanity/icons/Envelope';
@@ -649,7 +649,8 @@ export const kitConfig: KitConfig = {
       detail:
         'Press + and pick from about 40 ready-made pages: Plan a visit, Kids, VBS, Easter and more.',
       target: { pane: 'pages;page' },
-      icon: AddDocumentIcon,
+      // A pane target has no document type to take art from, so name the brick art outright.
+      icon: brandIcon('pages'),
     },
     // 2026-10-19: the bulletin replaced "Edit the menus" (a monthly job at most; the menus
     // are still one click away in "Your pages", Site-wide). The same job is also a Quick
