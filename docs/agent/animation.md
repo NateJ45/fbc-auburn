@@ -142,6 +142,13 @@ ScrollTrigger, SplitText and Barba, driven by Alpine components. What it does, a
 Left out on purpose: the loading curtain and its wait (slow on every click), anything that
 rotates (the cross rule), scroll-jacking or pinning.
 
+**Phones show the first screen as it is** (mobile audit, 2026-10-24). Below 768px, any unit already
+on screen when the page arrives is left alone (never armed), and the CSS hold on the page head and
+hero is off, so the page's main words paint with the page. Holding them for the fonts and the stagger
+put Lighthouse mobile LCP at 3.3 to 3.7s on About, Plan your visit, Ministries and Sermons with the
+text already loaded; without the hold those pages measured 1.9 to 2.7s. Everything below the fold
+still rises as it arrives. Desktop is unchanged.
+
 **How it works.** `src/scripts/flow.ts` (called from `motion.ts` on every `astro:page-load`) picks
 the units itself, so an editor's new section moves like the rest: a list of selectors (`UP_UNITS`,
 `LINE_UNITS`) inside `<main>`, a unit only if no ancestor is one (a card moves as one piece), and a

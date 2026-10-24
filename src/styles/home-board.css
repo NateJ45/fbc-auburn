@@ -936,10 +936,13 @@
     min-height: 0;
     padding-top: 0;
   }
+  /* svh, not vh: on a phone vh is the screen with the browser's bars hidden, so the words and the
+     Plan your visit button could start below the fold (mobile audit, 2026-10-24). */
   .hb-hero .hb-photo,
   .hb-hero .hb-photo__shade {
     bottom: auto;
     height: min(78vh, 620px);
+    height: min(78svh, 620px);
   }
   .hb-hero__inner {
     gap: 28px;
@@ -950,7 +953,8 @@
     flex-direction: column;
     justify-content: flex-end;
     min-height: min(78vh, 620px);
-    padding: 96px 0 28px;
+    min-height: min(78svh, 620px);
+    padding: clamp(40px, 12svh, 96px) 0 28px;
   }
   .hb-photo__shade {
     background: linear-gradient(

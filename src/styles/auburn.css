@@ -1756,3 +1756,11 @@ html.motion .sill.is-laid .sill-brick {
   justify-content: center;
   margin-top: 18px;
 }
+/* Phones: the full-width button, like the Home hero's, rather than one floating mid-column off the
+   page's left edge (mobile audit, 2026-10-24). */
+@media (max-width: 767px) {
+  .walk-opener__ask .btn-auburn {
+    width: 100%;
+    justify-content: center;
+  }
+}
