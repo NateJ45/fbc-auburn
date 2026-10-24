@@ -16,6 +16,14 @@ sequence).
 
 ## Waiting on a human
 
+### 1zy. Find your place: move the live Ministries page onto the hub (opened 2026-10-24)
+
+The block ships in the deploy; the content does not move until it is live, or the Studio would show an unknown block.
+After the deploy is green: back up, dry run, then
+`NCS_PRODUCTION_WRITE=yes node scripts/content/ministries-find-your-place.mjs <backup-folder> --apply`, rebuild, and
+check /ministries/ at 1280, 375 and 320. Then, from Jacob: the ages and leaders on each card, whether he offers coffee
+with the pastor, which serving teams exist, and photos for the cards on the shot list.
+
 ### 1zz. The standardising pass: port the shared fixes, and see Live preview signed in (opened 2026-10-24)
 
 Two loose ends from fbc-auburn#112. **Ports:** several fixes are in starter components, not church ones, and
