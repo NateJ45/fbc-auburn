@@ -137,7 +137,7 @@ export interface ChurchFacts {
   /** `sms` is set only when Church facts says the number takes texts ("Call or text"). */
   phone: { display: string; tel: string; sms: string | null; confirmed: boolean } | null;
   email: { display: string; href: string; confirmed: boolean } | null;
-  /** Church Trac member sign-in (Church facts > Member sign-in link), or null. */
+  /** Church Trac member sign-in (Church Trac > Member sign-in link), or null. */
   memberLoginUrl: string | null;
   /** Church Trac (docs/agent/church-trac.md): the church's address and three forms, each or null. */
   churchTracUrl: string | null;
@@ -153,7 +153,7 @@ export interface ChurchFacts {
   liveUrl: string | null;
   /** Which service liveUrl is on, for the words ("Watch live on Facebook"), or null. */
   liveVia: 'YouTube' | 'Facebook' | null;
-  /** Online giving (Church facts > Online giving link), or null: Give stays on the site. */
+  /** Online giving (Church Trac > Online giving link), or null: Give stays on the site. */
   givingUrl: string | null;
   founded: { year: number; confirmed: boolean } | null;
   /** UC... channel id, or null: no Watch replay is fetched. */

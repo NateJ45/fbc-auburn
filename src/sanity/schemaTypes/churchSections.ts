@@ -1038,7 +1038,7 @@ export const churchTracPageSection = defineType({
   type: 'object',
   icon: BookIcon,
   description:
-    'Shows a page you keep in Church Trac, like a bulletin or a newsletter, in this site’s look. It updates every morning. Needs the Church Trac address in Site settings > Church facts.',
+    'Shows a page you keep in Church Trac, like a bulletin or a newsletter, in this site’s look. It updates every morning. Needs the Church Trac address in Site settings > Church Trac.',
   fields: [
     headingField(),
     introField(),

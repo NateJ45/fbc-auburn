@@ -77,7 +77,7 @@ export interface RawChromeSettings {
   showSocials?: boolean | null;
   showFooterSocials?: boolean | null;
   sectionVisibility?: Parameters<typeof getSectionVisibility>[0];
-  /** Church facts > Online giving link. */
+  /** Church Trac > Online giving link. */
   givingUrl?: string | null;
 }
 
