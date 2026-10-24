@@ -34,7 +34,7 @@
 // Data: the links, tagline, email, socials and the Sunday facts all come from the Header (Sanity
 // Site settings and Church facts), with sensible defaults so the menu renders before content does.
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Mail, Phone, Search } from 'lucide-react';
 import { socialLabel, type SocialLink } from '@/lib/social-links';
 import { socialIcon } from '@/lib/social-icons';
@@ -97,6 +97,12 @@ interface Props {
   cta?: { show: boolean; label: string; href: string };
   /** Sunday facts, from Church facts, for the This Sunday card. */
   sunday?: MenuSunday;
+  /**
+   * Where Sunday streams (Church facts, src/lib/live-service.ts): a row under the address in the
+   * This Sunday card. It reads "Live now" with a dot while worship is streaming, from the answer
+   * src/lib/live-client.ts leaves on window.__churchLive (2026-10-24).
+   */
+  watch?: { href: string; label: string };
   /** The current path, so the page you are on keeps its stone. */
   current?: string;
   /**
@@ -140,10 +146,20 @@ export default function MobileNav({
   logoDarkUrl,
   cta = DEFAULT_CTA,
   sunday,
+  watch,
   current,
   search = false,
 }: Props) {
   const [open, setOpen] = useState(false);
+  // The live state, kept in step with live-client.ts while the island is on the page.
+  const [live, setLive] = useState<{ live: boolean; href?: string } | undefined>(undefined);
+  useEffect(() => {
+    setLive(window.__churchLive);
+    const onLive = (e: Event) =>
+      setLive((e as CustomEvent<{ live: boolean; href?: string }>).detail);
+    document.addEventListener('church:live', onLive);
+    return () => document.removeEventListener('church:live', onLive);
+  }, []);
   // Set when the visitor picks "Search the site" inside the menu: the menu closes first, and the
   // search dialog opens once Radix has handed focus back (onCloseAutoFocus below), so the two
   // modals never fight over focus.
@@ -293,6 +309,20 @@ export default function MobileNav({
                           </a>
                         </>
                       )}
+                    </p>
+                  )}
+                  {watch && (
+                    <p className="auburn-menu__watch">
+                      <a
+                        href={(live?.live && live.href) || watch.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-live={live?.live ? '' : undefined}
+                      >
+                        <span className="auburn-menu__live-dot" aria-hidden="true" />
+                        {live?.live ? 'Live now: watch the service' : watch.label}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
                     </p>
                   )}
                   {cta.show && (

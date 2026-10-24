@@ -198,7 +198,7 @@ export const churchFactsFields = [
     type: 'url',
     group: 'church',
     description:
-      'Where people watch on Sunday, like the church’s Facebook live videos page. Shown on Watch and in the footer. Leave empty to use the Facebook link from Social links.',
+      'Where people watch on Sunday, like the church’s Facebook live videos page. Shown on Watch, in the footer, on the This Sunday card and in the Live now banner that appears at the top of every page during Sunday worship. Leave empty to use the YouTube channel below (once it is set), else the Facebook link from Social links.',
     validation: (Rule) => Rule.uri({ scheme: ['https'] }),
   }),
   // Section library (2026-10-18): the "Contact details" block shows these lines.
@@ -226,7 +226,7 @@ export const churchFactsFields = [
     type: 'string',
     group: 'church',
     description:
-      'Starts with UC and is 24 characters long (YouTube Studio > Settings > Channel > Advanced settings). The newest video shows on Home and Watch after each publish and every morning. Leave blank until the church has a channel.',
+      'Starts with UC and is 24 characters long (YouTube Studio > Settings > Channel > Advanced settings). The newest video shows on Home and Watch after each publish and every morning, the This Sunday card names the coming Sunday’s scheduled stream, and Watch live links go to the channel’s live page. Leave blank until the church has a channel.',
     validation: (Rule) =>
       Rule.regex(/^UC[\w-]{22}$/, { name: 'channel ID starting with UC' }).warning(),
   }),

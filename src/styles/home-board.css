@@ -362,6 +362,16 @@
   align-items: center;
   font-size: var(--fs-small);
 }
+/* Watching from home (2026-10-24): where Sunday streams, or the coming stream by name. */
+.hb-sunday__watch {
+  margin: 0 0 12px;
+  font-size: var(--fs-small);
+  line-height: 1.5;
+}
+.hb-sunday__watch a {
+  display: inline-block;
+  padding: 4px 0;
+}
 /* Jacob's "how to find us" line: parking, the door (Church facts > address; empty hides it). */
 .hb-sunday__findus {
   color: #dbe3ee;
