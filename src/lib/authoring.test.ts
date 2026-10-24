@@ -277,6 +277,7 @@ const COUNT: Record<string, [string, number, number]> = {
   tabsSection: ['tabs', 2, 5],
   columnsSection: ['textColumns', 2, 3],
   iconCardsSection: ['cards', 1, 12],
+  findYourPlaceSection: ['groups', 1, 8],
   stepsRailSection: ['steps', 2, 8],
   accordionSection: ['items', 1, 20],
   beliefsSection: ['beliefs', 1, 20],

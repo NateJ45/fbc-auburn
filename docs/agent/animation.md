@@ -135,6 +135,7 @@ ScrollTrigger, SplitText and Barba, driven by Alpine components. What it does, a
 | Photos and arches drift with the scroll (scrubbed parallax)                                                                                                       | Big framed photos drift inside their frame                                                              | `.flow-par`, CSS view timeline (Chrome, Edge, Safari 26; still elsewhere)   |
 | Hero text slides away as you scroll out; hero image slides in from the side on load                                                                               | Home: the photo sinks and zooms, the words lift and fade; the This Sunday card slides in from the right | view timeline on `.hb-hero` (`--hero-p` fallback in Firefox), `.flow--side` |
 | Footer: a big line of text slides sideways with the scroll                                                                                                        | The footer verse (Site settings > Social and footer > "Footer: the verse"; Matthew 11:28 by default)    | `scrubVerse()` in `flow.ts`, ends as the verse nears the top of the screen  |
+| (ours only)                                                                                                                                                       | The building sketch draws itself in: the pen lines sweep across, the shading follows 35% behind         | `sketch-draw` in `flow.css`, view timeline; finished drawing elsewhere      |
 | Buttons lean toward the mouse (magnetic)                                                                                                                          | Primary buttons and the header's Plan your visit, mouse only                                            | `translate` from the pointer, 14px at most                                  |
 | Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main lifts out (220ms), the new page rises in (700ms); header and footer stay put                       | `::view-transition-*(main-content)` in `flow.css`                           |
 
@@ -166,7 +167,9 @@ effects, which Lighthouse reports as "unsupported timing parameters". Headings a
 batch (`splitAll` in `flow.ts`: every read of a phase before any write of the next), so the page is
 laid out a handful of times for all of them rather than three times per heading (Lighthouse's
 "forced reflow"). Only `opacity`, `translate`,
-`scale` and (for the parallax) `transform` move. The starter's `[data-reveal]`,
+`scale`, (for the parallax) `transform` and (for the sketch) a mask sweep move. The sketch's
+sweep, `--sketch-draw`, rests at 150%, every sweep past the right edge, so it too is the finished
+drawing whenever the animation does not run. The starter's `[data-reveal]`,
 `[data-stagger-grid]` and `.img-curtain` stand down once the flow layer has armed a page.
 
 **Brick, laid by brick (2026-10-24).** The brick pieces are laid the way a mason builds:

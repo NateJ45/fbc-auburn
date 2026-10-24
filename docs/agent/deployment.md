@@ -171,14 +171,27 @@ once hashes are present. Helpers and tests: `scripts/lib/csp.mjs`.
 - **Only scripts are restricted.** No `default-src`, so images, frames (YouTube, Facebook, maps),
   styles, fonts and fetches (the weather) are untouched.
 - **What can still break:** a script that pasted code adds AT RUNTIME from an origin not in the
-  HTML (a widget whose loader pulls a second script from another host). Add that origin to
-  `RUNTIME_ORIGINS` in `scripts/build-csp.mjs`. GA4's tag is already handled that way.
+  HTML (a widget whose loader pulls a second script from another host). List that origin in
+  `scripts/csp-origins.json` (this site's own file, not PORTABLE; a JSON array such as
+  `["https://widget.example.com"]`). GA4's tag is handled inside the script. The script and
+  `scripts/lib/csp.mjs` are PORTABLE copies from the starter (PORTS.md card 153).
+- **Lighthouse still notes "Host allowlists can frequently be bypassed"** (unscored; Best
+  Practices stays 100). That comes from the Cloudflare beacon's origin in the list. The cure,
+  `'strict-dynamic'`, makes browsers ignore every origin in `script-src`, which would block any
+  outside widget script pasted into a Custom code block. Kept as is on purpose (2026-10-24).
 - **The Studio detaches it** (`/studio/*`: `! Content-Security-Policy`, then `frame-ancestors`
   only), per trap 1 below.
 - **Trusted Types are not required** (`require-trusted-types-for`). Lighthouse lists it, unscored;
   enforcing it would break the router, Pagefind's results and the React islands, which all write
   HTML strings, and a report-only trial logs console errors that cost the Best Practices score.
 - The build fails if the `/*` line is missing, so the policy never quietly drops to none.
+- **One known console error, harmless (decided 2026-10-24).** On an in-site click to a page whose
+  last script is an inline module, Astro's router (`astro/dist/transitions/router.js`, `runScripts`)
+  appends an empty `<script type="module" src="data:application/javascript,">` only to wait for that
+  module to run. The policy blocks it and Chrome logs "Loading the script 'data:application/javascript,'
+  violates ... Content Security Policy". Nothing breaks: the router resolves on `onerror` as well as
+  `onload`. It never happens on a first load, so Lighthouse does not see it. `data:` stays OUT of
+  `script-src` on purpose: it is a common way to slip a script past a policy.
 
 For a full policy (`default-src` and the rest), reid-design-site's `public/_headers`
 (2026-09-29) is a tested start, and the header comment in `public/_headers` lists the Studio's

@@ -248,6 +248,36 @@ export function timesPhrase(minutes: number[]): string {
     : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
 }
 
+/**
+ * A day as an editor typed it ("Wednesdays", "Sunday mornings") with that day's gathering times
+ * from Church facts added: "Wednesdays, 6:00 pm". Text that does not start with a weekday, or a
+ * day with no times on file, comes back as typed. Times are never typed into a card (the Find
+ * your place cards and Home's bands both use this).
+ *
+ * `name` (a card's title) narrows the day to its own gathering when one is named after it: on a
+ * Sunday with "Sunday School for all ages" at 9:45 and "Worship" at 11:00, a "Sunday School" card
+ * gets 9:45 only, while a "Kids" card (no gathering of that name) gets both.
+ */
+export function dayWithTimes(
+  day: string,
+  serviceTimes: readonly Pick<ServiceTime, 'dayIndex' | 'minutes' | 'label'>[],
+  name?: string,
+): string {
+  const first = plain(day).toLowerCase().split(/[\s,]/)[0]?.replace(/s$/, '') ?? '';
+  const dayIndex = WEEKDAY_NAMES.indexOf(first as Weekday);
+  if (dayIndex < 0) return day;
+  const onDay = serviceTimes.filter((s) => s.dayIndex === dayIndex);
+  const want = plain(name).toLowerCase().trim();
+  const named = want
+    ? onDay.filter((s) => {
+        const label = plain(s.label).toLowerCase().trim();
+        return label !== '' && (label.includes(want) || want.includes(label));
+      })
+    : [];
+  const minutes = (named.length ? named : onDay).map((s) => s.minutes);
+  return minutes.length ? `${day}, ${timesPhrase(minutes)}` : day;
+}
+
 /** "A", "A and B", "A, B and C". */
 export function andList(items: string[]): string {
   if (items.length <= 1) return items[0] ?? '';

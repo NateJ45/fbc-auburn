@@ -17,7 +17,10 @@ Performance is a UX feature, not a vanity score. Lighthouse 100 on Performance i
 A mobile run on Home scored 91 / 100 / 100 / 100. What it flagged and what changed:
 
 - **Render-blocking CSS (~440ms):** `build.inlineStylesheets: 'always'` in `astro.config.mjs`, so a
-  page's CSS arrives in its HTML (about 50KB more per page, compressed).
+  page's CSS arrives in its HTML (about 50KB more per page, compressed). Measured the same day, Home
+  over `scripts/serve-dist.mjs`, Lighthouse 12.6 mobile, median of three: inline FCP 1.35 s / LCP
+  2.10 s, linked FCP 1.65 s / LCP 2.26 s. A live run from a home connection read LCP 3.1 to 3.2 s
+  (real latency plus the simulated slow phone); compare like with like before undoing it.
 - **Image delivery:** the pre-launch example photos have 480/640/800 copies and a srcset with
   `sizes="auto, ..."` (`exampleSrcset` in `src/data/shot-list.ts`); the video poster is 720 wide.
 - **The example clip and cache lifetime:** `preload="none"`, played only while on screen

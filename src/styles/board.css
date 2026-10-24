@@ -251,6 +251,13 @@ main:is(:has(.board-head), :has(> .hb)) .auburn-arch {
   max-height: 460px;
   border-radius: var(--radius-card);
 }
+/* A photo is cut to the building's gable (src/styles/shapes.css, 2026-10-24): square corners, and a
+   little taller than 4:3 so the roof has room above the subject. */
+main:is(:has(.board-head), :has(> .hb)) .auburn-arch.shape-gable {
+  aspect-ratio: 5 / 4.4;
+  max-height: 520px;
+  border-radius: 0;
+}
 
 /* ---- Centred heads (the Walk, the steps rail) move onto the page's edge ---------------------- */
 main:is(:has(.board-head), :has(> .hb)) .steps-rail__intro,

@@ -14,6 +14,15 @@ _2026-10-24: page headings are plain type, not brick._
 `BoardPageHead`, and `ArchHero`) now renders plain Young Serif in deep navy, and the 404's brick-wall headline went the
 same way. Then the rest: the share cards (`scripts/lib/og-card.mjs`, all 19 regenerated, plus first cards for events, next steps and prayer) set the title and the Home "Auburn" in plain navy, and the sermon and series art with no picture sets its word in plain cream type (`SermonArt.astro`, `.c-art__word`). The generator (`scripts/lib/brick-letters.mjs`), its tests and the flow layer's `lay` kind stay, unused.
 
+_2026-10-24: the shape system and Find your place._
+
+**Decision.** From an audit of hppres.org: pictures take two Auburn shapes instead of rounded rectangles (a stepped brick
+corner on cards; the building's gable over a navy brick slab on every ImageText photo), and Ministries becomes a "Find
+your place" hub: a new `findYourPlaceSection` block with groups (New here, Kids and youth, Adults, Serve, Care) stacked
+beside a sticky index that follows the scroll and the header, chips on a phone. Card times come from Church facts through
+the new `dayWithTimes` (Home's bands use it too). All groups show at once rather than as tabs, because a small church's
+groups would hold one card each. The CI snapshot pins the new Ministries page. Detail: `docs/agent/shapes.md`.
+
 _2026-10-24: every Studio icon is brick._
 
 **Decision.** The Studio's icons (desk lists, tabs, tools, templates, the Site Guide) mixed two styles: the newer

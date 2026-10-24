@@ -12,6 +12,9 @@ import Sill from '@/components/Sill.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
 import { shotFor } from '@/data/shot-list';
 import { splitStega } from '@/lib/preview-stega';
+// Auburn's shape system (2026-10-24): a photo here is cut to the building's gable and set over a
+// navy brick slab that runs to the page edge on the photo's side (src/styles/shapes.css).
+import '@/styles/shapes.css';
 // With no photo yet, the slot holds the church's mark, not an empty grey shape (2026-10-24).
 import markPrint from '@/assets/brand/mark-print.png';
 
@@ -87,7 +90,7 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
     <Sill class="building-band__sill" />
   </section>
 ) : (
-  <section class={bg} aria-labelledby={heading ? headingId : undefined}>
+  <section class:list={[bg, 'shape-slab-host']} aria-labelledby={heading ? headingId : undefined}>
     {/* THE SHARED SPLIT (PORTS.md card 91). `.split` in globals.css is the one text/picture
       column split; the picture takes the narrow track on whichever side it is on, so
       `.split--media-first` mirrors the tracks. The picture stays first in the DOM and the
@@ -109,16 +112,21 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
           <div class="auburn-art">
             <BaptismGraphic class="auburn-art__baptism" />
           </div>
-        ) : shot ? (
-          <ShotRequest shot={shot} class="auburn-arch" />
-        ) : image?.asset ? (
-          <SanityImage
-            source={image}
-            width={800}
-            sizes="(min-width: 1024px) 45vw, 100vw"
-            quality={75}
-            class="auburn-arch h-auto w-full object-cover"
-          />
+        ) : shot || image?.asset ? (
+          // A photo (or its Photo needed request): the gable over the brick slab.
+          <div class:list={['shape-slab', imageFirst && 'shape-slab--left']}>
+            {shot ? (
+              <ShotRequest shot={shot} class="auburn-arch shape-gable" />
+            ) : (
+              <SanityImage
+                source={image}
+                width={800}
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                quality={75}
+                class="auburn-arch shape-gable h-auto w-full object-cover"
+              />
+            )}
+          </div>
         ) : (
           <div class="auburn-arch auburn-arch--empty" aria-hidden="true">
             <img

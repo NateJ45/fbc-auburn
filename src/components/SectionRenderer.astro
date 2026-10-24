@@ -28,6 +28,7 @@ import FaqSection from '@/components/sections/FaqSection.astro'; // scaffold: fa
 import LogoStrip from '@/components/sections/LogoStrip.astro';
 import TeamGrid from '@/components/sections/TeamGrid.astro';
 import IconCards from '@/components/sections/IconCards.astro';
+import FindYourPlace from '@/components/sections/FindYourPlace.astro';
 import ThisWeekSection from '@/components/sections/ThisWeekSection.astro';
 import WatchSection from '@/components/sections/WatchSection.astro';
 import EmbedSection from '@/components/sections/EmbedSection.astro';
@@ -290,6 +291,15 @@ const editKeyOf = (block: unknown) => {
           heading={s.heading}
           intro={s.intro}
           cards={s.cards ?? []}
+          surface={lightSurface(surface)}
+          headingId={headingId}
+        />
+      ) : s._type === 'findYourPlaceSection' ? (
+        <FindYourPlace
+          eyebrow={s.eyebrow}
+          heading={s.heading}
+          intro={s.intro}
+          groups={s.groups ?? []}
           surface={lightSurface(surface)}
           headingId={headingId}
         />
