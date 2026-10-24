@@ -152,6 +152,11 @@ const SECTION_ARMS = `
         link${CTA_PROJECTION}
       }
     },
+    _type == "letterSection" => {
+      ...,
+      signature${IMAGE_PROJECTION},
+      link${CTA_PROJECTION}
+    },
     _type == "findYourPlaceSection" => {
       ...,
       groups[]{

@@ -64,6 +64,7 @@ export const SECTION_ARRAY_FIELDS: readonly string[] = ['pageBuilder', 'addition
  * name straight out of the schema, so this cannot fall out of step again.
  */
 export const HEADING_ACCENT_FIELDS: Readonly<Record<string, string>> = {
+  heroSection: 'headline', // FBC Auburn (2026-10-24): two-tone page titles
   richTextSection: 'heading',
   ctaBandSection: 'headline',
   faqSection: 'headline', // scaffold: faq

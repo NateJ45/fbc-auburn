@@ -1,0 +1,136 @@
+---
+// Safe to edit by hand
+// "Where next" (2026-10-24, from the hppres.org audit): three full-width rows at the top of the
+// ink footer on every page, each a big Young Serif link with a long hairline arrow. No page ends
+// at a dead end: the three things a visitor most often wants next are always one tap away.
+// The page you are on drops out of the list and the next one moves up, so there are always three.
+// Hover (or keyboard focus) fills the row with brick red from the left and draws the arrow out.
+// Part of the footer (Footer.astro), so it is outside <main> and every page gets it.
+
+interface Props {
+  /** The current path, to leave the page you are on out of the list. */
+  path: string;
+}
+const { path } = Astro.props;
+
+// In order of importance. The first three that are not this page are shown.
+const ROWS = [
+  { href: '/plan-your-visit/', label: 'Plan your visit', note: 'Your first Sunday' },
+  { href: '/ministries/', label: 'Find your place', note: 'Kids, adults, serving, care' },
+  { href: '/sermons/', label: 'Sermons', note: 'Listen or watch again' },
+  { href: '/about/', label: 'About the church', note: 'Who we are' },
+];
+const here = path.endsWith('/') ? path : `${path}/`;
+const rows = ROWS.filter((r) => r.href !== here).slice(0, 3);
+---
+
+<nav class="where-next" aria-label="Where next">
+  <ul role="list" class="where-next__list mx-auto max-w-content">
+    {rows.map((r) => (
+      <li>
+        <a href={r.href} class="where-next__row">
+          <span class="where-next__label">{r.label}</span>
+          <span class="where-next__note">{r.note}</span>
+          <svg
+            class="where-next__arrow"
+            viewBox="0 0 120 16"
+            width="120"
+            height="16"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M0 8 H118 M110 1 L118 8 L110 15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+          </svg>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .where-next {
+    padding-inline: var(--spacing-l, 1.5rem);
+    padding-block: clamp(1.5rem, 4vw, 3rem) clamp(0.5rem, 2vw, 1.5rem);
+  }
+  .where-next__list {
+    list-style: none;
+    margin-block: 0;
+    padding: 0;
+  }
+  .where-next__list > li + li .where-next__row {
+    border-top: 1px solid rgb(255 255 255 / 0.16);
+  }
+  .where-next__row {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'label arrow' 'note arrow';
+    align-items: center;
+    column-gap: 1.5rem;
+    padding: clamp(1.1rem, 2.4vw, 1.75rem) clamp(0.75rem, 2vw, 1.5rem);
+    color: #fff;
+    text-decoration: none;
+  }
+  /* The brick-red fill that sweeps in from the left. */
+  .where-next__row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--auburn-red);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .where-next__row:hover::before,
+  .where-next__row:focus-visible::before {
+    transform: scaleX(1);
+  }
+  .where-next__row:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+  }
+  .where-next__label {
+    grid-area: label;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .where-next__note {
+    grid-area: note;
+    margin-top: 0.35rem;
+    font-size: var(--fs-tag);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.72);
+  }
+  .where-next__row:hover .where-next__note,
+  .where-next__row:focus-visible .where-next__note {
+    color: #fff;
+  }
+  .where-next__arrow {
+    grid-area: arrow;
+    width: clamp(48px, 9vw, 120px);
+    height: auto;
+    transform: translateX(-10px);
+    transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .where-next__row:hover .where-next__arrow,
+  .where-next__row:focus-visible .where-next__arrow {
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .where-next__row::before,
+    .where-next__arrow {
+      transition: none;
+    }
+  }
+</style>

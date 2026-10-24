@@ -45,6 +45,7 @@ import { sundayIcs, thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import Sill from '@/components/Sill.astro';
+import WhereNext from '@/components/WhereNext.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
 
@@ -186,6 +187,9 @@ const hasCalendar =
       The whole footer is ink: .site-footer redefines the colour tokens (src/styles/auburn.css),
       so the starter's link grid below turns light-on-ink without touching its classes. */}
   <Sill class="site-footer__sill" />
+
+  {/* Where next (2026-10-24): three big rows so no page is a dead end (WhereNext.astro). */}
+  <WhereNext path={Astro.url.pathname} />
 
   <figure class="sf-verse" data-flow-verse>
     <blockquote class="m-0">

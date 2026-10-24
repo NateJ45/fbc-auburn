@@ -19,6 +19,7 @@
 // finds the field and no brick is spent on an invisible character.
 import { brickWord, LETTER_TONES } from '../../scripts/lib/brick-letters.mjs';
 import { splitStega } from '@/lib/preview-stega';
+import { splitHeadingAccent } from '@/lib/heading-accent';
 
 interface Props {
   text: string;
@@ -26,6 +27,12 @@ interface Props {
   tone?: 'mosaic' | 'solid';
   id?: string;
   class?: string;
+  /**
+   * Two-tone (2026-10-24): words of the title to set apart. In brick they are drawn all auburn and
+   * the rest all navy (no every-fourth-letter rhythm); in plain text they take the auburn colour.
+   * First match, case-insensitive (src/lib/heading-accent.ts). Not found: the title as usual.
+   */
+  accent?: string;
 }
 const {
   text,
@@ -33,21 +40,33 @@ const {
   tone = Tag === 'h1' ? 'mosaic' : 'solid',
   id,
   class: cls,
+  accent,
 } = Astro.props;
 const { cleaned, encoded } = splitStega(text ?? '');
+const two = splitHeadingAccent(cleaned, accent);
+// The accent as a range of the title's characters; the word loop below steps over the spaces.
+const accentFrom = two.found ? two.before.length : -1;
+const accentTo = two.found ? accentFrom + two.word.length : -1;
+const drawn = two.found ? two.before + two.word + two.after : cleaned;
 
 // One SVG per word. The auburn letter is every fourth letter counted across the whole title
 // (spaces take no turn), so a two-word title keeps one rhythm.
 let k = 0;
+let pos = 0;
 const words =
   tone === 'mosaic'
-    ? cleaned
+    ? drawn
         .split(/\s+/)
         .filter(Boolean)
         .map((word, w) => {
           const accent: number[] = [];
+          const start = drawn.indexOf(word, pos);
+          pos = start + word.length;
           [...word].forEach((_, i) => {
-            if (k++ % 4 === 2) accent.push(i);
+            const at = start + i;
+            const on = two.found ? at >= accentFrom && at < accentTo : k % 4 === 2;
+            if (on) accent.push(i);
+            k++;
           });
           return brickWord(word, {
             tones: LETTER_TONES.navy,
@@ -74,6 +93,12 @@ const words =
       ))}
       <span class="sr-only">{cleaned}</span>
       {encoded}
+    </>
+  ) : two.found ? (
+    <>
+      {two.before}
+      <span class="stone-heading__accent">{two.word}</span>
+      {two.after}
     </>
   ) : (
     text

@@ -26,7 +26,12 @@
   --gable-pitch: 24%;
 }
 
-.shape-step {
+/* The Watch band's media (2026-10-24) take the step too: the sermon art, the poster card and the
+   YouTube frame are drawn by other components, so they are named here rather than given a class. */
+.shape-step,
+.watch-band .c-art,
+.watch-band .watch-card,
+.watch-band .last-sunday__frame {
   clip-path: polygon(
     0 calc(3 * var(--step-u)),
     calc(2 * var(--step-u)) calc(3 * var(--step-u)),
@@ -52,7 +57,10 @@
 /* Every shape is a frame: the picture inside fills it. No border: a clipped border shows as a
    hairline along the cut (the Photo needed frame has one). */
 .shape-step,
-.shape-gable {
+.shape-gable,
+.watch-band .c-art,
+.watch-band .watch-card,
+.watch-band .last-sunday__frame {
   overflow: hidden;
   border: 0;
   border-radius: 0;

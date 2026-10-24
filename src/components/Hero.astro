@@ -61,6 +61,10 @@ interface Props {
    * word; pick one effect per hero. If both are passed, rotatingWords wins.
    */
   scriptAccent?: string;
+  /** FBC Auburn (2026-10-24): words of the title set in auburn brick on an inner page head. */
+  headingAccent?: string;
+  /** FBC Auburn (2026-10-24): the Sunday times band under an inner page head. */
+  showTimes?: boolean;
   /**
    * Hero structure: bleed (full-bleed image under a scrim, the original),
    * split (dark text panel beside the image) or editorial (type only, image
@@ -87,6 +91,8 @@ const {
   size = 'short',
   rotatingWords,
   scriptAccent,
+  headingAccent,
+  showTimes = false,
   variant,
   icon,
   quiet = false,
@@ -261,6 +267,8 @@ const wrapperHeight =
     size={size}
     icon={icon}
     quiet={quiet}
+    headingAccent={headingAccent}
+    showTimes={showTimes}
   />
 ) : hasImage ? (
   <section
