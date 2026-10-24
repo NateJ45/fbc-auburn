@@ -80,11 +80,21 @@ export function initFlow() {
     }
     return false;
   };
+  // Phones show the first screen as it is (mobile audit, 2026-10-24): holding it for the fonts and
+  // the stagger kept the page's main words hidden for 2.7 to 3.1s after they had loaded (Lighthouse
+  // LCP on a throttled phone). Only what is below the fold rises as it arrives there.
+  const firstScreenAsIs = matchMedia('(max-width: 767px)').matches;
+  const inFirstScreen = (el: Element) =>
+    firstScreenAsIs && el.getBoundingClientRect().top < innerHeight;
   const candidates = main.querySelectorAll<HTMLElement>(`${LINE_UNITS}, ${UP_UNITS}`);
   for (const el of candidates) {
     if (el.closest(SKIP) || isInsideTaken(el) || el.dataset.flowOn) continue;
     // Hidden things (a closed accordion's answer, an empty slot) have nothing to show.
     if (!el.getClientRects().length) continue;
+    if (inFirstScreen(el)) {
+      taken.add(el); // its children stay put with it
+      continue;
+    }
     let kind: (typeof units)[number]['kind'] = 'up';
     // A brick-letter title is laid brick by brick rather than raised (layPlan below).
     if (el.matches('.stone-mosaic') && el.querySelector('.bl-c')) kind = 'lay';
@@ -99,7 +109,7 @@ export function initFlow() {
   }
   // The This Sunday card slides in from the side on Home as one piece, like a photo arriving.
   const sundayCard = main.querySelector<HTMLElement>('.hb-hero__card');
-  if (sundayCard && !sundayCard.dataset.flowOn) {
+  if (sundayCard && !sundayCard.dataset.flowOn && !inFirstScreen(sundayCard)) {
     const kept = units.filter((u) => !sundayCard.contains(u.el));
     units.length = 0;
     units.push(...kept, { el: sundayCard, kind: 'side' });
