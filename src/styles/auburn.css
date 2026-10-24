@@ -1324,9 +1324,23 @@ html.motion .sill.is-laid .sill-brick {
   padding-top: clamp(40px, 5vw, 64px);
   padding-bottom: clamp(40px, 5vw, 64px);
 }
+.sf-invite__brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+}
 .sf-invite__mark {
+  flex: none;
   width: 56px;
   height: auto;
+}
+.sf-invite__name {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  line-height: 1.1;
+  color: #ffffff;
+  text-wrap: balance;
 }
 .sf-invite__actions {
   display: flex;
@@ -1586,7 +1600,7 @@ html.motion .sill.is-laid .sill-brick {
   .sf-invite {
     display: contents;
   }
-  .sf-invite__mark {
+  .sf-invite__brand {
     order: 1;
   }
   .sf-invite__actions {

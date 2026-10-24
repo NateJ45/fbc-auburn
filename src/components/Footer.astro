@@ -203,15 +203,20 @@ const hasCalendar =
       <BuildingSketch ink="#7F98B8" class="sf-sketch__art" />
     </div>
     <div class="sf-invite">
-      <img
-        class="sf-invite__mark"
-        src={markAsset.src}
-        width={72}
-        height={72}
-        alt=""
-        loading="lazy"
-        decoding="async"
-      />
+      {/* The mark with the church's name beside it (2026-10-24): the mark alone did not say whose
+          footer this is. */}
+      <p class="sf-invite__brand">
+        <img
+          class="sf-invite__mark"
+          src={markAsset.src}
+          width={72}
+          height={72}
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+        <span class="sf-invite__name">{brandName}</span>
+      </p>
       <div class="sf-invite__actions">
         {visitCta && (
           <a class="btn-auburn btn-auburn--primary" href={visitCta.href}>
