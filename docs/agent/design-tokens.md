@@ -13,6 +13,9 @@ token before adding a one-off.
 - Headings: `--text-h1` / `--text-h2` from the theme, then `--fs-h3` (24 to 32px), `--fs-title` (24px, a card title), `--fs-title-sm` (20px, a row title or an accordion question), `--fs-numeral` (28 to 36px, times and dates). Leading: H1/H2 1.1, H3/H4 1.2, reading text 1.6 (zero-specificity `:where()` rules, so a display heading with its own keeps it).
 - Corners: `--radius-control` 10px (buttons, fields, tabs), `--radius-card` 20px (cards, panels, players, photos that stand alone), `--radius-inner` 14px (a picture inside a card or a list row), `--radius-tag` 4px, `--radius-pill`. `--radius-md` is pointed at the control radius for the shared components.
 - Space: `--pad-card` (20 to 28px), `--pad-panel` (24 to 40px), `--gap-grid` (16 to 24px, boxed cards), `--gap-open-row` / `--gap-open-col` (items with no box), `--gap-heading` (a section heading to its content). Bands keep `py-section-lg`; Home's bands use `--hb-rhythm` (`--spacing-section-md`) above every section and below any tinted one.
+- Focus: one ring, 3px of `--ring`, offset 3px (white on the Home hero photo). Embedded frames and the FAQ questions use it too.
+- Tap targets: every standalone link is at least 44px to tap on a phone; small ones get the invisible hit area (`.hit-44`, or the same `::after` in `auburn.css` for the sermon links, the header logo and Get directions). Check with `scripts/measure-tap-targets.mjs`.
+- Three-across grids (the Give page, the Giving board, three-card grids) start at 64rem; two-across from 48rem.
 - Buttons: `.btn-auburn` with `--primary` (auburn) or `--secondary` (outline), 48px tall; the header's is the 44px compact one. Never hand-roll a button from utilities.
 
 The starter-generic text below predates the reskin (its font names are the starter's).

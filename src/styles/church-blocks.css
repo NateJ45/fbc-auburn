@@ -108,11 +108,15 @@
   .cb-grid--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+/* Three-card grids go three-across at 64rem, two-across before that (2026-10-24: at 48rem a
+   card title like "Plan your visit" broke its arrow onto a line of its own). */
+@media (min-width: 64rem) {
   .cb-grid--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-@media (min-width: 40rem) and (max-width: 47.99rem) {
+@media (min-width: 40rem) and (max-width: 63.99rem) {
   .cb-grid--3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -304,11 +308,13 @@
   .cb-board[data-n='4'] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+/* Three across waits for 64rem (2026-10-24): at 48rem the Giving board's columns were about 140px
+   and its address wrapped every few words. Two and four stay two-across from 48rem. */
+@media (min-width: 64rem) {
   .cb-board[data-n='3'] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-}
-@media (min-width: 64rem) {
   .cb-board[data-n='4'] {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -1155,7 +1161,7 @@
 .cb-field textarea:focus-visible,
 .cb-check input:focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 .cb-check {
   display: flex;

@@ -265,7 +265,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-filters select:focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 .c-filters__clear {
   min-height: 48px;
@@ -549,7 +549,9 @@ a:focus-visible > .c-art .c-art__play,
   grid-template-columns: max-content minmax(0, 1fr);
   gap: 0.45rem 1.25rem;
   max-width: 40rem;
-  margin: 0;
+  /* The space under the summary lives here: a bare margin: 0 overrode the mt-l on the element, so
+     the list sat flush under the summary (2026-10-24). */
+  margin: var(--gap-heading) 0 0;
 }
 .c-facts dt {
   font-weight: 700;

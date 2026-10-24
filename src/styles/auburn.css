@@ -68,6 +68,7 @@
   --text-xs: var(--fs-tag);
   --text-sm: var(--fs-small);
   --text-base: var(--fs-body);
+  --text-xl: var(--fs-lead); /* a post's standfirst used text-xl (20px) beside 21px intros */
 
   /* Headings, Young Serif. H1 and H2 are the theme's --text-h1 / --text-h2; below them: */
   --fs-h3: var(--text-h3); /* 24 to 32px: a heading inside a band (Plan your visit's walk) */
@@ -272,7 +273,21 @@ h6 {
   text-decoration: none;
   transition:
     background-color 160ms ease,
-    color 160ms ease;
+    color 160ms ease,
+    transform 160ms ease;
+}
+/* Every button presses the same way (2026-10-24): only the ones that also carried press-tactile
+   nudged down; the footer's and the forms' did not move. The hero's white outline button joins. */
+.btn-auburn:active,
+.hb-ghost:active {
+  transform: translateY(1px);
+  transition-duration: 60ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-auburn:active,
+  .hb-ghost:active {
+    transform: none;
+  }
 }
 .btn-auburn--primary {
   background: var(--auburn-red);
@@ -296,7 +311,7 @@ h6 {
 .hb a:focus-visible,
 .site-footer a:focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 4px;
+  outline-offset: 3px;
   border-radius: 2px;
 }
 .site-footer a:focus-visible,
@@ -334,6 +349,14 @@ h6 {
   line-height: var(--lh-body);
 }
 
+/* No paper grain. The starter's fixed 4% grain (body::before in globals.css) is covered by every
+   Auburn section's own ground (the board rule even paints var(--background) to hide it), so it only
+   showed where a page had no ground of its own: a darker band down a journal post's body. One flat
+   ground everywhere instead (2026-10-24). */
+body::before {
+  content: none;
+}
+
 /* A section ends on its padding, not on its last paragraph's margin: the trailing my-m on rich text
    made the gap between sections 163 to 189px depending on what came last (2026-10-24). */
 :where(main section) :where(p, ul, ol, dl, blockquote):last-child {
@@ -350,6 +373,50 @@ body {
    label under the scale. */
 html .site-search__suggest-title {
   font-size: var(--fs-tag);
+}
+
+/* One focus ring (2026-10-24): 3px of the ring colour, 3px off the element. The skip link drew 2px,
+   and an embedded video or custom-code frame drew none, so a keyboard user lost their place there. */
+html .skip-link:focus-visible,
+:where(main iframe):focus-visible,
+main [data-slot='accordion-trigger']:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+/* The UI kit's accordion drew its ring inside the button, flush on the question's first letter; it
+   takes the site's ring above instead. */
+main [data-slot='accordion-trigger']:focus-visible {
+  border-color: transparent;
+  box-shadow: none;
+}
+/* On the hero photo a navy ring all but vanishes: white, like the outline button beside it. */
+.hb-hero .btn-auburn:focus-visible {
+  outline-color: #ffffff;
+}
+
+/* A 44px tap area for the small standalone links (2026-10-24, measured with
+   scripts/measure-tap-targets.mjs at 390px): the header logo (40px tall), Get directions, and the
+   sermon and newsletter list links (22 to 34px). The same invisible hit area as globals.css's
+   .hit-44 (PORTS.md card 82), so nothing visible moves. */
+.site-header__logo-link,
+.church-address__map,
+.c-link,
+.c-latest__title,
+.c-row__title a {
+  position: relative;
+}
+.site-header__logo-link::after,
+.church-address__map::after,
+.c-link::after,
+.c-latest__title::after,
+.c-row__title a::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
 }
 
 /* The search dialog is a panel, so it takes the card corner. */
@@ -956,13 +1023,17 @@ html .site-search-dialog {
   text-transform: uppercase;
   color: #7f98b8;
 }
+/* Same shape as NotConfirmed.astro's tag (2026-10-24). */
 .auburn-menu__tag {
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: #f6e4df;
-  color: #7e2e20;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-tag);
+  background: #fce3da;
+  color: #7a2a14;
   font-size: var(--fs-tag);
-  font-weight: 700;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 .auburn-menu__card-date {
   margin: 0.3rem 0 0.9rem;

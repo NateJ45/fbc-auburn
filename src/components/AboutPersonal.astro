@@ -53,7 +53,7 @@ const hasBeyond = Boolean(beyondDesign?.trim() || candidPhoto?.asset);
 const hasAnything = currently.length > 0 || rapid.length > 0 || spots.length > 0 || hasBeyond;
 
 const cardClass =
-  'card-lift bg-card rounded-md border border-border-soft shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)] overflow-hidden';
+  'card-lift bg-card rounded-[var(--radius-card)] border border-border-soft shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)] overflow-hidden';
 ---
 
 {hasAnything && (
@@ -104,7 +104,7 @@ const cardClass =
                       width={900}
                       sizes="(min-width: 1024px) 40vw, 100vw"
                       quality={75}
-                      class="mt-m h-auto w-full rounded-md"
+                      class="mt-m h-auto w-full rounded-[var(--radius-card)]"
                     />
                   )}
                   {beyondDesign && (

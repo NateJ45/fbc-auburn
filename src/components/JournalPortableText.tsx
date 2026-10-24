@@ -123,10 +123,12 @@ function makeComponents(): PortableTextComponents {
           {children}
         </p>
       ),
+      // Headings inside a post sit one step below the page's own section headings (2026-10-24):
+      // a body H2 was the full 48px section size with 140px above it.
       h2: ({ children }) => (
         <h2
           id={makeHeadingId(seen, children)}
-          className="mt-section-lg mb-m scroll-mt-24 font-display text-h2 text-foreground"
+          className="mt-l mb-s scroll-mt-24 font-display text-h3 text-foreground"
         >
           {children}
         </h2>
@@ -134,7 +136,7 @@ function makeComponents(): PortableTextComponents {
       h3: ({ children }) => (
         <h3
           id={makeHeadingId(seen, children)}
-          className="mt-section-md mb-s scroll-mt-24 font-display text-h3 text-foreground"
+          className="mt-l mb-xs scroll-mt-24 font-display text-h4 text-foreground"
         >
           {children}
         </h3>
@@ -142,7 +144,7 @@ function makeComponents(): PortableTextComponents {
       h4: ({ children }) => (
         <h4
           id={makeHeadingId(seen, children)}
-          className="mt-l mb-s scroll-mt-24 font-display text-h4 text-foreground"
+          className="mt-m mb-xs scroll-mt-24 font-display text-h5 text-foreground"
         >
           {children}
         </h4>
@@ -264,7 +266,7 @@ function makeComponents(): PortableTextComponents {
                 alt={value.alt ?? ''}
                 loading="lazy"
                 decoding="async"
-                className="h-auto w-full rounded-md"
+                className="h-auto w-full rounded-[var(--radius-card)]"
               />
             </a>
             {value.caption && (
@@ -280,7 +282,7 @@ function makeComponents(): PortableTextComponents {
       pullQuote: ({ value }) => {
         if (!value?.quote) return null;
         return (
-          <figure className="my-section-lg border-y border-border-soft py-section-md text-center">
+          <figure className="my-l border-y border-border-soft py-l text-center">
             <span
               aria-hidden="true"
               className="mb-[-1.5rem] block font-display text-[clamp(3rem,6vw,5rem)] leading-none text-link/45 select-none"
@@ -292,7 +294,7 @@ function makeComponents(): PortableTextComponents {
             </blockquote>
             {value.attribution && (
               <figcaption className="mt-l text-xs tracking-widest text-foreground/80 uppercase">
-                — {value.attribution}
+                {value.attribution}
               </figcaption>
             )}
           </figure>
@@ -318,9 +320,9 @@ function makeComponents(): PortableTextComponents {
         if (!value?.itemName) return null;
         const hasImage = !!value.image?.asset;
         const inner = (
-          <div className="flex items-start gap-l rounded-md border border-border-soft bg-muted p-l">
+          <div className="flex items-start gap-l rounded-[var(--radius-card)] border border-border-soft bg-muted p-l">
             {hasImage && (
-              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md bg-card">
+              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-[var(--radius-inner)] bg-card">
                 <img
                   src={urlFor(value.image).width(200).quality(75).format('webp').url()}
                   width={96}
@@ -373,7 +375,7 @@ function makeComponents(): PortableTextComponents {
         if (!value?.content) return null;
         return (
           <aside
-            className="my-section-md rounded-r-md border-l-4 border-tertiary bg-muted/70 p-l"
+            className="my-section-md rounded-r-[var(--radius-card)] border-l-4 border-tertiary bg-muted/70 p-l"
             aria-label={value.label ?? 'Note'}
           >
             <p className="mb-s text-xs font-semibold tracking-widest text-foreground/80 uppercase">
@@ -421,7 +423,7 @@ function makeComponents(): PortableTextComponents {
                         alt={img.alt ?? ''}
                         loading="lazy"
                         decoding="async"
-                        className="aspect-[4/3] h-full w-full rounded-md object-cover"
+                        className="aspect-[4/3] h-full w-full rounded-[var(--radius-card)] object-cover"
                       />
                     </a>
                     {img.caption && (
@@ -467,7 +469,7 @@ function makeComponents(): PortableTextComponents {
         if (!src) return null;
         return (
           <figure className="my-section-md">
-            <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
+            <div className="relative aspect-video w-full overflow-hidden rounded-[var(--radius-card)] bg-muted">
               <iframe
                 src={src}
                 title={value.caption ?? 'Video'}

@@ -270,14 +270,17 @@
   text-transform: uppercase;
   color: #dbe3ee;
 }
+/* The "To confirm" tag in NotConfirmed.astro's own shape and colours (2026-10-24: it was a white
+   pill here and a sentence-case pill in the menu, three looks for one tag). */
 .hb-pill {
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--auburn-red-dark);
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-tag);
+  background: #fce3da;
+  color: #7a2a14;
   font-size: var(--fs-tag);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 .hb-sunday__date {

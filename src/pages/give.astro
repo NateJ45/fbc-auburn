@@ -124,7 +124,9 @@ const schemas = [
     gap: var(--gap-grid);
     margin-top: var(--gap-heading);
   }
-  @media (min-width: 48rem) {
+  /* Three across from 64rem, like the icon cards: at 48rem each column was about 140px and the
+     address wrapped every few words (2026-10-24). */
+  @media (min-width: 64rem) {
     .give-ways {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }

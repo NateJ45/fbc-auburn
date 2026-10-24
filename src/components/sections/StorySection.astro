@@ -46,10 +46,10 @@ const bg = surface === 'muted' ? 'bg-muted' : 'bg-background';
           width={900}
           sizes="(min-width: 1024px) 40vw, 100vw"
           quality={75}
-          class="h-auto w-full rounded-md"
+          class="h-auto w-full rounded-[var(--radius-card)]"
         />
       ) : (
-        <div class="aspect-[4/5] rounded-md bg-muted" aria-hidden="true" />
+        <div class="aspect-[4/5] rounded-[var(--radius-card)] bg-muted" aria-hidden="true" />
       )}
       {attribution && (
         <p class="mt-s text-xs tracking-widest text-foreground/80 uppercase">{attribution}</p>

@@ -153,6 +153,13 @@ main:has(.board-head) :where(.max-w-content.px-m, .max-w-content.px-l) {
   padding: 24px var(--board-gutter, var(--spacing-l)) 0;
   background: var(--background);
 }
+/* A rule opens a section, so one with no section after it goes (2026-10-24). A block that renders
+   nothing until its data exists (Calendar subscribe with no feed, Events with no calendar) left its
+   rule behind: a lone marker, or two stacked. */
+.board-rule-wrap:has(+ .board-rule-wrap),
+.board-rule-wrap:last-child {
+  display: none;
+}
 .board-rule {
   display: flex;
   align-items: center;
