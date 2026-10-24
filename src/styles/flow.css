@@ -395,13 +395,11 @@ html.motion .flow-magnetic:not(.btn-auburn) {
   color: var(--muted-foreground);
   vertical-align: middle;
 }
-/* Phones keep the wrapped sentence (2026-10-24): one line is about four screens wide there and
-   raced past in a few hundred pixels of scroll, so nobody could read it. A step smaller so it
-   wraps into four or five lines rather than six. */
+/* Not on phones (2026-10-24), as on the reference site: one line is about four screens wide there
+   and raced past in a few hundred pixels of scroll, so nobody could read it. */
 @media (max-width: 767px) {
-  .sf-verse__line {
-    font-size: 1.75rem;
-    line-height: 1.15;
+  .sf-verse {
+    display: none;
   }
 }
 @media (min-width: 768px) {

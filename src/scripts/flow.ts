@@ -414,7 +414,7 @@ function scrubVerse(): () => void {
   const wrap = document.querySelector<HTMLElement>('[data-flow-verse]');
   const line = wrap?.querySelector<HTMLElement>('.sf-verse__line');
   if (!wrap || !line) return () => {};
-  // Phones read it as a wrapped sentence instead (flow.css), so there is nothing to slide there.
+  // Phones do not show it (flow.css), so there is nothing to slide there.
   // Checked on every update, so a phone turned to landscape past 768px picks the slide up.
   const wide = matchMedia('(min-width: 768px)');
   let frame = 0;

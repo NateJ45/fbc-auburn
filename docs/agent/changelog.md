@@ -7,9 +7,9 @@ _2026-10-24: smoother phone scrolling; the footer verse reads on phones._
 re-laid the whole page and nudged the content up under the thumb. The bar now compacts from `lg` up
 only; below that it keeps its height and just gains the white ground and shadow (`src/styles/auburn.css`).
 The footer verse slid as one line about four screens wide on a 375px phone, through about 630px of
-scroll, so only four or five words were ever visible. Under 768px it is now a wrapped sentence at
-1.75rem that fades up with the rest of the footer; `scrubVerse()` in `flow.ts` does nothing there,
-and picks the slide up if a phone turns to landscape past 768px.
+scroll, so only four or five words were ever visible. Under 768px it is now hidden, as on the
+reference site (Nathan's pick over a wrapped sentence); `scrubVerse()` in `flow.ts` does nothing
+there, and picks the slide up if a phone turns to landscape past 768px.
 
 _2026-10-24: Dependabot sweep, wrangler to 4.151.3._
 
