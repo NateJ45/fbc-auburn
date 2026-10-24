@@ -395,15 +395,24 @@ html.motion .flow-magnetic:not(.btn-auburn) {
   color: var(--muted-foreground);
   vertical-align: middle;
 }
-/* One line from the first paint (html.motion is set before it), so the footer's height never
-   changes when the script starts. */
-html.motion .sf-verse__line {
-  width: max-content;
-  white-space: nowrap;
-  will-change: translate;
+/* Phones keep the wrapped sentence (2026-10-24): one line is about four screens wide there and
+   raced past in a few hundred pixels of scroll, so nobody could read it. A step smaller so it
+   wraps into four or five lines rather than six. */
+@media (max-width: 767px) {
+  .sf-verse__line {
+    font-size: 1.75rem;
+    line-height: 1.15;
+  }
 }
 @media (min-width: 768px) {
   .sf-verse__line {
     padding-inline: 32px;
+  }
+  /* One line from the first paint (html.motion is set before it), so the footer's height never
+     changes when the script starts. */
+  html.motion .sf-verse__line {
+    width: max-content;
+    white-space: nowrap;
+    will-change: translate;
   }
 }

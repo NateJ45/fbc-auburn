@@ -503,11 +503,23 @@ html .site-search-dialog {
     0 1px 0 #e6ded2,
     0 12px 30px -24px rgb(22 38 61 / 0.35);
 }
-.site-header[data-scrolled] .site-header__row {
-  padding-block: 12px;
+/* The bar compacts from lg up only. It is sticky and in the flow, so a height change re-lays the
+   whole page every frame of the transition and nudges the content up as the scroll starts, which
+   read as lag on phones (2026-10-24). Below lg it keeps its height and only gains the ground and
+   shadow; the phone lockup is the same size in both states anyway. */
+@media (min-width: 64rem) {
+  .site-header[data-scrolled] .site-header__row {
+    padding-block: 12px;
+  }
+  .site-header[data-scrolled] .site-header__logo {
+    height: 40px;
+  }
 }
-.site-header[data-scrolled] .site-header__logo {
-  height: 40px;
+@media (max-width: 63.99rem) {
+  .site-header__row,
+  .site-header__logo {
+    transition: none;
+  }
 }
 /* The narrowest phones (under 360px): a smaller lockup and a slimmer Menu pill, so "First
    Baptist" no longer runs into the pill (6px apart at 320px; visitor audit, 2026-10-18). */
