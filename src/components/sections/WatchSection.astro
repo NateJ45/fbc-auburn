@@ -149,10 +149,8 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
 </section>
 
 <style>
-  .watch-band {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
+  /* No edge lines of its own (removed 2026-10-24): the board rule above every section already
+     draws one, and the band's lines sat 18px from it, two hairlines stacked at each end. */
   .watch-band__actions {
     display: flex;
     flex-wrap: wrap;

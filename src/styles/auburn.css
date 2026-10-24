@@ -334,6 +334,12 @@ h6 {
   line-height: var(--lh-body);
 }
 
+/* A section ends on its padding, not on its last paragraph's margin: the trailing my-m on rich text
+   made the gap between sections 163 to 189px depending on what came last (2026-10-24). */
+:where(main section) :where(p, ul, ol, dl, blockquote):last-child {
+  margin-bottom: 0;
+}
+
 /* Text that sets no size of its own reads at the body size, not the browser's 16px (Contact's and
    Privacy's rich text and the footer address inherited 16px while the same paragraphs elsewhere
    were 18px). */
