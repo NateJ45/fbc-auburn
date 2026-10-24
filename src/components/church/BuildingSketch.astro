@@ -25,8 +25,9 @@ interface Props {
 }
 const { ink = 'var(--auburn-deep, #1F3A5F)', label, door = false, class: className } = Astro.props;
 const img = await getImage({ src: sketch, format: 'webp' });
-// Where the front door is in the drawing, as fractions of its width and height.
-const DOOR = { x: 0.482, y: 0.56 };
+// Where the front door is in the drawing, as fractions of its width and height (the 2026-10-24
+// redraw: the door under the portico, between its two posts).
+const DOOR = { x: 0.58, y: 0.57 };
 const style = `--sketch: url(${img.src}); --sketch-ink: ${ink}; aspect-ratio: ${sketch.width} / ${sketch.height};`;
 ---
 
