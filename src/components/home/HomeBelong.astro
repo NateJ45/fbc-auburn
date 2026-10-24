@@ -31,7 +31,7 @@ const isStandIn = (img: ProjectedImage | null | undefined) =>
   (img?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
 ---
 
-<section class="hb-section" aria-labelledby={block.heading ? headingId : undefined}>
+<section class="hb-section hb-belong" aria-labelledby={block.heading ? headingId : undefined}>
   <div class="hb-wrap">
     {block.eyebrow && <SectionLabel text={block.eyebrow} as="p" />}
     <div class="hb-mosaic" data-big={big ? 'yes' : 'no'} data-small={small.length}>

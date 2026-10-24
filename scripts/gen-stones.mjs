@@ -59,6 +59,14 @@ export const TILES = {
     fills: ['#16304D', '#18334F', '#142C47', '#1A3552'],
     seed: 17,
   },
+  // A pale warm ground (2026-10-23): Home's "Other ways in" band (home-board.css .hb-band--green),
+  // the printed brick in the band's own tint, so its white cards sit on a wall.
+  warm: {
+    size: 420,
+    grout: '#E6D8CE',
+    fills: ['#F1E8E2', '#F4ECE6', '#EEE3DC', '#F2E9E3'],
+    seed: 23,
+  },
   // A pale sky ground: a person with no photo (PersonCard.astro) and the library's quiet panels.
   sky: {
     size: 420,

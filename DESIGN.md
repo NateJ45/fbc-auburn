@@ -55,7 +55,7 @@ are brick-filled letters, and the 404 headline and the sermon art with no pictur
 
 Update 2026-10-17, the bold home pass: Home carries a full-height ribbon of stones in the four
 mark colours (`StoneRibbon.astro`, `src/scripts/ribbon.ts`) on a plain white page with no tinted
-bands or dividers, a large red intro line in the hero, and photos (stock stand-ins until the photo
+bands or dividers, a photo hero on Home with the welcome set over it in white (2026-10-23), and photos (stock stand-ins until the photo
 session). Decision: `docs/design-directions/2026-10-17-fbc-auburn/README.md`.
 
 North star: a small church that looks like itself. The stone mark is the most distinctive thing
