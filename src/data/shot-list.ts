@@ -156,6 +156,67 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'food-pantry', credit: 'Raj Tuladhar on Unsplash' },
     },
   ],
+  // The Find your place cards (2026-10-24): keyed by the card's title, one photo each. A card in
+  // two groups (Sunday School, Music) asks once and shows it in both. Cards left out here (Next
+  // steps, Youth, Sunday School, Prayer, the serving teams) keep their stone icon on brick.
+  '/ministries/|Plan your visit': [
+    {
+      title: 'The road sign, from a car',
+      detail: 'The sign by the road as a first-time guest sees it, with the building behind.',
+      orientation: 'landscape',
+      example: { file: 'road-sign', credit: 'goodrich kingrey on Unsplash', note: 'end' },
+    },
+  ],
+  '/ministries/|Coffee with the pastor': [
+    {
+      title: 'You with a coffee, ready to talk',
+      detail: 'At a table in the fellowship hall or a local coffee shop. Relaxed, a phone is fine.',
+      orientation: 'landscape',
+      example: { file: 'pastor-portrait', credit: 'Susmit Sam on Unsplash' },
+    },
+  ],
+  '/ministries/|Kids': [
+    {
+      title: 'The children’s room, ready for Sunday',
+      detail:
+        'The room set up with toys or a lesson out. No children’s faces without signed releases.',
+      orientation: 'landscape',
+      example: { file: 'nursery', credit: 'Atikah Akhtar on Unsplash' },
+    },
+  ],
+  '/ministries/|Bible study and prayer': [
+    {
+      title: 'Open Bibles round a table',
+      detail: 'The Wednesday group, from across the table. Hands and Bibles are enough.',
+      orientation: 'landscape',
+      example: { file: 'bible-study', credit: 'Mitchell Leach on Unsplash' },
+    },
+  ],
+  '/ministries/|Music': [
+    {
+      title: 'The singers or players on a Sunday',
+      detail: 'From the side or the back during worship, so the music leads and nobody poses.',
+      orientation: 'landscape',
+      example: { file: 'worship-wide', credit: 'Natalya Ukolova on Unsplash' },
+    },
+  ],
+  '/ministries/|Fellowship': [
+    {
+      title: 'A meal after church',
+      detail:
+        'The fellowship hall with plates out and people talking. Ask before you share a face.',
+      orientation: 'landscape',
+      example: { file: 'after-service', credit: 'Connor Olson on Unsplash' },
+    },
+  ],
+  '/ministries/|Greeters': [
+    {
+      title: 'A greeter at the front door',
+      detail: 'Someone holding the door on a Sunday morning, taken from the path a guest walks up.',
+      orientation: 'landscape',
+      example: { file: 'front-door', credit: 'Roger Starnes Sr on Unsplash' },
+    },
+  ],
   '/what-we-believe/|Baptism': [
     {
       title: 'A baptism',

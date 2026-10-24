@@ -326,6 +326,53 @@ const SECTIONS: Record<string, unknown>[] = [
       },
     ],
   },
+  {
+    _type: 'findYourPlaceSection',
+    _key: 'findyourplace',
+    heading: 'Find your place',
+    groups: [
+      {
+        _key: 'g1',
+        _type: 'fypGroup',
+        title: 'New here',
+        line: 'Your first Sunday, and the people you will meet.',
+        cards: [
+          {
+            _key: 'c1',
+            _type: 'fypCard',
+            icon: 'coffee',
+            title: 'Plan your visit',
+            forWho: 'Everyone',
+            day: 'Sundays',
+            body: 'Where to park, where the door is, and what happens.',
+            link: cta('Plan your visit'),
+          },
+          {
+            _key: 'c2',
+            _type: 'fypCard',
+            icon: 'bible',
+            title: 'Meet the pastor',
+            forWho: 'Anyone',
+          },
+        ],
+      },
+      {
+        _key: 'g2',
+        _type: 'fypGroup',
+        title: 'Serve',
+        cards: [
+          {
+            _key: 'c3',
+            _type: 'fypCard',
+            icon: 'handshake',
+            title: 'Greeters',
+            place: 'The front door',
+            body: 'Say hello and point people to coffee.',
+          },
+        ],
+      },
+    ],
+  },
   { _type: 'thisWeekSection', _key: 'thisweek', heading: 'This week' },
   {
     _type: 'watchSection',

@@ -1,0 +1,518 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-24): "Find your place", the Ministries hub. Taken from
+// the hppres.org audit and scaled to a small church:
+//
+//   - Every group shows at once, stacked ("New here", "Kids and youth", "Adults", "Serve",
+//     "Care"). A sticky index down the left names them in big Young Serif; the group in view is ink
+//     with the brick marker, the rest are a quiet tint. It is a list of plain jump links
+//     (/ministries/#serve deep-links, Back and Forward just work), and a small script marks the
+//     group in view with aria-current. On a phone the index is a sticky row of chips under the
+//     header, the active chip filled.
+//   - Each card: a photo with the stepped brick corner (src/styles/shapes.css), or its stone icon
+//     on warm brick when there is no photo; who it is for in small caps; the title; WHEN and WHERE
+//     as a coloured serif line ("Wednesdays, 6:00 pm · Fellowship hall"), the day's times from
+//     Church facts, never typed; a sentence or two; and the whole card is the link.
+//   - Before launch an empty or stand-in photo shows its "Photo needed" request, keyed
+//     "/ministries/|<card title>" in src/data/shot-list.ts.
+//
+// A content block: the surface comes from the cadence (rule 9). Docs: docs/agent/shapes.md.
+import '@/styles/shapes.css';
+import SanityImage from '@/components/SanityImage.astro';
+import StoneIcon from '@/components/StoneIcon.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { MARKER } from '@/components/home/stones.generated';
+import { getChurchFacts } from '@/lib/church-data';
+import { dayWithTimes, plain } from '@/lib/church-facts';
+import { ctaHref } from '@/lib/cta-href';
+import { shotFor } from '@/data/shot-list';
+import { surfaceClass } from '@/lib/surfaces';
+import type { ProjectedFypGroup } from '@/lib/pageBuilder.types';
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  groups?: ProjectedFypGroup[];
+  surface?: 'background' | 'muted';
+  headingId: string;
+  /** The page's path, for the shot list ("/ministries/"). */
+  path?: string;
+}
+const {
+  eyebrow,
+  heading,
+  intro,
+  groups = [],
+  surface = 'background',
+  headingId,
+  path = Astro.url.pathname,
+} = Astro.props;
+
+const facts = await getChurchFacts();
+
+// One anchor per group from its name: "Kids and youth" -> "kids-and-youth". A repeated name gets a
+// number so two groups never share an id.
+const seen = new Map<string, number>();
+const slugOf = (title: string): string => {
+  const base =
+    plain(title)
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'group';
+  const n = (seen.get(base) ?? 0) + 1;
+  seen.set(base, n);
+  return n === 1 ? base : `${base}-${n}`;
+};
+const shown = groups
+  .filter((g) => g.title && g.cards?.length)
+  .map((g) => ({ ...g, id: slugOf(g.title ?? '') }));
+
+// Headings: under a block heading the groups are h3 and the cards h4; with no block heading
+// (straight under the page title, as on Ministries) the groups are h2 and the cards h3.
+const GroupTitle = heading ? 'h3' : 'h2';
+const CardTitle = heading ? 'h4' : 'h3';
+
+const whenWhere = (day?: string, place?: string, title?: string): string =>
+  [day ? dayWithTimes(day, facts.serviceTimes, title) : '', place ?? '']
+    .filter(Boolean)
+    .join(' · ');
+---
+
+<section
+  class:list={[surfaceClass(surface), 'fyp shape-slab-host']}
+  aria-labelledby={heading ? headingId : undefined}
+  data-fyp
+>
+  <div class="mx-auto max-w-content px-m py-section-lg">
+    {(eyebrow || heading || intro) && (
+      <div class="fyp__head">
+        {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
+        {heading && (
+          <h2 id={headingId} class="font-display text-h2 leading-tight">
+            {heading}
+          </h2>
+        )}
+        {intro && <p class="fyp__intro">{intro}</p>}
+      </div>
+    )}
+
+    <div class="fyp__layout">
+      {shown.length > 1 && (
+        <nav class="fyp__index" aria-label="Groups on this page" data-fyp-index>
+          <ol role="list">
+            {shown.map((g, i) => (
+              <li>
+                <a
+                  href={`#${g.id}`}
+                  class="fyp__jump"
+                  data-fyp-jump={g.id}
+                  aria-current={i === 0 ? 'true' : undefined}
+                >
+                  <svg
+                    class="fyp__marker"
+                    viewBox="0 0 78 36"
+                    width="26"
+                    height="12"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    {MARKER.map((s) => (
+                      <path d={s.d} fill={s.fill} />
+                    ))}
+                  </svg>
+                  <span>{g.title}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
+      <div class="fyp__groups">
+        {shown.map((g) => (
+          <section id={g.id} class="fyp__group" aria-labelledby={`${g.id}-h`} data-fyp-group>
+            <div class="fyp__group-head">
+              <GroupTitle id={`${g.id}-h`} class="fyp__group-title">
+                {g.title}
+              </GroupTitle>
+              {g.line && <p class="fyp__group-line">{g.line}</p>}
+            </div>
+            <ul class="fyp__cards" role="list">
+              {(g.cards ?? []).map((card) => {
+                // A card links only when its link has a label (an empty link object is no link).
+                const href = card.link?.label ? ctaHref(card.link) : null;
+                const shot = shotFor(path, card.title, 0, card.image);
+                const ww = whenWhere(card.day, card.place, card.title);
+                return (
+                  <li class:list={['fyp-card', href && 'shape-card']}>
+                    <div class="fyp-card__pic shape-step">
+                      {shot ? (
+                        <ShotRequest shot={shot} inLink={Boolean(href)} class="shot--fill" />
+                      ) : card.image?.asset ? (
+                        <div class="shape-zoom">
+                          <SanityImage
+                            source={card.image}
+                            width={720}
+                            height={600}
+                            sizes="(min-width: 80rem) 22rem, (min-width: 40rem) 45vw, 100vw"
+                            quality={70}
+                          />
+                        </div>
+                      ) : (
+                        <div class="shape-zoom shape-tile">
+                          <StoneIcon name={card.icon} size={120} />
+                        </div>
+                      )}
+                    </div>
+                    {card.forWho && <p class="fyp-card__for">{card.forWho}</p>}
+                    <CardTitle class="fyp-card__title">
+                      {href ? (
+                        <a href={href} class="fyp-card__link">
+                          {card.title}
+                        </a>
+                      ) : (
+                        card.title
+                      )}
+                    </CardTitle>
+                    {ww && <p class="fyp-card__when">{ww}</p>}
+                    {card.body && <p class="fyp-card__body">{card.body}</p>}
+                    {href && (
+                      <p class="fyp-card__more" aria-hidden="true">
+                        {card.link?.label}
+                        <span class="fyp-card__arrow">→</span>
+                      </p>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Marks the group in view in the index (aria-current), so the index follows the scroll. The
+  // links themselves are plain anchors and work without this. Re-run after every View Transitions
+  // swap. On a phone the active chip is scrolled into its row without moving the page.
+  function initFindYourPlace() {
+    document.querySelectorAll<HTMLElement>('[data-fyp]').forEach((root) => {
+      if (root.dataset.fypReady) return;
+      root.dataset.fypReady = '1';
+      const links = [...root.querySelectorAll<HTMLAnchorElement>('[data-fyp-jump]')];
+      const groups = [...root.querySelectorAll<HTMLElement>('[data-fyp-group]')];
+      if (links.length < 2) return;
+      const index = root.querySelector<HTMLElement>('[data-fyp-index]');
+      // The header's height (not its moved position) places the index under it.
+      const header = document.querySelector<HTMLElement>('.site-header');
+      const measure = () => {
+        if (header) root.style.setProperty('--fyp-header', `${header.offsetHeight}px`);
+      };
+      const setActive = (id: string) => {
+        for (const a of links) {
+          const on = a.dataset.fypJump === id;
+          if (on) a.setAttribute('aria-current', 'true');
+          else a.removeAttribute('aria-current');
+          if (on && index && index.scrollWidth > index.clientWidth) {
+            const left = a.offsetLeft - (index.clientWidth - a.offsetWidth) / 2;
+            index.scrollTo({ left, behavior: 'instant' });
+          }
+        }
+      };
+      // The group whose top has passed a line a third of the way down the window is current.
+      const pick = () => {
+        const line = window.innerHeight / 3;
+        let current = groups[0];
+        for (const g of groups) if (g.getBoundingClientRect().top <= line) current = g;
+        // At the very bottom the last group wins, even if it is short.
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+          current = groups[groups.length - 1];
+        }
+        if (current) setActive(current.id);
+      };
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          ticking = false;
+          measure();
+          pick();
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      document.addEventListener('astro:before-swap', () => {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      });
+      measure();
+      pick();
+    });
+  }
+  initFindYourPlace();
+  document.addEventListener('astro:page-load', initFindYourPlace);
+</script>
+
+<style>
+  .fyp__head {
+    max-width: 44rem;
+    margin-bottom: clamp(2.2rem, 5vw, 3.5rem);
+  }
+  .fyp__intro {
+    margin-top: 0.8rem;
+    font-size: var(--fs-lead);
+    line-height: 1.55;
+    color: var(--muted-foreground);
+  }
+
+  /* ---- Layout: index beside the groups on a wide screen, chips above them on a phone ---- */
+  .fyp__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+  @media (min-width: 64rem) {
+    .fyp__layout {
+      grid-template-columns: 15.5rem minmax(0, 1fr);
+      gap: clamp(2.5rem, 4vw, 4.5rem);
+      align-items: start;
+    }
+  }
+
+  /* ---- The index ---- */
+  /* The index sits under the sticky header and follows it: the base layout hides the header on a
+     scroll down (data-state="hidden", 300ms), so the index slides up to the top with it and comes
+     back down when the header does. --fyp-header is the header's own height, measured by the
+     script below (it changes with the width and as the bar compacts). */
+  .fyp__index {
+    position: sticky;
+    z-index: 5;
+    top: calc(var(--fyp-header, 4rem) + var(--fyp-gap, 0px));
+    transition: top 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  :global(body:has(.site-header[data-state='hidden'])) .fyp__index {
+    top: var(--fyp-gap, 0px);
+  }
+  .fyp__index ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .fyp__jump {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    font-family: var(--font-display);
+    line-height: 1.1;
+    color: var(--fyp-quiet);
+    transition: color 200ms ease;
+  }
+  .fyp__jump:hover,
+  .fyp__jump:focus-visible {
+    color: var(--heading-solid);
+  }
+  .fyp__jump[aria-current='true'] {
+    color: var(--heading-solid);
+  }
+  .fyp__marker {
+    flex: none;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+  .fyp__jump[aria-current='true'] .fyp__marker {
+    opacity: 1;
+    transform: none;
+  }
+  /* The quiet tint: large text, so 3:1 against the page is the bar; this is about 3.4:1. */
+  .fyp {
+    --fyp-quiet: #7f8da3;
+  }
+
+  @media (min-width: 64rem) {
+    .fyp {
+      --fyp-gap: 3rem;
+    }
+    .fyp__index li + li {
+      margin-top: 0.35rem;
+    }
+    .fyp__jump {
+      font-size: clamp(1.7rem, 1rem + 1.1vw, 2.25rem);
+      padding-block: 0.25rem;
+    }
+  }
+
+  /* A phone and a tablet: one sticky row of chips that scrolls sideways. */
+  @media (max-width: 63.99rem) {
+    .fyp__index {
+      margin-inline: calc(-1 * var(--spacing-m));
+      padding: 0.6rem var(--spacing-m);
+      background: color-mix(in srgb, var(--background) 94%, transparent);
+      backdrop-filter: blur(6px);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .fyp__index::-webkit-scrollbar {
+      display: none;
+    }
+    .fyp__index ol {
+      display: flex;
+      gap: 0.5rem;
+      width: max-content;
+    }
+    .fyp__jump {
+      min-height: 44px;
+      padding: 0 1rem;
+      border: 1px solid color-mix(in srgb, var(--heading-solid) 25%, transparent);
+      border-radius: var(--radius-pill);
+      font-size: 1.05rem;
+      color: var(--heading-solid);
+      background: var(--background);
+      white-space: nowrap;
+    }
+    .fyp__jump[aria-current='true'] {
+      background: var(--heading-solid);
+      border-color: var(--heading-solid);
+      color: #fff;
+    }
+    .fyp__marker {
+      display: none;
+    }
+  }
+
+  /* ---- Groups ---- */
+  .fyp__group {
+    /* A jump lands the group's name just under the header and the chip row. */
+    scroll-margin-top: calc(var(--fyp-header, 4rem) + 4.5rem);
+  }
+  @media (min-width: 64rem) {
+    .fyp__group {
+      scroll-margin-top: 7rem;
+    }
+  }
+  .fyp__group + .fyp__group {
+    margin-top: clamp(4.5rem, 9vw, 8rem);
+  }
+  .fyp__group-head {
+    margin-bottom: clamp(1.6rem, 3vw, 2.4rem);
+    max-width: 40rem;
+  }
+  .fyp__group-title {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3, clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem));
+    line-height: 1.15;
+    color: var(--heading-solid);
+  }
+  .fyp__group-line {
+    margin-top: 0.4rem;
+    color: var(--muted-foreground);
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+  }
+
+  /* ---- Cards ---- */
+  .fyp__cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.75rem, 5vw, 4.5rem) clamp(1.5rem, 2.5vw, 2.5rem);
+  }
+  @media (min-width: 36rem) {
+    .fyp__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 80rem) {
+    .fyp__cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .fyp-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .fyp-card__pic {
+    aspect-ratio: 6 / 5;
+    margin-bottom: 1.15rem;
+  }
+  .fyp-card__pic :global(.shot--fill) {
+    position: absolute;
+    inset: 0;
+  }
+  .fyp-card__pic {
+    position: relative;
+  }
+  .fyp-card__for {
+    font-size: var(--fs-tag);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    margin-bottom: 0.4rem;
+  }
+  .fyp-card__title {
+    font-family: var(--font-display);
+    font-size: var(--fs-title);
+    line-height: 1.2;
+    color: var(--heading-solid);
+  }
+  .fyp-card__link {
+    color: inherit;
+    text-decoration: none;
+  }
+  /* The whole card is the link: the title's link covers the card. */
+  .fyp-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+  .fyp-card__link:focus-visible {
+    outline: none;
+  }
+  .fyp-card:has(.fyp-card__link:focus-visible) {
+    outline: 3px solid var(--ring, var(--heading-solid));
+    outline-offset: 6px;
+  }
+  /* When and where: the second thing read, in the brick red serif. */
+  .fyp-card__when {
+    margin-top: 0.35rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    line-height: 1.35;
+    color: var(--auburn-red);
+  }
+  .fyp-card__body {
+    margin-top: 0.6rem;
+    line-height: 1.6;
+    color: var(--foreground);
+  }
+  .fyp-card__more {
+    margin-top: auto;
+    padding-top: 0.9rem;
+    font-weight: 600;
+    font-size: var(--fs-small);
+    color: var(--link);
+  }
+  .fyp-card__arrow {
+    display: inline-block;
+    margin-left: 0.35rem;
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .shape-card:hover .fyp-card__arrow {
+      transform: translateX(5px);
+    }
+  }
+</style>

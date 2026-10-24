@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-24: the shape system and Find your place._
+
+**Decision.** From an audit of hppres.org: pictures take two Auburn shapes instead of rounded rectangles (a stepped brick
+corner on cards; the building's gable over a navy brick slab on every ImageText photo), and Ministries becomes a "Find
+your place" hub: a new `findYourPlaceSection` block with groups (New here, Kids and youth, Adults, Serve, Care) stacked
+beside a sticky index that follows the scroll and the header, chips on a phone. Card times come from Church facts through
+the new `dayWithTimes` (Home's bands use it too). All groups show at once rather than as tabs, because a small church's
+groups would hold one card each. The CI snapshot pins the new Ministries page. Detail: `docs/agent/shapes.md`.
+
 _2026-10-24: every Studio icon is brick._
 
 **Decision.** The Studio's icons (desk lists, tabs, tools, templates, the Site Guide) mixed two styles: the newer
