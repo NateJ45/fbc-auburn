@@ -573,6 +573,10 @@ export type SiteSettings = {
   };
   footerInvite?: string;
   footerSecondaryCta?: CtaBlock;
+  footerVerse?: {
+    text?: string;
+    reference?: string;
+  };
   footerAbout?: string;
   footerCredit?: string;
   footerCreditUrl?: string;

@@ -1,6 +1,6 @@
 # Animation layer
 
-> Native scrolling (Lenis removed), scroll reset on navigation, Motion integration, scroll-triggered reveals, hero entry stagger, Ken Burns slideshow, view-transition cross-fade, and the opt-in script accent.
+> The flow layer (line-by-line headings, fade-ups, parallax, the footer verse, page transitions), native scrolling (Lenis removed), scroll reset on navigation, Motion integration, scroll-triggered reveals, hero entry stagger, Ken Burns slideshow, view-transition cross-fade, and the opt-in script accent.
 
 Non-animation polish (brand stripe, card-lift, surface-warm, reading-progress, sticky-header, paper-grain, print stylesheet) is covered in `polish-layer.md`.
 
@@ -78,6 +78,8 @@ The first slide stays the eager `fetchpriority="high"` LCP image; the rest lazy-
 
 ## View-transition cross-fade
 
+On FBC Auburn the cross-fade below is replaced by the flow layer's lift-and-rise (see "The flow layer").
+
 `<main id="main">` carries `view-transition-name: main-content` and cross-fades on every navigation (`vt-fade-out` 150ms -> `vt-fade-in` 200ms). The header and footer are named (`site-header` / `site-footer`) and pinned with `animation: none` so they stay put through the swap instead of flashing. Astro respects `prefers-reduced-motion` automatically -- reduced-motion users get an instant cut. Pure CSS, no JS.
 
 ---
@@ -118,6 +120,51 @@ The shared logic lives in `src/lib/heading-accent.ts` (`splitHeadingAccent(headi
 **Discipline:** use at most one script accent per heading. Over-use dilutes the effect. The accent word is matched case-insensitively against the headline, first occurrence only. Think of it as an editorial signature, not decoration.
 
 ---
+
+## The flow layer (FBC Auburn, 2026-10-24)
+
+Nathan asked for the whole site to feel alive as you scroll, the way a reference church site
+(Highland Park Presbyterian, Dallas) does. Its motion was audited on 2026-10-24: GSAP with
+ScrollTrigger, SplitText and Barba, driven by Alpine components. What it does, and what we kept:
+
+| On the reference site                                                                                                                                             | Ours                                                                                                    | How                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Headings, intros and quotes rise line by line out of a mask (SplitText lines, 101% to 0, 1.2s expo-out, 0.1s apart, starting when the top is 85% down the screen) | Every `h1`, `h2` and pull quote in `<main>`                                                             | `flow.ts` splits into `.flow-line` masks, `flow.css` `flow-line`            |
+| Everything else fades up as it arrives, staggered within a group                                                                                                  | Paragraphs, list items, cards, buttons, figures, forms, stone icons                                     | `.flow--up`, 1s expo-out, 90ms apart for things arriving together           |
+| Photos fade in from a slight zoom                                                                                                                                 | Images in a cropping frame                                                                              | `.flow--photo` (scale 1.12 to 1)                                            |
+| Photos and arches drift with the scroll (scrubbed parallax)                                                                                                       | Big framed photos drift inside their frame                                                              | `.flow-par`, CSS view timeline (Chrome, Edge, Safari 26; still elsewhere)   |
+| Hero text slides away as you scroll out; hero image slides in from the side on load                                                                               | Home: the photo sinks and zooms, the words lift and fade; the This Sunday card slides in from the right | view timeline on `.hb-hero` (`--hero-p` fallback in Firefox), `.flow--side` |
+| Footer: a big line of text slides sideways with the scroll                                                                                                        | The footer verse (Site settings > Social and footer > "Footer: the verse"; Matthew 11:28 by default)    | `scrubVerse()` in `flow.ts`, ends as the verse nears the top of the screen  |
+| Buttons lean toward the mouse (magnetic)                                                                                                                          | Primary buttons and the header's Plan your visit, mouse only                                            | `translate` from the pointer, 14px at most                                  |
+| Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main lifts out (220ms), the new page rises in (700ms); header and footer stay put                       | `::view-transition-*(main-content)` in `flow.css`                           |
+
+Left out on purpose: the loading curtain and its wait (slow on every click), anything that
+rotates (the cross rule), scroll-jacking or pinning.
+
+**How it works.** `src/scripts/flow.ts` (called from `motion.ts` on every `astro:page-load`) picks
+the units itself, so an editor's new section moves like the rest: a list of selectors (`UP_UNITS`,
+`LINE_UNITS`) inside `<main>`, a unit only if no ancestor is one (a card moves as one piece), and a
+`SKIP` list for things with their own motion (the stone `.reveal`s, `.mark-build`, the hero photo,
+the background path). `data-flow="off"` opts a subtree out; `data-flow="lines"` or
+`data-flow-item` opts something in. One IntersectionObserver (bottom margin -12%) starts each unit
+once; units arriving together are staggered in document order, and the first screen waits 120ms so
+it rises with the page. Headings split only after the fonts load, and live preview never splits
+(click-to-edit reads the text nodes); a heading whose link breaks across lines fades up instead.
+
+**The safety rules.** Every hidden starting state is the first frame of a paused CSS animation
+(`both paused`), started by `.flow-go`. So with no `html.motion` (reduced motion, `?still`) none of
+it applies; a test that sets `animation: none` (`tests/helpers.ts` `settle`) sees the page at rest;
+and once a unit lands the script takes its classes off. A split heading keeps its line spans
+(they change nothing in the layout, and the mask goes with the class) so nothing in the DOM moves
+after the page has settled; the spans come out, and the heading's own nodes go back, when the width
+changes or the page is left. The first screen is held (`flow-hold`) until the script arms it, and the hold lets go by
+itself after 1.6s, so a page whose script fails is never left blank. Only `opacity`, `translate`,
+`scale` and (for the parallax) `transform` move. The starter's `[data-reveal]`,
+`[data-stagger-grid]` and `.img-curtain` stand down once the flow layer has armed a page.
+
+**Rule change.** The stone path's "one moving moment per page" (below) still holds for the stone
+drawings (the mark build, the baptism ring, the walk). The flow layer is the page's general
+movement and runs everywhere.
 
 ## The stone path (FBC Auburn, 2026-10-17)
 

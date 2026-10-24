@@ -300,6 +300,7 @@ export const SITE_SETTINGS_PROJECTION = `{
     footerCreditUrl,
     footerInvite,
     footerAbout,
+    footerVerse{ text, reference },
     footerSecondaryCta${CTA_PROJECTION},
     newsletter,
     googleBusinessUrl,

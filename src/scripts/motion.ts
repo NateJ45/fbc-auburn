@@ -14,6 +14,8 @@
 //     rAF-throttled scroll listener sets --drift / --turn here.
 //   - The background path and the Walk in with us plan always run here (they need layout).
 
+import { initFlow } from './flow';
+
 const SCROLL_DRIVEN =
   typeof CSS !== 'undefined' && CSS.supports?.('animation-timeline: view()') === true;
 
@@ -260,3 +262,5 @@ function initMotion() {
 }
 
 document.addEventListener('astro:page-load', initMotion);
+// The flow layer (src/scripts/flow.ts): headings, fade-ups, photos, the footer verse.
+document.addEventListener('astro:page-load', initFlow);
