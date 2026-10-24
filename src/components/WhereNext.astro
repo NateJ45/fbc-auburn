@@ -7,21 +7,33 @@
 // Hover (or keyboard focus) fills the row with brick red from the left and draws the arrow out.
 // Part of the footer (Footer.astro), so it is outside <main> and every page gets it.
 
+import { getAllPageSlugs } from '@/lib/queries';
+
 interface Props {
   /** The current path, to leave the page you are on out of the list. */
   path: string;
 }
 const { path } = Astro.props;
 
-// In order of importance. The first three that are not this page are shown.
+// In order of importance. The first three that are not this page, and that exist, are shown.
+// `studio` names a page made in the Studio (built by [slug].astro): it is only linked while that
+// page is published, so a renamed or archived page, or a build without the dataset (CI), never
+// leaves a broken link. The rest are the site's own routes and always exist.
 const ROWS = [
   { href: '/plan-your-visit/', label: 'Plan your visit', note: 'Your first Sunday' },
-  { href: '/ministries/', label: 'Find your place', note: 'Kids, adults, serving, care' },
+  {
+    href: '/ministries/',
+    label: 'Find your place',
+    note: 'Kids, adults, serving, care',
+    studio: 'ministries',
+  },
   { href: '/sermons/', label: 'Sermons', note: 'Listen or watch again' },
   { href: '/about/', label: 'About the church', note: 'Who we are' },
+  { href: '/give/', label: 'Give', note: 'Sunday, by mail or online' },
 ];
+const slugs = new Set(await getAllPageSlugs());
 const here = path.endsWith('/') ? path : `${path}/`;
-const rows = ROWS.filter((r) => r.href !== here).slice(0, 3);
+const rows = ROWS.filter((r) => r.href !== here && (!r.studio || slugs.has(r.studio))).slice(0, 3);
 ---
 
 <nav class="where-next" aria-label="Where next">
