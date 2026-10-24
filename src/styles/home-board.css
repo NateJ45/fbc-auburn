@@ -815,7 +815,8 @@
   color: #ffffff;
   text-decoration: none;
 }
-.hb-watch img {
+.hb-watch img,
+.hb-watch video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -847,7 +848,8 @@
   z-index: 1;
   display: block;
 }
-.hb-watch__shot .shot__detail {
+.hb-watch__shot .shot__detail,
+.hb-watch__shot .shot__hold {
   display: none;
 }
 /* On a phone the 16:9 card is too short for the note and the words: both go into the flow, the

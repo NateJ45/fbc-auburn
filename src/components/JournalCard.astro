@@ -52,7 +52,7 @@ const titleClass = featured
 
   <div class:list={[aspectClass, 'img-zoom relative overflow-hidden bg-muted']}>
     {coverShot ? (
-      <ShotRequest shot={coverShot} class="shot--fill" />
+      <ShotRequest shot={coverShot} class="shot--fill" inLink />
     ) : entry.coverImage?.asset ? (
       <SanityImage
         source={entry.coverImage}

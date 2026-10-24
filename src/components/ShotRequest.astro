@@ -6,21 +6,28 @@
 //
 // Two looks, both in the pre-launch notes' yellow (ForJacob.astro) so nobody mistakes them for the
 // finished site:
-//   frame (default)  fills a picture slot: the note's paper yellow, camera-frame corners, the
-//                    request in Young Serif and a small phone drawn the way to hold it. Give it
-//                    the slot's own class for its shape (`auburn-arch`), or `shot--fill` to cover
-//                    a slot that already has a size (Home's mosaic tiles).
+//   frame (default)  fills a picture slot. With an example (every shot has one since 2026-10-24),
+//                    a stock photo of the same kind of shot fills the slot and a yellow note pins
+//                    to its lower corner: "Example", the request in Young Serif, and a "How to take
+//                    yours" toggle that opens the detail, the way to hold the phone and the credit.
+//                    Without one, the old look: paper yellow, camera-frame corners, the request.
+//                    Give it the slot's own class for its shape (`auburn-arch`), or `shot--fill` to
+//                    cover a slot that already has a size (Home's mosaic tiles).
 //   tag              a pinned note for a picture that sits behind words (the Home hero, the Last
-//                    Sunday card): the slot keeps its dark ground so the white words still read.
+//                    Sunday card). The slot itself draws the example behind it (HomeHero, HomeWeekWatch).
+// `inLink` drops the toggle for a slot inside a link (a News and notes card): a <details> inside an
+// <a> is not allowed, so the note keeps the request only.
 // Never indexed by site search.
 import type { Shot } from '@/data/shot-list';
+import { exampleSrc } from '@/data/shot-list';
 
 interface Props {
   shot: Shot;
   variant?: 'frame' | 'tag';
+  inLink?: boolean;
   class?: string;
 }
-const { shot, variant = 'frame', class: className } = Astro.props;
+const { shot, variant = 'frame', inLink = false, class: className } = Astro.props;
 const hold =
   shot.orientation === 'portrait'
     ? 'Hold the phone upright'
@@ -29,41 +36,93 @@ const hold =
       : 'Hold the phone sideways';
 // The little phone: 14 by 22 upright, turned on its side for landscape.
 const [pw, ph] = shot.orientation === 'landscape' ? [22, 14] : [14, 22];
+const example = variant === 'frame' ? shot.example : undefined;
+const tag = shot.video ? 'Example video' : shot.example ? 'Example photo' : 'Photo needed';
 ---
 
 <div
-  class:list={['shot', `shot--${variant}`, className]}
+  class:list={['shot', `shot--${variant}`, example && 'shot--example', className]}
   data-shot={shot.orientation}
   data-pagefind-ignore="all"
 >
-  {variant === 'frame' && <span class="shot__corners" aria-hidden="true" />}
-  <div class="shot__body">
-    <p class="shot__tag">Photo needed</p>
-    <p class="shot__title">{shot.title}</p>
-    <p class="shot__detail">{shot.detail}</p>
-    <p class="shot__hold">
-      <svg
-        width={pw}
-        height={ph}
-        viewBox={`0 0 ${pw} ${ph}`}
-        aria-hidden="true"
-        focusable="false"
-        class="shot__phone"
-      >
-        <rect
-          x="1"
-          y="1"
-          width={pw - 2}
-          height={ph - 2}
-          rx="3"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        />
-      </svg>
-      {hold}
-    </p>
-  </div>
+  {example ? (
+    <>
+      <img
+        class="shot__example"
+        src={exampleSrc(example.file)}
+        alt={`Example: ${shot.title}`}
+        loading="lazy"
+        decoding="async"
+      />
+      <div class:list={['shot__note', example.note === 'end' && 'shot__note--end']}>
+        <p class="shot__tag">Example photo · yours goes here</p>
+        <p class="shot__title">{shot.title}</p>
+        {!inLink && (
+          <details class="shot__how">
+            <summary>How to take yours</summary>
+            <p class="shot__detail">{shot.detail}</p>
+            <p class="shot__hold">
+              <svg
+                width={pw}
+                height={ph}
+                viewBox={`0 0 ${pw} ${ph}`}
+                aria-hidden="true"
+                focusable="false"
+                class="shot__phone"
+              >
+                <rect
+                  x="1"
+                  y="1"
+                  width={pw - 2}
+                  height={ph - 2}
+                  rx="3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+              </svg>
+              {hold}
+            </p>
+            <p class="shot__credit">Example by {example.credit}</p>
+          </details>
+        )}
+      </div>
+    </>
+  ) : (
+    <>
+      {variant === 'frame' && <span class="shot__corners" aria-hidden="true" />}
+      <div class="shot__body">
+        <p class="shot__tag">
+          {tag}
+          {variant === 'tag' && shot.example && ' · yours goes here'}
+        </p>
+        <p class="shot__title">{shot.title}</p>
+        <p class="shot__detail">{shot.detail}</p>
+        <p class="shot__hold">
+          <svg
+            width={pw}
+            height={ph}
+            viewBox={`0 0 ${pw} ${ph}`}
+            aria-hidden="true"
+            focusable="false"
+            class="shot__phone"
+          >
+            <rect
+              x="1"
+              y="1"
+              width={pw - 2}
+              height={ph - 2}
+              rx="3"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+          {hold}
+        </p>
+      </div>
+    </>
+  )}
 </div>
 
 <style is:global>
@@ -167,6 +226,64 @@ const [pw, ph] = shot.orientation === 'landscape' ? [22, 14] : [14, 22];
     }
     .shot--frame .shot__detail,
     .shot--frame .shot__hold {
+      display: none;
+    }
+  }
+
+  /* ---- frame with an example: the stock photo fills the slot, the note pins to a corner ---- */
+  .shot--example {
+    align-items: end;
+    background: var(--hb-ink, #16263d);
+  }
+  .shot__example {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .shot__note {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+    max-width: min(22rem, calc(100% - 24px));
+    margin: 12px;
+    padding: 12px 14px;
+    border: 2px solid var(--shot-ink);
+    border-radius: 12px;
+    background: var(--shot-paper);
+    box-shadow: 0 12px 30px -14px rgb(15 34 56 / 0.6);
+  }
+  .shot__note--end {
+    justify-self: end;
+  }
+  .shot__note .shot__title {
+    font-size: var(--fs-title-sm);
+  }
+  .shot__how summary {
+    cursor: pointer;
+    font-size: var(--fs-tag);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .shot__how[open] {
+    display: grid;
+    gap: 8px;
+  }
+  .shot__credit {
+    font-size: var(--fs-tag);
+    opacity: 0.75;
+  }
+  /* A small tile: the tag only, the photo does the talking. */
+  @container (max-width: 240px) {
+    .shot__note {
+      margin: 8px;
+      padding: 6px 8px;
+    }
+    .shot__note .shot__title,
+    .shot__note .shot__how {
       display: none;
     }
   }

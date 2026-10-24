@@ -6,6 +6,12 @@
 // the Studio and it shows straight away; at launch PRE_LAUNCH_NOTES goes false and every
 // placeholder goes with it (a slot with no photo then falls back to what it showed before).
 //
+// Each shot also carries an example (2026-10-24): a free Unsplash photo (and, for Last Sunday, a
+// Pexels clip) of the same kind of picture, kept in public/shot-examples/. The placeholder shows the
+// example filling the slot with a yellow "Example" note pinned on it, so the page reads as finished
+// while still saying which photo is Jacob's to take. Sources and photographers:
+// public/shot-examples/CREDITS.md.
+//
 // The same list feeds the "For Jacob" pill (src/data/for-jacob.ts), one note per shot, so the
 // pill and the placeholders never disagree.
 //
@@ -23,7 +29,20 @@ export interface Shot {
   detail: string;
   /** The way to hold the phone. The placeholder takes the slot's own shape either way. */
   orientation: 'landscape' | 'portrait' | 'square';
+  /**
+   * A free stock photo of the same kind of shot (2026-10-24), so the slot looks finished and Jacob
+   * sees what we mean. `file` is its name in public/shot-examples/ (.webp); `credit` names the
+   * photographer; `note: 'end'` pins the note to the right corner when the left one would hide the
+   * subject. Never shipped at launch: it goes with the placeholder.
+   */
+  example?: { file: string; credit: string; note?: 'end' };
+  /** A short silent clip shown instead of the example photo (the Last Sunday video card). */
+  video?: { file: string; credit: string };
 }
+
+/** The public path of an example's photo, video (.mp4) or video poster. */
+export const exampleSrc = (file: string, ext: 'webp' | 'mp4' = 'webp') =>
+  `/shot-examples/${file}.${ext}`;
 
 const SHOTS: Record<string, Shot[]> = {
   '/|hero': [
@@ -32,6 +51,7 @@ const SHOTS: Record<string, Shot[]> = {
       detail:
         'The congregation during worship or the welcome, taken from behind the last pews so backs, not faces, fill the frame. The welcome words go over the left side, so keep that part calm.',
       orientation: 'landscape',
+      example: { file: 'hero', credit: 'Christian Harb on Unsplash' },
     },
   ],
   '/|A place to belong': [
@@ -39,16 +59,19 @@ const SHOTS: Record<string, Shot[]> = {
       title: 'Sunday worship, wide from the back',
       detail: 'The whole room singing, with the front of the sanctuary in view.',
       orientation: 'portrait',
+      example: { file: 'worship-wide', credit: 'Natalya Ukolova on Unsplash' },
     },
     {
       title: 'People talking after the service',
       detail: 'Coffee, a handshake, a laugh in the aisle. Ask before you share a face.',
       orientation: 'portrait',
+      example: { file: 'after-service', credit: 'Connor Olson on Unsplash' },
     },
     {
       title: 'A small group or Bible study',
       detail: 'Open Bibles around a table, on a Sunday morning or a Wednesday night.',
       orientation: 'landscape',
+      example: { file: 'bible-study', credit: 'Mitchell Leach on Unsplash' },
     },
   ],
   '/|Last Sunday': [
@@ -57,6 +80,8 @@ const SHOTS: Record<string, Shot[]> = {
       detail:
         'Taken from halfway back, with a few heads in the foreground. It stands in for the video until each Sunday’s recording is linked.',
       orientation: 'landscape',
+      example: { file: 'preaching', credit: 'adrianna geo on Unsplash' },
+      video: { file: 'sermon', credit: 'cottonbro studio on Pexels' },
     },
   ],
   '/|Meet Pastor Jacob': [
@@ -64,6 +89,7 @@ const SHOTS: Record<string, Shot[]> = {
       title: 'You, head and shoulders',
       detail: 'Natural light by a window or outside the front door. A phone is fine.',
       orientation: 'portrait',
+      example: { file: 'pastor-portrait', credit: 'Susmit Sam on Unsplash' },
     },
   ],
   '/about/|Who we are': [
@@ -72,6 +98,7 @@ const SHOTS: Record<string, Shot[]> = {
       detail:
         'A group photo on the front steps or by the sign after a Sunday service, everyone who would like to be in it.',
       orientation: 'landscape',
+      example: { file: 'church-family', credit: 'Olek Buzunov on Unsplash' },
     },
   ],
   '/plan-your-visit/|Bringing children': [
@@ -80,6 +107,7 @@ const SHOTS: Record<string, Shot[]> = {
       detail:
         'The room set up, with toys or a lesson out. No children’s faces unless their parents have signed a release.',
       orientation: 'landscape',
+      example: { file: 'nursery', credit: 'Atikah Akhtar on Unsplash' },
     },
   ],
   '/plan-your-visit/|Getting here': [
@@ -88,6 +116,7 @@ const SHOTS: Record<string, Shot[]> = {
       detail:
         'Stand where a first-time guest parks and take the walk up to the door, so they know where to go.',
       orientation: 'landscape',
+      example: { file: 'front-door', credit: 'Roger Starnes Sr on Unsplash' },
     },
   ],
   '/plan-your-visit/|Look for the sign': [
@@ -96,6 +125,7 @@ const SHOTS: Record<string, Shot[]> = {
       detail:
         'Hamilton-Scipio Road as a driver sees it, with the building behind the sign. A clear day, from the passenger seat.',
       orientation: 'landscape',
+      example: { file: 'road-sign', credit: 'goodrich kingrey on Unsplash', note: 'end' },
     },
   ],
   '/ministries/|Serving our neighbours': [
@@ -104,6 +134,7 @@ const SHOTS: Record<string, Shot[]> = {
       detail:
         'People packing or handing out food on a pantry day, not just the tables. Only faces that are happy to be shown.',
       orientation: 'landscape',
+      example: { file: 'food-pantry', credit: 'Raj Tuladhar on Unsplash' },
     },
   ],
   '/what-we-believe/|Baptism': [
@@ -112,6 +143,7 @@ const SHOTS: Record<string, Shot[]> = {
       detail:
         'In the baptistry or outdoors, taken from the side. Only with the family’s say-so; the baptistry empty works too.',
       orientation: 'landscape',
+      example: { file: 'baptism', credit: 'Vince Fleming on Unsplash' },
     },
   ],
   '/leadership/|Jacob Wysong': [
@@ -119,6 +151,7 @@ const SHOTS: Record<string, Shot[]> = {
       title: 'You, head and shoulders',
       detail: 'The same photo as on Home works here. Natural light, a phone is fine.',
       orientation: 'portrait',
+      example: { file: 'pastor-portrait', credit: 'Susmit Sam on Unsplash' },
     },
   ],
 };
@@ -128,6 +161,7 @@ const JOURNAL_COVER: Shot = {
   title: 'A photo that goes with this post',
   detail: 'Something from the news you are sharing. Optional: a post reads fine without one.',
   orientation: 'landscape',
+  example: { file: 'news-cover', credit: 'Ray Kim on Unsplash' },
 };
 
 interface AssetLike {
