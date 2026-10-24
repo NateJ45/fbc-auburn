@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-24: the church phone, 937-620-8693 (from the church's TikTok bio), set in Site settings with `phoneConfirmed` false by `scripts/content/church-phone.mjs` under the write protocol; it shows with the "To confirm" tag and stays out of the JSON-LD until the church ticks the box._
+
 _2026-10-24: the church's TikTok (@auburn.pastor, its bio names the church and address) added to Site settings > Social links after Facebook, by `scripts/content/social-tiktok.mjs` under the write protocol (document and dataset backups outside the repo, dry run, apply, `audit:data` clean). The footer draws it as an icon button beside Facebook._
 
 _2026-10-24: a compact footer._
