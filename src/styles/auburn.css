@@ -732,7 +732,7 @@ html .site-search-dialog {
   }
 }
 
-/* ---- The Menu button and the full-screen night menu (MobileNav.tsx) ---- */
+/* ---- The Menu button and the full-screen menu (MobileNav.tsx) ---- */
 .menu-pill {
   display: inline-flex;
   align-items: center;
@@ -750,7 +750,7 @@ html .site-search-dialog {
   background: var(--muted);
 }
 /* Visitor search (PORTS.md card 126): a round button in the Menu pill's style, just left of it at
-   every width, and a search row at the top of the night menu. The dialog itself is styled from the
+   every width, and a search row at the top of the menu. The dialog itself is styled from the
    theme tokens in src/components/search/. */
 .site-header__menu {
   display: flex;
@@ -773,40 +773,12 @@ html .site-search-dialog {
 .search-pill:hover {
   background: var(--muted);
 }
-.search-pill:focus-visible,
-.auburn-menu__search:focus-visible {
+.search-pill:focus-visible {
   outline: 3px solid var(--ring);
   outline-offset: 3px;
 }
-.auburn-menu__search {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  width: 100%;
-  min-height: 48px;
-  padding: 0.6rem 1.1rem;
-  border: 1px solid rgb(255 255 255 / 0.25);
-  border-radius: 999px;
-  color: rgb(255 255 255 / 0.85);
-  font-size: var(--fs-button);
-  text-decoration: none;
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease;
-}
-.auburn-menu__search:hover {
-  border-color: rgb(255 255 255 / 0.6);
-  background: rgb(255 255 255 / 0.06);
-  color: #ffffff;
-}
-@media (max-width: 53.99rem) {
-  .auburn-menu__search {
-    order: -2;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .search-pill,
-  .auburn-menu__search {
+  .search-pill {
     transition: none;
   }
 }
@@ -837,181 +809,296 @@ html .site-search-dialog {
     margin-left: auto;
   }
 }
+/* The sheet (2026-10-24, after hppres.org): the light page ground over everything, a stack of big
+   serif rows with hairlines between them, then the This Sunday card and the contact details. The
+   rows run edge to edge on phones so an open group's red reaches both sides of the screen. */
 .auburn-menu {
-  --menu-night: #16304d;
+  --menu-gutter: var(--spacing-m, 1.25rem);
+  --menu-rule: rgb(22 38 61 / 0.14);
   display: flex;
   flex-direction: column;
+  gap: 0;
   width: 100%;
   max-width: none;
   inset: 0;
   border: 0;
-  padding: clamp(1.25rem, 4vw, 3rem) clamp(1.25rem, 5vw, 4rem) 0;
-  background: var(--menu-night);
-  color: #ffffff;
-  overflow-y: auto;
-  /* A light focus ring on the night ground (the close button and anything without its own). */
-  --ring: #7f98b8;
-}
-.auburn-menu > button {
-  color: #ffffff;
-  top: clamp(1rem, 3vw, 2rem);
-  right: clamp(1rem, 3vw, 2rem);
-}
-.auburn-menu > button:hover {
-  background: rgb(255 255 255 / 0.12);
-  color: #ffffff;
-}
-.auburn-menu__head {
   padding: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: var(--fs-body);
+  box-shadow: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* The sheet fades in where it stands; the shared slide from the right would read as a drawer. */
+  --tw-enter-translate-x: 0;
+  --tw-exit-translate-x: 0;
 }
-/* The close button is a 44px target (it measured 28px). */
-.auburn-menu [data-slot='sheet-close'],
-.auburn-menu button[aria-label='Close'] {
-  display: inline-flex;
-  min-width: 44px;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-}
-.auburn-menu__eyebrow {
-  font-family: var(--font-body);
-  font-size: var(--fs-tag);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #7f98b8;
-}
-.auburn-menu__grid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(2rem, 5vw, 5rem);
-  align-content: start;
-  width: min(1240px, 100%);
-  margin-inline: auto;
-  padding-block: clamp(1.25rem, 3vw, 2.5rem);
-}
-@media (min-width: 54rem) {
-  .auburn-menu__grid {
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-    align-items: start;
+@media (min-width: 64rem) {
+  .auburn-menu {
+    --menu-gutter: clamp(1.5rem, 4vw, 3rem);
   }
 }
 
-/* The links: numbered in gold; on hover or focus the number becomes a stone in the story's next
-   colour and the word steps right. The page you are on keeps its stone. */
-.auburn-menu__main,
+/* The top bar: the lockup where the header's sits and the close button where the Menu pill was. */
+.auburn-menu__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  flex: none;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 72px;
+  padding: 0.75rem var(--menu-gutter);
+  background: var(--background);
+  border-bottom: 1px solid var(--menu-rule);
+}
+.auburn-menu__logo {
+  display: block;
+  width: auto;
+  height: clamp(28px, calc((100vw - 120px) / 4.95), 44px);
+  max-width: calc(100% - 64px);
+}
+.auburn-menu__close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--background);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+.auburn-menu__close:hover {
+  background: var(--muted);
+}
+.auburn-menu__close:focus-visible,
+.auburn-menu__search:focus-visible,
+.auburn-menu__side a:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.auburn-menu__grid {
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: clamp(2rem, 5vw, 3rem);
+  width: min(1240px, 100%);
+  margin-inline: auto;
+  padding-bottom: clamp(2rem, 5vw, 3rem);
+}
+@media (min-width: 64rem) {
+  .auburn-menu__grid {
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(3rem, 6vw, 6rem);
+    padding: 2.5rem var(--menu-gutter) 3rem;
+  }
+}
+
+/* Search, shaped like the field it opens. */
+.auburn-menu__search {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 52px;
+  margin: 1.25rem var(--menu-gutter) 1rem;
+  padding: 0 1.1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--card);
+  color: var(--muted-foreground);
+  font-size: var(--fs-body);
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease;
+}
+.auburn-menu__search:hover {
+  border-color: var(--foreground);
+  color: var(--foreground);
+}
+@media (min-width: 64rem) {
+  .auburn-menu__search {
+    margin: 0 0 1.5rem;
+  }
+}
+
+/* The rows. */
+.auburn-menu__rows,
 .auburn-menu__sub {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.auburn-menu__main a {
-  position: relative;
+.auburn-menu__rows {
+  border-top: 1px solid var(--menu-rule);
+}
+.auburn-menu__item {
+  border-bottom: 1px solid var(--menu-rule);
+}
+.auburn-menu__row {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  padding: 0.12em 0;
+  justify-content: space-between;
+  gap: 1.25rem;
+  width: 100%;
+  min-height: clamp(5.5rem, 5rem + 1.5vw, 6.25rem);
+  padding: 0.85rem var(--menu-gutter);
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
   font-family: var(--font-display);
-  font-size: clamp(2rem, 1.3rem + 2vw, 3rem);
-  line-height: 1.12;
-  color: #ffffff;
+  font-size: clamp(1.875rem, 1.55rem + 1.3vw, 2.625rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-align: left;
   text-decoration: none;
-}
-.auburn-menu__num {
-  flex: none;
-  width: 2.2rem;
-  font-family: var(--font-body);
-  font-size: var(--fs-tag);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  font-variant-numeric: tabular-nums;
-  color: #b5503a;
+  cursor: pointer;
   transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+    background-color 220ms ease,
+    color 220ms ease;
 }
-.auburn-menu__stone {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 1.5rem;
-  height: 1.2rem;
-  margin-top: -0.6rem;
-  border-radius: 46% 54% 42% 58% / 56% 44% 56% 44%;
-  transform: scale(0) rotate(-20deg);
-  transition: transform 0.32s cubic-bezier(0.3, 1.4, 0.5, 1);
-}
-.auburn-menu__stone--0 {
-  background: #7f98b8;
-}
-.auburn-menu__stone--1 {
-  background: #2c4f7c;
-  border-radius: 54% 46% 56% 44% / 46% 54% 44% 56%;
-}
-.auburn-menu__stone--2 {
-  background: #b5503a;
-  border-radius: 48% 52% 42% 58% / 56% 48% 52% 44%;
-}
-.auburn-menu__stone--3 {
-  background: #b5503a;
-  border-radius: 56% 44% 52% 48% / 44% 56% 46% 54%;
+@media (min-width: 64rem) {
+  .auburn-menu__row {
+    padding-inline: 1.25rem;
+  }
 }
 .auburn-menu__label {
-  transition:
-    transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1),
-    color 0.2s ease;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.auburn-menu__main a:hover .auburn-menu__num,
-.auburn-menu__main a:focus-visible .auburn-menu__num,
-.auburn-menu__main a[aria-current='page'] .auburn-menu__num {
-  opacity: 0;
-  transform: scale(0.6);
+.auburn-menu__arrow {
+  flex: none;
+  width: clamp(40px, 8vw, 56px);
+  height: auto;
+  color: var(--auburn-red);
+  transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.auburn-menu__main a:hover .auburn-menu__stone,
-.auburn-menu__main a:focus-visible .auburn-menu__stone,
-.auburn-menu__main a[aria-current='page'] .auburn-menu__stone {
-  transform: none;
+.auburn-menu__row:hover {
+  background: var(--muted);
 }
-.auburn-menu__main a:hover .auburn-menu__label,
-.auburn-menu__main a:focus-visible .auburn-menu__label {
-  transform: translateX(0.35rem);
+.auburn-menu__row:hover .auburn-menu__label {
+  transform: translateX(0.25rem);
 }
-.auburn-menu__main a[aria-current='page'] .auburn-menu__label {
-  color: #dbe3ee;
+.auburn-menu__row:hover .auburn-menu__arrow {
+  transform: translateX(6px);
 }
-.auburn-menu a:focus-visible {
-  outline: 3px solid #b5503a;
-  outline-offset: 3px;
+.auburn-menu__row:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: -3px;
 }
-.auburn-menu__group {
-  margin: 1rem 0 0;
-  padding-left: calc(2.2rem + 0.9rem);
-  font-size: var(--fs-tag);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #7f98b8;
-}
-.auburn-menu__sub a {
-  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.2rem);
+/* The page you are on: a red stone after its name. */
+.auburn-menu__row[aria-current='page'] .auburn-menu__label::after,
+.auburn-menu__sub a[aria-current='page']::after {
+  content: '';
+  display: inline-block;
+  width: 0.4em;
+  height: 0.32em;
+  margin-left: 0.4em;
+  vertical-align: 0.12em;
+  border-radius: 46% 54% 42% 58% / 56% 44% 56% 44%;
+  background: var(--auburn-red);
 }
 
-/* The side: the This Sunday card, then the tagline, contact and the white logo. */
+/* An open group: the row fills red (white on #9a3b2a is 6.9:1), the arrow turns down and its
+   pages list underneath on the same red, a size smaller. */
+.auburn-menu__item[data-open] {
+  border-bottom-color: var(--auburn-red);
+}
+.auburn-menu__row[aria-expanded='true'],
+.auburn-menu__row[aria-expanded='true']:hover {
+  background: var(--auburn-red);
+  color: #ffffff;
+}
+.auburn-menu__row[aria-expanded='true'] .auburn-menu__label {
+  transform: none;
+}
+.auburn-menu__row[aria-expanded='true'] .auburn-menu__arrow {
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+.auburn-menu__row[aria-expanded='true']:focus-visible,
+.auburn-menu__sub a:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: -6px;
+}
+.auburn-menu__sub {
+  padding: 0 0 1.1rem;
+  background: var(--auburn-red);
+}
+.auburn-menu__sub[hidden] {
+  display: none;
+}
+.auburn-menu__sub a {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0.4rem var(--menu-gutter);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  line-height: 1.2;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+.auburn-menu__sub a::before {
+  content: '';
+  flex: none;
+  width: 1.1rem;
+  height: 1px;
+  margin-right: 0.85rem;
+  background: rgb(255 255 255 / 0.55);
+  transition: width 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.auburn-menu__sub a:hover {
+  background: var(--auburn-red-dark);
+}
+.auburn-menu__sub a:hover::before {
+  width: 1.6rem;
+}
+.auburn-menu__sub a[aria-current='page']::after {
+  background: #ffffff;
+}
+@media (min-width: 64rem) {
+  .auburn-menu__sub a {
+    padding-inline: 1.25rem;
+  }
+}
+
+/* The side: the This Sunday card, then the tagline and contact details. */
 .auburn-menu__side {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1.4rem;
+  gap: 1.75rem;
+  padding-inline: var(--menu-gutter);
+}
+@media (min-width: 64rem) {
+  .auburn-menu__side {
+    position: sticky;
+    top: calc(72px + 2.5rem);
+    padding-inline: 0;
+  }
 }
 .auburn-menu__card {
   position: relative;
   overflow: hidden;
-  width: 100%;
   padding: var(--pad-card);
-  border: 1px solid rgb(255 255 255 / 0.1);
+  padding-top: calc(var(--pad-card) + 5px);
+  border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  background: #1a3552;
+  background: var(--card);
+  box-shadow: var(--shadow-card);
   font-variant-numeric: tabular-nums lining-nums;
 }
 .auburn-menu__card::before {
@@ -1029,9 +1116,10 @@ html .site-search-dialog {
 }
 .auburn-menu__card-top {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.8rem;
+  gap: 0.4rem 0.8rem;
 }
 .auburn-menu__card-eyebrow {
   margin: 0;
@@ -1039,7 +1127,8 @@ html .site-search-dialog {
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #7f98b8;
+  white-space: nowrap;
+  color: var(--auburn-red);
 }
 /* Same shape as NotConfirmed.astro's tag (2026-10-24). */
 .auburn-menu__tag {
@@ -1052,12 +1141,14 @@ html .site-search-dialog {
   line-height: 1.4;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 .auburn-menu__card-date {
   margin: 0.3rem 0 0.9rem;
   font-family: var(--font-display);
   font-size: var(--fs-numeral);
   line-height: 1.05;
+  color: var(--heading-solid);
 }
 .auburn-menu__card-times {
   display: grid;
@@ -1077,7 +1168,7 @@ html .site-search-dialog {
 }
 .auburn-menu__card-times dd {
   margin: 0;
-  color: #d5dae3;
+  color: var(--muted-foreground);
 }
 .auburn-menu__times {
   margin: 0;
@@ -1089,11 +1180,15 @@ html .site-search-dialog {
 .auburn-menu__where {
   margin: 1rem 0 1.1rem;
   padding-top: 0.9rem;
-  border-top: 1px solid rgb(255 255 255 / 0.14);
-  color: #d5dae3;
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
 }
+/* A 44px target without moving the line: the padding is taken back by the margin. */
 .auburn-menu__where a {
-  color: #ffffff;
+  display: inline-block;
+  padding-block: 11px;
+  margin-block: -11px;
+  color: var(--foreground);
   font-weight: 600;
   text-underline-offset: 3px;
 }
@@ -1106,7 +1201,7 @@ html .site-search-dialog {
   min-height: 44px;
   align-items: center;
   gap: 0.55rem;
-  color: #ffffff;
+  color: var(--foreground);
   font-weight: 600;
   text-underline-offset: 3px;
 }
@@ -1115,11 +1210,21 @@ html .site-search-dialog {
   height: 9px;
   flex: none;
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.45);
+  background: var(--auburn-sky);
 }
 .auburn-menu__watch a[data-live] .auburn-menu__live-dot {
   background: #e5484d;
   box-shadow: 0 0 0 4px rgb(229 72 77 / 0.25);
+}
+.auburn-menu__card .btn-auburn,
+.auburn-menu__side > .btn-auburn {
+  width: 100%;
+}
+.auburn-menu__about {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
 }
 .auburn-menu__tagline {
   margin: 0;
@@ -1127,20 +1232,24 @@ html .site-search-dialog {
   font-family: var(--font-display);
   font-size: var(--fs-title);
   line-height: 1.3;
+  color: var(--heading-solid);
 }
 .auburn-menu__contact {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 .auburn-menu__contact a {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #ffffff;
+  gap: 0.55rem;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+  color: var(--foreground);
+  text-underline-offset: 3px;
 }
 .auburn-menu__social {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.6rem;
 }
 .auburn-menu__social a {
@@ -1149,22 +1258,20 @@ html .site-search-dialog {
   justify-content: center;
   width: 44px;
   height: 44px;
-  border: 1.5px solid rgb(255 255 255 / 0.6);
+  border: 1.5px solid var(--border);
   border-radius: 999px;
-  color: #ffffff;
+  color: var(--foreground);
+  transition: background-color 160ms ease;
 }
-.auburn-menu__logo {
-  width: 200px;
-  height: auto;
-  margin-top: 0.4rem;
-  opacity: 0.9;
+.auburn-menu__social a:hover {
+  background: var(--muted);
 }
 
-/* The sill along the bottom of the panel, edge to edge. */
+/* The sill along the bottom of the sheet, edge to edge. */
 .auburn-menu__sill {
   flex: none;
-  height: 64px;
-  margin: 1.5rem calc(-1 * clamp(1.25rem, 5vw, 4rem)) 0;
+  height: 56px;
+  margin-top: auto;
   overflow: hidden;
 }
 .auburn-menu__sill svg {
@@ -1173,20 +1280,19 @@ html .site-search-dialog {
   height: 100%;
 }
 
-/* Coming alive: when the panel opens, the links rise in one after another, the card follows and
-   the sill lays itself. CSS only, keyed on the panel's data-state; nothing moves under reduced
-   motion. */
+/* Coming in: the rows rise one after another (12px, 300ms, 40ms apart), the card and the contact
+   details follow on the same count, and the sill lays itself. An opened group's pages rise in the
+   same way. CSS only, keyed on the sheet's data-state; nothing moves under reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
-  .auburn-menu[data-state='open'] .auburn-menu__main > li,
+  .auburn-menu[data-state='open'] .auburn-menu__search,
+  .auburn-menu[data-state='open'] .auburn-menu__item,
   .auburn-menu[data-state='open'] .auburn-menu__side > * {
-    animation: menu-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    animation-delay: calc(90ms + var(--i, 0) * 45ms);
+    animation: menu-rise 300ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(60ms + var(--i, 0) * 40ms);
   }
-  .auburn-menu[data-state='open'] .auburn-menu__side > * {
-    animation-delay: 220ms;
-  }
-  .auburn-menu[data-state='open'] .auburn-menu__side > * + * {
-    animation-delay: 300ms;
+  .auburn-menu__sub:not([hidden]) > li {
+    animation: menu-rise 300ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--j, 0) * 40ms);
   }
   .auburn-menu[data-state='open'] .auburn-menu__sill .sill-brick {
     transform-box: fill-box;
@@ -1195,10 +1301,22 @@ html .site-search-dialog {
     animation-delay: calc(260ms + var(--i) * 5ms);
   }
 }
+@media (prefers-reduced-motion: reduce) {
+  .auburn-menu__close,
+  .auburn-menu__search,
+  .auburn-menu__row,
+  .auburn-menu__label,
+  .auburn-menu__arrow,
+  .auburn-menu__sub a,
+  .auburn-menu__sub a::before,
+  .auburn-menu__social a {
+    transition: none;
+  }
+}
 @keyframes menu-rise {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -1206,25 +1324,6 @@ html .site-search-dialog {
   }
 }
 
-/* Phones: the This Sunday card first (people open the menu to find the times), then the links,
-   then the rest of the side column. */
-@media (max-width: 53.99rem) {
-  .auburn-menu__side {
-    display: contents;
-  }
-  .auburn-menu__card {
-    order: -1;
-  }
-  .auburn-menu__grid {
-    gap: 1.6rem;
-  }
-  .auburn-menu__tagline,
-  .auburn-menu__contact,
-  .auburn-menu__social,
-  .auburn-menu__logo {
-    order: 1;
-  }
-}
 /* Phones: logo on the left and the Menu pill on the right, as in the mockups (the starter centres it). */
 @media (max-width: 63.99rem) {
   .site-header__row {
