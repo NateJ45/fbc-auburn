@@ -1,5 +1,24 @@
 # Change history
 
+_2026-10-24: mobile audit._
+
+**Decision.** A full phone audit (Lighthouse mobile on six pages; a sweep of 20 routes at 320, 360,
+375 and 414 for overflow, tap targets, text size, alignment, fixed bars, images and the menu). No
+overflow, no input under 16px, no fixed bar covering the footer, and the phone menu traps focus,
+closes on Escape and locks the page. Fixed: (1) the flow layer held each page's first screen until
+the fonts were in and the stagger reached it, so the main words showed 2.7 to 3.1s after they had
+loaded; phones now show the first screen as it is (`flow.ts`, `flow.css`; animation.md). Local
+Lighthouse mobile: Plan your visit 83 to 97, About 89 to 96, Sermons 91 to 99 (the local build has
+no analytics beacon, so part of Plan your visit's gain is that). (2) The Home hero's photo and words
+size to `svh`, the screen with the browser's bars showing, with a smaller top space on short phones,
+so the welcome and Plan your first visit sit in the first screen once the pre-launch photo note is
+gone. (3) The footer's Text link is 44px wide, the Next steps rail links 44px tall, and the Plan your
+visit button runs the full column on phones like the Home hero's. Left as they are: the Cloudflare
+beacon (a 362ms task on one page; a PORTABLE file, and it measures Web Vitals so it must load early),
+13px uppercase labels (eyebrows and tags, by design), the 20px side gutter, and links inside sentences
+(WCAG 2.5.8 exempts them). The small standalone links the sweep flagged already carry an invisible
+44px hit area (`auburn.css`, `.hit-44`).
+
 _2026-10-24: smoother phone scrolling; the footer verse reads on phones._
 
 **Decision.** Phones felt laggy as a scroll started: the sticky header compacted (8px less padding over

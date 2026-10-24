@@ -137,7 +137,7 @@ html.motion .reveal:not(.in) {
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
-  padding-block: 0.4rem;
+  padding-block: 0.5rem; /* 44px tall with its line, a fingertip's height */
 }
 .rail__link:hover {
   text-decoration-thickness: 2px;
