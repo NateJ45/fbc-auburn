@@ -9,6 +9,9 @@ import MarkBuild from '@/components/motion/MarkBuild.astro';
 import BaptismGraphic from '@/components/motion/BaptismGraphic.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import Sill from '@/components/Sill.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { shotFor } from '@/data/shot-list';
+import { splitStega } from '@/lib/preview-stega';
 // With no photo yet, the slot holds the church's mark, not an empty grey shape (2026-10-24).
 import markPrint from '@/assets/brand/mark-print.png';
 
@@ -42,6 +45,10 @@ const {
 // strings as the ternary that was here for 'background' and 'muted'.
 const bg = surfaceClass(surface);
 const imageFirst = imageSide === 'left';
+// Before launch, a photo slot that is empty or holds a stand-in names the photo we want instead
+// (src/data/shot-list.ts, keyed by page and heading). Drawings ('mark', 'baptism', 'building') never.
+const shot =
+  art === 'photo' ? shotFor(Astro.url.pathname, splitStega(heading ?? '').cleaned, 0, image) : null;
 const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebrow ? 'mt-m' : ''}`;
 ---
 
@@ -102,6 +109,8 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
           <div class="auburn-art">
             <BaptismGraphic class="auburn-art__baptism" />
           </div>
+        ) : shot ? (
+          <ShotRequest shot={shot} class="auburn-arch" />
         ) : image?.asset ? (
           <SanityImage
             source={image}

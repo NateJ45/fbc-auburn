@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-24: the shot list. Every photo slot that held a stand-in (the Facebook pantry, gift-table, building, sign and sanctuary photos; the Unsplash hero and Last Sunday poster) or sat empty now shows a yellow "Photo needed" box naming the photo we want, so the preview doubles as Pastor Jacob's shot list. Code-side only, no data written: `src/data/shot-list.ts` holds the shots (keyed by page and block heading) and decides when a slot shows one (before launch, while empty or a stand-in: an `fbca-fb-*` or `stand-in-*` upload or an Unsplash asset); `ShotRequest.astro` draws it (a frame in a picture slot, a pinned note over the hero and the Last Sunday card); the For Jacob pill lists the same shots. Open loop: PENDING 1x, the shot list._
+
 _2026-10-24: the building sketch redrawn from the real site. The first sketch put the road sign and cross on the wrong side and gave the long wall five narrow windows; the redraw (Gemini, from street and aerial photos, the first sketch as the style reference) has the four tall windows, the white base, the portico with steps and the ramp to the right, and the steeple on the front gable. Nathan chose the building only, no road or sign, since Gemini kept misplacing the sign. `node scripts/brand-sketch.mjs` regenerated the webp (43 KB); the walk opener's door pin moved to the new doorway._
 
 _2026-10-24: the pre-review pass (from a portfolio critique, 6.5/10 before it), and two of Jacob's named pages._

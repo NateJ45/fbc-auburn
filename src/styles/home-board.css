@@ -107,6 +107,13 @@
 .hb-hero[data-photo='no'] .hb-photo__shade {
   display: none;
 }
+/* Before launch, the "Photo needed" note above the welcome (ShotRequest.astro, tag look). */
+.hb-hero__shot {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin-bottom: 32px;
+}
 .hb-hero__inner {
   position: relative;
   z-index: 2; /* above the sill, so the hanging card covers it */
@@ -819,6 +826,38 @@
 }
 .hb-watch__text {
   z-index: 1;
+}
+/* Before launch, the "Photo needed" note pinned to the card's top corner, kept short so the
+   card's own words still fit under it on a phone. */
+.hb-watch__shot {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 1;
+  display: block;
+}
+.hb-watch__shot .shot__detail {
+  display: none;
+}
+/* On a phone the 16:9 card is too short for the note and the words: both go into the flow, the
+   note on top, and the card grows to hold them. */
+@media (max-width: 600px) {
+  .hb-watch:has(.hb-watch__shot) {
+    aspect-ratio: auto;
+    padding: 16px 16px 24px;
+  }
+  .hb-watch__shot,
+  .hb-watch:has(.hb-watch__shot) .hb-watch__text {
+    position: relative;
+    inset: auto;
+  }
+  .hb-watch__shot {
+    margin-bottom: 28px;
+  }
+  .hb-watch:has(.hb-watch__shot) .hb-watch__text {
+    padding-inline: 10px;
+  }
 }
 .hb-watch__live {
   display: inline-block;

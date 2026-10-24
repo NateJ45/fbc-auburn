@@ -25,6 +25,8 @@ import { site } from '@/data/site';
 import { urlFor } from '@/lib/sanity';
 
 import SanityImage from '@/components/SanityImage.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { journalCoverShot } from '@/data/shot-list';
 import JournalPortableText from '@/components/JournalPortableText';
 import JournalCard from '@/components/JournalCard.astro';
 import JournalCategoryChip from '@/components/JournalCategoryChip.astro';
@@ -91,6 +93,8 @@ if (!entry) {
 // The layout adds the church's name to the title. (The starter's "Studio Journal" wording is gone.)
 const title = entry.seoTitle ?? entry.title;
 const description = entry.seoDescription ?? entry.excerpt ?? `News and notes from ${site.name}.`;
+// Before launch, a stand-in cover gives way to a "Photo needed" box (src/data/shot-list.ts).
+const coverShot = journalCoverShot(entry.coverImage);
 const coverOg = entry.coverImage?.asset
   ? urlFor(entry.coverImage).width(1200).height(630).fit('crop').quality(80).format('webp').url()
   : undefined;
@@ -170,7 +174,12 @@ const schemas = [
         photo reads as a feature image rather than a billboard. Sanity
         request width matches at 1800 so we're not requesting a 1920 px
         file for a slot that maxes around 900 px even at 2× retina. */}
-    {entry.coverImage?.asset && (
+    {coverShot && (
+      <div class="mx-auto max-w-4xl px-m">
+        <ShotRequest shot={coverShot} />
+      </div>
+    )}
+    {entry.coverImage?.asset && !coverShot && (
       <figure class="mx-auto max-w-4xl px-m">
         <SanityImage
           source={entry.coverImage}
