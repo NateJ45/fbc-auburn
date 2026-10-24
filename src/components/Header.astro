@@ -24,7 +24,8 @@
 import { getImage } from 'astro:assets';
 import { site } from '@/data/site';
 import { Mail, Phone } from 'lucide-react';
-import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
+import { resolveSocialLinks, socialLabel } from '@/lib/social-links';
+import { socialIcon } from '@/lib/social-icons';
 import MobileNav from './MobileNav';
 import { ChevronDown } from 'lucide-react';
 import { getChurchFacts } from '@/lib/church-data';
@@ -62,6 +63,7 @@ interface Props {
         phone?: string;
         socialInstagram?: string;
         socialFacebook?: string;
+        socialLinks?: { platform?: string; url?: string; label?: string }[] | null;
         availabilityStatus?: string;
       })
     | null;
@@ -100,8 +102,9 @@ const email = chrome.showEmail ? (allFacts.email?.display ?? '') : '';
 // The phone shows in the menu and Home's header line only once the church has confirmed it: neither
 // has room for the "To confirm" tag the footer and Contact carry (2026-10-24).
 const phone = allFacts.phone?.confirmed ? allFacts.phone.display : '';
-const ig = chrome.showSocials ? (siteSettings?.socialInstagram ?? '') : '';
-const fb = chrome.showSocials ? (allFacts.facebookUrl ?? '') : '';
+// Every social account (Site settings > Social links, plus the Facebook fact when the list has no
+// Facebook entry), the same list the footer shows (src/lib/social-links.ts, 2026-10-24).
+const socials = chrome.showSocials ? resolveSocialLinks(siteSettings, allFacts.facebookUrl) : [];
 
 // Subset of siteSettings the mobile menu needs. Pass as a plain object so the
 // React island doesn't try to serialize the whole Sanity document graph.
@@ -110,8 +113,7 @@ const mobileNavSettings = siteSettings
       tagline: siteSettings.tagline,
       email: email || undefined,
       phone: phone || undefined,
-      socialInstagram: chrome.showSocials ? siteSettings.socialInstagram : undefined,
-      socialFacebook: fb || undefined,
+      socials: socials.length > 0 ? socials : undefined,
     }
   : null;
 
@@ -257,30 +259,22 @@ function isGroupActive(items: { href: string }[]) {
               {phone}
             </a>
           )}
-          {(ig || fb) && (
+          {socials.length > 0 && (
             <div class="flex items-center gap-1">
-              {ig && (
-                <a
-                  href={ig}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  class="inline-flex h-7 w-7 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent hover:text-link"
-                >
-                  <IconBrandInstagram size={14} stroke={1.5} />
-                </a>
-              )}
-              {fb && (
-                <a
-                  href={fb}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  class="inline-flex h-7 w-7 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent hover:text-link"
-                >
-                  <IconBrandFacebook size={14} stroke={1.5} />
-                </a>
-              )}
+              {socials.map((link) => {
+                const Icon = socialIcon(link.platform);
+                return (
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={socialLabel(link)}
+                    class="inline-flex h-7 w-7 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent hover:text-link"
+                  >
+                    <Icon size={14} stroke={1.5} />
+                  </a>
+                );
+              })}
             </div>
           )}
           {/* No theme toggle: FBC Auburn is light only (2026-10-17). */}

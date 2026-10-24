@@ -36,7 +36,8 @@
 
 import { useRef, useState } from 'react';
 import { Mail, Phone, Search } from 'lucide-react';
-import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
+import { socialLabel, type SocialLink } from '@/lib/social-links';
+import { socialIcon } from '@/lib/social-icons';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { telHref } from '@/lib/phone';
 import { SILL, SILL_PRINT, SILL_VIEWBOX } from '@/components/home/stones.generated';
@@ -61,8 +62,8 @@ interface MobileNavSiteSettings {
   tagline?: string;
   email?: string;
   phone?: string;
-  socialInstagram?: string;
-  socialFacebook?: string;
+  /** Every social account, resolved by the Header (src/lib/social-links.ts). */
+  socials?: SocialLink[];
 }
 
 interface MenuSunday {
@@ -151,8 +152,7 @@ export default function MobileNav({
   const tagline = siteSettings?.tagline ?? 'A close-knit church with the door open.';
   const email = siteSettings?.email;
   const phone = siteSettings?.phone;
-  const ig = siteSettings?.socialInstagram;
-  const fb = siteSettings?.socialFacebook;
+  const socials = siteSettings?.socials ?? [];
 
   const close = () => setOpen(false);
   // One running number across flat links and grouped ones, so the stagger and the colours flow.
@@ -324,18 +324,22 @@ export default function MobileNav({
                   )}
                 </div>
               )}
-              {(ig || fb) && (
+              {socials.length > 0 && (
                 <div className="auburn-menu__social">
-                  {ig && (
-                    <a href={ig} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                      <IconBrandInstagram size={20} stroke={1.5} />
-                    </a>
-                  )}
-                  {fb && (
-                    <a href={fb} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                      <IconBrandFacebook size={20} stroke={1.5} />
-                    </a>
-                  )}
+                  {socials.map((link) => {
+                    const Icon = socialIcon(link.platform);
+                    return (
+                      <a
+                        key={link.url}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={socialLabel(link)}
+                      >
+                        <Icon size={20} stroke={1.5} />
+                      </a>
+                    );
+                  })}
                 </div>
               )}
               {logoDarkUrl && (

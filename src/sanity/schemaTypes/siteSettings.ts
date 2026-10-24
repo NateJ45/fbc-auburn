@@ -365,7 +365,7 @@ export const siteSettings = defineType({
       type: 'array',
       group: 'social',
       description:
-        'Add one entry per platform. The footer renders these in order. Leave empty to fall back to the legacy Instagram/Facebook fields (for existing sites).',
+        'Add one entry per platform. The phone menu and the footer show these in order. Leave empty to fall back to the legacy Instagram/Facebook fields (for existing sites).',
       of: [
         defineArrayMember({
           type: 'object',
