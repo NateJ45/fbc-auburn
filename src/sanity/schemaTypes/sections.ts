@@ -223,7 +223,7 @@ export const imageTextSection = defineType({
         list: [
           { title: 'A photo (a soft arch until there is one)', value: 'photo' },
           { title: 'The church mark (the brick print)', value: 'mark' },
-          { title: 'The baptism drawing', value: 'baptism' },
+          { title: 'The baptism drawing (old stone art, to be redrawn)', value: 'baptism' },
           // 2026-10-23: the pen-and-pencil sketch of the building, as a full-width band.
           { title: 'The building drawing (a wide band)', value: 'building' },
         ],

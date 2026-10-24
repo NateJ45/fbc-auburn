@@ -22,6 +22,11 @@ const PHOTOS_OK: JacobNote = {
 const NOTES: Record<string, JacobNote[]> = {
   '/': [
     {
+      title: 'Meet Pastor Jacob: a photo and a few lines.',
+      detail:
+        'A head-and-shoulders photo of you and three or four sentences for the new block near the bottom of the page.',
+    },
+    {
       title: 'A welcome photo for the top of the page.',
       detail:
         'People, not the building: the church greeting each other, worship, or the front door on a Sunday. Wide and sharp (a phone is fine). The one there now is a borrowed stand-in.',
@@ -58,9 +63,14 @@ const NOTES: Record<string, JacobNote[]> = {
         'We have not drafted any beliefs. Each card asks for two to four plain sentences and one verse, in your words.',
     },
     {
+      title: 'The gospel, first.',
+      detail:
+        'The page now opens with the good news in your words, then nine short topics, the order the largest SBC church sites use.',
+    },
+    {
       title: 'The full statement of faith.',
       detail:
-        'Paste the church’s own statement, or tell us if you hold to the Baptist Faith and Message 2000 as written and we will link to it.',
+        'The page says, in yellow brackets, that the church affirms the Baptist Faith and Message 2000 and links to it. Confirm that, or send the church’s own statement instead.',
     },
     {
       title: 'Baptism.',

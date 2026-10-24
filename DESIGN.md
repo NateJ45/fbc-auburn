@@ -140,7 +140,7 @@ floating element (a sticky "Plan your visit" bar on mobile).
   A roadside-red version, with the cross filled `#D9262E`, is kept ready in
   `brand/logo/alternates/roadside-red/` in case the church prefers it, for large uses only.
   Horizontal lockup in the header; Auburn-led lockup where the place name should lead.
-- Stone icons for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
+- Stone icons (2026-10-23: printed like the brick, rugged and lived in: chipped edges, a darker rim in each tile's colour, grain and white flecks, baked by `scripts/print-icons.mjs` from the masters in `brand/icons/`) for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
   praying hands, giving hand); one size per page, never mixed with line icons.
 - Buttons: one family, 10 px radius, deep sky solid and deep sky outline; red only for the single
   most important action on a page.
