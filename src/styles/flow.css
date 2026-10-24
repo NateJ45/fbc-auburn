@@ -48,11 +48,12 @@
 /* ---- The first screen, before the script has armed it ------------------------------------
    The script runs after the HTML is parsed, which can be a frame after the first paint. Hold the
    hero's words back until it arms them, so they do not show, vanish and rise. The hold lets go
-   by itself after 1.6s (a zero-length animation with a delay and backwards fill), so a page
-   whose script never runs is never left blank. */
+   by itself after 1.6s (a 1.6s animation held at opacity 0, with no fill, so it ends visible), so
+   a page whose script never runs is never left blank. A real duration, not "0s 1.6s backwards":
+   the compositor refuses zero-length effects (Lighthouse's "unsupported timing parameters"). */
 html.motion:not(.flow-armed) :where(.hb-hero__copy, .board-head__copy) > *,
 html.motion:not(.flow-armed) :where(.hb-hero__card, .board-head__photo) {
-  animation: flow-hold 0s 1.6s backwards;
+  animation: flow-hold 1.6s linear;
 }
 
 /* ---- The starter's older reveals step aside --------------------------------------------------

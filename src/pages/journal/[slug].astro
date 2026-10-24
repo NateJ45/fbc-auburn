@@ -113,7 +113,7 @@ const updatedLabel =
 const schemas = [
   breadcrumbSchema([
     { name: 'Home', url: site.url },
-    { name: 'Journal', url: `${site.url}/journal/` },
+    { name: 'News and notes', url: `${site.url}/journal/` },
     { name: entry.title ?? slug, url: `${site.url}/journal/${slug}/` },
   ]),
   blogPostingSchema(entry, coverOg ?? null),

@@ -132,6 +132,11 @@ const notes = PRE_LAUNCH_NOTES
     font-family: var(--font-body);
     color: #16263d;
   }
+  /* Out of the way while the phone menu or the search dialog is open: it sat on top of the menu's
+     links, and the menu had already hidden it from screen readers (2026-10-24). */
+  body:has([role='dialog'][data-state='open'], dialog[open]) .fj {
+    display: none;
+  }
   .fj__pill {
     display: inline-flex;
     align-items: center;

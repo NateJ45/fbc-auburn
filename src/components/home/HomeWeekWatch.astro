@@ -194,8 +194,7 @@ const CardTag = cardHref ? 'a' : 'div';
                       muted
                       loop
                       playsinline
-                      autoplay
-                      preload="metadata"
+                      preload="none"
                       aria-hidden="true"
                       data-shot-video
                     />
@@ -318,11 +317,21 @@ const CardTag = cardHref ? 'a' : 'div';
 </style>
 
 <script>
-  // Before launch the card plays an example clip (shot-list.ts); with reduced motion it holds still
-  // on its poster instead.
-  const clip = document.querySelector<HTMLVideoElement>('[data-shot-video]');
-  if (clip && matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    clip.removeAttribute('autoplay');
-    clip.pause();
+  // Before launch the card plays an example clip (shot-list.ts). It loads nothing until the card
+  // comes on screen (preload="none", no autoplay: the clip was a fifth of the first load) and
+  // pauses again when it leaves; with reduced motion it holds still on its poster.
+  function initShotClip() {
+    const clip = document.querySelector<HTMLVideoElement>('[data-shot-video]');
+    if (!clip || clip.dataset.clipOn) return;
+    clip.dataset.clipOn = '1';
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) clip.play().catch(() => {});
+      else clip.pause();
+    });
+    io.observe(clip);
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
   }
+  initShotClip();
+  document.addEventListener('astro:page-load', initShotClip);
 </script>
