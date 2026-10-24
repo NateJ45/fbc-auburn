@@ -7,7 +7,12 @@ import { ChevronDownIcon } from '@sanity/icons/ChevronDown';
 import { ListIcon } from '@sanity/icons/List';
 import { CodeTextInput } from '../components/CodeTextInput';
 import { codeWarningMessage } from '../../lib/custom-code';
-import { churchFactsFields } from './churchFacts';
+import {
+  churchFactsFields,
+  churchTracFields,
+  CHURCH_TRAC_FIELDSET,
+  CHURCH_TRAC_GROUP,
+} from './churchFacts';
 import { formSettingsFields } from './form';
 import { imageWithAlt } from './_imageWithAlt';
 
@@ -19,6 +24,7 @@ export const siteSettings = defineType({
   options: { canvasApp: { exclude: true } },
   groups: [
     { name: 'church', title: 'Church facts' },
+    CHURCH_TRAC_GROUP,
     { name: 'identity', title: 'Name and contact' },
     { name: 'navigation', title: 'Menus' },
     { name: 'visibility', title: 'Parts of the site' },
@@ -28,6 +34,7 @@ export const siteSettings = defineType({
     // PORTS.md card 121: site-wide extra code, rendered by BaseLayout only.
     { name: 'code', title: 'Code on every page' },
   ],
+  fieldsets: [CHURCH_TRAC_FIELDSET],
   fields: [
     defineField({
       name: 'title',
@@ -41,7 +48,7 @@ export const siteSettings = defineType({
       name: 'tagline',
       title: 'Tagline',
       type: 'string',
-      description: 'Short tagline shown under the logo in the footer.',
+      description: 'A short line about the church, shown in the menu.',
       validation: (Rule) => Rule.required().max(140),
     }),
     defineField({
@@ -72,7 +79,7 @@ export const siteSettings = defineType({
       type: 'array',
       group: 'navigation',
       description:
-        'Every page in the Menu, in order. On a wide screen the header shows the first four; the Menu button shows them all. Drag to reorder. Leave empty to use the built-in default menu. Once you add items here, they replace the whole menu, so include every link you want.',
+        'Every page in the Menu, in order. On a wide screen the header shows the first five; the Menu button shows them all. Drag to reorder. Leave empty to use the built-in default menu. Once you add items here, they replace the whole menu, so include every link you want.',
       validation: (Rule) => Rule.max(10),
       of: [
         // The shared link object (./navLink.ts). Existing menu items already
@@ -365,7 +372,7 @@ export const siteSettings = defineType({
       type: 'array',
       group: 'social',
       description:
-        'Add one entry per platform. The footer renders these in order. Leave empty to fall back to the legacy Instagram/Facebook fields (for existing sites).',
+        'Add one entry per platform. The phone menu and the footer show these in order. Leave empty to fall back to the legacy Instagram/Facebook fields (for existing sites).',
       of: [
         defineArrayMember({
           type: 'object',
@@ -454,13 +461,16 @@ export const siteSettings = defineType({
     }),
     // FBC Auburn (2026-10-18): the footer's own words, so the pastor can change them himself.
     // Each falls back to the built-in wording when left empty.
+    // Hidden since 2026-10-24: the compact footer has no big heading or line under it. Kept in the
+    // schema (not removed) so the Studio never offers "Remove field" on the stored value (rule 1).
     defineField({
       name: 'footerInvite',
       title: 'Footer: the line under the big heading',
       type: 'string',
       group: 'social',
+      hidden: true,
       description:
-        'One short sentence under "A small church with the door open." (the tagline above). Leave empty for "Come along on a Sunday, or ask us anything first."',
+        'One short sentence under "A close-knit church with the door open." (the tagline above). Leave empty for "Come along on a Sunday, or ask us anything first."',
       validation: (Rule) => Rule.max(120),
     }),
     defineField({
@@ -470,6 +480,31 @@ export const siteSettings = defineType({
       group: 'social',
       description:
         'The outline button beside "Plan your visit". Leave the label empty for "Ask a question", which goes to the Contact page.',
+    }),
+    defineField({
+      name: 'footerVerse',
+      title: 'Footer: the verse',
+      type: 'object',
+      group: 'social',
+      description:
+        'One verse across the top of the footer on every page, in big type. It slides along as people scroll down to the footer. Leave empty for Matthew 11:28.',
+      options: { collapsible: false },
+      fields: [
+        defineField({
+          name: 'text',
+          title: 'The verse',
+          type: 'string',
+          description: 'The words only, without quotation marks. One verse reads best.',
+          validation: (Rule) => Rule.max(160),
+        }),
+        defineField({
+          name: 'reference',
+          title: 'Where it is from',
+          type: 'string',
+          description: 'For example "Matthew 11:28" or "Matthew 11:28 (CSB)".',
+          validation: (Rule) => Rule.max(40),
+        }),
+      ],
     }),
     defineField({
       name: 'footerAbout',
@@ -732,6 +767,8 @@ export const siteSettings = defineType({
     }),
     // Church facts (address, service times, YouTube, calendar): ./churchFacts.ts.
     ...churchFactsFields,
+    // The Church Trac tab: ./churchFacts.ts (churchTracFields).
+    ...churchTracFields,
     // Forms (the form builder): who a form can go to, as names and codes only (./form.ts).
     ...formSettingsFields,
 

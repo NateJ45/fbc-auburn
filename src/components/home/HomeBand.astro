@@ -14,7 +14,7 @@
 import SectionLabel from './SectionLabel.astro';
 import StoneIcon from '@/components/StoneIcon.astro';
 import { getChurchFacts } from '@/lib/church-data';
-import { WEEKDAY_NAMES, plain, timesPhrase } from '@/lib/church-facts';
+import { dayWithTimes } from '@/lib/church-facts';
 import { ctaHref } from '@/lib/cta-href';
 import type { ProjectedIconCard, ProjectedIconCardsSection } from '@/lib/pageBuilder.types';
 
@@ -27,13 +27,7 @@ const { block, variant, headingId } = Astro.props;
 const cards: ProjectedIconCard[] = block.cards ?? [];
 const facts = await getChurchFacts();
 
-function titleWithTime(title: string): string {
-  const first = plain(title).toLowerCase().split(/[\s,]/)[0]?.replace(/s$/, '') ?? '';
-  const dayIndex = WEEKDAY_NAMES.indexOf(first as (typeof WEEKDAY_NAMES)[number]);
-  if (dayIndex < 0) return title;
-  const minutes = facts.serviceTimes.filter((s) => s.dayIndex === dayIndex).map((s) => s.minutes);
-  return minutes.length ? `${title}, ${timesPhrase(minutes)}` : title;
-}
+const titleWithTime = (title: string): string => dayWithTimes(title, facts.serviceTimes);
 ---
 
 <section

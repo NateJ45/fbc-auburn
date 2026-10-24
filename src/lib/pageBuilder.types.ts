@@ -365,6 +365,37 @@ export interface ProjectedIconCardsSection {
   cards?: ProjectedIconCard[];
 }
 
+/** findYourPlaceSection (FBC Auburn, 2026-10-24): the Ministries hub, groups of cards. Content block. */
+export interface ProjectedFypCard {
+  _key?: string;
+  _type?: 'fypCard';
+  image?: SanityImageObject | null;
+  icon?: string;
+  title?: string;
+  /** "Birth to 5th grade": a few words, set in small caps under the title. */
+  forWho?: string;
+  /** A day ("Wednesdays"); its times come from Church facts, never typed. */
+  day?: string;
+  place?: string;
+  body?: string;
+  link?: ProjectedCtaBlock | null;
+}
+export interface ProjectedFypGroup {
+  _key?: string;
+  _type?: 'fypGroup';
+  title?: string;
+  line?: string;
+  cards?: ProjectedFypCard[];
+}
+export interface ProjectedFindYourPlaceSection {
+  _type: 'findYourPlaceSection';
+  _key: string;
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  groups?: ProjectedFypGroup[];
+}
+
 /** thisWeekSection (FBC Auburn): the next seven days, derived. Content block. */
 export interface ProjectedThisWeekSection {
   _type: 'thisWeekSection';
@@ -510,6 +541,7 @@ export type PageBuilderBlock =
   | ProjectedDynamicListSection
   // FBC Auburn
   | ProjectedIconCardsSection
+  | ProjectedFindYourPlaceSection
   | ProjectedThisWeekSection
   | ProjectedWatchSection
   // FBC Auburn stone-path blocks

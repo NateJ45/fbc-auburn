@@ -4,6 +4,10 @@
 >
 > **FBC Auburn is light only (decided 2026-10-17, CLAUDE.md rule 3).** The theme toggle is removed and the bootstrap in `BaseLayout.astro` defaults to light and ignores the system setting; only a stored `dark` (seeded by the shared dark test suites) turns dark on. The rest of this page describes the starter's three-state system, which is still in the code underneath.
 
+## FBC Auburn palette (applied 2026-10-21)
+
+Two families on a warm ground: navy `#1F3A5F` (primary, links, buttons, H2s, the Feature band), auburn `#9A3B2A` (the mark, icon subjects, at most one call to action per page), ground `#FBF8F3`, soft band `#F4EFE7`, ink `#16263D`. Roles, contrast numbers and the full list are in `DESIGN.md` "Colors". Change colours in `brand/brand.config.json`, run `npm run apply-brand` (the `theme-tokens` gate fails if config and `globals.css` disagree), then update the hexes hardwired in `src/styles/*.css`, the `--feature*` / `--stone*` literals and the swatches in `src/lib/surfaces.ts` (`surfaces.test.ts` measures them), `npm run gen:stones` for the ribbon, `public/textures` and `public/studio-banner`, then `npm run build`, `npm run og` and `npm run thumbnails`. The table below is the starter's generic default, kept for reference.
+
 ## Default palette
 
 The starter ships a neutral Slate/Ink/Paper palette. These are the defaults to build on and test against; a consuming project re-skins by editing the design seam described at the end of this document.
@@ -228,5 +232,7 @@ For reference, the four areas `apply-brand` touches. Described here so you know 
 
 4. **Studio theme + OG generator**
    Rewrites the Studio theme's font stacks in `sanity.config.ts` (DISPLAY_STACK / BODY_STACK) and the OG generator inputs, then regenerates `public/og-default.png`. The Studio's colours are brand-driven again since 2026-10-18 (PORTS.md card 110), without a rewrite: `src/sanity/studioTheme.ts` reads `palette.light --primary` (or `studio.accent`) and the two `--background` values from `brand.config.json` and hands them to @sanity/ui's own `buildTheme({ palette })`, which still builds both schemes. Only the hue of the accent is the brand's; `src/lib/studio-theme.ts` solves each step's lightness against Sanity's tuned blue and pushes the button steps to 4.5:1, and `studio-theme.test.ts` checks the rendered theme. `apply-brand` prints the Studio title and warns when `public/favicon.svg` is still the starter's mark. Since card 116 the Studio is light by default on a warm paper (`studio.paper`, else the light background warmed toward cream), its greys take the paper's and dark background's hues, the navbar has its own dark theme on `studio.chrome` (else `--color-primary-dark`), the radius follows `radius`, and `apply-brand` writes `src/sanity/studioFonts.css` from the display and body `imports` so the Studio loads the site's font files. `studio.paper` and `studio.chrome` are optional hex values; leave them out to derive.
+
+   FBC Auburn reads larger in the Studio (2026-10-24): `withLargerText()` in `sanity.config.ts` grows every text and label size step, and the icon size Sanity pairs with each, by `STUDIO_TEXT_SCALE` (1.2: list rows go from 13px to 16px, their icons from 21px to 25px). Headings, code and the navbar keep Sanity's sizes. Set the scale to 1 to undo it.
 
 No other files need to change for a brand swap. The `--tint-rgb` token propagates your hue through all the polish-layer overlays automatically.

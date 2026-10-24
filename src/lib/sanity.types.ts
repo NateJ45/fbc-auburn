@@ -31,6 +31,15 @@ export type IconCardImage = {
   _type: 'image';
 };
 
+export type FypCardImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "fypCard.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type LastMessage = {
   title?: string;
   passage?: string;
@@ -119,6 +128,9 @@ export type PrivatePage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -204,6 +216,12 @@ export type PrivatePage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -567,6 +585,10 @@ export type SiteSettings = {
   };
   footerInvite?: string;
   footerSecondaryCta?: CtaBlock;
+  footerVerse?: {
+    text?: string;
+    reference?: string;
+  };
   footerAbout?: string;
   footerCredit?: string;
   footerCreditUrl?: string;
@@ -616,14 +638,20 @@ export type SiteSettings = {
     _key: string;
   }>;
   phoneConfirmed?: boolean;
+  phoneTakesTexts?: boolean;
   emailConfirmed?: boolean;
-  givingUrl?: string;
   liveStreamUrl?: string;
   officeHours?: string;
   foundedYear?: number;
   foundedConfirmed?: boolean;
   youtubeChannelId?: string;
+  churchTracUrl?: string;
+  connectCardUrl?: string;
+  contactFormUrl?: string;
+  prayerFormUrl?: string;
+  givingUrl?: string;
   churchTracIcalUrl?: string;
+  memberLoginUrl?: string;
   formRecipients?: Array<{
     name?: string;
     key?: string;
@@ -973,6 +1001,9 @@ export type SectionPreset = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -1060,6 +1091,12 @@ export type SectionPreset = {
       } & FormSection)
     | ({
         _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
       } & RsvpSection)
     | ({
         _key: string;
@@ -1088,6 +1125,21 @@ export type RsvpSection = {
     } & FormQuestion
   >;
   confirmationNote?: string;
+};
+
+export type ChurchTracPageSection = {
+  _type: 'churchTracPageSection';
+  heading?: string;
+  intro?: string;
+  page?: string;
+};
+
+export type ChurchTracFormSection = {
+  _type: 'churchTracFormSection';
+  heading?: string;
+  intro?: string;
+  embed?: string;
+  size?: 'short' | 'medium' | 'long';
 };
 
 export type FormReference = {
@@ -1504,6 +1556,54 @@ export type ThisWeekSection = {
   intro?: string;
 };
 
+export type FindYourPlaceSection = {
+  _type: 'findYourPlaceSection';
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+  groups?: Array<{
+    title?: string;
+    line?: string;
+    cards?: Array<{
+      image?: FypCardImage;
+      icon?:
+        | 'map-pin'
+        | 'clock'
+        | 'coffee'
+        | 'bible'
+        | 'praying-hands'
+        | 'blocks'
+        | 'music'
+        | 'giving-hand'
+        | 'crown'
+        | 'cross'
+        | 'dove'
+        | 'cracked-heart'
+        | 'broken-chain'
+        | 'cup-and-loaf'
+        | 'church'
+        | 'clouds-and-light'
+        | 'backpack'
+        | 'chalkboard'
+        | 'plate'
+        | 'handshake'
+        | 'open-door'
+        | 'toolbox'
+        | 'grocery-bag';
+      title?: string;
+      forWho?: string;
+      day?: string;
+      place?: string;
+      body?: string;
+      link?: CtaBlock;
+      _type: 'fypCard';
+      _key: string;
+    }>;
+    _type: 'fypGroup';
+    _key: string;
+  }>;
+};
+
 export type IconCardsSection = {
   _type: 'iconCardsSection';
   eyebrow?: string;
@@ -1518,7 +1618,22 @@ export type IconCardsSection = {
       | 'praying-hands'
       | 'blocks'
       | 'music'
-      | 'giving-hand';
+      | 'giving-hand'
+      | 'crown'
+      | 'cross'
+      | 'dove'
+      | 'cracked-heart'
+      | 'broken-chain'
+      | 'cup-and-loaf'
+      | 'church'
+      | 'clouds-and-light'
+      | 'backpack'
+      | 'chalkboard'
+      | 'plate'
+      | 'handshake'
+      | 'open-door'
+      | 'toolbox'
+      | 'grocery-bag';
     image?: IconCardImage;
     title?: string;
     body?: string;
@@ -1640,7 +1755,7 @@ export type GallerySection = {
 
 export type ImageTextSection = {
   _type: 'imageTextSection';
-  art?: 'photo' | 'mark' | 'baptism';
+  art?: 'photo' | 'mark' | 'baptism' | 'building';
   image?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -1724,7 +1839,29 @@ export type RichTextSection = {
 export type HeroSection = {
   _type: 'heroSection';
   icon?:
-    'map-pin' | 'clock' | 'coffee' | 'bible' | 'praying-hands' | 'blocks' | 'music' | 'giving-hand';
+    | 'map-pin'
+    | 'clock'
+    | 'coffee'
+    | 'bible'
+    | 'praying-hands'
+    | 'blocks'
+    | 'music'
+    | 'giving-hand'
+    | 'crown'
+    | 'cross'
+    | 'dove'
+    | 'cracked-heart'
+    | 'broken-chain'
+    | 'cup-and-loaf'
+    | 'church'
+    | 'clouds-and-light'
+    | 'backpack'
+    | 'chalkboard'
+    | 'plate'
+    | 'handshake'
+    | 'open-door'
+    | 'toolbox'
+    | 'grocery-bag';
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;
@@ -1835,6 +1972,9 @@ export type PrivacyPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -1920,6 +2060,12 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -1973,6 +2119,9 @@ export type Page = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -2058,6 +2207,12 @@ export type Page = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -2325,6 +2480,9 @@ export type SermonsPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -2410,6 +2568,12 @@ export type SermonsPage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -2629,6 +2793,9 @@ export type JournalPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -2714,6 +2881,12 @@ export type JournalPage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -2825,6 +2998,9 @@ export type ContactPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -2910,6 +3086,12 @@ export type ContactPage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -2999,6 +3181,9 @@ export type FaqPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -3084,6 +3269,12 @@ export type FaqPage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -3135,6 +3326,9 @@ export type AboutPage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -3220,6 +3414,12 @@ export type AboutPage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -3378,6 +3578,9 @@ export type HomePage = {
       } & IconCardsSection)
     | ({
         _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
       } & ThisWeekSection)
     | ({
         _key: string;
@@ -3463,6 +3666,12 @@ export type HomePage = {
     | ({
         _key: string;
       } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
     | ({
         _key: string;
       } & RsvpSection)
@@ -3736,6 +3945,7 @@ export type Geopoint = {
 export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | IconCardImage
+  | FypCardImage
   | LastMessage
   | TimelineEntryImage
   | Logo
@@ -3780,6 +3990,8 @@ export type AllSanitySchemaTypes =
   | SyncedSection
   | SectionPreset
   | RsvpSection
+  | ChurchTracPageSection
+  | ChurchTracFormSection
   | FormReference
   | FormSection
   | Form
@@ -3813,6 +4025,7 @@ export type AllSanitySchemaTypes =
   | StepsRailSection
   | WatchSection
   | ThisWeekSection
+  | FindYourPlaceSection
   | IconCardsSection
   | EmbedSection
   | LogoStripSection

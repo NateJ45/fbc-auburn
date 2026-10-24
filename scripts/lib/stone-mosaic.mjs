@@ -1,6 +1,10 @@
 // Safe to edit by hand
-// The FBC Auburn stone generators, as pure functions (no file access), so the build script
-// (scripts/gen-stones.mjs) and the tests (stone-mosaic.test.mjs) share one copy.
+// The FBC Auburn pebble-stone generators of 2026-10-17, as pure functions (no file access).
+// SUPERSEDED 2026-10-21: the brand moved to brick and the site now draws every decorative piece
+// from scripts/lib/brick-courses.mjs (docs/design-directions/2026-10-21-brick-path/). These stay
+// for the record and for `lcg` and `MARK`, which the brick generators and og-card.mjs still
+// import. The 2026-10-17 note below that "a full brick path went too far from the warmth" was
+// true of the stone brand; it no longer applies.
 //
 // History (all 2026-10-17): board E drew random round pebbles in 13 colours; the Home audit found
 // they did not match the logo's dressed stones; a squared, coursed redraw and then a full brick
@@ -31,12 +35,12 @@ export function lcg(seed) {
 
 /** The mark's six colours, and nothing else. */
 export const MARK = {
-  deep: '#235E93',
-  green: '#2C5B3A',
-  sky: '#3B83AA',
-  water: '#96C3EA',
-  red: '#C4401F',
-  gold: '#E8A93A',
+  deep: '#1F3A5F',
+  green: '#2C4F7C',
+  sky: '#2C4F7C',
+  water: '#7F98B8',
+  red: '#9A3B2A',
+  gold: '#B5503A',
 };
 
 // Keep a*x + b*y <= c (Sutherland-Hodgman against one half-plane).

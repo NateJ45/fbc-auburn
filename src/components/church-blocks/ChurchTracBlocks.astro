@@ -1,0 +1,76 @@
+---
+// Safe to edit by hand
+// Draws the blocks src/lib/church-trac-page.ts reads out of a Church Trac page (headings,
+// paragraphs with bold, italic and links, pictures, buttons, side-by-side columns, rules) in the
+// site's own type. Columns draw their blocks through this same component (Astro.self). Links and
+// pictures were already checked by the reader (https or mailto only).
+import type { Block, Inline } from '@/lib/church-trac-page';
+
+interface Props {
+  blocks: Block[];
+}
+const { blocks } = Astro.props;
+const isExternal = (href: string) => /^https?:\/\//i.test(href);
+const runs = (inline: Inline[]) => inline;
+---
+
+{blocks.map((b) =>
+  b.kind === 'heading' ? (
+    b.level === 2 ? (
+      <h3 class="ctp__h">{b.text}</h3>
+    ) : (
+      <h4 class="ctp__h ctp__h--small">{b.text}</h4>
+    )
+  ) : b.kind === 'text' ? (
+    <p class="ctp__p">
+      {runs(b.inline).map((r) =>
+        'br' in r ? (
+          <br />
+        ) : r.href ? (
+          <a
+            href={r.href}
+            target={isExternal(r.href) ? '_blank' : undefined}
+            rel={isExternal(r.href) ? 'noopener noreferrer' : undefined}
+          >
+            {r.bold ? (
+              <strong>{r.italic ? <em>{r.text}</em> : r.text}</strong>
+            ) : r.italic ? (
+              <em>{r.text}</em>
+            ) : (
+              r.text
+            )}
+          </a>
+        ) : r.bold ? (
+          <strong>{r.italic ? <em>{r.text}</em> : r.text}</strong>
+        ) : r.italic ? (
+          <em>{r.text}</em>
+        ) : (
+          r.text
+        ),
+      )}
+    </p>
+  ) : b.kind === 'image' ? (
+    <img class="ctp__img" src={b.src} alt="" loading="lazy" decoding="async" />
+  ) : b.kind === 'button' ? (
+    <p class="ctp__btn">
+      <a
+        class="btn-auburn"
+        href={b.href}
+        target={isExternal(b.href) ? '_blank' : undefined}
+        rel={isExternal(b.href) ? 'noopener noreferrer' : undefined}
+      >
+        {b.label}
+      </a>
+    </p>
+  ) : b.kind === 'columns' ? (
+    <div class="ctp__cols">
+      {b.columns.map((col) => (
+        <div class="ctp__col">
+          <Astro.self blocks={col} />
+        </div>
+      ))}
+    </div>
+  ) : b.kind === 'rule' ? (
+    <hr class="ctp__rule" />
+  ) : null,
+)}

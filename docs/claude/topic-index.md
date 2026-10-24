@@ -33,6 +33,8 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | Studio plan (who edits, weekly jobs, which surface)                                                      | `docs/agent/studio-plan.md`                                          |
 | Hidden pages, password pages (security note), Checkup link and heading checks                            | `docs/agent/private-pages.md`                                        |
 | Church facts, This Sunday, This week, YouTube replay, weather (drop-in components)                       | `docs/agent/church-data.md`                                          |
+| Shape system (stepped corner, gable, brick slab) and the Find your place ministries hub                  | `docs/agent/shapes.md`                                               |
+| Church Trac: forms, the page band, {token} links                                                         | `docs/agent/church-trac.md`                                          |
 | Editor-driven vs hardcoded                                                                               | `docs/agent/editor-vs-hardcoded.md`                                  |
 | Cross-repo shared improvements (port cards + applied-to matrix + drift check)                            | `PORTS.md`                                                           |
 | Change history (prose ledger; the checkable matrix lives in PORTS.md)                                    | `docs/agent/changelog.md`                                            |

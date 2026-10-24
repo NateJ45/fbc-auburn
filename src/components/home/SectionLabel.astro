@@ -1,10 +1,14 @@
 ---
 // Safe to edit by hand
-// A board E section label: small caps with a hairline, led by three gold steps from the mark
+// A board E section label: small caps with a hairline, led by three stepped bricks from the mark
 // (one marker everywhere). Renders as an h2 when it is the section's heading, or a <p> when
 // the section has its own.
 import '@/styles/board.css';
 import { MARKER } from './stones.generated';
+import { layOrder } from '@/lib/brick-lay';
+
+// The three steps are laid bottom step first as the section comes in (src/styles/flow.css).
+const markerTurns = layOrder(MARKER);
 
 interface Props {
   text: string;
@@ -23,8 +27,8 @@ const { text, as: Tag = 'h2', id } = Astro.props;
     aria-hidden="true"
     focusable="false"
   >
-    {MARKER.map((s) => (
-      <path d={s.d} fill={s.fill} />
+    {MARKER.map((s, i) => (
+      <path class="lay-brick" d={s.d} fill={s.fill} style={`--lay: ${markerTurns[i]}`} />
     ))}
   </svg>
   {text}

@@ -418,6 +418,8 @@ quickUpdate: [
 
 `postPhoto.tileLead` and `postPhoto.draftNote` reword Post a photo's "saved as a draft" lines (a shop: "Saved for you to check before it goes in the shop.").
 
+`postPhoto.stories` (card 143) adds documents that keep a photo list of their own, such as a room story's `gallery`, to the places a photo can go: `{ types: ['project'], field?: 'gallery', altField?: 'alt', captionField?: 'caption', noun?: 'Room story' }`. Each document appears as "Room story: Title (n photos)"; the photo goes onto the DRAFT (made from the published copy when there is none), alt text required, never published. One photo per pass, with "Post another photo" on the done card. `galleryTypes` may be empty when only stories are offered. `postPhoto.altExample` (card 144) swaps the church example in "Describe the photo" for one in the site's world, and `postPhoto.emptyNote` words the line shown when there is nowhere to put a photo yet (default: "There is no room story to add a photo to yet. Start one in the full editor first." for a stories-only site).
+
 Field kinds: `string`, `text`, `date`, `datetime`, `url`, `number`, `boolean` (a checkbox; its `description` is the
 words beside it), `select` (`options: [{ title, value }]`), `file`, `image` (`accept`). Every field takes `path`
 (dot-separated, default its `name`), `as: 'blocks' | 'slug'`, `required`, `max`, `description`, `initial(now)`.
@@ -916,19 +918,38 @@ family site gets its own devices and the starter's neutral defaults stay tidy.
 piece with made-up data in light or dark (`&scheme=dark`), since the real screens need a signed-in Studio
 (`src/sanity/kit/harness/Surfaces.tsx`, dev only).
 
+**Neutral look warning (card 139).** `npm run check:look` warns when `studio.look` still has the neutral marker, stone, colours or connector (`neutralLookWarnings()` in `studio-look.ts`). Never fails unless `--strict`.
+
+**Toasts (card 140).** `KitToastBody` (`kit/ui/surfaces.tsx`) is the React-node description of a success toast: the sentence and, after a publish, the three Is-it-live stones (`liveSteps('on-its-way')`). Sanity owns the toast frame and title. Used by `publishNote.tsx` and Trash/restore; bench: `part=toast`.
+
+**Switch (card 141).** `KitSwitch` (`kit/ui/surfaces.tsx`) draws a Quick update yes/no field: a `role="switch"` button, a track and thumb in the look's colours, "Yes" or "No" in words. Do not use a native checkbox in the kit; it can be invisible in real Chrome. Bench: `part=switch`.
+
+**How to on date fields (card 142).** Sanity 6 date and datetime inputs draw their own header, so the chip goes under the input, not in the description (`drawsOwnHeader()` in `studio-kit.ts`).
+
+**Empty Trash (card 146).** `trashListItem()` (`kit/trash.tsx`) is the desk's Trash item: the list when something is in it, `EmptyTrashPane` (the kit's `EmptyState`) when not. Keep the id `trash`. Bench: `part=trash`.
+
+**Home as a dashboard (card 145).** The status rail runs the full height at the right, from the top of the page, so "Is it live?" is on screen with the greeting. `HomeTool.tsx` lays Home out as `.ui-dash` (`kit/ui/css.ts`): the banner and the ways in at the top left, a main column (Pick up, Coming up, Newsletter, Recent edits, Visitors, Your pages, videos) and a status rail (Is it live, Checkup, This week, Ask). The layout follows the pane's width with container queries: 960px and up puts the rail at the right (sticky), 1500px and up lays the main cards two across, and anything narrower is one column with the status first. A new Home card goes in the main column, or in the rail only if it is a status.
+
+**Checkup in columns (card 147).** `CheckupView` shows a `LevelSummary` strip (counts per level) and the levels as columns (`.ui-checkup`, `auto-fill` from 340px), so a wide pane is used and a phone gets one column. Bench: `part=checkup`.
+
+**Quick update on a wide pane (card 148).** The tile list is a grid (`auto-fill` from 300px) and an open form shows a "How this goes" rail (`.ui-quick__rail`, `LiveSteps`: Fill in, Save, On the website) beside it from 860px up. Under that width it is the phone layout: one column, no rail.
+
+**Helpers in the kit's callouts (card 149).** The writing helper's suggestion (`WritingHelp.tsx`) and the private-page password status (`PrivatePasswordInput.tsx`) are `KitNotice`s (note, tip, careful), so they take the site's stones and colours. Bench: `part=helpers`.
+
 **Still to do** (`docs/PENDING.md`): the sign-in heading (blocked in sanity 6.19; see "The edges" above). The field
 "How to" chip landed with card 134 (below).
 
 ### Part two (card 132)
 
-| Piece       | What it is                                                                                | Where it is used                                  |
-| ----------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `DateBlock` | the month in small caps over the day in the display font, inside a stone outline          | Home's Coming up and RSVP rows                    |
-| `ArtRow(s)` | a list row: the type's art on a small stone (or a `lead`), title, muted line, tag, action | Recent edits, Pick up, Coming up, the newsletter  |
-| `Figure`    | a headline number in the display font with its words                                      | Visitors, newsletter subscribers, CollectionIntro |
-| `MarkBars`  | bars in the calm mark colours, each with its number in words                              | Visitors                                          |
-| `StepTrail` | named steps across: laid, ringed, waiting (`LiveSteps` with one column per word)          | Post a photo, the tour                            |
-| `TileCard`  | now takes `href` (a real link) as well as `onClick`; art top left, 52px (card 133)        | Home's ways in, Quick update                      |
+| Piece       | What it is                                                                                                                                                  | Where it is used                                  |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `DateBlock` | the month in small caps over the day in the display font, inside a stone outline                                                                            | Home's Coming up and RSVP rows                    |
+| `ArtRow(s)` | a list row: the type's art on a small stone (or a `lead`), title, muted line, tag, action                                                                   | Recent edits, Pick up, Coming up, the newsletter  |
+| `Figure`    | a headline number in the display font with its words                                                                                                        | Visitors, newsletter subscribers, CollectionIntro |
+| `MarkBars`  | bars in the calm mark colours, each with its number in words                                                                                                | Visitors                                          |
+| `StepTrail` | named steps across: laid, ringed, waiting (`LiveSteps` with one column per word)                                                                            | Post a photo, the tour                            |
+| `TileCard`  | now takes `href` (a real link) as well as `onClick`; art top left, 52px (card 133)                                                                          | Home's ways in, Quick update                      |
+| `TileCard`  | the tile is a flex column that starts at the top, so a `<button>` tile no longer centres its inside and drops the colour edge below the card top (card 150) | Home's ways in, Quick update                      |
 
 - **Done means calm.** `look.<scheme>.calm` lists the stones that may say "done": every mark colour except one within
   28 degrees of the careful hue (`calmStones()`, tested). `StateStone calm`, `LiveSteps`, `AllClear` and `MarkBars`

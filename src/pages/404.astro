@@ -1,20 +1,17 @@
 ---
 // Safe to edit by hand
-// Custom 404, "Off the path" (FBC Auburn mockups): the stepping-stone path breaks off, the title
-// is an Auburn Stone mosaic, and two buttons lead back. No search (there isn't one).
+// Custom 404, "Off the path" (FBC Auburn mockups): the brick path breaks off after two steps, the title
+// is cut out of a brick wall, and two buttons lead back. No search (there isn't one).
 //
 // The words and buttons can be set in the Studio (Not Found Page); these are the fallbacks.
 // The starter's photo column is gone: the broken path is the picture.
-import { getImage } from 'astro:assets';
 import { withTrailingSlash } from '@/lib/href';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import StoneHeading from '@/components/StoneHeading.astro';
+import { wallWord, LETTER_TONES } from '../../scripts/lib/brick-letters.mjs';
+import { splitStega } from '@/lib/preview-stega';
 import { getNotFoundPage, getSiteSettings } from '@/lib/queries';
-import stoneA from '@/assets/brand/stone-a.svg';
-import stoneB from '@/assets/brand/stone-b.svg';
 
 const [notFoundPage, siteSettings] = await Promise.all([getNotFoundPage(), getSiteSettings()]);
-const [a, b] = await Promise.all([getImage({ src: stoneA }), getImage({ src: stoneB })]);
 
 const seoTitle = notFoundPage?.seoTitle ?? 'Page not found';
 const seoDescription =
@@ -24,6 +21,16 @@ const headline = notFoundPage?.headline ?? 'Off the path';
 const body =
   notFoundPage?.body ??
   "This page has wandered off, or the link was mistyped. Let's get you back on the path.";
+
+// The headline is cut out of a brick wall (treatment B), one block per word so it wraps; the words
+// stay real text in the heading's aria-label.
+const { cleaned: headlineText, encoded: headlineStega } = splitStega(headline);
+const headlineWalls = headlineText
+  .split(/\s+/)
+  .filter(Boolean)
+  .map((w, i) =>
+    wallWord(w, { tones: LETTER_TONES.auburn, letter: '#FBF8F3', seed: 5 + i * 7, pad: 0.16 }),
+  );
 
 const primaryLabel = notFoundPage?.primaryCtaLabel ?? 'Back to the home page';
 const primaryHref = withTrailingSlash(notFoundPage?.primaryCtaHref) ?? '/';
@@ -37,12 +44,21 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
     aria-labelledby="not-found-heading"
   >
     <div class="lost__path" aria-hidden="true">
-      <img src={a.src} alt="" width="56" height="28" class="lost__a" />
-      <img src={b.src} alt="" width="56" height="28" class="lost__b" />
-      <span class="lost__gone"></span>
-      <span class="lost__gone"></span>
+      <span class="lost__brick lost__brick--1"></span>
+      <span class="lost__brick lost__brick--2"></span>
+      <span class="lost__gone lost__gone--3"></span>
+      <span class="lost__gone lost__gone--4"></span>
     </div>
-    <StoneHeading text={headline} id="not-found-heading" class="lost__h1" />
+    <h1 id="not-found-heading" class="lost__h1" aria-label={headlineText}>
+      {headlineWalls.map((svg, i) => (
+        <>
+          {i > 0 && ' '}
+          <Fragment set:html={svg} />
+        </>
+      ))}
+      <span class="sr-only">{headlineText}</span>
+      {headlineStega}
+    </h1>
     <p class="mx-auto mt-m max-w-xl text-lg leading-relaxed text-muted-foreground">{body}</p>
     <div class="mt-l flex flex-wrap justify-center gap-s">
       <a href={primaryHref} class="btn-auburn btn-auburn--primary press-tactile">
@@ -63,21 +79,40 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
     gap: 16px;
     margin-bottom: 2.5rem;
   }
-  .lost__path img {
-    width: 56px;
-    height: auto;
-  }
-  .lost__a {
-    transform: rotate(-10deg);
-  }
-  .lost__b {
-    transform: translateY(-8px) rotate(-4deg);
-  }
+  /* Four steps of the brick path, stepping up to the right like the section marker: two laid
+     (auburn bricks with the inset bottom band every brick on the site carries), two missing
+     (dashed outlines where the next bricks should be). Brick brand, 2026-10-23. */
+  .lost__brick,
   .lost__gone {
     width: 56px;
-    height: 26px;
+    height: 24px;
+    border-radius: 3px;
+  }
+  /* Printed like every brick (2026-10-23): a darker rim, heavier along the bottom, and the linocut
+     flecks from npm run gen:stones. */
+  .lost__brick {
+    border-radius: 2px;
+    background-image: url('/textures/print-flecks.svg');
+    background-size: 64px 44px;
+    box-shadow:
+      inset 0 0 0 2px rgb(0 0 0 / 0.2),
+      inset 0 -3px 0 rgb(0 0 0 / 0.16);
+  }
+  .lost__brick--1 {
+    background-color: #9a3b2a;
+  }
+  .lost__brick--2 {
+    background-color: #b5503a;
+    transform: translateY(-10px);
+  }
+  .lost__gone {
     border: 2px dashed var(--border);
-    border-radius: 10px;
+  }
+  .lost__gone--3 {
+    transform: translateY(-20px);
+  }
+  .lost__gone--4 {
+    transform: translateY(-30px);
   }
   .lost :global(.lost__h1) {
     font-size: clamp(3rem, 1.5rem + 6vw, 6rem);

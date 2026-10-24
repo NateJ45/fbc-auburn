@@ -706,11 +706,11 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: 'Open the `Menus` tab. `Top menu links` is the full menu, the one that opens from the `Menu` button; the bar across the top of the website shows the **first four** of them, so put the most important first. A `Dropdown` groups several pages under one heading. `Header button` is the `Plan your visit` button. `Footer link columns` are the rows of links in the footer. Pick pages from the list rather than typing addresses, so a renamed page never breaks a link. Drag rows to reorder them, and use the `...` menu on a row to remove one.',
+        text: 'Open the `Menus` tab. `Top menu links` is the full menu, the one that opens from the `Menu` button; the bar across the top of the website shows the **first five** of them, so put the most important first. A `Dropdown` groups several pages under one heading. `Header button` is the `Plan your visit` button. `Footer link columns` are the rows of links in the footer. Pick pages from the list rather than typing addresses, so a renamed page never breaks a link. Drag rows to reorder them, and use the `...` menu on a row to remove one.',
       },
       {
         kind: 'p',
-        text: "The footer's own words (the line under the big heading, the second button and the line in the bottom bar) are on the `Social and footer` tab. Leave one empty and the website uses its built-in wording.",
+        text: "The footer's own words (the second button and the line in the bottom bar) are on the `Social and footer` tab. Leave one empty and the website uses its built-in wording.",
       },
       {
         kind: 'callout',
@@ -817,12 +817,49 @@ export const guides: Guide[] = [
         kind: 'bullets',
         items: [
           '**Phone and email** are typed under `Identity & contact`. They show in the menu, the footer and on Contact. Tick `Confirmed by the church` for each under `Church facts` once it is right; until then they carry a "To confirm" tag and are kept away from Google.',
-          '**Online giving link**: paste the giving page address and every Give link goes straight there. Leave it empty and Give opens the site’s own page about giving on Sunday or by mail.',
+          '**Online giving link** (on the `Church Trac` tab): paste the giving page address and every Give link goes straight there. Leave it empty and Give opens the site’s own page about giving on Sunday or by mail.',
           '**Live stream link**: where people watch on Sunday. It shows on Watch and in the footer, and the home page’s "Live now" card goes there during worship. Empty uses the Facebook link.',
           '**Facebook**: add it under `Social & footer`, `Social links`, platform Facebook.',
         ],
       },
       { kind: 'p', text: 'Publish, and the links appear on the next update of the site.' },
+    ],
+  },
+
+  // ── Church Trac (2026-10-24, docs/agent/church-trac.md) ─────────────────────
+  {
+    slug: 'church-trac',
+    category: 'Housekeeping',
+    title: 'Church Trac forms, pages and links',
+    icon: 'info',
+    lead: 'Paste a Church Trac address once and the website uses it everywhere.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Site Settings', 'Church Trac'],
+        link: { doc: 'siteSettings' },
+      },
+      {
+        kind: 'bullets',
+        items: [
+          '**Church Trac address** (like https://yourchurch.churchtrac.com): needed for the `Church Trac page` section, which shows a page you keep in Church Trac, like a bulletin, and updates every morning.',
+          '**Connection card**: once it is set, Contact shows it in place of the website’s own form, and every "Tell us you are coming" button goes straight to it.',
+          '**Contact form** (optional): a Church Trac form for general questions. If it is set, Contact shows this one instead of the connection card.',
+          '**Prayer request form**: once it is set, the Prayer requests page shows it in place of the website’s own form.',
+          '**Online giving link**: every Give link goes straight there.',
+          '**Calendar feed** (Calendar > Share > iCal link in Church Trac): the events you add there show on Home and Events.',
+          '**Member sign-in link**: shown in the footer as "Members: sign in".',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'Any link box can also take a placeholder instead of an address: `{giving}`, `{connect}`, `{contact-form}`, `{prayer}`, `{calendar}`, `{members}` or `{watch}`. The website fills it from the boxes above, so if a form moves you change one box, not every button. A placeholder whose box is empty goes to the website’s own page for the same thing.',
+      },
+      {
+        kind: 'p',
+        text: 'To show any other Church Trac form on a page, add the `Church Trac form` section and paste the embed code Church Trac gives you. In Church Trac, the form’s "Embed Domain" setting must hold this website’s address, or the form will not open here.',
+      },
     ],
   },
 
@@ -863,6 +900,8 @@ export const guides: Guide[] = [
           '**Live stream**: a "Watch live" button that says "Live now" during Sunday worship.',
           '**Newsletter sign-up**: the email sign-up box, or a button to your sign-up page.',
           '**Form**: one of your forms, like prayer requests or a sign-up sheet.',
+          '**Church Trac form**: a form you built in Church Trac, pasted in as its embed code.',
+          '**Church Trac page**: a page you keep in Church Trac, like a bulletin, shown in the website’s look and updated every morning.',
         ],
       },
       {

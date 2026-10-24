@@ -4,7 +4,7 @@
 // Hero.astro hands over to this whenever the site's hero layout is "split" (brand.config.json).
 //
 //   size="tall"   Home masthead: the eyebrow reads "First Baptist Church of" and the headline,
-//                 "Auburn", is set huge as a colour mosaic in Auburn Stone. The subhead's first
+//                 "Auburn", is set huge as brick letters (StoneHeading). The subhead's first
 //                 sentence becomes the large serif intro line (red, the Gemini comp's "Come as you
 //                 are.") and the rest sits under it, then the derived "This Sunday" line.
 //   size="short"  Inner pages: handed to BoardPageHead (board E, 2026-10-17): no arch, no mark.
@@ -19,7 +19,8 @@ import StoneHeading from '@/components/StoneHeading.astro';
 import StoneIcon from '@/components/StoneIcon.astro';
 import ThisSunday from '@/components/church/ThisSunday.astro';
 import BoardPageHead from '@/components/home/BoardPageHead.astro';
-import markLight from '@/assets/brand/fbc-auburn-icon-full-color.svg';
+// The full linocut print as a raster (brand/logo/mark.svg is about 900 KB of grain).
+import markLight from '@/assets/brand/mark-print.png';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 import type { ComponentProps } from 'astro/types';
 
@@ -71,7 +72,10 @@ if (masthead && subhead) {
 }
 
 const hasImage = !!image?.asset;
-const mark = hasImage || !masthead ? null : await getImage({ src: markLight });
+const mark =
+  hasImage || !masthead
+    ? null
+    : await getImage({ src: markLight, width: 640, format: 'webp', quality: 82 });
 ---
 
 {!masthead ? (

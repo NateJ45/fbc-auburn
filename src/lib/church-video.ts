@@ -125,6 +125,55 @@ export function latestVideo(entries: FeedEntry[], now: Date): LatestVideo | null
   };
 }
 
+// ── The upcoming stream (2026-10-24, after First Baptist Muncie's upcomingBroadcast) ──
+// A livestream scheduled on YouTube sits in the channel feed days early with 0 views. The feed
+// carries no "scheduled" flag and no start time, so the reading is deliberately narrow: a
+// zero-view upload, published by the build, whose publish day falls in the week ending on the
+// coming Sunday (Monday to that Sunday, church time). Two different titles claiming the same
+// Sunday name nothing (never guess which one the church meant). Facebook has no feed to read, so
+// this is YouTube only; until then the This Sunday card just says where to watch.
+
+/** The coming Sunday's scheduled stream, as the This Sunday card names it. */
+export interface UpcomingStream {
+  videoId: string;
+  title: string;
+  /** YYYY-MM-DD on the church's calendar. */
+  sunday: string;
+  /** https://www.youtube.com/watch?v=<id>, where the stream plays live. */
+  watchUrl: string;
+}
+
+/** YYYY-MM-DD plus `n` days. */
+const plusDays = (iso: string, n: number) =>
+  new Date(Date.parse(`${iso}T12:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+const weekdayOf = (iso: string) => new Date(`${iso}T12:00:00Z`).getUTCDay();
+
+/** The Sunday on or after a church-calendar day. */
+export function sundayOnOrAfter(iso: string): string {
+  return plusDays(iso, (7 - weekdayOf(iso)) % 7);
+}
+
+/** The coming Sunday's scheduled stream as of `now`, or null. */
+export function upcomingStream(entries: FeedEntry[], now: Date): UpcomingStream | null {
+  const target = sundayOnOrAfter(DAY.format(now));
+  const found = entries
+    .filter(
+      (e) =>
+        e.views === 0 &&
+        Date.parse(e.published) <= now.getTime() &&
+        sundayOnOrAfter(DAY.format(new Date(e.published))) === target,
+    )
+    .sort((a, b) => Date.parse(b.published) - Date.parse(a.published));
+  const first = found[0];
+  if (!first || found.some((e) => e.title !== first.title)) return null;
+  return {
+    videoId: first.videoId,
+    title: first.title,
+    sunday: target,
+    watchUrl: `https://www.youtube.com/watch?v=${first.videoId}`,
+  };
+}
+
 export const feedUrl = (channelId: string) =>
   `https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
 export const channelUrl = (channelId: string) =>

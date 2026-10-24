@@ -7,10 +7,20 @@ import PortableText from '@/components/PortableText';
 import CtaLink from '@/components/CtaLink.astro';
 import MarkBuild from '@/components/motion/MarkBuild.astro';
 import BaptismGraphic from '@/components/motion/BaptismGraphic.astro';
+import BuildingSketch from '@/components/church/BuildingSketch.astro';
+import Sill from '@/components/Sill.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { shotFor } from '@/data/shot-list';
+import { splitStega } from '@/lib/preview-stega';
+// Auburn's shape system (2026-10-24): a photo here is cut to the building's gable and set over a
+// navy brick slab that runs to the page edge on the photo's side (src/styles/shapes.css).
+import '@/styles/shapes.css';
+// With no photo yet, the slot holds the church's mark, not an empty grey shape (2026-10-24).
+import markPrint from '@/assets/brand/mark-print.png';
 
 interface Props {
   /** FBC Auburn: a photo, or one of the church's drawings with its scroll motion. */
-  art?: 'photo' | 'mark' | 'baptism';
+  art?: 'photo' | 'mark' | 'baptism' | 'building';
   image?: any;
   imageSide?: 'left' | 'right';
   eyebrow?: string;
@@ -38,59 +48,116 @@ const {
 // strings as the ternary that was here for 'background' and 'muted'.
 const bg = surfaceClass(surface);
 const imageFirst = imageSide === 'left';
+// Before launch, a photo slot that is empty or holds a stand-in names the photo we want instead
+// (src/data/shot-list.ts, keyed by page and heading). Drawings ('mark', 'baptism', 'building') never.
+const shot =
+  art === 'photo' ? shotFor(Astro.url.pathname, splitStega(heading ?? '').cleaned, 0, image) : null;
 const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebrow ? 'mt-m' : ''}`;
 ---
 
-<section class={bg} aria-labelledby={heading ? headingId : undefined}>
-  {/* THE SHARED SPLIT (PORTS.md card 91). `.split` in globals.css is the one text/picture
+{art === 'building' ? (
+  // THE BUILDING BAND (2026-10-23): the words on one row (heading left, the paragraph and the
+  // button right, the split's own tracks), then the pen-and-pencil sketch of the church across the
+  // full column, standing on a brick sill like a foundation. The Muncie site's heritage band is the
+  // model: the drawing is the page's centrepiece, not a picture beside a paragraph.
+  <section class={bg} aria-labelledby={heading ? headingId : undefined}>
+    <div class="mx-auto max-w-content px-m pt-section-lg" data-reveal>
+      <div class="split items-start">
+        <div>
+          {eyebrow && (
+            <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>
+          )}
+          {heading && (
+            <h2 id={headingId} class="font-display text-h2 auburn-h2">
+              {heading}
+            </h2>
+          )}
+        </div>
+        <div>
+          {body && <PortableText value={body} className={bodyClass} />}
+          {cta?.label && (
+            <div class="mt-l">
+              <CtaLink cta={cta} variant="secondary" />
+            </div>
+          )}
+        </div>
+      </div>
+      <BuildingSketch
+        class="building-band__sketch"
+        label="A pen and pencil sketch of the church: the red brick building with its white portico, the ramp up to the front door, the steeple, and the road sign beside the plain roadside cross"
+      />
+    </div>
+    <Sill class="building-band__sill" />
+  </section>
+) : (
+  <section class:list={[bg, 'shape-slab-host']} aria-labelledby={heading ? headingId : undefined}>
+    {/* THE SHARED SPLIT (PORTS.md card 91). `.split` in globals.css is the one text/picture
       column split; the picture takes the narrow track on whichever side it is on, so
       `.split--media-first` mirrors the tracks. The picture stays first in the DOM and the
       side is chosen with `lg:order-*`, so the stacked phone order (picture, then words) is
       unchanged. */}
-  <div
-    class:list={[
-      'split mx-auto max-w-content items-center px-m py-section-lg',
-      imageFirst && 'split--media-first',
-    ]}
-    data-reveal
-  >
-    <div class:list={[imageFirst ? 'lg:order-1' : 'lg:order-2']}>
-      {art === 'mark' ? (
-        <div class="auburn-art">
-          <MarkBuild class="auburn-art__mark" />
-        </div>
-      ) : art === 'baptism' ? (
-        <div class="auburn-art">
-          <BaptismGraphic class="auburn-art__baptism" />
-        </div>
-      ) : image?.asset ? (
-        <SanityImage
-          source={image}
-          width={800}
-          sizes="(min-width: 1024px) 45vw, 100vw"
-          quality={75}
-          class="auburn-arch h-auto w-full object-cover"
-        />
-      ) : (
-        <div class="auburn-arch auburn-arch--empty" aria-hidden="true" />
-      )}
-    </div>
+    <div
+      class:list={[
+        'split mx-auto max-w-content items-center px-m py-section-lg',
+        imageFirst && 'split--media-first',
+      ]}
+      data-reveal
+    >
+      <div class:list={[imageFirst ? 'lg:order-1' : 'lg:order-2']}>
+        {art === 'mark' ? (
+          <div class="auburn-art">
+            <MarkBuild class="auburn-art__mark" />
+          </div>
+        ) : art === 'baptism' ? (
+          <div class="auburn-art">
+            <BaptismGraphic class="auburn-art__baptism" />
+          </div>
+        ) : shot || image?.asset ? (
+          // A photo (or its Photo needed request): the gable over the brick slab.
+          <div class:list={['shape-slab', imageFirst && 'shape-slab--left']}>
+            {shot ? (
+              <ShotRequest shot={shot} class="auburn-arch shape-gable" />
+            ) : (
+              <SanityImage
+                source={image}
+                width={800}
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                quality={75}
+                class="auburn-arch shape-gable h-auto w-full object-cover"
+              />
+            )}
+          </div>
+        ) : (
+          <div class="auburn-arch auburn-arch--empty" aria-hidden="true">
+            <img
+              class="auburn-arch__mark"
+              src={markPrint.src}
+              width="720"
+              height="703"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        )}
+      </div>
 
-    <div class:list={[imageFirst ? 'lg:order-2' : 'lg:order-1']}>
-      {eyebrow && (
-        <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>
-      )}
-      {heading && (
-        <h2 id={headingId} class="font-display text-h2 auburn-h2">
-          {heading}
-        </h2>
-      )}
-      {body && <PortableText value={body} className={bodyClass} />}
-      {cta?.label && (
-        <div class="mt-l">
-          <CtaLink cta={cta} variant="secondary" />
-        </div>
-      )}
+      <div class:list={[imageFirst ? 'lg:order-2' : 'lg:order-1']}>
+        {eyebrow && (
+          <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>
+        )}
+        {heading && (
+          <h2 id={headingId} class="font-display text-h2 auburn-h2">
+            {heading}
+          </h2>
+        )}
+        {body && <PortableText value={body} className={bodyClass} />}
+        {cta?.label && (
+          <div class="mt-l">
+            <CtaLink cta={cta} variant="secondary" />
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+)}

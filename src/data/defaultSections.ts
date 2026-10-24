@@ -44,7 +44,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
     headline: 'Auburn',
     welcome: 'Come as you are.',
     subhead:
-      'We are a small Southern Baptist family in Ross Township. Someone will meet you at the door, and there is coffee in the fellowship hall.',
+      'We are a close-knit Southern Baptist family in Ross Township. Someone will meet you at the door, and there is coffee in the fellowship hall.',
     primaryCta: { _type: 'ctaBlock', label: 'Plan your first visit', href: '/plan-your-visit/' },
     secondaryCta: { _type: 'ctaBlock', label: 'Meet the church', href: '/about/' },
   },

@@ -1,16 +1,28 @@
 ---
 // Safe to edit by hand
-// The church mark, inlined as its separate stones (src/assets/brand/mark-layered.svg, split by
-// the mockups' tools/parts.cjs; regrouping only, the drawing is the Figma master's). With motion
-// on it builds itself in story order as it scrolls in (ring, water, steps, the cross from its
-// foot up, the heart last), then its three wave bands drift a few pixels apart with the scroll.
-// The cross never moves. Motion: src/styles/motion.css ("Mark build"); at rest it is the mark.
-import markSvg from '@/assets/brand/mark-layered.svg?raw';
+// The church mark, large (the "mark" picture choice on an Image and text block, and the Steps rail).
+// Since 2026-10-23 the mark is the linocut print (brand/logo/mark.svg), shown from its raster
+// (src/assets/brand/mark-print.png, as WebP) because the SVG is about 900 KB of grain. The old
+// stone mark that built itself stone by stone (mark-layered.svg) is retired; the class name stays
+// so the blocks' layout CSS still applies.
+import { getImage } from 'astro:assets';
+import markPrint from '@/assets/brand/mark-print.png';
 
 interface Props {
   class?: string;
 }
 const { class: extraClass = '' } = Astro.props as Props;
+const img = await getImage({ src: markPrint, width: 720, format: 'webp', quality: 82 });
 ---
 
-<div class:list={['mark-build-wrap', extraClass]} set:html={markSvg} />
+<div class:list={['mark-build-wrap', extraClass]}>
+  <img
+    src={img.src}
+    width={markPrint.width}
+    height={markPrint.height}
+    alt="The church's mark: a wall of red-brown brick with a plain cross cut out of it"
+    loading="lazy"
+    decoding="async"
+    style="display:block;width:100%;height:auto"
+  />
+</div>

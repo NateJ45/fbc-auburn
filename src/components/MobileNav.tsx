@@ -34,12 +34,13 @@
 // Data: the links, tagline, email, socials and the Sunday facts all come from the Header (Sanity
 // Site settings and Church facts), with sensible defaults so the menu renders before content does.
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Mail, Phone, Search } from 'lucide-react';
-import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
+import { socialLabel, type SocialLink } from '@/lib/social-links';
+import { socialIcon } from '@/lib/social-icons';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { telHref } from '@/lib/phone';
-import { SILL, SILL_VIEWBOX } from '@/components/home/stones.generated';
+import { SILL, SILL_PRINT, SILL_VIEWBOX } from '@/components/home/stones.generated';
 
 // ---- Types ------------------------------------------------------------------
 
@@ -61,8 +62,8 @@ interface MobileNavSiteSettings {
   tagline?: string;
   email?: string;
   phone?: string;
-  socialInstagram?: string;
-  socialFacebook?: string;
+  /** Every social account, resolved by the Header (src/lib/social-links.ts). */
+  socials?: SocialLink[];
 }
 
 interface MenuSunday {
@@ -96,6 +97,12 @@ interface Props {
   cta?: { show: boolean; label: string; href: string };
   /** Sunday facts, from Church facts, for the This Sunday card. */
   sunday?: MenuSunday;
+  /**
+   * Where Sunday streams (Church facts, src/lib/live-service.ts): a row under the address in the
+   * This Sunday card. It reads "Live now" with a dot while worship is streaming, from the answer
+   * src/lib/live-client.ts leaves on window.__churchLive (2026-10-24).
+   */
+  watch?: { href: string; label: string };
   /** The current path, so the page you are on keeps its stone. */
   current?: string;
   /**
@@ -123,9 +130,9 @@ function StonesIcon() {
       viewBox="0 0 20 18"
       aria-hidden="true"
     >
-      <rect x="1" y="1" width="18" height="4" rx="2" fill="#3b83aa" />
-      <rect x="1" y="7" width="13" height="4" rx="2" fill="#2c5b3a" />
-      <rect x="1" y="13" width="16" height="4" rx="2" fill="#e8a93a" />
+      <rect x="1" y="1" width="18" height="4" rx="2" fill="#2C4F7C" />
+      <rect x="1" y="7" width="13" height="4" rx="2" fill="#2C4F7C" />
+      <rect x="1" y="13" width="16" height="4" rx="2" fill="#B5503A" />
     </svg>
   );
 }
@@ -139,20 +146,29 @@ export default function MobileNav({
   logoDarkUrl,
   cta = DEFAULT_CTA,
   sunday,
+  watch,
   current,
   search = false,
 }: Props) {
   const [open, setOpen] = useState(false);
+  // The live state, kept in step with live-client.ts while the island is on the page.
+  const [live, setLive] = useState<{ live: boolean; href?: string } | undefined>(undefined);
+  useEffect(() => {
+    setLive(window.__churchLive);
+    const onLive = (e: Event) =>
+      setLive((e as CustomEvent<{ live: boolean; href?: string }>).detail);
+    document.addEventListener('church:live', onLive);
+    return () => document.removeEventListener('church:live', onLive);
+  }, []);
   // Set when the visitor picks "Search the site" inside the menu: the menu closes first, and the
   // search dialog opens once Radix has handed focus back (onCloseAutoFocus below), so the two
   // modals never fight over focus.
   const searchNext = useRef(false);
 
-  const tagline = siteSettings?.tagline ?? 'A small church with the door open.';
+  const tagline = siteSettings?.tagline ?? 'A close-knit church with the door open.';
   const email = siteSettings?.email;
   const phone = siteSettings?.phone;
-  const ig = siteSettings?.socialInstagram;
-  const fb = siteSettings?.socialFacebook;
+  const socials = siteSettings?.socials ?? [];
 
   const close = () => setOpen(false);
   // One running number across flat links and grouped ones, so the stagger and the colours flow.
@@ -295,6 +311,20 @@ export default function MobileNav({
                       )}
                     </p>
                   )}
+                  {watch && (
+                    <p className="auburn-menu__watch">
+                      <a
+                        href={(live?.live && live.href) || watch.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-live={live?.live ? '' : undefined}
+                      >
+                        <span className="auburn-menu__live-dot" aria-hidden="true" />
+                        {live?.live ? 'Live now: watch the service' : watch.label}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                    </p>
+                  )}
                   {cta.show && (
                     <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary">
                       {cta.label}
@@ -324,18 +354,22 @@ export default function MobileNav({
                   )}
                 </div>
               )}
-              {(ig || fb) && (
+              {socials.length > 0 && (
                 <div className="auburn-menu__social">
-                  {ig && (
-                    <a href={ig} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                      <IconBrandInstagram size={20} stroke={1.5} />
-                    </a>
-                  )}
-                  {fb && (
-                    <a href={fb} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                      <IconBrandFacebook size={20} stroke={1.5} />
-                    </a>
-                  )}
+                  {socials.map((link) => {
+                    const Icon = socialIcon(link.platform);
+                    return (
+                      <a
+                        key={link.url}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={socialLabel(link)}
+                      >
+                        <Icon size={20} stroke={1.5} />
+                      </a>
+                    );
+                  })}
                 </div>
               )}
               {logoDarkUrl && (
@@ -354,9 +388,23 @@ export default function MobileNav({
 
           <div className="auburn-menu__sill" aria-hidden="true">
             <svg viewBox={SILL_VIEWBOX} preserveAspectRatio="xMidYMid slice" focusable="false">
-              {SILL.map((s, i) => (
-                <path key={i} d={s.d} fill={s.fill} style={{ '--i': i } as React.CSSProperties} />
-              ))}
+              {/* The linocut flecks: a mask over the bricks (scripts/lib/brick-print.mjs). */}
+              <g
+                dangerouslySetInnerHTML={{
+                  __html: SILL_PRINT.replaceAll('__ID__', 'menu-sill-print'),
+                }}
+              />
+              <g mask="url(#menu-sill-print)">
+                {SILL.map((s, i) => (
+                  <path
+                    key={i}
+                    className="sill-brick"
+                    d={s.d}
+                    fill={s.fill}
+                    style={{ '--i': i } as React.CSSProperties}
+                  />
+                ))}
+              </g>
             </svg>
           </div>
         </SheetContent>

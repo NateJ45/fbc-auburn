@@ -33,6 +33,7 @@ import { resolve } from './src/sanity/resolve';
 import { PreviewNavigator } from './src/sanity/components/PreviewNavigator';
 import { envVal } from './src/sanity/urls';
 import { StudioIcon } from './src/sanity/components/StudioIdentity';
+import type { RootTheme, ThemeFont } from '@sanity/ui/theme';
 import { buildStudioTheme, seedLightScheme } from './src/sanity/studioTheme';
 import {
   studioLook,
@@ -86,7 +87,35 @@ const DISPLAY_STACK = '"Young Serif", Georgia, "Times New Roman", serif';
 const BODY_STACK = '"Familjen Grotesk Variable", system-ui, -apple-system, sans-serif';
 const STUDIO_FONTS = { display: DISPLAY_STACK, body: BODY_STACK };
 
-const studioTheme = buildStudioTheme(STUDIO_FONTS);
+// Larger reading size (2026-10-24): the church's editors found the stock 13px
+// list rows and their icons hard to read. Every text and label step (and the
+// icon size Sanity pairs with it) grows by STUDIO_TEXT_SCALE; headings and code
+// keep their sizes. The navbar has its own theme (StudioLook.tsx) and is left
+// alone. Set the scale to 1 to go back to Sanity's sizes.
+const STUDIO_TEXT_SCALE = 1.2;
+
+function withLargerText(theme: RootTheme, scale: number): RootTheme {
+  if (scale === 1) return theme;
+  const grow = (font: ThemeFont): ThemeFont => ({
+    ...font,
+    sizes: font.sizes.map((s) => ({
+      ...s,
+      fontSize: Math.round(s.fontSize * scale),
+      lineHeight: Math.round(s.lineHeight * scale),
+      iconSize: Math.round(s.iconSize * scale),
+      ascenderHeight: Math.round(s.ascenderHeight * scale),
+      descenderHeight: Math.round(s.descenderHeight * scale),
+    })),
+  });
+  const fonts = { ...theme.fonts, text: grow(theme.fonts.text), label: grow(theme.fonts.label) };
+  return {
+    ...theme,
+    fonts,
+    ...(theme.v2 ? { v2: { ...theme.v2, font: fonts } } : null),
+  };
+}
+
+const studioTheme = withLargerText(buildStudioTheme(STUDIO_FONTS), STUDIO_TEXT_SCALE);
 seedLightScheme();
 
 // The Studio tab's title and icons come from the site's own /studio page

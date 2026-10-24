@@ -12,16 +12,19 @@
 }
 .c-intro {
   margin-top: 0.8rem;
-  font-size: 1.2rem;
+  font-size: var(--fs-lead);
   line-height: 1.55;
   color: var(--muted-foreground);
 }
+/* An empty state is a quiet card (2026-10-24): it drew two rules of its own, three lines stacked
+   under the section's rule. */
 .c-empty {
   max-width: 40rem;
-  padding: clamp(1.25rem, 3vw, 1.75rem) 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  font-size: 1.1rem;
+  padding: var(--pad-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+  font-size: var(--fs-body);
   line-height: 1.6;
   color: var(--muted-foreground);
 }
@@ -52,7 +55,9 @@
   display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(
+    --radius-card
+  ); /* stands on its own (latest sermon, series), so the card corner */
   background: var(--muted);
 }
 .c-art img {
@@ -61,8 +66,8 @@
   object-fit: cover;
 }
 /* No picture: series art made of the church's own stones (SermonArt.astro, block polish
-   2026-10-18). A stone tile ground in one of three colours, the gold steps, and the book or title in
-   Auburn Stone, its letters in white, sky and gold like the footer's Auburn. The word is sized in
+   2026-10-18). A stone tile ground in one of three colours, the gold steps, and the book or title cut
+   out of a brick wall, one wall per word. The word is sized in
    container units, so it fills a small card and a wide player alike. */
 .c-art--blank {
   container-type: inline-size;
@@ -71,14 +76,14 @@
   justify-items: start;
   gap: 0.4rem;
   padding: clamp(0.9rem, 2.4vw, 1.5rem);
-  background: #1d2f44 url('/textures/tile-navy.svg') 0 0 / 420px 420px;
+  background: #16304d url('/textures/tile-navy.svg') 0 0 / 420px 420px;
   color: #fff;
 }
 .c-art--deep {
-  background: #235e93 url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+  background: #1f3a5f url('/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
 .c-art--green {
-  background: #2c5b3a url('/textures/tile-green.svg') 0 0 / 420px 420px;
+  background: #2c4f7c url('/textures/tile-green.svg') 0 0 / 420px 420px;
 }
 .c-art--blank svg {
   width: clamp(52px, 16cqi, 96px);
@@ -86,25 +91,17 @@
 }
 .c-art__word {
   max-width: 100%;
-  font-family: 'Auburn Stone', 'Young Serif', serif;
+  /* Each word is a brick wall with the word cut out of it (an SVG sized in em, from SermonArt.astro),
+     so the font-size here is the word's size and the walls wrap like words. */
   font-size: var(--word, 2rem);
-  line-height: 0.98;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
-  overflow-wrap: anywhere;
+  line-height: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.12em 0.2em;
 }
 /* With the play stone in the middle, the word stays small enough to sit under it. */
 .c-art--blank:has(.c-art__play) .c-art__word {
   font-size: min(var(--word, 2rem), 11cqi);
-}
-.c-art__word .w0 {
-  color: #ffffff;
-}
-.c-art__word .w1 {
-  color: #96c3ea;
-}
-.c-art__word .w2 {
-  color: #e8a93a;
 }
 .c-art__play {
   position: absolute;
@@ -117,7 +114,7 @@
   border-radius: 999px;
   background: rgb(255 255 255 / 0.94);
   color: var(--auburn-red);
-  box-shadow: 0 10px 24px -12px rgb(15 25 38 / 0.6);
+  box-shadow: var(--shadow-button);
   transition: transform 0.2s ease;
 }
 .c-art__play svg {
@@ -138,7 +135,7 @@ a:focus-visible > .c-art .c-art__play,
 
 /* ---- The Latest sermon block's title ------------------------------------------------------ */
 .c-latest__h {
-  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  font-size: var(--fs-h3);
 }
 .c-latest__title {
   color: inherit;
@@ -181,19 +178,19 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-date__day {
   font-family: var(--font-display);
-  font-size: 2.4rem;
+  font-size: var(--fs-numeral);
   line-height: 1;
   color: var(--auburn-deep, var(--heading-solid));
 }
 .c-date__my {
   margin-top: 0.25rem;
-  font-size: 0.9rem;
+  font-size: var(--fs-tag);
   font-weight: 600;
   color: var(--muted-foreground);
 }
 .c-row__title {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: var(--fs-title-sm);
   line-height: 1.25;
   color: var(--heading-solid);
 }
@@ -226,7 +223,7 @@ a:focus-visible > .c-art .c-art__play,
   border-radius: 999px;
   background: var(--muted);
   color: var(--foreground);
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   font-weight: 600;
 }
 .c-tag svg {
@@ -238,7 +235,7 @@ a:focus-visible > .c-art .c-art__play,
     grid-template-columns: 3.6rem minmax(0, 1fr);
   }
   .c-date__day {
-    font-size: 1.9rem;
+    font-size: var(--fs-numeral);
   }
 }
 
@@ -256,7 +253,7 @@ a:focus-visible > .c-art .c-art__play,
   min-width: 0;
   flex: 1 1 12rem;
   max-width: 18rem;
-  font-size: 0.95rem;
+  font-size: var(--fs-small);
   font-weight: 600;
   color: var(--foreground);
 }
@@ -265,7 +262,7 @@ a:focus-visible > .c-art .c-art__play,
   min-height: 48px;
   padding: 0.55rem 0.8rem;
   border: 1.5px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-control);
   background: var(--background);
   color: var(--foreground);
   font: inherit;
@@ -273,7 +270,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-filters select:focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 .c-filters__clear {
   min-height: 48px;
@@ -302,7 +299,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2.5rem);
+  gap: var(--gap-open-row) var(--gap-open-col);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -325,7 +322,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-card__title {
   margin-top: 1rem;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: var(--fs-title);
   line-height: 1.2;
   color: var(--heading-solid);
 }
@@ -337,7 +334,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-card > a:hover .c-art,
 .c-card > a:focus-visible .c-art {
   transform: translateY(-4px);
-  box-shadow: 0 26px 48px -30px rgb(23 26 38 / 0.5);
+  box-shadow: 0 26px 48px -30px rgb(22 38 61 / 0.5);
 }
 @media (prefers-reduced-motion: reduce) {
   .c-card .c-art {
@@ -362,7 +359,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-people {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
-  gap: clamp(2rem, 4vw, 2.75rem) clamp(1.25rem, 3vw, 2rem);
+  gap: var(--gap-open-row) var(--gap-open-col);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -373,7 +370,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-group__title {
   margin-bottom: 1.2rem;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -382,7 +379,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-photo {
   aspect-ratio: 1;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(--radius-inner);
   background: var(--muted);
 }
 .c-photo img {
@@ -390,12 +387,12 @@ a:focus-visible > .c-art .c-art__play,
   height: 100%;
   object-fit: cover;
 }
-/* No photo: the initials in Auburn Stone on the pale sky stone ground (block polish). */
+/* No photo: the initials in Young Serif on the pale sky stone ground (block polish). */
 .c-photo--blank {
   display: grid;
   place-items: center;
-  background: #e9f2fb url('/textures/tile-sky.svg') 0 0 / 420px 420px;
-  font-family: 'Auburn Stone', 'Young Serif', serif;
+  background: #e9eef5 url('/textures/tile-sky.svg') 0 0 / 420px 420px;
+  font-family: 'Young Serif', serif;
   font-size: clamp(3rem, 8vw, 4.5rem);
   line-height: 1;
   color: var(--auburn-deep, var(--heading-solid));
@@ -403,13 +400,13 @@ a:focus-visible > .c-art .c-art__play,
 .c-person__name {
   margin-top: 0.9rem;
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: var(--fs-title-sm);
   line-height: 1.2;
   color: var(--heading-solid);
 }
 .c-person__role {
   margin-top: 0.25rem;
-  font-size: 0.95rem;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -447,7 +444,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-file__title {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: var(--fs-title-sm);
   color: var(--link);
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -463,17 +460,17 @@ a:focus-visible > .c-art .c-art__play,
   gap: 0.4rem;
   max-width: 40rem;
   margin-bottom: 1.8rem;
-  padding: clamp(1.2rem, 3vw, 1.75rem);
+  padding: var(--pad-card);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: var(--radius-card);
   background: var(--background);
-  box-shadow: 0 24px 48px -36px rgb(23 26 38 / 0.45);
+  box-shadow: var(--shadow-card);
 }
 .c-feature__label {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 15px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -481,7 +478,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-feature__title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: var(--fs-title);
   line-height: 1.2;
 }
 .c-feature .btn-auburn {
@@ -497,8 +494,8 @@ a:focus-visible > .c-art .c-art__play,
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 14px;
-  background: #1d2f44;
+  border-radius: var(--radius-card);
+  background: #16304d;
 }
 .c-player__frame > a {
   position: absolute;
@@ -531,7 +528,7 @@ a:focus-visible > .c-art .c-art__play,
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   text-shadow: 0 1px 6px rgb(0 0 0 / 0.5);
 }
 .c-audio {
@@ -549,7 +546,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-summary {
   max-width: 44rem;
-  font-size: 1.2rem;
+  font-size: var(--fs-lead);
   line-height: 1.6;
 }
 .c-facts {
@@ -557,7 +554,9 @@ a:focus-visible > .c-art .c-art__play,
   grid-template-columns: max-content minmax(0, 1fr);
   gap: 0.45rem 1.25rem;
   max-width: 40rem;
-  margin: 0;
+  /* The space under the summary lives here: a bare margin: 0 overrode the mt-l on the element, so
+     the list sat flush under the summary (2026-10-24). */
+  margin: var(--gap-heading) 0 0;
 }
 .c-facts dt {
   font-weight: 700;

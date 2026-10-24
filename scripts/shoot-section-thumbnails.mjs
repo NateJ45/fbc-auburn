@@ -44,6 +44,14 @@ const STAND_IN =
   '<html><body style="margin:0;height:100vh;display:grid;place-items:center;background:#3a3f47">' +
   '<svg width="96" height="96" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#e8e8e8"/></svg>' +
   '</body></html>';
+// A Church Trac form frame: three empty fields and a button, so the picture reads as a form.
+const FIELD =
+  '<div style="height:44px;margin:0 0 18px;border:1px solid #cfd4dc;border-radius:6px;background:#fff"></div>';
+const FORM_STAND_IN =
+  '<html><body style="margin:0;padding:32px;background:#f4f6f9;font:16px sans-serif">' +
+  FIELD.repeat(3) +
+  '<div style="width:140px;height:44px;border-radius:6px;background:#26476b"></div>' +
+  '</body></html>';
 
 const argUrl = process.argv.includes('--url')
   ? process.argv[process.argv.indexOf('--url') + 1]
@@ -137,6 +145,13 @@ try {
   await page.route(
     /youtube(-nocookie)?\.com\/embed|player\.vimeo\.com|embed\.example\.com/,
     (route) => route.fulfill({ contentType: 'text/html', body: STAND_IN }),
+  );
+  // Church Trac (docs/agent/church-trac.md): a form frame gets the stand-in panel, and a Church Trac
+  // page's pictures (another church's, in the fixture) get the plain fixture photo.
+  await page.route(/churchtrac\.com/, (route) =>
+    route.request().resourceType() === 'image'
+      ? route.fulfill({ path: FIXTURE, contentType: 'image/jpeg' })
+      : route.fulfill({ contentType: 'text/html', body: FORM_STAND_IN }),
   );
 
   await page.goto(`${base}/styleguide/sections/`, { waitUntil: 'networkidle' });

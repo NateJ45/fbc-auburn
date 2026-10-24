@@ -156,6 +156,12 @@ export default defineConfig({
   // binding with no namespace id fails the deploy. A fork that adds a login
   // turns this back on and creates the namespace deliberately.
   session: false,
+  // 2026-10-24: every page's stylesheets go inline in its <head>. Lighthouse's mobile run on Home
+  // listed the four linked sheets as render-blocking (about 440ms), since the first paint waited
+  // on a second round trip for them. Inline, they arrive with the HTML (about 50KB more per page,
+  // compressed). Same call as stonesteps-50k and fbcm. The fonts and textures they name stay
+  // separate files: Vite only base64-inlines assets under 4KB, and none of those is that small.
+  build: { inlineStylesheets: 'always' },
   // `imageService: 'compile'` tells @astrojs/cloudflare to process images
   // with Sharp at build time and ship plain static files — no Cloudflare
   // Images runtime, no per-transform fees, no Workers binding required.

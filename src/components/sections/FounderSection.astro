@@ -40,11 +40,11 @@ const {
           width={800}
           sizes="(min-width: 1024px) 45vw, 100vw"
           quality={75}
-          class="h-auto w-full rounded-md"
+          class="h-auto w-full rounded-[var(--radius-card)]"
         />
       </div>
     ) : (
-      <div class="order-1 aspect-[4/5] rounded-md bg-muted" aria-hidden="true" />
+      <div class="order-1 aspect-[4/5] rounded-[var(--radius-card)] bg-muted" aria-hidden="true" />
     )}
 
     <div class="order-2">

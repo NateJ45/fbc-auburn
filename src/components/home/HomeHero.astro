@@ -1,139 +1,142 @@
 ---
 // Safe to edit by hand
-// Board E's opening: the church's Auburn-wide lockup at hero scale (the full-colour mark beside
-// "FIRST BAPTIST CHURCH OF" over a mosaic "Auburn"), then the lead row (the red welcome line, a
-// paragraph, one red button and a text link) beside the This Sunday card, then the stone path
-// running in from the left edge under the buttons and ending in red at the card's left
-// side (the card is the door). The place line ("Hamilton, OH 45013") sits
-// top right of the masthead, from Church facts, so "Auburn" is never read as Alabama. On a
-// phone the mark is hidden (the header carries it), the card comes straight after the welcome
-// and its buttons (so the time and place are on the first screen), and a short strip of the path
-// follows the card.
+// Home's opening (2026-10-23, the photo hero): a full-width photograph with the welcome set over
+// it in white, so the first thing a visitor sees is people, not a logo. Over the photo, darkened
+// toward the lower left so the words always read: the church's name and town as a small line,
+// the welcome as the page's one h1 ("Come as you are."), a sentence on what the church is about,
+// the Sunday times and address, and two buttons (plan a first visit; the second action). The This
+// Sunday card sits at the right on a wide screen and follows the words on a phone. A printed
+// brick sill runs along the photo's foot, the doorstep into the page.
 //
-// Content: the Home document's hero block (Studio > Home > Page layout > Hero). Eyebrow and
-// Headline draw the lockup, "Welcome line" is the red line, Subhead the paragraph, and the two
-// buttons. The h1 reads "First Baptist Church of Auburn" as one heading.
-//
-// The path lays itself once, when it comes into view: the inline script below arms it before
-// first paint (only under html.motion), then lays it as soon as a third of it is on screen (at
-// once on a tall screen). See StonePath.astro.
-import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
+// Content: the Home document's hero block (Studio > Home > Page layout > Hero). "Background photo"
+// is the picture; Eyebrow and Headline make the name line ("First Baptist Church of" + "Auburn");
+// "Welcome line" is the big heading; Subhead the sentence; the two buttons. With no photo the
+// hero falls back to the navy brick ground. A stand-in (an Unsplash picture) is labelled
+// "Stand-in photograph" in the corner until the church's own photo replaces it. Before launch a
+// stand-in is not shown at all: the hero keeps the navy ground and a pinned "Photo needed" note
+// names the shot we want (src/data/shot-list.ts, key "hero").
+import SanityImage from '@/components/SanityImage.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
-import SundayFacts from './SundayFacts.astro';
-import StonePath from './StonePath.astro';
+import Sill from '@/components/Sill.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { timesPhrase } from '@/lib/church-facts';
 import { ctaHref } from '@/lib/cta-href';
 import { splitStega } from '@/lib/preview-stega';
-import type { ProjectedHeroSection } from '@/lib/pageBuilder.types';
+import type { ProjectedHeroSection, ProjectedImage } from '@/lib/pageBuilder.types';
 
 interface Props {
   block: ProjectedHeroSection;
 }
 const { block } = Astro.props;
 
-// The mosaic word: each letter takes the next brand colour (green, deep sky, red, water). Built
-// from the visible text only; a preview's invisible stega run is put back after the letters.
-const { cleaned: word, encoded } = splitStega(block.headline || 'Auburn');
-let k = 0;
-const letters = [...word].map((c) => (/\s/.test(c) ? { c, i: -1 } : { c, i: k++ % 4 }));
-// The masthead is set for a word of up to 7 letters ("Auburn" is 6). A longer word, should an
-// editor type one, scales the type down so it never runs off the screen.
-const longest = Math.max(1, ...word.split(/\s+/).map((w) => w.length));
-const wordScale = Math.min(1, 7 / longest).toFixed(3);
-const name = [splitStega(block.eyebrow ?? '').cleaned, word].filter(Boolean).join(' ');
-const primary = block.primaryCta;
+const shot = shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
+const photo = !shot && block.backgroundImage?.asset ? block.backgroundImage : null;
+// Before launch the shot's example photo fills the hero behind its note, so Home reads as finished.
+// It is the page's LCP element, so phones get a smaller copy (29 KB, not the 2000px 166 KB file
+// that pushed Lighthouse's mobile LCP past 4.5 s; heroSrcset in shot-list.ts). On a phone the hero
+// is taller than wide and the landscape photo is cropped to cover it, so it is drawn about 1.5
+// times the screen width: `sizes` says so, or the browser would pick a copy too small and blur it.
+const example = shot?.example ? exampleSrc(shot.example.file) : null;
+const exampleSrcset = shot?.example ? heroSrcset(shot.example.file) : undefined;
+const isStandIn = (img: ProjectedImage | null | undefined) =>
+  (img?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
 
+// The name line: "First Baptist Church of Auburn", then the town from Church facts so "Auburn" is
+// never read as Alabama.
+const nameLine = [splitStega(block.eyebrow ?? '').cleaned, splitStega(block.headline ?? '').cleaned]
+  .filter(Boolean)
+  .join(' ');
 const facts = await getChurchFacts();
-
-// The phone Sunday bar (Home audit research, 2026-10-17): once the This Sunday card has scrolled
-// away, a slim bar at the bottom keeps when, where and the visit button one tap away. Same facts
-// as the card; same visit link as the hero's own button.
-const barMinutes = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
-const barTimes = barMinutes.length ? `Sundays ${timesPhrase(barMinutes)}` : '';
-const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
-const addr = facts.address;
-// The town, state and ZIP ("Hamilton, OH 45013"), worded as everywhere else (visitor audit,
-// 2026-10-18); the road is already in the header note and on the card (the Home critic counted it
-// three times above the fold).
-const place = addr ? addr.lines[1] : '';
+const town = facts.address ? facts.address.lines[1] : '';
+const sundayMinutes = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
+const times = sundayMinutes.length ? `Sundays ${timesPhrase(sundayMinutes)}` : '';
+const primary = block.primaryCta;
 const secondary = block.secondaryCta;
+const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
 ---
 
-<!-- The This Sunday card is the largest thing on the first screen and its stone ground is a CSS
-     background, which the browser finds late; fetch it early (Lighthouse: LCP 3.7s on mobile). -->
-<link
-  rel="preload"
-  as="image"
-  href="/textures/tile-deep.svg"
-  type="image/svg+xml"
-  fetchpriority="high"
-/>
-<section class="hb-hero" aria-labelledby="hb-h1">
-  <div class="hb-wrap">
-    <div class="hb-masthead">
+<section class="hb-hero" aria-labelledby="hb-h1" data-photo={photo || example ? 'yes' : 'no'}>
+  <div class="hb-photo" aria-hidden={photo ? undefined : 'true'}>
+    {example && (
       <img
-        class="hb-hero-mark"
-        src={markAsset.src}
-        width={markAsset.width}
-        height={markAsset.height}
+        src={example}
+        srcset={exampleSrcset}
+        sizes="(max-width: 767px) 150vw, 100vw"
         alt=""
+        width="2000"
+        height="1333"
         loading="eager"
-        decoding="async"
+        fetchpriority="high"
+        class="hb-photo__img"
       />
-      <h1 class="hb-h1" id="hb-h1" aria-label={name}>
-        {block.eyebrow && <span class="hb-eyebrow">{block.eyebrow}</span>}{' '}
-        <span class="hb-word" style={`--hb-word-scale: ${wordScale}`}>
-          {letters.map(({ c, i }) =>
-            i < 0 ? (
-              ' '
-            ) : (
-              <span aria-hidden="true" class={`s${i}`}>
-                {c}
-              </span>
-            ),
-          )}
-          {encoded}
-        </span>
-      </h1>
-      {place && <p class="hb-place">{place}</p>}
-    </div>
+    )}
+    {photo && (
+      <SanityImage
+        source={photo as never}
+        width={2000}
+        sizes="100vw"
+        quality={65}
+        loading="eager"
+        fetchpriority="high"
+        class="hb-photo__img"
+      />
+    )}
+    <div class="hb-photo__shade"></div>
+  </div>
+  {isStandIn(photo) && (
+    <p class="hb-standin">
+      <span>Stand-in photograph</span>
+    </p>
+  )}
 
-    <div class="hb-lead">
-      <div>
-        {block.welcome && <p class="hb-welcome">{block.welcome}</p>}
-        <SundayFacts />
-        {block.subhead && <p class="hb-intro">{block.subhead}</p>}
-        {(primary?.label || secondary?.label) && (
-          <div class="hb-actions">
-            {primary?.label && (
-              <a
-                class="btn-auburn btn-auburn--primary"
-                href={ctaHref(primary, '/plan-your-visit/')}
-              >
-                {primary.label}
-              </a>
-            )}
-            {/* A space between the buttons so site search does not read "visitMeet" (card 126);
-                the row is flex, so it changes nothing on screen. */}{' '}
-            {secondary?.label && (
-              <a class="hb-textlink" href={ctaHref(secondary, '/about/')}>
-                {secondary.label}
-              </a>
-            )}
-          </div>
-        )}
-      </div>
+  {shot && (
+    <div class="hb-wrap hb-hero__shot">
+      <ShotRequest shot={shot} variant="tag" />
+    </div>
+  )}
+
+  <div class="hb-wrap hb-hero__inner">
+    <div class="hb-hero__copy">
+      {nameLine && (
+        <p class="hb-name">
+          {nameLine}
+          {town && <span class="hb-name__town">{town}</span>}
+        </p>
+      )}
+      <h1 class="hb-h1" id="hb-h1">
+        {block.welcome || 'Come as you are.'}
+      </h1>
+      {/* The times and the address are the This Sunday card's job; saying them here too was the
+          same fact twice on one screen (review, 2026-10-23). */}
+      {block.subhead && <p class="hb-intro">{block.subhead}</p>}
+      {(primary?.label || secondary?.label) && (
+        <div class="hb-actions">
+          {primary?.label && (
+            <a class="btn-auburn btn-auburn--primary" href={ctaHref(primary, '/plan-your-visit/')}>
+              {primary.label}
+            </a>
+          )}
+          {/* A space between the buttons so site search does not run their words together. */}{' '}
+          {secondary?.label && (
+            <a class="hb-ghost" href={ctaHref(secondary, '/watch/')}>
+              {secondary.label}
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+    <div class="hb-hero__card">
       <SundayCard />
-      <StonePath variant="phone" />
-      <StonePath variant="wide" />
     </div>
   </div>
+  <Sill class="hb-hero__sill" />
 </section>
 
-{barTimes && (
+{times && (
   <div class="hb-sundaybar" data-sundaybar hidden>
-    <p class="hb-sundaybar__times hb-num">{barTimes}</p>
+    <p class="hb-sundaybar__times hb-num">{times}</p>
     {facts.address && (
       <a class="hb-sundaybar__link" href={facts.address.mapsUrl} rel="noopener" target="_blank">
         Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
@@ -144,44 +147,6 @@ const secondary = block.secondaryCta;
     </a>
   </div>
 )}
-
-<script is:inline>
-  // Arm the stone path before first paint, then lay it. Only under
-  // html.motion (set in BaseLayout's head unless reduced motion or ?still), so without JS or
-  // with reduced motion the finished path is what renders.
-  (function () {
-    if (!document.documentElement.classList.contains('motion')) return;
-    var paths = document.querySelectorAll('[data-stone-path]');
-    paths.forEach(function (p) {
-      p.classList.add('is-armed');
-    });
-    var lay = function (p) {
-      p.classList.add('is-laid');
-    };
-    // Lay each path when a third of it is in view, so people actually see it happen. Without
-    // IntersectionObserver, lay it 350ms after the markup is parsed, as before.
-    if (!('IntersectionObserver' in window)) {
-      setTimeout(function () {
-        paths.forEach(lay);
-      }, 350);
-      return;
-    }
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (e) {
-          if (!e.isIntersecting) return;
-          lay(e.target);
-          io.unobserve(e.target);
-        });
-      },
-      { threshold: 0.33 },
-    );
-    paths.forEach(function (p) {
-      io.observe(p);
-    });
-  })();
-</script>
-
 <script>
   // The phone Sunday bar: shown once the This Sunday card has scrolled up out of view, hidden again
   // while the footer (which carries its own invitation) is on screen. Two IntersectionObservers, no

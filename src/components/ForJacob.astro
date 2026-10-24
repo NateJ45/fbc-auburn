@@ -1,0 +1,207 @@
+---
+// Safe to edit by hand
+// The pre-launch notes for the pastor (2026-10-23). While PRE_LAUNCH_NOTES is on
+// (src/data/for-jacob.ts), every page shows a small "For Jacob" pill in the corner that opens a list
+// of what we need from him for that page, and every placeholder written in square brackets in the
+// page's words ("[Jacob: ...]" or "[Placeholder: ...]") is highlighted yellow, so nothing
+// unfinished can be mistaken for the real thing. Turn PRE_LAUNCH_NOTES off at launch and both go.
+//
+// A <details> element, so it opens without JavaScript; the highlighter is a few lines that wrap the
+// bracketed text in <mark>. Neither is indexed by site search.
+import { PRE_LAUNCH_NOTES, notesFor } from '@/data/for-jacob';
+import { shotsForPage } from '@/data/shot-list';
+
+// The page's own notes, then one per photo on its shot list (src/data/shot-list.ts), in the order
+// the "Photo needed" boxes appear on the page.
+const notes = PRE_LAUNCH_NOTES
+  ? [
+      ...notesFor(Astro.url.pathname),
+      ...shotsForPage(Astro.url.pathname).map((s) => ({
+        title: `Photo: ${s.title}.`,
+        detail: `${s.detail} (${s.orientation === 'portrait' ? 'Hold the phone upright.' : s.orientation === 'square' ? 'Square.' : 'Hold the phone sideways.'})`,
+      })),
+    ]
+  : [];
+---
+
+{PRE_LAUNCH_NOTES && (
+  <details class="fj" data-pagefind-ignore="all">
+    <summary class="fj__pill">
+      For Jacob
+      {notes.length > 0 && `: ${notes.length} thing${notes.length === 1 ? '' : 's'} we need`}
+    </summary>
+    <div class="fj__panel">
+      <p class="fj__lede">
+        This is a preview. Anything <mark class="fj-mark">in yellow brackets</mark> is placeholder
+        wording we wrote to show the idea, and each "Photo needed" box names a photo we would love
+        from you. Here is what we need for this page:
+      </p>
+      {notes.length > 0 ? (
+        <ol class="fj__list">
+          {notes.map((n) => (
+            <li>
+              <strong>{n.title}</strong>
+              {n.detail && <span> {n.detail}</span>}
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="fj__none">Nothing for this page yet. If anything here looks wrong, tell us.</p>
+      )}
+    </div>
+  </details>
+)}
+
+{PRE_LAUNCH_NOTES && <script>
+  // Highlight placeholder wording: any "[Jacob: ...]", "[Placeholder: ...]" or "[Photo: ...]"
+  // in the page's text, wherever it came from (Studio content or a component), as a <mark>.
+  const RE = /\[(?:Jacob|Placeholder|Photo)\b[^\]\n]*\]/g;
+  const mark = () => {
+    const root = document.querySelector('main') ?? document.body;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const hits: Text[] = [];
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const t = n as Text;
+      if (t.parentElement?.closest('mark, script, style, .fj')) continue;
+      RE.lastIndex = 0;
+      if (RE.test(t.data)) hits.push(t);
+    }
+    for (const t of hits) {
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      RE.lastIndex = 0;
+      for (let m = RE.exec(t.data); m; m = RE.exec(t.data)) {
+        frag.append(t.data.slice(last, m.index));
+        const el = document.createElement('mark');
+        el.className = 'fj-mark';
+        el.textContent = m[0];
+        frag.append(el);
+        last = m.index + m[0].length;
+      }
+      frag.append(t.data.slice(last));
+      t.replaceWith(frag);
+    }
+    // A placeholder that runs across a link or a line break is split over several text nodes, so
+    // the pass above cannot see both brackets: highlight the whole paragraph, item or heading.
+    const OPEN = /\[(?:Jacob|Placeholder|Photo)\b/;
+    root.querySelectorAll<HTMLElement>('p, li, dd, h1, h2, h3, h4, blockquote').forEach((el) => {
+      if (el.closest('.fj') || el.classList.contains('fj-block')) return;
+      if (!OPEN.test(el.textContent ?? '')) return;
+      if (el.querySelector('.fj-mark')) return;
+      el.classList.add('fj-block');
+    });
+  };
+  mark();
+  document.addEventListener('astro:page-load', mark);
+  // Text that arrives later (an accordion answer drawn when it opens, an island that hydrates)
+  // is marked too, once per animation frame after a change. Our own marks are skipped, so it settles.
+  let queued = false;
+  new MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      mark();
+    });
+  }).observe(document.body, { childList: true, subtree: true, characterData: true });
+</script>}
+
+<style is:global>
+  .fj-mark {
+    padding: 0 0.15em;
+    border-radius: 3px;
+    background: #ffe46b;
+    color: #16263d;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .fj-block {
+    background: #ffe46b;
+    color: #16263d;
+    box-shadow: 0 0 0 4px #ffe46b;
+    border-radius: 3px;
+  }
+  .fj {
+    /* Bottom right and compact (2026-10-24): at the bottom left it sat over the page's left-edge
+       text (the Watch intro, the Give card, the Contact form's labels). */
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 60;
+    max-width: min(420px, calc(100vw - 24px));
+    font-family: var(--font-body);
+    color: #16263d;
+  }
+  /* Out of the way while the phone menu or the search dialog is open: it sat on top of the menu's
+     links, and the menu had already hidden it from screen readers (2026-10-24). */
+  body:has([role='dialog'][data-state='open'], dialog[open]) .fj {
+    display: none;
+  }
+  .fj__pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 6px 14px;
+    border: 2px solid #16263d;
+    border-radius: 999px;
+    background: #ffe46b;
+    box-shadow: 0 8px 24px -10px rgb(22 38 61 / 0.5);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+  }
+  .fj__pill::-webkit-details-marker {
+    display: none;
+  }
+  .fj__pill:focus-visible {
+    outline: 3px solid #1f3a5f;
+    outline-offset: 3px;
+  }
+  .fj__panel {
+    max-height: min(60vh, 520px);
+    overflow: auto;
+    margin-top: 10px;
+    padding: 18px 20px;
+    border: 2px solid #16263d;
+    border-radius: 12px;
+    background: #fffbe6;
+    box-shadow: 0 18px 40px -18px rgb(22 38 61 / 0.55);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .fj__lede {
+    margin: 0 0 12px;
+  }
+  .fj__list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding-left: 1.2em;
+  }
+  .fj__none {
+    margin: 0;
+  }
+  /* Above the phone Sunday bar on Home. */
+  @media (max-width: 767px) {
+    .fj {
+      bottom: 84px;
+    }
+  }
+  /* Room under the footer's bottom bar while the pill is shown, so it never sits over the bar's
+     Privacy policy and Back to top links at the very end of the page (2026-10-24: it did once it
+     moved to the bottom right). */
+  body:has(.fj) .sf-bottom {
+    padding-bottom: 64px;
+  }
+  @media (max-width: 767px) {
+    body:has(.fj) .sf-bottom {
+      padding-bottom: 140px;
+    }
+  }
+  @media print {
+    .fj {
+      display: none;
+    }
+  }
+</style>

@@ -12,6 +12,8 @@ import Hero from '@/components/Hero.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import ContactForm from '@/components/ContactForm';
+import ChurchTracFrame from '@/components/church-blocks/ChurchTracFrame.astro';
+import { churchTracFormFor } from '@/lib/church-links';
 import CopyEmailButton from '@/components/CopyEmailButton';
 import CalendlyInline from '@/components/CalendlyInline';
 import ChurchAddress from '@/components/church/ChurchAddress.astro';
@@ -55,7 +57,11 @@ const schedulingLinkLabel = page?.schedulingLinkLabel ?? 'Book a time to talk.';
 const availability = page?.availabilityNote ?? siteSettings?.availabilityStatus;
 // The church's phone and email, from Site settings through Church facts (src/lib/church-facts.ts):
 // each is null until it is filled in, and carries its "To confirm" tag until confirmed.
-const { email, phone } = await getChurchFacts();
+const contactFacts = await getChurchFacts();
+const { email, phone } = contactFacts;
+// Church Trac (2026-10-24, docs/agent/church-trac.md): once Church facts has a contact form or a
+// connection card, it takes the site form's place, so messages land in Church Trac.
+const churchTracForm = churchTracFormFor('contact', contactFacts);
 
 // Satisfaction guarantee — renders near the form CTA when set in siteSettings.
 const satisfactionGuarantee = siteSettings?.satisfactionGuarantee;
@@ -100,15 +106,19 @@ const schemas = [
         </p>
       )}
 
-      <ContactForm
-        client:visible
-        projectTypes={page?.formProjectTypeOptions}
-        locations={page?.formLocationOptions}
-        budgets={page?.formBudgetOptions}
-        timelines={page?.formTimelineOptions}
-        sources={page?.formSourceOptions}
-        {...questionProps}
-      />
+      {churchTracForm ? (
+        <ChurchTracFrame src={churchTracForm} title="Contact the church" size="long" />
+      ) : (
+        <ContactForm
+          client:visible
+          projectTypes={page?.formProjectTypeOptions}
+          locations={page?.formLocationOptions}
+          budgets={page?.formBudgetOptions}
+          timelines={page?.formTimelineOptions}
+          sources={page?.formSourceOptions}
+          {...questionProps}
+        />
+      )}
 
       {/* Email failsafe — surfaced right after the form so visitors who hit
           a submission error or just prefer email have a clear alternate path
@@ -125,13 +135,21 @@ const schemas = [
       {phone && (
         <p class="mt-s flex flex-wrap items-center gap-xs text-sm text-foreground/75">
           <Phone size={14} aria-hidden="true" className="text-secondary" />
-          <span>Or call</span>
+          <span>{phone.sms ? 'Or call or text' : 'Or call'}</span>
           <a
             href={phone.tel}
             class="font-medium text-link underline underline-offset-2 hover:text-primary-dark"
           >
             {phone.display}
           </a>
+          {phone.sms && (
+            <a
+              href={phone.sms}
+              class="font-medium text-link underline underline-offset-2 hover:text-primary-dark"
+            >
+              Text us
+            </a>
+          )}
           <NotConfirmed confirmed={phone.confirmed} />
         </p>
       )}
@@ -193,7 +211,9 @@ const schemas = [
 
       {phone && (
         <div>
-          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Call</p>
+          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">
+            {phone.sms ? 'Call or text' : 'Call'}
+          </p>
           <a
             href={phone.tel}
             class="inline-flex items-center gap-xs text-sm text-link transition-colors hover:text-primary-dark"
@@ -201,6 +221,14 @@ const schemas = [
             <Phone size={14} aria-hidden="true" />
             {phone.display}
           </a>
+          {phone.sms && (
+            <a
+              href={phone.sms}
+              class="ml-s inline-flex items-center text-sm text-link transition-colors hover:text-primary-dark"
+            >
+              Text<span class="sr-only"> {phone.display}</span>
+            </a>
+          )}
           <NotConfirmed confirmed={phone.confirmed} />
         </div>
       )}
@@ -214,7 +242,7 @@ const schemas = [
             href={schedulingLink}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center border border-primary px-m py-s text-sm font-semibold text-link transition-colors hover:bg-accent"
+            class="btn-auburn btn-auburn--secondary"
           >
             {schedulingLinkLabel}
           </a>

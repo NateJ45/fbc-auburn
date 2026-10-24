@@ -51,7 +51,7 @@ const paras = (t?: string) =>
   >
     <article class="mx-auto max-w-prose px-m py-section-lg" aria-labelledby="issue-heading">
       <p class="text-sm text-foreground/70">
-        <a href="/newsletter/" class="underline underline-offset-2 hover:text-link">
+        <a href="/newsletter/" class="hit-44 relative underline underline-offset-2 hover:text-link">
           Newsletter
         </a>
         , {dateWords(current.date)}
@@ -71,7 +71,10 @@ const paras = (t?: string) =>
                 {it.meta && <p class="text-sm text-foreground/70">{it.meta}</p>}
                 <p class="font-semibold text-foreground">
                   {safeUrl(it.url) ? (
-                    <a href={safeUrl(it.url)} class="underline underline-offset-2 hover:text-link">
+                    <a
+                      href={safeUrl(it.url)}
+                      class="hit-44 relative underline underline-offset-2 hover:text-link"
+                    >
                       {it.title}
                     </a>
                   ) : (
@@ -110,7 +113,7 @@ const paras = (t?: string) =>
           <li class="py-s">
             <a
               href={issuePath(raw.slug)}
-              class="font-semibold text-foreground underline underline-offset-2 hover:text-link"
+              class="hit-44 relative font-semibold text-foreground underline underline-offset-2 hover:text-link"
             >
               {raw.subject}
             </a>

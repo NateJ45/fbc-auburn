@@ -8,10 +8,14 @@
 // > Service times plus Church Trac events (thisWeek()), each with the date in big deep-sky
 // numerals. Last Sunday is the YouTube replay (LastSunday) once a channel is set, and until then
 // the Watch block's poster card: its link label as the title, its text underneath, lifting on
-// hover.
+// hover. Before launch, a stand-in poster gives way to a pinned "Photo needed" note on the card's
+// ink ground (src/data/shot-list.ts).
 import SectionLabel from './SectionLabel.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { exampleSrc, shotFor } from '@/data/shot-list';
+import { splitStega } from '@/lib/preview-stega';
 import { getChurchFacts } from '@/lib/church-data';
 import { andList, monthDay, thisWeek, timesPhrase } from '@/lib/church-facts';
 import { churchDataNow, loadChurchEvents } from '@/lib/church-feeds';
@@ -75,9 +79,8 @@ const lmDate =
         timeZone: 'UTC',
       })
     : '';
-// The "Live now" window: worship (the last Sunday gathering) from 5 minutes before to 75 after.
-const sundayTimes = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
-const liveStart = sundayTimes.length ? Math.max(...sundayTimes) - 5 : null;
+// "Live now" (2026-10-24): the tag and the card's jump to the stream are driven by
+// src/lib/live-client.ts, the same clock as the site-wide banner (components/church/LiveBanner.astro).
 // No link set (the built-in defaults, where the Watch page may not exist): a plain card.
 const watchHref =
   fresh && lm?.videoUrl ? lm.videoUrl : watch?.link ? ctaHref(watch.link) : undefined;
@@ -99,6 +102,11 @@ const sermonPic = [sermon?.image, sermon?.series?.art].find(
 ) as SanityImageObject | undefined;
 const sermonThumb = sermon && !sermonPic ? sermonVideo(sermon.videoUrl)?.thumbnailUrl : undefined;
 const poster = sermon ? (sermonPic ?? (sermonThumb ? null : watch?.poster)) : watch?.poster;
+// The block's own poster (step 5) is the only one with a shot request; a sermon's picture never is.
+const posterShot =
+  watch && poster === watch.poster
+    ? shotFor(Astro.url.pathname, splitStega(watchHeading).cleaned, 0, watch.poster)
+    : null;
 const cardHref = sermon ? sermonHref(sermon.slug) : watchHref;
 const cardTitle = sermon
   ? sermon.title
@@ -174,9 +182,33 @@ const CardTag = cardHref ? 'a' : 'div';
               slot="fallback"
               class:list={['hb-watch', cardHref && 'hb-lift']}
               href={cardHref}
-              data-live-href={cardHref && facts.liveUrl ? facts.liveUrl : undefined}
+              data-live-link={cardHref && facts.liveUrl ? facts.liveUrl : undefined}
             >
-              {poster?.asset && (
+              {posterShot && (
+                <>
+                  {posterShot.video ? (
+                    <video
+                      class="hb-watch__video"
+                      src={exampleSrc(posterShot.video.file, 'mp4')}
+                      poster={exampleSrc(`${posterShot.video.file}-poster`)}
+                      muted
+                      loop
+                      playsinline
+                      preload="none"
+                      aria-hidden="true"
+                      data-shot-video
+                    />
+                  ) : (
+                    posterShot.example && (
+                      <img src={exampleSrc(posterShot.example.file)} alt="" loading="lazy" />
+                    )
+                  )}
+                  <span class="hb-watch__shot">
+                    <ShotRequest shot={posterShot} variant="tag" />
+                  </span>
+                </>
+              )}
+              {poster?.asset && !posterShot && (
                 <SanityImage
                   source={poster as never}
                   width={900}
@@ -199,12 +231,12 @@ const CardTag = cardHref ? 'a' : 'div';
               <span class="hb-watch__text">
                 <span class="hb-watch__play" aria-hidden="true">
                   <svg width="22" height="22" viewBox="0 0 24 24">
-                    <path d="M8 5.5v13l11-6.5z" fill="#C4401F" />
+                    <path d="M8 5.5v13l11-6.5z" fill="#9A3B2A" />
                   </svg>
                 </span>
                 <span>
-                  {liveStart !== null && (
-                    <span class="hb-watch__live" data-live-start={liveStart} hidden>
+                  {facts.liveUrl && (
+                    <span class="hb-watch__live" data-live-show hidden>
                       Live now
                     </span>
                   )}
@@ -241,7 +273,7 @@ const CardTag = cardHref ? 'a' : 'div';
     flex: none;
     width: 64px;
     font-family: var(--font-display);
-    font-size: 44px;
+    font-size: var(--fs-numeral);
     line-height: 1;
     color: var(--auburn-deep);
   }
@@ -277,37 +309,29 @@ const CardTag = cardHref ? 'a' : 'div';
     margin-left: 8px;
     padding: 1px 8px;
     border-radius: 999px;
-    background: #fbe9e4;
-    color: #8f2c14;
-    font-size: 13px;
+    background: #f6e4df;
+    color: #7e2e20;
+    font-size: var(--fs-tag);
     font-weight: 700;
   }
 </style>
 
 <script>
-  // "Live now" on the watch card during Sunday worship, by the church's own clock (Eastern):
-  // from 5 minutes before the last Sunday gathering to 75 minutes after it starts. The card reads
-  // the same without JS; this only reveals the tag.
-  const tag = document.querySelector<HTMLElement>('[data-live-start]');
-  if (tag) {
-    const start = Number(tag.dataset.liveStart);
-    const parts = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/New_York',
-      weekday: 'short',
-      hour: 'numeric',
-      minute: 'numeric',
-      hourCycle: 'h23',
-    }).formatToParts(new Date());
-    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
-    const minutes = Number(get('hour')) * 60 + Number(get('minute'));
-    tag.hidden = !(get('weekday') === 'Sun' && minutes >= start && minutes <= start + 80);
-    // While it is live, the card goes straight to the stream (Church facts > Live stream link, or
-    // the Facebook page) instead of the Watch page (visitor audit, 2026-10-18).
-    const card = tag.closest<HTMLAnchorElement>('a[data-live-href]');
-    if (card && !tag.hidden) {
-      card.href = card.dataset.liveHref ?? card.href;
-      card.target = '_blank';
-      card.rel = 'noopener noreferrer';
-    }
+  // Before launch the card plays an example clip (shot-list.ts). It loads nothing until the card
+  // comes on screen (preload="none", no autoplay: the clip was a fifth of the first load) and
+  // pauses again when it leaves; with reduced motion it holds still on its poster.
+  function initShotClip() {
+    const clip = document.querySelector<HTMLVideoElement>('[data-shot-video]');
+    if (!clip || clip.dataset.clipOn) return;
+    clip.dataset.clipOn = '1';
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) clip.play().catch(() => {});
+      else clip.pause();
+    });
+    io.observe(clip);
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
   }
+  initShotClip();
+  document.addEventListener('astro:page-load', initShotClip);
 </script>

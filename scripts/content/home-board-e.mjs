@@ -76,7 +76,7 @@ const pageBuilder = [
     ...hero,
     welcome: 'Come as you are.',
     subhead:
-      'We are a small Southern Baptist family in Ross Township. Someone will meet you at the door, and there is coffee in the fellowship hall.',
+      'We are a close-knit Southern Baptist family in Ross Township. Someone will meet you at the door, and there is coffee in the fellowship hall.',
     primaryCta: internal('Plan your first visit', 'page-plan-your-visit'),
     secondaryCta: internal('Meet the church', 'aboutPage'),
   },

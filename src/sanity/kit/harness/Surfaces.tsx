@@ -44,6 +44,8 @@ import type { RsvpOverview } from '../../mail/rsvpData';
 // Card 132: Post a photo's three-stone path and the tour (parts photo, tour).
 import { PHOTO_STEPS, PhotoStep } from '../PostPhoto';
 import { TourCard } from '../StudioTour';
+import { EmptyTrashPane } from '../trash';
+import { SuggestionCard } from '../../ai/WritingHelp';
 import {
   AllClear,
   ArtRows,
@@ -59,6 +61,9 @@ import {
   SeverityStone,
   StepTrail,
   type CheckItem,
+  KitNotice,
+  KitSwitch,
+  KitToastBody,
 } from '../ui';
 
 const noLink = () => ({
@@ -438,6 +443,44 @@ export function SurfacesBench({ part }: { part: string }) {
   const show = (p: string) => part === 'all' || part === p;
   return (
     <div style={{ display: 'grid', gap: 40 }}>
+      {show('switch') && (
+        <KitScope style={{ maxWidth: 420, display: 'grid', gap: 16 }}>
+          <KitSwitch id="b1" checked={false} onChange={() => {}} label="This one has sold" />
+          <KitSwitch id="b2" checked onChange={() => {}} label="This one has sold" />
+        </KitScope>
+      )}
+      {show('trash') && <EmptyTrashPane />}
+      {show('helpers') && (
+        <KitScope style={{ maxWidth: 560, display: 'grid', gap: 16 }}>
+          <SuggestionCard
+            text="Join us on Sunday at 10:30 for worship, followed by lunch in the hall."
+            onUse={() => {}}
+            onAgain={() => {}}
+            onClose={() => {}}
+          />
+          <KitNotice tone="tip" title="A password is set">
+            Set 12 October. Type a new one below to change it.
+          </KitNotice>
+          <KitNotice tone="careful" title="No password yet">
+            Nobody can open this page until you set one and publish.
+          </KitNotice>
+        </KitScope>
+      )}
+      {show('toast') && (
+        <KitScope style={{ maxWidth: 360, display: 'grid', gap: 16 }}>
+          <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 6 }}>
+            <strong>Published</strong>
+            <KitToastBody steps={liveSteps('on-its-way')}>
+              The website updates itself in a few minutes. Home shows "Up to date" once your change
+              is live.
+            </KitToastBody>
+          </div>
+          <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 6 }}>
+            <strong>Moved to Trash</strong>
+            <KitToastBody>It comes off the website at the next update.</KitToastBody>
+          </div>
+        </KitScope>
+      )}
       {show('tool') && (
         <ToolHeading
           meaning="checkup"

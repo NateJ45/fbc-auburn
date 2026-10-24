@@ -1,6 +1,6 @@
 // Foundation, edit with care
 // Generates one share image per page at public/og/<route-slug>.png, drawn by
-// scripts/lib/og-card.mjs (the Auburn card: the lockup, the title in Auburn Stone, the stone
+// scripts/lib/og-card.mjs (the Auburn card: the lockup, the title in brick letters, the stone
 // path), matching the per-route convention in BaseLayout (the pathname with slashes turned into
 // dashes; falls back to og-default.png when a route has no matching file).
 //
@@ -97,7 +97,9 @@ const longDate = (iso) =>
 
 // ---- Home: the masthead card, with the church's tagline (Site settings) under it ----------
 const settings = await client.fetch(`*[_type == "siteSettings"][0]{ tagline }`).catch(() => null);
-await render('home', settings?.tagline || 'A small church with the door open.', { home: true });
+await render('home', settings?.tagline || 'A close-knit church with the door open.', {
+  home: true,
+});
 
 // ---- Page singletons → /og/<slug>.png -----------------------------------
 // `defaultTitle` is the fallback when Sanity's seoTitle and heroHeadline are both empty.

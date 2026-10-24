@@ -116,7 +116,7 @@ const fallbackLabel: Record<string, string> = {
               {item.href ? (
                 <a
                   href={withTrailingSlash(item.href)}
-                  class="card-lift group block h-full overflow-hidden rounded-md border border-border-soft bg-card no-underline transition-colors hover:border-primary/40"
+                  class="card-lift group block h-full overflow-hidden rounded-[var(--radius-card)] border border-border-soft bg-card no-underline transition-colors hover:border-primary/40"
                 >
                   {item.coverImage?.asset && (
                     <div class="aspect-[16/9] overflow-hidden bg-muted">
@@ -145,7 +145,7 @@ const fallbackLabel: Record<string, string> = {
                   </div>
                 </a>
               ) : (
-                <div class="h-full rounded-md border border-border-soft bg-card p-m">
+                <div class="h-full rounded-[var(--radius-card)] border border-border-soft bg-card p-m">
                   <h3 class="font-display text-h4 text-foreground">{item.title}</h3>
                   {item.summary && (
                     <p class="mt-xs text-sm leading-relaxed text-foreground/80">{item.summary}</p>
@@ -209,7 +209,7 @@ const fallbackLabel: Record<string, string> = {
         >
           {shown.map((item) => (
             <li>
-              <div class="h-full rounded-md border border-border-soft bg-card p-m">
+              <div class="h-full rounded-[var(--radius-card)] border border-border-soft bg-card p-m">
                 <h3 class="font-display text-h4 text-foreground">{item.title}</h3>
                 {item.meta && (
                   <p class="mt-xs text-xs font-semibold tracking-eyebrow text-link uppercase">

@@ -2,17 +2,11 @@
    First Baptist Church of Auburn: the brand layer on top of globals.css (imported after it in
    BaseLayout, so a tie goes to this file). Palette, fonts and radius come from
    brand/brand.config.json through apply-brand; this file holds what the config cannot say:
-   the Auburn Stone heading face, the mosaic letter colours, the arched hero and the button shape.
+   the brick heading letters (.bl-word), the mosaic letter colours, the arched hero and the button shape.
    Design source: DESIGN.md and docs/design-directions/2026-10-17-fbc-auburn/ (A blended with B and C). */
 
 /* The sermon archive, people list and downloads shelf (2026-10-18). */
 @import './collections.css';
-
-@font-face {
-  font-family: 'Auburn Stone';
-  src: url('/fonts/auburn-stone.woff2') format('woff2');
-  font-display: swap;
-}
 
 /* The two text fonts' Latin faces, served from /fonts at a fixed path so BaseLayout can preload
    them (the @fontsource copies get hashed names that cannot be preloaded). Same family, style,
@@ -44,29 +38,81 @@
 :root {
   /* Brand colours the semantic tokens do not carry. Red is for the cross and the one main
      button per page; gold and sky are accents only, never text on white. */
-  --auburn-green: #2c5b3a;
-  --auburn-deep: #235e93;
-  --auburn-water: #3b83aa;
-  --auburn-red: #c4401f;
-  --auburn-red-dark: #a8361a;
-  --auburn-gold: #e8a93a;
-  --auburn-sky: #96c3ea;
+  --auburn-green: #2c4f7c;
+  --auburn-deep: #1f3a5f;
+  --auburn-water: #2c4f7c;
+  --auburn-red: #9a3b2a;
+  --auburn-red-dark: #7e2e20;
+  --auburn-gold: #b5503a;
+  --auburn-sky: #7f98b8;
   /* Mosaic letters, light: green, deep sky, red, water (gold fails 3:1 on white). */
-  --mosaic-0: #2c5b3a;
-  --mosaic-1: #235e93;
-  --mosaic-2: #c4401f;
-  --mosaic-3: #3b83aa;
-  --heading-solid: #235e93;
+  --mosaic-0: #2c4f7c;
+  --mosaic-1: #1f3a5f;
+  --mosaic-2: #9a3b2a;
+  --mosaic-3: #2c4f7c;
+  --heading-solid: #1f3a5f;
+
+  /* ---- The one scale (2026-10-24 standardising pass). Every size, radius and gap in the brand
+     layer, the board, the church blocks, the collections and the components' own styles comes
+     from here; a new value that is not on it is a bug. Measured across every route at 375 and
+     1280 before the pass: about a hundred distinct font sizes, five card radii, four section H2
+     sizes. ---- */
+
+  /* Text, Familjen Grotesk. Tailwind's text-xs / text-sm / text-base read the same values, so a
+     utility and a stylesheet can no longer disagree (they were 12 / 14 / 16 against 13 / 15 / 18). */
+  --fs-tag: 0.8125rem; /* 13px: eyebrows, tags, pills, captions, "To confirm" */
+  --fs-small: 0.9375rem; /* 15px: meta lines, labels, footnotes, the footer's small print */
+  --fs-body: 1.125rem; /* 18px: all reading text, card bodies, list items (DESIGN.md minimum) */
+  --fs-lead: clamp(1.1875rem, 1.1rem + 0.3vw, 1.3125rem); /* 19 to 21px: a page or band intro */
+  --fs-button: 1.0625rem; /* 17px: every button, header and footer included */
+  --text-xs: var(--fs-tag);
+  --text-sm: var(--fs-small);
+  --text-base: var(--fs-body);
+  --text-xl: var(--fs-lead); /* a post's standfirst used text-xl (20px) beside 21px intros */
+
+  /* Headings, Young Serif. H1 and H2 are the theme's --text-h1 / --text-h2; below them: */
+  --fs-h3: var(--text-h3); /* 24 to 32px: a heading inside a band (Plan your visit's walk) */
+  --fs-title: 1.5rem; /* 24px: a card or block title */
+  --fs-title-sm: 1.25rem; /* 20px: a row title in a list, an accordion question */
+  --fs-numeral: clamp(1.75rem, 1.5rem + 0.8vw, 2.25rem); /* 28 to 36px: times, dates, day numbers */
+  --lh-body: 1.6;
+  --lh-title: 1.2;
+  --lh-heading: 1.1;
+
+  /* Corners. Controls (buttons, fields, tabs) share the button's 10px; anything that holds content
+     (a card, a panel, a photo, a player) is 20px; small inline tags are 4px; pills are round. */
+  --radius-control: var(--radius);
+  --radius-card: 20px;
+  --radius-inner: 14px; /* a picture or thumbnail inside a card or a list row */
+  --radius-tag: 4px;
+  --radius-pill: 999px;
+  /* The shared components (search, dialogs) draw their fields with var(--radius-md); point it at
+     the control radius so a field and the button beside it match (they were 8px and 10px). */
+  --radius-md: var(--radius-control);
+
+  /* Space inside things. The page rhythm between bands is --spacing-section-md / -lg. */
+  --pad-card: clamp(1.25rem, 1rem + 1vw, 1.75rem); /* 20 to 28px: inside a card or panel */
+  --pad-panel: clamp(1.5rem, 1rem + 2vw, 2.5rem); /* 24 to 40px: a feature panel (a tinted block) */
+  --gap-grid: clamp(1rem, 0.75rem + 1vw, 1.5rem); /* 16 to 24px: between cards in a grid */
+  /* Between items that have no box of their own (sermon cards, people, icon cards). */
+  --gap-open-row: clamp(2rem, 4vw, 3rem);
+  --gap-open-col: clamp(1.5rem, 3vw, 2.5rem);
+  --gap-heading: clamp(1rem, 0.8rem + 0.6vw, 1.5rem); /* a section heading to its content */
+
+  /* Shadows (2026-10-24): three, where there were ten recipes. Soft and navy-tinted, never grey. */
+  --shadow-card: 0 18px 40px -32px rgb(22 38 61 / 0.4); /* a card sitting on the page */
+  --shadow-raised: 0 30px 60px -36px rgb(22 38 61 / 0.6); /* a panel over another layer */
+  --shadow-button: 0 10px 24px -12px rgb(15 25 38 / 0.6); /* a round play button on a photo */
 }
 /* Dark values. The site is light only (no toggle, the system setting is ignored), so no visitor
    sees these; they stay because the shared dark test suites (a11y-dark, contrast) still force
    dark mode and would fail deep sky on the dark ground. */
 .dark {
-  --mosaic-0: #8fc7a0;
-  --mosaic-1: #96c3ea;
-  --mosaic-2: #e5735a;
-  --mosaic-3: #e8a93a;
-  --heading-solid: #96c3ea;
+  --mosaic-0: #d98a74;
+  --mosaic-1: #7f98b8;
+  --mosaic-2: #d98a74;
+  --mosaic-3: #b5503a;
+  --heading-solid: #7f98b8;
 }
 
 /* Young Serif ships one weight; asking for 500 would make the browser fake a bold. */
@@ -79,9 +125,20 @@ h6 {
   font-weight: 400;
 }
 
-/* ---- Stone headings (StoneHeading.astro) ---- */
+/* ---- Brick letterforms (scripts/lib/brick-letters.mjs, 2026-10-21) ----
+   A drawn word is an inline SVG sized in em, so it scales with the font-size of whatever holds it
+   and sits on the line's baseline (the vertical-align is inline). Capped at the line's width, it
+   keeps its shape (height auto) so a long word shrinks rather than pokes out. */
+.bl-word {
+  display: inline-block;
+  max-width: 100%;
+  height: auto !important;
+  overflow: visible;
+}
+
+/* ---- Brick headings (StoneHeading.astro) ---- */
 .stone-heading {
-  font-family: 'Auburn Stone', 'Young Serif', serif;
+  font-family: 'Young Serif', serif;
   font-weight: 400;
   line-height: 1.02;
   letter-spacing: -0.01em;
@@ -89,18 +146,6 @@ h6 {
 }
 .stone-solid {
   color: var(--heading-solid);
-}
-.stone-heading .s0 {
-  color: var(--mosaic-0);
-}
-.stone-heading .s1 {
-  color: var(--mosaic-1);
-}
-.stone-heading .s2 {
-  color: var(--mosaic-2);
-}
-.stone-heading .s3 {
-  color: var(--mosaic-3);
 }
 
 /* ---- Arched hero (ArchHero.astro): words on the left, an arched photo on the right ---- */
@@ -123,7 +168,7 @@ h6 {
   container-type: inline-size;
 }
 .arch-hero__eyebrow {
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -166,11 +211,11 @@ h6 {
 }
 .arch-hero__sunday {
   margin-top: 1.1rem !important;
-  font-size: 1.05rem !important;
+  font-size: var(--fs-body) !important;
 }
 .arch-hero__sub {
   color: var(--muted-foreground);
-  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.25rem);
+  font-size: var(--fs-lead);
   line-height: 1.6;
   max-width: 36rem;
 }
@@ -226,14 +271,28 @@ h6 {
   justify-content: center;
   min-height: 48px;
   padding: 0.7rem 1.4rem;
-  border-radius: var(--radius);
-  font-size: 1.05rem;
+  border-radius: var(--radius-control);
+  font-size: var(--fs-button);
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
   transition:
     background-color 160ms ease,
-    color 160ms ease;
+    color 160ms ease,
+    transform 160ms ease;
+}
+/* Every button presses the same way (2026-10-24): only the ones that also carried press-tactile
+   nudged down; the footer's and the forms' did not move. The hero's white outline button joins. */
+.btn-auburn:active,
+.hb-ghost:active {
+  transform: translateY(1px);
+  transition-duration: 60ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-auburn:active,
+  .hb-ghost:active {
+    transform: none;
+  }
 }
 .btn-auburn--primary {
   background: var(--auburn-red);
@@ -257,16 +316,123 @@ h6 {
 .hb a:focus-visible,
 .site-footer a:focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 4px;
+  outline-offset: 3px;
   border-radius: 2px;
 }
 .site-footer a:focus-visible,
 .site-footer .btn-auburn:focus-visible {
-  outline-color: #96c3ea;
+  outline-color: #7f98b8;
 }
 .btn-auburn:focus-visible {
   outline: 3px solid var(--ring);
   outline-offset: 3px;
+}
+
+/* ---- Form fields: the button's corner and type size (2026-10-24). The contact form's fields were
+   Tailwind's rounded-md (8px) at 16px beside a 10px, 17px button. :where() keeps this at zero
+   specificity, so a field with its own shape (the round menu search) keeps it. ---- */
+:where(
+  input:not([type='checkbox'], [type='radio'], [type='range'], [type='file']),
+  select,
+  textarea
+) {
+  border-radius: var(--radius-control);
+  font-size: var(--fs-body);
+}
+/* ---- Heading leading (2026-10-24): every section H2 sets tight at 1.1 and every H3/H4 at 1.2.
+   SectionHeading's `leading-tight` (1.25) and the bands' own values (1.08 to 1.25) gave the same
+   48px H2 a 53px line on one band and a 60px line on the next. Zero specificity, so a display
+   heading that sets its own (the brick H1s, the masthead) keeps it. ---- */
+:where(main h1, main h2, .final-cta h2) {
+  line-height: var(--lh-heading);
+}
+:where(main h3, main h4) {
+  line-height: var(--lh-title);
+}
+/* Reading text in the page body sits on one line height. */
+:where(main p, main li, main dd) {
+  line-height: var(--lh-body);
+}
+
+/* No paper grain. The starter's fixed 4% grain (body::before in globals.css) is covered by every
+   Auburn section's own ground (the board rule even paints var(--background) to hide it), so it only
+   showed where a page had no ground of its own: a darker band down a journal post's body. One flat
+   ground everywhere instead (2026-10-24). */
+body::before {
+  content: none;
+}
+
+/* A section ends on its padding, not on its last paragraph's margin: the trailing my-m on rich text
+   made the gap between sections 163 to 189px depending on what came last (2026-10-24). */
+:where(main section) :where(p, ul, ol, dl, blockquote):last-child {
+  margin-bottom: 0;
+}
+
+/* Text that sets no size of its own reads at the body size, not the browser's 16px (Contact's and
+   Privacy's rich text and the footer address inherited 16px while the same paragraphs elsewhere
+   were 18px). */
+body {
+  font-size: var(--fs-body);
+}
+/* The shared search panel's "Not sure where to start?" label is a tag, at 12px it was the one
+   label under the scale. */
+html .site-search__suggest-title {
+  font-size: var(--fs-tag);
+}
+
+/* One focus ring (2026-10-24): 3px of the ring colour, 3px off the element. The skip link drew 2px,
+   and an embedded video or custom-code frame drew none, so a keyboard user lost their place there. */
+html .skip-link:focus-visible,
+:where(main iframe):focus-visible,
+main [data-slot='accordion-trigger']:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+/* The UI kit's accordion drew its ring inside the button, flush on the question's first letter; it
+   takes the site's ring above instead. */
+main [data-slot='accordion-trigger']:focus-visible {
+  border-color: transparent;
+  box-shadow: none;
+}
+/* On the hero photo a navy ring all but vanishes: white, like the outline button beside it. */
+.hb-hero .btn-auburn:focus-visible {
+  outline-color: #ffffff;
+}
+
+/* A 44px tap area for the small standalone links (2026-10-24, measured with
+   scripts/measure-tap-targets.mjs at 390px): the header logo (40px tall), Get directions, and the
+   sermon and newsletter list links (22 to 34px). The same invisible hit area as globals.css's
+   .hit-44 (PORTS.md card 82), so nothing visible moves. */
+.site-header__logo-link,
+.church-address__map,
+.c-link,
+.c-latest__title,
+.c-row__title a {
+  position: relative;
+}
+.site-header__logo-link::after,
+.church-address__map::after,
+.c-link::after,
+.c-latest__title::after,
+.c-row__title a::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+/* The brand's cards: 'soft' layout gives every .card-lift card calc(var(--radius) + 0.25rem), 14px
+   (globals.css), so the journal cards came out at the inner corner. A card is a card: 20px. */
+html[data-cards='soft'] .card-lift {
+  border-radius: var(--radius-card);
+}
+
+/* The search dialog is a panel, so it takes the card corner. */
+html .site-search-dialog {
+  border-radius: var(--radius-card);
 }
 
 /* ---- Header: sentence-case nav at a readable size; the button is the outline one, so the page's
@@ -274,7 +440,7 @@ h6 {
 .site-header .site-nav a,
 .site-header .site-nav summary {
   white-space: nowrap;
-  font-size: 1rem;
+  font-size: var(--fs-button);
   font-weight: 500;
   letter-spacing: 0;
 }
@@ -289,7 +455,7 @@ h6 {
   white-space: nowrap;
   min-height: 44px;
   padding: 0.5rem 1.15rem;
-  font-size: 1rem;
+  font-size: var(--fs-button);
 }
 .site-header .btn-auburn--current {
   background: var(--muted);
@@ -300,7 +466,7 @@ h6 {
    the logo slot until the hero's own lockup passes under the bar (data-past, set by the script at
    the end of Header.astro). ---- */
 .site-header__logo {
-  height: 64px;
+  height: 44px;
   transition: height 0.3s ease;
 }
 .site-header__row {
@@ -328,27 +494,36 @@ h6 {
 /* 84px once the bar has room for it beside the four menu links and the two buttons. */
 @media (min-width: 1280px) {
   .site-header__logo {
-    height: 84px;
+    height: 56px;
   }
 }
 .site-header[data-scrolled] {
   background: #ffffff;
   box-shadow:
-    0 1px 0 #d9dee6,
-    0 12px 30px -24px rgb(23 26 38 / 0.35);
+    0 1px 0 #e6ded2,
+    0 12px 30px -24px rgb(22 38 61 / 0.35);
 }
 .site-header[data-scrolled] .site-header__row {
   padding-block: 12px;
 }
 .site-header[data-scrolled] .site-header__logo {
-  height: 64px;
+  height: 40px;
 }
 /* The narrowest phones (under 360px): a smaller lockup and a slimmer Menu pill, so "First
    Baptist" no longer runs into the pill (6px apart at 320px; visitor audit, 2026-10-18). */
 @media (max-width: 22.49rem) {
   .site-header__logo,
   .site-header[data-scrolled] .site-header__logo {
-    height: 52px;
+    height: 34px;
+  }
+}
+/* Phones: the lockup is wide (about 4.7 to 1), so it shrinks into the room left of the search button
+   and the Menu pill instead of running under them. */
+@media (max-width: 29.99rem) {
+  .site-header__logo,
+  .site-header[data-scrolled] .site-header__logo {
+    height: clamp(24px, calc((100vw - 205px) / 4.67), 40px);
+    width: auto;
   }
 }
 .site-header__brand {
@@ -368,7 +543,7 @@ h6 {
     flex-direction: column;
     gap: 3px;
     margin: 0;
-    font-size: 15px;
+    font-size: var(--fs-small);
     line-height: 1.35;
     font-variant-numeric: tabular-nums lining-nums;
     transition:
@@ -377,7 +552,7 @@ h6 {
       visibility 0s;
   }
   .site-header__note-times {
-    font-size: 13px;
+    font-size: var(--fs-tag);
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -437,12 +612,19 @@ h6 {
   width: 100%;
   border-radius: 999px 999px 18px 18px;
 }
+/* No photo yet (2026-10-24): the Stone tint with the brick-cross print in the middle, and a shorter
+   slot than a photo gets, so a missing picture is a quiet mark rather than a tall empty shape
+   (DESIGN.md: "never a grey box"). */
 .auburn-arch--empty {
-  background: linear-gradient(
-    180deg,
-    var(--muted) 0%,
-    color-mix(in srgb, var(--auburn-sky) 22%, var(--muted)) 100%
-  );
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  max-height: 360px;
+  background: var(--stone-paint, #e9eef5);
+}
+.auburn-arch__mark {
+  width: min(38%, 150px);
+  height: auto;
 }
 @media (max-width: 63.99rem) {
   .auburn-arch {
@@ -465,7 +647,7 @@ h6 {
   margin-bottom: 1.6rem;
 }
 .final-cta__h2 {
-  font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.6rem);
+  font-size: var(--text-h2);
   max-width: 40rem;
   margin-inline: auto;
 }
@@ -560,7 +742,7 @@ h6 {
   border: 1.5px solid var(--border);
   border-radius: 999px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--fs-button);
   color: var(--foreground);
   background: var(--background);
 }
@@ -606,7 +788,7 @@ h6 {
   border: 1px solid rgb(255 255 255 / 0.25);
   border-radius: 999px;
   color: rgb(255 255 255 / 0.85);
-  font-size: 1.05rem;
+  font-size: var(--fs-button);
   text-decoration: none;
   transition:
     background-color 160ms ease,
@@ -656,7 +838,7 @@ h6 {
   }
 }
 .auburn-menu {
-  --menu-night: #1b2a3d;
+  --menu-night: #16304d;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -668,7 +850,7 @@ h6 {
   color: #ffffff;
   overflow-y: auto;
   /* A light focus ring on the night ground (the close button and anything without its own). */
-  --ring: #96c3ea;
+  --ring: #7f98b8;
 }
 .auburn-menu > button {
   color: #ffffff;
@@ -693,11 +875,11 @@ h6 {
 }
 .auburn-menu__eyebrow {
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #96c3ea;
+  color: #7f98b8;
 }
 .auburn-menu__grid {
   flex: 1;
@@ -740,11 +922,11 @@ h6 {
   flex: none;
   width: 2.2rem;
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   font-weight: 700;
   letter-spacing: 0.08em;
   font-variant-numeric: tabular-nums;
-  color: #e8a93a;
+  color: #b5503a;
   transition:
     opacity 0.2s ease,
     transform 0.2s ease;
@@ -761,18 +943,18 @@ h6 {
   transition: transform 0.32s cubic-bezier(0.3, 1.4, 0.5, 1);
 }
 .auburn-menu__stone--0 {
-  background: #96c3ea;
+  background: #7f98b8;
 }
 .auburn-menu__stone--1 {
-  background: #4f9a63;
+  background: #2c4f7c;
   border-radius: 54% 46% 56% 44% / 46% 54% 44% 56%;
 }
 .auburn-menu__stone--2 {
-  background: #e8a93a;
+  background: #b5503a;
   border-radius: 48% 52% 42% 58% / 56% 48% 52% 44%;
 }
 .auburn-menu__stone--3 {
-  background: #e0583a;
+  background: #b5503a;
   border-radius: 56% 44% 52% 48% / 44% 56% 46% 54%;
 }
 .auburn-menu__label {
@@ -796,20 +978,20 @@ h6 {
   transform: translateX(0.35rem);
 }
 .auburn-menu__main a[aria-current='page'] .auburn-menu__label {
-  color: #dbeaf8;
+  color: #dbe3ee;
 }
 .auburn-menu a:focus-visible {
-  outline: 3px solid #e8a93a;
+  outline: 3px solid #b5503a;
   outline-offset: 3px;
 }
 .auburn-menu__group {
   margin: 1rem 0 0;
   padding-left: calc(2.2rem + 0.9rem);
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #96c3ea;
+  color: #7f98b8;
 }
 .auburn-menu__sub a {
   font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.2rem);
@@ -826,10 +1008,10 @@ h6 {
   position: relative;
   overflow: hidden;
   width: 100%;
-  padding: 1.6rem 1.7rem 1.5rem;
+  padding: var(--pad-card);
   border: 1px solid rgb(255 255 255 / 0.1);
-  border-radius: 20px;
-  background: #243650;
+  border-radius: var(--radius-card);
+  background: #1a3552;
   font-variant-numeric: tabular-nums lining-nums;
 }
 .auburn-menu__card::before {
@@ -839,10 +1021,10 @@ h6 {
   height: 5px;
   background: linear-gradient(
     90deg,
-    #96c3ea 0 25%,
-    #2c5b3a 25% 50%,
-    #e8a93a 50% 75%,
-    #c4401f 75% 100%
+    #7f98b8 0 25%,
+    #2c4f7c 25% 50%,
+    #b5503a 50% 75%,
+    #9a3b2a 75% 100%
   );
 }
 .auburn-menu__card-top {
@@ -853,24 +1035,28 @@ h6 {
 }
 .auburn-menu__card-eyebrow {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--fs-tag);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #96c3ea;
+  color: #7f98b8;
 }
+/* Same shape as NotConfirmed.astro's tag (2026-10-24). */
 .auburn-menu__tag {
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: #fbe9e4;
-  color: #8f2c14;
-  font-size: 0.75rem;
-  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-tag);
+  background: #fce3da;
+  color: #7a2a14;
+  font-size: var(--fs-tag);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 .auburn-menu__card-date {
   margin: 0.3rem 0 0.9rem;
   font-family: var(--font-display);
-  font-size: 2.1rem;
+  font-size: var(--fs-numeral);
   line-height: 1.05;
 }
 .auburn-menu__card-times {
@@ -886,16 +1072,16 @@ h6 {
 }
 .auburn-menu__card-times dt {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: var(--fs-title); /* the compact card: title size, so "11:00" fits its 4.4rem column */
   line-height: 1;
 }
 .auburn-menu__card-times dd {
   margin: 0;
-  color: #d6d9e1;
+  color: #d5dae3;
 }
 .auburn-menu__times {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -904,18 +1090,42 @@ h6 {
   margin: 1rem 0 1.1rem;
   padding-top: 0.9rem;
   border-top: 1px solid rgb(255 255 255 / 0.14);
-  color: #d6d9e1;
+  color: #d5dae3;
 }
 .auburn-menu__where a {
   color: #ffffff;
   font-weight: 600;
   text-underline-offset: 3px;
 }
+/* Where Sunday streams (2026-10-24); "Live now" with a red dot while worship is on. */
+.auburn-menu__watch {
+  margin: -0.4rem 0 1.1rem;
+}
+.auburn-menu__watch a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.55rem;
+  color: #ffffff;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+.auburn-menu__live-dot {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.45);
+}
+.auburn-menu__watch a[data-live] .auburn-menu__live-dot {
+  background: #e5484d;
+  box-shadow: 0 0 0 4px rgb(229 72 77 / 0.25);
+}
 .auburn-menu__tagline {
   margin: 0;
   text-wrap: balance;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: var(--fs-title);
   line-height: 1.3;
 }
 .auburn-menu__contact {
@@ -978,7 +1188,7 @@ h6 {
   .auburn-menu[data-state='open'] .auburn-menu__side > * + * {
     animation-delay: 300ms;
   }
-  .auburn-menu[data-state='open'] .auburn-menu__sill path {
+  .auburn-menu[data-state='open'] .auburn-menu__sill .sill-brick {
     transform-box: fill-box;
     transform-origin: center;
     animation: sill-lay 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -1036,18 +1246,18 @@ h6 {
    inside the footer, so every Tailwind class in the link grid reads light on ink. Light only
    (rule 3): this is the footer's own ground, not a dark theme. ---- */
 .site-footer {
-  --foreground: #f3f6f9;
-  --muted: #171a26;
-  --muted-foreground: #b4b8c4;
-  --border: #2e3446;
-  --border-soft: #2e3446;
+  --foreground: #f4efe7;
+  --muted: #16263d;
+  --muted-foreground: #b6c0cf;
+  --border: #24344d;
+  --border-soft: #24344d;
   --link: #ffffff;
-  --primary: #96c3ea;
-  --accent: #232838;
+  --primary: #7f98b8;
+  --accent: #1b2d47;
   /* A light focus ring on ink (WCAG 1.4.11): about 9:1 here. */
-  --ring: #96c3ea;
-  background: #171a26;
-  color: #f3f6f9;
+  --ring: #7f98b8;
+  background: #16263d;
+  color: #f4efe7;
 }
 .site-footer a {
   color: #ffffff;
@@ -1074,14 +1284,17 @@ h6 {
 .site-footer__sill {
   margin-top: -32px;
 }
-html.motion .sill.is-armed:not(.is-laid) path {
+html.motion .sill.is-armed:not(.is-laid) .sill-brick {
   opacity: 0;
 }
-html.motion .sill.is-laid path {
-  animation: sill-lay 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: calc(var(--i) * 6ms);
+/* Laid like a mason lays them (2026-10-24): bottom course left to right, then back along the top,
+   each brick set down with a small tap (brick-set in src/styles/flow.css; turns from
+   src/lib/brick-lay.ts via --lay). */
+html.motion .sill.is-laid .sill-brick {
+  animation: brick-set 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--lay, var(--i)) * 26ms);
   transform-box: fill-box;
-  transform-origin: center;
+  transform-origin: 50% 100%;
 }
 @keyframes sill-lay {
   from {
@@ -1094,56 +1307,56 @@ html.motion .sill.is-laid path {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sill path {
+  .sill .sill-brick {
     animation: none !important;
     opacity: 1 !important;
   }
 }
 
+/* The compact footer (2026-10-24): left, the mark, the two next steps and the link rows; right,
+   the This Sunday panel. It was 1,523px on desktop with a display-size tagline, a building sketch
+   and a full-width brick "Auburn" signature. */
 .sf-top {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: clamp(40px, 6vw, 96px);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+  padding-top: clamp(40px, 5vw, 64px);
+  padding-bottom: clamp(40px, 5vw, 64px);
+}
+.sf-invite__brand {
+  display: flex;
   align-items: center;
-  padding-top: clamp(56px, 7vw, 96px);
-  padding-bottom: clamp(48px, 6vw, 80px);
+  gap: 16px;
+  margin: 0;
 }
 .sf-invite__mark {
-  width: 72px;
+  flex: none;
+  width: 56px;
   height: auto;
 }
-.sf-invite__tagline {
-  max-width: 13ch;
-  margin: 22px 0 18px;
+.sf-invite__name {
   font-family: var(--font-display);
-  font-size: clamp(44px, 5.4vw, 80px);
-  line-height: 1;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
+  font-size: var(--fs-h3);
+  line-height: 1.1;
   color: #ffffff;
-}
-.sf-invite__line {
-  max-width: 28rem;
-  margin: 0;
-  font-size: 19px;
-  line-height: 1.55;
-  color: #d6d9e1;
+  text-wrap: balance;
 }
 .sf-invite__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 /* The This Sunday panel: a lighter ink card, its top edge in the story's four colours. */
 .sf-sunday {
   position: relative;
   overflow: hidden;
-  padding: 30px 32px 26px;
-  border: 1px solid #2e3446;
-  border-radius: 20px;
-  background: #1f2537;
+  padding: var(--pad-card);
+  border: 1px solid #24344d;
+  border-radius: var(--radius-card);
+  background: #16304d;
   font-variant-numeric: tabular-nums lining-nums;
 }
 .sf-sunday::before {
@@ -1153,10 +1366,10 @@ html.motion .sill.is-laid path {
   height: 5px;
   background: linear-gradient(
     90deg,
-    #96c3ea 0 25%,
-    #2c5b3a 25% 50%,
-    #e8a93a 50% 75%,
-    #c4401f 75% 100%
+    #7f98b8 0 25%,
+    #2c4f7c 25% 50%,
+    #b5503a 50% 75%,
+    #9a3b2a 75% 100%
   );
 }
 .sf-sunday__top {
@@ -1167,16 +1380,16 @@ html.motion .sill.is-laid path {
 }
 .sf-sunday__eyebrow {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-tag);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #96c3ea;
+  color: #7f98b8;
 }
 .sf-sunday__date {
   margin: 6px 0 18px;
   font-family: var(--font-display);
-  font-size: clamp(32px, 3vw, 42px);
+  font-size: var(--fs-numeral);
   line-height: 1.05;
   color: #ffffff;
 }
@@ -1187,34 +1400,34 @@ html.motion .sill.is-laid path {
 }
 .sf-sunday__times > div {
   display: grid;
-  grid-template-columns: 5.2rem minmax(0, 1fr);
+  grid-template-columns: 6.75rem minmax(0, 1fr); /* room for "11:00" at the largest --fs-numeral */
   align-items: baseline;
   gap: 12px;
 }
 .sf-sunday__times dt {
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: var(--fs-numeral);
   line-height: 1;
   color: #ffffff;
 }
 .sf-sunday__times dd {
   margin: 0;
-  font-size: 17px;
-  color: #d6d9e1;
+  font-size: var(--fs-body);
+  color: #d5dae3;
 }
 .sf-sunday__where {
   margin-top: 20px;
   padding-top: 18px;
-  border-top: 1px solid #2e3446;
-  color: #d6d9e1;
+  border-top: 1px solid #24344d;
+  color: #d5dae3;
 }
 .sf-sunday__where p {
   margin: 0;
 }
 .sf-sunday__findus {
   margin-top: 8px !important;
-  font-size: 15px;
-  color: #b4b8c4;
+  font-size: var(--fs-small);
+  color: #b6c0cf;
 }
 .sf-sunday__links {
   display: flex;
@@ -1235,22 +1448,20 @@ html.motion .sill.is-laid path {
    unchanged; only its layout is. */
 .site-footer__links {
   grid-template-columns: minmax(0, 1fr);
-  row-gap: 18px;
-  padding-top: 36px;
-  padding-bottom: 40px;
-  border-top: 1px solid #2e3446;
+  row-gap: 12px;
+  border-top: 1px solid #24344d;
 }
 .site-footer__links > nav,
 .site-footer__links > div {
   display: grid;
-  grid-template-columns: 9rem minmax(0, 1fr);
+  grid-template-columns: 7.5rem minmax(0, 1fr);
   align-items: baseline;
   gap: 4px 24px;
 }
 .site-footer__links > nav > p,
 .site-footer__links > div > p:first-child {
   margin: 0;
-  color: #96c3ea !important;
+  color: #7f98b8 !important;
   font-weight: 700;
 }
 .site-footer__links > nav ul {
@@ -1261,50 +1472,22 @@ html.motion .sill.is-laid path {
 }
 .site-footer__links > nav ul a {
   font-family: var(--font-display);
-  font-size: clamp(20px, 1.7vw, 26px);
+  font-size: var(--fs-title-sm);
   color: #ffffff !important;
   text-decoration: none;
-  background: linear-gradient(#e8a93a, #e8a93a) 0 100% / 0 2px no-repeat;
+  background: linear-gradient(#b5503a, #b5503a) 0 100% / 0 2px no-repeat;
   transition: background-size 0.25s ease;
 }
 .site-footer__links > nav ul a:hover {
   background-size: 100% 2px;
 }
 
-/* The signature: the name in mosaic letters, full width, running off the bottom edge. */
-.sf-signature {
-  overflow: hidden;
-  height: 0.6em;
-  font-family: 'Auburn Stone', 'Young Serif', serif;
-  /* Six letters at about 0.6em each: 26vw keeps the whole word on screen at every width. */
-  font-size: min(26vw, 500px);
-  line-height: 0.82;
-  text-align: center;
-  user-select: none;
-}
-.sf-signature__word {
-  letter-spacing: -0.035em;
-  transform: translateY(0.06em);
-}
-.sf-signature .s0 {
-  color: #96c3ea;
-}
-.sf-signature .s1 {
-  color: #e8a93a;
-}
-.sf-signature .s2 {
-  color: #c4401f;
-}
-.sf-signature .s3 {
-  color: #3b83aa;
-}
-
 .sf-bottom {
   position: relative;
-  border-top: 1px solid #2e3446;
-  background: #12141e;
-  font-size: 14px;
-  color: #b4b8c4;
+  border-top: 1px solid #24344d;
+  background: #0f2238;
+  font-size: var(--fs-small);
+  color: #b6c0cf;
 }
 .sf-bottom__inner {
   display: flex;
@@ -1329,7 +1512,7 @@ html.motion .sill.is-laid path {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: #d6d9e1 !important;
+  color: #d5dae3 !important;
   text-underline-offset: 3px;
 }
 
@@ -1354,17 +1537,21 @@ html.motion .sill.is-laid path {
 }
 @media (max-width: 420px) {
   .sf-sunday {
-    padding: 26px 22px 20px;
+    padding: var(--pad-card);
   }
   .sf-invite__actions .btn-auburn {
     flex: 1 1 auto;
   }
 }
-/* Between 1024px and 1199px the bar is tight with the lockup; close up the menu's gaps a little. */
-@media (min-width: 1024px) and (max-width: 1199px) {
-  .site-header .site-header__nav,
+/* Between 1024px and 1279px the bar is tight with the lockup; close up the menu's gaps. Five links
+   since the 2026-10-24 audit, so 1rem between links and 1.25rem around the button (1.5rem left
+   "About" touching the lockup at 1024, and 1199px left 24px at 1200). */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .site-header .site-header__nav {
+    gap: 1.25rem;
+  }
   .site-header .site-nav {
-    gap: 1.5rem;
+    gap: 1rem;
   }
 }
 
@@ -1375,4 +1562,86 @@ html.motion .sill.is-laid path {
   .site-footer .px-l {
     padding-inline: 20px;
   }
+}
+/* The building sketch, faint, behind the footer's top area (2026-10-24): anchored bottom right, it
+   takes no space, so the compact footer keeps its height. Under everything that is clickable. */
+.sf-top {
+  position: relative;
+  isolation: isolate;
+}
+.sf-sketch {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  width: min(560px, 50%);
+  opacity: 0.16;
+  pointer-events: none;
+}
+.sf-sketch__art {
+  width: 100%;
+}
+@media (max-width: 960px) {
+  .sf-sketch {
+    width: 92%;
+    opacity: 0.12;
+  }
+}
+
+/* The link rows sit in the footer's left column, under the buttons, not in a band of their own. */
+.sf-invite .site-footer__links {
+  max-width: none;
+  margin: 28px 0 0;
+  padding: 24px 0 0;
+}
+/* On one column the This Sunday panel comes straight after the buttons and the links follow it:
+   times and the address are what a phone visitor came to the footer for. */
+@media (max-width: 960px) {
+  .sf-invite {
+    display: contents;
+  }
+  .sf-invite__brand {
+    order: 1;
+  }
+  .sf-invite__actions {
+    order: 2;
+    margin-top: -12px;
+  }
+  .sf-top > .sf-sunday {
+    order: 3;
+  }
+  .sf-invite .site-footer__links {
+    order: 4;
+    margin-top: 0;
+  }
+}
+
+/* ---- The building band (2026-10-23): ImageText art "building" -------------------------------
+   The sketch runs across the column under the words and stands on a brick sill, its ground line
+   just above the bricks. */
+.building-band__sketch {
+  max-width: 1120px;
+  margin: clamp(28px, 4vw, 52px) auto 0;
+}
+.building-band__sill {
+  margin-top: -6px;
+}
+
+/* Plan your visit: the walk's opener (2026-10-23), the building sketch with the front door pinned. */
+.walk-opener {
+  max-width: 920px;
+  margin: clamp(24px, 4vw, 48px) auto clamp(16px, 2vw, 24px);
+}
+.walk-opener figcaption {
+  max-width: 36rem;
+  margin: 14px auto 0;
+  text-align: center;
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+.walk-opener__ask {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
 }

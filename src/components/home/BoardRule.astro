@@ -3,17 +3,22 @@
 // Board E on the inner pages: the section label's three stepping stones and its hairline, drawn
 // at the top of each section by SectionRenderer (it replaced the gold-stone divider on
 // 2026-10-17). Home's labels carry words; an inner page's sections carry their own headings, so
-// the rule is the marker and the line only. The marker is three gold steps from the mark, the
-// same everywhere. Decorative: aria-hidden.
+// the rule is the marker and the line only. The marker is three stepped bricks from the mark's
+// corner (brick brand, 2026-10-21), the same everywhere. Decorative: aria-hidden.
 import '@/styles/board.css';
 import { MARKER } from './stones.generated';
+import { layOrder } from '@/lib/brick-lay';
+
+// The three steps are laid bottom step first as the section comes in (src/styles/flow.css).
+const markerTurns = layOrder(MARKER);
 ---
 
-<div class="board-rule-wrap" aria-hidden="true">
+{/* data-flow-item: the flow layer treats the rule as a unit, so its steps are laid as it comes in. */}
+<div class="board-rule-wrap" aria-hidden="true" data-flow-item>
   <div class="board-rule">
     <svg class="hb-marker" viewBox="0 0 78 36" width="78" height="36" focusable="false">
-      {MARKER.map((s) => (
-        <path d={s.d} fill={s.fill} />
+      {MARKER.map((s, i) => (
+        <path class="lay-brick" d={s.d} fill={s.fill} style={`--lay: ${markerTurns[i]}`} />
       ))}
     </svg>
   </div>

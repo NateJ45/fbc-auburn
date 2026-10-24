@@ -64,6 +64,12 @@ export interface RawChurchFacts {
   title?: string | null;
   phone?: string | null;
   phoneConfirmed?: boolean | null;
+  phoneTakesTexts?: boolean | null;
+  memberLoginUrl?: string | null;
+  churchTracUrl?: string | null;
+  connectCardUrl?: string | null;
+  contactFormUrl?: string | null;
+  prayerFormUrl?: string | null;
   email?: string | null;
   emailConfirmed?: boolean | null;
   churchAddress?: {
@@ -128,13 +134,26 @@ export interface ChurchAddress {
 export interface ChurchFacts {
   address: ChurchAddress | null;
   serviceTimes: ServiceTime[];
-  phone: { display: string; tel: string; confirmed: boolean } | null;
+  /** `sms` is set only when Church facts says the number takes texts ("Call or text"). */
+  phone: { display: string; tel: string; sms: string | null; confirmed: boolean } | null;
   email: { display: string; href: string; confirmed: boolean } | null;
+  /** Church Trac member sign-in (Church Trac > Member sign-in link), or null. */
+  memberLoginUrl: string | null;
+  /** Church Trac (docs/agent/church-trac.md): the church's address and three forms, each or null. */
+  churchTracUrl: string | null;
+  connectCardUrl: string | null;
+  contactFormUrl: string | null;
+  prayerFormUrl: string | null;
   /** The church's Facebook page (Social links), or null. */
   facebookUrl: string | null;
-  /** Where Sunday is watched live: the Live stream link, else the Facebook page, else null. */
+  /**
+   * Where Sunday is watched live: the Live stream link, else the YouTube channel's live page
+   * (once a channel id is set), else the Facebook page, else null (2026-10-24; live-service.ts).
+   */
   liveUrl: string | null;
-  /** Online giving (Church facts > Online giving link), or null: Give stays on the site. */
+  /** Which service liveUrl is on, for the words ("Watch live on Facebook"), or null. */
+  liveVia: 'YouTube' | 'Facebook' | null;
+  /** Online giving (Church Trac > Online giving link), or null: Give stays on the site. */
   givingUrl: string | null;
   founded: { year: number; confirmed: boolean } | null;
   /** UC... channel id, or null: no Watch replay is fetched. */
@@ -229,6 +248,36 @@ export function timesPhrase(minutes: number[]): string {
     : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
 }
 
+/**
+ * A day as an editor typed it ("Wednesdays", "Sunday mornings") with that day's gathering times
+ * from Church facts added: "Wednesdays, 6:00 pm". Text that does not start with a weekday, or a
+ * day with no times on file, comes back as typed. Times are never typed into a card (the Find
+ * your place cards and Home's bands both use this).
+ *
+ * `name` (a card's title) narrows the day to its own gathering when one is named after it: on a
+ * Sunday with "Sunday School for all ages" at 9:45 and "Worship" at 11:00, a "Sunday School" card
+ * gets 9:45 only, while a "Kids" card (no gathering of that name) gets both.
+ */
+export function dayWithTimes(
+  day: string,
+  serviceTimes: readonly Pick<ServiceTime, 'dayIndex' | 'minutes' | 'label'>[],
+  name?: string,
+): string {
+  const first = plain(day).toLowerCase().split(/[\s,]/)[0]?.replace(/s$/, '') ?? '';
+  const dayIndex = WEEKDAY_NAMES.indexOf(first as Weekday);
+  if (dayIndex < 0) return day;
+  const onDay = serviceTimes.filter((s) => s.dayIndex === dayIndex);
+  const want = plain(name).toLowerCase().trim();
+  const named = want
+    ? onDay.filter((s) => {
+        const label = plain(s.label).toLowerCase().trim();
+        return label !== '' && (label.includes(want) || want.includes(label));
+      })
+    : [];
+  const minutes = (named.length ? named : onDay).map((s) => s.minutes);
+  return minutes.length ? `${day}, ${timesPhrase(minutes)}` : day;
+}
+
 /** "A", "A and B", "A, B and C". */
 export function andList(items: string[]): string {
   if (items.length <= 1) return items[0] ?? '';
@@ -299,6 +348,14 @@ export function httpsUrl(value?: string | null): string | null {
 }
 
 /** The church's Facebook page: the Facebook row in Social links, else the legacy field. */
+/** The service a live link is on, read from its host; null for anything else. */
+export function liveVia(url: string | null): 'YouTube' | 'Facebook' | null {
+  if (!url) return null;
+  if (/^https:\/\/([\w-]+\.)?(youtube\.com|youtu\.be)\//i.test(url)) return 'YouTube';
+  if (/^https:\/\/([\w-]+\.)?(facebook\.com|fb\.watch|fb\.com)\//i.test(url)) return 'Facebook';
+  return null;
+}
+
 function facebookFrom(s: RawChurchFacts): string | null {
   const row = (s.socialLinks ?? []).find((l) => plain(l?.platform) === 'Facebook' && l?.url);
   return httpsUrl(row?.url) ?? httpsUrl(s.socialFacebook);
@@ -375,22 +432,41 @@ export function resolveChurchFacts(raw?: RawChurchFacts | null): ChurchFacts {
   const email = s.email?.trim() ?? '';
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(plain(email));
   const facebookUrl = facebookFrom(s);
+  const channelId = /^UC[\w-]{22}$/.test(channel) ? channel : null;
+  const liveUrl =
+    httpsUrl(s.liveStreamUrl) ??
+    (channelId ? `https://www.youtube.com/channel/${channelId}/live` : null) ??
+    facebookUrl;
 
   return {
     address: resolveAddress(hasAddress ? s.churchAddress : FALLBACK_FACTS.churchAddress),
     serviceTimes: times.length > 0 ? times : resolveServiceTimes(FALLBACK_FACTS.serviceTimes),
-    phone: phone && tel ? { display: phone, tel, confirmed: s.phoneConfirmed === true } : null,
+    phone:
+      phone && tel
+        ? {
+            display: phone,
+            tel,
+            sms: s.phoneTakesTexts === true ? tel.replace(/^tel:/, 'sms:') : null,
+            confirmed: s.phoneConfirmed === true,
+          }
+        : null,
+    memberLoginUrl: httpsUrl(s.memberLoginUrl),
+    churchTracUrl: httpsUrl(s.churchTracUrl),
+    connectCardUrl: httpsUrl(s.connectCardUrl),
+    contactFormUrl: httpsUrl(s.contactFormUrl),
+    prayerFormUrl: httpsUrl(s.prayerFormUrl),
     email: emailOk
       ? { display: email, href: `mailto:${plain(email)}`, confirmed: s.emailConfirmed === true }
       : null,
     facebookUrl,
-    liveUrl: httpsUrl(s.liveStreamUrl) ?? facebookUrl,
+    liveUrl,
+    liveVia: liveVia(liveUrl),
     givingUrl: httpsUrl(s.givingUrl),
     founded:
       year !== null
         ? { year, confirmed: s.foundedConfirmed === true }
         : { year: FALLBACK_FACTS.foundedYear, confirmed: false },
-    youtubeChannelId: /^UC[\w-]{22}$/.test(channel) ? channel : null,
+    youtubeChannelId: channelId,
     icalUrl: /^(https|webcal):\/\//i.test(ical) ? ical.replace(/^webcal:/i, 'https:') : null,
     calendarPageUrl: calendarPageFor(ical || null),
     officeHours: plain(s.officeHours)

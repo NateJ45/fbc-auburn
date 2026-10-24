@@ -15,22 +15,24 @@
 // even before Sanity content is wired up.
 //
 // FBC Auburn, board E (2026-10-17). The lockup is 84px tall from 1280px, 64px below that and on the
-// compact bar once the page scrolls (data-scrolled; CSS in src/styles/auburn.css). On HOME from 1280px the logo
-// slot first shows a Sunday note (the Sunday times, the address and Directions, all derived from
-// Site settings > Church facts) while the hero's own big lockup is on screen, and swaps to the logo
-// once that lockup passes under the header (data-past). Home has no eyebrow strip and the bar never
-// hides on scroll there. Phones and inner pages always show the logo.
+// compact bar once the page scrolls (data-scrolled; CSS in src/styles/auburn.css). HOME has no
+// eyebrow strip and the bar never hides on scroll there. Since the photo hero (2026-10-23) Home has
+// no big lockup of its own, so the header renders data-past from the start and shows the logo, as on
+// every page; the older Sunday-note swap (the logo slot showing the times until a hero lockup passed
+// under the bar) still works for a Home that brings back a .hb-masthead.
 
 import { getImage } from 'astro:assets';
 import { site } from '@/data/site';
 import { Mail, Phone } from 'lucide-react';
-import { IconBrandInstagram, IconBrandFacebook } from '@tabler/icons-react';
+import { resolveSocialLinks, socialLabel } from '@/lib/social-links';
+import { socialIcon } from '@/lib/social-icons';
 import MobileNav from './MobileNav';
 import { ChevronDown } from 'lucide-react';
 import { getChurchFacts } from '@/lib/church-data';
 import { getNavPages } from '@/lib/queries';
 import { mergePageSwitches } from '@/lib/page-switches';
 import { thisSunday, timesPhrase } from '@/lib/church-facts';
+import { watchLabel, watchLive } from '@/lib/live-service';
 import { churchDataNow } from '@/lib/church-feeds';
 import logoLightAsset from '@/assets/logo-light.svg';
 import markAsset from '@/assets/brand/fbc-auburn-icon-full-color.svg';
@@ -62,6 +64,7 @@ interface Props {
         phone?: string;
         socialInstagram?: string;
         socialFacebook?: string;
+        socialLinks?: { platform?: string; url?: string; label?: string }[] | null;
         availabilityStatus?: string;
       })
     | null;
@@ -97,9 +100,12 @@ const logoSrcset = logo
 // same values the footer and Contact show (visitor audit, 2026-10-18).
 const allFacts = await getChurchFacts();
 const email = chrome.showEmail ? (allFacts.email?.display ?? '') : '';
-const phone = allFacts.phone?.display ?? '';
-const ig = chrome.showSocials ? (siteSettings?.socialInstagram ?? '') : '';
-const fb = chrome.showSocials ? (allFacts.facebookUrl ?? '') : '';
+// The phone shows in the menu and Home's header line only once the church has confirmed it: neither
+// has room for the "To confirm" tag the footer and Contact carry (2026-10-24).
+const phone = allFacts.phone?.confirmed ? allFacts.phone.display : '';
+// Every social account (Site settings > Social links, plus the Facebook fact when the list has no
+// Facebook entry), the same list the footer shows (src/lib/social-links.ts, 2026-10-24).
+const socials = chrome.showSocials ? resolveSocialLinks(siteSettings, allFacts.facebookUrl) : [];
 
 // Subset of siteSettings the mobile menu needs. Pass as a plain object so the
 // React island doesn't try to serialize the whole Sanity document graph.
@@ -108,8 +114,7 @@ const mobileNavSettings = siteSettings
       tagline: siteSettings.tagline,
       email: email || undefined,
       phone: phone || undefined,
-      socialInstagram: chrome.showSocials ? siteSettings.socialInstagram : undefined,
-      socialFacebook: fb || undefined,
+      socials: socials.length > 0 ? socials : undefined,
     }
   : null;
 
@@ -160,7 +165,7 @@ const isHome = pathname === '/';
 // Home's Sunday note (board E), derived from Church facts; never typed. The menu carries the same
 // facts on every page (Home audit research, 2026-10-17: people open the menu to find times).
 const noteFacts = isHome ? allFacts : null;
-const notePhone = isHome ? allFacts.phone : null;
+const notePhone = isHome && allFacts.phone?.confirmed ? allFacts.phone : null;
 const sundayMinutes = (noteFacts?.serviceTimes ?? [])
   .filter((t) => t.dayIndex === 0)
   .map((t) => t.minutes);
@@ -183,6 +188,11 @@ const menuSunday = menuMinutes.length
       confirmed: menuThisSunday?.confirmed ?? true,
     }
   : undefined;
+// The menu's watch row (2026-10-24): where Sunday streams, from Church facts (live-service.ts).
+const liveSettings = watchLive(allFacts);
+const menuWatch = liveSettings
+  ? { href: liveSettings.href, label: watchLabel(liveSettings.via) }
+  : undefined;
 function isActive(href: string) {
   if (href === '/') return pathname === '/';
   return pathname.startsWith(href.endsWith('/') ? href : `${href}/`);
@@ -194,7 +204,11 @@ function isGroupActive(items: { href: string }[]) {
 }
 ---
 
-<header class="site-header bg-background" data-home={isHome ? '' : undefined}>
+<header
+  class="site-header bg-background"
+  data-home={isHome ? '' : undefined}
+  data-past={isHome ? '' : undefined}
+>
   {/* Brand accent stripe — same visual signature used at the top of the
       mobile menu drawer. Visible on every viewport. */}
   <div class="site-header__stripe h-1 bg-primary" aria-hidden="true"></div>
@@ -251,30 +265,22 @@ function isGroupActive(items: { href: string }[]) {
               {phone}
             </a>
           )}
-          {(ig || fb) && (
+          {socials.length > 0 && (
             <div class="flex items-center gap-1">
-              {ig && (
-                <a
-                  href={ig}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  class="inline-flex h-7 w-7 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent hover:text-link"
-                >
-                  <IconBrandInstagram size={14} stroke={1.5} />
-                </a>
-              )}
-              {fb && (
-                <a
-                  href={fb}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  class="inline-flex h-7 w-7 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent hover:text-link"
-                >
-                  <IconBrandFacebook size={14} stroke={1.5} />
-                </a>
-              )}
+              {socials.map((link) => {
+                const Icon = socialIcon(link.platform);
+                return (
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={socialLabel(link)}
+                    class="inline-flex h-7 w-7 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent hover:text-link"
+                  >
+                    <Icon size={14} stroke={1.5} />
+                  </a>
+                );
+              })}
             </div>
           )}
           {/* No theme toggle: FBC Auburn is light only (2026-10-17). */}
@@ -311,10 +317,10 @@ function isGroupActive(items: { href: string }[]) {
             logo, show the full availabilityStatus so the roomy header doesn't
             read as half-empty. The complete status is always in the aria-label
             and on the Contact page. */}
-        <span class="text-[0.65rem] font-semibold tracking-eyebrow whitespace-nowrap uppercase md:hidden">
+        <span class="text-xs font-semibold tracking-eyebrow whitespace-nowrap uppercase md:hidden">
           Open
         </span>
-        <span class="hidden text-[0.65rem] font-semibold tracking-eyebrow whitespace-nowrap uppercase md:inline">
+        <span class="hidden text-xs font-semibold tracking-eyebrow whitespace-nowrap uppercase md:inline">
           {availability}
         </span>
       </a>
@@ -442,8 +448,8 @@ function isGroupActive(items: { href: string }[]) {
         navigation close; the nav is fully functional without it. */}
     <div class="site-header__nav hidden items-center gap-l lg:flex">
       <nav class="site-nav flex items-center gap-l" aria-label="Primary">
-        {/* FBC Auburn: the header shows the first four menu links; the Menu button shows all. */}
-        {NAV_ITEMS.slice(0, 4).map((item) =>
+        {/* FBC Auburn: the header shows the first five menu links (four until the 2026-10-24 audit added Events); the Menu button shows all. Five fit at 1024 with the tighter gaps in auburn.css (1024 to 1279px). */}
+        {NAV_ITEMS.slice(0, 5).map((item) =>
           item.kind === 'flat' ? (
             <a
               href={item.href}
@@ -533,6 +539,7 @@ function isGroupActive(items: { href: string }[]) {
       logoLightUrl={logoLightWebpMobile.src}
       logoDarkUrl={logoDarkWebpMobile.src}
       sunday={menuSunday}
+      watch={menuWatch}
       current={pathname}
       search={site.search.enabled || undefined}
       {...mobileCtaProps}
@@ -687,9 +694,11 @@ function isGroupActive(items: { href: string }[]) {
     header.toggleAttribute('data-scrolled', window.scrollY > 8);
     if (!header.hasAttribute('data-home')) return;
     const masthead = document.querySelector<HTMLElement>('.hb-masthead');
+    // Home opens on a photo hero since 2026-10-23, with no big lockup of its own, so the bar shows
+    // the logo from the start (data-past is also rendered on the server, so nothing flashes).
     const past = masthead
       ? masthead.getBoundingClientRect().bottom < header.getBoundingClientRect().height
-      : window.scrollY > 420;
+      : true;
     header.toggleAttribute('data-past', past);
   };
   const hw = window as typeof window & { __headerStateBound?: boolean };

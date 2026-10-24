@@ -85,9 +85,9 @@ export const SECTION_SURFACES: SurfacePair[] = [
     title: 'Paper',
     hint: 'The ordinary page surface. Every other surface is a step away from it.',
     className: 'bg-background',
-    dot: '#FFFFFF',
+    dot: '#FBF8F3',
     dotDark: '#141823',
-    dotInk: '#171A26',
+    dotInk: '#16263D',
     inCadence: true,
     tokens: { bg: '--background', text: '--foreground', heading: '--foreground', link: '--link' },
   },
@@ -96,9 +96,9 @@ export const SECTION_SURFACES: SurfacePair[] = [
     title: 'Soft paper',
     hint: 'The alternating band. The cadence puts it between two Paper sections.',
     className: 'bg-muted',
-    dot: '#F3F6F9',
+    dot: '#F4EFE7',
     dotDark: '#1C2333',
-    dotInk: '#171A26',
+    dotInk: '#16263D',
     inCadence: true,
     tokens: { bg: '--muted', text: '--foreground', heading: '--foreground', link: '--link' },
   },
@@ -109,7 +109,7 @@ export const SECTION_SURFACES: SurfacePair[] = [
     className: 'bg-card',
     dot: '#FFFFFF',
     dotDark: '#1C2333',
-    dotInk: '#171A26',
+    dotInk: '#16263D',
     tokens: {
       bg: '--card',
       text: '--card-foreground',
@@ -122,9 +122,9 @@ export const SECTION_SURFACES: SurfacePair[] = [
     title: 'Ink',
     hint: 'The closing CTA band. The same near-black on a light or a dark page.',
     className: 'bg-accent-dark text-bg',
-    dot: '#0F1726',
-    dotDark: '#0F1726',
-    dotInk: '#FFFFFF',
+    dot: '#0F2238',
+    dotDark: '#0F2238',
+    dotInk: '#FBF8F3',
     themeStatic: true,
     tokens: {
       bg: '--color-accent-dark',
@@ -143,8 +143,8 @@ export const SECTION_SURFACES: SurfacePair[] = [
     title: 'Feature',
     hint: 'The church blue an editor can ask for with the Feature look. White text.',
     className: 'surface-feature',
-    dot: '#235E93',
-    dotDark: '#235E93',
+    dot: '#1F3A5F',
+    dotDark: '#1F3A5F',
     dotInk: '#FFFFFF',
     themeStatic: true,
     inCadence: true,
@@ -158,17 +158,17 @@ export const SECTION_SURFACES: SurfacePair[] = [
   },
   // The Stone look (2026-10-18): the pale stepping-stone tiles
   // (public/textures/tile-sky.svg) the church's sky panels use, with dark text.
-  // The band paints #E9F2FB under the tiles, but the pair is MEASURED on
-  // --stone, the darkest colour in the tile (#D3E3F3, the gaps between stones),
+  // The band paints #E9EEF5 under the tiles, but the pair is MEASURED on
+  // --stone, the darkest colour in the tile (#D3DCE8, the gaps between stones),
   // so the gate checks the worst spot any word can land on.
   {
     value: 'stone',
     title: 'Stone',
     hint: 'The pale stepping-stone band an editor can ask for with the Stone look. Dark text.',
     className: 'surface-stone',
-    dot: '#D3E3F3',
-    dotDark: '#D3E3F3',
-    dotInk: '#171A26',
+    dot: '#D3DCE8',
+    dotDark: '#D3DCE8',
+    dotInk: '#16263D',
     themeStatic: true,
     inCadence: true,
     accentToken: '--stone-accent',
@@ -207,8 +207,8 @@ export const HEADING_ACCENT = {
   /** Theme-aware token the accent word reads on the theme-following surfaces. */
   token: '--primary',
   /** Literal light/dark values of `token`, asserted against globals.css. */
-  light: '#235E93',
-  dark: '#96C3EA',
+  light: '#1F3A5F',
+  dark: '#7F98B8',
   /** Pinned colour on the fixed ink band, where a theme-aware token would flip. */
-  onDarkBand: '#96C3EA',
+  onDarkBand: '#7F98B8',
 } as const;

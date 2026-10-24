@@ -46,8 +46,8 @@ brand
   48 px, and an avatar (white small mark on a deep sky circle).
 - **Everyday default is one colour.** Full colour is for the website's big moments, banners and
   the mark itself.
-- **Type:** Young Serif (display) and Familjen Grotesk (text and UI). Auburn Stone, a Young Serif
-  split into stones, sets stone headings at 40 px and up only.
+- **Type:** Young Serif (display) and Familjen Grotesk (text and UI). The big headings (40 px and up) are drawn in brick:
+  Young Serif letters filled with running-bond brick (DESIGN.md, "Brick letterforms").
 - **Brand extras:** stone icons (Bible, coffee, music, map pin, clock, praying hands, giving hand,
   blocks), "First Baptist" stone lettering and a baptism graphic.
 

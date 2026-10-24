@@ -21,6 +21,7 @@ import { site } from '@/data/site';
 import Hero from '@/components/Hero.astro';
 import FaqAccordion from '@/components/FaqAccordion';
 import FinalCta from '@/components/FinalCta.astro';
+import BoardRule from '@/components/home/BoardRule.astro';
 
 const [page, siteSettings] = await Promise.all([getFaqPage(), getSiteSettings()]);
 
@@ -65,9 +66,13 @@ const schemas = [
   />
 
   {/* ------- 2. FAQ accordion (grouped by category) ------------------------- */}
+  {/* The section marker every other page opens its sections with (2026-10-24); the board's
+      rule-then-section spacing also closes the gap that sat above the first group. */}
+  <BoardRule />
   <section class="bg-background" aria-label="Frequently asked questions">
     <div class="mx-auto max-w-content px-m py-section-lg">
-      <div class="mx-auto max-w-3xl">
+      {/* On the page's left edge like every other band (rule 17); it was centred, off the heading line. */}
+      <div class="max-w-3xl">
         {faqs.length > 0 ? (
           <FaqAccordion
             client:visible

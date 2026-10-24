@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import {
   calendarPageFor,
   clockLabel,
+  dayWithTimes,
   FALLBACK_FACTS,
   parseClock,
   resolveChurchFacts,
@@ -69,8 +70,10 @@ test('settings resolve, times sorted Sunday first, half-filled rows skipped', ()
   assert.deepEqual(f.phone, {
     display: '(513) 555-0100',
     tel: 'tel:+15135550100',
+    sms: null,
     confirmed: true,
   });
+  assert.equal(f.memberLoginUrl, null);
   assert.deepEqual(f.founded, { year: 1960, confirmed: true });
   assert.equal(f.youtubeChannelId, 'UCabcdefghijklmnopqrstuv');
   assert.equal(f.icalUrl, 'https://www.churchtrac.com/ical?ui=ABC123');
@@ -78,6 +81,17 @@ test('settings resolve, times sorted Sunday first, half-filled rows skipped', ()
     f.calendarPageUrl,
     'https://www.churchtrac.com/public_calendar?ui=ABC123&view=listMonth',
   );
+});
+
+test('a number that takes texts gets an sms link; a member sign-in link must be https', () => {
+  const f = resolveChurchFacts({
+    phone: '(513) 555-0100',
+    phoneTakesTexts: true,
+    memberLoginUrl: 'https://example.churchtrac.com/portal',
+  });
+  assert.equal(f.phone?.sms, 'sms:+15135550100');
+  assert.equal(f.memberLoginUrl, 'https://example.churchtrac.com/portal');
+  assert.equal(resolveChurchFacts({ memberLoginUrl: 'http://example.com' }).memberLoginUrl, null);
 });
 
 test('an empty settings document falls back to the published facts, all unconfirmed', () => {
@@ -225,6 +239,8 @@ test('email, Facebook, the live link and giving resolve, and stay null when empt
 
   const f = resolveChurchFacts({
     ...SETTINGS,
+    // No channel, so the live link falls through to Facebook (a channel would win, see below).
+    youtubeChannelId: null,
     email: 'office@example.org',
     emailConfirmed: true,
     socialLinks: [
@@ -253,6 +269,24 @@ test('email, Facebook, the live link and giving resolve, and stay null when empt
   assert.equal(live.liveUrl, 'https://www.facebook.com/fbcauburn/live');
   assert.equal(live.facebookUrl, null, 'only https addresses are linked');
   assert.equal(live.email, null, 'a malformed email is not linked');
+  assert.equal(live.liveVia, 'Facebook');
+});
+
+test('the live link: Live stream link, then the YouTube channel, then Facebook (2026-10-24)', () => {
+  const fb = { socialLinks: [{ platform: 'Facebook', url: 'https://www.facebook.com/fbcauburn' }] };
+  const channel = `UC${'a'.repeat(22)}`;
+  assert.equal(resolveChurchFacts(fb).liveVia, 'Facebook');
+  const yt = resolveChurchFacts({ ...fb, youtubeChannelId: channel });
+  assert.equal(yt.liveUrl, `https://www.youtube.com/channel/${channel}/live`);
+  assert.equal(yt.liveVia, 'YouTube');
+  const own = resolveChurchFacts({
+    ...fb,
+    youtubeChannelId: channel,
+    liveStreamUrl: 'https://stream.example.org/sunday',
+  });
+  assert.equal(own.liveUrl, 'https://stream.example.org/sunday');
+  assert.equal(own.liveVia, null);
+  assert.equal(resolveChurchFacts(null).liveVia, null);
 });
 
 test('structured data adds the email and the map pin only once confirmed', async () => {
@@ -295,4 +329,19 @@ test('earlierSundayLine names the gatherings before worship', async () => {
     ),
     null,
   );
+});
+
+test('dayWithTimes adds the times for that day from Church facts, other text stays', () => {
+  const times = [
+    { dayIndex: 0, minutes: 585, label: 'Sunday School for all ages' },
+    { dayIndex: 0, minutes: 660, label: 'Worship' },
+    { dayIndex: 3, minutes: 1080, label: 'Bible study and prayer' },
+  ];
+  assert.equal(dayWithTimes('Wednesdays', times), 'Wednesdays, 6:00 pm');
+  assert.equal(dayWithTimes('Sunday mornings', times), 'Sunday mornings, 9:45 and 11:00 am');
+  assert.equal(dayWithTimes('Saturdays', times), 'Saturdays');
+  assert.equal(dayWithTimes('Once a month', times), 'Once a month');
+  // A card named after one gathering gets that gathering's time only.
+  assert.equal(dayWithTimes('Sundays', times, 'Sunday School'), 'Sundays, 9:45 am');
+  assert.equal(dayWithTimes('Sundays', times, 'Kids'), 'Sundays, 9:45 and 11:00 am');
 });

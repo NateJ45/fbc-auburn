@@ -1,5 +1,101 @@
 # Change history
 
+_2026-10-24: the shape system and Find your place._
+
+**Decision.** From an audit of hppres.org: pictures take two Auburn shapes instead of rounded rectangles (a stepped brick
+corner on cards; the building's gable over a navy brick slab on every ImageText photo), and Ministries becomes a "Find
+your place" hub: a new `findYourPlaceSection` block with groups (New here, Kids and youth, Adults, Serve, Care) stacked
+beside a sticky index that follows the scroll and the header, chips on a phone. Card times come from Church facts through
+the new `dayWithTimes` (Home's bands use it too). All groups show at once rather than as tabs, because a small church's
+groups would hold one card each. The CI snapshot pins the new Ministries page. Detail: `docs/agent/shapes.md`.
+
+_2026-10-24: every Studio icon is brick._
+
+**Decision.** The Studio's icons (desk lists, tabs, tools, templates, the Site Guide) mixed two styles: the newer
+brick-course icons (Ministries, most beliefs) and the older pebble mosaic. Round 25 redrew the 24 pebble icons in brick in
+Gemini (home, page, guide, search, camera, eye, link, envelope, gear, bin, undo arrow, lightning, help, health check,
+calendar, palette, clock, map pin, music, open Bible, praying hands, giving hand, dove, broken chain), traced as drawn into
+`brand/icons/` under the same names, so the site's pictures and the icon pickers update too. Seven meanings that still
+fell back to `@sanity/icons` got their own: padlock (password pages), signpost (redirects), compass (the not-found page),
+telephone (Contact), stack of pages (the Content tool), code brackets (custom code) and a label tag (categories), wired in
+`src/sanity/brandIconArt.tsx`. The undo arrow was mirrored so it turns back. The trace now gives each brick its majority
+colour, which removed Gemini's navy speckle. The toy blocks and the clouds stay as they were. The Home tile "Add a page" opens a pane, which has no document type to take art from, so `kit.config.ts` names its icon outright (`brandIcon('pages')`).
+
+_2026-10-24: Lighthouse green again on Home. The "Photo needed" examples (#130) put a 2000px, 166 KB stock photo in the Home hero, which became the page's LCP element and took the mobile LCP past the 4.5 s gate (CI median 4656 ms; 5483 ms locally). The hero now has `srcset` with 800 and 1280 copies (16 and 29 KB, `heroSrcset` in `src/data/shot-list.ts`) and `sizes="(max-width: 767px) 150vw, 100vw"`, because on a phone the landscape photo is cropped to cover a taller box and is drawn about 1.5 times the screen width. Home's local median fell to 4001 ms (perf 0.78 to 0.87). The rest of the gap is the shared render-blocking CSS, unchanged._
+
+_2026-10-24: a Church Trac tab in Site settings._
+
+**Decision.** The seven Church Trac addresses (Church Trac address, connection card, contact form, prayer form, online
+giving, calendar feed, member sign-in) sat among the church's facts. They now have their own tab, in the order the church
+would set them up, under a short intro that says what each does and names Church Trac's Embed Domain setting. Display only:
+the field names and data are unchanged, so no migration and nothing for "Remove field" to touch. The live stream link and
+YouTube channel stay in Church facts (they are not Church Trac). The tab wears the link icon (`brand/brand.config.json`, the Studio icon groups).
+
+_2026-10-24: Church Trac on the site, from fbcm (PORTS.md card 152)._
+
+**Decision.** The church will run on Church Trac, and the site's own forms could not deliver. fbcm's three Church Trac pieces
+came over, adapted to Auburn: Church facts boxes for the Church Trac address, connection card, contact form and prayer form;
+`{token}` links filled in `queries.ts` (not `sanity.ts`, which is PORTABLE); a shared frame that replaces the Contact and
+Prayer forms once a box is set (and sends the visit buttons to the connection card); a "Church Trac form" band; and a "Church
+Trac page" band that reads a named Church Trac page at build time. Code stays in the church sites by decision (no starter
+code); the card maps it. `docs/agent/church-trac.md`.
+
+_2026-10-24: Ministries gets its own icons. Youth, Fellowship and Greeters all wore the coffee cup, Sunday School the clock and Workdays and grounds the map pin; round 24 drew seven new stone icons in the same style and five colours (backpack, chalkboard, plate and cutlery, handshake, open door, toolbox, grocery bag; masters in `brand/icons/`, printed by `node scripts/print-icons.mjs`, added to `STONE_ICONS`), and redrew the toy blocks with A, B, C under the same `blocks` name, so Kids, The children's room, the Ministries page head and the Studio's children icon all pick it up. `scripts/content/ministry-icons.mjs` set six cards: Youth (backpack), Sunday School (chalkboard), Fellowship (plate), Greeters (handshake), Food pantry and outreach (grocery bag), Workdays and grounds (toolbox). The open door is in the picker only._
+
+_2026-10-24: the livestream features from First Baptist Muncie._
+
+**Decision.** Auburn streams on Facebook and plans YouTube, so the live pieces work on Facebook now and
+improve by themselves when a channel id is set. A Live now banner above the header on every page,
+Home's watch card tag and the phone menu row share one clock (`src/lib/live-service.ts`, worship from
+5 minutes before to 80 after, church time). The This Sunday card says where to watch, and names the
+coming Sunday's scheduled YouTube stream once there is one. `/api/live-status/` (YouTube Data API,
+needs `YOUTUBE_API_KEY`) is ported but dormant. The live link now prefers the YouTube channel's live
+page over Facebook when both exist. Detail: `docs/agent/church-data.md`.
+
+_2026-10-24: what visitors and members need, after an audit against two other church sites._
+
+**Decision.** Auburn's newcomer pages already answered more than either reference (a FAQ, service
+length, dress, the first-Sunday walk), but the member side was thin. Added as placeholders with For
+Jacob notes (`scripts/content/next-steps-members.mjs`): a Next steps page, Youth and Ways to serve on
+Ministries with a leader and place ask on each card, When life happens on Contact, Events and
+Sermons in reach (the header shows five links: About, Ministries, Events, Watch, Give), and two
+Church facts: `phoneTakesTexts` for "Call or text" and `memberLoginUrl` for a footer member
+sign-in. Open items in PENDING.md 1x.
+
+_2026-10-24: examples in the shot list. Each "Photo needed" slot now shows a stock example of the shot it asks for (12 Unsplash photos, one Pexels clip for the Last Sunday card, all in `public/shot-examples/`, about 2 MB, credits in its CREDITS.md) under a pinned yellow note with a "How to take yours" toggle, so Jacob sees a finished-looking site and exactly which pictures are his to take. `Shot.example` / `Shot.video` in `src/data/shot-list.ts`; the hero and the watch card draw theirs behind the tag note. The clip respects reduced motion. Removed at launch with `PRE_LAUNCH_NOTES`.
+
+_2026-10-24: the shot list. Every photo slot that held a stand-in (the Facebook pantry, gift-table, building, sign and sanctuary photos; the Unsplash hero and Last Sunday poster) or sat empty now shows a yellow "Photo needed" box naming the photo we want, so the preview doubles as Pastor Jacob's shot list. Code-side only, no data written: `src/data/shot-list.ts` holds the shots (keyed by page and block heading) and decides when a slot shows one (before launch, while empty or a stand-in: an `fbca-fb-*` or `stand-in-*` upload or an Unsplash asset); `ShotRequest.astro` draws it (a frame in a picture slot, a pinned note over the hero and the Last Sunday card); the For Jacob pill lists the same shots. Open loop: PENDING 1x, the shot list._
+
+_2026-10-24: eight belief icons for What we believe. Drawn in Gemini in the stone-icon style and the site's five icon colours (navy, navy mid, navy pale, auburn, auburn dark), traced as drawn into masters in `brand/icons/` (crown, cross, dove, cracked heart, broken chain, cup and loaf over waves, church, clouds with light), printed by `node scripts/print-icons.mjs`, and added to `STONE_ICONS` in `src/lib/stone-icons.ts`, so every stone-icon picker offers them. `scripts/content/belief-icons.mjs` set the icon on each of the page's nine cards (The Bible keeps the open Bible). The page's For Jacob note asks him to flag any picture that says the wrong thing._
+
+_2026-10-24: the building sketch redrawn from the real site. The first sketch put the road sign and cross on the wrong side and gave the long wall five narrow windows; the redraw (Gemini, from street and aerial photos, the first sketch as the style reference) has the four tall windows, the white base, the portico with steps and the ramp to the right, and the steeple on the front gable. Nathan chose the building only, no road or sign, since Gemini kept misplacing the sign. `node scripts/brand-sketch.mjs` regenerated the webp (43 KB); the walk opener's door pin moved to the new doorway._
+
+_2026-10-24: the pre-review pass (from a portfolio critique, 6.5/10 before it), and two of Jacob's named pages._
+
+**Decision.** Before Jacob reviews the preview: Home's hero shows the church's own sanctuary photo (its Facebook page; hotspot on the "Jesus > Everything" banner) in place of a stock stand-in, with a two-line placeholder welcome and a dot in the kicker; an empty picture slot shows the brick-cross print on the Stone tint, shorter than a photo slot; the For Jacob pill moved bottom right and smaller (it covered left-edge text), with room under the footer bar so it never covers Privacy policy or Back to top; icon cards share one icon height (the Ministries titles drifted 12px) and What we believe's one stray icon is gone; Plan your visit's head has the map-pin and one intro; empty states are quiet cards; Journal's category row needs two categories; FAQ opens with the section marker; ten shadow recipes became three tokens; the Other ways in icons grow a little on hover. The walk map's outside follows the aerial and street photos (lot across the front and down the west side, the drive on the east, the sign at the east corner by the road, doors facing the road, annex at the back); its rooms are still a guess. New Studio pages `/prayer/` (a prayer-mode form: never stored, name optional, opt-in sharing) and `/events/` (the weekly rhythm and the Church Trac events), in the menu and the footer's Belong column (`scripts/content/prayer-events.mjs`, `scripts/content/pre-review.mjs`).
+
+_2026-10-24: the building sketch back in the footer, faint (16%, 12% on one column) behind the top area at the bottom right, so the compact footer keeps its height; and the phone, now set but unconfirmed, shows only where it can carry the "To confirm" tag (the footer and Contact), not in the menu or Home's header line until `phoneConfirmed` is ticked._
+
+_2026-10-24: the church phone, (513) 863-3500 (the church line on its earlier website and local listings), set in Site settings with `phoneConfirmed` false by `scripts/content/church-phone.mjs` under the write protocol; it shows with the "To confirm" tag and stays out of the JSON-LD until the church ticks the box. An earlier run the same day set a personal number by mistake; this replaced it._
+
+_2026-10-24: the church's TikTok (@auburn.pastor, its bio names the church and address) added to Site settings > Social links after Facebook, by `scripts/content/social-tiktok.mjs` under the write protocol (document and dataset backups outside the repo, dry run, apply, `audit:data` clean). The footer draws it as an icon button beside Facebook._
+
+_2026-10-24: a compact footer._
+
+**Decision.** The footer was 1,523px on desktop and 1,646px on a phone, a third of a page. Nathan picked the compact option from three mock-ups: the display-size tagline and its line, the building sketch and the full-width brick "Auburn" signature are gone; the mark, the two buttons and the link rows share the left column beside the This Sunday panel (726px desktop, 1,224px phone; on one column the panel follows the buttons). The buttons stay as the closing invite on the pages that have no band of their own. The Studio's "Footer: the line under the big heading" field (`footerInvite`) is hidden, not removed, so its stored value is never offered for "Remove field"; the `tagline` field's help now says it shows in the menu. The repeated church name under Get in touch is gone (the bottom bar carries it).
+
+_2026-10-24: checked live after the standardising pass merged._
+
+**Decision.** Live builds from the church's real content, which the CI snapshot does not carry, and it showed two misses. A section an editor adds to Home below the board (the live "Meet Pastor Jacob" text-and-picture band) got none of the board grammar, which was scoped to `main:has(.board-head)`: a 24px gutter, a cream ground on white, 140px under its rule, and the arch the inner pages drop. The scope is now `main:is(:has(.board-head), :has(> .hb))`, and such a section paints no ground of its own on Home. And the brand's `cards: soft` layout gave every `.card-lift` card a 14px corner (globals.css), with the standalone sermon art on the inner 14px too; both are the 20px card corner now.
+
+_2026-10-24: one scale for type, corners, buttons and spacing._
+
+**Decision.** A computed-style audit of every route at 375 and 1280 px found about a hundred distinct font sizes, card corners of 12 to 22 px, section H2s at four sizes and three line heights, form fields at 8 px beside 10 px buttons, a 52 px hero button pair, three hand-rolled buttons (Contact's scheduling link, the email page's Unsubscribe, the newsletter's Subscribe), and FAQ questions rendering at 16 px because tailwind-merge dropped `text-h3` as a colour. All of it now reads from tokens at the top of `auburn.css` (`docs/agent/design-tokens.md`); Tailwind's xs/sm/base point at 13/15/18 px. Display type (the masthead, brick H1s, 404, countdown) was left as designed. Home's sections padded only their foot, so a heading under the hero's brick sill or the navy belong band sat on its edge; every Home section now pads its top with `--hb-rhythm` (`--spacing-section-md`), and pads its foot too before a tinted band. On the inner pages a section now ends on its padding, not its last paragraph's margin (gaps between sections were 163 to 189px, now 163 to 165), and the Watch band lost its own edge lines, which doubled the board rule. A further sweep the same day covered every block on `/styleguide/sections/`, pages that only exist with content (built from a throwaway local snapshot with a sermon, a series, a post and an issue), keyboard focus, hover and press, the open menu and search, 768 and 1024, and tap targets. It fixed stats labels at 9.9px, `rounded-md` on content cards and photos, a logo strip hiding its first logo, a lone board rule under an empty block, the sermon facts list flush under its summary (`.c-facts { margin: 0 }` beat `mt-l`), journal body headings at full section size, the starter's 4% paper grain showing as a darker band down a post, three looks for the "To confirm" tag, focus rings at 2, 3 and 4px offsets (now one: 3px, offset 3px, white on the hero photo, outside the FAQ question), presses that only some buttons had, three-across grids at 768 (now from 64rem), and 138 links under 44px on a phone (0 now, with the card 82 hit area).
+
+_2026-10-21: the letterforms went brick (docs/design-directions/2026-10-21-brick-path/, sheet 13)._
+
+**Decision.** The Auburn Stone letterforms (Young Serif split into pebbles, a webfont) are replaced by build-time SVG. `scripts/lib/brick-letters.mjs` draws a word as treatment A (each Young Serif glyph clips a running-bond field, every fourth letter in auburn) or treatment B (the word cut out of a stepped wall). The glyph outlines and kerning are baked into `scripts/lib/brick-font.generated.mjs` (`npm run gen:letters`), so the generator reads no files and runs in the Worker too. `StoneHeading` draws one SVG per word so a title still wraps, keeps the clean text in an aria-label plus a hidden copy, and puts the preview's stega run back after. The masthead, footer signature and share cards use A; the 404 headline and the sermon art with no picture use B. The Auburn Stone preload and `@font-face` are gone; the font file stays for the Studio banner lettering.
+
 _2026-10-19: CI builds from a pinned content snapshot (starter card 138): `ci/sanity-snapshot.ndjson.gz`, `scripts/snapshot.mjs`, a daily non-blocking `live-watch.yml`._
 
 _2026-10-19: Auburn's own tours and Quick update jobs on card 137._

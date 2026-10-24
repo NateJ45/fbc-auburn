@@ -16,6 +16,25 @@ sequence).
 
 ## Waiting on a human
 
+### 1zy. Find your place: move the live Ministries page onto the hub (opened 2026-10-24)
+
+The block ships in the deploy; the content does not move until it is live, or the Studio would show an unknown block.
+After the deploy is green: back up, dry run, then
+`NCS_PRODUCTION_WRITE=yes node scripts/content/ministries-find-your-place.mjs <backup-folder> --apply`, rebuild, and
+check /ministries/ at 1280, 375 and 320. Then, from Jacob: the ages and leaders on each card, whether he offers coffee
+with the pastor, which serving teams exist, and photos for the cards on the shot list.
+
+### 1zz. The standardising pass: port the shared fixes, and see Live preview signed in (opened 2026-10-24)
+
+Two loose ends from fbc-auburn#112. **Ports:** several fixes are in starter components, not church ones, and
+belong in `ncs-astro-sanity-starter` with a port card: FAQ questions rendering at 16px (tailwind-merge drops
+`text-h3` beside `text-foreground`; `FaqAccordion.tsx`), the stats labels at 0.62rem (`StatsCounter.tsx`),
+the logo strip's row hiding its first logo when it overflows (`justify-center-safe`, `LogoStrip.astro`),
+`rounded-md` (8px) on content cards and photos in the section components, the journal body's headings at full
+section size (`JournalPortableText.tsx`), the `.c-facts` `margin: 0` cancelling `mt-l`, and a board rule left
+behind by a block that renders nothing (`board.css`). **Live preview:** the brand stylesheet also loads in the
+Studio's Live preview, so the new body size and type are there too; check it once signed in after the deploy.
+
 ### 1z. Card 136: Search Console on Home, once the church's domain is chosen (opened 2026-10-19)
 
 **Blocker: the domain cutover, then a Google service account.** Card 136 came in with the starter: the Visitors card can
@@ -133,6 +152,138 @@ domain and their mail.
 
 ---
 
+### 1x. The shot list: photos from Pastor Jacob (opened 2026-10-24)
+
+**Blocker: Jacob's photos.** Every picture slot that held a stand-in (Facebook photos of the pantry, the
+gift tables, the building, the sign and the sanctuary; the Unsplash hero and Last Sunday poster) or sat
+empty now shows a yellow "Photo needed" box naming the shot (`src/components/ShotRequest.astro`, list in
+`src/data/shot-list.ts`), and the For Jacob pill lists the same shots page by page. The stand-in assets
+stay in the dataset untouched; uploading the church's own photo in the Studio replaces the box at once.
+Since 2026-10-24 (later) each box also shows an example: a free Unsplash photo of the same kind of
+shot fills the slot (a Pexels clip plays in the Last Sunday card) under a yellow "Example photo, yours
+goes here" note with a "How to take yours" toggle, so the preview looks finished while still saying
+which photos are Jacob's. Files and credits: `public/shot-examples/` (`CREDITS.md`). The Home hero's
+example is the page's LCP element, so it ships an 800 and a 1280 copy beside the 2000px file (`heroSrcset`
+in `shot-list.ts`); a new full-width example needs both copies made too, or Lighthouse's LCP gate goes red.
+Every other example has 480, 640 and 800 copies for its srcset (`exampleSrcset`, 2026-10-24, from a
+Lighthouse "Improve image delivery" flag); a new one needs those three made too. The Last Sunday clip
+loads nothing until its card is on screen.
+The shots wanted:
+
+- Home: the hero (Sunday morning from the back of the room, landscape, left side calm for the words);
+  Who we are (worship wide from the back, upright; people talking after the service, upright; a small
+  group or Bible study, landscape); Last Sunday (Jacob preaching, seen from the pews, landscape); Meet
+  Pastor Jacob (head and shoulders, upright).
+- About, Who we are: the church family together on the steps after a service, landscape.
+- Plan your visit: the nursery or children's room ready for Sunday (no children's faces without signed
+  releases); the walk from the car park to the front door; the road sign from a car.
+- Ministries, Serving our neighbours: volunteers at the food pantry.
+- What we believe, Baptism: a baptism with the family's say-so, or the empty baptistry.
+- Leadership: Jacob, head and shoulders (the Home photo works).
+- News and notes: a post's stand-in cover asks for "a photo that goes with this post" (optional).
+
+At launch, `PRE_LAUNCH_NOTES` false turns every box off: a slot whose stand-in was never replaced shows the
+stand-in again, so delete or replace those first (the Facebook ones are `fbca-fb-*` uploads). Not covered:
+the round signer portrait in Who we are (hidden while empty; same photo as Meet Pastor Jacob).
+
+### 1x. The preview for Jacob (2026-10-23)
+
+**Blocker: Jacob's answers.** Every page carries marked placeholder copy ("[Placeholder: ...]" drafts and
+"[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
+(`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Since 2026-10-24 every photo slot shows a
+"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
+dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
+Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
+
+Belief icons (2026-10-24): What we believe's nine cards carry stone icons (eight new ones, `crown` to
+`clouds-and-light` in `src/lib/stone-icons.ts`, set by `scripts/content/belief-icons.mjs`). Doctrine is
+Jacob's, so the page's For Jacob note asks him to flag any picture that says the wrong thing; swap one by
+picking another icon on the card in the Studio, or redraw it (masters in `brand/icons/`, then
+`node scripts/print-icons.mjs`).
+
+### 1x. Church Trac: the church's addresses, and the Embed Domain (2026-10-24)
+
+**Blocker: Jacob sends the addresses.** The Church Trac pieces from fbcm are in (`docs/agent/church-trac.md`, PORTS.md card
+152), all empty-safe: Contact, Prayer and the "Tell us you are coming" buttons keep the site's own forms until Site settings >
+Church Trac (its own tab since 2026-10-24) holds the contact form or connection card and the prayer form. Open:
+
+- Fill `churchTracUrl`, `connectCardUrl`, `contactFormUrl` (optional) and `prayerFormUrl` once Jacob sends them (a small
+  backup-first data script, or by hand in the Studio), then rebuild and check each page shows the frame.
+- In Church Trac, set each form's "Form/Giving Embed Domain" to this site's address (the workers.dev address now, the church's
+  domain at cutover), or the frames refuse to open.
+- Not yet seen with a real Auburn form: the frame heights (`FORM_SIZES`) were measured on fbcm's connection card.
+
+### 1x. Next steps, Youth, serving and care: Jacob's answers (2026-10-24)
+
+**Blocker: Jacob's answers.** From the newcomer and member audit
+(2026-10-24), as placeholders with For Jacob notes, set by `scripts/content/next-steps-members.mjs`:
+a new `/next-steps/` page (know Jesus, baptism, membership, a group, serving), a Youth card and a
+"Ways to serve" section on Ministries plus a "who leads it, where it meets" ask on every card,
+"When life happens" (visits, funerals, weddings, help) in Contact's extra sections, and the menu led
+by About, Ministries, Events, Watch, Give (the header now shows five) with Next steps and Sermons
+added. Two new Church facts: `phoneTakesTexts` ("Call or text") and `memberLoginUrl` (footer
+"Members: sign in"; before launch an empty link shows a yellow ask). Open:
+
+- "This number takes texts" is ticked as a placeholder (set after the deploy, 2026-10-24); untick it
+  in Church facts if Jacob says the line cannot take texts.
+- The baptism step uses the praying hands; the belief icons (fbc-auburn#124) have since merged, so
+  `cup-and-loaf` (the ordinances over water) is there to swap in once Jacob has seen both pages.
+- Plan your visit's last step does not link to Next steps yet; add it once Jacob has filled the page.
+- Youth uses the coffee cup until a youth stone icon is drawn.
+
+### 1x. Logo: the linocut print follow-ups (wired in 2026-10-23)
+
+**Blocker: the church has not seen it yet.** The mark is the linocut print (2026-10-23, replacing
+the 2026-10-21 drawn brick cross): `brand/logo/mark.svg` and `mark-small.svg` are the traced
+masters, and `npm run logo` builds the lockups, seal, favicon, red alternates and site copies from
+them (`brand/logo/README.md`). The full print shows large (Home hero, arch page head, closing band,
+via `src/assets/brand/mark-print.png`), the small cut elsewhere, and the ink footer uses the small
+cut on its paper plate. Open:
+
+- Show the church the plain print and the roadside-red alternate
+  (`brand/logo/alternates/roadside-red/`); if they pick red, swap the large slots to it and keep the
+  white cross at small sizes.
+- `brand/illustration/church.svg` (the traced church drawing) is not used yet, and its door frames
+  have two red slivers to clean up by hand.
+- Still on the old stone art: the animated `MarkBuild.astro` (`mark-layered.svg`, used by the Image
+  and text and Steps rail blocks) and `baptism-layered.svg`, which need a layered redraw.
+- `npm run favicon` rewrites `site.webmanifest` and drops its maskable entry and short name:
+  `git checkout` it after.
+
+DONE 2026-10-21: the auburn-and-navy palette is applied site-wide (DESIGN.md "Colors").
+
+DONE 2026-10-21: the pebble art is replaced by brick (`docs/design-directions/2026-10-21-brick-path/`):
+the section marker, the hero path (a low wall of three courses under the This Sunday card), the
+walk's numbered bricks, the card, sermon and panel tiles, the sill, the Studio banner strips and the
+share cards, all from `scripts/lib/brick-courses.mjs` via `npm run gen:stones`. Still stone: the
+Auburn Stone letterforms (the masthead and footer "Auburn", `StoneHeading.astro`), and the two
+layered pieces named above (`mark-layered.svg`, `baptism-layered.svg`).
+
+DONE 2026-10-21: the letterforms went brick (the queued item below, as built). `scripts/lib/brick-letters.mjs`
+(`brickWord` treatment A, `wallWord` treatment B; outlines in `scripts/lib/brick-font.generated.mjs`,
+rebuilt by `npm run gen:letters`) draws the Home masthead, the footer signature, the page H1s
+(`StoneHeading.astro`) and the share cards as A, and the 404 headline and the sermon and series art
+with no picture as B; the person initials (`.c-photo--blank`) are plain Young Serif. The Auburn Stone
+preload and `@font-face` are gone. What still uses the Auburn Stone font: only the Studio banner
+lettering (`src/sanity/kit.config.ts`, `studio-banner.test.ts`, `public/fonts/auburn-stone.woff2`), until the
+Studio kit gets the generator. One social tile in brick-wall letters is not drawn yet.
+
+Original brief (kept for the record): the letterforms go brick (decision and sheet 13 in
+`docs/design-directions/2026-10-21-brick-path/README.md`, "The letterforms"). Treatment A
+(brick-filled letters) for the masthead "Auburn" (`home-board.css` `.hb-word`), the page H1s
+(`StoneHeading.astro`, used by `ArchHero`, `BoardPageHead` and the 404) and the footer signature
+(`auburn.css` `.sf-signature`); treatment B (the word cut out of a wall) for the 404 headline, the
+sermon and series art with no picture (`SermonArt.astro`, `collections.css` `.c-art__word`) and
+one social tile. Build it as a build-time SVG generator: fontkitten draws the Young Serif
+outlines (see `scripts/brand-logo.mjs` for the parse, and why opentype.js is kerning-only), the
+`brick-courses.mjs` field fills them, one SVG per word so lines wrap on phones, the words kept as
+real text (`aria-label`, and the live-preview stega run put back after, as `StoneHeading` does
+now). The person initials (`collections.css` `.p-card` no-photo) can drop to plain Young Serif.
+Leave the Studio banner lettering on Auburn Stone (`kit.config.ts` lettering, `studio-banner.test.ts`)
+until the kit gets the generator; keep the font files until nothing on the site uses them, then
+drop the preload in `BaseLayout.astro` and the `@font-face` in `auburn.css`. Gates plus the 375
+and 1280 sweep on Home, About, Sermons, a blank series, Contact and the 404.
+
 ### 1c. Finish the reskin: the rest of the mockups
 
 **Blocker: none; queued work.** The pick is recorded (A blended with B and C). The first pass
@@ -158,13 +309,24 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
 - DONE 2026-10-17: the Menu (a full-screen panel at every width, the header shows the first four
   links) and the footer columns in Site settings; the contact form is a visit form (editor-written
   questions in the Contact page; `?visit=sunday-11` pre-fills it).
+- DONE 2026-10-24: brick laid by brick: the brick-letter titles, the sill and the stepped markers
+  are laid course by course with a trowel tap (`docs/agent/animation.md`, "Brick, laid by brick").
+- DONE 2026-10-24: the flow layer (`src/scripts/flow.ts`, `src/styles/flow.css`,
+  `docs/agent/animation.md` "The flow layer"): line-by-line headings, staggered fade-ups, photo
+  zoom and drift, the home hero drift, magnetic buttons, page-to-page lift and rise, and the footer
+  verse (Site settings > Social and footer). Waiting on Pastor Jacob: which verse and translation
+  for the footer (Matthew 11:28, CSB, until he picks). Open: the flow layer could go back to the
+  starter as a port card once it has run on the live preview for a while.
 - DONE 2026-10-17: the motion layer and "Walk in with us" (`src/styles/motion.css`,
   `src/scripts/motion.ts`): reveals, the rail, the mark building itself with wave drift (About,
   "The story in our mark"), the baptism ring and ripples, the background path, stone dividers and
   nav stones. Waiting on the church: a rough plan of the building (which door guests use, where
-  the fellowship hall, children's room and sanctuary are). Until then the Walk's drawing is
-  placeholder geometry in `src/lib/walk-plan.ts` (ROOMS, STOPS, ROUTE); only those change.
-- Still open: Events in the menu once the church's Church Trac links exist; Give is in the menu
+  the fellowship hall, children's room and sanctuary are). Since 2026-10-24 the outside of the
+  Walk's plan follows the aerial and street photos (lot, drive, sign, doors, annex); the rooms inside
+  (`src/lib/walk-plan.ts` ROOMS, STOPS, ROUTE) are still a guess until he shares a plan.
+- Events and Prayer requests are in the menu (2026-10-24, Studio pages `/events/` and `/prayer/`);
+  Events fills from Church Trac once the calendar link is set, and the prayer form sends once a
+  church email is connected. Still open: Give is in the menu
   (2026-10-17) but goes to Contact until there is a giving link (swap it in Site settings >
   Navigation); the deacons' team grid once names and permissions exist.
 - Waiting on Pastor Jacob (Home, 2026-10-17): the four "Your first Sunday" steps (Studio: Home,
@@ -181,18 +343,14 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   week, Who we are, This week and Last Sunday, Other ways in, the ink footer and the header's
   Sunday note. Built by `src/components/home/HomeBoard.astro`; data change
   `scripts/content/home-board-e.mjs`.
-- Photos: Home uses four STOCK stand-ins from Unsplash (free licence; each asset's `source` field
-  holds its Unsplash id): the church, the embrace and the shared meal in Who we are, and the Last
-  Sunday poster. Each carries a "Stand-in photograph" caption, derived from that `source`, which
-  goes by itself when a real photo is uploaded (Studio: Home, then the block). Replace them from the
-  photo session before launch.
+- Photos: Home's stand-ins (Facebook and Unsplash) are hidden behind "Photo needed" shot requests
+  before launch (1x, the shot list). An Unsplash stand-in that is still in place after launch keeps
+  its "Stand-in photograph" caption.
 - Waiting on Pastor Jacob: his welcome for Who we are. The note reads "[Two or three sentences of
   welcome in Pastor Jacob's own words.]" until he writes it (Studio: Home, Who we are, Text).
-- Waiting on the church: a Give link (the Give card goes to Contact until there is one) and the
-  social links for the footer's Follow column (Site settings; the column hides while empty).
+- Waiting on the church: a Give link (the Give card goes to Contact until there is one).
 - Inner pages are on board E's grammar (2026-10-17): white ground, stepping-stone rules, one left
-  edge, no arch. Still open there: the empty picture slots (Serving our neighbours, Bringing
-  children) wait on the photo session, and the faint background path from the motion layer is
+  edge, no arch. Still open there: the picture slots show shot requests until the photos come (1x, the shot list), and the faint background path from the motion layer is
   hidden on these pages (`board.css`); bring it back only if Nathan wants it under the white.
 
 Service times, the 1959 founding and Hebrews 13:8 are still unconfirmed with the church; copy
@@ -288,9 +446,9 @@ edit in Site settings > Church facts, then a publish.
 - The church phone (Identity & contact > Phone) and `phoneConfirmed`; there is none on file.
 - The church email (Identity & contact > Public email) and `emailConfirmed`; none on file, so no
   mailto: shows anywhere yet.
-- The Facebook page (Social & footer > Social links, platform Facebook) and, if it differs, the
-  Church facts `liveStreamUrl`. Until one is set, /watch/ and the footer have no live link and the
-  Home "Live now" card still goes to /watch/ (visitor audit, 2026-10-18).
+- If the church streams somewhere other than its Facebook page (facebook.com/FirstAuburnHamilton,
+  in Social links since 2026-10-24), the Church facts `liveStreamUrl`. The Live now banner, the
+  This Sunday watch line and the menu row use the Facebook page until then.
 - `givingUrl` once online giving exists (Church Trac); until then Give opens /give/.
 - Optional `churchAddress.lat` / `lng` for the JSON-LD map pin.
 - The contact form's transport: the privacy policy (2026-10-18) describes the intended setup, the
@@ -299,9 +457,11 @@ edit in Site settings > Church facts, then a publish.
 - The Home "Other ways in" Give card still links to Contact: a `ctaBlock` has no typed-path link
   type, so it cannot point at /give/ without a Give page document. Repoint it in the Studio once
   `givingUrl` is set (external link), or add a Give page document.
-- The YouTube channel id, if the church streams there (the Watch band shows its fallback until
-  then). If the public feed proves flaky, port First Baptist Muncie's Data API reader
-  (`youtube-feed-api.ts`, needs a key).
+- The YouTube channel id, once the church starts streaming there (planned). One edit turns on the
+  replay, the scheduled stream on the This Sunday card and the Watch live links to the channel's
+  live page. Then add the Worker secret `YOUTUBE_API_KEY` so Live now follows the real stream
+  rather than the clock (`docs/agent/church-data.md` says how). If the public feed proves flaky,
+  port First Baptist Muncie's Data API reader (`youtube-feed-api.ts`, same key).
 - The Church Trac calendar's iCal link (Calendar > Share), which fills This week with events and
   adds the "Full calendar" link.
 - Set Identity > business type to Church when the Studio kit allows it; the JSON-LD still says
@@ -315,7 +475,7 @@ edit in Site settings > Church facts, then a publish.
 2026-10-17 (`docs/agent/studio-kit.md`): Home, Site Guide, Checkup, the staff view, Trash, the note after Publish
 and the tour, checked signed in at `/studio` in light and dark. Still to do:
 
-- **Nathan to review the new stone icons; alternatives in the overnight scratchpad.** Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`; eight more (help, restore, quick, mail, settings, trash, calendar, palette) followed. The restore stone has no meaning key yet (a `restore` meaning in the starter's `BRAND_ICON_KEYS` would use it).
+- **Nathan to review the Studio icons, redrawn in brick on 2026-10-24 (round 25), plus seven new ones (padlock, signpost, compass, telephone, stack of pages, code, tag).** Older note: Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`; eight more (help, restore, quick, mail, settings, trash, calendar, palette) followed. The restore stone has no meaning key yet (a `restore` meaning in the starter's `BRAND_ICON_KEYS` would use it).
 - **The editor's Sanity user id in `kitConfig.staff`** once he has accepted the invitation. Until then the staff
   view goes by role, and he is an administrator, so he would see the full Studio.
 - **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its

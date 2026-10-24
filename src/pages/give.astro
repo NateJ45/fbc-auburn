@@ -1,7 +1,7 @@
 ---
 // Safe to edit by hand
 // The Give page (visitor audit, 2026-10-18). The menu's Give link comes here until the church sets
-// up online giving; once Site settings > Church facts > Online giving link is filled in, every Give
+// up online giving; once Site settings > Church Trac > Online giving link is filled in, every Give
 // link in the menus goes straight to that page instead (src/lib/give.ts), and
 // this page leads with a "Give online" button for anyone who lands here from elsewhere.
 //
@@ -17,6 +17,7 @@ import { getSiteSettings } from '@/lib/queries';
 import { getChurchFacts } from '@/lib/church-data';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
+import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
 
 const [siteSettings, facts] = await Promise.all([getSiteSettings(), getChurchFacts()]);
 const worship = facts.serviceTimes.filter((s) => s.dayIndex === 0).at(-1) ?? null;
@@ -79,7 +80,12 @@ const schemas = [
       {address && (
         <div class="give-way">
           <h3 class="give-way__title">By mail</h3>
-          <p>Make a check out to {site.name} and mail it to:</p>
+          <p>
+            Make a check out to {site.name}{' '}
+            {/* Pre-launch: the payee is our guess until Jacob confirms it (src/data/for-jacob.ts). */}
+            {PRE_LAUNCH_NOTES && '[Jacob: is this the name checks should be made out to?] '}
+            and mail it to:
+          </p>
           <address class="give-way__address">
             {site.name}
             <br />
@@ -115,26 +121,28 @@ const schemas = [
   .give-ways {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
-    margin-top: 2rem;
+    gap: var(--gap-grid);
+    margin-top: var(--gap-heading);
   }
-  @media (min-width: 48rem) {
+  /* Three across from 64rem, like the icon cards: at 48rem each column was about 140px and the
+     address wrapped every few words (2026-10-24). */
+  @media (min-width: 64rem) {
     .give-ways {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
   .give-way {
-    padding: 1.5rem;
+    padding: var(--pad-card);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: var(--radius-card);
     background: var(--background);
-    font-size: 1.05rem;
+    font-size: var(--fs-body);
     line-height: 1.6;
     color: var(--foreground);
   }
   .give-way__title {
     margin: 0 0 0.5rem;
-    font-size: 1.5rem;
+    font-size: var(--fs-title);
     line-height: 1.2;
     color: var(--heading-solid);
   }

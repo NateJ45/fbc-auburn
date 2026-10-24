@@ -5,50 +5,67 @@
 // page's HTML and readable without JS; src/scripts/motion.ts only lights it up leg by leg.
 //
 // =============================================================================================
-// PLACEHOLDER LAYOUT. The church has not shared a plan of its building yet. When it does, only
-// ROOMS, STOPS and ROUTE below change; the words of each stop live in Sanity (walkSection).
+// THE OUTSIDE IS REAL, THE INSIDE IS NOT YET (2026-10-24). The lot, the drive, the sign, the
+// building's footprint and its front doors follow the aerial view and street photos of 4241
+// Hamilton-Scipio Rd: the road along the front, the lot across the front and down the west side,
+// the front gable (porch, ramp, steeple) facing the road, the white annex at the back, a concrete
+// drive down the east side, and the sign with the red cross at the lot's east corner by the road.
+// The plan is drawn as you arrive, road at the foot, so west is on the right. WHICH ROOMS ARE
+// INSIDE (the hall, the children's room) is still a guess until the church shares a plan; only
+// ROOMS, STOPS and ROUTE change then. The words of each stop live in Sanity (walkSection).
 // =============================================================================================
 
 /** [x, y, w, h, kind, label, tile w, tile h] in a 800 x 620 viewBox. */
 type Room = [number, number, number, number, RoomKind, string, number, number];
-export type RoomKind = 'lawn' | 'lot' | 'road' | 'sanct' | 'hall' | 'kids' | 'door';
+export type RoomKind =
+  'lawn' | 'lot' | 'drive' | 'road' | 'sanct' | 'hall' | 'kids' | 'door' | 'sign';
 
 export const VIEWBOX = { w: 800, h: 620 } as const;
 
-// PLACEHOLDER: the lot, the road and the rooms.
 const ROOMS: Room[] = [
-  [40, 40, 380, 260, 'lawn', '', 46, 30],
-  [40, 330, 380, 200, 'lot', 'Parking', 30, 60],
-  [150, 532, 80, 26, 'lot', '', 36, 20],
-  [0, 562, 800, 46, 'road', 'Hamilton-Scipio Road', 64, 34],
-  [460, 60, 300, 230, 'sanct', 'Sanctuary', 44, 30],
-  [460, 310, 150, 170, 'hall', 'Fellowship hall', 40, 30],
-  [625, 310, 135, 170, 'kids', "Children's room", 36, 30],
-  [468, 486, 66, 24, 'door', 'Front doors', 30, 20],
+  // The east lawn (left), the concrete drive beside the building, the west lot (right).
+  [20, 40, 160, 440, 'lawn', '', 46, 30],
+  [190, 60, 44, 410, 'drive', '', 36, 40],
+  [530, 40, 250, 430, 'lot', 'Parking', 30, 60],
+  // The front lot between the road and the building, and the road itself.
+  [190, 470, 590, 86, 'lot', '', 30, 60],
+  [0, 566, 800, 46, 'road', 'Hamilton-Scipio Road', 64, 34],
+  // The building: the sanctuary, its front doors facing the road, the white annex at the back.
+  [250, 146, 230, 290, 'sanct', 'Sanctuary', 44, 30],
+  [325, 440, 80, 22, 'door', 'Front doors', 30, 20],
+  // PLACEHOLDER: the annex's rooms, until the church says which is which.
+  [250, 40, 170, 96, 'hall', 'Fellowship hall', 40, 30],
+  [425, 40, 95, 96, 'kids', 'Kids', 36, 30],
+  // The sign and red cross, in its brick planter at the lot's east corner by the road.
+  [36, 500, 70, 24, 'sign', 'Church sign', 30, 20],
 ];
 
 /** [x, y, stone icon, tag]. Stop n on the plan pairs with stop n in Sanity. */
 type Stop = [number, number, string, string];
-// PLACEHOLDER: where each stop sits on the plan.
 const STOPS: Stop[] = [
-  [230, 440, 'map-pin', 'Park here'],
-  [500, 462, 'praying-hands', 'A greeter meets you'],
-  [535, 400, 'coffee', 'Coffee is here'],
-  [692, 400, 'blocks', 'Kids check in here'],
-  [610, 175, 'bible', 'Sit anywhere'],
+  [650, 300, 'map-pin', 'Park here'],
+  // Beside the doors, not on them, so the "Front doors" label stays readable.
+  [452, 492, 'praying-hands', 'A greeter meets you'],
+  // PLACEHOLDER: the inside stops follow the guessed rooms above.
+  [300, 95, 'coffee', 'Coffee is here'],
+  [472, 95, 'blocks', 'Kids check in here'],
+  [365, 300, 'bible', 'Sit anywhere'],
 ];
-// PLACEHOLDER: waypoints walked from the previous stop to this one (none before the first).
+// Waypoints walked from the previous stop to this one (none before the first): from the west
+// lot round the front to the doors, then inside.
 const ROUTE: [number, number][][] = [
   [],
+  [[650, 505]],
   [
-    [330, 474],
-    [440, 488],
+    // Up past the right end of the "Front doors" label, not through it.
+    [425, 445],
+    [365, 420],
+    [320, 160],
   ],
-  [[525, 430]],
-  [[600, 420]],
+  [[386, 116]],
   [
-    [692, 320],
-    [640, 262],
+    [472, 160],
+    [420, 230],
   ],
 ];
 
@@ -122,9 +139,10 @@ export function buildWalkPlan(stopCount: number = STOPS.length): WalkPlan {
         tiles.push({ x: r1(x0), y: r1(yy), w: r1(x1 - x0), h: r1(y1 - yy) });
       }
     }
-    // Labels sit at each room's top edge (centred for the road, under the doors) so stop
+    // Labels sit at each room's top edge (centred for the road, under the doors and the sign) so stop
     // markers never cover them.
-    const ly = kind === 'door' ? y + h + 22 : kind === 'road' ? y + h / 2 + 6 : y + 24;
+    const ly =
+      kind === 'door' || kind === 'sign' ? y + h + 22 : kind === 'road' ? y + h / 2 + 6 : y + 24;
     return { kind, tiles, label: label ? { x: x + w / 2, y: ly, text: label } : undefined };
   });
 

@@ -1,0 +1,33 @@
+---
+// Safe to edit by hand
+// The "Church Trac form" band (2026-10-24, PORTS.md card 152; docs/agent/church-trac.md): a
+// form the church built in Church Trac, pasted as embed code, drawn in the site's own frame beside
+// the heading. The frame and its safety rules are ChurchTracFrame.astro. A band whose paste is not
+// a Church Trac form draws nothing on the live site, never an empty frame.
+import ChurchBand from './ChurchBand.astro';
+import ChurchTracFrame from './ChurchTracFrame.astro';
+import { formSrc } from '@/lib/church-trac-form';
+import type { ProjectedChurchTracFormSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedChurchTracFormSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const ok = Boolean(formSrc(block.embed));
+---
+
+{ok && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label={block.heading || 'Church Trac form'}
+    beside
+  >
+    <ChurchTracFrame src={block.embed} title={block.heading} size={block.size} />
+  </ChurchBand>
+)}

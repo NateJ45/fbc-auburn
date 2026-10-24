@@ -729,9 +729,9 @@ Note: the MCP lighthouse_audit only returns Accessibility / BP / SEO / Agentic. 
 ## Share images (Open Graph)
 
 Every route shares a 1200x630 card in the church's brand: the lockup top left, the page title in
-Auburn Stone with the mosaic letter colours (one colour, deep sky, when it needs three lines), and
-the stone path across the foot. Home and the fallback `public/og-default.png` use the masthead
-(mark, "First Baptist Church of", Auburn in mosaic) with the Site settings tagline. Drawn by
+brick letters (navy brick with every fourth letter in auburn; plain navy type when it needs three lines),
+and the brick wall across the foot. Home and the fallback `public/og-default.png` use the masthead
+(mark, "First Baptist Church of", Auburn in brick letters) with the Site settings tagline. Drawn by
 `scripts/lib/og-card.mjs` (site-specific; the starter's PORTABLE `scripts/lib/render-og.mjs` is
 no longer called here). PNGs are committed; CI never draws them.
 
@@ -817,7 +817,7 @@ Never change the feed address after submitting: both directories follow it.
 All empty-safe; each lights up after a publish. Phone and email are typed under Identity & contact
 (`phone`, `email`) and confirmed with `phoneConfirmed` / `emailConfirmed`: they show in the menu,
 the footer and Contact with a "To confirm" tag, and join the JSON-LD only once confirmed. `givingUrl`
-(https) makes every menu link to `/give/` go there instead (`src/lib/give.ts`). `liveStreamUrl`
+(https, on the Church Trac tab with the other Church Trac addresses, `docs/agent/church-trac.md`) makes every menu link to `/give/` go there instead (`src/lib/give.ts`). `liveStreamUrl`
 is the Watch band's and footer's live link, and the Home "Live now" card's target during worship;
 empty falls back to the Facebook row in Social links. `churchAddress.lat` / `lng` add the map pin
 to the JSON-LD with a confirmed address. All are resolved once in `src/lib/church-facts.ts`.

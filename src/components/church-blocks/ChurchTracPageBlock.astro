@@ -1,0 +1,141 @@
+---
+// Safe to edit by hand
+// The "Church Trac page" band (2026-10-24, PORTS.md card 152; docs/agent/church-trac.md): a page
+// the church keeps in Church Trac (a bulletin, a ministry newsletter), read at build time from
+// <Site settings > Church Trac > Church Trac address>/<page> by src/lib/church-trac-pages.ts and drawn here in the
+// site's own type (ChurchTracBlocks.astro). The heading is the band's own, else the page's name.
+//
+// WHEN IT CANNOT BE READ (Church Trac down, the page renamed): the band says so and links to the
+// page on Church Trac. WITH NO ADDRESS SET: before launch a yellow "[Jacob: ...]" ask, after launch
+// nothing. The daily rebuild (deploy.yml) keeps the page within a day of a Church Trac edit.
+import ChurchBand from './ChurchBand.astro';
+import ChurchTracBlocks from './ChurchTracBlocks.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { churchTracPageUrl, loadChurchTracPage } from '@/lib/church-trac-pages';
+import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+import type { ProjectedChurchTracPageSection } from '@/lib/churchBlocks.types';
+
+interface Props {
+  block: ProjectedChurchTracPageSection;
+  surface?: 'background' | 'muted';
+  headingId: string;
+}
+const { block, surface, headingId } = Astro.props;
+const { churchTracUrl } = await getChurchFacts();
+const page = await loadChurchTracPage(block.page, churchTracUrl);
+const url = churchTracPageUrl(block.page, churchTracUrl);
+const heading = block.heading || page?.title || 'From Church Trac';
+const show = Boolean(page || url || PRE_LAUNCH_NOTES);
+---
+
+{show && (
+  <ChurchBand
+    type={block._type}
+    heading={heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label={heading}
+  >
+    <div class="ctp">
+      {page ? (
+        <>
+          {page.banner && (
+            <img class="ctp__banner" src={page.banner} alt="" loading="lazy" decoding="async" />
+          )}
+          {page.bannerBlocks.length > 0 && <ChurchTracBlocks blocks={page.bannerBlocks} />}
+          {page.sections.map((blocks) => (
+            <div class="ctp__section">
+              <ChurchTracBlocks blocks={blocks} />
+            </div>
+          ))}
+          {url && (
+            <p class="ctp__source">
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                See it on Church Trac<span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            </p>
+          )}
+        </>
+      ) : url ? (
+        <p class="ctp__p">
+          This page could not be loaded just now.{' '}
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            Read it on Church Trac<span class="sr-only"> (opens in a new tab)</span>
+          </a>
+          .
+        </p>
+      ) : (
+        <p class="ctp__p">
+          [Jacob: this section shows a page you keep in Church Trac. Send us your Church Trac
+          address and the page's name, and it fills in here every morning.]
+        </p>
+      )}
+    </div>
+  </ChurchBand>
+)}
+
+<style is:global>
+  .ctp {
+    max-width: 44rem;
+    min-width: 0;
+  }
+  .ctp__banner,
+  .ctp__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 0 var(--spacing-m);
+    border-radius: var(--radius-card);
+  }
+  .ctp__section + .ctp__section {
+    margin-top: var(--spacing-l);
+    padding-top: var(--spacing-l);
+    border-top: 1px solid var(--border);
+  }
+  .ctp__h {
+    margin: 0 0 0.5rem;
+  }
+  .ctp__h--small {
+    font-size: var(--text-h5);
+  }
+  .ctp__p {
+    margin: 0 0 0.85rem;
+    line-height: 1.6;
+  }
+  .ctp__p a,
+  .ctp__source a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .ctp__btn {
+    margin: 0.5rem 0 1rem;
+  }
+  .ctp__cols {
+    display: grid;
+    gap: var(--spacing-m);
+  }
+  @media (min-width: 768px) {
+    .ctp__cols {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+  }
+  .ctp__col {
+    min-width: 0;
+  }
+  .ctp__rule {
+    margin: 1.25rem 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+  .ctp__source {
+    margin: var(--spacing-m) 0 0;
+    font-size: var(--text-sm);
+  }
+  .ctp__source a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

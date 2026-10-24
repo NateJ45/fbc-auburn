@@ -55,6 +55,8 @@ import { SyncIcon } from '@sanity/icons/Sync';
 import { TimelineIcon } from '@sanity/icons/Timeline';
 import { imageWithAlt } from './_imageWithAlt';
 import { rsvpSection } from './rsvpSection';
+import { checkPaste } from '../../lib/church-trac-form';
+import { churchTracPageName } from '../../lib/church-trac-address';
 
 // ── Shared fields ────────────────────────────────────────────────────────────
 
@@ -977,6 +979,93 @@ export const formSection = defineType({
   },
 });
 
+// ── 22. Church Trac form (2026-10-24, PORTS.md card 152) ─────────────────────
+// A form built in Church Trac (a connection card, a sign-up, a prayer request) shown on the page in
+// the site's own frame. Only an https churchtrac.com address survives the paste
+// (src/lib/church-trac-form.ts); the page draws its own <iframe>. docs/agent/church-trac.md.
+export const churchTracFormSection = defineType({
+  name: 'churchTracFormSection',
+  title: 'Church Trac form',
+  type: 'object',
+  icon: ClipboardIcon,
+  description:
+    'Shows a form you built in Church Trac, right on the page. In Church Trac, copy the form’s embed code and paste it here.',
+  fields: [
+    headingField(),
+    introField(),
+    defineField({
+      name: 'embed',
+      title: 'Church Trac embed code',
+      type: 'text',
+      rows: 4,
+      description:
+        'Paste the code Church Trac gives you (it starts with <iframe), or the form’s address. Only the Church Trac address is kept.',
+      validation: (R) => R.custom((value) => checkPaste(value)),
+    }),
+    defineField({
+      name: 'size',
+      title: 'Form size',
+      type: 'string',
+      description: 'How tall the frame is. Pick Long for a form with many questions.',
+      options: {
+        list: [
+          { title: 'Short', value: 'short' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Long', value: 'long' },
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      initialValue: 'medium',
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', size: 'size' },
+    prepare: ({ title, size }) => ({
+      title: title || 'Church Trac form',
+      subtitle: `Church Trac form${size ? ` · ${size}` : ''}`,
+    }),
+  },
+});
+
+// ── 23. Church Trac page (2026-10-24, PORTS.md card 152) ─────────────────────
+// A page the church keeps in Church Trac (a bulletin, a ministry newsletter), read at build time
+// from <Church Trac address>/<page> and drawn in the site's own type (src/lib/church-trac-pages.ts).
+// The daily rebuild keeps it within a day of a Church Trac edit. docs/agent/church-trac.md.
+export const churchTracPageSection = defineType({
+  name: 'churchTracPageSection',
+  title: 'Church Trac page',
+  type: 'object',
+  icon: BookIcon,
+  description:
+    'Shows a page you keep in Church Trac, like a bulletin or a newsletter, in this site’s look. It updates every morning. Needs the Church Trac address in Site settings > Church Trac.',
+  fields: [
+    headingField(),
+    introField(),
+    defineField({
+      name: 'page',
+      title: 'Church Trac page name',
+      type: 'string',
+      description:
+        'The last part of the page’s address in Church Trac: for https://yourchurch.churchtrac.com/bulletin, type bulletin. Pasting the whole address works too.',
+      validation: (R) =>
+        R.custom((value) => {
+          if (!value) return 'Type the page name from its Church Trac address.';
+          return churchTracPageName(value)
+            ? true
+            : 'Use the page name from its address: letters, numbers and dashes only.';
+        }),
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', page: 'page' },
+    prepare: ({ title, page }) => ({
+      title: title || 'Church Trac page',
+      subtitle: page ? `Church Trac page: ${page}` : 'Church Trac page: none named yet',
+    }),
+  },
+});
+
 // ── Exports ──────────────────────────────────────────────────────────────────
 
 export const churchSectionSchemas = [
@@ -1001,6 +1090,8 @@ export const churchSectionSchemas = [
   columnsSection,
   photoSection,
   formSection,
+  churchTracFormSection,
+  churchTracPageSection,
   // The email backbone (card 127): replies kept in D1, never in Sanity.
   rsvpSection,
 ];
@@ -1034,9 +1125,16 @@ export const CHURCH_INSERT_GROUPS: { name: string; title: string; of: string[] }
   {
     name: 'giving',
     title: 'Giving and sign-ups',
-    of: ['givingSection', 'progressSection', 'formSection', 'newsletterSection', 'rsvpSection'],
+    of: [
+      'givingSection',
+      'progressSection',
+      'formSection',
+      'churchTracFormSection',
+      'newsletterSection',
+      'rsvpSection',
+    ],
   },
-  { name: 'media', title: 'Media', of: ['livestreamSection'] },
+  { name: 'media', title: 'Media', of: ['livestreamSection', 'churchTracPageSection'] },
 ];
 
 /** Blocks that fill themselves from Church facts or the calendar (page checks). */
@@ -1050,6 +1148,7 @@ export const CHURCH_SELF_FILLING = [
   'calendarSubscribeSection',
   'contactCardSection',
   'formSection',
+  'churchTracPageSection',
 ];
 
 /** Blocks that draw their own band (the notice); the rest take the page cadence. */

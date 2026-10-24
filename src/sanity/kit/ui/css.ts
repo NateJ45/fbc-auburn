@@ -261,10 +261,10 @@ export const UI_CSS = `
 .ncs-ui .ui-live--compact .ui-state--now::after{inset:-3px;border-width:1.5px}
 
 /* Quick update tiles and the done screen */
-.ncs-ui .ui-tile{position:relative;display:block;width:100%;padding:0;overflow:hidden;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--ui-surface);border:1px solid var(--ui-rule);border-radius:var(--ui-radius);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
-.ncs-ui .ui-tile>.ui-edge{display:block}
+.ncs-ui .ui-tile{position:relative;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;width:100%;padding:0;overflow:hidden;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--ui-surface);border:1px solid var(--ui-rule);border-radius:var(--ui-radius);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.ncs-ui .ui-tile>.ui-edge{display:block;flex:none}
 .ncs-ui a.ui-tile:not([data-ui]){color:inherit;text-decoration:none}
-.ncs-ui .ui-tile__in{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:start;padding:18px 20px 20px;min-height:96px}
+.ncs-ui .ui-tile__in{flex:1 1 auto;display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:start;padding:18px 20px 20px;min-height:96px}
 .ncs-ui .ui-tile__title{display:block;font-family:var(--ui-display);font-weight:var(--ui-display-weight);font-size:22px;line-height:1.2;color:var(--ui-heading);text-wrap:balance}
 .ncs-ui .ui-tile__lead{display:block;margin-top:5px;font-size:15px;line-height:1.5;color:var(--ui-muted)}
 .ncs-ui .ui-tile:hover{transform:translateY(-2px);box-shadow:0 12px 26px -16px rgb(0 0 0 / .4);border-color:var(--ui-heading)}
@@ -313,4 +313,43 @@ export const UI_CSS = `
 @media (max-width:480px){.ncs-ui .ui-bars__row{grid-template-columns:minmax(0,1fr) auto}.ncs-ui .ui-bars__track{grid-column:1 / -1;grid-row:2}}
 .ncs-ui .ui-trail .ui-live{max-width:520px}
 .ncs-ui .ui-tour-trail .ui-live{max-width:none}
+.ncs-ui.ui-toast{display:flex;flex-direction:column;gap:8px;font-size:13px;line-height:1.45}
+.ncs-ui.ui-toast .ui-toast__steps{display:flex;align-items:center}
+.ncs-ui .ui-switch{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:8px 14px;background:var(--ui-surface);border:2px solid var(--ui-ink);border-radius:var(--ui-radius);color:var(--ui-ink);font:inherit;font-size:16px;text-align:left;cursor:pointer}
+.ncs-ui .ui-switch__track{flex:none;position:relative;width:52px;height:30px;border-radius:999px;border:2px solid var(--ui-ink);background:var(--ui-surface);transition:background .15s}
+.ncs-ui .ui-switch__thumb{position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--ui-ink);transition:transform .15s}
+.ncs-ui .ui-switch.is-on .ui-switch__track{background:var(--ui-heading);border-color:var(--ui-heading)}
+.ncs-ui .ui-switch.is-on .ui-switch__thumb{transform:translateX(22px);background:var(--ui-surface)}
+.ncs-ui .ui-switch__label{flex:1;min-width:0}
+.ncs-ui .ui-switch__state{flex:none;font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:var(--ui-ink)}
+@media (prefers-reduced-motion:reduce){.ncs-ui .ui-switch__track,.ncs-ui .ui-switch__thumb{transition:none}}
+/* Card 145: Home as a dashboard (not under .ncs-ui: it lays out Sanity UI cards too). */
+.ui-dash-wrap{container-type:inline-size;width:100%}
+.ui-dash{display:grid;gap:24px;grid-template-columns:minmax(0,1fr);grid-template-areas:"banner" "tiles" "rail" "main" "foot";max-width:1760px;margin:0 auto;align-items:start}
+.ui-dash__banner{grid-area:banner;min-width:0}
+.ui-dash__tiles{grid-area:tiles;min-width:0}
+.ui-dash__rail{grid-area:rail;display:grid;gap:24px;min-width:0}
+.ui-dash__main{grid-area:main;display:grid;gap:24px;grid-template-columns:minmax(0,1fr);min-width:0}
+.ui-dash__foot{grid-area:foot;min-width:0}
+.ui-dash__wide{grid-column:1 / -1;min-width:0}
+@container (min-width:960px){
+  .ui-dash{grid-template-columns:minmax(0,1fr) minmax(340px,400px);grid-template-areas:"banner rail" "tiles rail" "main rail" "foot foot"}
+  .ui-dash__rail{position:sticky;top:0;align-self:start}
+}
+@container (min-width:1500px){
+  .ui-dash__main{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* Card 147: the Checkup in columns by level, with a count strip above */
+.ncs-ui .ui-levels{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:10px 28px}
+.ncs-ui .ui-levels__item{display:inline-flex;align-items:center;gap:8px;font-size:15px;color:var(--ui-muted)}
+.ncs-ui .ui-levels__item b{font-family:var(--ui-display);font-weight:var(--ui-display-weight);font-size:24px;line-height:1;color:var(--ui-ink)}
+.ncs-ui .ui-checkup{display:grid;gap:28px 24px;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));align-items:start}
+/* Card 148: Quick update's form with a rail beside it on a wide pane (phones: the form alone) */
+.ui-quick-wrap{container-type:inline-size;width:100%}
+.ui-quick{display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+.ui-quick__rail{display:none}
+@container (min-width:860px){
+  .ui-quick{grid-template-columns:minmax(0,600px) minmax(280px,1fr);align-items:start}
+  .ui-quick__rail{display:block;position:sticky;top:0}
+}
 `;

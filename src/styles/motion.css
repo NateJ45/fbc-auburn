@@ -17,6 +17,10 @@
    does not, src/scripts/motion.ts adds `.in` with an IntersectionObserver and feeds `--drift` and
    `--turn` from a passive scroll listener. Same picture either way. */
 
+/* The flow layer (2026-10-24): line-by-line headings, fade-ups, photos, the hero drift, the
+   footer verse, page-to-page. */
+@import './flow.css';
+
 /* ======================================================================================
    Reveal: a stone or icon lands once as it scrolls in.
    Opt in with class="reveal"; --x, --y, --r, --s place it at rest, --d (observer) and --k
@@ -89,7 +93,7 @@ html.motion .reveal:not(.in) {
   height: 80px;
 }
 .rail__n {
-  font-size: 0.8rem;
+  font-size: var(--fs-tag);
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -97,14 +101,14 @@ html.motion .reveal:not(.in) {
 }
 .rail__title {
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem);
+  font-size: var(--fs-h3);
   line-height: 1.15;
   color: var(--heading-solid);
   margin: 0.2rem 0 0.5rem;
 }
 .rail__text {
   color: var(--muted-foreground);
-  font-size: 1.1rem;
+  font-size: var(--fs-body);
   line-height: 1.6;
   margin-bottom: 0.6rem;
   max-width: 34rem;
@@ -114,7 +118,7 @@ html.motion .reveal:not(.in) {
   grid-template-columns: max-content minmax(0, 1fr);
   gap: 0.35rem 1rem;
   margin: 0.4rem 0 0.6rem;
-  font-size: 1.05rem;
+  font-size: var(--fs-body);
 }
 .rail__times div {
   display: contents;
@@ -161,7 +165,7 @@ html.motion .reveal:not(.in) {
   width: clamp(200px, 26vw, 300px);
 }
 .rail-end__line {
-  font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.6rem);
+  font-size: var(--text-h2);
   line-height: 1.2;
   max-width: 36rem;
   margin: 1.6rem 0 1rem;
@@ -393,23 +397,25 @@ html.motion .baptism-motion #ripples {
    while the page scrolls normally. Tile colours are the plan's own (the site is light only).
    ====================================================================================== */
 .walk {
-  --plan-ground: #f3f6f9;
-  --t-lawn: #cfe3d3;
-  --t-lot: #dce2ea;
+  --plan-ground: #f4efe7;
+  --t-lawn: #d3dce8;
+  --t-lot: #e4dcd0;
   --t-road: #c4ccd7;
-  --t-sanct: #cfe1f2;
-  --t-hall: #f5e3c3;
-  --t-kids: #d6ead9;
-  --t-door: #c4401f;
-  --label: #4a4f5e;
-  --tag-bg: #171a26;
+  --t-sanct: #dbe3ee;
+  --t-hall: #f3ddd5;
+  --t-kids: #e1e8f1;
+  --t-door: #9a3b2a;
+  --t-drive: #ece6dc;
+  --t-sign: #7e2e20;
+  --label: #4a5a73;
+  --tag-bg: #16263d;
   --tag-fg: #ffffff;
 }
 /* The gatherings before worship, under the intro (WalkSection.astro, derived from Church facts). */
 .walk-earlier {
   max-width: 40rem;
   margin: 1rem 0 0;
-  font-size: 1.1rem;
+  font-size: var(--fs-body);
   line-height: 1.55;
   font-weight: 600;
   color: var(--foreground);
@@ -450,20 +456,21 @@ html.motion .baptism-motion #ripples {
   transition: color 0.4s;
 }
 .walk-steps__t {
+  font-size: var(--fs-small);
   font-weight: 600;
   color: var(--foreground);
   letter-spacing: 0.04em;
 }
 .walk-steps h3 {
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem);
+  font-size: var(--fs-h3);
   line-height: 1.15;
   color: var(--heading-solid);
   margin: 0.2rem 0 0.6rem;
 }
 .walk-steps p:not(.walk-steps__t) {
   color: var(--muted-foreground);
-  font-size: 1.15rem;
+  font-size: var(--fs-body);
   line-height: 1.6;
   max-width: 30rem;
 }
@@ -485,7 +492,7 @@ html.motion .walk-steps li.active {
   height: auto;
   max-height: 100%;
   background: var(--plan-ground);
-  border-radius: 22px;
+  border-radius: var(--radius-card);
 }
 .walk-plan .room rect {
   fill: var(--t-lot);
@@ -507,6 +514,12 @@ html.motion .walk-steps li.active {
 }
 .walk-plan .r-door rect {
   fill: var(--t-door);
+}
+.walk-plan .r-drive rect {
+  fill: var(--t-drive);
+}
+.walk-plan .r-sign rect {
+  fill: var(--t-sign);
 }
 .walk-plan .room-label {
   font: 600 15px var(--font-body);

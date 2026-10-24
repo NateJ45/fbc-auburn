@@ -35,7 +35,13 @@ import {
   richTwin,
 } from './_appearanceFields';
 import { sideOptions } from '../../lib/layout-variants';
-import { iconCardsSection, stoneIconField, thisWeekSection, watchSection } from './auburnSections';
+import {
+  findYourPlaceSection,
+  iconCardsSection,
+  stoneIconField,
+  thisWeekSection,
+  watchSection,
+} from './auburnSections';
 // FBC Auburn collections (2026-10-18): latest sermon, series grid, people, downloads.
 import { collectionSectionSchemas } from './collectionSections';
 import { auburnSectionSchemas } from './auburnMotionSections';
@@ -222,8 +228,10 @@ export const imageTextSection = defineType({
       options: {
         list: [
           { title: 'A photo (a soft arch until there is one)', value: 'photo' },
-          { title: 'The church mark, building itself stone by stone', value: 'mark' },
-          { title: 'The baptism drawing', value: 'baptism' },
+          { title: 'The church mark (the brick print)', value: 'mark' },
+          { title: 'The baptism drawing (old stone art, to be redrawn)', value: 'baptism' },
+          // 2026-10-23: the pen-and-pencil sketch of the building, as a full-width band.
+          { title: 'The building drawing (a wide band)', value: 'building' },
         ],
         layout: 'radio',
       },
@@ -712,6 +720,7 @@ export const pageSectionSchemas = [
   logoStripSection,
   embedSection,
   iconCardsSection, // FBC Auburn
+  findYourPlaceSection, // FBC Auburn: the Ministries hub (2026-10-24)
   thisWeekSection, // FBC Auburn
   watchSection, // FBC Auburn
   // FBC Auburn: the stepping-stone rail and the Walk in with us plan (auburnMotionSections.ts)
@@ -793,6 +802,7 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'richTextSection',
         'imageTextSection',
         'iconCardsSection',
+        'findYourPlaceSection',
         'spacerSection',
       ],
     },
