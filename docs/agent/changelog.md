@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-24: the church's TikTok (@auburn.pastor, its bio names the church and address) added to Site settings > Social links after Facebook, by `scripts/content/social-tiktok.mjs` under the write protocol (document and dataset backups outside the repo, dry run, apply, `audit:data` clean). The footer draws it as an icon button beside Facebook._
+
 _2026-10-24: a compact footer._
 
 **Decision.** The footer was 1,523px on desktop and 1,646px on a phone, a third of a page. Nathan picked the compact option from three mock-ups: the display-size tagline and its line, the building sketch and the full-width brick "Auburn" signature are gone; the mark, the two buttons and the link rows share the left column beside the This Sunday panel (726px desktop, 1,224px phone; on one column the panel follows the buttons). The buttons stay as the closing invite on the pages that have no band of their own. The Studio's "Footer: the line under the big heading" field (`footerInvite`) is hidden, not removed, so its stored value is never offered for "Remove field"; the `tagline` field's help now says it shows in the menu. The repeated church name under Get in touch is gone (the bottom bar carries it).
