@@ -2,19 +2,17 @@
 // Safe to edit by hand
 // The picture for a sermon or a series, in the one 16:9 frame with 14px corners: the sermon's own
 // picture, else its series' picture, else the YouTube thumbnail, else the stones (three gold steps
-// from the mark on a stone ground) with the series' book or title cut out of a brick wall, so a sermon
+// from the mark on a stone ground) with the series' book or title in cream Young Serif, so a sermon
 // with no picture at all looks like series art, not a missing picture (block polish, 2026-10-18):
 //   - the ground is one of three stone tiles (navy, deep sky, green; scripts/gen-stones.mjs), picked
 //     from the words, so every sermon in a series shares its series' colour and neighbours differ;
-//   - the word is cut out of an auburn brick wall (white letters as negative space, treatment B of
-//     the brick letterforms, scripts/lib/brick-letters.mjs), one wall per word so a title wraps;
+//   - the word is plain type (it was cut out of a brick wall until 2026-10-24, dropped as too busy);
 //   - the size follows the word's length (a container unit), so Mark and Lamentations both fill it.
 // `play` adds the round play button (a link around it is the caller's). Decorative: the words beside it carry the meaning, so alt is empty.
 import SanityImage from '@/components/SanityImage.astro';
 import PlayMark from './PlayMark.astro';
 import { MARKER } from '@/components/home/stones.generated';
 import { sermonVideo, type SermonDoc } from '@/lib/sermons';
-import { wallWord, LETTER_TONES } from '../../../scripts/lib/brick-letters.mjs';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 
 interface Props {
@@ -51,17 +49,12 @@ const hash = [...(seed ?? sermon?.series?.title ?? blankWord)].reduce(
   9,
 );
 const ground = GROUNDS[hash % GROUNDS.length];
-// The longest word decides the size (a wall is about 0.6em a letter plus its margin, so 112 / letters
+// The longest word decides the size (Young Serif is about 0.6em a letter, so 112 / letters
 // fills about three quarters of the width); a title of several words is set smaller so it fits on two
 // or three lines under the steps.
 const words = blankWord.split(/\s+/).filter(Boolean);
 const longest = Math.max(4, ...words.map((w) => w.length));
 const size = Math.max(7, Math.min(22, Math.round((words.length > 1 ? 74 : 112) / longest)));
-// Each word is cut out of its own brick wall (treatment B of the brick letterforms), so a title of
-// several words wraps; the drawing is decorative (the whole picture is aria-hidden).
-const walls = words.map((w, i) =>
-  wallWord(w, { tones: LETTER_TONES.auburn, letter: '#FBF8F3', seed: 5 + i * 7, pad: 0.14 }),
-);
 ---
 
 {picked ? (
@@ -99,12 +92,7 @@ const walls = words.map((w, i) =>
     </svg>
     {blankWord && (
       <span class="c-art__word" style={`--word: ${size}cqi`}>
-        {walls.map((svg, i) => (
-          <>
-            {i > 0 && ' '}
-            <Fragment set:html={svg} />
-          </>
-        ))}
+        {blankWord}
       </span>
     )}
     {play && <PlayMark />}

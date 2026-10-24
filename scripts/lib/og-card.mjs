@@ -12,19 +12,21 @@
 //   await closeCards(); // once, at the end: the shared browser keeps the process alive otherwise
 //
 //   title   the page title, from data (Sanity), never hard-coded. Up to about 70 characters reads
-//           well: the type steps down from 120px to 64px and wraps to three lines at most.
+//           well: the type steps down from 108px to 60px and wraps to three lines at most.
 //   kicker  optional small line above the title (a date, "Sermon series", "News and notes").
-//   home    true draws the home card instead: the masthead (mark, "First Baptist Church of",
-//           Auburn in brick letters) and `title` as the line under it (the Site settings tagline).
+//   home    true draws the home card instead: the church's full name as the title
+//           and `title` as the line under it (the Site settings tagline), kicker "Hamilton, Ohio".
 //   brand   optional { name, place } for the lockup; defaults to the church's name.
 //
-// DETERMINISTIC: no clock, no randomness (the stones are seeded, stone-mosaic.mjs), fonts come
+// DETERMINISTIC: no clock, no randomness (the bricks are seeded, brick-courses.mjs), fonts come
 // from public/fonts, and the PNG is written only when its bytes change, so re-running the
 // generators leaves git clean unless a title or the design changed.
 //
-// The design (picked 2026-10-18 from three directions, comparison in the PR): white ground, the
-// church lockup top left, the title in brick letters (the site's own H1, treatment A of the brick
-// letterforms: navy brick with every fourth letter in auburn), and the brick wall across the foot.
+// The design ("night", picked 2026-10-24 from five directions in
+// docs/design-directions/2026-10-24-og-cards/): the navy stone-tile ground of the site's dark bands,
+// the white mark and the church's name top left, a small auburn kicker, the title in cream Young
+// Serif, the building sketch faint in pale navy on the right, and a two-course brick sill along the
+// foot. Home sets the church's name as the title with the Site settings tagline under it.
 //
 // Playwright is already a devDependency (the test suite); the PNGs are committed, so CI never
 // runs this. If it ever does, the workflow needs `npx playwright install chromium`.
@@ -32,43 +34,47 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MARK } from './stone-mosaic.mjs';
-import { BRICK_PATH_PRESETS, brickMarker, brickPath } from './brick-courses.mjs';
+import { BRICK_PATH_PRESETS, brickPath } from './brick-courses.mjs';
 import { printMask } from './brick-print.mjs';
-import { brickWord, LETTER_TONES } from './brick-letters.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
-const INK = '#16263D';
+// The night palette: the site's dark-band ground, cream type, pale navy, a light auburn kicker.
+const NIGHT = {
+  ground: '#11294A',
+  cream: '#FBF8F3',
+  pale: '#7F98B8',
+  kicker: '#E0876F',
+};
 const b64 = (rel) => readFileSync(resolve(root, rel)).toString('base64');
 const FONTS = {
   serif: b64('public/fonts/young-serif-latin-400.woff2'),
   sans: b64('public/fonts/familjen-grotesk-latin-wght.woff2'),
 };
-const MARK_SVG = `data:image/svg+xml;base64,${b64('src/assets/brand/fbc-auburn-icon-full-color.svg')}`;
+const MARK_SVG = `data:image/svg+xml;base64,${b64('src/assets/brand/fbc-auburn-icon-white.svg')}`;
+const TILE_NAVY = `data:image/svg+xml;base64,${b64('public/textures/tile-navy.svg')}`;
+// The building sketch's lines (scripts/brand-sketch.mjs), used as a mask so it takes any ink.
+const SKETCH = `data:image/webp;base64,${b64('src/assets/brand/building-sketch.webp')}`;
 
-/** The brick wall across the foot of the card, generated once (seeded, so always the same). */
-const PATH_H = 210;
-const PATH_SVG = (() => {
-  const stones = brickPath({ width: OG_WIDTH, height: PATH_H, preset: 'og', seed: 4 });
+/** The sill along the foot of the card: two full courses, generated once (seeded). */
+const SILL_H = 60;
+const SILL_SVG = (() => {
+  const stones = brickPath({ width: OG_WIDTH, height: SILL_H, preset: 'sill', seed: 7 });
   const paths = stones.map((s) => `<path d="${s.d}" fill="${s.fill}"/>`).join('');
-  // The linocut flecks (scripts/lib/brick-print.mjs), punched through the wall.
+  // The linocut flecks (scripts/lib/brick-print.mjs), punched through the bricks.
   const defs = printMask('og-print', {
     x: 0,
     y: 0,
     w: OG_WIDTH,
-    h: PATH_H,
-    u: BRICK_PATH_PRESETS.og.h,
+    h: SILL_H,
+    u: BRICK_PATH_PRESETS.sill.h,
     seed: 53,
   });
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${OG_WIDTH} ${PATH_H}" width="${OG_WIDTH}" height="${PATH_H}">${defs}<g mask="url(#og-print)">${paths}</g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${OG_WIDTH} ${SILL_H}" width="${OG_WIDTH}" height="${SILL_H}">${defs}<g mask="url(#og-print)">${paths}</g></svg>`;
 })();
-const STEPS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 78 36" width="52" height="24">${brickMarker()
-  .map((s) => `<path d="${s.d}" fill="${s.fill}"/>`)
-  .join('')}</svg>`;
 
 const esc = (s) =>
   String(s)
@@ -84,74 +90,46 @@ export const cleanText = (s) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-/**
- * The title as brick letters, one SVG per word so it wraps (as StoneHeading.astro does): sized in
- * em, so the fit loop below scales it with font-size like text. Every fourth letter, counted
- * across the title, is auburn.
- */
-function brickLine(text, tracking = -0.015) {
-  let k = 0;
-  return text
-    .split(' ')
-    .filter(Boolean)
-    .map((word, n) => {
-      const accent = [];
-      [...word].forEach((_, i) => {
-        if (k++ % 4 === 2) accent.push(i);
-      });
-      return brickWord(word, {
-        tones: LETTER_TONES.navy,
-        accent: { letters: accent, tones: LETTER_TONES.auburn },
-        seed: 3 + n * 11,
-        tracking,
-      });
-    })
-    .join(' ');
-}
-
 function cardHtml({ title, kicker, home, brand }) {
   const head = `<!doctype html><html><head><meta charset="utf-8"><style>
   @font-face{font-family:YoungSerif;src:url(data:font/woff2;base64,${FONTS.serif}) format('woff2');font-display:block}
   @font-face{font-family:Familjen;src:url(data:font/woff2;base64,${FONTS.sans}) format('woff2');font-weight:400 700;font-display:block}
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{width:${OG_WIDTH}px;height:${OG_HEIGHT}px;overflow:hidden;background:#fff}
-  .card{position:relative;width:${OG_WIDTH}px;height:${OG_HEIGHT}px;background:#fff;color:${INK};
+  html,body{width:${OG_WIDTH}px;height:${OG_HEIGHT}px;overflow:hidden;background:${NIGHT.ground}}
+  .card{position:relative;width:${OG_WIDTH}px;height:${OG_HEIGHT}px;overflow:hidden;
+    background:${NIGHT.ground} url(${TILE_NAVY}) 0 0/420px 420px;color:${NIGHT.cream};
     font-family:Familjen,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-  .path{position:absolute;left:0;bottom:0;width:${OG_WIDTH}px;height:${PATH_H}px}
-  .lockup{position:absolute;left:72px;top:60px;display:flex;align-items:center;gap:22px}
-  .lockup img{width:92px;height:92px;display:block}
-  .lockup .n1{font-family:YoungSerif,serif;font-size:40px;line-height:1;color:${INK}}
-  .lockup .n2{font-family:Familjen,sans-serif;font-weight:600;font-size:28px;line-height:1.1;color:${MARK.deep};margin-top:6px}
-  .body{position:absolute;left:72px;right:72px;top:190px;height:250px;display:flex;flex-direction:column;justify-content:center}
-  .kicker{display:flex;align-items:center;gap:14px;margin-bottom:14px;font-weight:700;font-size:24px;
-    letter-spacing:.14em;text-transform:uppercase;color:${MARK.deep}}
-  .title{font-family:YoungSerif,serif;line-height:1.02;letter-spacing:-.01em;text-wrap:balance}
-  .title .plain{display:none}
-  .title.is-plain .bk{display:none} .title.is-plain .plain{display:inline}
-  .bl-word{display:inline-block}
-  /* Home: the masthead, as the site's home hero sets it. */
-  .mast{position:absolute;left:64px;right:64px;top:50px;display:flex;align-items:center;gap:40px}
-  .mast img{width:250px;height:250px;flex:none}
-  .mast .place{font-weight:700;font-size:28px;letter-spacing:.16em;text-transform:uppercase;color:${MARK.deep}}
-  .mast .auburn{font-family:YoungSerif,serif;font-size:184px;line-height:.98;letter-spacing:-.01em;margin-top:4px}
-  .tagline{position:absolute;left:72px;right:72px;top:340px;font-family:YoungSerif,serif;font-size:50px;line-height:1.1;color:${INK}}
-  </style></head><body><div class="card">`;
-  const path = `<div class="path">${PATH_SVG}</div>`;
+  .sketch{position:absolute;right:-60px;bottom:52px;width:660px;height:440px;background:${NIGHT.pale};opacity:.32;
+    -webkit-mask:url(${SKETCH}) right bottom/contain no-repeat;mask:url(${SKETCH}) right bottom/contain no-repeat}
+  .sill{position:absolute;left:0;bottom:0;width:${OG_WIDTH}px;height:${SILL_H}px}
+  .lockup{position:absolute;left:76px;top:64px;display:flex;align-items:center;gap:17px}
+  .lockup img{width:60px;height:60px;display:block}
+  .lockup .n1{font-family:YoungSerif,serif;font-size:26px;line-height:1;color:${NIGHT.cream}}
+  .lockup .n2{font-weight:600;font-size:19px;line-height:1.1;color:${NIGHT.pale};margin-top:4px}
+  .body{position:absolute;left:76px;top:200px;width:760px;height:310px;display:flex;flex-direction:column;justify-content:center}
+  .kicker{font-weight:700;font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:${NIGHT.kicker};margin-bottom:20px}
+  .title{font-family:YoungSerif,serif;line-height:1.02;letter-spacing:-.015em;text-wrap:balance;color:${NIGHT.cream}}
+  .name{font-family:YoungSerif,serif;font-size:76px;line-height:1;letter-spacing:-.015em;color:${NIGHT.cream}}
+  .tagline{font-family:YoungSerif,serif;line-height:1.15;text-wrap:balance;color:${NIGHT.pale};margin-top:22px}
+  </style></head><body><div class="card"><div class="sketch"></div>
+  <div class="lockup"><img src="${MARK_SVG}" alt="">
+    <div><div class="n1">${esc(brand.line1)}</div><div class="n2">${esc(brand.line2)}</div></div></div>`;
+  const foot = `<div class="sill">${SILL_SVG}</div></div></body></html>`;
   if (home) {
     return `${head}
-    <div class="mast"><img src="${MARK_SVG}" alt="">
-      <div><div class="place">${esc(brand.lead)}</div><div class="auburn">${brickLine(brand.place, -0.035)}</div></div></div>
+  <div class="body">
+    <div class="kicker">${esc(brand.home)}</div>
+    <div class="name">${esc(brand.lead)} ${esc(brand.place)}</div>
     <div class="tagline" id="fit">${esc(title)}</div>
-    ${path}</div></body></html>`;
+  </div>
+  ${foot}`;
   }
   return `${head}
-  <div class="lockup"><img src="${MARK_SVG}" alt="">
-    <div><div class="n1">${esc(brand.line1)}</div><div class="n2">${esc(brand.line2)}</div></div></div>
   <div class="body">
-    ${kicker ? `<div class="kicker">${STEPS_SVG}<span>${esc(kicker)}</span></div>` : ''}
-    <div class="title" id="fit"><span class="bk">${brickLine(title)}</span><span class="plain">${esc(title)}</span></div>
+    ${kicker ? `<div class="kicker">${esc(kicker)}</div>` : ''}
+    <div class="title" id="fit">${esc(title)}</div>
   </div>
-  ${path}</div></body></html>`;
+  ${foot}`;
 }
 
 // ONE BROWSER FOR THE WHOLE RUN (launching chromium per card is minutes on a full site).
@@ -176,6 +154,8 @@ const DEFAULT_BRAND = {
   line2: 'Church of Auburn',
   lead: 'First Baptist Church of',
   place: 'Auburn',
+  // The Home card's kicker.
+  home: 'Hamilton, Ohio',
 };
 
 /**
@@ -204,14 +184,14 @@ export async function renderCard({ title, kicker, home = false, outPath, brand =
   // fewer (two for the home tagline). Measured in the browser with the real font, so the result
   // is the same on every run.
   const size = await page.evaluate(
-    ({ home: isHome, solid }) => {
+    ({ home: isHome }) => {
       const el = document.getElementById('fit');
-      const box = isHome ? { w: 1056, h: 120 } : { w: 1056, h: el.parentElement.clientHeight };
-      const kick = el.previousElementSibling?.classList.contains('kicker')
-        ? el.previousElementSibling
-        : null;
-      const room = box.h - (kick ? kick.offsetHeight + 14 : 0);
-      const [max, min, maxLines] = isHome ? [50, 36, 2] : [120, 64, 3];
+      const body = el.parentElement;
+      const box = { w: body.clientWidth, h: body.clientHeight };
+      // Everything else in the column (the kicker, Home's name) takes its room first.
+      const others = [...body.children].filter((c) => c !== el);
+      const room = box.h - others.reduce((h, c) => h + c.offsetHeight + 22, 0);
+      const [max, min, maxLines] = isHome ? [40, 30, 2] : [108, 60, 3];
       let s = max;
       for (; s > min; s -= 2) {
         el.style.fontSize = `${s}px`;
@@ -220,16 +200,9 @@ export async function renderCard({ title, kicker, home = false, outPath, brand =
         if (el.scrollWidth <= box.w && el.offsetHeight <= room && lines <= maxLines) break;
       }
       el.style.fontSize = `${s}px`;
-      // A title that needs three lines is set as plain navy type (StoneHeading's "solid" tone): the
-      // brick letters get busy across three lines at thumbnail size.
-      const lh = parseFloat(getComputedStyle(el).lineHeight);
-      if (!isHome && Math.round(el.offsetHeight / lh) >= 3) {
-        el.classList.add('is-plain');
-        el.style.color = solid;
-      }
       return s;
     },
-    { home, solid: MARK.deep },
+    { home },
   );
   const type = /\.jpe?g$/i.test(outPath) ? 'jpeg' : 'png';
   const buf = await page.screenshot({ type, ...(type === 'jpeg' ? { quality: 88 } : {}) });

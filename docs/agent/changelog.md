@@ -10,10 +10,24 @@ undici 7.30.1 security fix. The group raises the Astro integrations' minimum Nod
 static pages, `/preview/`, `/private/<slug>/` and `/studio` all answered. Rule 8's pin text in
 `.claude/rules/dependencies.md` is updated; the starter and the sibling sites stay on 4.129 until moved on purpose.
 
+_2026-10-24: the "night" share card._
+
+**Decision.** With the brick letters gone the share cards were plain, so five directions were drawn
+(`docs/design-directions/2026-10-24-og-cards/`) and Nathan picked "night": the navy stone-tile ground of the site's
+dark bands, the white mark and name, the page head's eyebrow as an auburn kicker, a cream title, the building sketch
+faint on the right and a two-course brick sill. `scripts/lib/og-card.mjs` draws it; `scripts/generate-og-pages.mjs`
+now reads each page's eyebrow for the kicker. Cards grew from about 90 KB to about 240 KB with the texture.
+
+_2026-10-24: page headings are plain type, not brick._
+
+**Decision.** Nathan found the brick-letter H1s too busy. `StoneHeading.astro` (every inner page head through
+`BoardPageHead`, and `ArchHero`) now renders plain Young Serif in deep navy, and the 404's brick-wall headline went the
+same way. Then the rest: the share cards (`scripts/lib/og-card.mjs`, all 19 regenerated, plus first cards for events, next steps and prayer) set the title and the Home "Auburn" in plain navy, and the sermon and series art with no picture sets its word in plain cream type (`SermonArt.astro`, `.c-art__word`). The generator (`scripts/lib/brick-letters.mjs`), its tests and the flow layer's `lay` kind stay, unused.
+
 _2026-10-24: the rest of the hppres.org audit._
 
 **Decision.** Everything else worth taking from hppres.org, in Auburn's own shapes: "where next" rows at the top of the
-footer on every page; two-tone page titles (headingAccent on the page head, drawn in auburn brick); a Sunday times
+footer on every page; two-tone page titles (headingAccent on the page head, set in auburn); a Sunday times
 band under inner page heads (from Church facts, one bar on a phone); fold-out questions restyled as hairline rows; a
 letter block for the pastor; an outlined ghost word and the stepped corner on the Watch band; a full-screen phone menu
 of big serif rows; a new News and notes article layout (sticky rail, stepped cover); and stepped people portraits with a

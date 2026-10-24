@@ -728,10 +728,12 @@ Note: the MCP lighthouse_audit only returns Accessibility / BP / SEO / Agentic. 
 
 ## Share images (Open Graph)
 
-Every route shares a 1200x630 card in the church's brand: the lockup top left, the page title in
-brick letters (navy brick with every fourth letter in auburn; plain navy type when it needs three lines),
-and the brick wall across the foot. Home and the fallback `public/og-default.png` use the masthead
-(mark, "First Baptist Church of", Auburn in brick letters) with the Site settings tagline. Drawn by
+Every route shares a 1200x630 card in the church's brand, the "night" card (picked 2026-10-24 from
+five, `docs/design-directions/2026-10-24-og-cards/`): the navy stone-tile ground, the white mark and
+name top left, the page head's eyebrow as a small auburn kicker (a Studio page's opening banner
+eyebrow, a singleton's `heroEyebrow`, a post's date), the title in cream Young Serif, the building
+sketch faint on the right and a two-course brick sill along the foot. Home and the fallback
+`public/og-default.png` set the church's full name with the Site settings tagline under it. Drawn by
 `scripts/lib/og-card.mjs` (site-specific; the starter's PORTABLE `scripts/lib/render-og.mjs` is
 no longer called here). PNGs are committed; CI never draws them.
 
