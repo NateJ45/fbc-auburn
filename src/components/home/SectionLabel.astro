@@ -5,6 +5,10 @@
 // the section has its own.
 import '@/styles/board.css';
 import { MARKER } from './stones.generated';
+import { layOrder } from '@/lib/brick-lay';
+
+// The three steps are laid bottom step first as the section comes in (src/styles/flow.css).
+const markerTurns = layOrder(MARKER);
 
 interface Props {
   text: string;
@@ -23,8 +27,8 @@ const { text, as: Tag = 'h2', id } = Astro.props;
     aria-hidden="true"
     focusable="false"
   >
-    {MARKER.map((s) => (
-      <path d={s.d} fill={s.fill} />
+    {MARKER.map((s, i) => (
+      <path class="lay-brick" d={s.d} fill={s.fill} style={`--lay: ${markerTurns[i]}`} />
     ))}
   </svg>
   {text}

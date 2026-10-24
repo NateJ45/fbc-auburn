@@ -298,6 +298,8 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
 - DONE 2026-10-17: the Menu (a full-screen panel at every width, the header shows the first four
   links) and the footer columns in Site settings; the contact form is a visit form (editor-written
   questions in the Contact page; `?visit=sunday-11` pre-fills it).
+- DONE 2026-10-24: brick laid by brick: the brick-letter titles, the sill and the stepped markers
+  are laid course by course with a trowel tap (`docs/agent/animation.md`, "Brick, laid by brick").
 - DONE 2026-10-24: the flow layer (`src/scripts/flow.ts`, `src/styles/flow.css`,
   `docs/agent/animation.md` "The flow layer"): line-by-line headings, staggered fade-ups, photo
   zoom and drift, the home hero drift, magnetic buttons, page-to-page lift and rise, and the footer
