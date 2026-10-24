@@ -106,6 +106,107 @@ html.motion .flow-go .flow-line__in {
   animation-play-state: running;
 }
 
+/* ---- Brick laid by brick ----------------------------------------------------------------------
+   The brick-letter titles, the sill and the stepped markers are laid the way a mason builds:
+   bottom course first, brick by brick along it, working back the other way on the next course,
+   each brick set down with a small tap. Transforms and opacity for the sill and markers (one
+   element per brick); the letters' bricks are grouped by course (about 200 bricks a word would
+   be too much markup), so a course is uncovered a brick's length at a time by a stepped clip.
+
+   Titles. flow.ts (layPlan) gives each word its line (--line) and its place on it (--lw of --ln),
+   and the title its time per line (--tline). A course takes four slots (--tc) to run the line and
+   the next starts one slot later, so several courses are under way at once, racked back like a
+   wall going up. While it is laid, the letters show faintly first, like a chalk line. */
+@keyframes bl-lay-ltr {
+  from {
+    clip-path: inset(-20% 100% -20% 0);
+  }
+  to {
+    clip-path: inset(-20% 0 -20% 0);
+  }
+}
+@keyframes bl-lay-rtl {
+  from {
+    clip-path: inset(-20% 0 -20% 100%);
+  }
+  to {
+    clip-path: inset(-20% 0 -20% 0);
+  }
+}
+@keyframes bl-chalk {
+  0% {
+    opacity: 0;
+  }
+  12%,
+  70% {
+    opacity: 0.16;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+html.motion .flow--lay {
+  --tc: calc(var(--tline, 1250ms) / 19);
+}
+html.motion .flow--lay .bl-c {
+  --run: calc(var(--tc) * 4 / var(--ln, 1));
+  animation-name: bl-lay-ltr;
+  animation-duration: var(--run);
+  animation-timing-function: steps(var(--b, 12), end);
+  animation-fill-mode: both;
+  animation-play-state: paused;
+  animation-delay: calc(
+    var(--flow-delay, 0ms) + var(--line, 0) * var(--tline, 1250ms) + var(--o, 0) * var(--tc) +
+      var(--lw, 0) * var(--run)
+  );
+}
+html.motion .flow--lay .bl-c--r {
+  animation-name: bl-lay-rtl;
+  animation-delay: calc(
+    var(--flow-delay, 0ms) + var(--line, 0) * var(--tline, 1250ms) + var(--o, 0) * var(--tc) +
+      (var(--ln, 1) - 1 - var(--lw, 0)) * var(--run)
+  );
+}
+html.motion .flow--lay .bl-ghost {
+  animation: bl-chalk calc(var(--tline, 1250ms) + 400ms) linear
+    calc(var(--flow-delay, 0ms) + var(--line, 0) * var(--tline, 1250ms) - 200ms) both paused;
+}
+html.motion .flow-go .bl-c,
+html.motion .flow-go .bl-ghost {
+  animation-play-state: running;
+}
+
+/* The tap: dropped from a little above, it lands a touch low and squashed, and settles. */
+@keyframes brick-set {
+  0% {
+    opacity: 0;
+    transform: translateY(-70%);
+  }
+  40% {
+    opacity: 1;
+  }
+  62% {
+    transform: translateY(5%) scaleY(0.9);
+  }
+  82% {
+    transform: translateY(-1.5%) scaleY(1.03);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* The section markers' three stepped bricks, bottom step first, as their label comes in. */
+html.motion .flow .lay-brick {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: brick-set 520ms var(--flow-ease-soft)
+    calc(var(--flow-delay, 0ms) + 120ms + var(--lay, 0) * 140ms) both paused;
+}
+html.motion .flow-go .lay-brick {
+  animation-play-state: running;
+}
+
 /* ---- Photographs drift inside their frames as the page passes ----------------------------
    On `transform` (a translate and a fixed zoom so the frame never shows an edge), which
    composes with the reveal's `scale`. Scroll-timeline browsers only; elsewhere the photo just

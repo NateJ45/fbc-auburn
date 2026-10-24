@@ -1287,11 +1287,14 @@ html .site-search-dialog {
 html.motion .sill.is-armed:not(.is-laid) .sill-brick {
   opacity: 0;
 }
+/* Laid like a mason lays them (2026-10-24): bottom course left to right, then back along the top,
+   each brick set down with a small tap (brick-set in src/styles/flow.css; turns from
+   src/lib/brick-lay.ts via --lay). */
 html.motion .sill.is-laid .sill-brick {
-  animation: sill-lay 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: calc(var(--i) * 6ms);
+  animation: brick-set 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--lay, var(--i)) * 26ms);
   transform-box: fill-box;
-  transform-origin: center;
+  transform-origin: 50% 100%;
 }
 @keyframes sill-lay {
   from {
