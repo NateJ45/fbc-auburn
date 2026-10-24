@@ -171,7 +171,7 @@ const who = form?.recipientName || 'the church office';
         )}
         {phone && (
           <p style="margin-top: 0.25rem">
-            Call{' '}
+            {phone.sms ? 'Call or text' : 'Call'}{' '}
             <a class="cb-link hit-44 relative" href={phone.tel}>
               {phone.display}
             </a>

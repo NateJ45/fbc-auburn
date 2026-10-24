@@ -72,7 +72,7 @@ export const siteSettings = defineType({
       type: 'array',
       group: 'navigation',
       description:
-        'Every page in the Menu, in order. On a wide screen the header shows the first four; the Menu button shows them all. Drag to reorder. Leave empty to use the built-in default menu. Once you add items here, they replace the whole menu, so include every link you want.',
+        'Every page in the Menu, in order. On a wide screen the header shows the first five; the Menu button shows them all. Drag to reorder. Leave empty to use the built-in default menu. Once you add items here, they replace the whole menu, so include every link you want.',
       validation: (Rule) => Rule.max(10),
       of: [
         // The shared link object (./navLink.ts). Existing menu items already

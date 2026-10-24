@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-24: what visitors and members need, after an audit against two other church sites._
+
+**Decision.** Auburn's newcomer pages already answered more than either reference (a FAQ, service
+length, dress, the first-Sunday walk), but the member side was thin. Added as placeholders with For
+Jacob notes (`scripts/content/next-steps-members.mjs`): a Next steps page, Youth and Ways to serve on
+Ministries with a leader and place ask on each card, When life happens on Contact, Events and
+Sermons in reach (the header shows five links: About, Ministries, Events, Watch, Give), and two
+Church facts: `phoneTakesTexts` for "Call or text" and `memberLoginUrl` for a footer member
+sign-in. Open items in PENDING.md 1x.
+
 _2026-10-24: the building sketch redrawn from the real site. The first sketch put the road sign and cross on the wrong side and gave the long wall five narrow windows; the redraw (Gemini, from street and aerial photos, the first sketch as the style reference) has the four tall windows, the white base, the portico with steps and the ramp to the right, and the steeple on the front gable. Nathan chose the building only, no road or sign, since Gemini kept misplacing the sign. `node scripts/brand-sketch.mjs` regenerated the webp (43 KB); the walk opener's door pin moved to the new doorway._
 
 _2026-10-24: the pre-review pass (from a portfolio critique, 6.5/10 before it), and two of Jacob's named pages._

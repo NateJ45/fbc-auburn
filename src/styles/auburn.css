@@ -1502,11 +1502,15 @@ html.motion .sill.is-laid .sill-brick {
     flex: 1 1 auto;
   }
 }
-/* Between 1024px and 1199px the bar is tight with the lockup; close up the menu's gaps a little. */
-@media (min-width: 1024px) and (max-width: 1199px) {
-  .site-header .site-header__nav,
+/* Between 1024px and 1279px the bar is tight with the lockup; close up the menu's gaps. Five links
+   since the 2026-10-24 audit, so 1rem between links and 1.25rem around the button (1.5rem left
+   "About" touching the lockup at 1024, and 1199px left 24px at 1200). */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .site-header .site-header__nav {
+    gap: 1.25rem;
+  }
   .site-header .site-nav {
-    gap: 1.5rem;
+    gap: 1rem;
   }
 }
 

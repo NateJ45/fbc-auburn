@@ -277,6 +277,8 @@ export const SITE_SETTINGS_PROJECTION = `{
     churchAddress{ street, city, state, zip, findUs, lat, lng, confirmed },
     serviceTimes[]{ _key, label, day, time, note, confirmed },
     phoneConfirmed,
+    phoneTakesTexts,
+    memberLoginUrl,
     emailConfirmed,
     givingUrl,
     liveStreamUrl,

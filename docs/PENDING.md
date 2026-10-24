@@ -156,6 +156,25 @@ banner fought the welcome). At launch: replace every bracket, set `PRE_LAUNCH_NO
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 
+### 1x. Next steps, Youth, serving and care: Jacob's answers, and the texts flag (2026-10-24)
+
+**Blocker: Jacob's answers, then one re-run after the deploy.** From the newcomer and member audit
+(2026-10-24), as placeholders with For Jacob notes, set by `scripts/content/next-steps-members.mjs`:
+a new `/next-steps/` page (know Jesus, baptism, membership, a group, serving), a Youth card and a
+"Ways to serve" section on Ministries plus a "who leads it, where it meets" ask on every card,
+"When life happens" (visits, funerals, weddings, help) in Contact's extra sections, and the menu led
+by About, Ministries, Events, Watch, Give (the header now shows five) with Next steps and Sermons
+added. Two new Church facts: `phoneTakesTexts` ("Call or text") and `memberLoginUrl` (footer
+"Members: sign in"; before launch an empty link shows a yellow ask). Open:
+
+- The script ran with `--skip-texts` so the Studio never saw an unknown field. After this deploys,
+  re-run it without the flag (backup, dry run, `--apply`) to tick "This number takes texts" as the
+  placeholder, then untick it if Jacob says the line cannot take texts.
+- The baptism step uses the praying hands; swap it for a water icon once the belief icons
+  (fbc-auburn#124) are in.
+- Plan your visit's last step does not link to Next steps yet; add it once Jacob has filled the page.
+- Youth uses the coffee cup until a youth stone icon is drawn.
+
 ### 1x. Logo: the linocut print follow-ups (wired in 2026-10-23)
 
 **Blocker: the church has not seen it yet.** The mark is the linocut print (2026-10-23, replacing

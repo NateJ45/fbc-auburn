@@ -125,13 +125,21 @@ const schemas = [
       {phone && (
         <p class="mt-s flex flex-wrap items-center gap-xs text-sm text-foreground/75">
           <Phone size={14} aria-hidden="true" className="text-secondary" />
-          <span>Or call</span>
+          <span>{phone.sms ? 'Or call or text' : 'Or call'}</span>
           <a
             href={phone.tel}
             class="font-medium text-link underline underline-offset-2 hover:text-primary-dark"
           >
             {phone.display}
           </a>
+          {phone.sms && (
+            <a
+              href={phone.sms}
+              class="font-medium text-link underline underline-offset-2 hover:text-primary-dark"
+            >
+              Text us
+            </a>
+          )}
           <NotConfirmed confirmed={phone.confirmed} />
         </p>
       )}
@@ -193,7 +201,9 @@ const schemas = [
 
       {phone && (
         <div>
-          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Call</p>
+          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">
+            {phone.sms ? 'Call or text' : 'Call'}
+          </p>
           <a
             href={phone.tel}
             class="inline-flex items-center gap-xs text-sm text-link transition-colors hover:text-primary-dark"
@@ -201,6 +211,14 @@ const schemas = [
             <Phone size={14} aria-hidden="true" />
             {phone.display}
           </a>
+          {phone.sms && (
+            <a
+              href={phone.sms}
+              class="ml-s inline-flex items-center text-sm text-link transition-colors hover:text-primary-dark"
+            >
+              Text<span class="sr-only"> {phone.display}</span>
+            </a>
+          )}
           <NotConfirmed confirmed={phone.confirmed} />
         </div>
       )}

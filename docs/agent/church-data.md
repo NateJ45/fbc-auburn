@@ -13,6 +13,8 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
 | How to find us       | `churchAddress.findUs` (one optional sentence)    | n/a (Jacob's own words)        |
 | Service times        | `serviceTimes[]` { label, day, time (24h), note } | each row's `confirmed`         |
 | Phone                | `phone` (Identity & contact)                      | `phoneConfirmed`               |
+| Takes texts          | `phoneTakesTexts` ("Call or text", an sms: link)  | n/a (rides on the phone's)     |
+| Member sign-in       | `memberLoginUrl` (https, footer "Members")        | n/a                            |
 | Year founded         | `foundedYear`                                     | `foundedConfirmed`             |
 | YouTube channel      | `youtubeChannelId` (UC..., 24 characters)         | n/a                            |
 | Church Trac calendar | `churchTracIcalUrl` (the iCal link)               | n/a (the church's own entries) |

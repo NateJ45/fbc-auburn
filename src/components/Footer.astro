@@ -26,7 +26,7 @@
 // message when nothing is published yet.
 
 import { site } from '@/data/site';
-import { IconBrandFacebook, IconPlayerPlay } from '@tabler/icons-react';
+import { IconBrandFacebook, IconPlayerPlay, IconUser } from '@tabler/icons-react';
 import { resolveSocialLinks, socialLabel, type SocialLink } from '@/lib/social-links';
 import { socialIcon } from '@/lib/social-icons';
 import { Mail, Phone } from 'lucide-react';
@@ -46,6 +46,7 @@ import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import Sill from '@/components/Sill.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
+import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -130,11 +131,22 @@ const footerSundaysConfirmed = footerSundays.every((t) => t.confirmed);
 const footerAddress = footerFacts.address;
 // Phone, email, the Facebook page and the live stream link, all from Church facts and each null
 // until filled in (visitor audit, 2026-10-18).
-const { phone, email, facebookUrl, liveUrl } = footerFacts;
+const { phone, email, facebookUrl, liveUrl, memberLoginUrl } = footerFacts;
+// Member sign-in (Church facts > Member sign-in link, 2026-10-24). Before launch an empty link shows
+// a "[Jacob: ...]" ask in its place, which ForJacob.astro highlights; after launch it is simply left out.
+const memberLoginAsk = !memberLoginUrl && PRE_LAUNCH_NOTES;
 // The Facebook page gets a words link unless the social buttons below already show it.
 const facebookText =
   facebookUrl && !socialLinksToRender.some((l) => l.platform === 'Facebook') ? facebookUrl : null;
-const hasTouch = !!(email || phone || liveUrl || facebookText || socialLinksToRender.length > 0);
+const hasTouch = !!(
+  email ||
+  phone ||
+  liveUrl ||
+  facebookText ||
+  memberLoginUrl ||
+  memberLoginAsk ||
+  socialLinksToRender.length > 0
+);
 // The closing invitation (Home audit research, 2026-10-17): the footer's first row is the last
 // thing on every page, so it ends with the two next steps a stranger can take. The visit button
 // goes where the header's button goes, so a build without Sanity never links to a missing page.
@@ -453,6 +465,18 @@ const hasCalendar =
                     <Phone size={14} aria-hidden="true" />
                     {phone.display}
                   </a>
+                  {phone.sms && (
+                    <>
+                      {' '}
+                      <span aria-hidden="true">·</span>{' '}
+                      <a
+                        href={phone.sms}
+                        class="inline-flex min-h-[44px] items-center text-link transition-colors hover:text-primary-dark"
+                      >
+                        Text<span class="sr-only"> {phone.display}</span>
+                      </a>
+                    </>
+                  )}
                   <NotConfirmed confirmed={phone.confirmed} />
                 </p>
               )}
@@ -480,6 +504,27 @@ const hasCalendar =
                     <IconBrandFacebook size={14} stroke={1.75} aria-hidden="true" />
                     Facebook<span class="sr-only"> (opens in a new tab)</span>
                   </a>
+                </p>
+              )}
+              {memberLoginUrl && (
+                <p>
+                  <a
+                    href={memberLoginUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+                  >
+                    <IconUser size={14} stroke={1.75} aria-hidden="true" />
+                    Members: sign in<span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </p>
+              )}
+              {/* Outside <main>, so the For Jacob highlighter does not reach it: marked here instead. */}
+              {memberLoginAsk && (
+                <p>
+                  <mark class="fj-mark">
+                    [Jacob: your Church Trac member sign-in link goes here.]
+                  </mark>
                 </p>
               )}
             </div>
