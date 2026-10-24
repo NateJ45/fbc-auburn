@@ -12,8 +12,11 @@ leave out the road and sign because Gemini kept placing the sign wrongly. The fi
 (2026-10-23) had the sign and cross on the wrong side and five narrow windows; it is in git history.
 
 The site does not show this file. `node scripts/brand-sketch.mjs` lifts its lines off the paper
-into `src/assets/brand/building-sketch.webp` (transparency only, about 43 KB), and
-`src/components/church/BuildingSketch.astro` paints it in whatever ink the place needs. It appears in
+into two files, `src/assets/brand/building-sketch-lines.webp` (the solid pen lines) and
+`building-sketch-shade.webp` (the lighter pencil shading), transparency only, about 47 KB together.
+`src/components/church/BuildingSketch.astro` paints them in whatever ink the place needs; split
+that way, the drawing draws itself in as it scrolls into view, lines first (2026-10-24; not in the
+footer). It appears in
 three places:
 
 - **About, "Our building":** the Image and text block with the picture set to "The building drawing

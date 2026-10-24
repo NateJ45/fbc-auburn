@@ -108,7 +108,8 @@ ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the t
   `scripts/lib/brick-print.mjs`, used by the path, sill, tiles, markers, share cards, Studio
   strips and the letterforms.
 - **The building sketch** (2026-10-23, redrawn from the real site 2026-10-24, the building only): a pen-and-pencil rendering of the church, lifted off its
-  paper and painted in navy (pale navy in the footer) through `BuildingSketch.astro`. Used as the
+  paper and painted in navy (pale navy in the footer) through `BuildingSketch.astro`, as two masks
+  (pen lines, pencil shading) so it draws itself in on scroll, lines first (2026-10-24). Used as the
   About "Our building" band and as the Plan your visit walk's opener with the
   front door pinned. Master and notes: `brand/illustration/`.
 - **Brick letterforms** for the big headings, 40 px and up (decided 2026-10-21, sheet 13 in
