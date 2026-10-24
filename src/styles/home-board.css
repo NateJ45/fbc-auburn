@@ -19,6 +19,9 @@
   --hb-line: #e6ded2;
   --hb-label-color: var(--auburn-deep);
   --hb-gutter: var(--spacing-l);
+  /* One gap between bands, top and bottom (48px on a phone to 80px on desktop), the same token the
+     inner pages' sections are built from. */
+  --hb-rhythm: var(--spacing-section-md);
   /* Light in every case (rule 3); pinned so a forced dark theme cannot turn links pale here. */
   --link: #1f3a5f;
   background: #ffffff;
@@ -213,10 +216,7 @@
     z-index: 3;
     margin-bottom: -230px;
   }
-  .hb-hero + .hb-section,
-  .hb-hero + * + .hb-section {
-    padding-top: 40px;
-  }
+  /* The card hangs into this section, so its heading keeps the narrow left column (below). */
   .hb-walk > .hb-wrap > :first-child,
   .hb-walk h2 {
     max-width: 52%;
@@ -228,12 +228,12 @@
 .hb-belong {
   position: relative;
   isolation: isolate;
-  padding-bottom: 72px;
+  padding-bottom: var(--hb-rhythm); /* it ends on the navy ground, so it pads its own foot */
 }
 .hb-belong::before {
   content: '';
   position: absolute;
-  inset: 220px 0 0;
+  inset: calc(var(--hb-rhythm) + 220px) 0 0; /* the band's top padding, then partway down the photos */
   z-index: -1;
   background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
@@ -344,9 +344,10 @@
 }
 
 /* ---- Bands: pale mosaic texture, white panels ------------------------------------------------ */
-/* One rhythm between sections (Home audit, 2026-10-17: the gaps had stacked to 160 to 250px). */
+/* One rhythm between sections (Home audit, 2026-10-17: the gaps had stacked to 160 to 250px). A
+   tinted band pads both ends, so nothing touches its edge. */
 .hb-band {
-  padding: 60px 0 64px;
+  padding-block: var(--hb-rhythm);
 }
 /* Flat tints: the pebble textures were dropped in the Home audit (2026-10-17); the white panels
    and the stone icons carry the bands. */
@@ -607,8 +608,15 @@
 }
 
 /* ---- Who we are: the photo mosaic ------------------------------------------------------------- */
+/* Every section pads its top (2026-10-24: they padded only the foot, so the heading after the
+   hero's brick sill or the navy belong band sat right on its edge). Two plain sections in a row
+   share one gap; a plain section pads its foot too when a tinted band follows it. */
 .hb-section {
-  padding-bottom: 80px;
+  padding-block: var(--hb-rhythm) 0;
+}
+.hb-section:has(+ .hb-band),
+.hb-section:last-child {
+  padding-bottom: var(--hb-rhythm);
 }
 .hb-mosaic {
   display: grid;
@@ -873,9 +881,6 @@
   .hb-intro {
     font-size: var(--fs-lead);
   }
-  .hb-band {
-    padding: 48px 0 56px;
-  }
   .hb-band--sky {
     margin-top: 24px;
   }
@@ -919,7 +924,7 @@
 /* Phones: the navy band behind "A place to belong" starts under the first photo. */
 @media (max-width: 960px) {
   .hb-belong::before {
-    inset: 160px 0 0;
+    inset: calc(var(--hb-rhythm) + 160px) 0 0;
   }
 }
 /* Phones: the two hero buttons stack full width, the usual pattern on the best church sites. */

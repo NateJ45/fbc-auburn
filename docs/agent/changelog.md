@@ -2,7 +2,7 @@
 
 _2026-10-24: one scale for type, corners, buttons and spacing._
 
-**Decision.** A computed-style audit of every route at 375 and 1280 px found about a hundred distinct font sizes, card corners of 12 to 22 px, section H2s at four sizes and three line heights, form fields at 8 px beside 10 px buttons, a 52 px hero button pair, three hand-rolled buttons (Contact's scheduling link, the email page's Unsubscribe, the newsletter's Subscribe), and FAQ questions rendering at 16 px because tailwind-merge dropped `text-h3` as a colour. All of it now reads from tokens at the top of `auburn.css` (`docs/agent/design-tokens.md`); Tailwind's xs/sm/base point at 13/15/18 px. Display type (the masthead, brick H1s, 404, countdown) was left as designed.
+**Decision.** A computed-style audit of every route at 375 and 1280 px found about a hundred distinct font sizes, card corners of 12 to 22 px, section H2s at four sizes and three line heights, form fields at 8 px beside 10 px buttons, a 52 px hero button pair, three hand-rolled buttons (Contact's scheduling link, the email page's Unsubscribe, the newsletter's Subscribe), and FAQ questions rendering at 16 px because tailwind-merge dropped `text-h3` as a colour. All of it now reads from tokens at the top of `auburn.css` (`docs/agent/design-tokens.md`); Tailwind's xs/sm/base point at 13/15/18 px. Display type (the masthead, brick H1s, 404, countdown) was left as designed. Home's sections padded only their foot, so a heading under the hero's brick sill or the navy belong band sat on its edge; every Home section now pads its top with `--hb-rhythm` (`--spacing-section-md`), and pads its foot too before a tinted band.
 
 _2026-10-21: the letterforms went brick (docs/design-directions/2026-10-21-brick-path/, sheet 13)._
 
