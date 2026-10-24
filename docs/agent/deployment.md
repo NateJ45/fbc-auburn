@@ -173,6 +173,10 @@ once hashes are present. Helpers and tests: `scripts/lib/csp.mjs`.
 - **What can still break:** a script that pasted code adds AT RUNTIME from an origin not in the
   HTML (a widget whose loader pulls a second script from another host). Add that origin to
   `RUNTIME_ORIGINS` in `scripts/build-csp.mjs`. GA4's tag is already handled that way.
+- **Lighthouse still notes "Host allowlists can frequently be bypassed"** (unscored; Best
+  Practices stays 100). That comes from the Cloudflare beacon's origin in the list. The cure,
+  `'strict-dynamic'`, makes browsers ignore every origin in `script-src`, which would block any
+  outside widget script pasted into a Custom code block. Kept as is on purpose (2026-10-24).
 - **The Studio detaches it** (`/studio/*`: `! Content-Security-Policy`, then `frame-ancestors`
   only), per trap 1 below.
 - **Trusted Types are not required** (`require-trusted-types-for`). Lighthouse lists it, unscored;
