@@ -24,6 +24,10 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
   time or an address into a component.
 - With Sanity empty, each fact falls back to `FALLBACK_FACTS` (the values from the church's
   Facebook page), all unconfirmed. There is no fallback phone.
+- The round social buttons (header strip, phone menu, footer) all come from one list,
+  `resolveSocialLinks()` in `src/lib/social-links.ts` (icons in `social-icons.ts`): Site settings >
+  Social links in order, with the Facebook fact added when the list has no Facebook entry
+  (2026-10-24). A platform added in the Studio shows in every place at once.
 - `day`, `time`, `youtubeChannelId` and `churchTracIcalUrl` are in `NON_STEGA_FIELDS` (rule 8b).
 
 ## The "To confirm" tag

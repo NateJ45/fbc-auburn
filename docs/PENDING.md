@@ -267,8 +267,7 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   photo session before launch.
 - Waiting on Pastor Jacob: his welcome for Who we are. The note reads "[Two or three sentences of
   welcome in Pastor Jacob's own words.]" until he writes it (Studio: Home, Who we are, Text).
-- Waiting on the church: a Give link (the Give card goes to Contact until there is one) and the
-  social links for the footer's Follow column (Site settings; the column hides while empty).
+- Waiting on the church: a Give link (the Give card goes to Contact until there is one).
 - Inner pages are on board E's grammar (2026-10-17): white ground, stepping-stone rules, one left
   edge, no arch. Still open there: the empty picture slots (Serving our neighbours, Bringing
   children) wait on the photo session, and the faint background path from the motion layer is
