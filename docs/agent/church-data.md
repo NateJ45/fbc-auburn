@@ -28,6 +28,10 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
 
 ## The "To confirm" tag
 
+Where a fact appears without room for the tag, it waits for its flag instead: the phone shows in the
+menu and in Home's header line only once `phoneConfirmed` is ticked (2026-10-24); the footer's Get
+in touch and the Contact page show it straight away, with the tag.
+
 `NotConfirmed.astro` is the small inline tag from the mockups. Pass the fact's flag:
 `<NotConfirmed confirmed={facts.founded?.confirmed} />`. It renders nothing once the flag is true,
 so the tag disappears on its own when someone ticks the box. Unconfirmed facts are also kept out of

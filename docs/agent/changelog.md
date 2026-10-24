@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-24: the building sketch back in the footer, faint (16%, 12% on one column) behind the top area at the bottom right, so the compact footer keeps its height; and the phone, now set but unconfirmed, shows only where it can carry the "To confirm" tag (the footer and Contact), not in the menu or Home's header line until `phoneConfirmed` is ticked._
+
 _2026-10-24: the church phone, 937-620-8693 (from the church's TikTok bio), set in Site settings with `phoneConfirmed` false by `scripts/content/church-phone.mjs` under the write protocol; it shows with the "To confirm" tag and stays out of the JSON-LD until the church ticks the box._
 
 _2026-10-24: the church's TikTok (@auburn.pastor, its bio names the church and address) added to Site settings > Social links after Facebook, by `scripts/content/social-tiktok.mjs` under the write protocol (document and dataset backups outside the repo, dry run, apply, `audit:data` clean). The footer draws it as an icon button beside Facebook._

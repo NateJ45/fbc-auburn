@@ -1506,6 +1506,31 @@ html.motion .sill.is-laid .sill-brick {
     padding-inline: 20px;
   }
 }
+/* The building sketch, faint, behind the footer's top area (2026-10-24): anchored bottom right, it
+   takes no space, so the compact footer keeps its height. Under everything that is clickable. */
+.sf-top {
+  position: relative;
+  isolation: isolate;
+}
+.sf-sketch {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  width: min(560px, 50%);
+  opacity: 0.16;
+  pointer-events: none;
+}
+.sf-sketch__art {
+  width: 100%;
+}
+@media (max-width: 960px) {
+  .sf-sketch {
+    width: 92%;
+    opacity: 0.12;
+  }
+}
+
 /* The link rows sit in the footer's left column, under the buttons, not in a band of their own. */
 .sf-invite .site-footer__links {
   max-width: none;
