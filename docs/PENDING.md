@@ -150,7 +150,9 @@ domain and their mail.
 "[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
 (`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Real photos from the church's Facebook page
 are in place where they fit, pending his OK; the Home hero keeps a labelled stand-in until he sends a
-Sunday photo of people. At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, and grep the
+Sunday photo of people (since 2026-10-24 an Unsplash congregation seen from behind, set by
+`scripts/content/hero-stand-in.mjs`; the Facebook sanctuary photo it replaced was 1440px wide and its
+banner fought the welcome). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, and grep the
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 
