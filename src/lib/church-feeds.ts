@@ -19,7 +19,15 @@
 
 import { parseIcs, type CalendarEvent } from './church-calendar.ts';
 import type { ChurchFacts } from './church-facts.ts';
-import { feedUrl, latestVideo, parseYoutubeFeed, type LatestVideo } from './church-video.ts';
+import {
+  feedUrl,
+  latestVideo,
+  parseYoutubeFeed,
+  upcomingStream,
+  type FeedEntry,
+  type LatestVideo,
+  type UpcomingStream,
+} from './church-video.ts';
 
 export const FEED_TIMEOUT_MS = 8000;
 
@@ -92,16 +100,16 @@ async function fixture(which: 'youtube' | 'calendar'): Promise<string | null | u
     : (await import('../../tests/fixtures/church-calendar.ics?raw')).default;
 }
 
-let videoShared: Promise<LatestVideo | null> | null = null;
+let entriesShared: Promise<FeedEntry[] | null> | null = null;
 let eventsShared: Promise<CalendarEvent[] | null> | null = null;
 
-/** The channel's latest watched video, once per build, or null. */
-export function loadLatestVideo(
+/** The channel feed's entries, once per build, or null (the replay and the upcoming stream). */
+function loadYoutubeEntries(
   facts: Pick<ChurchFacts, 'youtubeChannelId'>,
-  fetchImpl: Fetch = fetch,
-): Promise<LatestVideo | null> {
-  if (videoShared) return videoShared;
-  videoShared = (async () => {
+  fetchImpl: Fetch,
+): Promise<FeedEntry[] | null> {
+  if (entriesShared) return entriesShared;
+  entriesShared = (async () => {
     let xml = await fixture('youtube');
     if (xml === undefined) {
       if (!facts.youtubeChannelId) return null;
@@ -112,9 +120,27 @@ export function loadLatestVideo(
         fetchImpl,
       );
     }
-    return xml ? latestVideo(parseYoutubeFeed(xml), churchDataNow()) : null;
+    return xml ? parseYoutubeFeed(xml) : null;
   })();
-  return videoShared;
+  return entriesShared;
+}
+
+/** The channel's latest watched video, or null. */
+export async function loadLatestVideo(
+  facts: Pick<ChurchFacts, 'youtubeChannelId'>,
+  fetchImpl: Fetch = fetch,
+): Promise<LatestVideo | null> {
+  const entries = await loadYoutubeEntries(facts, fetchImpl);
+  return entries ? latestVideo(entries, churchDataNow()) : null;
+}
+
+/** The coming Sunday's scheduled YouTube stream, or null (church-video.ts upcomingStream). */
+export async function loadUpcomingStream(
+  facts: Pick<ChurchFacts, 'youtubeChannelId'>,
+  fetchImpl: Fetch = fetch,
+): Promise<UpcomingStream | null> {
+  const entries = await loadYoutubeEntries(facts, fetchImpl);
+  return entries ? upcomingStream(entries, churchDataNow()) : null;
 }
 
 /** The Church Trac calendar's events, once per build, or null. */
@@ -141,6 +167,6 @@ export function loadChurchEvents(
 
 /** Test hook: forget the once-per-build answers. */
 export function resetChurchFeeds(): void {
-  videoShared = null;
+  entriesShared = null;
   eventsShared = null;
 }

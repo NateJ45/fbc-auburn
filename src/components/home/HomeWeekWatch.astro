@@ -79,9 +79,8 @@ const lmDate =
         timeZone: 'UTC',
       })
     : '';
-// The "Live now" window: worship (the last Sunday gathering) from 5 minutes before to 75 after.
-const sundayTimes = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
-const liveStart = sundayTimes.length ? Math.max(...sundayTimes) - 5 : null;
+// "Live now" (2026-10-24): the tag and the card's jump to the stream are driven by
+// src/lib/live-client.ts, the same clock as the site-wide banner (components/church/LiveBanner.astro).
 // No link set (the built-in defaults, where the Watch page may not exist): a plain card.
 const watchHref =
   fresh && lm?.videoUrl ? lm.videoUrl : watch?.link ? ctaHref(watch.link) : undefined;
@@ -183,7 +182,7 @@ const CardTag = cardHref ? 'a' : 'div';
               slot="fallback"
               class:list={['hb-watch', cardHref && 'hb-lift']}
               href={cardHref}
-              data-live-href={cardHref && facts.liveUrl ? facts.liveUrl : undefined}
+              data-live-link={cardHref && facts.liveUrl ? facts.liveUrl : undefined}
             >
               {posterShot && (
                 <>
@@ -237,8 +236,8 @@ const CardTag = cardHref ? 'a' : 'div';
                   </svg>
                 </span>
                 <span>
-                  {liveStart !== null && (
-                    <span class="hb-watch__live" data-live-start={liveStart} hidden>
+                  {facts.liveUrl && (
+                    <span class="hb-watch__live" data-live-show hidden>
                       Live now
                     </span>
                   )}
@@ -325,31 +324,5 @@ const CardTag = cardHref ? 'a' : 'div';
   if (clip && matchMedia('(prefers-reduced-motion: reduce)').matches) {
     clip.removeAttribute('autoplay');
     clip.pause();
-  }
-
-  // "Live now" on the watch card during Sunday worship, by the church's own clock (Eastern):
-  // from 5 minutes before the last Sunday gathering to 75 minutes after it starts. The card reads
-  // the same without JS; this only reveals the tag.
-  const tag = document.querySelector<HTMLElement>('[data-live-start]');
-  if (tag) {
-    const start = Number(tag.dataset.liveStart);
-    const parts = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/New_York',
-      weekday: 'short',
-      hour: 'numeric',
-      minute: 'numeric',
-      hourCycle: 'h23',
-    }).formatToParts(new Date());
-    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
-    const minutes = Number(get('hour')) * 60 + Number(get('minute'));
-    tag.hidden = !(get('weekday') === 'Sun' && minutes >= start && minutes <= start + 80);
-    // While it is live, the card goes straight to the stream (Church facts > Live stream link, or
-    // the Facebook page) instead of the Watch page (visitor audit, 2026-10-18).
-    const card = tag.closest<HTMLAnchorElement>('a[data-live-href]');
-    if (card && !tag.hidden) {
-      card.href = card.dataset.liveHref ?? card.href;
-      card.target = '_blank';
-      card.rel = 'noopener noreferrer';
-    }
   }
 </script>

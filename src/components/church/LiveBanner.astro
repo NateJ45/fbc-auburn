@@ -1,0 +1,128 @@
+---
+// Safe to edit by hand
+// The Live now banner (2026-10-24, after First Baptist Muncie's "Watch live" -> "Live now"): a
+// slim strip above the header, on every page, shown only while Sunday worship is streaming.
+// "Live now. Sunday worship is streaming on Facebook. Watch live"
+//
+// Built hidden: the page is static, so nothing in the HTML claims to be live. src/lib/live-client.ts
+// (started by the script below) reveals it inside the window, by the church's clock (worship, the
+// last Sunday gathering, from 5 minutes before to 80 after; src/lib/live-service.ts) and, once
+// there is a YouTube channel, by /api/live-status. It also carries the settings the other live
+// pieces read (Home's watch card, the phone menu), so it is rendered whenever there is somewhere
+// to watch, and renders nothing when there is not.
+//
+// Everything comes from Church facts (rule 15): the link (the Live stream link, else the YouTube
+// channel's live page, else the Facebook page), the service it is on, and the time.
+
+import { getChurchFacts } from '@/lib/church-data';
+import { watchLabel, watchLive } from '@/lib/live-service';
+
+const live = watchLive(await getChurchFacts());
+---
+
+{live && (
+  <div
+    class="live-banner"
+    role="status"
+    data-live-show
+    data-live-start={live.start ?? undefined}
+    data-live-check={live.check ? '' : undefined}
+    hidden
+  >
+    {/* One inline sentence, so a phone wraps it like text rather than stacking three rows. */}
+    <p class="live-banner__inner">
+      <span class="live-banner__dot" aria-hidden="true"></span>
+      <strong>Live now.</strong>{' '}
+      <span class="live-banner__more">
+        Sunday worship is streaming{live.via ? ` on ${live.via}` : ''}.
+      </span>{' '}
+      <a
+        class="live-banner__link"
+        href={live.href}
+        data-live-link={live.href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {watchLabel(null)}
+        <span class="sr-only"> (opens in a new tab)</span>
+      </a>
+    </p>
+  </div>
+)}
+
+<script>
+  import { startLiveWatch } from '@/lib/live-client';
+  startLiveWatch();
+</script>
+
+<style>
+  .live-banner {
+    background: var(--auburn-deep);
+    color: #fff;
+  }
+  .live-banner[hidden] {
+    display: none;
+  }
+  .live-banner__inner {
+    max-width: var(--container-content);
+    margin: 0 auto;
+    padding: 9px 16px;
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    text-align: center;
+    text-wrap: balance;
+  }
+  /* The dot pulses; the global reduced-motion rule flattens it to a still red dot. */
+  .live-banner__dot {
+    position: relative;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 8px;
+    vertical-align: 0;
+    border-radius: 999px;
+    background: #e5484d;
+  }
+  .live-banner__dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: live-banner-pulse 1.8s ease-out infinite;
+  }
+  @keyframes live-banner-pulse {
+    from {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    to {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+  .live-banner__link {
+    color: #fff;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+    white-space: nowrap;
+    /* A taller hit area without changing the line. */
+    padding: 6px 0;
+  }
+  .live-banner__link:hover {
+    text-decoration-color: #e5484d;
+  }
+  .live-banner__link:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  /* The narrowest phones: the dot, "Live now." and the link; the sentence is the link's job. */
+  @media (max-width: 339px) {
+    .live-banner__more {
+      display: none;
+    }
+  }
+</style>
