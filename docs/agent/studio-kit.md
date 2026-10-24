@@ -771,6 +771,10 @@ the brand's deep colour (a navbar middleware that always calls `renderDefault`, 
 `withEditorTypography(types, fonts)` gives every Portable Text style a `component` in the site's fonts. A new rich
 text field picks it up with no extra work, as long as it lists its `styles`.
 
+Larger reading size (FBC Auburn, 2026-10-24): `withLargerText()` in `sanity.config.ts` grows every text and label
+size step, and the icon size Sanity pairs with each, by `STUDIO_TEXT_SCALE` (1.2: list rows go from 13px to 16px,
+their icons from 21px to 25px). Headings, code and the navbar keep Sanity's sizes. Set the scale to 1 to undo it.
+
 ## The edges: /studio page, words, wordmark (card 120)
 
 Also outside the kit plugin; site choices in `src/sanity/studioEdges.config.ts`.
