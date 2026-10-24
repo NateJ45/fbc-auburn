@@ -97,7 +97,9 @@ const logoSrcset = logo
 // same values the footer and Contact show (visitor audit, 2026-10-18).
 const allFacts = await getChurchFacts();
 const email = chrome.showEmail ? (allFacts.email?.display ?? '') : '';
-const phone = allFacts.phone?.display ?? '';
+// The phone shows in the menu and Home's header line only once the church has confirmed it: neither
+// has room for the "To confirm" tag the footer and Contact carry (2026-10-24).
+const phone = allFacts.phone?.confirmed ? allFacts.phone.display : '';
 const ig = chrome.showSocials ? (siteSettings?.socialInstagram ?? '') : '';
 const fb = chrome.showSocials ? (allFacts.facebookUrl ?? '') : '';
 
@@ -160,7 +162,7 @@ const isHome = pathname === '/';
 // Home's Sunday note (board E), derived from Church facts; never typed. The menu carries the same
 // facts on every page (Home audit research, 2026-10-17: people open the menu to find times).
 const noteFacts = isHome ? allFacts : null;
-const notePhone = isHome ? allFacts.phone : null;
+const notePhone = isHome && allFacts.phone?.confirmed ? allFacts.phone : null;
 const sundayMinutes = (noteFacts?.serviceTimes ?? [])
   .filter((t) => t.dayIndex === 0)
   .map((t) => t.minutes);

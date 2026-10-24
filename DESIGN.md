@@ -142,7 +142,8 @@ Compact (2026-10-24): it was 1,523px on desktop (1.7 screens) with a display-siz
 building sketch and a full-width brick "Auburn" signature. Now: the brick sill; on the left the mark,
 the two next steps (Plan your visit, and the Studio's second button) and the link rows; on the right
 the This Sunday panel; then the slim bottom bar. About 730px on desktop. On one column the This
-Sunday panel follows the buttons and the links come after it. The buttons stay because Home, Contact,
+Sunday panel follows the buttons and the links come after it. The building sketch sits behind the
+top area at 16% opacity (12% on one column), bottom right, taking no room of its own. The buttons stay because Home, Contact,
 Give, Sermons, Bulletin and Privacy end with no closing band of their own.
 
 ## Elevation
