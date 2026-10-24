@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-24: the building sketch redrawn from the real site. The first sketch put the road sign and cross on the wrong side and gave the long wall five narrow windows; the redraw (Gemini, from street and aerial photos, the first sketch as the style reference) has the four tall windows, the white base, the portico with steps and the ramp to the right, and the steeple on the front gable. Nathan chose the building only, no road or sign, since Gemini kept misplacing the sign. `node scripts/brand-sketch.mjs` regenerated the webp (43 KB); the walk opener's door pin moved to the new doorway._
+
 _2026-10-24: the building sketch back in the footer, faint (16%, 12% on one column) behind the top area at the bottom right, so the compact footer keeps its height; and the phone, now set but unconfirmed, shows only where it can carry the "To confirm" tag (the footer and Contact), not in the menu or Home's header line until `phoneConfirmed` is ticked._
 
 _2026-10-24: the church phone, (513) 863-3500 (the church line on its earlier website and local listings), set in Site settings with `phoneConfirmed` false by `scripts/content/church-phone.mjs` under the write protocol; it shows with the "To confirm" tag and stays out of the JSON-LD until the church ticks the box. An earlier run the same day set a personal number by mistake; this replaced it._

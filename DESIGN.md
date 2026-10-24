@@ -107,7 +107,7 @@ ones in `src/assets/brand/`). The old seven colours are gone from the CSS, the t
   darker grout; a fleck texture on the CSS bricks). One module draws it:
   `scripts/lib/brick-print.mjs`, used by the path, sill, tiles, markers, share cards, Studio
   strips and the letterforms.
-- **The building sketch** (2026-10-23): a pen-and-pencil rendering of the church, lifted off its
+- **The building sketch** (2026-10-23, redrawn from the real site 2026-10-24, the building only): a pen-and-pencil rendering of the church, lifted off its
   paper and painted in navy (pale navy in the footer) through `BuildingSketch.astro`. Used as the
   About "Our building" band and as the Plan your visit walk's opener with the
   front door pinned. Master and notes: `brand/illustration/`.
