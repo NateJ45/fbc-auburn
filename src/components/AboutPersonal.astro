@@ -53,7 +53,7 @@ const hasBeyond = Boolean(beyondDesign?.trim() || candidPhoto?.asset);
 const hasAnything = currently.length > 0 || rapid.length > 0 || spots.length > 0 || hasBeyond;
 
 const cardClass =
-  'card-lift bg-card rounded-[var(--radius-card)] border border-border-soft shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)] overflow-hidden';
+  'card-lift bg-card rounded-[var(--radius-card)] border border-border-soft shadow-[var(--shadow-card)] overflow-hidden';
 ---
 
 {hasAnything && (

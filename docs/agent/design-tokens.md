@@ -16,6 +16,7 @@ token before adding a one-off.
 - Focus: one ring, 3px of `--ring`, offset 3px (white on the Home hero photo). Embedded frames and the FAQ questions use it too.
 - Tap targets: every standalone link is at least 44px to tap on a phone; small ones get the invisible hit area (`.hit-44`, or the same `::after` in `auburn.css` for the sermon links, the header logo and Get directions). Check with `scripts/measure-tap-targets.mjs`.
 - Three-across grids (the Give page, the Giving board, three-card grids) start at 64rem; two-across from 48rem.
+- Shadows: `--shadow-card` (a card on the page), `--shadow-raised` (a panel over another layer: the This Sunday card, the welcome note), `--shadow-button` (a round play button on a photo). Soft and navy-tinted; there were ten recipes.
 - Buttons: `.btn-auburn` with `--primary` (auburn) or `--secondary` (outline), 48px tall; the header's is the 44px compact one. Never hand-roll a button from utilities.
 
 The starter-generic text below predates the reskin (its font names are the starter's).
