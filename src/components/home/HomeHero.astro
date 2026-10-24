@@ -17,7 +17,7 @@
 // names the shot we want (src/data/shot-list.ts, key "hero").
 import SanityImage from '@/components/SanityImage.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
-import { shotFor } from '@/data/shot-list';
+import { exampleSrc, shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
 import Sill from '@/components/Sill.astro';
 import { getChurchFacts } from '@/lib/church-data';
@@ -33,6 +33,8 @@ const { block } = Astro.props;
 
 const shot = shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
 const photo = !shot && block.backgroundImage?.asset ? block.backgroundImage : null;
+// Before launch the shot's example photo fills the hero behind its note, so Home reads as finished.
+const example = shot?.example ? exampleSrc(shot.example.file) : null;
 const isStandIn = (img: ProjectedImage | null | undefined) =>
   (img?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
 
@@ -50,8 +52,19 @@ const secondary = block.secondaryCta;
 const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
 ---
 
-<section class="hb-hero" aria-labelledby="hb-h1" data-photo={photo ? 'yes' : 'no'}>
+<section class="hb-hero" aria-labelledby="hb-h1" data-photo={photo || example ? 'yes' : 'no'}>
   <div class="hb-photo" aria-hidden={photo ? undefined : 'true'}>
+    {example && (
+      <img
+        src={example}
+        alt=""
+        width="2000"
+        height="1333"
+        loading="eager"
+        fetchpriority="high"
+        class="hb-photo__img"
+      />
+    )}
     {photo && (
       <SanityImage
         source={photo as never}

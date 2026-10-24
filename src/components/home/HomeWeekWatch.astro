@@ -14,7 +14,7 @@ import SectionLabel from './SectionLabel.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
-import { shotFor } from '@/data/shot-list';
+import { exampleSrc, shotFor } from '@/data/shot-list';
 import { splitStega } from '@/lib/preview-stega';
 import { getChurchFacts } from '@/lib/church-data';
 import { andList, monthDay, thisWeek, timesPhrase } from '@/lib/church-facts';
@@ -186,9 +186,29 @@ const CardTag = cardHref ? 'a' : 'div';
               data-live-href={cardHref && facts.liveUrl ? facts.liveUrl : undefined}
             >
               {posterShot && (
-                <span class="hb-watch__shot">
-                  <ShotRequest shot={posterShot} variant="tag" />
-                </span>
+                <>
+                  {posterShot.video ? (
+                    <video
+                      class="hb-watch__video"
+                      src={exampleSrc(posterShot.video.file, 'mp4')}
+                      poster={exampleSrc(`${posterShot.video.file}-poster`)}
+                      muted
+                      loop
+                      playsinline
+                      autoplay
+                      preload="metadata"
+                      aria-hidden="true"
+                      data-shot-video
+                    />
+                  ) : (
+                    posterShot.example && (
+                      <img src={exampleSrc(posterShot.example.file)} alt="" loading="lazy" />
+                    )
+                  )}
+                  <span class="hb-watch__shot">
+                    <ShotRequest shot={posterShot} variant="tag" />
+                  </span>
+                </>
               )}
               {poster?.asset && !posterShot && (
                 <SanityImage
@@ -299,6 +319,14 @@ const CardTag = cardHref ? 'a' : 'div';
 </style>
 
 <script>
+  // Before launch the card plays an example clip (shot-list.ts); with reduced motion it holds still
+  // on its poster instead.
+  const clip = document.querySelector<HTMLVideoElement>('[data-shot-video]');
+  if (clip && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    clip.removeAttribute('autoplay');
+    clip.pause();
+  }
+
   // "Live now" on the watch card during Sunday worship, by the church's own clock (Eastern):
   // from 5 minutes before the last Sunday gathering to 75 minutes after it starts. The card reads
   // the same without JS; this only reveals the tag.

@@ -151,6 +151,10 @@ gift tables, the building, the sign and the sanctuary; the Unsplash hero and Las
 empty now shows a yellow "Photo needed" box naming the shot (`src/components/ShotRequest.astro`, list in
 `src/data/shot-list.ts`), and the For Jacob pill lists the same shots page by page. The stand-in assets
 stay in the dataset untouched; uploading the church's own photo in the Studio replaces the box at once.
+Since 2026-10-24 (later) each box also shows an example: a free Unsplash photo of the same kind of
+shot fills the slot (a Pexels clip plays in the Last Sunday card) under a yellow "Example photo, yours
+goes here" note with a "How to take yours" toggle, so the preview looks finished while still saying
+which photos are Jacob's. Files and credits: `public/shot-examples/` (`CREDITS.md`).
 The shots wanted:
 
 - Home: the hero (Sunday morning from the back of the room, landscape, left side calm for the words);
@@ -174,7 +178,7 @@ the round signer portrait in Who we are (hidden while empty; same photo as Meet 
 **Blocker: Jacob's answers.** Every page carries marked placeholder copy ("[Placeholder: ...]" drafts and
 "[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
 (`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Since 2026-10-24 every photo slot shows a
-"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, and grep the
+"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 
