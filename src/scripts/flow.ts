@@ -108,21 +108,19 @@ export function initFlow() {
   // The first screen's hold (flow.css) can let go now: everything is armed.
   html.classList.add('flow-armed');
 
+  // Landing only takes the classes off. A split heading keeps its line spans (they change nothing
+  // in the layout) so the DOM never shifts under a reader, or under a test measuring the page, a
+  // second after it has settled; the spans come out when the width changes (below).
   const land = (el: HTMLElement) => {
     el.classList.remove('flow', 'flow--lines', 'flow--up', 'flow--photo', 'flow--side', 'flow-go');
     el.style.removeProperty('--flow-delay');
-    const restore = lineRestorers.get(el);
-    if (restore) {
-      restore();
-      lineRestorers.delete(el);
-    }
   };
 
   const go = (el: HTMLElement, delayMs: number) => {
     el.style.setProperty('--flow-delay', `${delayMs}ms`);
     el.classList.add('flow-go');
-    // Hand back plain markup once the last piece has landed. A timer, not animationend alone,
-    // so a tab in the background (where animations may not run) still finishes.
+    // Take the classes off once the last piece has landed. A timer, not animationend, so a tab in
+    // the background (where animations may not run) still finishes.
     const lines = el.querySelectorAll('.flow-line__in').length;
     const total = delayMs + (lines ? (lines - 1) * LINE_STAGGER_MS + 1250 : 1400);
     const t = window.setTimeout(() => land(el), total + 80);
@@ -131,10 +129,9 @@ export function initFlow() {
 
   // Lines need the real fonts to know where a heading breaks; everything else can go now.
   const lineUnits = units.filter((u) => u.kind === 'lines').map((u) => u.el);
-  const ready = Promise.race([
-    document.fonts?.ready ?? Promise.resolve(),
-    new Promise((r) => window.setTimeout(r, 900)),
-  ]);
+  // No timeout race: splitting with a fallback font and then swapping fonts would rewrap lines.
+  // fonts.ready settles whether the fonts load or fail.
+  const ready = document.fonts?.ready ?? Promise.resolve();
 
   let firstBatch = true;
   const io = new IntersectionObserver(
@@ -168,6 +165,31 @@ export function initFlow() {
       }
     }
     for (const { el } of units) io.observe(el);
+  });
+
+  // A new width rewraps headings, so the line spans come out: put each heading's own nodes back,
+  // and split again the ones still waiting to rise. Height-only resizes (a phone's address bar, a
+  // full-page screenshot) change no line breaks and are ignored.
+  let lastWidth = innerWidth;
+  let resizeTimer = 0;
+  const onResize = () => {
+    if (innerWidth === lastWidth) return;
+    lastWidth = innerWidth;
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      for (const [el, restore] of [...lineRestorers]) {
+        restore();
+        lineRestorers.delete(el);
+        if (el.classList.contains('flow--lines') && !el.classList.contains('flow-go')) {
+          if (!splitLines(el)) el.classList.replace('flow--lines', 'flow--up');
+        }
+      }
+    }, 150);
+  };
+  addEventListener('resize', onResize, { passive: true });
+  disposers.push(() => {
+    removeEventListener('resize', onResize);
+    window.clearTimeout(resizeTimer);
   });
 
   // ---- 3. Scroll-tied pieces: the hero drift and the footer verse --------------------------
@@ -208,6 +230,8 @@ export function initFlow() {
       land(el);
       el.classList.remove('flow-par');
       delete el.dataset.flowOn;
+      lineRestorers.get(el)?.();
+      lineRestorers.delete(el);
     }
     teardown = null;
   };
@@ -225,13 +249,14 @@ function clipsChild(el: HTMLElement) {
 // ---- Line splitting ----------------------------------------------------------------------
 // Words become spans and are grouped by where they sit; each line goes in a mask
 // (.flow-line) and rises inside it (.flow-line__in). Inline children (a link, an <em>, one of
-// StoneHeading's word drawings) stay whole. The original child nodes are kept and put back once
-// the heading has landed, so nothing downstream ever sees the spans.
+// StoneHeading's word drawings) stay whole. The original child nodes are kept and put back when
+// the width changes or the page is left.
 const lineRestorers = new Map<HTMLElement, () => void>();
 
 function splitLines(el: HTMLElement): boolean {
   if (lineRestorers.has(el)) return true;
   const original = [...el.childNodes];
+  const before = el.getBoundingClientRect().height;
   const pieces: Node[] = [];
   for (const node of original) {
     if (node.nodeType === Node.TEXT_NODE) {
@@ -250,8 +275,11 @@ function splitLines(el: HTMLElement): boolean {
   el.replaceChildren(...pieces);
 
   const restore = () => el.replaceChildren(...original);
+  // A piece starts a new line when it begins below the bottom of the line so far. Grouping by
+  // overlap, not by equal tops: StoneHeading's word drawings differ in height, so words on one
+  // line do not share a top edge.
   const lines: Node[][] = [];
-  let lastTop = Number.NaN;
+  let lineBottom = Number.NEGATIVE_INFINITY;
   for (const piece of pieces) {
     if (piece.nodeType !== Node.ELEMENT_NODE) {
       lines[lines.length - 1]?.push(piece);
@@ -263,10 +291,13 @@ function splitLines(el: HTMLElement): boolean {
       restore();
       return false;
     }
-    const top = rects.length ? Math.round(rects[0].top) : lastTop;
-    if (!lines.length || (Number.isFinite(top) && Math.abs(top - lastTop) > 3)) lines.push([]);
+    const r = rects[0];
+    if (!lines.length || (r && r.top >= lineBottom - 2)) {
+      lines.push([]);
+      lineBottom = Number.NEGATIVE_INFINITY;
+    }
     lines[lines.length - 1].push(piece);
-    if (Number.isFinite(top)) lastTop = top;
+    if (r) lineBottom = Math.max(lineBottom, r.bottom);
   }
   if (!lines.length) {
     restore();
@@ -284,6 +315,12 @@ function splitLines(el: HTMLElement): boolean {
       return mask;
     }),
   );
+  // The split must not move anything. If the heading came out a different height, put it back
+  // and let it fade up instead.
+  if (Math.abs(el.getBoundingClientRect().height - before) > 1) {
+    restore();
+    return false;
+  }
   lineRestorers.set(el, restore);
   return true;
 }
@@ -320,7 +357,6 @@ function scrubVerse(): () => void {
     if (active) update();
   });
   io.observe(wrap);
-  wrap.classList.add('is-scrubbed');
   update();
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', onScroll, { passive: true });
@@ -329,7 +365,6 @@ function scrubVerse(): () => void {
     removeEventListener('scroll', onScroll);
     removeEventListener('resize', onScroll);
     if (frame) cancelAnimationFrame(frame);
-    wrap.classList.remove('is-scrubbed');
     line.style.translate = '';
   };
 }

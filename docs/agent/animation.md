@@ -154,8 +154,10 @@ it rises with the page. Headings split only after the fonts load, and live previ
 **The safety rules.** Every hidden starting state is the first frame of a paused CSS animation
 (`both paused`), started by `.flow-go`. So with no `html.motion` (reduced motion, `?still`) none of
 it applies; a test that sets `animation: none` (`tests/helpers.ts` `settle`) sees the page at rest;
-and once a unit lands the script takes its classes off and puts a split heading's original nodes
-back. The first screen is held (`flow-hold`) until the script arms it, and the hold lets go by
+and once a unit lands the script takes its classes off. A split heading keeps its line spans
+(they change nothing in the layout, and the mask goes with the class) so nothing in the DOM moves
+after the page has settled; the spans come out, and the heading's own nodes go back, when the width
+changes or the page is left. The first screen is held (`flow-hold`) until the script arms it, and the hold lets go by
 itself after 1.6s, so a page whose script fails is never left blank. Only `opacity`, `translate`,
 `scale` and (for the parallax) `transform` move. The starter's `[data-reveal]`,
 `[data-stagger-grid]` and `.img-curtain` stand down once the flow layer has armed a page.
