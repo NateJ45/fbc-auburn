@@ -8,10 +8,14 @@
 // > Service times plus Church Trac events (thisWeek()), each with the date in big deep-sky
 // numerals. Last Sunday is the YouTube replay (LastSunday) once a channel is set, and until then
 // the Watch block's poster card: its link label as the title, its text underneath, lifting on
-// hover.
+// hover. Before launch, a stand-in poster gives way to a pinned "Photo needed" note on the card's
+// ink ground (src/data/shot-list.ts).
 import SectionLabel from './SectionLabel.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { shotFor } from '@/data/shot-list';
+import { splitStega } from '@/lib/preview-stega';
 import { getChurchFacts } from '@/lib/church-data';
 import { andList, monthDay, thisWeek, timesPhrase } from '@/lib/church-facts';
 import { churchDataNow, loadChurchEvents } from '@/lib/church-feeds';
@@ -99,6 +103,11 @@ const sermonPic = [sermon?.image, sermon?.series?.art].find(
 ) as SanityImageObject | undefined;
 const sermonThumb = sermon && !sermonPic ? sermonVideo(sermon.videoUrl)?.thumbnailUrl : undefined;
 const poster = sermon ? (sermonPic ?? (sermonThumb ? null : watch?.poster)) : watch?.poster;
+// The block's own poster (step 5) is the only one with a shot request; a sermon's picture never is.
+const posterShot =
+  watch && poster === watch.poster
+    ? shotFor(Astro.url.pathname, splitStega(watchHeading).cleaned, 0, watch.poster)
+    : null;
 const cardHref = sermon ? sermonHref(sermon.slug) : watchHref;
 const cardTitle = sermon
   ? sermon.title
@@ -176,7 +185,12 @@ const CardTag = cardHref ? 'a' : 'div';
               href={cardHref}
               data-live-href={cardHref && facts.liveUrl ? facts.liveUrl : undefined}
             >
-              {poster?.asset && (
+              {posterShot && (
+                <span class="hb-watch__shot">
+                  <ShotRequest shot={posterShot} variant="tag" />
+                </span>
+              )}
+              {poster?.asset && !posterShot && (
                 <SanityImage
                   source={poster as never}
                   width={900}

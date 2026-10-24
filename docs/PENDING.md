@@ -144,15 +144,37 @@ domain and their mail.
 
 ---
 
+### 1x. The shot list: photos from Pastor Jacob (opened 2026-10-24)
+
+**Blocker: Jacob's photos.** Every picture slot that held a stand-in (Facebook photos of the pantry, the
+gift tables, the building, the sign and the sanctuary; the Unsplash hero and Last Sunday poster) or sat
+empty now shows a yellow "Photo needed" box naming the shot (`src/components/ShotRequest.astro`, list in
+`src/data/shot-list.ts`), and the For Jacob pill lists the same shots page by page. The stand-in assets
+stay in the dataset untouched; uploading the church's own photo in the Studio replaces the box at once.
+The shots wanted:
+
+- Home: the hero (Sunday morning from the back of the room, landscape, left side calm for the words);
+  Who we are (worship wide from the back, upright; people talking after the service, upright; a small
+  group or Bible study, landscape); Last Sunday (Jacob preaching, seen from the pews, landscape); Meet
+  Pastor Jacob (head and shoulders, upright).
+- About, Who we are: the church family together on the steps after a service, landscape.
+- Plan your visit: the nursery or children's room ready for Sunday (no children's faces without signed
+  releases); the walk from the car park to the front door; the road sign from a car.
+- Ministries, Serving our neighbours: volunteers at the food pantry.
+- What we believe, Baptism: a baptism with the family's say-so, or the empty baptistry.
+- Leadership: Jacob, head and shoulders (the Home photo works).
+- News and notes: a post's stand-in cover asks for "a photo that goes with this post" (optional).
+
+At launch, `PRE_LAUNCH_NOTES` false turns every box off: a slot whose stand-in was never replaced shows the
+stand-in again, so delete or replace those first (the Facebook ones are `fbca-fb-*` uploads). Not covered:
+the round signer portrait in Who we are (hidden while empty; same photo as Meet Pastor Jacob).
+
 ### 1x. The preview for Jacob (2026-10-23)
 
 **Blocker: Jacob's answers.** Every page carries marked placeholder copy ("[Placeholder: ...]" drafts and
 "[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
-(`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Real photos from the church's Facebook page
-are in place where they fit, pending his OK; the Home hero keeps a labelled stand-in until he sends a
-Sunday photo of people (since 2026-10-24 an Unsplash congregation seen from behind, set by
-`scripts/content/hero-stand-in.mjs`; the Facebook sanctuary photo it replaced was 1440px wide and its
-banner fought the welcome). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, and grep the
+(`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Since 2026-10-24 every photo slot shows a
+"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, and grep the
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 
@@ -266,17 +288,14 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   week, Who we are, This week and Last Sunday, Other ways in, the ink footer and the header's
   Sunday note. Built by `src/components/home/HomeBoard.astro`; data change
   `scripts/content/home-board-e.mjs`.
-- Photos: Home uses four STOCK stand-ins from Unsplash (free licence; each asset's `source` field
-  holds its Unsplash id): the church, the embrace and the shared meal in Who we are, and the Last
-  Sunday poster. Each carries a "Stand-in photograph" caption, derived from that `source`, which
-  goes by itself when a real photo is uploaded (Studio: Home, then the block). Replace them from the
-  photo session before launch.
+- Photos: Home's stand-ins (Facebook and Unsplash) are hidden behind "Photo needed" shot requests
+  before launch (1x, the shot list). An Unsplash stand-in that is still in place after launch keeps
+  its "Stand-in photograph" caption.
 - Waiting on Pastor Jacob: his welcome for Who we are. The note reads "[Two or three sentences of
   welcome in Pastor Jacob's own words.]" until he writes it (Studio: Home, Who we are, Text).
 - Waiting on the church: a Give link (the Give card goes to Contact until there is one).
 - Inner pages are on board E's grammar (2026-10-17): white ground, stepping-stone rules, one left
-  edge, no arch. Still open there: the empty picture slots (Serving our neighbours, Bringing
-  children) wait on the photo session, and the faint background path from the motion layer is
+  edge, no arch. Still open there: the picture slots show shot requests until the photos come (1x, the shot list), and the faint background path from the motion layer is
   hidden on these pages (`board.css`); bring it back only if Nathan wants it under the white.
 
 Service times, the 1959 founding and Hebrews 13:8 are still unconfirmed with the church; copy

@@ -1,0 +1,191 @@
+---
+// Safe to edit by hand
+// A "Photo needed" placeholder (2026-10-24): stands in a picture slot before launch and names the
+// photo we want there, so the preview doubles as Pastor Jacob's shot list. The shot comes from
+// src/data/shot-list.ts, which also decides when a slot shows this instead of its photo.
+//
+// Two looks, both in the pre-launch notes' yellow (ForJacob.astro) so nobody mistakes them for the
+// finished site:
+//   frame (default)  fills a picture slot: the note's paper yellow, camera-frame corners, the
+//                    request in Young Serif and a small phone drawn the way to hold it. Give it
+//                    the slot's own class for its shape (`auburn-arch`), or `shot--fill` to cover
+//                    a slot that already has a size (Home's mosaic tiles).
+//   tag              a pinned note for a picture that sits behind words (the Home hero, the Last
+//                    Sunday card): the slot keeps its dark ground so the white words still read.
+// Never indexed by site search.
+import type { Shot } from '@/data/shot-list';
+
+interface Props {
+  shot: Shot;
+  variant?: 'frame' | 'tag';
+  class?: string;
+}
+const { shot, variant = 'frame', class: className } = Astro.props;
+const hold =
+  shot.orientation === 'portrait'
+    ? 'Hold the phone upright'
+    : shot.orientation === 'square'
+      ? 'Square crop'
+      : 'Hold the phone sideways';
+// The little phone: 14 by 22 upright, turned on its side for landscape.
+const [pw, ph] = shot.orientation === 'landscape' ? [22, 14] : [14, 22];
+---
+
+<div
+  class:list={['shot', `shot--${variant}`, className]}
+  data-shot={shot.orientation}
+  data-pagefind-ignore="all"
+>
+  {variant === 'frame' && <span class="shot__corners" aria-hidden="true" />}
+  <div class="shot__body">
+    <p class="shot__tag">Photo needed</p>
+    <p class="shot__title">{shot.title}</p>
+    <p class="shot__detail">{shot.detail}</p>
+    <p class="shot__hold">
+      <svg
+        width={pw}
+        height={ph}
+        viewBox={`0 0 ${pw} ${ph}`}
+        aria-hidden="true"
+        focusable="false"
+        class="shot__phone"
+      >
+        <rect
+          x="1"
+          y="1"
+          width={pw - 2}
+          height={ph - 2}
+          rx="3"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+      </svg>
+      {hold}
+    </p>
+  </div>
+</div>
+
+<style is:global>
+  .shot {
+    --shot-ink: #16263d;
+    --shot-paper: #fffbe6;
+    --shot-yellow: #ffe46b;
+    /* Fixed, not the theme heading colour: the paper is always light, so its ink must not follow the
+       stored dark tokens (contrast.spec.ts runs them). */
+    --shot-heading: #1f3a5f;
+    color: var(--shot-ink);
+    font-family: var(--font-body);
+  }
+  .shot p {
+    margin: 0;
+  }
+  .shot__tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: var(--radius-pill);
+    background: var(--shot-yellow);
+    font-size: var(--fs-tag);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .shot__title {
+    font-family: var(--font-display);
+    font-size: var(--fs-title);
+    line-height: var(--lh-title);
+    color: var(--shot-heading);
+  }
+  .shot__detail {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+  .shot__hold {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-tag);
+    font-weight: 600;
+  }
+  .shot__phone {
+    flex: none;
+  }
+
+  /* ---- frame: fills a picture slot ---- */
+  .shot--frame {
+    position: relative;
+    display: grid;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--shot-paper);
+    container-type: inline-size;
+  }
+  .shot--frame:not(.auburn-arch):not(.shot--fill) {
+    aspect-ratio: 4 / 3;
+  }
+  .shot--fill {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+  }
+  /* Camera-frame corners, 22px arms inset 14px, drawn with four gradients. */
+  .shot__corners {
+    position: absolute;
+    inset: 14px;
+    pointer-events: none;
+    --c: var(--shot-heading);
+    background:
+      linear-gradient(var(--c), var(--c)) top left / 22px 2px,
+      linear-gradient(var(--c), var(--c)) top left / 2px 22px,
+      linear-gradient(var(--c), var(--c)) top right / 22px 2px,
+      linear-gradient(var(--c), var(--c)) top right / 2px 22px,
+      linear-gradient(var(--c), var(--c)) bottom left / 22px 2px,
+      linear-gradient(var(--c), var(--c)) bottom left / 2px 22px,
+      linear-gradient(var(--c), var(--c)) bottom right / 22px 2px,
+      linear-gradient(var(--c), var(--c)) bottom right / 2px 22px;
+    background-repeat: no-repeat;
+    opacity: 0.55;
+  }
+  .shot--frame .shot__body {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+    max-width: 34rem;
+    padding: 32px 36px;
+  }
+  /* A small tile (Home's mosaic on a phone): the tag and the request only. */
+  @container (max-width: 240px) {
+    .shot--frame .shot__body {
+      gap: 8px;
+      padding: 20px 16px;
+    }
+    .shot--frame .shot__title {
+      font-size: var(--fs-body);
+    }
+    .shot--frame .shot__detail,
+    .shot--frame .shot__hold {
+      display: none;
+    }
+  }
+
+  /* ---- tag: a pinned note over a dark picture slot ---- */
+  .shot--tag {
+    max-width: 320px;
+    padding: 14px 16px;
+    border: 2px solid var(--shot-ink);
+    border-radius: 12px;
+    background: var(--shot-paper);
+    box-shadow: 0 12px 30px -14px rgb(15 34 56 / 0.6);
+  }
+  .shot--tag .shot__body {
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+  }
+  .shot--tag .shot__title {
+    font-size: var(--fs-title-sm);
+  }
+</style>
