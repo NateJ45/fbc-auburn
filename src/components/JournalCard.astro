@@ -34,8 +34,8 @@ const dateLabel = formatDate(entry.publishedAt);
 // Resting shadow matches the rest of the card grammar (ServiceCard,
 // ProjectCard, TestimonialCard) — soft warm 4px ambient depth.
 const wrapperClass = featured
-  ? 'card-lift card-lift-slow group block bg-card border border-border-soft rounded-md overflow-hidden hover:border-primary/40 transition-colors lg:col-span-2 shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)]'
-  : 'card-lift card-lift-slow group block bg-card border border-border-soft rounded-md overflow-hidden hover:border-primary/40 transition-colors shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)]';
+  ? 'card-lift card-lift-slow group block bg-card border border-border-soft rounded-[var(--radius-card)] overflow-hidden hover:border-primary/40 transition-colors lg:col-span-2 shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)]'
+  : 'card-lift card-lift-slow group block bg-card border border-border-soft rounded-[var(--radius-card)] overflow-hidden hover:border-primary/40 transition-colors shadow-[0_4px_18px_-14px_rgba(61,61,61,0.18)]';
 const aspectClass = featured ? 'aspect-[16/9]' : 'aspect-[4/3]';
 const titleClass = featured
   ? 'font-display text-h2 text-foreground'
@@ -63,7 +63,7 @@ const titleClass = featured
     )}
     <div class="img-tint img-tint-light" aria-hidden="true"></div>
     {entry.featured && (
-      <span class="absolute top-m left-m inline-flex items-center rounded-full bg-primary-dark px-s py-1 text-[0.65rem] font-semibold tracking-[0.2em] text-white uppercase">
+      <span class="absolute top-m left-m inline-flex items-center rounded-full bg-primary-dark px-s py-1 text-xs font-semibold tracking-[0.2em] text-white uppercase">
         ★ Featured
       </span>
     )}

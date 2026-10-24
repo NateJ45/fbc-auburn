@@ -103,7 +103,7 @@ const schemas = [
       <SermonPlayer sermon={s} />
       <div class:list={['c-sermon-body', (video || s.audio?.url) && 'mt-l']}>
         {s.summary && <p class="c-summary">{s.summary}</p>}
-        <dl class="c-facts mt-l">
+        <dl class="c-facts">
           {s.passage && (
             <>
               <dt>Passage</dt>

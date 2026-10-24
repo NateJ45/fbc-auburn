@@ -58,7 +58,7 @@ const { address } = await getChurchFacts();
     margin-top: 2rem;
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: var(--radius-card);
     background: var(--background);
   }
   @media (min-width: 40rem) {
@@ -92,13 +92,13 @@ const { address } = await getChurchFacts();
     display: grid;
     align-content: center;
     gap: 1.25rem;
-    padding: clamp(1.25rem, 4vw, 2rem);
+    padding: var(--pad-card);
   }
   .church-map__address {
     display: grid;
     gap: 0.15rem;
     font-style: normal;
-    font-size: 1.1rem;
+    font-size: var(--fs-body);
     line-height: 1.45;
     color: var(--foreground);
   }

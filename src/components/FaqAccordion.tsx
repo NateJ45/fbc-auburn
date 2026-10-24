@@ -114,10 +114,12 @@ export default function FaqAccordion({ faqs, categoryOrder, idPrefix = 'faq' }: 
                     value={itemId}
                     className="border-b border-border-soft"
                   >
-                    {/* Question text — bumped to h3 scale (Cormorant) so the
-                        question reads as the structural heading it is, not as
-                        a button label. Hover stays bronze for affordance. */}
-                    <AccordionTrigger className="py-m text-left font-display text-h3 text-foreground hover:text-link hover:no-underline">
+                    {/* Question text in the display face at the row-title size
+                        (--fs-title-sm, 20px), so the question reads as the heading it
+                        is. Written as text-[length:...] on purpose: tailwind-merge took
+                        the old `text-h3` for a colour and dropped it in favour of
+                        `text-foreground`, so the questions rendered at 16px. */}
+                    <AccordionTrigger className="py-m text-left font-display text-[length:var(--fs-title-sm)] leading-[var(--lh-title)] text-foreground hover:text-link hover:no-underline">
                       {item.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-base leading-relaxed text-foreground/85">

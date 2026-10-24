@@ -12,7 +12,7 @@
 }
 .c-intro {
   margin-top: 0.8rem;
-  font-size: 1.2rem;
+  font-size: var(--fs-lead);
   line-height: 1.55;
   color: var(--muted-foreground);
 }
@@ -21,7 +21,7 @@
   padding: clamp(1.25rem, 3vw, 1.75rem) 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  font-size: 1.1rem;
+  font-size: var(--fs-body);
   line-height: 1.6;
   color: var(--muted-foreground);
 }
@@ -52,7 +52,7 @@
   display: block;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(--radius-inner);
   background: var(--muted);
 }
 .c-art img {
@@ -130,7 +130,7 @@ a:focus-visible > .c-art .c-art__play,
 
 /* ---- The Latest sermon block's title ------------------------------------------------------ */
 .c-latest__h {
-  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  font-size: var(--fs-h3);
 }
 .c-latest__title {
   color: inherit;
@@ -173,19 +173,19 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-date__day {
   font-family: var(--font-display);
-  font-size: 2.4rem;
+  font-size: var(--fs-numeral);
   line-height: 1;
   color: var(--auburn-deep, var(--heading-solid));
 }
 .c-date__my {
   margin-top: 0.25rem;
-  font-size: 0.9rem;
+  font-size: var(--fs-tag);
   font-weight: 600;
   color: var(--muted-foreground);
 }
 .c-row__title {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: var(--fs-title-sm);
   line-height: 1.25;
   color: var(--heading-solid);
 }
@@ -218,7 +218,7 @@ a:focus-visible > .c-art .c-art__play,
   border-radius: 999px;
   background: var(--muted);
   color: var(--foreground);
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   font-weight: 600;
 }
 .c-tag svg {
@@ -230,7 +230,7 @@ a:focus-visible > .c-art .c-art__play,
     grid-template-columns: 3.6rem minmax(0, 1fr);
   }
   .c-date__day {
-    font-size: 1.9rem;
+    font-size: var(--fs-numeral);
   }
 }
 
@@ -248,7 +248,7 @@ a:focus-visible > .c-art .c-art__play,
   min-width: 0;
   flex: 1 1 12rem;
   max-width: 18rem;
-  font-size: 0.95rem;
+  font-size: var(--fs-small);
   font-weight: 600;
   color: var(--foreground);
 }
@@ -257,7 +257,7 @@ a:focus-visible > .c-art .c-art__play,
   min-height: 48px;
   padding: 0.55rem 0.8rem;
   border: 1.5px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-control);
   background: var(--background);
   color: var(--foreground);
   font: inherit;
@@ -265,7 +265,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-filters select:focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 .c-filters__clear {
   min-height: 48px;
@@ -294,7 +294,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2.5rem);
+  gap: var(--gap-open-row) var(--gap-open-col);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -317,7 +317,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-card__title {
   margin-top: 1rem;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: var(--fs-title);
   line-height: 1.2;
   color: var(--heading-solid);
 }
@@ -354,7 +354,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-people {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
-  gap: clamp(2rem, 4vw, 2.75rem) clamp(1.25rem, 3vw, 2rem);
+  gap: var(--gap-open-row) var(--gap-open-col);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -365,7 +365,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-group__title {
   margin-bottom: 1.2rem;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -374,7 +374,7 @@ a:focus-visible > .c-art .c-art__play,
 .c-photo {
   aspect-ratio: 1;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(--radius-inner);
   background: var(--muted);
 }
 .c-photo img {
@@ -395,13 +395,13 @@ a:focus-visible > .c-art .c-art__play,
 .c-person__name {
   margin-top: 0.9rem;
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: var(--fs-title-sm);
   line-height: 1.2;
   color: var(--heading-solid);
 }
 .c-person__role {
   margin-top: 0.25rem;
-  font-size: 0.95rem;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -439,7 +439,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-file__title {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: var(--fs-title-sm);
   color: var(--link);
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -455,9 +455,9 @@ a:focus-visible > .c-art .c-art__play,
   gap: 0.4rem;
   max-width: 40rem;
   margin-bottom: 1.8rem;
-  padding: clamp(1.2rem, 3vw, 1.75rem);
+  padding: var(--pad-card);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: var(--radius-card);
   background: var(--background);
   box-shadow: 0 24px 48px -36px rgb(22 38 61 / 0.45);
 }
@@ -465,7 +465,7 @@ a:focus-visible > .c-art .c-art__play,
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 15px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -473,7 +473,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-feature__title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: var(--fs-title);
   line-height: 1.2;
 }
 .c-feature .btn-auburn {
@@ -489,7 +489,7 @@ a:focus-visible > .c-art .c-art__play,
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(--radius-card);
   background: #16304d;
 }
 .c-player__frame > a {
@@ -523,7 +523,7 @@ a:focus-visible > .c-art .c-art__play,
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: var(--fs-tag);
   text-shadow: 0 1px 6px rgb(0 0 0 / 0.5);
 }
 .c-audio {
@@ -541,7 +541,7 @@ a:focus-visible > .c-art .c-art__play,
 }
 .c-summary {
   max-width: 44rem;
-  font-size: 1.2rem;
+  font-size: var(--fs-lead);
   line-height: 1.6;
 }
 .c-facts {
@@ -549,7 +549,9 @@ a:focus-visible > .c-art .c-art__play,
   grid-template-columns: max-content minmax(0, 1fr);
   gap: 0.45rem 1.25rem;
   max-width: 40rem;
-  margin: 0;
+  /* The space under the summary lives here: a bare margin: 0 overrode the mt-l on the element, so
+     the list sat flush under the summary (2026-10-24). */
+  margin: var(--gap-heading) 0 0;
 }
 .c-facts dt {
   font-weight: 700;

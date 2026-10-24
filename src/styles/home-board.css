@@ -12,18 +12,21 @@
    Light only (rule 3): no dark styles here. */
 
 .hb {
-  --hb-radius: 20px;
+  --hb-radius: var(--radius-card);
   --hb-ink: #16263d;
   --hb-body: #24344d;
   --hb-muted: #4a5a73;
   --hb-line: #e6ded2;
   --hb-label-color: var(--auburn-deep);
   --hb-gutter: var(--spacing-l);
+  /* One gap between bands, top and bottom (48px on a phone to 80px on desktop), the same token the
+     inner pages' sections are built from. */
+  --hb-rhythm: var(--spacing-section-md);
   /* Light in every case (rule 3); pinned so a forced dark theme cannot turn links pale here. */
   --link: #1f3a5f;
   background: #ffffff;
   color: var(--hb-ink);
-  font-size: 1.125rem;
+  font-size: var(--fs-body);
   line-height: 1.6;
   overflow-x: clip;
 }
@@ -120,7 +123,7 @@
   gap: 4px 14px;
   margin: 0 0 14px;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -144,7 +147,7 @@
 .hb-intro {
   max-width: 34rem;
   margin: 0 0 18px;
-  font-size: 21px;
+  font-size: var(--fs-lead);
   line-height: 1.5;
   color: #f4efe7;
 }
@@ -154,20 +157,20 @@
   align-items: center;
   gap: 12px 14px;
 }
-.hb-actions .btn-auburn {
-  min-height: 52px;
-  padding: 10px 26px;
-}
-/* The second action: a white outline button on the photo. */
+/* The hero's buttons are the site's own 48px pair (they were a 52px one-off until the
+   2026-10-24 standardising pass). */
+/* The second action: a white outline button on the photo, the outline button's shape in white. */
 .hb-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 52px;
-  padding: 10px 24px;
-  border: 2px solid #ffffff;
-  border-radius: 10px;
+  min-height: 48px;
+  padding: 0.7rem 1.4rem;
+  border: 1.5px solid #ffffff;
+  border-radius: var(--radius-control);
+  font-size: var(--fs-button);
   font-weight: 600;
+  line-height: 1.2;
   color: #ffffff;
   text-decoration: none;
   transition:
@@ -192,7 +195,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: rgb(15 34 56 / 0.72);
-  font-size: 12px;
+  font-size: var(--fs-tag);
   font-weight: 600;
   letter-spacing: 0.04em;
   color: #ffffff;
@@ -213,10 +216,7 @@
     z-index: 3;
     margin-bottom: -230px;
   }
-  .hb-hero + .hb-section,
-  .hb-hero + * + .hb-section {
-    padding-top: 40px;
-  }
+  /* The card hangs into this section, so its heading keeps the narrow left column (below). */
   .hb-walk > .hb-wrap > :first-child,
   .hb-walk h2 {
     max-width: 52%;
@@ -228,12 +228,12 @@
 .hb-belong {
   position: relative;
   isolation: isolate;
-  padding-bottom: 72px;
+  padding-bottom: var(--hb-rhythm); /* it ends on the navy ground, so it pads its own foot */
 }
 .hb-belong::before {
   content: '';
   position: absolute;
-  inset: 220px 0 0;
+  inset: calc(var(--hb-rhythm) + 220px) 0 0; /* the band's top padding, then partway down the photos */
   z-index: -1;
   background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
@@ -246,7 +246,7 @@
 .hb-sunday {
   position: relative;
   z-index: 2; /* above the path's last step */
-  padding: 32px 34px 30px;
+  padding: var(--pad-card);
   border-radius: var(--hb-radius);
   background-color: var(--auburn-deep);
   background-image: url('/textures/tile-deep.svg');
@@ -264,26 +264,29 @@
 .hb-sunday__title {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--fs-tag);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #dbe3ee;
 }
+/* The "To confirm" tag in NotConfirmed.astro's own shape and colours (2026-10-24: it was a white
+   pill here and a sentence-case pill in the menu, three looks for one tag). */
 .hb-pill {
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--auburn-red-dark);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-tag);
+  background: #fce3da;
+  color: #7a2a14;
+  font-size: var(--fs-tag);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 .hb-sunday__date {
   margin: 6px 0 4px;
   font-family: var(--font-display);
-  font-size: 34px;
+  font-size: var(--fs-numeral);
   line-height: 1.1;
 }
 /* The forecast line keeps one line of room, so it can arrive with the card on screen without
@@ -294,7 +297,7 @@
 }
 .hb-sunday .sunday-weather .sunday-weather__line {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--fs-small);
   color: #f4efe7;
 }
 .hb-sunday__times {
@@ -308,7 +311,7 @@
 }
 .hb-sunday__times dt {
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: var(--fs-numeral);
   line-height: 1;
 }
 .hb-sunday__times dd {
@@ -326,7 +329,7 @@
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  font-size: 15px;
+  font-size: var(--fs-small);
 }
 /* Jacob's "how to find us" line: parking, the door (Church facts > address; empty hides it). */
 .hb-sunday__findus {
@@ -334,7 +337,7 @@
 }
 .hb-sunday__where p {
   margin: 0;
-  font-size: 17px;
+  font-size: var(--fs-body);
   line-height: 1.5;
 }
 .hb-sunday a {
@@ -344,9 +347,10 @@
 }
 
 /* ---- Bands: pale mosaic texture, white panels ------------------------------------------------ */
-/* One rhythm between sections (Home audit, 2026-10-17: the gaps had stacked to 160 to 250px). */
+/* One rhythm between sections (Home audit, 2026-10-17: the gaps had stacked to 160 to 250px). A
+   tinted band pads both ends, so nothing touches its edge. */
 .hb-band {
-  padding: 60px 0 64px;
+  padding-block: var(--hb-rhythm);
 }
 /* Flat tints: the pebble textures were dropped in the Home audit (2026-10-17); the white panels
    and the stone icons carry the bands. */
@@ -399,14 +403,14 @@
 .hb-ways {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: var(--gap-grid);
 }
 .hb-way {
   display: flex;
   /* Top-aligned, so the three titles sit on one line whatever the text below (Home critic). */
   align-items: flex-start;
   gap: 18px;
-  padding: 22px 24px;
+  padding: var(--pad-card);
   border-radius: var(--hb-radius);
   background: #ffffff;
   box-shadow: 0 18px 40px -32px rgb(22 38 61 / 0.4);
@@ -422,7 +426,7 @@
 .hb-way__title {
   display: block;
   font-family: var(--font-display);
-  font-size: 23px;
+  font-size: var(--fs-title);
   line-height: 1.25;
 }
 .hb-way__body {
@@ -459,9 +463,9 @@
    down a rail on phones. */
 .hb-walk__heading {
   max-width: 30ch;
-  margin: 0 0 40px;
+  margin: 0 0 var(--gap-heading);
   font-family: var(--font-display);
-  font-size: clamp(34px, 3.4vw, 48px);
+  font-size: var(--text-h2);
   font-weight: 400;
   line-height: 1.08;
   letter-spacing: -0.01em;
@@ -498,7 +502,7 @@
     inset 0 0 0 2px rgb(0 0 0 / 0.2),
     inset 0 -4px 0 rgb(0 0 0 / 0.16);
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--fs-title);
   line-height: 1;
   color: #ffffff;
 }
@@ -533,7 +537,7 @@
 }
 .hb-walk__when {
   margin: 0 0 6px;
-  font-size: 13px;
+  font-size: var(--fs-tag);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -543,14 +547,14 @@
   margin: 0 0 8px;
   text-wrap: balance;
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--fs-title);
   font-weight: 400;
   line-height: 1.15;
   color: var(--hb-ink);
 }
 .hb-walk__body {
   margin: 0;
-  font-size: 17px;
+  font-size: var(--fs-body);
   line-height: 1.55;
   color: var(--hb-body);
 }
@@ -572,7 +576,7 @@
 .hb-walk__endline {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--fs-title);
   color: var(--hb-ink);
 }
 @media (max-width: 960px) {
@@ -607,8 +611,15 @@
 }
 
 /* ---- Who we are: the photo mosaic ------------------------------------------------------------- */
+/* Every section pads its top (2026-10-24: they padded only the foot, so the heading after the
+   hero's brick sill or the navy belong band sat right on its edge). Two plain sections in a row
+   share one gap; a plain section pads its foot too when a tinted band follows it. */
 .hb-section {
-  padding-bottom: 80px;
+  padding-block: var(--hb-rhythm) 0;
+}
+.hb-section:has(+ .hb-band),
+.hb-section:last-child {
+  padding-bottom: var(--hb-rhythm);
 }
 .hb-mosaic {
   display: grid;
@@ -640,7 +651,7 @@
   border-radius: 999px;
   background: #16263d;
   color: #ffffff;
-  font-size: 12px;
+  font-size: var(--fs-tag);
   font-weight: 600;
   letter-spacing: 0.06em;
 }
@@ -669,7 +680,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 20px;
-  padding: 30px 34px;
+  padding: var(--pad-card);
   border-radius: var(--hb-radius);
   background: var(--auburn-green);
   color: #ffffff;
@@ -677,14 +688,14 @@
 .hb-note h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(32px, 3.2vw, 46px);
+  font-size: var(--text-h2);
   font-weight: 400;
   line-height: 1.05;
 }
 .hb-note__quote {
   margin: 0 0 10px;
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: var(--fs-lead);
   line-height: 1.45;
 }
 .hb-note__quote,
@@ -720,7 +731,7 @@
 }
 .hb-note__sign {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--fs-small);
   color: #d3dce8;
 }
 .hb-note__sign a {
@@ -737,17 +748,17 @@
 }
 /* Both headings carry the same rule, so the two columns start alike (Home critic, 2026-10-17). */
 .hb-pair h2 {
-  margin: 0 0 18px;
+  margin: 0 0 var(--gap-heading);
   padding-bottom: 14px;
   border-bottom: 2px solid var(--hb-ink);
   font-family: var(--font-display);
-  font-size: clamp(34px, 3.6vw, 48px);
+  font-size: var(--text-h2);
   font-weight: 400;
   line-height: 1.1;
 }
 .hb-week-foot {
   margin: 14px 0 0;
-  font-size: 15px;
+  font-size: var(--fs-small);
   color: var(--hb-muted);
 }
 .hb-week-foot a {
@@ -792,7 +803,7 @@
   border-radius: 999px;
   background: #9a3b2a;
   color: #ffffff;
-  font-size: 12px;
+  font-size: var(--fs-tag);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -819,11 +830,11 @@
 .hb-watch__title {
   display: block;
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: var(--fs-title);
   line-height: 1.2;
 }
 .hb-watch__sub {
-  font-size: 15px;
+  font-size: var(--fs-small);
   color: #ffffff;
 }
 .hb .last-sunday {
@@ -871,10 +882,7 @@
     );
   }
   .hb-intro {
-    font-size: 18px;
-  }
-  .hb-band {
-    padding: 48px 0 56px;
+    font-size: var(--fs-lead);
   }
   .hb-band--sky {
     margin-top: 24px;
@@ -909,7 +917,7 @@
   /* The line saying where it streams stays on phones too (it was hidden). */
   .hb-watch__sub {
     display: block;
-    font-size: 14px;
+    font-size: var(--fs-small);
   }
   .hb-watch__play {
     width: 48px;
@@ -919,7 +927,7 @@
 /* Phones: the navy band behind "A place to belong" starts under the first photo. */
 @media (max-width: 960px) {
   .hb-belong::before {
-    inset: 160px 0 0;
+    inset: calc(var(--hb-rhythm) + 160px) 0 0;
   }
 }
 /* Phones: the two hero buttons stack full width, the usual pattern on the best church sites. */
@@ -937,13 +945,13 @@
 }
 @media (max-width: 420px) {
   .hb-sunday {
-    padding: 26px 22px 24px;
+    padding: var(--pad-card);
   }
   .hb-intro {
-    font-size: 19px;
+    font-size: var(--fs-lead);
   }
   .hb-way {
-    padding: 18px;
+    padding: var(--pad-card);
     gap: 14px;
   }
   .hb-way .stone-icon {
@@ -983,7 +991,7 @@
   .hb-sundaybar__times {
     flex: 1;
     margin: 0;
-    font-size: 15px;
+    font-size: var(--fs-small);
     font-weight: 700;
     line-height: 1.25;
     color: var(--auburn-deep);
@@ -999,7 +1007,7 @@
   .hb-sundaybar .hb-sundaybar__visit {
     min-height: 44px;
     padding: 8px 16px;
-    font-size: 15px;
+    font-size: var(--fs-small);
     white-space: nowrap;
   }
   /* Room under the footer's last line for the bar, should it ever overlap. */

@@ -131,7 +131,7 @@ export default function StickyCTAChip({ label, href = '/contact/', threshold = 0
         <a
           href={href}
           tabIndex={visible ? 0 : -1}
-          className="press-tactile flex min-w-0 items-center gap-2 text-xs font-semibold tracking-eyebrow uppercase"
+          className="hit-44 press-tactile relative flex min-w-0 items-center gap-2 text-xs font-semibold tracking-eyebrow uppercase"
         >
           <span className="truncate">{label}</span>
           <span aria-hidden="true" className="shrink-0 text-base leading-none">

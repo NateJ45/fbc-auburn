@@ -16,6 +16,17 @@ sequence).
 
 ## Waiting on a human
 
+### 1zz. The standardising pass: port the shared fixes, and see Live preview signed in (opened 2026-10-24)
+
+Two loose ends from fbc-auburn#112. **Ports:** several fixes are in starter components, not church ones, and
+belong in `ncs-astro-sanity-starter` with a port card: FAQ questions rendering at 16px (tailwind-merge drops
+`text-h3` beside `text-foreground`; `FaqAccordion.tsx`), the stats labels at 0.62rem (`StatsCounter.tsx`),
+the logo strip's row hiding its first logo when it overflows (`justify-center-safe`, `LogoStrip.astro`),
+`rounded-md` (8px) on content cards and photos in the section components, the journal body's headings at full
+section size (`JournalPortableText.tsx`), the `.c-facts` `margin: 0` cancelling `mt-l`, and a board rule left
+behind by a block that renders nothing (`board.css`). **Live preview:** the brand stylesheet also loads in the
+Studio's Live preview, so the new body size and type are there too; check it once signed in after the deploy.
+
 ### 1z. Card 136: Search Console on Home, once the church's domain is chosen (opened 2026-10-19)
 
 **Blocker: the domain cutover, then a Google service account.** Card 136 came in with the starter: the Visitors card can
