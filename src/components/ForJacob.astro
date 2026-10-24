@@ -9,8 +9,19 @@
 // A <details> element, so it opens without JavaScript; the highlighter is a few lines that wrap the
 // bracketed text in <mark>. Neither is indexed by site search.
 import { PRE_LAUNCH_NOTES, notesFor } from '@/data/for-jacob';
+import { shotsForPage } from '@/data/shot-list';
 
-const notes = PRE_LAUNCH_NOTES ? notesFor(Astro.url.pathname) : [];
+// The page's own notes, then one per photo on its shot list (src/data/shot-list.ts), in the order
+// the "Photo needed" boxes appear on the page.
+const notes = PRE_LAUNCH_NOTES
+  ? [
+      ...notesFor(Astro.url.pathname),
+      ...shotsForPage(Astro.url.pathname).map((s) => ({
+        title: `Photo: ${s.title}.`,
+        detail: `${s.detail} (${s.orientation === 'portrait' ? 'Hold the phone upright.' : s.orientation === 'square' ? 'Square.' : 'Hold the phone sideways.'})`,
+      })),
+    ]
+  : [];
 ---
 
 {PRE_LAUNCH_NOTES && (
@@ -22,8 +33,8 @@ const notes = PRE_LAUNCH_NOTES ? notesFor(Astro.url.pathname) : [];
     <div class="fj__panel">
       <p class="fj__lede">
         This is a preview. Anything <mark class="fj-mark">in yellow brackets</mark> is placeholder
-        wording we wrote to show the idea, and photos marked "Stand-in" are borrowed. Here is what
-        we need from you for this page:
+        wording we wrote to show the idea, and each "Photo needed" box names a photo we would love
+        from you. Here is what we need for this page:
       </p>
       {notes.length > 0 ? (
         <ol class="fj__list">

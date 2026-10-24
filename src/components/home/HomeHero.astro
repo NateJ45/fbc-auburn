@@ -12,8 +12,12 @@
 // is the picture; Eyebrow and Headline make the name line ("First Baptist Church of" + "Auburn");
 // "Welcome line" is the big heading; Subhead the sentence; the two buttons. With no photo the
 // hero falls back to the navy brick ground. A stand-in (an Unsplash picture) is labelled
-// "Stand-in photograph" in the corner until the church's own photo replaces it.
+// "Stand-in photograph" in the corner until the church's own photo replaces it. Before launch a
+// stand-in is not shown at all: the hero keeps the navy ground and a pinned "Photo needed" note
+// names the shot we want (src/data/shot-list.ts, key "hero").
 import SanityImage from '@/components/SanityImage.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
 import Sill from '@/components/Sill.astro';
 import { getChurchFacts } from '@/lib/church-data';
@@ -27,7 +31,8 @@ interface Props {
 }
 const { block } = Astro.props;
 
-const photo = block.backgroundImage?.asset ? block.backgroundImage : null;
+const shot = shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
+const photo = !shot && block.backgroundImage?.asset ? block.backgroundImage : null;
 const isStandIn = (img: ProjectedImage | null | undefined) =>
   (img?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
 
@@ -64,6 +69,12 @@ const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
     <p class="hb-standin">
       <span>Stand-in photograph</span>
     </p>
+  )}
+
+  {shot && (
+    <div class="hb-wrap hb-hero__shot">
+      <ShotRequest shot={shot} variant="tag" />
+    </div>
   )}
 
   <div class="hb-wrap hb-hero__inner">

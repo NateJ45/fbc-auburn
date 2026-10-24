@@ -8,9 +8,13 @@
 //
 // STAND-IN PHOTOS. A photo whose Sanity asset came from Unsplash (asset.source.name) carries a
 // "Stand-in photograph" caption, so it is never mistaken for the church. Upload the church's own
-// photo and the caption goes by itself.
+// photo and the caption goes by itself. Before launch a stand-in (or an empty slot on the shot
+// list) shows a "Photo needed" box naming the shot instead (src/data/shot-list.ts).
 import SectionLabel from './SectionLabel.astro';
 import SanityImage from '@/components/SanityImage.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { shotFor } from '@/data/shot-list';
+import { splitStega } from '@/lib/preview-stega';
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import { ctaHref } from '@/lib/cta-href';
 import type { ProjectedImage, ProjectedImageTextSection } from '@/lib/pageBuilder.types';
@@ -20,8 +24,16 @@ interface Props {
   headingId: string;
 }
 const { block, headingId } = Astro.props;
+// Before launch, a slot that is empty or holds a stand-in shows a "Photo needed" box naming the
+// shot instead (src/data/shot-list.ts): the big photo is shot 0, the small ones 1 and 2.
+const heading = splitStega(block.heading ?? '').cleaned;
+const path = Astro.url.pathname;
+const bigShot = shotFor(path, heading, 0, block.image);
 const big = block.image?.asset ? block.image : null;
-const small = (block.extraImages ?? []).filter((i) => i?.asset).slice(0, 2);
+const extras = (block.extraImages ?? []).filter((i) => i?.asset);
+const small = [0, 1]
+  .map((i) => ({ img: extras[i] ?? null, shot: shotFor(path, heading, i + 1, extras[i]) }))
+  .filter((s) => s.img || s.shot);
 // The signer's portrait (Home audit, 2026-10-17): a small circle beside the signature, so a
 // visitor meets the pastor, not just his words. Optional.
 const portrait = block.signedPhoto?.asset ? block.signedPhoto : null;
@@ -34,17 +46,23 @@ const isStandIn = (img: ProjectedImage | null | undefined) =>
 <section class="hb-section hb-belong" aria-labelledby={block.heading ? headingId : undefined}>
   <div class="hb-wrap">
     {block.eyebrow && <SectionLabel text={block.eyebrow} as="p" />}
-    <div class="hb-mosaic" data-big={big ? 'yes' : 'no'} data-small={small.length}>
-      {big && (
+    <div class="hb-mosaic" data-big={big || bigShot ? 'yes' : 'no'} data-small={small.length}>
+      {bigShot ? (
         <figure class="hb-ph hb-ph--big">
-          <SanityImage
-            source={big as never}
-            width={1200}
-            sizes="(max-width: 960px) 100vw, 50vw"
-            quality={70}
-          />
-          {isStandIn(big) && <figcaption>Stand-in photograph</figcaption>}
+          <ShotRequest shot={bigShot} class="shot--fill" />
         </figure>
+      ) : (
+        big && (
+          <figure class="hb-ph hb-ph--big">
+            <SanityImage
+              source={big as never}
+              width={1200}
+              sizes="(max-width: 960px) 100vw, 50vw"
+              quality={70}
+            />
+            {isStandIn(big) && <figcaption>Stand-in photograph</figcaption>}
+          </figure>
+        )
       )}
       <div class="hb-note">
         {block.heading && <h2 id={headingId}>{block.heading}</h2>}
@@ -75,15 +93,21 @@ const isStandIn = (img: ProjectedImage | null | undefined) =>
           )}
         </div>
       </div>
-      {small.map((img) => (
+      {small.map(({ img, shot }) => (
         <figure class="hb-ph">
-          <SanityImage
-            source={img as never}
-            width={700}
-            sizes="(max-width: 960px) 50vw, 25vw"
-            quality={70}
-          />
-          {isStandIn(img) && <figcaption>Stand-in photograph</figcaption>}
+          {shot ? (
+            <ShotRequest shot={shot} class="shot--fill" />
+          ) : (
+            <>
+              <SanityImage
+                source={img as never}
+                width={700}
+                sizes="(max-width: 960px) 50vw, 25vw"
+                quality={70}
+              />
+              {isStandIn(img) && <figcaption>Stand-in photograph</figcaption>}
+            </>
+          )}
         </figure>
       ))}
     </div>

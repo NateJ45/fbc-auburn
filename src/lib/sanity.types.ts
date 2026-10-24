@@ -1520,7 +1520,15 @@ export type IconCardsSection = {
       | 'praying-hands'
       | 'blocks'
       | 'music'
-      | 'giving-hand';
+      | 'giving-hand'
+      | 'crown'
+      | 'cross'
+      | 'dove'
+      | 'cracked-heart'
+      | 'broken-chain'
+      | 'cup-and-loaf'
+      | 'church'
+      | 'clouds-and-light';
     image?: IconCardImage;
     title?: string;
     body?: string;
@@ -1726,7 +1734,22 @@ export type RichTextSection = {
 export type HeroSection = {
   _type: 'heroSection';
   icon?:
-    'map-pin' | 'clock' | 'coffee' | 'bible' | 'praying-hands' | 'blocks' | 'music' | 'giving-hand';
+    | 'map-pin'
+    | 'clock'
+    | 'coffee'
+    | 'bible'
+    | 'praying-hands'
+    | 'blocks'
+    | 'music'
+    | 'giving-hand'
+    | 'crown'
+    | 'cross'
+    | 'dove'
+    | 'cracked-heart'
+    | 'broken-chain'
+    | 'cup-and-loaf'
+    | 'church'
+    | 'clouds-and-light';
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;

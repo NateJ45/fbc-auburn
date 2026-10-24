@@ -4,7 +4,8 @@
 // off at launch (and the yellow highlighting of "[Jacob: ...]" placeholders goes with it).
 //
 // Keys are page paths with a trailing slash ("/" for Home). Keep each note to one thing he can
-// act on: a title, then a sentence on what we want and why.
+// act on: a title, then a sentence on what we want and why. Photos are not listed here: the shot
+// list (src/data/shot-list.ts) adds one note per "Photo needed" box on the page.
 
 export const PRE_LAUNCH_NOTES = true;
 
@@ -13,30 +14,17 @@ export interface JacobNote {
   detail?: string;
 }
 
-const PHOTOS_OK: JacobNote = {
-  title: 'These photos are from your Facebook page: OK to use them?',
-  detail:
-    'We only picked photos with no people in them. Say the word and we will swap any of them, or use your own.',
-};
-
 const NOTES: Record<string, JacobNote[]> = {
   '/': [
     {
-      title: 'Meet Pastor Jacob: a photo and a few lines.',
-      detail:
-        'A head-and-shoulders photo of you and three or four sentences for the new block near the bottom of the page.',
-    },
-    {
-      title: 'A welcome photo for the top of the page.',
-      detail:
-        'The sanctuary photo there now is from your Facebook page. People would be even better: the church greeting each other, worship, or the front door on a Sunday. Wide and sharp (a phone is fine).',
+      title: 'Meet Pastor Jacob: a few lines.',
+      detail: 'Three or four sentences about you for the block near the bottom of the page.',
     },
     {
       title: 'Your welcome, in your words.',
       detail:
         'The line under "Come as you are." and the note signed by you are our drafts in brackets: rewrite them or tell us what to change.',
     },
-    PHOTOS_OK,
     {
       title: 'Confirm the Sunday and Wednesday times.',
       detail:
@@ -54,7 +42,6 @@ const NOTES: Record<string, JacobNote[]> = {
       detail:
         'The building says First Baptist Church of Auburn and the road sign says Auburn Baptist Church. One, or both?',
     },
-    PHOTOS_OK,
   ],
   '/what-we-believe/': [
     {
@@ -68,6 +55,11 @@ const NOTES: Record<string, JacobNote[]> = {
         'The page now opens with the good news in your words, then nine short topics, the order the largest SBC church sites use.',
     },
     {
+      title: 'The pictures beside each belief.',
+      detail:
+        'Each topic has a small brick picture: a crown for God, the cross, a dove, a cracked heart for sin, a broken chain for salvation, the cup and bread over water, the church, and light through the clouds. Tell us if any of them says the wrong thing.',
+    },
+    {
       title: 'The full statement of faith.',
       detail:
         'The page says, in yellow brackets, that the church affirms the Baptist Faith and Message 2000 and links to it. Confirm that, or send the church’s own statement instead.',
@@ -76,13 +68,8 @@ const NOTES: Record<string, JacobNote[]> = {
       title: 'Baptism.',
       detail: 'What it means here, and what someone should do if they would like to be baptised.',
     },
-    PHOTOS_OK,
   ],
   '/leadership/': [
-    {
-      title: 'A photo of you.',
-      detail: 'Head and shoulders, natural light, a phone is fine. It goes beside your bio.',
-    },
     {
       title: 'A few sentences about you.',
       detail:
@@ -114,7 +101,6 @@ const NOTES: Record<string, JacobNote[]> = {
       title: 'Children during worship.',
       detail: 'Is there a nursery or children’s room, and who looks after it?',
     },
-    PHOTOS_OK,
   ],
   '/ministries/': [
     {
@@ -147,7 +133,6 @@ const NOTES: Record<string, JacobNote[]> = {
       detail:
         'One or two real examples. Does the food pantry run through the year, and when is it open?',
     },
-    PHOTOS_OK,
   ],
   '/watch/': [
     {
