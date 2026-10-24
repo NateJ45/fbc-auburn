@@ -11,8 +11,11 @@
 // colours read on the paper and on the dark ground, so no one-colour version.
 //
 // Which document type, field group or tool means what: brand/brand.config.json
-// `studio.icons`. Meanings with no stone (contact,
-// redirects...) keep the starter's @sanity/icons.
+// `studio.icons`. Since round 25 (2026-10-24) every icon is drawn in brick courses with the
+// linocut finish (masters in brand/icons/, printed by scripts/print-icons.mjs), and the meanings
+// that had no art (contact, redirects, password pages, 404, code...) have their own. Meanings
+// not listed (testimonial, service, value, step: capabilities this site removed) keep the
+// starter's @sanity/icons.
 // =============================================================================
 
 import type { BrandIconKey } from '../lib/studio-icons';
@@ -41,6 +44,13 @@ import trashUrl from '../assets/brand/stone-icon-trash.svg?url';
 import calendarUrl from '../assets/brand/stone-icon-calendar.svg?url';
 import paletteUrl from '../assets/brand/stone-icon-palette.svg?url';
 import restoreUrl from '../assets/brand/stone-icon-restore.svg?url';
+import lockUrl from '../assets/brand/stone-icon-lock.svg?url';
+import signpostUrl from '../assets/brand/stone-icon-signpost.svg?url';
+import compassUrl from '../assets/brand/stone-icon-compass.svg?url';
+import phoneUrl from '../assets/brand/stone-icon-phone.svg?url';
+import stackUrl from '../assets/brand/stone-icon-stack.svg?url';
+import codeUrl from '../assets/brand/stone-icon-code.svg?url';
+import tagUrl from '../assets/brand/stone-icon-tag.svg?url';
 import markUrl from '../assets/brand/fbc-auburn-icon-full-color.svg?url';
 
 // Inset 0: each file's viewBox is already cropped to its art, so the default 10% margin only made
@@ -69,6 +79,14 @@ const TrashIcon = artIcon(trashUrl, 'Bin', 0);
 const CalendarIcon = artIcon(calendarUrl, 'Calendar', 0);
 const PaletteIcon = artIcon(paletteUrl, 'Paint palette', 0);
 const RestoreIcon = artIcon(restoreUrl, 'Turning back arrow', 0);
+// Round 25 (2026-10-24): the meanings that still fell back to @sanity/icons.
+const LockIcon = artIcon(lockUrl, 'Padlock', 0);
+const SignpostIcon = artIcon(signpostUrl, 'Signpost', 0);
+const CompassIcon = artIcon(compassUrl, 'Compass', 0);
+const PhoneIcon = artIcon(phoneUrl, 'Telephone', 0);
+const StackIcon = artIcon(stackUrl, 'Stack of pages', 0);
+const CodeIcon = artIcon(codeUrl, 'Code brackets', 0);
+const TagIcon = artIcon(tagUrl, 'Label tag', 0);
 // The church's own mark: who we are (the About page, mapped in brand.config.json).
 const Mark = artIcon(markUrl, 'The church mark', 0);
 
@@ -127,4 +145,17 @@ export const BRAND_ICON_ART: Partial<Record<BrandIconKey, BrandIcon>> = {
   // Scheduling and publishing, and the Brand kit.
   publishing: CalendarIcon,
   brandKit: PaletteIcon,
+  // Password pages; redirects (a signpost sends you on); the not-found page (off the path).
+  privacy: LockIcon,
+  redirect: SignpostIcon,
+  notFound: CompassIcon,
+  // The Contact page; the Content tool and plain documents; categories; custom code.
+  contact: PhoneIcon,
+  content: StackIcon,
+  document: Page,
+  text: Page,
+  related: ChainLink,
+  category: TagIcon,
+  table: StackIcon,
+  code: CodeIcon,
 };
