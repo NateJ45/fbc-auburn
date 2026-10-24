@@ -160,7 +160,12 @@ and once a unit lands the script takes its classes off. A split heading keeps it
 (they change nothing in the layout, and the mask goes with the class) so nothing in the DOM moves
 after the page has settled; the spans come out, and the heading's own nodes go back, when the width
 changes or the page is left. The first screen is held (`flow-hold`) until the script arms it, and the hold lets go by
-itself after 1.6s, so a page whose script fails is never left blank. Only `opacity`, `translate`,
+itself after 1.6s, so a page whose script fails is never left blank. The hold is a real 1.6s animation
+at opacity 0 with no fill, not a zero-length one with a delay: the compositor refuses zero-length
+effects, which Lighthouse reports as "unsupported timing parameters". Headings are split in one
+batch (`splitAll` in `flow.ts`: every read of a phase before any write of the next), so the page is
+laid out a handful of times for all of them rather than three times per heading (Lighthouse's
+"forced reflow"). Only `opacity`, `translate`,
 `scale` and (for the parallax) `transform` move. The starter's `[data-reveal]`,
 `[data-stagger-grid]` and `.img-curtain` stand down once the flow layer has armed a page.
 

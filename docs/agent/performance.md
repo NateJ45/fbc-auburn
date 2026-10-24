@@ -12,6 +12,25 @@ Performance is a UX feature, not a vanity score. Lighthouse 100 on Performance i
 - **CLS (Cumulative Layout Shift)** < 0.05. Reserve space for images with explicit width/height (or aspect-ratio CSS). Don't lazy-load above-the-fold images. Web fonts use `font-display: swap` to avoid invisible-text shifts.
 - **INP (Interaction to Next Paint)** < 200ms. Keep React island hydration light. Favor `client:visible` and `client:idle` over `client:load` for anything below the fold.
 
+### FBC Auburn, the 2026-10-24 Lighthouse pass
+
+A mobile run on Home scored 91 / 100 / 100 / 100. What it flagged and what changed:
+
+- **Render-blocking CSS (~440ms):** `build.inlineStylesheets: 'always'` in `astro.config.mjs`, so a
+  page's CSS arrives in its HTML (about 50KB more per page, compressed).
+- **Image delivery:** the pre-launch example photos have 480/640/800 copies and a srcset with
+  `sizes="auto, ..."` (`exampleSrcset` in `src/data/shot-list.ts`); the video poster is 720 wide.
+- **The example clip and cache lifetime:** `preload="none"`, played only while on screen
+  (`HomeWeekWatch.astro`), and `/shot-examples/*` cached a year (`public/_headers`).
+- **Non-composited animations:** the hero's `flow-hold` had zero length (`docs/agent/animation.md`).
+- **Forced reflow:** the flow layer reads, then writes, in batches. What remains is Astro's router
+  reading the scroll position on load, which is the page's first layout, not extra work.
+- **CSP and HSTS:** `docs/agent/deployment.md`, "Security headers".
+- **Left as they are, on purpose:** "Legacy JavaScript" is Cloudflare's own analytics beacon (third
+  party). "Unused JavaScript" (~35KB) is React, which the phone menu needs (`client:idle`); dropping
+  it means rewriting the menu without React. The weather fetch in the dependency tree already waits
+  for idle time.
+
 ### Bundle budgets
 
 | Slot                                            | Target  |
