@@ -69,3 +69,30 @@ same `object-position` (centre, 30% down) so heads line up along a row. A person
 `.shape-tile` with the mark (`src/assets/brand/mark-print.png`), so a grid never breaks. The name is Young Serif, the
 role small caps grey. Two portraits a row on a phone (below 40rem), auto-fill from 14rem above. The block's intro (the
 existing `intro` field) is the place for "what this role is"; it already sits under the heading, before the faces.
+
+## Wayfinding (the rest of the hppres.org audit, 2026-10-24)
+
+- **Where next** (`src/components/WhereNext.astro`, in the footer on every page): three full-width Young Serif rows with
+  long hairline arrows (Plan your visit, Find your place, Sermons, then About the church as the spare). The page you are
+  on drops out. Hover or focus sweeps brick red in from the left.
+- **Two-tone page titles**: the page head's "Accent word in the heading" (`headingAccent`, now on `heroSection` too, in
+  `HEADING_ACCENT_FIELDS`). StoneHeading draws those letters all auburn and the rest all navy instead of the
+  every-fourth-letter rhythm; a plain title takes the auburn colour. Ministries uses "your place", Plan your visit
+  "your visit".
+- **The Sunday times band** (`src/components/church/TimesBand.astro`): the page head's "Show the Sunday times band" box
+  (`heroSection.showTimes`). A pale panel across the bottom of an inner page head, from 30% in out to the window edge:
+  "Sundays at Auburn", each Sunday gathering (time big, what it is in small caps), the address and Directions, all from
+  Church facts, with the To confirm tag while unconfirmed. Under 64rem it is one bar that opens the map.
+- **Fold-out questions** (`accordionSection`, `src/styles/church-blocks.css`): hairline rows, the question in Young
+  Serif, a thin circled plus that fills red and turns to a minus when open, the answer in the right-hand column on a wide
+  screen. Plan your visit's "Good to know" uses it.
+- **A letter** (`letterSection`, `src/components/sections/LetterSection.astro`): greeting, the letter, sign-off,
+  signature picture or the name in Young Serif, role, optional button, on a sheet of warm paper with a brick-red top
+  edge and a slight turn (none with reduced motion). Leadership carries Pastor Jacob's.
+- **Last Sunday** (`WatchSection.astro`): the band's label ("Last Sunday" or "Latest message") huge in outline behind
+  it, half off its bottom edge, and the stepped corner on its media. Use the outline word no more than twice on the site.
+- **The phone menu** (`src/components/MobileNav.tsx`, styles in `src/styles/auburn.css`): a full-screen sheet of big
+  Young Serif rows with long arrows; a row with pages under it opens in place, filled red.
+- The content moved by `scripts/content/hppres-wayfinding.mjs` (dry by default): Plan your visit's band, accent, the
+  three question headings ("What about my kids?", "Where do I park?", "How will I find it?", which are also the shot
+  list keys) and Good to know; Ministries' accent; the Leadership letter; Watch's "what is not streamed" ask.
