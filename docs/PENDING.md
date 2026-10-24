@@ -156,6 +156,12 @@ banner fought the welcome). At launch: replace every bracket, set `PRE_LAUNCH_NO
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 
+Belief icons (2026-10-24): What we believe's nine cards carry stone icons (eight new ones, `crown` to
+`clouds-and-light` in `src/lib/stone-icons.ts`, set by `scripts/content/belief-icons.mjs`). Doctrine is
+Jacob's, so the page's For Jacob note asks him to flag any picture that says the wrong thing; swap one by
+picking another icon on the card in the Studio, or redraw it (masters in `brand/icons/`, then
+`node scripts/print-icons.mjs`).
+
 ### 1x. Logo: the linocut print follow-ups (wired in 2026-10-23)
 
 **Blocker: the church has not seen it yet.** The mark is the linocut print (2026-10-23, replacing
