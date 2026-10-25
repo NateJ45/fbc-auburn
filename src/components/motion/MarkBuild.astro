@@ -25,9 +25,10 @@ const [, , vw, vh] = MARK_VIEWBOX.split(' ').map(Number);
 const uid = `mk${Math.random().toString(36).slice(2, 7)}`;
 
 // Timing: a steady beat between bricks and a breath between courses, so it reads as a wall being
-// laid by hand rather than a ripple. About five seconds start to finish.
-const BRICK_MS = 120;
-const COURSE_MS = 240;
+// laid by hand rather than a ripple. About two and a half seconds start to finish (was five
+// until 2026-10-25, which felt slow).
+const BRICK_MS = 40;
+const COURSE_MS = 80;
 const bricks = MARK_BRICKS.map((b, i) => ({ ...b, delay: i * BRICK_MS + b.course * COURSE_MS }));
 const total = bricks[bricks.length - 1].delay;
 ---
