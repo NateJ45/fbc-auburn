@@ -197,6 +197,12 @@ once hashes are present. Helpers and tests: `scripts/lib/csp.mjs`.
 - **Why one site-wide list, not a policy per page, and not Astro's `security.csp`:** the page
   router (`<ClientRouter />`) runs the next page's inline scripts under the FIRST page's policy,
   and Astro's own CSP feature does not support the router at all.
+- **The line must stay under 2,000 characters.** Cloudflare rejects a `_headers` line longer than
+  that and the deploy fails (it did on 2026-10-25, at 34 inline scripts). So `astro.config.mjs` sets
+  `vite.build.assetsInlineLimit: 0`: Astro's processed `<script>` blocks ship as hashed `/_astro/`
+  files under `'self'` instead of being inlined, and only `is:inline` scripts need a hash (10
+  then, a 679-character line). Check the `[csp] ... bytes` line of the build output when you add
+  an `is:inline` script.
 - **Only scripts are restricted.** No `default-src`, so images, frames (YouTube, Facebook, maps),
   styles, fonts and fetches (the weather) are untouched.
 - **What can still break:** a script that pasted code adds AT RUNTIME from an origin not in the

@@ -220,6 +220,12 @@ export default defineConfig({
     react(),
   ],
   vite: {
+    // Astro inlines a processed <script> smaller than this limit into the page, and every inline
+    // script needs its own sha256 in the CSP (scripts/build-csp.mjs). By 2026-10-25 the hashes
+    // pushed the one Content-Security-Policy line past Cloudflare's 2,000-character limit for a
+    // _headers line and the deploy failed. 0 serves those scripts as hashed /_astro/ files instead
+    // (cached for a year, covered by 'self'); only is:inline scripts still need a hash.
+    build: { assetsInlineLimit: 0 },
     // Read by src/pages/build-info.json.ts (see BUILD_COMMIT above).
     define: { __NCS_BUILD_COMMIT__: JSON.stringify(BUILD_COMMIT) },
     // fixSanityDedupeAlias() repairs @sanity/astro's dev-only alias, which is
