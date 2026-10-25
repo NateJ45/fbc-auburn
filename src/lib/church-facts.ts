@@ -70,6 +70,7 @@ export interface RawChurchFacts {
   connectCardUrl?: string | null;
   contactFormUrl?: string | null;
   prayerFormUrl?: string | null;
+  newsletterFormUrl?: string | null;
   email?: string | null;
   emailConfirmed?: boolean | null;
   churchAddress?: {
@@ -139,11 +140,13 @@ export interface ChurchFacts {
   email: { display: string; href: string; confirmed: boolean } | null;
   /** Church Trac member sign-in (Church Trac > Member sign-in link), or null. */
   memberLoginUrl: string | null;
-  /** Church Trac (docs/agent/church-trac.md): the church's address and three forms, each or null. */
+  /** Church Trac (docs/agent/church-trac.md): the church's address and four forms, each or null. */
   churchTracUrl: string | null;
   connectCardUrl: string | null;
   contactFormUrl: string | null;
   prayerFormUrl: string | null;
+  /** The Church Trac form that adds people to the church's email list (the newsletter). */
+  newsletterFormUrl: string | null;
   /** The church's Facebook page (Social links), or null. */
   facebookUrl: string | null;
   /**
@@ -455,6 +458,7 @@ export function resolveChurchFacts(raw?: RawChurchFacts | null): ChurchFacts {
     connectCardUrl: httpsUrl(s.connectCardUrl),
     contactFormUrl: httpsUrl(s.contactFormUrl),
     prayerFormUrl: httpsUrl(s.prayerFormUrl),
+    newsletterFormUrl: httpsUrl(s.newsletterFormUrl),
     email: emailOk
       ? { display: email, href: `mailto:${plain(email)}`, confirmed: s.emailConfirmed === true }
       : null,

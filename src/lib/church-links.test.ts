@@ -18,6 +18,7 @@ const EMPTY = linkValues({
   connectCardUrl: null,
   contactFormUrl: null,
   prayerFormUrl: null,
+  newsletterFormUrl: null,
   calendarPageUrl: null,
   memberLoginUrl: null,
   liveUrl: null,
@@ -27,6 +28,7 @@ const FULL: LinkValues = linkValues({
   connectCardUrl: 'https://x.churchtrac.com/connectcard',
   contactFormUrl: null,
   prayerFormUrl: 'https://x.churchtrac.com/prayer',
+  newsletterFormUrl: 'https://x.churchtrac.com/newsletter',
   calendarPageUrl: 'https://www.churchtrac.com/public_calendar?ui=ABC',
   memberLoginUrl: 'https://x.churchtrac.com/portal',
   liveUrl: 'https://www.facebook.com/x/live',
@@ -45,6 +47,7 @@ test('a filled box gives its address; the contact form falls back to the connect
   assert.equal(fillLink('{contact-form}', FULL), 'https://x.churchtrac.com/connectcard');
   assert.equal(fillLink('{calendar}', FULL), 'https://www.churchtrac.com/public_calendar?ui=ABC');
   assert.equal(fillLink('{watch}', FULL), 'https://www.facebook.com/x/live');
+  assert.equal(fillLink('{newsletter}', FULL), 'https://x.churchtrac.com/newsletter');
 });
 
 test('a blank box falls back to the site’s own page and warns', () => {
@@ -55,6 +58,7 @@ test('a blank box falls back to the site’s own page and warns', () => {
     '/contact/',
     '/contact/',
     '/prayer/',
+    '/contact/',
     '/events/',
     '/contact/',
     '/watch/',
@@ -87,6 +91,7 @@ test('the fill walks a document and leaves untouched parts as the same objects',
 
 test('the Studio check: known tokens pass, unknown ones and relative paths in absolute boxes do not', () => {
   assert.equal(checkLinkBox('{prayer}'), true);
+  assert.equal(checkLinkBox('{newsletter}'), true);
   assert.equal(checkLinkBox('/contact/'), true);
   assert.equal(checkLinkBox(''), true);
   assert.match(String(checkLinkBox('{givng}')), /Unknown link placeholder/);

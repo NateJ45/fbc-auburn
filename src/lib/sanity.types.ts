@@ -652,6 +652,7 @@ export type SiteSettings = {
   connectCardUrl?: string;
   contactFormUrl?: string;
   prayerFormUrl?: string;
+  newsletterFormUrl?: string;
   givingUrl?: string;
   churchTracIcalUrl?: string;
   memberLoginUrl?: string;

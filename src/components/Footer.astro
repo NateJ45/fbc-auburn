@@ -26,7 +26,7 @@
 // message when nothing is published yet.
 
 import { site } from '@/data/site';
-import { IconBrandFacebook, IconPlayerPlay, IconUser } from '@tabler/icons-react';
+import { IconBrandFacebook, IconMail, IconPlayerPlay, IconUser } from '@tabler/icons-react';
 import { resolveSocialLinks, socialLabel, type SocialLink } from '@/lib/social-links';
 import { socialIcon } from '@/lib/social-icons';
 import { Mail, Phone } from 'lucide-react';
@@ -133,10 +133,15 @@ const footerSundaysConfirmed = footerSundays.every((t) => t.confirmed);
 const footerAddress = footerFacts.address;
 // Phone, email, the Facebook page and the live stream link, all from Church facts and each null
 // until filled in (visitor audit, 2026-10-18).
-const { phone, email, facebookUrl, liveUrl, memberLoginUrl } = footerFacts;
+const { phone, email, facebookUrl, liveUrl, memberLoginUrl, newsletterFormUrl } = footerFacts;
 // Member sign-in (Church Trac > Member sign-in link, 2026-10-24). Before launch an empty link shows
 // a "[Jacob: ...]" ask in its place, which ForJacob.astro highlights; after launch it is simply left out.
 const memberLoginAsk = !memberLoginUrl && PRE_LAUNCH_NOTES;
+// The newsletter (2026-10-24): the church's email list is in Church Trac, so the footer links to
+// its sign-up form (Church Trac > Newsletter sign-up form). Before launch an empty box shows an ask,
+// unless the site's own list has been switched on instead (Site settings > Newsletter).
+const ownNewsletter = siteSettings?.newsletter?.enabled === true && !newsletterFormUrl;
+const newsletterAsk = !newsletterFormUrl && !ownNewsletter && PRE_LAUNCH_NOTES;
 // The Facebook page gets a words link unless the social buttons below already show it.
 const facebookText =
   facebookUrl && !socialLinksToRender.some((l) => l.platform === 'Facebook') ? facebookUrl : null;
@@ -147,6 +152,8 @@ const hasTouch = !!(
   facebookText ||
   memberLoginUrl ||
   memberLoginAsk ||
+  newsletterFormUrl ||
+  newsletterAsk ||
   socialLinksToRender.length > 0
 );
 // The closing invitation (Home audit research, 2026-10-17): the footer's first row is the last
@@ -549,11 +556,31 @@ const hasCalendar =
                   </a>
                 </p>
               )}
+              {newsletterFormUrl && (
+                <p>
+                  <a
+                    href={newsletterFormUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex min-h-[44px] items-center gap-xs text-link transition-colors hover:text-primary-dark"
+                  >
+                    <IconMail size={14} stroke={1.75} aria-hidden="true" />
+                    Get the church newsletter<span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </p>
+              )}
               {/* Outside <main>, so the For Jacob highlighter does not reach it: marked here instead. */}
               {memberLoginAsk && (
                 <p>
                   <mark class="fj-mark">
                     [Jacob: your Church Trac member sign-in link goes here.]
+                  </mark>
+                </p>
+              )}
+              {newsletterAsk && (
+                <p>
+                  <mark class="fj-mark">
+                    [Jacob: your Church Trac newsletter sign-up form goes here.]
                   </mark>
                 </p>
               )}
@@ -633,9 +660,9 @@ const hasCalendar =
     )}
   </div>
 
-  {/* Newsletter signup — renders only when siteSettings.newsletter.enabled is
-       true. Island hydrates when scrolled into view. */}
-  {siteSettings?.newsletter?.enabled && (
+  {/* The site's own newsletter box: only when siteSettings.newsletter.enabled is true and no
+       Church Trac sign-up form is set (Church Trac wins). Island hydrates when scrolled into view. */}
+  {ownNewsletter && siteSettings?.newsletter && (
     <div class="mx-auto max-w-content px-l pt-l">
       <div class="mx-auto max-w-md">
         <NewsletterSignup client:visible newsletter={siteSettings.newsletter} source="footer" />

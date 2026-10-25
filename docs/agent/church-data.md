@@ -17,8 +17,8 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
 | Year founded    | `foundedYear`                                     | `foundedConfirmed`         |
 | YouTube channel | `youtubeChannelId` (UC..., 24 characters)         | n/a                        |
 
-- **The Church Trac tab** (2026-10-24): the seven Church Trac addresses (`churchTracUrl`,
-  `connectCardUrl`, `contactFormUrl`, `prayerFormUrl`, `givingUrl`, `churchTracIcalUrl`,
+- **The Church Trac tab** (2026-10-24): the eight Church Trac addresses (`churchTracUrl`,
+  `connectCardUrl`, `contactFormUrl`, `prayerFormUrl`, `newsletterFormUrl`, `givingUrl`, `churchTracIcalUrl`,
   `memberLoginUrl`) sit on their own Site settings tab, in setup order with an intro
   (`churchTracFields` in `churchFacts.ts`; `docs/agent/church-trac.md`). They still resolve
   through `resolveChurchFacts` like every fact; only the tab they show under moved.
