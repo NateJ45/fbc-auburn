@@ -932,29 +932,40 @@
   }
   /* The photo hero on a phone: the words on the photo (it fills the first screen), then the This
      Sunday card on the navy ground under it, then the sill. */
+  /* The phone hero is a photo band with the welcome starting on its darkened foot (2026-10-24).
+     It was a block 78% of the screen tall with the words at the bottom, which left most of the first
+     screen as empty photo. svh, not vh: the screen with the browser's bars showing. */
   .hb-hero {
+    --hb-band: clamp(220px, 44svh, 380px);
     min-height: 0;
     padding-top: 0;
   }
-  /* svh, not vh: on a phone vh is the screen with the browser's bars hidden, so the words and the
-     Plan your visit button could start below the fold (mobile audit, 2026-10-24). */
+  /* The band's foot fades into the tiled ground, so the heading never crosses a hard edge. */
   .hb-hero .hb-photo,
   .hb-hero .hb-photo__shade {
     bottom: auto;
-    height: min(78vh, 620px);
-    height: min(78svh, 620px);
+    height: var(--hb-band);
+    -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent);
+    mask-image: linear-gradient(to bottom, #000 50%, transparent);
   }
   .hb-hero__inner {
     gap: 28px;
     padding-bottom: 32px;
   }
+  /* The name line and the heading sit on the band's last 160px, where the shade is darkest and the
+     photo fades out; the rest of the welcome carries on over the navy ground. */
   .hb-hero__copy {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    min-height: min(78vh, 620px);
-    min-height: min(78svh, 620px);
-    padding: clamp(40px, 12svh, 96px) 0 28px;
+    padding: calc(var(--hb-band) - 160px) 0 4px;
+  }
+  /* Before launch the "Photo needed" note fills the band itself, so the words follow it directly. */
+  .hb-hero__shot {
+    margin-bottom: 20px;
+    padding-top: 16px;
+  }
+  .hb-hero__shot + .hb-hero__inner .hb-hero__copy {
+    padding-top: 0;
   }
   .hb-photo__shade {
     background: linear-gradient(
