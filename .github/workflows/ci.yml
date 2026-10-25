@@ -39,6 +39,16 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Wired at the workflow level so every job agrees about what the site contains
+# (2026-10-25, PENDING 1zt). Without a project id `sanityFetch` treats Sanity as
+# unconfigured and returns its fallbacks WITHOUT querying the snapshot server, so
+# the site job built 19 pages from fallbacks while a local snapshot build made 28.
+# The ids are public (they are in every GROQ request URL). Starter card 161
+# makes snapshot.mjs read the id from the snapshot when it is missing, or fail.
+env:
+  PUBLIC_SANITY_PROJECT_ID: ${{ vars.PUBLIC_SANITY_PROJECT_ID }}
+  PUBLIC_SANITY_DATASET: ${{ vars.PUBLIC_SANITY_DATASET }}
+
 jobs:
   # Everything that does not need a built site. Runs in parallel with `site`.
   static:
