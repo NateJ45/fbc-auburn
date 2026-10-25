@@ -264,6 +264,23 @@ function initMotion() {
   };
 }
 
+// Printing (audit 2026-10-25, DEV-H1): print never scrolls, so units below the first screen would
+// stay on their hidden first frame. Drop html.motion for the print (every hidden state is scoped
+// to it) and put it back afterwards, unless the visitor's settings changed meanwhile.
+// src/styles/print.css is the CSS half, for previews that skip these events.
+let printedWithMotion = false;
+addEventListener('beforeprint', () => {
+  const html = document.documentElement;
+  printedWithMotion = html.classList.contains('motion');
+  html.classList.remove('motion');
+});
+addEventListener('afterprint', () => {
+  if (printedWithMotion && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('motion');
+  }
+  printedWithMotion = false;
+});
+
 document.addEventListener('astro:page-load', initMotion);
 // The flow layer (src/scripts/flow.ts): headings, fade-ups, photos, the footer verse.
 document.addEventListener('astro:page-load', initFlow);
