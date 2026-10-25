@@ -1,0 +1,520 @@
+---
+// Foundation, edit with care
+// The full-screen menu (the "Menu" pill and the sheet it opens). Rebuilt 2026-10-25 from a React
+// island (shadcn Sheet on Radix Dialog, about 110 KB of JS on every page) as plain server markup on
+// a native <dialog>:
+//   - showModal() gives the focus trap, Escape to close, the inert page behind and focus back on
+//     the pill when it closes, all from the browser. The small script below only opens and closes it.
+//   - With JavaScript off the pill is a real link to the footer's page list (#site-footer-nav), so
+//     a phone whose scripts failed still has every page one tap away (web-dev audit M6).
+//   - Rule 4 is untouched: the desktop nav is still the server-rendered row in Header.astro.
+//
+// Layout (FBC Auburn, 2026-10-24 after hppres.org): a full-screen sheet on the light page ground,
+// a stack of big serif rows.
+// - Top: the lockup on the left and the close button on the right, where the header's own sit.
+// - Search (when on) as a field-shaped row, then one full-width row per menu item: the label in
+//   Young Serif, a long thin arrow at the right, hairlines between. A menu group (Site settings >
+//   Menus) shows its name as a small red label with its pages as rows beneath, always open. The
+//   page you are on is marked with a red stone.
+// - Phones and tablets (below 64rem): straight under the search field, a compact This Sunday card
+//   (date, times, Directions; a "Live now" row only while worship streams) and the one red button,
+//   then the rows, then the tagline, email, phone and socials, then the sill.
+// - From 64rem the rows take the left column and the full card (address, the watch row, the visit
+//   button) and contact details the right. Each card is display:none at the other width
+//   (auburn.css), so only one is ever in the focus order or the accessibility tree.
+// - A row that points where the visit button does is dropped, so "Plan your visit" is never listed
+//   twice.
+// Motion is CSS only (src/styles/auburn.css, keyed on dialog[open]): the rows rise in 40ms apart,
+// and none of it runs under reduced motion.
+//
+// From 1024px the pill is hidden when the header's dropdowns already show every menu item
+// (data-nav-complete, set by Header.astro; design audit M8): one navigation system per width.
+//
+// Data: the links, tagline, email, socials and the Sunday facts all come from the Header (Sanity
+// Site settings and Church facts), with sensible defaults so the menu renders before content does.
+
+import { Mail, Phone, Search, XIcon } from 'lucide-react';
+import { socialLabel, type SocialLink } from '@/lib/social-links';
+import { socialIcon } from '@/lib/social-icons';
+import { telHref } from '@/lib/phone';
+import { SILL, SILL_PRINT, SILL_VIEWBOX } from '@/components/home/stones.generated';
+import type { NavItem } from '@/lib/siteSettings';
+
+interface MenuSunday {
+  times: string;
+  street?: string;
+  mapsUrl?: string;
+  /** "This Sunday" or "Today". */
+  title?: string;
+  /** "October 18" */
+  date?: string;
+  services?: { time: string; label: string }[];
+  confirmed?: boolean;
+}
+
+interface Props {
+  links: NavItem[];
+  siteSettings?: {
+    tagline?: string;
+    email?: string;
+    phone?: string;
+    socials?: SocialLink[];
+  } | null;
+  /** The light lockup's URL (Astro's getImage() in Header.astro). */
+  logoUrl?: string;
+  /** The sheet's red button: the header's own button (Site settings), Plan your visit by default. */
+  cta?: { show: boolean; label: string; href: string };
+  /** Sunday facts, from Church facts, for the This Sunday card. */
+  sunday?: MenuSunday;
+  /** Where Sunday streams (src/lib/live-service.ts); "Live now" while worship is on (script below). */
+  watch?: { href: string; label: string };
+  /** The current path, so the page you are on keeps its stone. */
+  current?: string;
+  /** Visitor search is on (src/data/site.ts search.enabled, PORTS.md card 126). */
+  search?: boolean;
+  /** Every menu item is already in the desktop row, so the pill can hide from 1024px. */
+  navComplete?: boolean;
+}
+
+const {
+  links,
+  siteSettings,
+  logoUrl,
+  cta = { show: true, label: 'Plan your visit', href: '/plan-your-visit/' },
+  sunday,
+  watch,
+  current,
+  search = false,
+  navComplete = false,
+} = Astro.props;
+
+const isCurrent = (href: string) =>
+  !!current && (href === '/' ? current === '/' : current.startsWith(href.replace(/\/?$/, '/')));
+/** Same page, ignoring a trailing slash, so "/plan-your-visit" matches "/plan-your-visit/". */
+const samePath = (a: string, b: string) => a.replace(/\/+$/, '') === b.replace(/\/+$/, '');
+
+const tagline = siteSettings?.tagline ?? 'A close-knit church with the door open.';
+const email = siteSettings?.email;
+const phone = siteSettings?.phone;
+const socials = siteSettings?.socials ?? [];
+
+// The rows, less any that duplicates the visit button (a flat row, or a page inside a group).
+const dupe = (href: string) => cta.show && samePath(href, cta.href);
+const rows = links
+  .filter((item) => !(item.kind === 'flat' && dupe(item.href)))
+  .map((item) =>
+    item.kind === 'dropdown' ? { ...item, items: item.items.filter((s) => !dupe(s.href)) } : item,
+  )
+  .filter((item) => item.kind === 'flat' || item.items.length > 0);
+
+// The stagger index runs on past the rows, so the card and contact details follow them in.
+let n = 0;
+const step = () => `--i: ${n++}`;
+const groupId = (label: string) => `menu-group-${label.replace(/\W+/g, '-').toLowerCase()}`;
+---
+
+<div class="site-header__menu" data-nav-complete={navComplete ? '' : undefined}>
+  {search && (
+    <a href="/search/" class="search-pill" aria-label="Search the site" data-site-search-open>
+      <Search size={20} strokeWidth={2} aria-hidden="true" />
+    </a>
+  )}
+  {/* A link until the script below takes it over: with JavaScript off it scrolls to the footer's
+      page list, so a phone is never left without navigation. */}
+  <a
+    href="#site-footer-nav"
+    class="menu-pill"
+    aria-label="Open the menu"
+    aria-controls="site-menu"
+    data-menu-open
+  >
+    <svg class="menu-pill__stones" width="20" height="18" viewBox="0 0 20 18" aria-hidden="true">
+      <rect x="1" y="1" width="18" height="4" rx="2" fill="#2C4F7C"></rect>
+      <rect x="1" y="7" width="13" height="4" rx="2" fill="#2C4F7C"></rect>
+      <rect x="1" y="13" width="16" height="4" rx="2" fill="#B5503A"></rect>
+    </svg>
+    <span>Menu</span>
+  </a>
+
+  <dialog id="site-menu" class="auburn-menu" aria-label="Menu" data-menu>
+    <div class="auburn-menu__head">
+      {logoUrl ? (
+        <img
+          src={logoUrl}
+          alt=""
+          width={496}
+          height={100}
+          class="auburn-menu__logo"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <span />
+      )}
+      <button type="button" class="auburn-menu__close" data-menu-close>
+        <XIcon size={22} strokeWidth={1.75} aria-hidden="true" />
+        <span class="sr-only">Close the menu</span>
+      </button>
+    </div>
+
+    <div class="auburn-menu__grid">
+      <div class="auburn-menu__primary">
+        {search && (
+          <a href="/search/" class="auburn-menu__search" style={step()} data-menu-search>
+            <Search size={20} aria-hidden="true" />
+            Search the site
+          </a>
+        )}
+        {(sunday || cta.show) && (
+          <div class="auburn-menu__visit" style={step()}>
+            {sunday && (
+              <section
+                class="auburn-menu__card auburn-menu__card--compact"
+                aria-label={sunday.title || 'This Sunday'}
+              >
+                <div class="auburn-menu__card-top">
+                  <p class="auburn-menu__card-eyebrow">{sunday.title || 'This Sunday'}</p>
+                  {sunday.confirmed === false && (
+                    <span class="auburn-menu__tag">Times to confirm</span>
+                  )}
+                </div>
+                {sunday.date && <p class="auburn-menu__card-date">{sunday.date}</p>}
+                {sunday.services && sunday.services.length > 0 ? (
+                  <dl class="auburn-menu__card-times">
+                    {sunday.services.map((s) => (
+                      <div>
+                        <dt>{s.time}</dt>
+                        <dd>{s.label}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : (
+                  <p class="auburn-menu__times">{sunday.times}</p>
+                )}
+                {sunday.mapsUrl && (
+                  <p class="auburn-menu__where auburn-menu__where--compact">
+                    <a href={sunday.mapsUrl} rel="noopener" target="_blank">
+                      Directions
+                      <span class="sr-only"> (opens Google Maps in a new tab)</span>
+                    </a>
+                  </p>
+                )}
+                {/* The compact card's watch row shows only while worship is live (script below). */}
+                {watch && (
+                  <p class="auburn-menu__watch" data-menu-live-only hidden>
+                    <a href={watch.href} target="_blank" rel="noopener noreferrer" data-menu-watch>
+                      <span class="auburn-menu__live-dot" aria-hidden="true" />
+                      <span data-menu-watch-label>Live now: watch the service</span>
+                      <span class="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </p>
+                )}
+              </section>
+            )}
+            {cta.show && (
+              <a href={cta.href} class="btn-auburn btn-auburn--primary">
+                {cta.label}
+              </a>
+            )}
+          </div>
+        )}
+        <nav aria-label="All pages" class="auburn-menu__nav">
+          <ul class="auburn-menu__rows">
+            {rows.map((item) =>
+              item.kind === 'flat' ? (
+                <li class="auburn-menu__item" style={step()}>
+                  <a
+                    href={item.href}
+                    class="auburn-menu__row"
+                    aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  >
+                    <span class="auburn-menu__label">{item.label}</span>
+                    <svg
+                      class="auburn-menu__arrow"
+                      viewBox="0 0 48 14"
+                      width="48"
+                      height="14"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path
+                        d="M0 7h46M40 1l6 6-6 6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </a>
+                </li>
+              ) : (
+                <li class="auburn-menu__group">
+                  <p id={groupId(item.label)} class="auburn-menu__group-label" style={step()}>
+                    {item.label}
+                  </p>
+                  <ul class="auburn-menu__rows" aria-labelledby={groupId(item.label)}>
+                    {item.items.map((sub) => (
+                      <li class="auburn-menu__item" style={step()}>
+                        <a
+                          href={sub.href}
+                          class="auburn-menu__row"
+                          aria-current={isCurrent(sub.href) ? 'page' : undefined}
+                        >
+                          <span class="auburn-menu__label">{sub.label}</span>
+                          <svg
+                            class="auburn-menu__arrow"
+                            viewBox="0 0 48 14"
+                            width="48"
+                            height="14"
+                            aria-hidden="true"
+                            focusable="false"
+                          >
+                            <path
+                              d="M0 7h46M40 1l6 6-6 6"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ),
+            )}
+          </ul>
+        </nav>
+      </div>
+
+      <div class="auburn-menu__side">
+        {sunday && (
+          <section
+            class="auburn-menu__card auburn-menu__card--full"
+            aria-label={sunday.title || 'This Sunday'}
+            style={step()}
+          >
+            <div class="auburn-menu__card-top">
+              <p class="auburn-menu__card-eyebrow">{sunday.title || 'This Sunday'}</p>
+              {sunday.confirmed === false && <span class="auburn-menu__tag">Times to confirm</span>}
+            </div>
+            {sunday.date && <p class="auburn-menu__card-date">{sunday.date}</p>}
+            {sunday.services && sunday.services.length > 0 ? (
+              <dl class="auburn-menu__card-times">
+                {sunday.services.map((s) => (
+                  <div>
+                    <dt>{s.time}</dt>
+                    <dd>{s.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <p class="auburn-menu__times">{sunday.times}</p>
+            )}
+            {sunday.street && (
+              <p class="auburn-menu__where">
+                {sunday.street}
+                {sunday.mapsUrl && (
+                  <>
+                    {' · '}
+                    <a href={sunday.mapsUrl} rel="noopener" target="_blank">
+                      Directions
+                      <span class="sr-only"> (opens Google Maps in a new tab)</span>
+                    </a>
+                  </>
+                )}
+              </p>
+            )}
+            {watch && (
+              <p class="auburn-menu__watch">
+                <a href={watch.href} target="_blank" rel="noopener noreferrer" data-menu-watch>
+                  <span class="auburn-menu__live-dot" aria-hidden="true" />
+                  <span data-menu-watch-label data-off-label={watch.label}>
+                    {watch.label}
+                  </span>
+                  <span class="sr-only"> (opens in a new tab)</span>
+                </a>
+              </p>
+            )}
+            {cta.show && (
+              <a href={cta.href} class="btn-auburn btn-auburn--primary">
+                {cta.label}
+              </a>
+            )}
+          </section>
+        )}
+        {cta.show && !sunday && (
+          <a
+            href={cta.href}
+            class="btn-auburn btn-auburn--primary auburn-menu__side-cta"
+            style={step()}
+          >
+            {cta.label}
+          </a>
+        )}
+        <div class="auburn-menu__about" style={step()}>
+          <p class="auburn-menu__tagline">{tagline}</p>
+          {(email || phone) && (
+            <div class="auburn-menu__contact">
+              {email && (
+                <a href={`mailto:${email}`}>
+                  <Mail size={16} aria-hidden="true" />
+                  {email}
+                </a>
+              )}
+              {phone && (
+                <a href={telHref(phone)}>
+                  <Phone size={16} aria-hidden="true" />
+                  {phone}
+                </a>
+              )}
+            </div>
+          )}
+          {socials.length > 0 && (
+            <div class="auburn-menu__social">
+              {socials.map((link) => {
+                const Icon = socialIcon(link.platform);
+                return (
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={socialLabel(link)}
+                  >
+                    <Icon size={20} stroke={1.5} />
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="auburn-menu__sill" aria-hidden="true">
+      <svg viewBox={SILL_VIEWBOX} preserveAspectRatio="xMidYMid slice" focusable="false">
+        {/* The linocut flecks: a mask over the bricks (scripts/lib/brick-print.mjs). */}
+        <g set:html={SILL_PRINT.replaceAll('__ID__', 'menu-sill-print')} />
+        <g mask="url(#menu-sill-print)">
+          {SILL.map((s, i) => (
+            <path class="sill-brick" d={s.d} fill={s.fill} style={`--i: ${i}`} />
+          ))}
+        </g>
+      </svg>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  // Open and close the menu. Everything else (focus trap, Escape, the inert page behind, focus
+  // back on the pill) is the native <dialog>'s own. Bound once per page (the header is swapped on
+  // every View Transitions navigation, so the listeners are delegated from the document).
+  type LiveState = { live: boolean; href?: string };
+
+  const menu = () => document.querySelector<HTMLDialogElement>('dialog[data-menu]');
+
+  // The pill is a link to the footer's page list until now: make it the button it acts as.
+  function upgrade() {
+    const pill = document.querySelector<HTMLAnchorElement>('[data-menu-open]');
+    if (!pill || pill.dataset.menuReady !== undefined) return;
+    pill.dataset.menuReady = '';
+    pill.setAttribute('role', 'button');
+    pill.setAttribute('aria-haspopup', 'dialog');
+    pill.setAttribute('aria-expanded', 'false');
+    syncLive(window.__churchLive);
+  }
+
+  function open() {
+    const d = menu();
+    if (!d || d.open) return;
+    d.showModal();
+    document.querySelector('[data-menu-open]')?.setAttribute('aria-expanded', 'true');
+  }
+
+  function close() {
+    const d = menu();
+    if (d?.open) d.close();
+  }
+
+  // "Live now" (src/lib/live-client.ts leaves the answer on window.__churchLive and fires
+  // church:live): the compact card's watch row appears, and both watch links go to the stream.
+  function syncLive(state: LiveState | undefined) {
+    const live = !!state?.live;
+    for (const row of document.querySelectorAll<HTMLElement>('[data-menu-live-only]')) {
+      row.hidden = !live;
+    }
+    for (const a of document.querySelectorAll<HTMLAnchorElement>('a[data-menu-watch]')) {
+      if (a.dataset.offHref === undefined) a.dataset.offHref = a.getAttribute('href') ?? '';
+      a.href = (live && state?.href) || a.dataset.offHref;
+      a.toggleAttribute('data-live', live);
+      const label = a.querySelector<HTMLElement>('[data-off-label]');
+      if (label) label.textContent = live ? 'Live now: watch the service' : label.dataset.offLabel!;
+    }
+  }
+
+  const w = window as typeof window & { __menuBound?: boolean };
+  if (!w.__menuBound) {
+    w.__menuBound = true;
+
+    // Capture phase: the pill is a same-page #link, which Astro's router would otherwise take first.
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (e.button !== 0) return;
+        const target = e.target as Element | null;
+        if (!target?.closest) return;
+        if (target.closest('[data-menu-open]')) {
+          e.preventDefault();
+          e.stopPropagation();
+          open();
+          return;
+        }
+        const d = menu();
+        if (!d?.open || !d.contains(target)) return;
+        if (target.closest('[data-menu-close]')) {
+          close();
+          return;
+        }
+        // "Search the site": the menu closes first, then the search dialog opens, so the two modals
+        // never hold focus at once. A modified click still opens /search/ in a new tab.
+        const searchRow = target.closest('[data-menu-search]');
+        if (searchRow) {
+          const me = e as MouseEvent;
+          if (me.ctrlKey || me.metaKey || me.shiftKey) return;
+          e.preventDefault();
+          // The search dialog's own click listener would read this click as "a link inside the
+          // open dialog" and shut it again the moment it opened.
+          e.stopImmediatePropagation();
+          close();
+          window.dispatchEvent(new CustomEvent('site-search:open'));
+          return;
+        }
+        // Any other link closes the menu as it is followed; a click on the sheet's own ground
+        // (outside the panel's content) does nothing, as before.
+        if (target.closest('a')) close();
+      },
+      true,
+    );
+
+    // The pill's state, whichever way the menu closed (the button, Escape, a link).
+    document.addEventListener(
+      'close',
+      (e) => {
+        if ((e.target as Element)?.matches?.('dialog[data-menu]')) {
+          document.querySelector('[data-menu-open]')?.setAttribute('aria-expanded', 'false');
+        }
+      },
+      true,
+    );
+
+    // Close as a View Transitions navigation starts (Back or Forward), so the page behind is
+    // not left inert under the swap.
+    document.addEventListener('astro:before-preparation', close);
+    document.addEventListener('astro:page-load', upgrade);
+    document.addEventListener('church:live', (e) => syncLive((e as CustomEvent<LiveState>).detail));
+  }
+  upgrade();
+</script>

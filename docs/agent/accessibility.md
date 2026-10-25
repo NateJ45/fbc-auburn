@@ -52,7 +52,7 @@ Adjacent independent controls (two side-by-side icon buttons, two stacked nav li
 
 ### Focus traps in modals and drawers
 
-The mobile nav uses shadcn Sheet (Radix Dialog under the hood) and gets focus trap for free. Same applies to any shadcn Dialog. Don't roll your own modal. If you build a custom overlay, you owe: focus moves into the overlay on open, Tab cycles within the overlay, Escape closes, focus returns to the trigger on close. Test with keyboard before merging.
+The phone menu (`MobileNav.astro`, 2026-10-25) is a native `<dialog>` opened with `showModal()`, which gives the focus trap, Escape, the inert page behind and focus back on the trigger for free; the site search dialog works the same way. shadcn Dialogs (Radix) get the same from Radix. Don't roll your own modal. If you build a custom overlay, you owe: focus moves into the overlay on open, Tab cycles within the overlay, Escape closes, focus returns to the trigger on close. Test with keyboard before merging.
 
 ### Screen reader pass
 

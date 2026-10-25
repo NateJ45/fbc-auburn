@@ -84,9 +84,10 @@ existing `intro` field) is the place for "what this role is"; it already sits un
 
 ## Wayfinding (the rest of the hppres.org audit, 2026-10-24)
 
-- **Where next** (`src/components/WhereNext.astro`, in the footer on every page): three full-width Young Serif rows with
-  long hairline arrows (Plan your visit, Find your place, Sermons, then About the church as the spare). The page you are
-  on drops out. Hover or focus sweeps brick red in from the left.
+- **Where next** (`src/components/WhereNext.astro`, at the top of the footer): three full-width Young Serif rows with
+  long hairline arrows (Plan your visit, Ministries, Sermons, then About and Give as spares; the menu's own names). The
+  page you are on drops out. Hover or focus sweeps brick red in from the left. Since 2026-10-25 a page that ends on its
+  own closing band (`FinalCta.astro`, `data-final-cta`) does not get them: one closing device per page.
 - **Two-tone page titles**: the page head's "Accent word in the heading" (`headingAccent`, now on `heroSection` too, in
   `HEADING_ACCENT_FIELDS`). StoneHeading draws those letters all auburn and the rest all navy instead of the
   every-fourth-letter rhythm; a plain title takes the auburn colour. Ministries uses "your place", Plan your visit
@@ -103,10 +104,12 @@ existing `intro` field) is the place for "what this role is"; it already sits un
   edge and a slight turn (none with reduced motion). Leadership carries Pastor Jacob's.
 - **Last Sunday** (`WatchSection.astro`): the band's label ("Last Sunday" or "Latest message") huge in outline behind
   it, half off its bottom edge, and the 14px inner corner on its media. Use the outline word no more than twice on the site.
-- **The phone menu** (`src/components/MobileNav.tsx`, styles in `src/styles/auburn.css`): a full-screen sheet of big
-  Young Serif rows with long arrows. A menu group (Site settings > Menus) shows its name as a small red label with
-  its pages as rows beneath, always open (2026-10-24; it was a row that opened in place, filled red). The menu is
-  three groups: New here, Get involved, Stay connected (`scripts/content/menu-groups.mjs`).
+- **The phone menu** (`src/components/MobileNav.astro`, a native `<dialog>` since 2026-10-25; styles in
+  `src/styles/auburn.css`): a full-screen sheet of big Young Serif rows with long arrows. A menu group (Site settings >
+  Menus) shows its name as a small red label with its pages as rows beneath, always open. The menu is three groups
+  (`scripts/content/audit-chrome.mjs`, 2026-10-25): New here (Plan your visit, About, What we believe, Leadership,
+  Contact), Get involved (Ministries, Next steps, News and notes), This week (Sermons, Events, Bulletin, Prayer
+  requests, Give). The footer's page list uses the same groups and names.
 - The content moved by `scripts/content/hppres-wayfinding.mjs` (dry by default): Plan your visit's band, accent, the
   three question headings ("What about my kids?", "Where do I park?", "How will I find it?", which are also the shot
   list keys) and Good to know; Ministries' accent; the Leadership letter; Watch's "what is not streamed" ask.
