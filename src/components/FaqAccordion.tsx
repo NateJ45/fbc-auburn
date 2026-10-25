@@ -94,15 +94,19 @@ export default function FaqAccordion({ faqs, categoryOrder, idPrefix = 'faq' }: 
         //      heading isn't rendered, so we switch from aria-labelledby
         //      (which would point at a non-existent id) to aria-label. This
         //      fixes the dangling reference the audit flagged on /process.
+        //      2026-10-25: with no category there is no label at all. Plan your visit carries two
+        //      Questions blocks, so two sections both named "Common questions" failed axe's
+        //      landmark-unique; the block around this list already has its own labelled heading.
         return (
           <section
             key={sectionId}
-            {...(section.category
-              ? { 'aria-labelledby': `${sectionId}-heading` }
-              : { 'aria-label': 'Common questions' })}
+            {...(section.category ? { 'aria-labelledby': `${sectionId}-heading` } : {})}
           >
             {section.category && (
-              <h2 id={`${sectionId}-heading`} className="mb-m font-display text-h3 text-foreground">
+              <h2
+                id={`${sectionId}-heading`}
+                className="mb-m font-display text-h3 text-[color:var(--heading-solid)]"
+              >
                 {section.category}
               </h2>
             )}
@@ -120,7 +124,7 @@ export default function FaqAccordion({ faqs, categoryOrder, idPrefix = 'faq' }: 
                         is. Written as text-[length:...] on purpose: tailwind-merge took
                         the old `text-h3` for a colour and dropped it in favour of
                         `text-foreground`, so the questions rendered at 16px. */}
-                    <AccordionTrigger className="py-m text-left font-display text-[length:var(--fs-title-sm)] leading-[var(--lh-title)] text-foreground hover:text-link hover:no-underline">
+                    <AccordionTrigger className="py-m text-left font-body text-[1.1875rem] leading-[1.35] font-semibold text-[color:var(--heading-solid)] hover:text-link hover:no-underline">
                       {item.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-base leading-relaxed text-foreground/85">

@@ -96,7 +96,7 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
     transform: translateY(-30px);
   }
   .lost :global(.lost__h1) {
-    font-size: clamp(3rem, 1.5rem + 6vw, 6rem);
+    font-size: clamp(3rem, 2rem + 4vw, 5.5rem); /* max 88px, the H1 cap (audit 2026-10-25) */
   }
   /* Phones (phone polish, 2026-10-24): on the 20px gutter and left-aligned like every other page,
      the path stepping off from the left, both buttons full width, 12px apart. */

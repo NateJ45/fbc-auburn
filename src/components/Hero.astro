@@ -77,6 +77,8 @@ interface Props {
   icon?: string | null;
   /** FBC Auburn: the page has its own stone moment, so the title is set plain (BoardPageHead). */
   quiet?: boolean;
+  /** The one-red-button rule (audit 2026-10-25): navy when an earlier block has the red. */
+  primaryVariant?: 'primary' | 'navy';
 }
 
 const {
@@ -96,6 +98,7 @@ const {
   variant,
   icon,
   quiet = false,
+  primaryVariant = 'primary',
 } = Astro.props as Props;
 
 const heroVariant = variant ?? layout.hero;
@@ -269,6 +272,7 @@ const wrapperHeight =
     quiet={quiet}
     headingAccent={headingAccent}
     showTimes={showTimes}
+    primaryVariant={primaryVariant}
   />
 ) : hasImage ? (
   <section
@@ -329,7 +333,7 @@ const wrapperHeight =
         )}
         {(primaryCta || secondaryCta) && (
           <div class="mt-l flex flex-wrap gap-s">
-            {primaryCta && <CtaLink cta={primaryCta} variant="primary" onDark />}
+            {primaryCta && <CtaLink cta={primaryCta} variant={primaryVariant} onDark />}
             {secondaryCta && <CtaLink cta={secondaryCta} variant="secondary" onDark />}
           </div>
         )}

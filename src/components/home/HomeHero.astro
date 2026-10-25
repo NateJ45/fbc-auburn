@@ -5,8 +5,8 @@
 // toward the lower left so the words always read: the church's name and town as a small line,
 // the welcome as the page's one h1 ("Come as you are."), a sentence on what the church is about,
 // the Sunday times and address, and two buttons (plan a first visit; the second action). The This
-// Sunday card sits at the right on a wide screen and follows the words on a phone. A printed
-// brick sill runs along the photo's foot, the doorstep into the page.
+// Sunday card sits at the right on a wide screen and follows the words on a phone.
+// The one brick sill on the page is the footer's (audit 2026-10-25); the hero has none of its own.
 //
 // Content: the Home document's hero block (Studio > Home > Page layout > Hero). "Background photo"
 // is the picture; Eyebrow and Headline make the name line ("First Baptist Church of" + "Auburn");
@@ -19,7 +19,6 @@ import SanityImage from '@/components/SanityImage.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
 import { exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
-import Sill from '@/components/Sill.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { clockLabel, timesPhrase } from '@/lib/church-facts';
 import { ctaHref } from '@/lib/cta-href';
@@ -137,7 +136,7 @@ const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
       <SundayCard />
     </div>
   </div>
-  <Sill class="hb-hero__sill" />
+  {/* No brick sill here (audit 2026-10-25, GD-H3): one sill per page, the footer's. */}
 </section>
 
 {times && (
@@ -172,7 +171,7 @@ const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
         <span class="sr-only"> (opens Google Maps in a new tab)</span>
       </a>
     )}
-    <a class="btn-auburn btn-auburn--primary hb-sundaybar__visit" href={barVisitHref}>
+    <a class="btn-auburn btn-auburn--navy hb-sundaybar__visit" href={barVisitHref}>
       Plan your visit
     </a>
   </div>

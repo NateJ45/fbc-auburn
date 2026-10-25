@@ -24,6 +24,7 @@
   --hb-rhythm: var(--spacing-section-md);
   /* Light in every case (rule 3); pinned so a forced dark theme cannot turn links pale here. */
   --link: #1f3a5f;
+  --heading-solid: #1f3a5f;
   background: #ffffff;
   color: var(--hb-ink);
   font-size: var(--fs-body);
@@ -71,7 +72,8 @@
   min-height: min(86vh, 780px);
   padding: 120px 0 0;
   color: #ffffff;
-  background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+  /* Flat navy with no photo (audit 2026-10-25, GD-H3: the navy brick tile is retired here). */
+  background: var(--auburn-deep);
 }
 .hb-photo,
 .hb-photo__shade {
@@ -90,19 +92,19 @@
   object-fit: cover;
   object-position: center 40%;
 }
+/* Desktop (audit 2026-10-25, GD-M10): a left-to-right shade, 0.85 behind the words easing to about
+   0.25 on the right, so the congregation reads instead of sitting under an even navy veil. A
+   bottom-up shade keeps the foot of the words dark on a bright picture. */
 .hb-photo__shade {
   z-index: 0;
   background:
+    linear-gradient(to top, rgb(15 34 56 / 0.55) 0%, rgb(15 34 56 / 0) 45%),
     linear-gradient(
-      to top,
-      rgb(15 34 56 / 0.92) 0%,
-      rgb(15 34 56 / 0.55) 42%,
-      rgb(15 34 56 / 0.15) 75%
-    ),
-    linear-gradient(to right, rgb(15 34 56 / 0.7) 0%, rgb(15 34 56 / 0) 62%),
-    /* An even wash under both, so the small name line over the upper photo holds 4.5:1 on a
-       bright picture too (contrast.spec.ts, 2026-10-23). */
-    rgb(15 34 56 / 0.28);
+      to right,
+      rgb(15 34 56 / 0.85) 0%,
+      rgb(15 34 56 / 0.7) 40%,
+      rgb(15 34 56 / 0.25) 100%
+    );
 }
 .hb-hero[data-photo='no'] .hb-photo__shade {
   display: none;
@@ -270,7 +272,9 @@
   position: absolute;
   inset: calc(var(--hb-rhythm) + 220px) 0 0; /* the band's top padding, then partway down the photos */
   z-index: -1;
-  background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+  /* Flat navy (audit 2026-10-25, GD-H3): brick behind the photos made a third brick surface on
+     one screen. The slab behind the gable photo is Home's brick moment below the hero. */
+  background: var(--auburn-deep);
 }
 .hb-belong .hb-ph,
 .hb-belong .hb-note {
@@ -278,16 +282,24 @@
 }
 
 /* ---- This Sunday card ------------------------------------------------------------------------ */
+/* Plain navy (audit 2026-10-25, GD-H3): the brick tile behind small text is gone; the brick is one
+   12px course along the top edge (--brick-course, auburn.css), like the footer card's top rule. */
 .hb-sunday {
   position: relative;
-  z-index: 2; /* above the path's last step */
-  padding: var(--pad-card);
+  z-index: 2;
+  overflow: hidden;
+  padding: calc(var(--pad-card) + 12px) var(--pad-card) var(--pad-card);
   border-radius: var(--hb-radius);
   background-color: var(--auburn-deep);
-  background-image: url('/textures/tile-deep.svg');
-  background-size: 420px 420px;
   box-shadow: var(--shadow-raised);
   color: #ffffff;
+}
+.hb-sunday::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 12px;
+  background: var(--brick-course);
 }
 .hb-sunday__top {
   display: flex;
@@ -399,13 +411,14 @@
 }
 /* Flat tints: the pebble textures were dropped in the Home audit (2026-10-17); the white panels
    and the stone icons carry the bands. */
+/* Audit 2026-10-25 (GD-H3, GD-M7): both card bands are the one tinted panel, flat #E9EEF5. The cream
+   brick wall behind "Other ways in" is retired; it read as wallpaper behind the white cards. */
 .hb-band--sky {
   margin: 0 0 40px;
-  background: #e9eef5 url('/textures/tile-sky.svg') 0 0 / 420px 420px;
+  background: #e9eef5;
 }
-/* Printed brick in the band's own warm tint (2026-10-23), so the white cards sit on a wall. */
 .hb-band--green {
-  background: #f1e8e2 url('/textures/tile-warm.svg') 0 0 / 420px 420px;
+  background: #e9eef5;
 }
 
 /* Through the week: a three-column board on a white panel. */
@@ -515,7 +528,7 @@
   line-height: 1.08;
   letter-spacing: -0.01em;
   text-wrap: balance;
-  color: var(--hb-ink);
+  color: var(--auburn-deep); /* navy, the one H2 colour (audit 2026-10-25, GD-H6) */
 }
 .hb-walk__steps {
   display: grid;
@@ -551,34 +564,24 @@
   line-height: 1;
   color: #ffffff;
 }
-.hb-walk__stone--0 {
-  background-color: #9a3b2a;
-}
-.hb-walk__stone--1 {
+/* Navy bricks, two tones (audit 2026-10-25, GD-H2: auburn is kept for the mark and the one button). */
+.hb-walk__stone--0,
+.hb-walk__stone--2 {
   background-color: #1f3a5f;
 }
-.hb-walk__stone--2 {
-  background-color: #b5503a;
-}
+.hb-walk__stone--1,
 .hb-walk__stone--3 {
   background-color: #2c4f7c;
 }
-/* A mortar line of small bricks from each step to the next, in the two auburn tones. */
+/* The site's one step connector (GD-M4): a 2px dashed line, 10px dashes, in light navy. */
 .hb-walk__step:not(:last-child)::after {
   content: '';
   position: absolute;
-  top: 18px;
+  top: 21px;
   left: 80px;
   right: -24px;
-  height: 8px;
-  border-radius: 2px;
-  background: repeating-linear-gradient(
-    90deg,
-    #b5503a 0 16px,
-    transparent 16px 20px,
-    #9a3b2a 20px 36px,
-    transparent 36px 40px
-  );
+  height: 2px;
+  background: var(--step-dash-x);
 }
 .hb-walk__when {
   margin: 0 0 6px;
@@ -641,11 +644,11 @@
   .hb-walk__step:not(:last-child)::after {
     top: 66px;
     bottom: 6px;
-    left: 27px;
     right: auto;
-    width: 7px;
+    width: 2px;
     height: auto;
-    background: repeating-linear-gradient(180deg, #b5503a 0 12px, transparent 12px 22px);
+    left: 31px;
+    background: var(--step-dash-y);
   }
   .hb-walk__when {
     margin-top: 4px;
@@ -800,6 +803,7 @@
   font-size: var(--text-h2);
   font-weight: 400;
   line-height: 1.1;
+  color: var(--auburn-deep);
 }
 .hb-week-foot {
   margin: 14px 0 0;
@@ -940,20 +944,13 @@
     min-height: 0;
     padding-top: 0;
   }
-  /* The band's foot fades into the tiled ground, so the heading never crosses a hard edge. */
-  .hb-hero .hb-photo,
-  .hb-hero .hb-photo__shade {
-    bottom: auto;
-    height: var(--hb-band);
-    -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent);
-    mask-image: linear-gradient(to bottom, #000 50%, transparent);
-  }
+  /* Audit 2026-10-25 (GD-M10): the photo runs behind the whole hero, words, buttons and the This
+     Sunday strip included, under a bottom-up shade; no brick ground under the type. */
   .hb-hero__inner {
     gap: 28px;
     padding-bottom: 32px;
   }
-  /* The name line and the heading sit on the band's last 160px, where the shade is darkest and the
-     photo fades out; the rest of the welcome carries on over the navy ground. */
+  /* The words start partway down the photo, leaving the top of the picture clear. */
   .hb-hero__copy {
     display: flex;
     flex-direction: column;
@@ -970,9 +967,9 @@
   .hb-photo__shade {
     background: linear-gradient(
       to top,
-      rgb(15 34 56 / 0.95) 0%,
-      rgb(15 34 56 / 0.6) 45%,
-      rgb(15 34 56 / 0.2) 80%
+      rgb(22 38 61 / 0.92) 0%,
+      rgb(22 38 61 / 0.6) 45%,
+      rgb(22 38 61 / 0.1) 80%
     );
   }
   .hb-intro {

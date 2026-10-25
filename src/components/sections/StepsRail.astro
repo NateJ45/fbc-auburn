@@ -1,9 +1,11 @@
 ---
 // Safe to edit by hand
 // Page-builder block: the stepping-stone rail (stepsRailSection). Numbered steps, each beside a
-// big stone icon, joined icon to icon by a laid brick path (running bond with a soldier-course edge)
-// that curves down the icon column for the full height of each step (2026-10-25); the path ends in
-// the church mark, which builds itself stone by stone (MarkBuild), then a closing line and buttons.
+// stone icon, joined icon to icon by the site's one step connector, a dashed light-navy line (audit
+// 2026-10-25, GD-M4; it was a winding brick path). Step 1 is set apart on a white card (P-9: knowing
+// Jesus is not one item on a checklist). The path ends at the church mark as its last stop, the
+// icon column's size, which builds itself brick by brick (MarkBuild), then a closing line and
+// buttons beside it.
 //
 // Everything here is server-rendered: the stones, the mark and every word are in the HTML, so the
 // block reads the same without JS. Motion (src/styles/motion.css, src/scripts/motion.ts): each
@@ -20,6 +22,8 @@ import type { ProjectedStepsRailSection } from '@/lib/pageBuilder.types';
 type Props = Omit<ProjectedStepsRailSection, '_type' | '_key'> & {
   surface?: 'background' | 'muted';
   headingId: string;
+  /** The one-red-button rule (audit 2026-10-25). */
+  primaryVariant?: 'primary' | 'navy';
 };
 
 const {
@@ -31,6 +35,7 @@ const {
   secondaryCta,
   surface = 'background',
   headingId,
+  primaryVariant = 'primary',
 } = Astro.props as Props;
 
 const stones = await stoneSrcs();
@@ -65,12 +70,7 @@ const isExternal = (href: string) => /^https?:\/\//.test(href);
             <span class="rail__stone reveal">
               {step.iconSrc && <img src={step.iconSrc} alt="" width="80" height="80" />}
             </span>
-            {n < rows.length - 1 && (
-              <span
-                class:list={['rail__trail', 'reveal', n % 2 && 'rail__trail--flip']}
-                aria-hidden="true"
-              />
-            )}
+            {n < rows.length - 1 && <span class="rail__trail reveal" aria-hidden="true" />}
           </div>
           <div class="rail__body">
             <p class="rail__n">Step {n + 1}</p>
@@ -103,14 +103,18 @@ const isExternal = (href: string) => /^https?:\/\//.test(href);
     </ol>
 
     <div class="rail-end">
-      <MarkBuild class="rail-end__mark" />
-      {endHeading && <p class="rail-end__line font-display auburn-h2">{endHeading}</p>}
-      {(primaryCta?.label || secondaryCta?.label) && (
-        <div class="rail-end__ctas">
-          {primaryCta?.label && <CtaLink cta={primaryCta} variant="primary" />}
-          {secondaryCta?.label && <CtaLink cta={secondaryCta} variant="secondary" />}
-        </div>
-      )}
+      <div class="rail-end__stop">
+        <MarkBuild class="rail-end__mark" />
+      </div>
+      <div class="rail-end__words">
+        {endHeading && <p class="rail-end__line font-display auburn-h2">{endHeading}</p>}
+        {(primaryCta?.label || secondaryCta?.label) && (
+          <div class="rail-end__ctas">
+            {primaryCta?.label && <CtaLink cta={primaryCta} variant={primaryVariant} />}
+            {secondaryCta?.label && <CtaLink cta={secondaryCta} variant="secondary" />}
+          </div>
+        )}
+      </div>
     </div>
   </div>
 </section>

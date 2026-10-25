@@ -68,6 +68,9 @@ interface Props {
    * exactly as before. The shape matches what SanityImage accepts.
    */
   backgroundImage?: SanityImageObject | null;
+  /** The one-red-button rule (audit 2026-10-25): SectionRenderer passes navy when an earlier block
+      on the page already has the red button. */
+  primaryVariant?: 'primary' | 'navy';
 }
 
 const {
@@ -82,6 +85,7 @@ const {
   headingAccent,
   subheadRich,
   backgroundImage,
+  primaryVariant = 'primary',
 } = Astro.props as Props;
 
 // Only treat the background as present when a real asset is attached, so an
@@ -201,17 +205,17 @@ const mark = hasBackground
     {(subhead || richSubhead) && (
       <p
         class:list={[
-          'mx-auto mt-m max-w-2xl text-lg',
+          'mx-auto mt-4 max-w-2xl text-xl leading-relaxed',
           hasBackground ? 'text-bg/85' : 'text-muted-foreground',
         ]}
       >
         {richSubhead ? <InlineRich value={subheadRich} /> : subhead}
       </p>
     )}
-    <div class="mt-l flex flex-wrap justify-center gap-s">
+    <div class="mt-7 flex flex-wrap justify-center gap-s">
       <CtaLink
         cta={cta}
-        variant="primary"
+        variant={primaryVariant}
         onDark={hasBackground}
         fallbackHref="/plan-your-visit/"
         fallbackLabel={fallbackCtaLabel}

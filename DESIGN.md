@@ -61,6 +61,24 @@ mark colours (`StoneRibbon.astro`, `src/scripts/ribbon.ts`) on a plain white pag
 bands or dividers, a photo hero on Home with the welcome set over it in white (2026-10-23), and photos (stock stand-ins until the photo
 session). Decision: `docs/design-directions/2026-10-17-fbc-auburn/README.md`.
 
+Update 2026-10-25, the restraint pass (site audit, graphic design and UX reviews). The motif, the red and
+Young Serif were each used at every opportunity, so none of them was special. Now:
+
+- **One red button per page**: the page's single primary next step (SectionRenderer gives the red to the first
+  block that asks for it). Every other button is solid navy or the navy outline. Card meta lines, menu arrows,
+  the walk's numbered bricks and every connector are navy; auburn is the mark and that one button.
+- **Less brick**: one sill per page (the footer's); the cream brick wall, the sky and navy tiles behind text and
+  the This Sunday card's tile are gone (the card is plain navy with one 12px brick course on top); at most two
+  brick surfaces in view. **Three surfaces**: the ground, white, and one tint `#E9EEF5`.
+- **Markers only beside words**: the brick marker leads a worded eyebrow and nothing else; the section break
+  is whitespace, and the hairline under the header is gone. The big brick cross is About's alone.
+- **Page heads**: shorter (about 350px on desktop), H1 max 88px (64px for a sermon or a post); the page photo
+  in the gable on the right, or the page's icon large at the right edge, centred on the title. Icons match
+  their page and none repeats across the heads.
+- **One H2 colour** (navy), one eyebrow, one button radius, one inline link, one step connector (2px dashed
+  light navy), and the gable as the one photo shape (the stepped card corner is retired). Young Serif from
+  24px up only. Full list: `docs/agent/design-tokens.md`, shapes: `docs/agent/shapes.md`.
+
 North star: a small church that looks like itself. The stone mark is the most distinctive thing
 the church owns, so the site is a calm, mostly one-colour frame for it. Clear Sunday facts first,
 generous white space, honest about size. Must not look like the First Baptist Church Muncie site
@@ -167,14 +185,16 @@ brick-cross print on the Stone tint, never a grey box.
 - Stone icons (2026-10-24, round 25: every icon is drawn in brick courses, like the Ministries set, so the older pebble
   mosaic is gone; 2026-10-23: printed like the brick, rugged and lived in: chipped edges, a darker rim in each tile's colour, grain and white flecks, baked by `scripts/print-icons.mjs` from the masters in `brand/icons/`) for the Sunday facts and the main entry points (clock, map pin, coffee, Bible,
   praying hands, giving hand); one size per page, never mixed with line icons.
-- Buttons: one family, 10 px radius, deep sky solid and deep sky outline; red only for the single
-  most important action on a page.
+- Buttons: one family, 10 px radius: auburn solid for the page's one main action, navy solid, and the navy
+  outline. Pills only for chips and tags.
 - Sunday block: times, address, parking and "what to expect" in one component, reused on Home and
   Plan Your Visit.
 
 ## Do's and Don'ts
 
-- Do keep one stone moment per page: the mosaic H1 or the full-colour mark, not both large.
+- Do keep one stone moment per page: the full-colour mark large once (About), the gable photo on its brick
+  slab elsewhere.
+- Do keep one red button per page and at most two brick surfaces in any one view.
 - Do make every layout work with no photographs, and better with one.
 - Do mark unconfirmed facts (service times, the verse) until the church confirms them.
 - Don't put mosaic colour on H2s, borders, dividers or backgrounds.
