@@ -13,8 +13,9 @@ site in four ways, and every one of them is empty-safe, so nothing changes until
 
 ## The boxes (Site settings > Church Trac tab)
 
-Seven boxes on their own tab (since 2026-10-24), in setup order under an intro fieldset: `churchTracUrl`
+Eight boxes on their own tab (since 2026-10-24), in setup order under an intro fieldset: `churchTracUrl`
 (the church's own `https://<church>.churchtrac.com`), `connectCardUrl`, `contactFormUrl`, `prayerFormUrl`,
+`newsletterFormUrl` (2026-10-24),
 `givingUrl`, `churchTracIcalUrl`, `memberLoginUrl` (`churchTracFields` in
 `src/sanity/schemaTypes/churchFacts.ts`). All optional, all https (webcal too for the feed), resolved
 with the other facts in `src/lib/church-facts.ts`. The live stream link stays in Church facts. Moving a field
@@ -22,7 +23,7 @@ between tabs is display only: names and data are unchanged.
 
 ## Link tokens
 
-A link box can hold `{giving}`, `{connect}`, `{contact-form}`, `{prayer}`, `{calendar}`,
+A link box can hold `{giving}`, `{connect}`, `{contact-form}`, `{prayer}`, `{newsletter}`, `{calendar}`,
 `{members}` or `{watch}` instead of an address (the list is `CHURCH_LINKS`).
 
 - **Filled in `src/lib/queries.ts`.** Its local `sanityFetch` passes every result through
@@ -54,6 +55,20 @@ A link box can hold `{giving}`, `{connect}`, `{contact-form}`, `{prayer}`, `{cal
 - **Church Trac's "Form/Giving Embed Domain"** setting must hold this site's address, or the form
   refuses to open in the frame. It reads the page's origin, which `public/_headers` sends
   (`Referrer-Policy: strict-origin-when-cross-origin`). It changes at the domain cutover.
+
+## The newsletter (2026-10-24)
+
+The church keeps its email list in Church Trac, so the sign-up adds people there and the site
+keeps no list of its own for Auburn. `newsletterFormUrl` is a Church Trac form set to add
+the person to the church's newsletter group.
+
+- **Footer**: "Get the church newsletter" (opens the form in a new tab) beside "Members: sign in".
+  Before launch an empty box shows a yellow `[Jacob: ...]` ask there.
+- **Newsletter section** (`NewsletterBlock.astro`): the form in `ChurchTracFrame` (short size). It wins
+  over the site's own box and the section's own sign-up link.
+- **The site's own list** (Site settings > Newsletter, D1 and an email provider, PORTS.md card 127)
+  stays switched off here. If it is ever switched on, the footer shows its box only while the Church
+  Trac box is empty.
 
 ## Pages
 

@@ -351,6 +351,7 @@ export const SITE_SETTINGS_PROJECTION = `{
     connectCardUrl,
     contactFormUrl,
     prayerFormUrl,
+    newsletterFormUrl,
     liveStreamUrl,
     officeHours,
     foundedYear,

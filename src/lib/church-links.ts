@@ -39,6 +39,7 @@ export const CHURCH_LINKS = [
     fallback: '/contact/',
   },
   { token: '{prayer}', box: 'Church Trac > Prayer request form', fallback: '/prayer/' },
+  { token: '{newsletter}', box: 'Church Trac > Newsletter sign-up form', fallback: '/contact/' },
   {
     token: '{calendar}',
     box: 'Church Trac > Church Trac calendar feed (its public page)',
@@ -82,6 +83,7 @@ export function linkValues(
     | 'connectCardUrl'
     | 'contactFormUrl'
     | 'prayerFormUrl'
+    | 'newsletterFormUrl'
     | 'calendarPageUrl'
     | 'memberLoginUrl'
     | 'liveUrl'
@@ -92,6 +94,7 @@ export function linkValues(
     '{connect}': facts.connectCardUrl,
     '{contact-form}': facts.contactFormUrl ?? facts.connectCardUrl,
     '{prayer}': facts.prayerFormUrl,
+    '{newsletter}': facts.newsletterFormUrl,
     '{calendar}': facts.calendarPageUrl,
     '{members}': facts.memberLoginUrl,
     '{watch}': facts.liveUrl,

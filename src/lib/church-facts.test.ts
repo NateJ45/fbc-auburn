@@ -94,6 +94,16 @@ test('a number that takes texts gets an sms link; a member sign-in link must be 
   assert.equal(resolveChurchFacts({ memberLoginUrl: 'http://example.com' }).memberLoginUrl, null);
 });
 
+test('the newsletter form is kept only when it is https', () => {
+  const url = 'https://example.churchtrac.com/forms/newsletter';
+  assert.equal(resolveChurchFacts({ newsletterFormUrl: url }).newsletterFormUrl, url);
+  assert.equal(
+    resolveChurchFacts({ newsletterFormUrl: 'http://example.com' }).newsletterFormUrl,
+    null,
+  );
+  assert.equal(resolveChurchFacts(null).newsletterFormUrl, null);
+});
+
 test('an empty settings document falls back to the published facts, all unconfirmed', () => {
   const f = resolveChurchFacts(null);
   assert.equal(f.address?.street, FALLBACK_FACTS.churchAddress.street);

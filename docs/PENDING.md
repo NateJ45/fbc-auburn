@@ -207,9 +207,11 @@ picking another icon on the card in the Studio, or redraw it (masters in `brand/
 
 **Blocker: Jacob sends the addresses.** The Church Trac pieces from fbcm are in (`docs/agent/church-trac.md`, PORTS.md card
 152), all empty-safe: Contact, Prayer and the "Tell us you are coming" buttons keep the site's own forms until Site settings >
-Church Trac (its own tab since 2026-10-24) holds the contact form or connection card and the prayer form. Open:
+Church Trac (its own tab since 2026-10-24) holds the contact form or connection card and the prayer form. The newsletter
+sign-up (footer link and the Newsletter section) appears once the newsletter form box is set. Open:
 
-- Fill `churchTracUrl`, `connectCardUrl`, `contactFormUrl` (optional) and `prayerFormUrl` once Jacob sends them (a small
+- Fill `churchTracUrl`, `connectCardUrl`, `contactFormUrl` (optional), `prayerFormUrl` and
+  `newsletterFormUrl` (a Church Trac form that adds people to the newsletter group) once Jacob sends them (a small
   backup-first data script, or by hand in the Studio), then rebuild and check each page shows the frame.
 - In Church Trac, set each form's "Form/Giving Embed Domain" to this site's address (the workers.dev address now, the church's
   domain at cutover), or the frames refuse to open.
