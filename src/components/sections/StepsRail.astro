@@ -1,7 +1,8 @@
 ---
 // Safe to edit by hand
 // Page-builder block: the stepping-stone rail (stepsRailSection). Numbered steps, each beside a
-// big stone icon, with three of the mark's gold stepping stones laid in each gap; the path ends in
+// big stone icon, joined icon to icon by a trail of the mark's small stepping stones that snakes down
+// the icon column for the full height of each step (2026-10-25); the path ends in
 // the church mark, which builds itself stone by stone (MarkBuild), then a closing line and buttons.
 //
 // Everything here is server-rendered: the stones, the mark and every word are in the HTML, so the
@@ -36,6 +37,23 @@ const stones = await stoneSrcs();
 const rows = await Promise.all(
   steps.filter((s) => s?.title).map(async (s) => ({ ...s, iconSrc: await stoneIconSrc(s.icon) })),
 );
+// The trail between two icons: PEBBLES of the mark's two long slabs (stone-a and stone-b; the
+// squat stone-c looked like a stray block at this size) on a gentle arc, bending the other way on
+// each segment so the whole path snakes down the page. x is the sideways offset, r the turn,
+// which follows the arc smoothly; w evens the two shapes out so they read as one size.
+const PEBBLES = 5;
+const trail = (n: number) =>
+  Array.from({ length: PEBBLES }, (_, k) => {
+    const t = (k + 1) / (PEBBLES + 1);
+    const dir = n % 2 ? 1 : -1;
+    const slab = (n + k) % 2;
+    return {
+      src: stones[slab],
+      w: slab ? 27 : 30,
+      x: Math.round(dir * Math.sin(t * Math.PI) * 12),
+      r: Math.round(dir * Math.cos(t * Math.PI) * -14),
+    };
+  });
 const isExternal = (href: string) => /^https?:\/\//.test(href);
 ---
 
@@ -59,53 +77,53 @@ const isExternal = (href: string) => /^https?:\/\//.test(href);
 
     <ol class="rail" role="list">
       {rows.map((step, n) => (
-        <>
-          <li class="rail__step">
+        <li class="rail__step">
+          <div class="rail__col">
             <span class="rail__stone reveal">
               {step.iconSrc && <img src={step.iconSrc} alt="" width="80" height="80" />}
             </span>
-            <div class="rail__body">
-              <p class="rail__n">Step {n + 1}</p>
-              <h3 class="rail__title">{step.title}</h3>
-              {step.body && <p class="rail__text">{step.body}</p>}
-              {step.times && step.times.length > 0 && (
-                <dl class="rail__times">
-                  {step.times.map((t) => (
-                    <div>
-                      <dt>{t.time}</dt>
-                      <dd>{t.label}</dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-              {step.linkLabel && step.linkHref && (
-                <a
-                  class="rail__link"
-                  href={withTrailingSlash(step.linkHref)}
-                  target={isExternal(step.linkHref) ? '_blank' : undefined}
-                  rel={isExternal(step.linkHref) ? 'noopener noreferrer' : undefined}
-                >
-                  {step.linkLabel}
-                  {isExternal(step.linkHref) && <span class="sr-only"> (opens in a new tab)</span>}
-                </a>
-              )}
-            </div>
-          </li>
-          {n < rows.length - 1 && (
-            <li class="rail__gap" aria-hidden="true" role="presentation">
-              {[0, 1, 2].map((k) => (
-                <img
-                  class="rail__pebble reveal"
-                  src={stones[(n + k) % 3]}
-                  alt=""
-                  width="62"
-                  height="28"
-                  style={`--d:${k * 140}ms;--k:${k};--x:${k % 2 ? 9 : -9}px;--r:${k % 2 ? 3 : -3}deg`}
-                />
-              ))}
-            </li>
-          )}
-        </>
+            {n < rows.length - 1 && (
+              <span class="rail__trail" aria-hidden="true">
+                {trail(n).map((t, k) => (
+                  <img
+                    class="rail__pebble reveal"
+                    src={t.src}
+                    alt=""
+                    width={t.w}
+                    height="12"
+                    style={`--w:${t.w}px;--d:${k * 90}ms;--k:${k / 2};--x:${t.x}px;--r:${t.r}deg`}
+                  />
+                ))}
+              </span>
+            )}
+          </div>
+          <div class="rail__body">
+            <p class="rail__n">Step {n + 1}</p>
+            <h3 class="rail__title">{step.title}</h3>
+            {step.body && <p class="rail__text">{step.body}</p>}
+            {step.times && step.times.length > 0 && (
+              <dl class="rail__times">
+                {step.times.map((t) => (
+                  <div>
+                    <dt>{t.time}</dt>
+                    <dd>{t.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {step.linkLabel && step.linkHref && (
+              <a
+                class="rail__link"
+                href={withTrailingSlash(step.linkHref)}
+                target={isExternal(step.linkHref) ? '_blank' : undefined}
+                rel={isExternal(step.linkHref) ? 'noopener noreferrer' : undefined}
+              >
+                {step.linkLabel}
+                {isExternal(step.linkHref) && <span class="sr-only"> (opens in a new tab)</span>}
+              </a>
+            )}
+          </div>
+        </li>
       ))}
     </ol>
 

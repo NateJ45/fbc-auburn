@@ -223,7 +223,7 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   `animation-timeline: view()` where supported (Chrome, Edge, Safari 26), an IntersectionObserver adding `.in`
   elsewhere. Used by the rail's icons and stones and the stone dividers; the icon cards and page icons can opt in with
   the same class.
-- **The rail** (`stepsRailSection`): three gold stones in each gap, then the mark building itself in story order.
+- **The rail** (`stepsRailSection`): a trail of five small slabs (stone-a and stone-b, sized to match) runs down the icon column from each icon to the next, on an arc that bends the other way each step and fills whatever height the text takes (2026-10-25; it was three big stones in a fixed gap, which left a hole after long text); then the mark building itself in story order.
 - **The mark build** (`MarkBuild.astro`, 2026-10-24): once 45% of the brick print is on screen the wall is laid
   one brick at a time, bottom course first and back and forth like a mason, each brick dropping with weight and
   settling, about five seconds in all, until the last course seals the top of the cross; then the mark gives one

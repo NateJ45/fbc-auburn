@@ -78,7 +78,17 @@ html.motion .reveal:not(.in) {
   display: grid;
   grid-template-columns: 98px minmax(0, 1fr);
   gap: clamp(1.2rem, 3vw, 2.4rem);
-  align-items: start;
+  align-items: stretch;
+}
+/* The icon column: the icon, then the trail stretching down to the next step's icon. Each step
+   above the last is padded so the trail has room to walk between the two. */
+.rail__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.rail__step:not(:last-child) .rail__body {
+  padding-bottom: clamp(3.5rem, 8vw, 5rem);
 }
 .rail__stone {
   width: 98px;
@@ -142,16 +152,20 @@ html.motion .reveal:not(.in) {
 .rail__link:hover {
   text-decoration-thickness: 2px;
 }
-/* The gap between two steps: three of the mark's gold stones, zigzagging down the path. */
-.rail__gap {
-  display: grid;
-  grid-template-columns: 98px;
-  justify-items: center;
-  gap: 8px;
-  padding-block: clamp(0.9rem, 2.4vw, 1.6rem);
+/* The trail between two icons: the mark's stones, small and evenly spaced on a gentle S (offsets
+   and turns come from StepsRail's trail()), filling whatever height the step's text takes. */
+.rail__trail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  min-height: 7rem;
+  padding-block: 0.6rem 0.2rem;
 }
 .rail__pebble {
-  width: 62px;
+  display: block;
+  width: var(--w, 30px);
   height: auto;
 }
 .rail-end {
@@ -189,11 +203,8 @@ html.motion .reveal:not(.in) {
     width: 58px;
     height: 58px;
   }
-  .rail__gap {
-    grid-template-columns: 70px;
-  }
   .rail__pebble {
-    width: 46px;
+    width: calc(var(--w, 30px) * 0.8);
   }
 }
 /* Phones (phone polish, 2026-10-24): the 70px stone column left the words 215px wide at 375 (190 at
