@@ -1,7 +1,8 @@
 // Safe to edit by hand
 // The FBC Auburn stone icons (brand kit, src/assets/brand/stone-icon-*.svg), as the list the
 // Studio's icon pickers offer: the original eight, eight for What we believe (round 23) and seven
-// for Ministries (round 24, which also redrew the toy blocks with A, B, C), all 2026-10-24;
+// for Ministries (round 24, which also redrew the toy blocks with A, B, C) and one for Watch
+// (round 26), all 2026-10-24;
 // masters in brand/icons/, printed by scripts/print-icons.mjs. Shared by the schema (src/sanity/schemaTypes/auburnSections.ts) and
 // the renderer (src/components/StoneIcon.astro), so a value can never name a file that is not there.
 // The field that stores one is called `icon`, which is on NON_STEGA_FIELDS (src/lib/cms-preview.ts).
@@ -32,6 +33,8 @@ export const STONE_ICONS = [
   { title: 'Open door (welcome)', value: 'open-door' },
   { title: 'Toolbox (workdays, grounds)', value: 'toolbox' },
   { title: 'Grocery bag (food pantry, outreach)', value: 'grocery-bag' },
+  // Watch (round 26, 2026-10-24)
+  { title: 'Screen with a play button (watch, livestream)', value: 'play-screen' },
 ] as const;
 
 export type StoneIconName = (typeof STONE_ICONS)[number]['value'];

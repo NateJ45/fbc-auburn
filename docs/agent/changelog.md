@@ -10,6 +10,17 @@ whose line stops short of it; the head pads 44px above and 36px below. Heads wit
 175px shorter at 375px, the rest about 34px (`src/styles/board.css`). A head photo still follows the
 words at full width; desktop is unchanged.
 
+_2026-10-24: Watch gets a livestream icon._
+
+**Decision.** The Watch page head wore the music note, which reads as worship music, not "watch
+live" (Nathan). Round 26 drew a screen with a red play button in the same brick style (Gemini,
+traced as drawn; master `brand/icons/stone-icon-play-screen.svg`, printed by
+`node scripts/print-icons.mjs`) and added it to `STONE_ICONS` as `play-screen`. The data change is
+`scripts/content/watch-icon.mjs`, which moves the Watch hero (`w-hero`) from music to the new icon
+and leaves it alone if someone has already picked something else. It runs after the code deploys,
+so the live page never asks for an icon the build does not have. Music stays in the picker for
+worship and choir cards.
+
 _2026-10-24: the phone Home hero is a photo band._
 
 **Decision.** Below 961px the hero was a block 78% of the screen tall with the welcome at its foot,
