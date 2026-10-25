@@ -45,8 +45,12 @@ test('Plan your visit has one FAQPage and the Church data', async ({ page }) => 
   await page.goto('/plan-your-visit/');
   const ld = await jsonLd(page);
   const types = ld.map((l) => l['@type']);
-  expect(types.filter((t) => t === 'FAQPage')).toHaveLength(1);
   expect(types).toContain('Church');
+  // Content-dependent: the FAQPage comes from the page's first Questions block, and a build whose
+  // content has none (CI's build differs from a local one) has nothing to emit.
+  const questions = await page.locator('main [data-slot="accordion-trigger"]').count();
+  test.skip(questions === 0, 'no Questions block on Plan your visit in this build');
+  expect(types.filter((t) => t === 'FAQPage')).toHaveLength(1);
   const faq = ld.find((l) => l['@type'] === 'FAQPage');
   expect(faq.mainEntity.length).toBeGreaterThan(0);
   expect(faq.mainEntity[0].acceptedAnswer.text).toBeTruthy();
@@ -61,7 +65,10 @@ test('the 404 page has no canonical', async ({ page }) => {
 test('the first photo under the page head is eager and high priority', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/ministries/');
-  const img = page.locator('main img:not(.stone-icon)').first();
+  const photos = page.locator('main img:not(.stone-icon)');
+  // Content-dependent: since the 2026-10-25 audit Ministries can show stone icons only.
+  test.skip((await photos.count()) === 0, 'no photo on Ministries in this build');
+  const img = photos.first();
   await expect(img).toHaveAttribute('loading', 'eager');
   await expect(img).toHaveAttribute('fetchpriority', 'high');
 });
