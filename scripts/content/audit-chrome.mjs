@@ -62,6 +62,20 @@ byKey['n-prayer'] ??= {
   linkType: 'internal',
   internalPage: ref('page-prayer'),
 };
+// "Need the pastor?" (/pastoral-care/) is made by audit-pages.mjs; it sits beside Prayer requests
+// once that page exists, so run audit-pages.mjs first.
+const hasCare = Boolean(await client.fetch(`count(*[_id == "page-pastoral-care"])`));
+if (hasCare)
+  byKey['n-care'] ??= {
+    _key: 'n-care',
+    _type: 'navLink',
+    label: 'Need the pastor?',
+    linkType: 'internal',
+    internalPage: ref('page-pastoral-care'),
+  };
+else
+  console.log('page-pastoral-care does not exist yet: Need the pastor? is left out of the menu.');
+const care = hasCare ? ['n-care'] : [];
 // The Bulletin is a site route (/bulletin/, the newest bulletin), linked like Sermons and Give.
 byKey['n-bulletin'] ??= {
   _key: 'n-bulletin',
@@ -82,7 +96,14 @@ const group = (key, label, keys) => ({
 const navItems = [
   group('g-new', 'New here', ['n-visit', 'n-about', 'n-believe', 'n-leadership', 'n-contact']),
   group('g-involved', 'Get involved', ['n-ministries', 'n-next', 'n-news']),
-  group('g-connected', 'This week', ['n-sermons', 'n-events', 'n-bulletin', 'n-prayer', 'n-give']),
+  group('g-connected', 'This week', [
+    'n-sermons',
+    'n-events',
+    'n-bulletin',
+    'n-prayer',
+    ...care,
+    'n-give',
+  ]),
 ];
 
 // ── 2. The footer's page list: the same groups and names ───────────────────────────────────
@@ -119,6 +140,7 @@ const footerColumns = [
     footerLink('n-events', 'fb-events'),
     footerLink('n-bulletin', 'fw-bulletin'),
     footerLink('n-prayer', 'fb-prayer'),
+    ...care.map((k) => footerLink(k, 'fw-care')),
     footerLink('n-give', 'fw-give'),
   ]),
 ].map((c) => ({ ...c, _type: columnType }));
