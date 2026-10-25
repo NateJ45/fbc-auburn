@@ -28,9 +28,15 @@
 //   Young Serif, a long thin arrow at the right, hairlines between. A row with children is a button
 //   (aria-expanded): open, it fills auburn red, its arrow turns down and its pages list beneath it
 //   in a smaller size. One group is open at a time. The page you are on is marked with a red stone.
-// - Below the rows: the This Sunday card (date, times, address, Directions, the watch row, the
-//   visit button), then the tagline, email, phone and socials, then the sill along the bottom.
-// - From 64rem the rows take the left column and the card and contact details the right.
+// - Phones and tablets (below 64rem, 2026-10-24): straight under the search field, a compact This
+//   Sunday card (date, times, Directions; a "Live now" row only while worship streams) and a
+//   full-width visit button, then the rows, then the tagline, email, phone and socials, then the
+//   sill. People open the menu to find times; the card was about 1.4 screens down below the rows.
+// - From 64rem the rows take the left column and the full card (address, the watch row, the visit
+//   button) and contact details the right, as before. Each card is display:none at the other
+//   width (auburn.css), so only one is ever in the focus order or the accessibility tree.
+// - A row that points where the visit button does is dropped, so "Plan your visit" is never listed
+//   twice.
 // Motion is CSS only (src/styles/auburn.css, keyed on the sheet's data-state="open"): the rows rise
 // in 40ms apart, and none of it runs under reduced motion. Focus trap, Escape, the scroll lock and
 // focus return all come from Radix Dialog. The trigger is a "Menu" pill at every width, its icon
@@ -172,6 +178,84 @@ function RowArrow() {
   );
 }
 
+/** Same page, ignoring a trailing slash, so "/plan-your-visit" matches "/plan-your-visit/". */
+const samePath = (a: string, b: string) => a.replace(/\/+$/, '') === b.replace(/\/+$/, '');
+
+/**
+ * The This Sunday card's insides. `compact` is the phone card under the search field: the date,
+ * the times and Directions, with the watch row only while worship is live. The full card (64rem
+ * up) adds the street and the watch row; the visit button is the caller's.
+ */
+function SundayCardBody({
+  sunday,
+  watch,
+  live,
+  compact = false,
+}: {
+  sunday: MenuSunday;
+  watch?: { href: string; label: string };
+  live?: { live: boolean; href?: string };
+  compact?: boolean;
+}) {
+  const directions = sunday.mapsUrl && (
+    <a href={sunday.mapsUrl} rel="noopener" target="_blank">
+      Directions
+      <span className="sr-only"> (opens Google Maps in a new tab)</span>
+    </a>
+  );
+  const showWatch = watch && (!compact || live?.live);
+  return (
+    <>
+      <div className="auburn-menu__card-top">
+        <p className="auburn-menu__card-eyebrow">{sunday.title || 'This Sunday'}</p>
+        {sunday.confirmed === false && <span className="auburn-menu__tag">Times to confirm</span>}
+      </div>
+      {sunday.date && <p className="auburn-menu__card-date">{sunday.date}</p>}
+      {sunday.services && sunday.services.length > 0 ? (
+        <dl className="auburn-menu__card-times">
+          {sunday.services.map((s) => (
+            <div key={s.time + s.label}>
+              <dt>{s.time}</dt>
+              <dd>{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <p className="auburn-menu__times">{sunday.times}</p>
+      )}
+      {compact
+        ? directions && (
+            <p className="auburn-menu__where auburn-menu__where--compact">{directions}</p>
+          )
+        : sunday.street && (
+            <p className="auburn-menu__where">
+              {sunday.street}
+              {directions && (
+                <>
+                  {' · '}
+                  {directions}
+                </>
+              )}
+            </p>
+          )}
+      {showWatch && watch && (
+        <p className="auburn-menu__watch">
+          <a
+            href={(live?.live && live.href) || watch.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-live={live?.live ? '' : undefined}
+          >
+            <span className="auburn-menu__live-dot" aria-hidden="true" />
+            {live?.live ? 'Live now: watch the service' : watch.label}
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        </p>
+      )}
+    </>
+  );
+}
+
 // ---- Component --------------------------------------------------------------
 
 export default function MobileNav({
@@ -218,6 +302,11 @@ export default function MobileNav({
   const email = siteSettings?.email;
   const phone = siteSettings?.phone;
   const socials = siteSettings?.socials ?? [];
+
+  // The rows, less any that duplicates the visit button below the search field.
+  const rows = cta.show
+    ? links.filter((item) => !(item.kind === 'flat' && samePath(item.href, cta.href)))
+    : links;
 
   const close = () => setOpen(false);
   const onOpenChange = (next: boolean) => {
@@ -299,9 +388,26 @@ export default function MobileNav({
                   Search the site
                 </a>
               )}
+              {(sunday || cta.show) && (
+                <div className="auburn-menu__visit" style={step()}>
+                  {sunday && (
+                    <section
+                      className="auburn-menu__card auburn-menu__card--compact"
+                      aria-label={sunday.title || 'This Sunday'}
+                    >
+                      <SundayCardBody sunday={sunday} watch={watch} live={live} compact />
+                    </section>
+                  )}
+                  {cta.show && (
+                    <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary">
+                      {cta.label}
+                    </a>
+                  )}
+                </div>
+              )}
               <nav aria-label="All pages" className="auburn-menu__nav">
                 <ul className="auburn-menu__rows">
-                  {links.map((item) => {
+                  {rows.map((item) => {
                     if (item.kind === 'flat') {
                       const here = isCurrent(item.href, current);
                       return (
@@ -360,57 +466,11 @@ export default function MobileNav({
             <div className="auburn-menu__side">
               {sunday && (
                 <section
-                  className="auburn-menu__card"
+                  className="auburn-menu__card auburn-menu__card--full"
                   aria-label={sunday.title || 'This Sunday'}
                   style={step()}
                 >
-                  <div className="auburn-menu__card-top">
-                    <p className="auburn-menu__card-eyebrow">{sunday.title || 'This Sunday'}</p>
-                    {sunday.confirmed === false && (
-                      <span className="auburn-menu__tag">Times to confirm</span>
-                    )}
-                  </div>
-                  {sunday.date && <p className="auburn-menu__card-date">{sunday.date}</p>}
-                  {sunday.services && sunday.services.length > 0 ? (
-                    <dl className="auburn-menu__card-times">
-                      {sunday.services.map((s) => (
-                        <div key={s.time + s.label}>
-                          <dt>{s.time}</dt>
-                          <dd>{s.label}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  ) : (
-                    <p className="auburn-menu__times">{sunday.times}</p>
-                  )}
-                  {sunday.street && (
-                    <p className="auburn-menu__where">
-                      {sunday.street}
-                      {sunday.mapsUrl && (
-                        <>
-                          {' · '}
-                          <a href={sunday.mapsUrl} rel="noopener" target="_blank">
-                            Directions
-                            <span className="sr-only"> (opens Google Maps in a new tab)</span>
-                          </a>
-                        </>
-                      )}
-                    </p>
-                  )}
-                  {watch && (
-                    <p className="auburn-menu__watch">
-                      <a
-                        href={(live?.live && live.href) || watch.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        data-live={live?.live ? '' : undefined}
-                      >
-                        <span className="auburn-menu__live-dot" aria-hidden="true" />
-                        {live?.live ? 'Live now: watch the service' : watch.label}
-                        <span className="sr-only"> (opens in a new tab)</span>
-                      </a>
-                    </p>
-                  )}
+                  <SundayCardBody sunday={sunday} watch={watch} live={live} />
                   {cta.show && (
                     <a href={cta.href} onClick={close} className="btn-auburn btn-auburn--primary">
                       {cta.label}
@@ -422,7 +482,7 @@ export default function MobileNav({
                 <a
                   href={cta.href}
                   onClick={close}
-                  className="btn-auburn btn-auburn--primary"
+                  className="btn-auburn btn-auburn--primary auburn-menu__side-cta"
                   style={step()}
                 >
                   {cta.label}

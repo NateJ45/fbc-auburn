@@ -52,7 +52,7 @@ The four core pages (home, about, services, process) and every custom `page` doc
 | `logoStripSection` | SELF_CONTAINED | Row or grid of client/partner logos with optional eyebrow and headline           |
 | `embedSection`     | SELF_CONTAINED | Embed URL, or pasted code in its own sandboxed box (card 121, custom-code.md)    |
 | `stepsRailSection` | CONTENT        | FBC Auburn: numbered steps on a stone path with stone icons, ending in the mark  |
-| `walkSection`      | CONTENT        | FBC Auburn: Walk in with us, the visit stop by stop beside a plan of the church  |
+| `walkSection`      | CONTENT        | FBC Auburn: Walk in with us, the visit stop by stop down a stepping-stone path   |
 
 The two FBC Auburn blocks live in `auburnMotionSections.ts` and are spread into `pageSectionSchemas`. Their stone
 icon picker is the `icon` field and `imageTextSection`'s new picture choice is `art` (photo, mark or baptism); both
