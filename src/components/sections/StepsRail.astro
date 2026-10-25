@@ -1,13 +1,13 @@
 ---
 // Safe to edit by hand
 // Page-builder block: the stepping-stone rail (stepsRailSection). Numbered steps, each beside a
-// big stone icon, joined icon to icon by a trail of the mark's small stepping stones that snakes down
-// the icon column for the full height of each step (2026-10-25); the path ends in
+// big stone icon, joined icon to icon by a laid brick path (running bond with a soldier-course edge)
+// that curves down the icon column for the full height of each step (2026-10-25); the path ends in
 // the church mark, which builds itself stone by stone (MarkBuild), then a closing line and buttons.
 //
 // Everything here is server-rendered: the stones, the mark and every word are in the HTML, so the
 // block reads the same without JS. Motion (src/styles/motion.css, src/scripts/motion.ts): each
-// stone lands as it scrolls in, in order down the page; reduced motion shows it all at rest.
+// icon and path lands as it scrolls in, in order down the page; reduced motion shows it all at rest.
 // Design source: the studio mockups' index.html ".rail" and motion.js part 1 (2026-10-17).
 import SectionHeading from '@/components/SectionHeading.astro';
 import CtaLink from '@/components/CtaLink.astro';
@@ -37,23 +37,6 @@ const stones = await stoneSrcs();
 const rows = await Promise.all(
   steps.filter((s) => s?.title).map(async (s) => ({ ...s, iconSrc: await stoneIconSrc(s.icon) })),
 );
-// The trail between two icons: PEBBLES of the mark's two long slabs (stone-a and stone-b; the
-// squat stone-c looked like a stray block at this size) on a gentle arc, bending the other way on
-// each segment so the whole path snakes down the page. x is the sideways offset, r the turn,
-// which follows the arc smoothly; w evens the two shapes out so they read as one size.
-const PEBBLES = 5;
-const trail = (n: number) =>
-  Array.from({ length: PEBBLES }, (_, k) => {
-    const t = (k + 1) / (PEBBLES + 1);
-    const dir = n % 2 ? 1 : -1;
-    const slab = (n + k) % 2;
-    return {
-      src: stones[slab],
-      w: slab ? 27 : 30,
-      x: Math.round(dir * Math.sin(t * Math.PI) * 12),
-      r: Math.round(dir * Math.cos(t * Math.PI) * -14),
-    };
-  });
 const isExternal = (href: string) => /^https?:\/\//.test(href);
 ---
 
@@ -83,18 +66,10 @@ const isExternal = (href: string) => /^https?:\/\//.test(href);
               {step.iconSrc && <img src={step.iconSrc} alt="" width="80" height="80" />}
             </span>
             {n < rows.length - 1 && (
-              <span class="rail__trail" aria-hidden="true">
-                {trail(n).map((t, k) => (
-                  <img
-                    class="rail__pebble reveal"
-                    src={t.src}
-                    alt=""
-                    width={t.w}
-                    height="12"
-                    style={`--w:${t.w}px;--d:${k * 90}ms;--k:${k / 2};--x:${t.x}px;--r:${t.r}deg`}
-                  />
-                ))}
-              </span>
+              <span
+                class:list={['rail__trail', 'reveal', n % 2 && 'rail__trail--flip']}
+                aria-hidden="true"
+              />
             )}
           </div>
           <div class="rail__body">
