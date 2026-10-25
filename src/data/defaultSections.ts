@@ -71,7 +71,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
         icon: 'bible',
         gathering: 'first',
         title: 'Sunday School for all ages',
-        body: 'A class for every age before worship. Come for this too, or just for worship.',
+        body: 'Small classes by age, adults included, before worship. It is optional on a first visit: plenty of people come just for worship.',
       },
       {
         _type: 'railStep',
@@ -79,7 +79,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
         icon: 'music',
         gathering: 'second',
         title: 'Worship',
-        body: 'About an hour. Children are welcome in the service, and there is a checked-in room for little ones.',
+        body: 'About an hour. We sing, pray and open the Bible together. Children are welcome in the service, and there is a room for little ones too.',
       },
       {
         _type: 'railStep',
@@ -135,7 +135,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
         _key: 'default-how-give',
         icon: 'giving-hand',
         title: 'Give',
-        body: 'In the offering on Sunday, by mail, or online once it is set up',
+        body: 'Give in the offering on Sunday, or by mail',
         link: { _type: 'ctaBlock', label: 'Give', href: '/give/' },
       },
       {
@@ -144,7 +144,7 @@ export const DEFAULT_HOME_SECTIONS: PageBuilderBlock[] = [
         icon: 'coffee',
         title: 'Ask a question',
         body: 'Anything before you come, or something we can pray about',
-        link: { _type: 'ctaBlock', label: 'Ask a question', href: '/contact/' },
+        link: { _type: 'ctaBlock', label: 'Ask a question', href: '/contact/?topic=question' },
       },
     ],
   },
@@ -229,7 +229,7 @@ export const DEFAULT_PLAN_VISIT_SECTIONS: PageBuilderBlock[] = [
     _type: 'ctaBandSection',
     _key: 'default-pyv-cta',
     headline: 'Let us know you are coming, and we will look out for you.',
-    cta: { _type: 'ctaBlock', label: 'Tell us you are visiting', href: '/contact/' },
+    cta: { _type: 'ctaBlock', label: 'Tell us you are coming', href: '/contact/?visit=sunday-11' },
   },
 ];
 

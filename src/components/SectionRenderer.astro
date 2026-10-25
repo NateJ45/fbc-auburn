@@ -53,6 +53,7 @@ import { plain } from '@/lib/church-facts';
 // FBC Auburn's church section library (churchSections.ts): one branch, one dispatcher.
 import ChurchBlock from '@/components/church-blocks/ChurchBlock.astro';
 import { isChurchBlock } from '@/lib/churchBlocks.types';
+import { anchorFor } from '@/lib/section-anchors';
 
 interface Props {
   sections?: unknown[];
@@ -82,10 +83,15 @@ const { sections = [], idPrefix = 'section', editDoc } = Astro.props as Props;
 const lightSurface = (s: string | null): 'background' | 'muted' =>
   s === 'muted' ? 'muted' : 'background';
 
+// A section with a named anchor (src/lib/section-anchors.ts, site audit 2026-10-25) takes the name
+// as its heading id, so /what-we-believe/#the-gospel lands on it; the rest keep the numbered id.
 const rows = classifySections<PageBuilderBlock>(
   expandSyncedSections(sections as PageBuilderBlock[]),
   idPrefix,
-);
+).map((row) => ({
+  ...row,
+  headingId: anchorFor((row.block as { _key?: string })._key, row.headingId),
+}));
 
 // FBC Auburn, board E on the inner pages (2026-10-17). Every section after the hero opens with a
 // rule of three stepping stones and a hairline (BoardRule), which replaced the gold-stone divider

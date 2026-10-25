@@ -115,6 +115,36 @@ const schemas = [
       </div>
     </div>
   </section>
+
+  {/* How gifts are cared for (site audit, 2026-10-25). Members want to know a gift is handled
+      well, and newcomers what the Cooperative Program is. The facts are the church's, so before
+      launch this band holds Jacob's asks; at launch (PRE_LAUNCH_NOTES false) it is hidden until
+      his answers are written in here. */}
+  {PRE_LAUNCH_NOTES && (
+    <>
+      <BoardRule />
+      <section class="mx-auto max-w-content px-m py-section-lg" aria-labelledby="give-care">
+        <SectionHeading headline="How gifts are cared for" headingId="give-care" />
+        <ul class="give-care">
+          <li>
+            [Jacob: how the offering is counted and recorded (for example, by two people together),
+            so givers know it is handled with care.]
+          </li>
+          <li>
+            [Jacob: whether givers get a giving statement each January for their taxes, and who to
+            ask for one.]
+          </li>
+          <li>[Jacob: how the budget is set: does the church vote on it each year?]</li>
+          <li>
+            [Jacob: a sentence on the Cooperative Program and how much of each gift goes to it, if
+            you would like that shared.] [Placeholder: Through the Cooperative Program, Southern
+            Baptist churches pool part of their giving to send missionaries, train pastors and start
+            new churches.]
+          </li>
+        </ul>
+      </section>
+    </>
+  )}
 </BaseLayout>
 
 <style>
@@ -150,6 +180,18 @@ const schemas = [
     margin-top: 0.5rem;
     font-style: normal;
     font-weight: 600;
+  }
+  .give-care {
+    max-width: 40rem;
+    margin-top: var(--gap-heading);
+    padding-left: 1.25rem;
+    list-style: disc;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--foreground);
+  }
+  .give-care li + li {
+    margin-top: 0.5rem;
   }
   .give-way a {
     font-weight: 600;

@@ -120,7 +120,16 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'church-family', credit: 'Olek Buzunov on Unsplash' },
     },
   ],
-  '/plan-your-visit/|What about my kids?': [
+  '/about/|A Sunday here': [
+    {
+      title: 'A Sunday morning, as a guest sees it',
+      detail:
+        'The sanctuary during the singing or the sermon, from the side or the back, so the room and the people in it fill the frame. No children’s faces.',
+      orientation: 'landscape',
+      example: { file: 'preaching', credit: 'adrianna geo on Unsplash' },
+    },
+  ],
+  '/plan-your-visit/|Your kids': [
     {
       title: 'The nursery or children’s room, ready for Sunday',
       detail:
@@ -129,7 +138,7 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'nursery', credit: 'Atikah Akhtar on Unsplash' },
     },
   ],
-  '/plan-your-visit/|Where do I park?': [
+  '/plan-your-visit/|Getting in and getting around': [
     {
       title: 'The front door, as a guest arrives',
       detail:
@@ -138,7 +147,7 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'front-door', credit: 'Roger Starnes Sr on Unsplash' },
     },
   ],
-  '/plan-your-visit/|How will I find it?': [
+  '/plan-your-visit/|Look for the sign': [
     {
       title: 'The road sign, from a car',
       detail:
@@ -147,7 +156,7 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'road-sign', credit: 'goodrich kingrey on Unsplash', note: 'end' },
     },
   ],
-  '/ministries/|Serving our neighbours': [
+  '/ministries/|Serving our neighbors': [
     {
       title: 'Volunteers at the food pantry',
       detail:
@@ -186,7 +195,7 @@ const SHOTS: Record<string, Shot[]> = {
   ],
   '/ministries/|Bible study and prayer': [
     {
-      title: 'Open Bibles round a table',
+      title: 'Open Bibles around a table',
       detail: 'The Wednesday group, from across the table. Hands and Bibles are enough.',
       orientation: 'landscape',
       example: { file: 'bible-study', credit: 'Mitchell Leach on Unsplash' },

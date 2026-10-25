@@ -367,3 +367,10 @@ main:is(:has(.board-head), :has(> .hb)) > svg.bgpath {
     width: 112px;
   }
 }
+
+/* Named section anchors (site audit, 2026-10-25; src/lib/section-anchors.ts): a link such as
+   /what-we-believe/#the-gospel lands on the heading with room above it for the sticky header. */
+h2[id],
+h3[id] {
+  scroll-margin-top: 6rem;
+}
