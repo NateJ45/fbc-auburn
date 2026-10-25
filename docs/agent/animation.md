@@ -130,24 +130,57 @@ ScrollTrigger, SplitText and Barba, driven by Alpine components. What it does, a
 | On the reference site                                                                                                                                             | Ours                                                                                                                                | How                                                                                                                      |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Headings, intros and quotes rise line by line out of a mask (SplitText lines, 101% to 0, 1.2s expo-out, 0.1s apart, starting when the top is 85% down the screen) | Every `h1`, `h2` and pull quote in `<main>`                                                                                         | `flow.ts` splits into `.flow-line` masks, `flow.css` `flow-line`                                                         |
-| Everything else fades up as it arrives, staggered within a group                                                                                                  | Paragraphs, list items, cards, buttons, figures, forms, stone icons                                                                 | `.flow--up`, 1s expo-out, 90ms apart for things arriving together                                                        |
+| Everything else fades up as it arrives, staggered within a group                                                                                                  | Paragraphs, list items, cards, buttons, figures, forms, stone icons                                                                 | `.flow--up`, 600ms expo-out (calm pages: 200ms, 8px), 60ms apart for things arriving together                            |
 | Photos fade in from a slight zoom                                                                                                                                 | Images in a cropping frame                                                                                                          | `.flow--photo` (scale 1.12 to 1)                                                                                         |
 | Photos and arches drift with the scroll (scrubbed parallax)                                                                                                       | Big framed photos drift inside their frame                                                                                          | `.flow-par`, CSS view timeline (Chrome, Edge, Safari 26; still elsewhere)                                                |
 | Hero text slides away as you scroll out; hero image slides in from the side on load                                                                               | Home: the photo sinks and zooms, the words lift and fade; the This Sunday card slides in from the right                             | view timeline on `.hb-hero` (`--hero-p` fallback in Firefox), `.flow--side`                                              |
 | Footer: a big line of text slides sideways with the scroll                                                                                                        | The footer verse (Site settings > Social and footer > "Footer: the verse"; Matthew 11:28 by default), on Home only since 2026-10-25 | `scrubVerse()` in `flow.ts`, ends as the verse nears the top of the screen; from 768px. Phones show it wrapped and still |
 | (ours only)                                                                                                                                                       | The building sketch draws itself in: the pen lines sweep across, the shading follows 35% behind                                     | `sketch-draw` in `flow.css`, view timeline; finished drawing elsewhere                                                   |
 | Buttons lean toward the mouse (magnetic)                                                                                                                          | Primary buttons and the header's Plan your visit, mouse only                                                                        | `translate` from the pointer, 14px at most                                                                               |
-| Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main lifts out (220ms), the new page rises in (700ms); header and footer stay put                                                   | `::view-transition-*(main-content)` in `flow.css`                                                                        |
+| Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main lifts out (120ms), the new page rises in (260ms); header and footer stay put                                                   | `::view-transition-*(main-content)` in `flow.css`                                                                        |
 
 Left out on purpose: the loading curtain and its wait (slow on every click), anything that
 rotates (the cross rule), scroll-jacking or pinning.
+
+**Two levels: full on Home and the 404, calm everywhere else** (audit 2026-10-25: GD-L8, P-14,
+UX-L7, V-14). The reviewers found the full layer busy on reading pages, and the pastor asked for
+stillness on What we believe and Prayer. `flow.ts` sets `html[data-flow]` on every page:
+
+- **full** when `<main>` holds a `[data-flow-full]` (HomeBoard's root and the 404's section). Everything in
+  the table above runs, quicker than before: fade-ups 600ms and 16px (were 1s and 28px), heading lines
+  800ms and 80ms apart (1.15s, 110ms), photos 900ms from a 1.06 zoom (1.4s, 1.12), the Sunday card
+  800ms from 32px (1.1s, 64px), 60ms stagger (90ms). The brick laying (the stepped markers, the
+  sill, the mark build, the brick-letter titles) and the footer verse slide run only here.
+- **calm** everywhere else: every unit is one short fade, **200ms and 8px**, 40ms apart; nothing is
+  split into lines, zoomed, drifted or laid; the markers, the sill and the mark (About) show already
+  laid; the footer verse wraps and rests; the first screen shows as it is at every width (no hold, no
+  font wait), so a page's main content (the Sermons video on a laptop) never looks missing on arrival.
+  The sketch's draw-in on Plan your visit and the stone `.reveal`s keep their own scroll-scrubbed motion.
+
+To give another page the full layer, put `data-flow-full` on an element inside its `<main>`. CSS keys
+the full-only rules on `html[data-flow='full']` (set by the script) or on `html:has([data-flow-full])`
+where it must apply before the script runs (the first-screen hold, the verse's one-line layout, the
+mark's hidden bricks). Reduced motion and `?still` still switch all of it off: no `html.motion`, no
+`data-flow`.
+
+**Page changes are quick** (UX-L7): the old page lifts out in 120ms (8px) and the new one rises into
+place in 260ms (12px) with no wait between; it was 220ms out, then 700ms in after a 60ms delay.
+
+**Printing** (DEV-H1): `src/styles/print.css` puts every unit at rest in print (animations off,
+opacity 1, no clip), hides the chrome and textures and prints black on white; `motion.ts` also drops
+`html.motion` on `beforeprint` and restores it on `afterprint`. `tests/print.spec.ts` pins it.
+
+**Splitting words** lives in `src/lib/flow-split.ts` (`splitWords`, unit-tested). Until 2026-10-25 the
+regex in `flow.ts` had lost its backslashes to a Git Bash heredoc (`/(s+)/`), so headings were cut on
+the letter s; `scripts/lib/regex-backslash.test.mjs` now fails on any regex in the repo that looks
+stripped.
 
 **Phones show the first screen as it is** (mobile audit, 2026-10-24). Below 768px, any unit already
 on screen when the page arrives is left alone (never armed), and the CSS hold on the page head and
 hero is off, so the page's main words paint with the page. Holding them for the fonts and the stagger
 put Lighthouse mobile LCP at 3.3 to 3.7s on About, Plan your visit, Ministries and Sermons with the
 text already loaded; without the hold those pages measured 1.9 to 2.7s. Everything below the fold
-still rises as it arrives. Desktop is unchanged.
+still rises as it arrives. Since 2026-10-25 calm pages do this at every width; only Home and the 404 hold their first screen on desktop.
 
 **How it works.** `src/scripts/flow.ts` (called from `motion.ts` on every `astro:page-load`) picks
 the units itself, so an editor's new section moves like the rest: a list of selectors (`UP_UNITS`,
@@ -155,7 +188,7 @@ the units itself, so an editor's new section moves like the rest: a list of sele
 `SKIP` list for things with their own motion (the stone `.reveal`s, `.mark-build`, the hero photo,
 the background path). `data-flow="off"` opts a subtree out; `data-flow="lines"` or
 `data-flow-item` opts something in. One IntersectionObserver (bottom margin -12%) starts each unit
-once; units arriving together are staggered in document order, and the first screen waits 120ms so
+once; units arriving together are staggered in document order, and on full pages the first screen waits 80ms so
 it rises with the page. The observer starts once the fonts are in or 600ms have passed, whichever
 comes first; headings split only on the real fonts (a heading whose font is still loading fades up
 whole), live preview never splits (click-to-edit reads the text nodes), and a heading whose link
@@ -204,7 +237,7 @@ squashed, settles).
 
 **Rule change.** The stone path's "one moving moment per page" (below) still holds for the stone
 drawings (the mark build, the baptism ring, the walk). The flow layer is the page's general
-movement and runs everywhere.
+movement and runs everywhere, at the calm level outside Home and the 404 (above).
 
 ## The stone path (FBC Auburn, 2026-10-17)
 
@@ -232,7 +265,7 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   shown underneath once it is laid, so the finished picture is exactly the logo. Timer, not scroll-scrubbed: it plays
   once. Styles in `motion.css` (`.mark-lay`); the old `.mark-build` stone rules there match nothing. In a
   text-and-picture band, pick
-  "The church mark" under Picture (`imageTextSection.art = mark`); About uses it for "The story in our mark".
+  "The church mark" under Picture (`imageTextSection.art = mark`); About uses it for "The story in our mark", where (a calm page) it shows finished; it is laid only on a full-motion page.
 - **Baptism** (`BaptismGraphic.astro`, `art = baptism`): the green ring turns about 14 degrees across the scroll
   and the ripples swell; `#cross` is never transformed.
 - **Background path**: on a page with a rail or a walk, faint stones on an S-curve behind `<main>`, laid just ahead
