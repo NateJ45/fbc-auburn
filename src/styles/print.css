@@ -1,0 +1,126 @@
+/* Safe to edit by hand.
+   FBC Auburn: the printed page (audit 2026-10-25, DEV-H1). Older members print Plan your visit,
+   What we believe, the bulletin and events; before this sheet most of a printed page came out
+   blank, because every flow unit below the first screen sat on the first frame of a paused
+   animation that print never scrolls far enough to start, and the navy brick slabs printed as
+   blocks of ink.
+
+   Three layers, on top of the starter's minimal print block in globals.css (which already hides
+   the header, the footer and fixed chrome, and underlines links):
+     1. Motion: every animated unit shows finished. src/scripts/motion.ts also drops html.motion
+        on `beforeprint` (and puts it back on `afterprint`), so a real print never even sees the
+        hidden starting states; this layer is for print previews that skip the event and for
+        anything the script misses. tests/print.spec.ts pins it.
+     2. Chrome and decoration: the Sunday bar, the For Jacob notes, the footer verse, the
+        background path and the textures do not print.
+     3. Ink: every surface prints black on white, so a navy band, the This Sunday card and the
+        letter blocks are readable and cheap to print. Pictures (<img>, inline SVG) stay. */
+
+@media print {
+  /* ---- 1. Motion: everything at rest ------------------------------------------------------- */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .flow,
+  .flow-line__in,
+  .flow-word,
+  .reveal,
+  .mark-build,
+  .mark-build path,
+  .mark-lay,
+  .mark-lay__whole,
+  .lay-brick,
+  .sill-brick,
+  .hb-stone,
+  .hb-hero__copy,
+  .hb-hero__card,
+  [data-reveal],
+  [data-stagger-grid] > * {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+  }
+  .flow-line,
+  .bl-c {
+    clip-path: none !important;
+  }
+  .flow-par,
+  .flow-magnetic {
+    transform: none !important;
+    translate: none !important;
+  }
+  /* The mark prints as the finished logo, not as its loose bricks. */
+  .mark-lay__brick,
+  .img-curtain,
+  .bgpath,
+  .bl-ghost {
+    display: none !important;
+  }
+
+  /* ---- 2. Chrome and decoration ------------------------------------------------------------ */
+  .skip-link,
+  [data-sundaybar],
+  .sf-verse,
+  .where-next,
+  .fj,
+  .live-banner,
+  .shape-slab::before,
+  .hb-photo,
+  [data-sill],
+  .shot__note,
+  iframe {
+    display: none !important;
+  }
+  /* The starter's sheet prints every external link's address after it; on these pages that is
+     long map and Facebook links, which crowd the paper, so the link text is enough. */
+  a[href^='http']::after {
+    content: none !important;
+  }
+
+  /* ---- 3. Ink: black on white everywhere ----------------------------------------------------- */
+  html,
+  body,
+  main {
+    background: #ffffff !important;
+  }
+  main *,
+  main *::before,
+  main *::after {
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    color: #000000 !important;
+  }
+  /* The building sketch is ink painted through a mask (BuildingSketch.astro): keep its ink. */
+  main .building-sketch::before,
+  main .building-sketch::after {
+    background-color: var(--sketch-ink) !important;
+  }
+  /* Faint display words behind a band (the Sermons "Last Sunday") are decoration. */
+  .watch-band__ghost {
+    display: none !important;
+  }
+  /* The placeholder highlight stays visible on paper until launch (ForJacob.astro). */
+  main .fj-mark,
+  main .fj-block {
+    background-color: #ffe46b !important;
+  }
+  /* A button reads as a button without its fill. */
+  main .btn-auburn {
+    border: 1px solid #000000 !important;
+  }
+  /* Bands and cards keep a hairline so the page still reads in sections. */
+  main section + section {
+    border-top: 1px solid #cccccc;
+  }
+  main :is(h1, h2, h3) {
+    break-after: avoid;
+  }
+  main :is(li, figure, blockquote, .hb-hero__card) {
+    break-inside: avoid;
+  }
+}

@@ -38,7 +38,12 @@ const maskId = `sill-print${className ? '-' + className.replace(/[^a-z0-9-]/gi, 
 <script>
   // Lay each sill once, when a quarter of it is on screen. Only under html.motion (BaseLayout sets
   // it unless reduced motion or ?still), so no JS shows the finished sill.
-  if (document.documentElement.classList.contains('motion') && 'IntersectionObserver' in window) {
+  // Laid only on a full-motion page (Home, the 404; audit 2026-10-25); elsewhere it rests laid.
+  if (
+    document.documentElement.classList.contains('motion') &&
+    document.querySelector('#main [data-flow-full]') &&
+    'IntersectionObserver' in window
+  ) {
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
