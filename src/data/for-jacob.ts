@@ -41,12 +41,22 @@ const NOTES: Record<string, JacobNote[]> = {
       detail:
         'Your road sign says adult Bible study at 6:30 and youth at 6:00 on Wednesdays; the site says 6:00. Which is right today?',
     },
+    {
+      title: 'Three different Sunday times are out there.',
+      detail:
+        'The site says Sunday School 9:45 and worship 11:00. Your Google listing shows the building open 9:30 am to 1 pm, and a Facebook post from the spring says Sunday School 9:15 and 10:30. What are the times today? Once we know, the Google hours may want a tidy too.',
+    },
   ],
   '/about/': [
     {
       title: 'How the church began.',
       detail:
         'Two or three sentences on its start and the season it is in now. Was it founded in 1959?',
+    },
+    {
+      title: '"Who we are" is in your own words now.',
+      detail:
+        'We took it from the description the church wrote for its Google listing, including "know Christ, make Him known, and glorify God". Change anything that no longer fits.',
     },
     {
       title: 'Which name should the site use?',
@@ -274,8 +284,9 @@ const NOTES: Record<string, JacobNote[]> = {
         'Where messages from the contact form should go, and the address to show on the site.',
     },
     {
-      title: 'The church phone number.',
-      detail: 'If you want one shown, and who answers it.',
+      title: 'Is (513) 863-3500 still the church line?',
+      detail:
+        'It is the number on your Google listing and the local directories, so the site shows it with a "To confirm" tag. A Facebook post from the spring gave (513) 868-1412 instead. Which should people call, and who answers it?',
     },
     {
       title: 'Who reads prayer requests?',
