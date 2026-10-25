@@ -153,8 +153,8 @@ html.motion .reveal:not(.in) {
   text-decoration-thickness: 2px;
 }
 /* The path between two icons (2026-10-25): a laid brick path, running bond inside a darker
-   soldier-course edge, that bends once down the icon column (the other way each step) and meets
-   the icons at both ends. The edge is the element, the bricks its ::before; each is
+   soldier-course edge, that bends once down the icon column (the other way each step) and stops
+   short of the icons at both ends, finished with a course of the edge brick across each end. The edge is the element, the bricks its ::before; each is
    painted with an axis-true brick pattern and cut to the curve by a mask whose stroke keeps its
    width however tall the step's text makes the box, so the bricks never stretch. */
 .rail__col > .rail__stone {
@@ -170,7 +170,7 @@ html.motion .reveal:not(.in) {
   flex: 1;
   align-self: stretch;
   min-height: 7rem;
-  margin-block: -9px; /* to the icon's foot and the next one's head: (98px disc - 80px icon) / 2 */
+  margin-block: 0.5rem; /* clear of the icon above and the one below */
   background: var(--edge) center top / 8px 7px repeat;
   -webkit-mask: var(--cut-edge) center / 100% 100% no-repeat;
   mask: var(--cut-edge) center / 100% 100% no-repeat;
@@ -180,8 +180,9 @@ html.motion .reveal:not(.in) {
   position: absolute;
   inset: 0;
   background: var(--bricks) center top / 88px 22px repeat;
-  -webkit-mask: var(--cut-bricks) center / 100% 100% no-repeat;
-  mask: var(--cut-bricks) center / 100% 100% no-repeat;
+  /* 7px shorter at each end, so the edge brick closes the path off */
+  -webkit-mask: var(--cut-bricks) center / 100% calc(100% - 14px) no-repeat;
+  mask: var(--cut-bricks) center / 100% calc(100% - 14px) no-repeat;
 }
 .rail__trail--flip {
   --cut-edge: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2032%2074%2028%2074%2050%20S50%2068%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2744%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
@@ -246,7 +247,7 @@ html.motion .reveal:not(.in) {
     --cut-edge: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2032%2030%2028%2030%2050%20S50%2068%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2728%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
     --cut-bricks: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2032%2030%2028%2030%2050%20S50%2068%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2719%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
     min-height: 4rem;
-    margin-block: -4px;
+    margin-block: 0.6rem;
   }
   .rail__trail--flip {
     --cut-edge: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2032%2070%2028%2070%2050%20S50%2068%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2728%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
