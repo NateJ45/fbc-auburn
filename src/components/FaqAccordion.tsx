@@ -94,11 +94,13 @@ export default function FaqAccordion({ faqs, categoryOrder, idPrefix = 'faq' }: 
         //      heading isn't rendered, so we switch from aria-labelledby
         //      (which would point at a non-existent id) to aria-label. This
         //      fixes the dangling reference the audit flagged on /process.
-        //      2026-10-25: with no category there is no label at all. Plan your visit carries two
-        //      Questions blocks, so two sections both named "Common questions" failed axe's
-        //      landmark-unique; the block around this list already has its own labelled heading.
+        const SectionTag = section.category ? 'section' : 'div';
         return (
-          <section
+          //   3. With no category the list is plain markup, not a landmark: the section that
+          //      holds it (FaqSection.astro) is already the labelled region, and a second
+          //      "Common questions" landmark inside it failed axe landmark-unique on Plan your
+          //      visit (audit 2026-10-25, DEV-L3).
+          <SectionTag
             key={sectionId}
             {...(section.category ? { 'aria-labelledby': `${sectionId}-heading` } : {})}
           >
@@ -134,7 +136,7 @@ export default function FaqAccordion({ faqs, categoryOrder, idPrefix = 'faq' }: 
                 );
               })}
             </Accordion>
-          </section>
+          </SectionTag>
         );
       })}
     </div>

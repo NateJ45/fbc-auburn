@@ -447,6 +447,22 @@ main [data-slot='accordion-trigger']:focus-visible {
 .hb-hero .btn-auburn:focus-visible {
   outline-color: #ffffff;
 }
+/* Dark surfaces re-point the ring (audit 2026-10-25, UX-H5): the navy ring was invisible on the
+   Home hero, the This Sunday card, the letter blocks and the dark photo frames (1:1 on navy).
+   Every ring on the site reads var(--ring) (globals.css base, the rules above, Tailwind's
+   outline-ring / ring-ring through --color-ring), so setting it here once covers every link,
+   button and summary inside, and a new dark section joins by adding data-dark-surface (the
+   .surface-feature look already sets its own light ring). White on these navies is 9:1 or more.
+   The footer and the phone menu keep their own lighter blue (#7f98b8, about 5:1 there). */
+:where(.hb-hero, .hb-sunday, .hb-note, .live-banner, .shot--example, [data-dark-surface]) {
+  --ring: #ffffff;
+  --color-ring: #ffffff;
+}
+/* A light card sitting on one of them (the shot request's note) takes the navy ring back. */
+:where(.shot__note, [data-light-surface]) {
+  --ring: #1f3a5f;
+  --color-ring: #1f3a5f;
+}
 
 /* A 44px tap area for the small standalone links (2026-10-24, measured with
    scripts/measure-tap-targets.mjs at 390px): the header logo (40px tall), Get directions, and the

@@ -305,14 +305,19 @@ html.motion .reveal:not(.in) {
 .mark-lay {
   transform-origin: 50% 60%;
 }
-html.motion .mark-lay:not(.is-laid) .mark-lay__whole,
-html.motion .mark-lay:not(.is-laying) .mark-lay__brick {
+/* Laid on full-motion pages only (Home, the 404; audit 2026-10-25). Elsewhere, About included, the
+   finished mark shows at once and MarkBuild's script leaves it alone. */
+html.motion:has([data-flow-full]) .mark-lay:not(.is-laid) .mark-lay__whole,
+html.motion:has([data-flow-full]) .mark-lay:not(.is-laying) .mark-lay__brick {
   opacity: 0;
+}
+html.motion:not(:has([data-flow-full])) .mark-lay__brick {
+  display: none;
 }
 html.motion .mark-lay.is-laying .mark-lay__brick {
   animation: mark-brick-lay 760ms var(--t, 0ms) both;
 }
-html.motion .mark-lay.is-laid {
+html.motion:has([data-flow-full]) .mark-lay.is-laid {
   animation: mark-swell 1100ms cubic-bezier(0.3, 0, 0.2, 1) both;
 }
 @keyframes mark-brick-lay {

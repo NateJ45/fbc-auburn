@@ -19,6 +19,8 @@
 //
 // Loaded by src/scripts/motion.ts; re-run on every astro:page-load. Styles: src/styles/flow.css.
 
+import { splitWords } from '../lib/flow-split';
+
 const UP_UNITS = [
   'h3',
   'h4',
@@ -49,9 +51,12 @@ const SKIP =
   '[data-flow="off"], .reveal, .mark-build, .mark-lay, .hb-photo, .hb-path, .bgpath, .sr-only, ' +
   '[data-sundaybar], .fj, .shot__example';
 
-const EASE_STAGGER_MS = 90;
+// Timings (audit 2026-10-25: gentle and quick). FULL is Home and the 404; CALM is every other page,
+// where a unit only fades in (200ms, 8px; flow.css) and nothing is split, zoomed or laid.
+const FULL = { stagger: 60, firstBase: 80, up: 600, photo: 900, side: 800, lines: 800 };
+const CALM = { stagger: 40, firstBase: 0, up: 200 };
 const MAX_STAGGER = 8;
-const LINE_STAGGER_MS = 110;
+const LINE_STAGGER_MS = 80;
 
 let teardown: (() => void) | null = null;
 
@@ -64,6 +69,12 @@ export function initFlow() {
 
   const disposers: (() => void)[] = [];
   const preview = location.pathname.startsWith('/preview');
+  // Full motion only where a page asks for it (data-flow-full: HomeBoard and the 404). The brick
+  // laying, the line-by-line headings, the photo zoom and drift and the footer verse slide stay
+  // there; everywhere else, What we believe and Prayer included, content just fades in. CSS keys
+  // the full-only rules on html[data-flow='full'] (flow.css, motion.css).
+  const full = !!main.querySelector('[data-flow-full]');
+  html.dataset.flow = full ? 'full' : 'calm';
 
   // ---- 1. Pick the units -----------------------------------------------------------------
   // An element is a unit only if no ancestor already is, so a card fades as one piece and the
@@ -83,7 +94,9 @@ export function initFlow() {
   // Phones show the first screen as it is (mobile audit, 2026-10-24): holding it for the fonts and
   // the stagger kept the page's main words hidden for 2.7 to 3.1s after they had loaded (Lighthouse
   // LCP on a throttled phone). Only what is below the fold rises as it arrives there.
-  const firstScreenAsIs = matchMedia('(max-width: 767px)').matches;
+  // Calm pages do the same at every width (audit 2026-10-25): a page's main content must never
+  // look missing on arrival (the Sermons video area sat empty on a laptop while it waited).
+  const firstScreenAsIs = !full || matchMedia('(max-width: 767px)').matches;
   const inFirstScreen = (el: Element) =>
     firstScreenAsIs && el.getBoundingClientRect().top < innerHeight;
   const candidates = main.querySelectorAll<HTMLElement>(`${LINE_UNITS}, ${UP_UNITS}`);
@@ -96,6 +109,11 @@ export function initFlow() {
       continue;
     }
     let kind: (typeof units)[number]['kind'] = 'up';
+    if (!full) {
+      units.push({ el, kind });
+      taken.add(el);
+      continue;
+    }
     // A brick-letter title is laid brick by brick rather than raised (layPlan below).
     if (el.matches('.stone-mosaic') && el.querySelector('.bl-c')) kind = 'lay';
     else if (el.matches(LINE_UNITS)) kind = 'lines';
@@ -109,7 +127,7 @@ export function initFlow() {
   }
   // The This Sunday card slides in from the side on Home as one piece, like a photo arriving.
   const sundayCard = main.querySelector<HTMLElement>('.hb-hero__card');
-  if (sundayCard && !sundayCard.dataset.flowOn && !inFirstScreen(sundayCard)) {
+  if (full && sundayCard && !sundayCard.dataset.flowOn && !inFirstScreen(sundayCard)) {
     const kept = units.filter((u) => !sundayCard.contains(u.el));
     units.length = 0;
     units.push(...kept, { el: sundayCard, kind: 'side' });
@@ -149,8 +167,19 @@ export function initFlow() {
     // the background (where animations may not run) still finishes.
     const lines = el.querySelectorAll('.flow-line__in').length;
     const laid = Number(el.dataset.layMs ?? 0);
-    const total =
-      delayMs + (laid ? laid + 250 : lines ? (lines - 1) * LINE_STAGGER_MS + 1250 : 1400);
+    const kind = el.dataset.flowOn;
+    const own = !full
+      ? CALM.up
+      : laid
+        ? laid + 250
+        : lines
+          ? (lines - 1) * LINE_STAGGER_MS + FULL.lines
+          : kind === 'photo'
+            ? FULL.photo
+            : kind === 'side'
+              ? FULL.side
+              : FULL.up;
+    const total = delayMs + own;
     const t = window.setTimeout(() => land(el), total + 80);
     disposers.push(() => window.clearTimeout(t));
   };
@@ -159,10 +188,13 @@ export function initFlow() {
   // 600ms (a cold load on a slow phone must not sit blank): headings whose fonts are not in by
   // then fade up whole instead, since splitting on a fallback font would rewrap after the swap.
   const lineUnits = units.filter((u) => u.kind === 'lines').map((u) => u.el);
-  const ready = Promise.race([
-    document.fonts?.ready ?? Promise.resolve(),
-    new Promise((r) => window.setTimeout(r, 600)),
-  ]);
+  // Calm pages split nothing, so they never wait for the fonts.
+  const ready = lineUnits.length
+    ? Promise.race([
+        document.fonts?.ready ?? Promise.resolve(),
+        new Promise((r) => window.setTimeout(r, 600)),
+      ])
+    : Promise.resolve();
 
   let firstBatch = true;
   const io = new IntersectionObserver(
@@ -173,11 +205,12 @@ export function initFlow() {
         .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
       if (!arriving.length) return;
       // The first screen waits a beat after a navigation so it rises with the page.
-      const base = firstBatch ? 120 : 0;
+      const t = full ? FULL : CALM;
+      const base = firstBatch ? t.firstBase : 0;
       firstBatch = false;
       arriving.forEach((el, i) => {
         io.unobserve(el);
-        go(el, base + Math.min(i, MAX_STAGGER) * EASE_STAGGER_MS);
+        go(el, base + Math.min(i, MAX_STAGGER) * t.stagger);
       });
     },
     // "top 85%": a unit starts once its top is 15% of the screen above the bottom edge.
@@ -229,8 +262,8 @@ export function initFlow() {
   });
 
   // ---- 3. Scroll-tied pieces: the hero drift and the footer verse --------------------------
-  disposers.push(scrubVerse());
-  if (!CSS.supports?.('animation-timeline: view()')) disposers.push(scrubHeroFallback());
+  if (full) disposers.push(scrubVerse());
+  if (full && !CSS.supports?.('animation-timeline: view()')) disposers.push(scrubHeroFallback());
 
   // ---- 4. Magnetic buttons: the main buttons lean a few pixels toward a mouse --------------
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -269,6 +302,7 @@ export function initFlow() {
       lineRestorers.get(el)?.();
       lineRestorers.delete(el);
     }
+    delete html.dataset.flow;
     teardown = null;
   };
   teardown = stop;
@@ -346,13 +380,12 @@ function splitAll(els: HTMLElement[]): Set<HTMLElement> {
   for (const w of work) {
     for (const node of w.original) {
       if (node.nodeType === Node.TEXT_NODE) {
-        for (const part of (node.textContent ?? '').split(/(s+)/)) {
-          if (!part) continue;
-          if (/^s+$/.test(part)) w.pieces.push(document.createTextNode(part));
+        for (const part of splitWords(node.textContent ?? '')) {
+          if (part.space) w.pieces.push(document.createTextNode(part.text));
           else {
             const span = document.createElement('span');
             span.className = 'flow-word';
-            span.textContent = part;
+            span.textContent = part.text;
             w.pieces.push(span);
           }
         }
@@ -365,9 +398,12 @@ function splitAll(els: HTMLElement[]): Set<HTMLElement> {
   // drawings differ in height, so words on one line do not share a top edge.
   const split = work.filter((w) => {
     let lineBottom = Number.NEGATIVE_INFINITY;
+    // Text before the first word (a leading space) waits for the first line, so nothing is lost.
+    const leading: Node[] = [];
     for (const piece of w.pieces) {
       if (piece.nodeType !== Node.ELEMENT_NODE) {
-        w.lines[w.lines.length - 1]?.push(piece);
+        if (w.lines.length) w.lines[w.lines.length - 1].push(piece);
+        else leading.push(piece);
         continue;
       }
       const rects = (piece as Element).getClientRects();
@@ -378,6 +414,7 @@ function splitAll(els: HTMLElement[]): Set<HTMLElement> {
         w.lines.push([]);
         lineBottom = Number.NEGATIVE_INFINITY;
       }
+      if (leading.length) w.lines[0].push(...leading.splice(0));
       w.lines[w.lines.length - 1].push(piece);
       if (r) lineBottom = Math.max(lineBottom, r.bottom);
     }

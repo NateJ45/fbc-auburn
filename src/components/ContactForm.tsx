@@ -1,7 +1,18 @@
 // Foundation, edit with care
-// Contact form. Posts to Web3Forms (env: PUBLIC_WEB3FORMS_KEY).
-// Autosaves draft to localStorage so a long message survives accidental navigation.
-// Honeypot included. Accessible focus management on error.
+// Contact form. Posts to the site's own /api/contact/ (Web3Forms as the fallback).
+// Autosaves a draft to sessionStorage (audit 2026-10-25, DEV-L9: localStorage kept a name, email
+// and message on a shared family or church-office computer for the next person), so a long message
+// survives an accidental click away but not the closing of the tab.
+// Honeypot included. Every problem shows at once, each under its own field with aria-invalid and
+// aria-describedby, and focus goes to the first one (audit 2026-10-25, DEV-M4 / UX-M7). Every
+// required field carries the same "*" cue.
+//
+// Prefill (the shared link convention, audit 2026-10-25): /contact/?topic=visit|question|prayer|other
+// picks the matching answer in the first editor-written list question, and &about=<short text>
+// starts the message with it ("About Music: "). ?visit=sunday-11 (Plan your visit) still works.
+//
+// With JavaScript off the form posts to /api/contact/ (method="post"), never a GET, so nothing
+// typed ends up in the address bar or the logs; contact.astro shows a <noscript> notice.
 //
 // Form scope (in order):
 //   1. Name (required)
@@ -36,6 +47,26 @@ import { site } from '@/data/site';
 import { parseCustomFieldEntries, type CustomFormField } from '@/lib/custom-form-fields';
 
 const DRAFT_KEY = `${site.storageKeyPrefix}-contact-draft`;
+
+// ?topic= values and the list answers they pick (matched against the editor's own wording).
+const TOPIC_MATCH: Record<string, RegExp> = {
+  visit: /visit/i,
+  question: /question/i,
+  prayer: /pray/i,
+  other: /something else|other/i,
+};
+
+/** A field's error id, for aria-describedby. */
+const errId = (name: string) => `${name}-error`;
+
+/** The draft store: this tab only. Falls back to nothing when storage is blocked. */
+function draftStore(): Storage | null {
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
 const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 const ACCESS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY as string | undefined;
 
@@ -153,6 +184,17 @@ const EMPTY: Draft = {
   zip: '',
 };
 
+/** The one required cue, the same on every field: a red star, hidden from screen readers (the
+ *  field itself carries required / aria-required). */
+function RequiredCue() {
+  return (
+    <span className="text-destructive" aria-hidden="true">
+      {' '}
+      *
+    </span>
+  );
+}
+
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 export default function ContactForm({
@@ -182,7 +224,7 @@ export default function ContactForm({
   // any time, and a restored answer under a changed question is worse than none.
   const [customValues, setCustomValues] = useState<Record<number, string | boolean>>({});
   const [status, setStatus] = useState<Status>('idle');
-  const [errors, setErrors] = useState<Partial<Record<keyof Draft, string>>>({});
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const [errorMessage, setErrorMessage] = useState('');
   const formRef = useRef<HTMLFormElement | null>(null);
   // When this form was rendered. The endpoint uses it to reject a submission
@@ -214,9 +256,15 @@ export default function ContactForm({
       /* ignore — SSR / non-browser environment */
     }
 
+    // A draft an older version of this form left in localStorage goes now (DEV-L9).
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* ignore */
+    }
     // Restore saved draft, then override projectType if the URL param matched.
     try {
-      const stored = localStorage.getItem(DRAFT_KEY);
+      const stored = draftStore()?.getItem(DRAFT_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         setDraft({
@@ -239,29 +287,43 @@ export default function ContactForm({
   // us you are coming"). With editor-written questions, pick the first list answer that starts
   // "I am planning to visit" and start the first paragraph box with a friendly line. Only fills
   // empty answers, and only on first load.
+  //
+  // The shared prefill (audit 2026-10-25): ?topic= picks the matching answer in the first list
+  // question, and &about= starts the message, so "Ask about Music" lands ready to type.
   useEffect(() => {
-    if (!useCustom) return;
-    let visit = '';
+    let params: URLSearchParams;
     try {
-      visit = new URLSearchParams(window.location.search).get('visit') ?? '';
+      params = new URLSearchParams(window.location.search);
     } catch {
       return;
     }
-    if (!visit) return;
+    const visit = params.get('visit') ?? '';
+    const topic = (params.get('topic') ?? (visit ? 'visit' : '')).toLowerCase();
+    // A short, plain label only: no control characters, at most 80 characters.
+    const about = (params.get('about') ?? '')
+      .replace(/[\u0000-\u001f\u007f]/g, ' ')
+      .trim()
+      .slice(0, 80);
     const hour = visit.match(/^sunday-(\d{1,2})$/)?.[1];
-    const line = hour
-      ? `Hello! I am planning to visit this Sunday for worship at ${hour}:00.`
-      : 'Hello! I am planning to visit.';
-    const next: Record<number, string> = {};
-    const choice = custom.findIndex(
-      (f) => f.kind === 'select' && f.options.some((o) => /^i am planning to visit/i.test(o)),
-    );
-    if (choice >= 0) {
-      next[choice] = custom[choice].options.find((o) => /^i am planning to visit/i.test(o)) ?? '';
+    const visitLine = visit
+      ? hour
+        ? `Hello! I am planning to visit this Sunday for worship at ${hour}:00.`
+        : 'Hello! I am planning to visit.'
+      : '';
+    const opener = [about ? `About ${about}: ` : '', visitLine].filter(Boolean).join('');
+    if (!useCustom) {
+      if (opener) setDraft((d) => (d.message ? d : { ...d, message: opener }));
+      return;
     }
+    const next: Record<number, string> = {};
+    const match = TOPIC_MATCH[topic];
+    const choice = match
+      ? custom.findIndex((f) => f.kind === 'select' && f.options.some((o) => match.test(o)))
+      : -1;
+    if (choice >= 0) next[choice] = custom[choice].options.find((o) => match!.test(o)) ?? '';
     const box = custom.findIndex((f) => f.kind === 'textarea');
-    if (box >= 0) next[box] = line;
-    setCustomValues((m) => ({ ...next, ...m }));
+    if (box >= 0 && opener) next[box] = opener;
+    if (Object.keys(next).length) setCustomValues((m) => ({ ...next, ...m }));
   }, []);
 
   // Persist on every change, debounced lightly via the natural re-render cadence.
@@ -271,9 +333,9 @@ export default function ContactForm({
     const hasContent = Object.values(draft).some((v) => v.trim().length > 0);
     if (!hasContent) return;
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      draftStore()?.setItem(DRAFT_KEY, JSON.stringify(draft));
     } catch {
-      /* localStorage may be full or disabled */
+      /* storage may be full or disabled */
     }
   }, [draft]);
 
@@ -300,14 +362,33 @@ export default function ContactForm({
     return entries;
   }
 
-  function validate(d: Draft): Partial<Record<keyof Draft, string>> {
-    const errs: Partial<Record<keyof Draft, string>> = {};
+  // Every problem in one pass, keyed by the field's name and in the order the fields appear, so
+  // the first key is the first field to fix.
+  function validate(d: Draft): Record<string, string> {
+    const errs: Record<string, string> = {};
     if (!d.name.trim()) errs.name = 'Please enter your name.';
     if (!d.email.trim()) errs.email = 'Please enter an email address.';
     else if (!/.+@.+\..+/.test(d.email)) errs.email = 'That email address looks off.';
     // The built-in project questions only exist when the Studio has no
     // editor-written ones, so only gate on them in that case.
-    if (useCustom) return errs;
+    if (useCustom) {
+      custom.forEach((f, i) => {
+        const v = customValues[i];
+        const empty = f.kind === 'checkbox' ? v !== true : typeof v !== 'string' || !v.trim();
+        const key = `custom_${i}`;
+        if (f.required && empty) {
+          errs[key] =
+            f.kind === 'select'
+              ? 'Please pick one.'
+              : f.kind === 'checkbox'
+                ? 'Please tick this box.'
+                : 'Please fill this in.';
+        } else if (f.kind === 'email' && !empty && !/.+@.+\..+/.test(String(v))) {
+          errs[key] = 'That email address looks off.';
+        }
+      });
+      return errs;
+    }
     if (!d.location) errs.location = "Pick the closest area — even if it's 'outside.'";
     if (!d.projectType) errs.projectType = 'Pick the closest match — we can sort the rest later.';
     if (!d.budget) errs.budget = 'A rough range helps us suggest the right tier.';
@@ -323,7 +404,7 @@ export default function ContactForm({
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       // Focus the first invalid field for screen-reader and keyboard users
-      const firstKey = Object.keys(errs)[0] as keyof Draft;
+      const firstKey = Object.keys(errs)[0];
       const el = formRef.current?.querySelector<HTMLElement>(`[name="${firstKey}"]`);
       el?.focus();
       return;
@@ -334,7 +415,7 @@ export default function ContactForm({
       // Pretend success so the bot moves on; don't actually submit.
       setStatus('success');
       try {
-        localStorage.removeItem(DRAFT_KEY);
+        draftStore()?.removeItem(DRAFT_KEY);
       } catch {
         /* ignore */
       }
@@ -436,7 +517,7 @@ export default function ContactForm({
       if (result.ok) {
         setStatus('success');
         try {
-          localStorage.removeItem(DRAFT_KEY);
+          draftStore()?.removeItem(DRAFT_KEY);
         } catch {
           /* ignore */
         }
@@ -444,7 +525,7 @@ export default function ContactForm({
         setCustomValues({});
       } else {
         setStatus('error');
-        if (result.errors) setErrors(result.errors as Partial<Record<keyof Draft, string>>);
+        if (result.errors) setErrors(result.errors as Record<string, string>);
         setErrorMessage(
           result.error ?? "Couldn't send right now. Try again in a minute, or contact us directly.",
         );
@@ -475,6 +556,9 @@ export default function ContactForm({
     <form
       ref={formRef}
       onSubmit={onSubmit}
+      // Without JavaScript the browser would GET the answers into the address bar (DEV-M3).
+      method="post"
+      action="/api/contact/"
       noValidate
       className="space-y-m"
       aria-busy={status === 'submitting'}
@@ -488,6 +572,14 @@ export default function ContactForm({
           {errorMessage}
         </div>
       )}
+
+      <p className="text-sm text-muted-foreground">
+        Boxes marked{' '}
+        <span className="text-destructive" aria-hidden="true">
+          *
+        </span>
+        <span className="sr-only">with a star</span> are needed.
+      </p>
 
       {/* Honeypot: bots fill this; humans can't see it. */}
       <div
@@ -510,6 +602,7 @@ export default function ContactForm({
       <div>
         <label htmlFor="name" className="mb-1 block text-sm font-semibold text-foreground">
           Name
+          <RequiredCue />
         </label>
         <input
           id="name"
@@ -539,6 +632,7 @@ export default function ContactForm({
         <div>
           <label htmlFor="email" className="mb-1 block text-sm font-semibold text-foreground">
             Email
+            <RequiredCue />
           </label>
           <input
             id="email"
@@ -594,6 +688,7 @@ export default function ContactForm({
                 className="mb-1 block text-sm font-semibold text-foreground"
               >
                 Where's the project?
+                <RequiredCue />
               </label>
               <select
                 id="location"
@@ -636,6 +731,7 @@ export default function ContactForm({
                 className="mb-1 block text-sm font-semibold text-foreground"
               >
                 Project type
+                <RequiredCue />
               </label>
               <select
                 id="projectType"
@@ -675,6 +771,7 @@ export default function ContactForm({
             <div>
               <label htmlFor="budget" className="mb-1 block text-sm font-semibold text-foreground">
                 Rough budget range
+                <RequiredCue />
               </label>
               <select
                 id="budget"
@@ -715,6 +812,7 @@ export default function ContactForm({
                 className="mb-1 block text-sm font-semibold text-foreground"
               >
                 Timeline
+                <RequiredCue />
               </label>
               <select
                 id="timeline"
@@ -749,6 +847,7 @@ export default function ContactForm({
           <div>
             <label htmlFor="message" className="mb-1 block text-sm font-semibold text-foreground">
               Tell us about the space
+              <RequiredCue />
             </label>
             <textarea
               id="message"
@@ -811,12 +910,30 @@ export default function ContactForm({
         const id = `custom-${i}`;
         const name = `custom_${i}`;
         const value = customValues[i];
-        const set = (v: string | boolean) => setCustomValues((m) => ({ ...m, [i]: v }));
+        const error = errors[name];
+        const set = (v: string | boolean) => {
+          setCustomValues((m) => ({ ...m, [i]: v }));
+          if (errors[name]) setErrors((e) => ({ ...e, [name]: undefined }));
+        };
+        // The same accessible wiring as the built-in fields: aria-invalid and the error's id.
+        const a11y = {
+          required: f.required,
+          'aria-required': f.required || undefined,
+          'aria-invalid': !!error,
+          'aria-describedby': error ? errId(name) : undefined,
+        };
+        const errorLine = error && (
+          <p
+            id={errId(name)}
+            role="alert"
+            aria-live="polite"
+            className="mt-xs text-sm text-destructive"
+          >
+            {error}
+          </p>
+        );
         const cue = f.required ? (
-          <span className="text-destructive" aria-hidden="true">
-            {' '}
-            *
-          </span>
+          <RequiredCue />
         ) : (
           <span className="font-normal text-muted-foreground"> (optional)</span>
         );
@@ -833,27 +950,24 @@ export default function ContactForm({
 
         if (f.kind === 'checkbox') {
           return (
-            <div key={id} className="flex items-start gap-s">
-              <input
-                id={id}
-                name={name}
-                type="checkbox"
-                data-custom-question
-                checked={value === true}
-                onChange={(e) => set(e.target.checked)}
-                required={f.required}
-                aria-required={f.required || undefined}
-                className="mt-1 h-5 w-5"
-              />
-              <label htmlFor={id} className="text-sm text-foreground">
-                {f.label}
-                {f.required && (
-                  <span className="text-destructive" aria-hidden="true">
-                    {' '}
-                    *
-                  </span>
-                )}
-              </label>
+            <div key={id}>
+              <div className="flex items-start gap-s">
+                <input
+                  id={id}
+                  name={name}
+                  type="checkbox"
+                  data-custom-question
+                  checked={value === true}
+                  onChange={(e) => set(e.target.checked)}
+                  {...a11y}
+                  className="mt-1 h-5 w-5"
+                />
+                <label htmlFor={id} className="text-sm text-foreground">
+                  {f.label}
+                  {f.required && <RequiredCue />}
+                </label>
+              </div>
+              {errorLine}
             </div>
           );
         }
@@ -873,8 +987,7 @@ export default function ContactForm({
                 data-custom-question
                 value={(value as string) || ''}
                 onChange={(e) => set(e.target.value)}
-                required={f.required}
-                aria-required={f.required || undefined}
+                {...a11y}
                 className={cls}
               />
             ) : f.kind === 'select' ? (
@@ -884,8 +997,7 @@ export default function ContactForm({
                 data-custom-question
                 value={(value as string) || ''}
                 onChange={(e) => set(e.target.value)}
-                required={f.required}
-                aria-required={f.required || undefined}
+                {...a11y}
                 className={cls}
               >
                 <option value="">Select an option</option>
@@ -905,11 +1017,11 @@ export default function ContactForm({
                 autoComplete={f.kind === 'email' ? 'email' : f.kind === 'phone' ? 'tel' : undefined}
                 value={(value as string) || ''}
                 onChange={(e) => set(e.target.value)}
-                required={f.required}
-                aria-required={f.required || undefined}
+                {...a11y}
                 className={cls}
               />
             )}
+            {errorLine}
           </div>
         );
       })}
