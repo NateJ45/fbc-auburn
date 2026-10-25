@@ -1,9 +1,16 @@
 ---
 // Safe to edit by hand
 // One sermon in a list: the date as a display numeral (like This week's dates on Home), the title
-// linking to the sermon's page, then the passage, the preacher and the series, and small tags for
+// linking to the sermon's page, then the passage, the preacher, the series and the length, and small tags for
 // what it has (video, audio, notes). The data- attributes are what the /sermons/ filters read.
-import { bookOf, preacherName, sermonHref, serviceTitle, type SermonDoc } from '@/lib/sermons';
+import {
+  bookOf,
+  lengthLabel,
+  preacherName,
+  sermonHref,
+  serviceTitle,
+  type SermonDoc,
+} from '@/lib/sermons';
 
 interface Props {
   sermon: SermonDoc;
@@ -20,7 +27,13 @@ const my = date
   : '';
 const who = preacherName(s);
 const service = s.service && s.service !== 'sunday-morning' ? serviceTitle(s.service) : '';
-const meta = [s.passage, who, hideSeries ? '' : s.series?.title, service].filter(Boolean);
+const meta = [
+  s.passage,
+  who,
+  hideSeries ? '' : s.series?.title,
+  service,
+  lengthLabel(s.minutes),
+].filter(Boolean);
 ---
 
 <li

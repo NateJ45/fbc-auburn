@@ -15,6 +15,7 @@ import { getAllSermons, getSermonsPage } from '@/lib/collection-queries';
 import {
   bibleGatewayUrl,
   fileLabel,
+  lengthLabel,
   longDate,
   preacherName,
   sermonJsonLd,
@@ -28,6 +29,7 @@ import { urlFor } from '@/lib/sanity';
 import { site } from '@/data/site';
 import ShareButtons from '@/components/ShareButtons.astro';
 import SearchMeta from '@/components/search/SearchMeta.astro';
+import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
 
 export async function getStaticPaths() {
   const sermons = await getAllSermons();
@@ -45,6 +47,9 @@ const s = all.find((x) => x.slug === slug);
 if (!s) throw new Error(`[sermons] "${slug}" was listed but is missing`);
 
 const who = preacherName(s);
+// Before launch, a sermon missing its passage, preacher or series says so in its facts (audit
+// 2026-10-25: every sermon should carry all three), so the gap is seen and filled in the Studio.
+const ask = PRE_LAUNCH_NOTES;
 const passageUrl = bibleGatewayUrl(s.passage, page?.bibleVersion);
 const service = serviceTitle(s.service);
 const sorted = sortSermons(all.filter((x) => x.slug && x.title && x._id !== s._id));
@@ -105,6 +110,24 @@ const schemas = [
       <div class:list={['c-sermon-body', (video || s.audio?.url) && 'mt-l']}>
         {s.summary && <p class="c-summary">{s.summary}</p>}
         <dl class="c-facts">
+          {!s.passage && ask && (
+            <>
+              <dt>Passage</dt>
+              <dd>[Jacob: the Bible passage for this sermon, like "Mark 4:35-41".]</dd>
+            </>
+          )}
+          {!who && ask && (
+            <>
+              <dt>Preacher</dt>
+              <dd>[Jacob: who preached it (pick from People, or type a guest's name).]</dd>
+            </>
+          )}
+          {!s.series?.title && ask && (
+            <>
+              <dt>Series</dt>
+              <dd>[Jacob: the series it belongs to, if any.]</dd>
+            </>
+          )}
           {s.passage && (
             <>
               <dt>Passage</dt>
@@ -133,6 +156,12 @@ const schemas = [
                 <time datetime={s.date}>{longDate(s.date)}</time>
                 {service && `, ${service}`}
               </dd>
+            </>
+          )}
+          {lengthLabel(s.minutes) && (
+            <>
+              <dt>Length</dt>
+              <dd>{lengthLabel(s.minutes)}</dd>
             </>
           )}
           {s.series?.title && s.series.slug && (

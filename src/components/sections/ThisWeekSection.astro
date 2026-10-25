@@ -2,7 +2,9 @@
 // Safe to edit by hand
 // Page-builder block (FBC Auburn): "This week at Auburn". The heading is the editor's; the rows are
 // derived from Site settings and the Church Trac calendar by ThisWeekList (docs/agent/church-data.md).
+// With mode "everyWeek" (the Events page, 2026-10-25) it lists each regular gathering once instead.
 import ThisWeekList from '@/components/church/ThisWeekList.astro';
+import EveryWeekList from '@/components/church/EveryWeekList.astro';
 import { surfaceClass } from '@/lib/surfaces';
 
 interface Props {
@@ -10,8 +12,16 @@ interface Props {
   intro?: string;
   surface?: 'background' | 'muted';
   headingId: string;
+  /** 'everyWeek': each regular gathering once, linked to its Ministries card (Events). */
+  mode?: 'thisWeek' | 'everyWeek' | null;
 }
-const { heading = 'This week at Auburn', intro, surface = 'background', headingId } = Astro.props;
+const {
+  heading = 'This week at Auburn',
+  intro,
+  surface = 'background',
+  headingId,
+  mode,
+} = Astro.props;
 ---
 
 <section class={surfaceClass(surface)} aria-labelledby={headingId}>
@@ -20,8 +30,6 @@ const { heading = 'This week at Auburn', intro, surface = 'background', headingI
       {heading}
     </h2>
     {intro && <p class="mt-s max-w-2xl text-lg text-muted-foreground">{intro}</p>}
-    <div class="mt-l">
-      <ThisWeekList />
-    </div>
+    <div class="mt-l">{mode === 'everyWeek' ? <EveryWeekList /> : <ThisWeekList />}</div>
   </div>
 </section>

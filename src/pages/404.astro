@@ -1,11 +1,14 @@
 ---
 // Safe to edit by hand
-// Custom 404, "Off the path" (FBC Auburn mockups): the brick path breaks off after two steps, the title
-// sits below it in plain navy type (the brick-wall title was dropped 2026-10-24), and two buttons lead back. No search (there isn't one).
+// Custom 404 (FBC Auburn mockups): the brick path breaks off after two steps, "Off the path" stays as
+// the small line above the title, and the title says plainly that the page was not found (audit
+// 2026-10-25). Then the site search (a plain form to /search/, so it works without JavaScript), the
+// three pages people most often want, and two buttons back.
 //
 // The words and buttons can be set in the Studio (Not Found Page); these are the fallbacks.
 // The starter's photo column is gone: the broken path is the picture.
 import { withTrailingSlash } from '@/lib/href';
+import { site } from '@/data/site';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getNotFoundPage, getSiteSettings } from '@/lib/queries';
 
@@ -15,7 +18,23 @@ const seoTitle = notFoundPage?.seoTitle ?? 'Page not found';
 const seoDescription =
   notFoundPage?.seoDescription ?? 'This page has wandered off. Head back to the home page.';
 
-const headline = notFoundPage?.headline ?? 'Off the path';
+// "Off the path" was the title until 2026-10-25; it is the eyebrow now, so an old Studio value
+// does not repeat it as the heading.
+const studioHeadline = notFoundPage?.headline?.trim();
+const headline =
+  studioHeadline && studioHeadline !== 'Off the path'
+    ? studioHeadline
+    : 'We could not find that page';
+// The three likely next pages (UX-L8). Hand-written, so they end in a slash (rule 19).
+const likely = [
+  {
+    href: '/plan-your-visit/',
+    label: 'Plan your visit',
+    note: 'Times, parking and your first Sunday',
+  },
+  { href: '/sermons/', label: 'Sermons', note: 'Watch or listen to a recent message' },
+  { href: '/events/', label: 'Events', note: 'What is on this week' },
+];
 const body =
   notFoundPage?.body ??
   "This page has wandered off, or the link was mistyped. Let's get you back on the path.";
@@ -38,10 +57,42 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
       <span class="lost__gone lost__gone--3"></span>
       <span class="lost__gone lost__gone--4"></span>
     </div>
+    <p class="arch-hero__eyebrow lost__eyebrow">Off the path</p>
     <h1 id="not-found-heading" class="lost__h1 stone-heading stone-solid">
       {headline}
     </h1>
     <p class="mx-auto mt-m max-w-xl text-lg leading-relaxed text-muted-foreground">{body}</p>
+    {site.search.enabled && (
+      <form class="lost__search mt-l" role="search" action="/search/" method="get">
+        <label for="lost-search" class="lost__search-label">
+          Search the site
+        </label>
+        <div class="lost__search-row">
+          <input
+            id="lost-search"
+            class="lost__search-input"
+            type="search"
+            name="q"
+            autocomplete="off"
+            enterkeyhint="search"
+            placeholder={site.search.placeholder}
+          />
+          <button type="submit" class="btn-auburn btn-auburn--secondary press-tactile">
+            Search
+          </button>
+        </div>
+      </form>
+    )}
+    <ul class="lost__likely mt-l" role="list" aria-label="Pages people often look for">
+      {likely.map((l) => (
+        <li>
+          <a href={l.href} class="lost__likely-link">
+            <span class="lost__likely-label">{l.label}</span>
+            <span class="lost__likely-note">{l.note}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
     <div class="lost__ctas mt-l flex flex-wrap justify-center gap-s">
       <a href={primaryHref} class="btn-auburn btn-auburn--primary press-tactile">
         {primaryLabel}
@@ -97,7 +148,80 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
     transform: translateY(-30px);
   }
   .lost :global(.lost__h1) {
-    font-size: clamp(3rem, 2rem + 4vw, 5.5rem); /* max 88px, the H1 cap (audit 2026-10-25) */
+    font-size: clamp(2.4rem, 1.4rem + 4vw, 4.5rem);
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  .lost__eyebrow {
+    margin-bottom: 0.6rem;
+  }
+  .lost__search {
+    max-width: 34rem;
+    margin-inline: auto;
+    text-align: left;
+  }
+  .lost__search-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    color: var(--heading-solid);
+  }
+  .lost__search-row {
+    display: flex;
+    gap: 0.6rem;
+  }
+  .lost__search-input {
+    flex: 1;
+    min-width: 0;
+    min-height: 48px;
+    padding: 0 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card, 14px);
+    background: #fff;
+    color: var(--foreground);
+    font-size: 1rem;
+  }
+  .lost__search-input:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .lost__likely {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    max-width: 52rem;
+    margin-inline: auto;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+  .lost__likely-link {
+    display: grid;
+    gap: 0.2rem;
+    height: 100%;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card, 14px);
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 200ms ease;
+  }
+  .lost__likely-link:hover {
+    border-color: var(--heading-solid);
+  }
+  .lost__likely-link:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
+  .lost__likely-label {
+    font-family: var(--font-display);
+    font-size: var(--fs-title-sm, 1.3rem);
+    color: var(--heading-solid);
+  }
+  .lost__likely-note {
+    font-size: var(--fs-small);
+    color: var(--muted-foreground);
   }
   /* Phones (phone polish, 2026-10-24): on the 20px gutter and left-aligned like every other page,
      the path stepping off from the left, both buttons full width, 12px apart. */
@@ -119,6 +243,13 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
     }
     .lost__ctas .btn-auburn {
       width: 100%;
+    }
+    .lost__search {
+      margin-inline: 0;
+    }
+    .lost__likely {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.6rem;
     }
   }
 </style>
