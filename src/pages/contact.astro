@@ -109,15 +109,25 @@ const schemas = [
       {churchTracForm ? (
         <ChurchTracFrame src={churchTracForm} title="Contact the church" size="long" />
       ) : (
-        <ContactForm
-          client:visible
-          projectTypes={page?.formProjectTypeOptions}
-          locations={page?.formLocationOptions}
-          budgets={page?.formBudgetOptions}
-          timelines={page?.formTimelineOptions}
-          sources={page?.formSourceOptions}
-          {...questionProps}
-        />
+        <>
+          <noscript>
+            {/* Audit 2026-10-25 (DEV-M3): with JavaScript off the form cannot send; say so, like
+              /prayer/, and point at the phone and email below. */}
+            <p class="mb-m rounded-md border border-border p-m text-sm text-foreground">
+              This form needs JavaScript to send. Please call or email us instead, using the details
+              on this page.
+            </p>
+          </noscript>
+          <ContactForm
+            client:visible
+            projectTypes={page?.formProjectTypeOptions}
+            locations={page?.formLocationOptions}
+            budgets={page?.formBudgetOptions}
+            timelines={page?.formTimelineOptions}
+            sources={page?.formSourceOptions}
+            {...questionProps}
+          />
+        </>
       )}
 
       {/* Email failsafe — surfaced right after the form so visitors who hit

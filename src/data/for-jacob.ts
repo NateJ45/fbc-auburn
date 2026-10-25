@@ -34,7 +34,12 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'The verse in the footer.',
       detail:
-        'Every page ends with Matthew 11:28 sliding across the footer. Is that the verse you want, and which translation does the church read from?',
+        'Home ends with Matthew 11:28 across the top of the footer. Is that the verse you want, and which translation does the church read from?',
+    },
+    {
+      title: 'Your TikTok in the footer.',
+      detail:
+        '[Jacob: the footer links to the auburn.pastor TikTok, labelled "Pastor Jacob on TikTok" so visitors read it as yours, not the church speaking. Does the church want it in the footer on every page, or would you rather it came out (or a church YouTube channel took its place)?]',
     },
     {
       title: 'Confirm the Sunday and Wednesday times.',

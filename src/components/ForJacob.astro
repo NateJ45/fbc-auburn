@@ -62,7 +62,10 @@ const notes = PRE_LAUNCH_NOTES
     const hits: Text[] = [];
     for (let n = walker.nextNode(); n; n = walker.nextNode()) {
       const t = n as Text;
-      if (t.parentElement?.closest('mark, script, style, .fj')) continue;
+      // An island not yet hydrated (astro-island[ssr]) is left alone: changing its text before
+      // React hydrates made it throw error #418 and render twice (audit 2026-10-25, DEV-L2). It is
+      // marked once it has hydrated (the observer below watches the ssr attribute go).
+      if (t.parentElement?.closest('mark, script, style, .fj, astro-island[ssr]')) continue;
       RE.lastIndex = 0;
       if (RE.test(t.data)) hits.push(t);
     }
@@ -85,7 +88,7 @@ const notes = PRE_LAUNCH_NOTES
     // the pass above cannot see both brackets: highlight the whole paragraph, item or heading.
     const OPEN = /\[(?:Jacob|Placeholder|Photo)\b/;
     root.querySelectorAll<HTMLElement>('p, li, dd, h1, h2, h3, h4, blockquote').forEach((el) => {
-      if (el.closest('.fj') || el.classList.contains('fj-block')) return;
+      if (el.closest('.fj, astro-island[ssr]') || el.classList.contains('fj-block')) return;
       if (!OPEN.test(el.textContent ?? '')) return;
       if (el.querySelector('.fj-mark')) return;
       el.classList.add('fj-block');
@@ -103,7 +106,13 @@ const notes = PRE_LAUNCH_NOTES
       queued = false;
       mark();
     });
-  }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  }).observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['ssr'],
+  });
 </script>}
 
 <style is:global>
@@ -193,7 +202,7 @@ const notes = PRE_LAUNCH_NOTES
   /* Above the phone Sunday bar on Home, only while the bar is showing (phone polish, 2026-10-24:
      it floated 84px up on every page, bar or not). */
   @media (max-width: 767px) {
-    body:has(.hb-sundaybar:not([hidden])) .fj {
+    body:has(.sundaybar:not([hidden])) .fj {
       bottom: 84px;
     }
   }
