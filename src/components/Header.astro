@@ -691,7 +691,17 @@ function isGroupActive(items: { href: string }[]) {
   const updateHeaderState = () => {
     const header = document.querySelector<HTMLElement>('.site-header');
     if (!header) return;
-    header.toggleAttribute('data-scrolled', window.scrollY > 8);
+    // Two thresholds, not one (2026-10-25). From lg up the bar shrinks by up to 36px while it sits
+    // in the flow, and the browser's scroll anchoring shifts scrollY by that much to hold the
+    // content still. With one 8px line that shift crossed it again, so near the top the bar flipped
+    // every few frames and the page shook. It compacts past 64px and opens again only at 8px or
+    // less, a gap wider than the shrink. Keep COMPACT_AT - OPEN_AT above the height difference
+    // between the two states if the bar's sizes change.
+    const COMPACT_AT = 64;
+    const OPEN_AT = 8;
+    const y = window.scrollY;
+    if (y > COMPACT_AT) header.setAttribute('data-scrolled', '');
+    else if (y <= OPEN_AT) header.removeAttribute('data-scrolled');
     if (!header.hasAttribute('data-home')) return;
     const masthead = document.querySelector<HTMLElement>('.hb-masthead');
     // Home opens on a photo hero since 2026-10-23, with no big lockup of its own, so the bar shows
