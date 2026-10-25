@@ -72,15 +72,38 @@ export const site = {
   // Visitor site search (PORTS.md card 126, docs/agent/site-search.md). On for
   // FBC Auburn: a search button in the header and the mobile menu, a /search/
   // page, and a Pagefind index of every page's main content, written after
-  // `astro build` by scripts/build-search-index.mjs. `suggestions` are the
-  // friendly links shown before a search and when nothing matches.
+  // `astro build` by scripts/build-search-index.mjs, which also reads the
+  // PDF, Word and text files those pages link to (card 154). `suggestions` are
+  // the friendly links shown before a search and when nothing matches.
+  // `synonyms` are groups that mean the same thing to a visitor: when a
+  // search finds fewer than three results, the rest of its group is searched
+  // too. Visitor's word first, the church's word after.
   search: {
     enabled: true as boolean,
-    placeholder: 'Search sermons, news and pages',
+    placeholder: 'Search sermons, bulletins and pages',
     suggestions: [
       { label: 'Plan your visit', href: '/plan-your-visit/' },
       { label: 'Contact us', href: '/contact/' },
     ],
+    synonyms: [
+      ['kids', 'children', 'nursery', 'childcare'],
+      ['youth', 'students', 'teens', 'teenagers', 'youth group'],
+      ['VBS', 'Vacation Bible School'],
+      ['communion', "Lord's Supper", 'Lords Supper'],
+      ['give', 'giving', 'tithe', 'tithes', 'offering', 'donate', 'donation'],
+      ['service times', 'worship times', 'Sunday worship', 'what time'],
+      ['pastor', 'preacher', 'minister'],
+      ['message', 'sermon', 'preaching'],
+      ['small group', 'small groups', 'Bible study', 'Sunday school'],
+      ['prayer request', 'pray for me', 'prayer'],
+      ['contact', 'get in touch', 'phone', 'email', 'office'],
+      ['directions', 'address', 'location', 'parking', 'map'],
+      ['wedding', 'marriage'],
+      ['funeral', 'memorial'],
+      ['join', 'membership', 'become a member'],
+      ['baptize', 'baptise', 'baptism'],
+      ['newsletter', 'news'],
+    ] as string[][],
   },
 
   // Public repo URL (used in footer credit if shown)

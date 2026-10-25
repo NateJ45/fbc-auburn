@@ -267,6 +267,8 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 149 | AI suggestion and the private-page password status are the kit's callouts           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | no             |
 | 151 | Component type fixes: FAQ size through cn, 12px labels, safe-centred logo row       | n/a     | n/a         | yes      | no               | no            | n/a            | no                 | no                  | no             |
 | 152 | Church Trac pattern: form band, page reader, link boxes (church sites, no code)     | n/a     | n/a         | n/a      | n/a              | n/a           | n/a            | n/a                | n/a                 | n/a            |
+| 153 | Build-time script-src: hash every inline script into `_headers` (`build-csp.mjs`)   | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 154 | Search reads uploaded PDF/Word/text files, corrects typos, tries synonyms           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
 
 Rows 106 to 135 (2026-10-19) are recorded from the five-site rollout report. fbcm is not a column, so its rollout is on the card status lines only. A cell becomes `yes` only where the report names that card for that site. A broad round or a sync alone leaves the cell as it was, and the card says "synced, not individually verified". Rows 132 and 133 were missing from the matrix and are added here. PRs: fbcm #74 to #81, presacademy #107 to #116, reid-design-site #157 to #165, mas-monograms #117 to #126, stonesteps-50k #131 to #140 (#136 is its design-language PR).
 
@@ -10226,3 +10228,95 @@ behaviour is not content-dependent. Detail: `docs/claude/build-and-scripts.md`.
 3. **Church Trac page reader.** Church Trac has no feed or API for its pages, so `church-trac-page.ts` reads a published page's HTML (a hundred-line tokenizer, no dependency), keeps headings, paragraphs, images, buttons and columns, drops template text and unsafe links, and the site draws it in its own type. One fetch per page per build, two tries, failure logged and shown as "Read it on Church Trac"; a daily rebuild keeps it within a day. Test against saved real pages (fbcm's `tests/fixtures/churchtrac-*.html`), never the live site in CI. fbcm hard-codes its two newsletters; Auburn makes it a band that names the page.
 
 **Where it lives:** fbcm `src/lib/church-links.ts`, `church-trac-form.ts`, `church-trac-page.ts`, `church-trac-newsletters.ts`, `OPERATIONS.md` "Switching to Church Trac"; FBC Auburn `docs/agent/church-trac.md`. **Also:** the iCal calendar (`church-calendar.ts`) is the fourth Church Trac feed, already in both sites.
+
+## Card 153: a build-time script-src for the public pages (2026-10-24)
+
+**Origin:** first-baptist-auburn's mobile Lighthouse report flagged its CSP as missing `script-src` and `object-src`
+("Ensure CSP is effective against XSS"). Astro's own `security.csp` does not support `<ClientRouter />`, and the router
+runs the next page's inline scripts under the FIRST page's policy, so a per-page policy cannot work either. Built in
+first-baptist-auburn (NateJ45/fbc-auburn#140), then generalised here.
+
+**Canonical:** PORTABLE: `scripts/build-csp.mjs`, `scripts/lib/csp.mjs` (+ `csp.test.mjs`). Per site (NOT portable):
+the `/*` `Content-Security-Policy: frame-ancestors 'self'` line and the `/studio/*` detach rule in `public/_headers`,
+the `npm run build` chain in `package.json`, the optional `scripts/csp-origins.json` (a JSON array of extra origins),
+and the "Security headers" section of `docs/agent/deployment.md` plus the note in `docs/agent/custom-code.md`.
+
+**What it does.** `npm run build` is now `with-workerd astro build && node scripts/build-csp.mjs && node
+scripts/build-search-index.mjs`. The script reads every built page in `dist/client` (not `/studio`), including the
+documents inside Custom code `srcdoc` frames (they inherit the page's policy), and rewrites the `/*` rule's CSP line in
+`dist/client/_headers` to `frame-ancestors 'self'; object-src 'none'; base-uri 'self'; script-src ...`. The list is
+`'self'`, `'wasm-unsafe-eval'` (Pagefind's WebAssembly; it allows wasm compilation, never JS eval), every external
+`<script src>` origin, GA4's `googletagmanager.com` when a page carries the tag, the site's `csp-origins.json`, one
+sorted sha256 per inline script on any page, `'unsafe-hashes'` plus hashes if an inline `on*=` handler exists, and
+`'unsafe-inline'` last (ignored by any browser that understands hashes; only a pre-hash browser reads it). JSON-LD and
+other non-running script types are skipped. `default-src` is deliberately unset, so images, frames, styles, fonts and
+fetches are untouched. The build FAILS if the placeholder line is missing, so the policy never silently drops to none.
+`/studio/*` detaches the policy (`! Content-Security-Policy`, then `frame-ancestors 'self'` only; card 59 trap 1).
+Trusted Types are not required: enforcing them breaks the router, Pagefind and the React islands.
+
+**Verified in the starter (2026-10-24)** under `npm run build` then `npm run preview` (wrangler dev): a page carries the
+full policy, `/studio/` carries `frame-ancestors 'self'` only, a `/_astro/*` file carries the full policy (no effect on a script
+response) and keeps its immutable cache line, nine pages in a row through the router, search (switched on locally for the check), the Custom code wall at `/styleguide/sections/` and the Studio load with no CSP violations, and
+`npm run test:unit` passes. fbc-auburn measured Lighthouse best-practices 100 with it.
+
+**Applied:** starter (this card); first-baptist-auburn (origin, fbc-auburn#140; PORTABLE copies since fbc-auburn#147,
+2026-10-24, sync-check clean). fbcm and Crestview are not matrix columns: fbcm sends only `frame-ancestors` today and can
+take it as-is.
+
+**Who should take it.** As-is (their `_headers` still say only `frame-ancestors 'self'`): stonesteps-50k, fbcm, and
+mas-monograms (its line lists extra frame-ancestors origins, so either drop them, as the Studio is embedded, or change
+`PLACEHOLDER` to match). presacademy, reid-design-site and nixoncreativestudio already send a full policy with
+`script-src 'self' 'unsafe-inline' ...`, which Lighthouse rates as not effective; they want the hashes too, but their
+`script-src` lives inside a `default-src` policy, so that port needs `build-csp.mjs` to rewrite only the `script-src`
+directive (a small extension to this card, decide when the first of them is ported). wcp, 2ndpreschicago and
+ncs-church-starter are archived.
+
+**Known, harmless console error (found live on fbc-auburn, 2026-10-24):** on an in-site click, Astro's router appends an
+empty `data:application/javascript,` module script after a page's last inline module, only to wait for it. The policy
+blocks it and the console logs a CSP error; the router resolves on `onerror` too, so nothing breaks, and a first load
+(what Lighthouse measures) never does it. Decided: leave `data:` out of `script-src`. A port check that sees only this
+error has passed. Detail: `docs/agent/deployment.md`, "Security headers".
+
+**Gotcha:** a widget that pasted code adds AT RUNTIME from a host that is not in the HTML (a loader that pulls a second
+script) is blocked. Put its origin in `scripts/csp-origins.json` and rebuild. Verify every port under `npm run preview`,
+never a plain static server: only wrangler applies `_headers`.
+
+## Card 154: search reads uploaded files, forgives typos, knows the site's words (2026-10-25)
+
+**Origin:** first-baptist-auburn asked for search "as robust and complete as possible". Card 126's Pagefind index read
+only page HTML, so a bulletin PDF was found by its title alone; Pagefind 1.5 has no fuzzy matching ("baptsim" found
+nothing), no synonyms, and a multi-word search where one word matched nothing returned nothing. Built here first.
+
+**Canonical:** PORTABLE: `scripts/build-search-index.mjs`, `scripts/lib/search-files.mjs` (+ `search-files.test.mjs`),
+`src/lib/site-search.ts` (+ test), `src/lib/site-search-client.ts`, `src/components/search/SearchPanel.astro`,
+`tests/search.spec.ts`. Per site (NOT portable): `site.search.synonyms` in `src/data/site.ts`, the
+`data-search-*` attributes on a site's own file links, and the `actions/cache` step in `ci.yml` (site job),
+`deploy.yml` and `lighthouse.yml`. New exact-pinned devDependencies: `unpdf` 1.8.1 and `mammoth` 1.13.0, used only at
+build time and imported only when a page links a file of that kind.
+
+**What it does.**
+
+1. **Files.** After `astro build`, every link to `cdn.sanity.io/files/...` (or a same-site `.pdf`/`.docx`/`.txt`)
+   inside an indexed `<main>` becomes its own Pagefind record: the text read out of the file, led by its title and
+   optional note, with type, date, format ("PDF") and the linking page as "From ...". Files come from the BUILT PAGES,
+   never from a Sanity query, so expired, scheduled, private and noindex files stay out with no extra logic. Links can
+   carry `data-search-title`, `data-search-type` (`bulletin`, `notes`, `newsletter`, `form`, `policy`, `download`), `data-search-date`
+   and `data-search-note`; a bare link still works (type `file`, title from its text). A file that will not
+   download (20 s timeout), is over 25 MB or is a scan (under 10 characters a page) is indexed by
+   title only and logged once; the build never fails over a file. Audio, images and other formats are left out unless the link carries `data-search-title`. Text is cached by the Sanity SHA-1 in
+   `node_modules/.cache/search-files/`, kept by `actions/cache`, so a file is read once ever. The asset URLs are
+   immutable, so CI reading them does not break card 138.
+2. **"Did you mean".** The build counts every indexed word into `dist/client/pagefind/words.json` (top 20k). With no
+   results, the client fetches it once, corrects each unknown word to the nearest frequent one (1 edit up to six
+   letters, 2 beyond, swaps count as one, never a prefix of a real word), searches that and says so: "Nothing found for
+   "baptsim". Showing 4 results for "baptism"." plus a "Search for "baptsim" instead" button.
+3. **Other ways to say it.** Under three results, the client also searches the site's synonym groups and spelled-out
+   Bible books ("Jn 3" -> "John 3", "1cor" -> "1 Corinthians"; names like "Tim" change only before a chapter), and with
+   none, each meaningful word alone. Results merge by Pagefind id, the original search's results first.
+
+**Verified in the starter (2026-10-25):** `npm run test:unit` (fixture PDF, blank "scanned" PDF and DOCX are built
+inside the test, no binaries committed), `npm run check`. End to end on first-baptist-auburn's real content: see its PR.
+
+**Applied:** starter (this card). first-baptist-auburn: origin, see the status line added with its PR.
+
+**Who should take it.** Any site with `search.enabled` (today only first-baptist-auburn). Others take it with card 126.

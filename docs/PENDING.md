@@ -16,6 +16,17 @@ sequence).
 
 ## Waiting on a human
 
+### 1zw. Search reads uploaded files: check it on the first real bulletin (opened 2026-10-25)
+
+Search now reads inside the PDF, Word and text files the site links to (PORTS.md card 154,
+`docs/agent/site-search.md`). The dataset has no downloads or sermon notes yet, so it was
+verified on generated files with the collections fixture. When the first real bulletin is
+uploaded and the site rebuilds: search a phrase from inside it on the live site, and read
+the deploy log's `[search]` lines. A scanned bulletin (a photo of paper) is named there and
+is found by its title only; ask the office to save bulletins as text PDFs (Word or
+Publisher "Save as PDF", or a scanner's "searchable PDF" option). Also tune
+`site.search.synonyms` in `src/data/site.ts` once the real ministry names are in.
+
 ### 1zx. The menu groups: Jacob's say, and one loose end (opened 2026-10-24)
 
 The menu is three groups and Watch and Questions folded into Sermons and Plan your visit (changelog,

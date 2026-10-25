@@ -152,6 +152,9 @@ const schemas = [
               href={s.notes.url}
               target="_blank"
               rel="noopener"
+              data-search-title={`Notes: ${s.title}`}
+              data-search-type="notes"
+              data-search-date={longDate(s.date) || undefined}
             >
               Download the notes
               {fileLabel(s.notes) && ` (${fileLabel(s.notes)})`}
