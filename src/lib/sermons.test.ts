@@ -13,6 +13,7 @@ import {
   isFreshSermon,
   itunesDuration,
   newestBulletin,
+  bulletinToShow,
   podcastEpisodes,
   podcastXml,
   preacherName,
@@ -248,6 +249,14 @@ describe('downloads', () => {
   it("this week's bulletin is the newest current one", () => {
     assert.equal(newestBulletin(list, WED)?._id, 'b1');
     assert.equal(newestBulletin([], WED), null);
+  });
+  it('the bulletin page falls back to the newest one, and says when it is not this week', () => {
+    assert.deepEqual(bulletinToShow(list, WED), { bulletin: list[0], thisWeek: true });
+    const later = new Date('2026-10-21T16:00:00Z');
+    assert.equal(bulletinToShow(list, later).thisWeek, false);
+    const expired = [{ ...list[0], expires: '2026-10-12' }];
+    assert.equal(bulletinToShow(expired, WED).bulletin?._id, 'b1');
+    assert.deepEqual(bulletinToShow([], WED), { bulletin: null, thisWeek: false });
   });
   it('labels a file', () => {
     assert.equal(fileLabel(file), 'PDF, 240 KB');

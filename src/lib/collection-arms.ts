@@ -34,6 +34,7 @@ export const SERMON_FIELDS = `{
   service,
   summary,
   videoUrl,
+  minutes,
   guestPreacher,
   "preacher": preacher->{ _id, name, role },
   "series": series->{ _id, title, "slug": slug.current, art${IMG} },

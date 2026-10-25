@@ -85,6 +85,19 @@
 .c-art--green {
   background: #2c4f7c url('/textures/tile-green.svg') 0 0 / 420px 420px;
 }
+/* The church sketch, faint in cream, bottom right behind the word (2026-10-25). */
+.c-art--blank .c-art__sketch {
+  position: absolute;
+  right: -4%;
+  bottom: -6%;
+  width: 62%;
+  opacity: 0.22;
+  pointer-events: none;
+}
+.c-art--blank > svg,
+.c-art__word {
+  position: relative;
+}
 .c-art--blank svg {
   width: clamp(52px, 16cqi, 96px);
   height: auto;
@@ -103,6 +116,12 @@
 /* With the play stone in the middle, the word stays small enough to sit under it. */
 .c-art--blank:has(.c-art__play) .c-art__word {
   font-size: min(var(--word, 2rem), 11cqi);
+}
+/* A long title (no series or book to show) under the play stone stays small and in the bottom
+   band, clear of the stone (2026-10-25). */
+.c-art--blank:has(.c-art__play) .c-art__word--long {
+  max-width: 70%;
+  font-size: min(var(--word, 2rem), 5.2cqi);
 }
 .c-art__play {
   position: absolute;

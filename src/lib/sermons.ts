@@ -282,9 +282,15 @@ export interface SermonDoc {
   notes?: FileAsset | null;
   /** Seconds, typed by the pastor if he wants the podcast to show a length. */
   audioSeconds?: number | null;
+  /** About how long it is, in minutes (Sanity `minutes`, 2026-10-25). */
+  minutes?: number | null;
 }
 
 /** The person who preached: the people list, else the guest name typed in. */
+/** "32 min", from the typed length; empty when there is none. */
+export const lengthLabel = (minutes?: number | null): string =>
+  minutes && minutes > 0 ? `${Math.round(minutes)} min` : '';
+
 export const preacherName = (s: Pick<SermonDoc, 'preacher' | 'guestPreacher'>): string =>
   s.preacher?.name?.trim() || s.guestPreacher?.trim() || '';
 
@@ -479,6 +485,26 @@ export function currentDownloads(
 export const newestBulletin = (list: DownloadDoc[], now: Date): DownloadDoc | null =>
   currentDownloads(list, now, 'bulletin', 1)[0] ?? null;
 
+/**
+ * What /bulletin/ shows (audit 2026-10-25): the newest current Bulletin, else the newest one
+ * with a file even if it has come down, so the page is never empty once one has been posted.
+ * `thisWeek` is true when it is dated within the last six days (or ahead), so the page can say
+ * "Last week's bulletin" instead of pretending an old one is new.
+ */
+export function bulletinToShow(
+  list: DownloadDoc[],
+  now: Date,
+): { bulletin: DownloadDoc | null; thisWeek: boolean } {
+  const bulletin =
+    newestBulletin(list, now) ??
+    list
+      .filter((d) => d.category === 'bulletin' && d.file?.url)
+      .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))[0] ??
+    null;
+  const thisWeek = !!bulletin?.date && daysSince(bulletin.date, now) <= 6;
+  return { bulletin, thisWeek };
+}
+
 /** "PDF, 240 KB" from a file asset, or "". */
 export function fileLabel(f?: FileAsset | null): string {
   if (!f) return '';
@@ -578,7 +604,7 @@ export function podcastEpisodes(
         audioUrl: s.audio!.url!,
         audioBytes: s.audio!.size ?? 0,
         audioType: s.audio!.mimeType || 'audio/mpeg',
-        seconds: s.audioSeconds ?? null,
+        seconds: s.audioSeconds ?? (s.minutes ? s.minutes * 60 : null),
         imageUrl: imageFor(s),
       };
     });

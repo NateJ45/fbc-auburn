@@ -1561,6 +1561,7 @@ export type ThisWeekSection = {
   _type: 'thisWeekSection';
   heading?: string;
   intro?: string;
+  mode?: 'thisWeek' | 'everyWeek';
 };
 
 export type LetterSection = {
@@ -2319,6 +2320,7 @@ export type Sermon = {
   summary?: string;
   slug?: Slug;
   videoUrl?: string;
+  minutes?: number;
   audio?: {
     asset?: SanityFileAssetReference;
     media?: unknown;

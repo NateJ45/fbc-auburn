@@ -13,6 +13,11 @@
 //     on warm brick when there is no photo; who it is for in small caps; the title; WHEN and WHERE
 //     as a coloured serif line ("Wednesdays, 6:00 pm · Fellowship hall"), the day's times from
 //     Church facts, never typed; a sentence or two; and the whole card is the link.
+//   - Every card has one action (2026-10-25): its own link, else "Ask about <title>" to the
+//     contact form with the topic filled in. Each card has an anchor ("#fyp-sunday-school") that
+//     the Events page's "Every week" list links to.
+//   - Phones (under 640px, 2026-10-25): compact rows, a 96px picture left, the description cut to
+//     one line behind "More"; a card with a real photo keeps it full width.
 //   - Before launch an empty or stand-in photo shows its "Photo needed" request, keyed
 //     "/ministries/|<card title>" in src/data/shot-list.ts.
 //
@@ -24,10 +29,11 @@ import ShotRequest from '@/components/ShotRequest.astro';
 import { MARKER } from '@/components/home/stones.generated';
 import { getChurchFacts } from '@/lib/church-data';
 import { dayWithTimes, plain } from '@/lib/church-facts';
+import { fypIds, keptGroups } from '@/lib/gatherings';
 import { ctaHref } from '@/lib/cta-href';
 import { shotFor } from '@/data/shot-list';
 import { surfaceClass } from '@/lib/surfaces';
-import type { ProjectedFypGroup } from '@/lib/pageBuilder.types';
+import type { ProjectedFypCard, ProjectedFypGroup } from '@/lib/pageBuilder.types';
 
 interface Props {
   eyebrow?: string;
@@ -51,28 +57,32 @@ const {
 
 const facts = await getChurchFacts();
 
-// One anchor per group from its name: "Kids and youth" -> "kids-and-youth". A repeated name gets a
-// number so two groups never share an id.
-const seen = new Map<string, number>();
-const slugOf = (title: string): string => {
-  const base =
-    plain(title)
-      .toLowerCase()
-      .replace(/&/g, ' and ')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '') || 'group';
-  const n = (seen.get(base) ?? 0) + 1;
-  seen.set(base, n);
-  return n === 1 ? base : `${base}-${n}`;
-};
-const shown = groups
-  .filter((g) => g.title && g.cards?.length)
-  .map((g) => ({ ...g, id: slugOf(g.title ?? '') }));
+// One anchor per group from its name ("Kids and youth" -> "kids-and-youth") and one per card
+// ("fyp-sunday-school"), from fypIds in src/lib/gatherings.ts, so the Events page's "Every week"
+// list can link a gathering to its card. A repeated name gets a number.
+const kept = keptGroups(groups);
+const ids = fypIds(kept);
+const shown = kept.map((g, i) => ({ ...g, id: ids[i].group, cardIds: ids[i].cards }));
 
 // Headings: under a block heading the groups are h3 and the cards h4; with no block heading
 // (straight under the page title, as on Ministries) the groups are h2 and the cards h3.
 const GroupTitle = heading ? 'h3' : 'h2';
 const CardTitle = heading ? 'h4' : 'h3';
+
+// Every card has one action (audit 2026-10-25): its own link when it has one, else "Ask about
+// <title>", which opens the contact form with the topic filled in (the shared convention:
+// /contact/?topic=question&about=<name>). A card whose own link is the bare contact page gets the
+// same topic, so the message says which ministry it is about.
+const askHref = (title: string) =>
+  `/contact/?topic=question&about=${encodeURIComponent(plain(title))}`;
+const cardAction = (card: ProjectedFypCard): { href: string; label: string } => {
+  const title = plain(card.title) || 'this';
+  if (card.link?.label) {
+    const href = ctaHref(card.link);
+    return { href: href === '/contact/' ? askHref(title) : href, label: card.link.label };
+  }
+  return { href: askHref(title), label: `Ask about ${title}` };
+};
 
 const whenWhere = (day?: string, place?: string, title?: string): string =>
   [day ? dayWithTimes(day, facts.serviceTimes, title) : '', place ?? '']
@@ -140,17 +150,21 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
               {g.line && <p class="fyp__group-line">{g.line}</p>}
             </div>
             <ul class="fyp__cards" role="list">
-              {(g.cards ?? []).map((card) => {
-                // A card links only when its link has a label (an empty link object is no link).
-                const href = card.link?.label ? ctaHref(card.link) : null;
+              {(g.cards ?? []).map((card, ci) => {
+                const action = cardAction(card);
                 const shot = shotFor(path, card.title, 0, card.image);
+                const photo = !shot && Boolean(card.image?.asset);
                 const ww = whenWhere(card.day, card.place, card.title);
                 return (
-                  <li class:list={['fyp-card', href && 'shape-card']}>
+                  <li
+                    id={g.cardIds[ci]}
+                    class:list={['fyp-card shape-card', photo && 'fyp-card--photo']}
+                    data-fyp-card
+                  >
                     <div class="fyp-card__pic shape-step">
                       {shot ? (
-                        <ShotRequest shot={shot} inLink={Boolean(href)} class="shot--fill" />
-                      ) : card.image?.asset ? (
+                        <ShotRequest shot={shot} inLink class="shot--fill" />
+                      ) : photo ? (
                         <div class="shape-zoom">
                           <SanityImage
                             source={card.image}
@@ -166,24 +180,45 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
                         </div>
                       )}
                     </div>
-                    {card.forWho && <p class="fyp-card__for">{card.forWho}</p>}
-                    <CardTitle class="fyp-card__title">
-                      {href ? (
-                        <a href={href} class="fyp-card__link">
-                          {card.title}
-                        </a>
-                      ) : (
-                        card.title
-                      )}
-                    </CardTitle>
-                    {ww && <p class="fyp-card__when">{ww}</p>}
-                    {card.body && <p class="fyp-card__body">{card.body}</p>}
-                    {href && (
-                      <p class="fyp-card__more" aria-hidden="true">
-                        {card.link?.label}
-                        <span class="fyp-card__arrow">→</span>
-                      </p>
+                    {/* The phone row's small picture: the stone icon, where the big frame holds a
+                        Photo needed request that would not read at 96px. */}
+                    {shot && (
+                      <div class="fyp-card__thumb shape-tile" aria-hidden="true">
+                        <StoneIcon name={card.icon} size={64} />
+                      </div>
                     )}
+                    <div class="fyp-card__text">
+                      {card.forWho && <p class="fyp-card__for">{card.forWho}</p>}
+                      <CardTitle class="fyp-card__title">
+                        <a href={action.href} class="fyp-card__link">
+                          {card.title}
+                          <span class="sr-only">: {action.label}</span>
+                        </a>
+                      </CardTitle>
+                      {ww && <p class="fyp-card__when">{ww}</p>}
+                      {card.body && (
+                        <p class="fyp-card__body" data-fyp-body>
+                          {card.body}
+                        </p>
+                      )}
+                      <div class="fyp-card__foot">
+                        {card.body && (
+                          <button
+                            type="button"
+                            class="fyp-card__toggle"
+                            aria-expanded="false"
+                            data-fyp-more
+                            hidden
+                          >
+                            More<span class="sr-only"> about {card.title}</span>
+                          </button>
+                        )}
+                        <p class="fyp-card__more" aria-hidden="true">
+                          {action.label}
+                          <span class="fyp-card__arrow">→</span>
+                        </p>
+                      </div>
+                    </div>
                   </li>
                 );
               })}
@@ -203,6 +238,37 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
     document.querySelectorAll<HTMLElement>('[data-fyp]').forEach((root) => {
       if (root.dataset.fypReady) return;
       root.dataset.fypReady = '1';
+      // "More" on a phone row: shown only when the description is cut short; opens it in place.
+      const toggles = [...root.querySelectorAll<HTMLButtonElement>('[data-fyp-more]')];
+      const fitMore = () => {
+        for (const btn of toggles) {
+          const body = btn
+            .closest('[data-fyp-card]')
+            ?.querySelector<HTMLElement>('[data-fyp-body]');
+          if (!body || body.dataset.open !== undefined) continue;
+          btn.hidden = body.scrollHeight <= body.clientHeight + 1;
+        }
+      };
+      for (const btn of toggles) {
+        btn.addEventListener('click', () => {
+          const body = btn
+            .closest('[data-fyp-card]')
+            ?.querySelector<HTMLElement>('[data-fyp-body]');
+          if (!body) return;
+          const open = body.dataset.open === undefined;
+          if (open) body.dataset.open = '';
+          else delete body.dataset.open;
+          btn.setAttribute('aria-expanded', String(open));
+          btn.firstChild!.textContent = open ? 'Less' : 'More';
+        });
+      }
+      fitMore();
+      window.addEventListener('resize', fitMore, { passive: true });
+      document.addEventListener(
+        'astro:before-swap',
+        () => window.removeEventListener('resize', fitMore),
+        { once: true },
+      );
       const links = [...root.querySelectorAll<HTMLAnchorElement>('[data-fyp-jump]')];
       const groups = [...root.querySelectorAll<HTMLElement>('[data-fyp-group]')];
       if (links.length < 2) return;
@@ -529,6 +595,141 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .shape-card:hover .fyp-card__arrow {
       transform: translateX(5px);
+    }
+  }
+
+  /* ---- Each card's action, the "More" toggle, and the phone rows (audit 2026-10-25) ---- */
+  /* A link to one card (from Events) lands it under the header and the chip row. */
+  .fyp-card {
+    scroll-margin-top: calc(var(--fyp-header, 4rem) + 5rem);
+  }
+  .fyp-card__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+  .fyp-card__thumb {
+    display: none;
+  }
+  /* "More" sits above the card's link cover, so it toggles instead of following the link. */
+  .fyp-card__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 1.25rem;
+    margin-top: auto;
+  }
+  .fyp-card__foot .fyp-card__more {
+    margin-top: 0;
+  }
+  .fyp-card__toggle {
+    position: relative;
+    z-index: 3;
+    align-self: flex-start;
+    margin-top: 0.25rem;
+    padding: 0.35rem 0;
+    min-height: 44px;
+    font-weight: 600;
+    font-size: var(--fs-small);
+    color: var(--heading-solid);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .fyp-card__toggle:focus-visible {
+    outline: 3px solid var(--ring, var(--heading-solid));
+    outline-offset: 2px;
+  }
+  /* Phones: every card is a compact row, a 96px picture on the left and the words on the right,
+     the description cut to one line until "More" (UX-H3, GD-M6: the page was 14,168px at 375).
+     A card with a real photo keeps it full width. Wider screens keep the photo cards. */
+  @media (max-width: 639px) {
+    .fyp__cards {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    .fyp-card {
+      display: grid;
+      grid-template-columns: 96px minmax(0, 1fr);
+      gap: 0 1rem;
+      align-items: start;
+      padding-block: 1.1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .fyp-card--photo {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .fyp-card:not(.fyp-card--photo) .fyp-card__pic {
+      width: 96px;
+      aspect-ratio: 1;
+      margin: 0;
+      --step-u: 6px;
+    }
+    .fyp-card:has(.fyp-card__thumb) .fyp-card__pic {
+      display: none;
+    }
+    .fyp-card__thumb {
+      display: grid;
+      width: 96px;
+      height: 96px;
+      --step-u: 6px;
+      clip-path: polygon(
+        0 calc(3 * var(--step-u)),
+        calc(2 * var(--step-u)) calc(3 * var(--step-u)),
+        calc(2 * var(--step-u)) calc(2 * var(--step-u)),
+        calc(4 * var(--step-u)) calc(2 * var(--step-u)),
+        calc(4 * var(--step-u)) var(--step-u),
+        calc(6 * var(--step-u)) var(--step-u),
+        calc(6 * var(--step-u)) 0,
+        100% 0,
+        100% 100%,
+        0 100%
+      );
+    }
+    .fyp-card .shape-tile > :global(:is(img, svg)) {
+      width: 56%;
+    }
+    .fyp-card__for {
+      margin-bottom: 0.2rem;
+    }
+    .fyp-card__title {
+      font-size: var(--fs-title-sm, 1.3rem);
+    }
+    .fyp-card__when {
+      margin-top: 0.15rem;
+      font-size: 0.98rem;
+    }
+    .fyp-card__body {
+      margin-top: 0.35rem;
+      line-height: 1.5;
+    }
+    /* Cut to one line only once the script is there to open it again. */
+    :global([data-fyp-ready]) .fyp-card__body:not([data-open]) {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      overflow: hidden;
+    }
+    .fyp-card__more {
+      padding-top: 0;
+    }
+    .fyp-card__foot {
+      margin-top: 0.15rem;
+    }
+    .fyp__group + .fyp__group {
+      margin-top: 2.75rem;
+    }
+    .fyp__group-head {
+      margin-bottom: 1rem;
+    }
+  }
+  @media (min-width: 640px) {
+    .fyp-card__toggle {
+      display: none;
     }
   }
 </style>

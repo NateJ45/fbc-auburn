@@ -1,0 +1,165 @@
+---
+// Safe to edit by hand
+// "Every week" on the Events page (audit 2026-10-25): each regular gathering once, Sunday first,
+// from Site settings > Church facts > Service times, the same rows Home's "This week" merges by
+// day, so the two pages never disagree (src/lib/gatherings.ts, docs/agent/church-data.md).
+//
+// Each row: the day and time, the gathering and its note (the "To confirm" tag while the time is
+// unconfirmed), then up to two links: the Ministries card that describes it (found by name on the
+// page that holds the Find your place hub; a Sunday gathering with no card goes to Plan your
+// visit) and "Add to calendar", a weekly .ics built at build time (/calendar/<key>.ics). That one
+// shows only once the time is confirmed: we never put a provisional time in someone's calendar.
+//
+// Only the list: the section around it (heading, band) is ThisWeekSection's.
+import NotConfirmed from './NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { sanityFetch } from '@/lib/sanity';
+import {
+  everyWeek,
+  matchMinistry,
+  ministryCards,
+  pluralDay,
+  type FypShape,
+} from '@/lib/gatherings';
+import { withTrailingSlash } from '@/lib/href';
+
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+const facts = await getChurchFacts();
+const rows = everyWeek(facts);
+
+// The page that holds the Ministries hub, and its card names.
+const hub = await sanityFetch<{ slug?: string; groups?: FypShape[] } | null>(
+  `*[_type == "page" && defined(slug.current) && count(pageBuilder[_type == "findYourPlaceSection"]) > 0 && !(_id in path("drafts.**"))] | order(_updatedAt desc)[0]{
+    "slug": slug.current,
+    "groups": pageBuilder[_type == "findYourPlaceSection"][0].groups[]{ title, "cards": cards[]{ title } }
+  }`,
+  {},
+  null,
+);
+const cards = hub?.slug ? ministryCards(hub.groups ?? []) : [];
+const hubPath = withTrailingSlash(`/${hub?.slug ?? ''}`) ?? '/';
+
+const linkFor = (label: string, dayIndex: number) => {
+  const card = matchMinistry(label, cards);
+  if (card) return { href: `${hubPath}#${card.id}`, text: `About ${card.title}` };
+  if (dayIndex === 0) return { href: '/plan-your-visit/', text: 'Plan your visit' };
+  return null;
+};
+---
+
+{rows.length > 0 && (
+  <ul class:list={['every-week', className]} data-every-week>
+    {rows.map((r) => {
+      const link = linkFor(r.label, r.dayIndex);
+      // The same test as /calendar/[key].ics.ts, so a link never points at a file not built.
+      const ics = r.confirmed && /^[a-z0-9-]+$/i.test(r.key);
+      return (
+        <li class="every-week__row">
+          <p class="every-week__when">
+            <span class="every-week__day">{pluralDay(r.dayIndex)}</span>
+            <span class="every-week__time">{r.timeLabel}</span>
+          </p>
+          <div class="every-week__what">
+            <h3 class="every-week__title">
+              {r.label}
+              <NotConfirmed confirmed={r.confirmed} />
+            </h3>
+            {r.note && <p class="every-week__note">{r.note}</p>}
+          </div>
+          {(link || ics) && (
+            <p class="every-week__links">
+              {link && (
+                <a class="every-week__link" href={link.href}>
+                  {link.text}
+                </a>
+              )}
+              {ics && (
+                <a class="every-week__link" href={`/calendar/${r.key}.ics`} download>
+                  Add to calendar<span class="sr-only">: {r.label}</span>
+                </a>
+              )}
+            </p>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+)}
+
+<style>
+  .every-week {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+  .every-week__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.3rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (min-width: 640px) {
+    .every-week__row {
+      grid-template-columns: 10rem minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: baseline;
+    }
+  }
+  .every-week__when {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.6rem;
+    align-items: baseline;
+  }
+  @media (min-width: 640px) {
+    .every-week__when {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+  .every-week__day {
+    font-weight: 600;
+    color: var(--heading-solid, var(--foreground));
+  }
+  .every-week__time {
+    font-family: var(--font-display);
+    color: var(--auburn-red);
+  }
+  .every-week__title {
+    font-family: var(--font-display);
+    font-size: var(--fs-title-sm);
+    line-height: 1.3;
+    color: var(--foreground);
+  }
+  .every-week__note {
+    margin-top: 0.15rem;
+    color: var(--muted-foreground);
+  }
+  .every-week__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+  }
+  .every-week__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    color: var(--foreground);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  .every-week__link:hover {
+    color: var(--heading-solid);
+  }
+  .every-week__link:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
+</style>

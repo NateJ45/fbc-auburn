@@ -18,8 +18,18 @@ test.describe('Sermons', () => {
       (els) => els.filter((e) => !(e as HTMLElement).hidden).length,
     );
     expect(visible).toBeLessThanOrEqual(12);
-    await expect(page.locator('[data-sermon-filters]')).toBeVisible();
-    await expect(page.locator('[data-sermon-count]')).toContainText(/sermon/);
+    // The filters and the tally show only once there is a choice (2026-10-25): a menu with two
+    // or more options, or more sermons than the first page.
+    const menus = await page.locator('[data-sermon-filters] select').count();
+    if (menus > 0) await expect(page.locator('[data-sermon-filters]')).toBeVisible();
+    else await expect(page.locator('[data-sermon-filters]')).toBeHidden();
+    if ((await rows.count()) > 12)
+      await expect(page.locator('[data-sermon-count]')).toContainText(/sermon/);
+    // The podcast is always findable, and the ghost word is gone.
+    await expect(
+      page.getByRole('link', { name: 'Subscribe to the podcast' }).first(),
+    ).toBeVisible();
+    await expect(page.locator('.watch-band__ghost')).toHaveCount(0);
   });
 
   test('a filter narrows the list and the address remembers it', async ({ page }) => {
@@ -70,9 +80,46 @@ test.describe("This week's bulletin", () => {
     ).toBeVisible();
     const open = page.getByRole('link', { name: /Open the bulletin/ });
     if ((await open.count()) === 0) {
-      await expect(page.getByText("This week's bulletin is not up yet.")).toBeVisible();
+      await expect(page.getByText('The first bulletin is not up yet.')).toBeVisible();
     } else {
       await expect(open).toHaveAttribute('href', /^https:\/\/cdn\.sanity\.io\/files\//);
+    }
+  });
+});
+
+test.describe('Events and Ministries (audit 2026-10-25)', () => {
+  test('every weekly gathering that has a Ministries card links to it', async ({ page }) => {
+    await page.goto('/events/', { waitUntil: 'domcontentloaded' });
+    const links = page.locator('[data-every-week] a[href*="#fyp-"]');
+    test.skip((await links.count()) === 0, 'the Events page still shows the dated week');
+    for (const href of await links.evaluateAll((els) => els.map((a) => a.getAttribute('href')))) {
+      const [path, id] = href!.split('#');
+      await page.goto(path, { waitUntil: 'domcontentloaded' });
+      await expect(page.locator(`[id="${id}"]`)).toHaveCount(1);
+    }
+  });
+
+  test('every Ministries card has one action', async ({ page }) => {
+    await page.goto('/ministries/', { waitUntil: 'domcontentloaded' });
+    const cards = page.locator('[data-fyp-card]');
+    const n = await cards.count();
+    test.skip(n === 0, 'no Find your place hub');
+    expect(await page.locator('[data-fyp-card] .fyp-card__link').count()).toBe(n);
+  });
+});
+
+test.describe('The missing page', () => {
+  test('says plainly it could not find the page, with search and three ways on', async ({
+    page,
+  }) => {
+    await page.goto('/no-such-page-here/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(/could not find/i);
+    for (const name of ['Plan your visit', 'Sermons', 'Events']) {
+      await expect(
+        page
+          .getByRole('list', { name: 'Pages people often look for' })
+          .getByRole('link', { name: new RegExp(name) }),
+      ).toBeVisible();
     }
   });
 });
