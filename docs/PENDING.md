@@ -455,7 +455,9 @@ edit in Site settings > Church facts, then a publish.
 
 - Tick `confirmed` on the address, each service time and the founding year once the church
   confirms them (the tags disappear and the confirmed address joins the JSON-LD).
-- The church phone (Identity & contact > Phone) and `phoneConfirmed`; there is none on file.
+- The church phone: (513) 863-3500 is set (the church's Google listing and local directories
+  agree), `phoneConfirmed` waits on Jacob; a spring Facebook post gave (513) 868-1412, asked in the
+  Contact For Jacob notes. The Sunday times disagree across the site, Google and Facebook (Home notes).
 - The church email (Identity & contact > Public email) and `emailConfirmed`; none on file, so no
   mailto: shows anywhere yet.
 - If the church streams somewhere other than its Facebook page (facebook.com/FirstAuburnHamilton,
