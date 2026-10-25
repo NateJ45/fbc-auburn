@@ -369,19 +369,21 @@ html.motion .flow-magnetic:not(.btn-auburn) {
 }
 
 /* ---- The footer verse ---------------------------------------------------------------------
-   One line of scripture across the top of the footer, in the display face. At rest it wraps like
-   any sentence; with motion on it is one line and flow.ts slides it with the scroll. */
+   One line of scripture across the top of the footer, in the display face, on Home only
+   (Footer.astro; site audit, 2026-10-25). At rest it wraps like any sentence; with motion on, from
+   768px, it is one line and flow.ts slides it with the scroll. Phones show it wrapped and still. */
 .sf-verse {
   overflow: hidden;
-  padding-top: clamp(40px, 7vw, 96px);
-  padding-bottom: clamp(24px, 4vw, 48px);
+  padding-top: clamp(32px, 4vw, 56px);
+  padding-bottom: clamp(24px, 3vw, 40px);
   border-bottom: 1px solid var(--border);
 }
 .sf-verse__line {
   margin: 0;
   padding-inline: 16px;
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 6.5vw, 5.75rem);
+  /* About 32px on a phone to 56px on a laptop (design audit H1: it was 88px across three lines). */
+  font-size: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
   line-height: 1.08;
   letter-spacing: -0.02em;
   color: var(--foreground);
@@ -398,11 +400,22 @@ html.motion .flow-magnetic:not(.btn-auburn) {
   color: var(--muted-foreground);
   vertical-align: middle;
 }
-/* Not on phones (2026-10-24), as on the reference site: one line is about four screens wide there
-   and raced past in a few hundred pixels of scroll, so nobody could read it. */
+/* Phones (2026-10-25): back, wrapped and still, at the smaller size (design audit L6: hiding it on
+   phones only made the signature inconsistent). The slide stays off below 768px: one line is about
+   four screens wide there and raced past in a few hundred pixels of scroll. */
 @media (max-width: 767px) {
   .sf-verse {
-    display: none;
+    padding-top: 40px;
+    padding-bottom: 28px;
+  }
+  .sf-verse__line {
+    padding-inline: 20px;
+    text-wrap: balance;
+  }
+  .sf-verse__ref {
+    display: block;
+    margin: 0.9rem 0 0;
+    font-size: var(--fs-tag);
   }
 }
 @media (min-width: 768px) {

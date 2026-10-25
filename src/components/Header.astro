@@ -26,7 +26,7 @@ import { site } from '@/data/site';
 import { Mail, Phone } from 'lucide-react';
 import { resolveSocialLinks, socialLabel } from '@/lib/social-links';
 import { socialIcon } from '@/lib/social-icons';
-import MobileNav from './MobileNav';
+import MobileNav from './MobileNav.astro';
 import { ChevronDown } from 'lucide-react';
 import { getChurchFacts } from '@/lib/church-data';
 import { getNavPages } from '@/lib/queries';
@@ -49,10 +49,6 @@ const logoLightImg = await getImage({ src: logoLightAsset });
 const logoDarkImg = await getImage({ src: logoDarkAsset });
 const logoLightSrcset = logoLightImg.src;
 const logoDarkSrcset = logoDarkImg.src;
-
-// Mobile drawer logos — same SVG URLs, passed as plain strings into MobileNav.
-const logoLightWebpMobile = logoLightImg;
-const logoDarkWebpMobile = logoDarkImg;
 
 interface Props {
   siteSettings?:
@@ -107,8 +103,7 @@ const phone = allFacts.phone?.confirmed ? allFacts.phone.display : '';
 // Facebook entry), the same list the footer shows (src/lib/social-links.ts, 2026-10-24).
 const socials = chrome.showSocials ? resolveSocialLinks(siteSettings, allFacts.facebookUrl) : [];
 
-// Subset of siteSettings the mobile menu needs. Pass as a plain object so the
-// React island doesn't try to serialize the whole Sanity document graph.
+// The part of siteSettings the full-screen menu (MobileNav.astro) shows.
 const mobileNavSettings = siteSettings
   ? {
       tagline: siteSettings.tagline,
@@ -117,14 +112,6 @@ const mobileNavSettings = siteSettings
       socials: socials.length > 0 ? socials : undefined,
     }
   : null;
-
-// The drawer's CTA prop is only passed when it DIFFERS from the drawer's own
-// built-in button. An island's props are serialized into the page, so passing
-// the default every time would rewrite the markup of every page for no change.
-const mobileCtaProps =
-  headerCta.show && headerCta.label === 'Plan your visit' && headerCta.href === '/plan-your-visit/'
-    ? {}
-    : { cta: headerCta };
 
 // Core nav structure. Flat items render as plain anchor links; dropdown
 // items render as native <details>/<summary> disclosure groups on desktop
@@ -155,10 +142,11 @@ const mobileCtaProps =
 // A custom page ticked "Show in the top menu" joins the end of the menu (src/lib/page-switches.ts).
 const NAV_ITEMS = mergePageSwitches(chrome.headerNav, [], await getNavPages()).nav;
 
-// Flatten NAV_ITEMS into the shape MobileNav expects (a list of NavLink[]
-// with optional sub-items for the groups). MobileNav already handles both
-// shapes via its updated interface.
-const NAV_LINKS = NAV_ITEMS;
+// The desktop row shows the first five menu items (DESKTOP_ITEMS). When that is all of them, the
+// row is the whole menu and the Menu pill hides from 1024px (design audit M8, 2026-10-25: two
+// navigation systems side by side); a longer menu keeps the pill so nothing is out of reach.
+const DESKTOP_ITEMS = 5;
+const navComplete = NAV_ITEMS.length <= DESKTOP_ITEMS;
 
 const pathname = Astro.url.pathname;
 const isHome = pathname === '/';
@@ -235,7 +223,7 @@ function isGroupActive(items: { href: string }[]) {
               <a
                 href="/contact/"
                 class="inline-flex items-center gap-1.5 text-xs font-semibold tracking-eyebrow text-foreground uppercase transition-colors hover:text-link"
-                aria-label={`${availability}. Get in touch.`}
+                aria-label={`${availability}. Ask a question.`}
               >
                 <span class="relative flex h-2 w-2 shrink-0" aria-hidden="true">
                   <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-tertiary opacity-60" />
@@ -304,7 +292,7 @@ function isGroupActive(items: { href: string }[]) {
       <a
         href="/contact/"
         class="site-header__pill absolute top-1/2 left-m inline-flex h-9 -translate-y-1/2 items-center gap-1.5 rounded-full border border-border-soft bg-muted pr-2.5 pl-2 text-foreground transition-colors hover:border-primary hover:text-primary-dark lg:hidden"
-        aria-label={`${availability}. Tap to start a conversation.`}
+        aria-label={`${availability}. Ask a question.`}
       >
         <span class="relative flex h-2 w-2 shrink-0" aria-hidden="true">
           {/* Soft pulsing halo — kills under prefers-reduced-motion via the
@@ -449,7 +437,7 @@ function isGroupActive(items: { href: string }[]) {
     <div class="site-header__nav hidden items-center gap-l lg:flex">
       <nav class="site-nav flex items-center gap-l" aria-label="Primary">
         {/* FBC Auburn: the header shows the first five menu links (four until the 2026-10-24 audit added Events); the Menu button shows all. Five fit at 1024 with the tighter gaps in auburn.css (1024 to 1279px). */}
-        {NAV_ITEMS.slice(0, 5).map((item) =>
+        {NAV_ITEMS.slice(0, DESKTOP_ITEMS).map((item) =>
           item.kind === 'flat' ? (
             <a
               href={item.href}
@@ -526,23 +514,18 @@ function isGroupActive(items: { href: string }[]) {
       )}
     </div>
 
-    {/* The drawer hydrates on idle, not client:only. The shadcn Sheet (Radix
-        Dialog) server-renders its trigger button fine, and the portal mounts
-        nothing until the drawer opens, so the hamburger is in the server HTML
-        and React arrives behind requestIdleCallback rather than on the
-        critical path. An Astro comment, not an HTML one, so it does not ship
-        on every page. See docs/agent/components.md. */}
+    {/* The full-screen menu: server markup on a native <dialog>, no framework (2026-10-25,
+        web-dev audit M2 and M6). See MobileNav.astro and docs/agent/page-architecture.md. */}
     <MobileNav
-      client:idle
-      links={NAV_LINKS}
+      links={NAV_ITEMS}
       siteSettings={mobileNavSettings}
-      logoLightUrl={logoLightWebpMobile.src}
-      logoDarkUrl={logoDarkWebpMobile.src}
+      logoUrl={logoLightImg.src}
       sunday={menuSunday}
       watch={menuWatch}
       current={pathname}
-      search={site.search.enabled || undefined}
-      {...mobileCtaProps}
+      search={site.search.enabled}
+      cta={headerCta}
+      navComplete={navComplete}
     />
   </div>
   {/* Visitor search (card 126): the dialog the search pill and the menu row open. */}
@@ -588,7 +571,8 @@ function isGroupActive(items: { href: string }[]) {
 
 {/* Progressive enhancement for the desktop dropdown nav. Everything still
     works without this (native <details> toggles on click/Enter/Space, links
-    are real <a> tags). This adds: open-on-hover with a small close delay,
+    are real <a> tags). This adds: open-on-hover with a 300ms close delay (a click on a label
+    hover has opened keeps it open),
     close-on-outside-click, close-on-Escape, and close-when-a-link-is-followed.
     Re-binds on astro:page-load so it survives View Transitions navigations. */}
 <script>
@@ -621,25 +605,39 @@ function isGroupActive(items: { href: string }[]) {
         }
       };
 
-      // Hover intent: open immediately on enter, close after a short delay on
-      // leave so a diagonal mouse path to the menu doesn't snap it shut. Only
-      // engages on pointers that can actually hover (skips touch).
+      // One model (UX audit H4, 2026-10-25): a mouse opens a group by hovering, and the menu stays
+      // open while the pointer is over the label or the panel. Clicking the label of a group that
+      // hover has just opened keeps it open (it used to toggle the <details> shut under the
+      // cursor); a second click closes it. Leaving starts a 300ms close, long enough for a
+      // diagonal path from the label to a link, cancelled the moment the pointer comes back.
+      // Touch and keyboard skip all of this: a tap or Enter toggles the native <details>.
+      let openedByHover = false;
       group.addEventListener('pointerenter', (e) => {
         if (e.pointerType === 'touch') return;
         cancelClose();
+        if (group.open) return;
         closeAll(group);
         group.open = true;
+        openedByHover = true;
       });
       group.addEventListener('pointerleave', (e) => {
         if (e.pointerType === 'touch') return;
         cancelClose();
         closeTimer = window.setTimeout(() => {
           group.open = false;
-        }, 140);
+          openedByHover = false;
+        }, 300);
       });
 
-      // When opened via keyboard/click, make sure the others close.
-      summary?.addEventListener('click', () => {
+      summary?.addEventListener('click', (e) => {
+        // A mouse click on a label hover has already opened: keep it open, once.
+        // (e.detail is 0 for Enter or Space, so the keyboard always toggles.)
+        if (group.open && openedByHover && e.detail > 0) {
+          e.preventDefault();
+          openedByHover = false;
+          return;
+        }
+        openedByHover = false;
         // <details> toggles AFTER this handler, so the post-toggle state is the
         // inverse of the current one. If it's about to open, close the rest.
         if (!group.open) closeAll(group);
