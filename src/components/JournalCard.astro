@@ -74,7 +74,9 @@ const titleClass = featured
       </span>
     )}
   </div>
-  <div class:list={[featured ? 'p-section-md' : 'p-l']}>
+  {/* Phones: the card's own 20 to 28px padding (--pad-card), so the words sit about 40px in, not 53px
+      (phone polish, 2026-10-24). */}
+  <div class:list={[featured ? 'p-section-md' : 'p-l', 'max-md:p-[var(--pad-card)]']}>
     <div class="flex flex-wrap items-center gap-x-m gap-y-xs">
       {primaryCategory?.title && (
         <JournalCategoryChip title={primaryCategory.title} tooltip={primaryCategory.description} />

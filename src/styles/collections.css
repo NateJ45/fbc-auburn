@@ -572,6 +572,17 @@ a:focus-visible > .c-art .c-art__play,
 .c-facts dd {
   margin: 0;
 }
+/* Phones (phone polish, 2026-10-24): each label over its value, so "October 18, 2026, Sunday
+   morning" keeps the full width instead of wrapping in a 240px column beside "Preached". */
+@media (max-width: 767px) {
+  .c-facts {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+  }
+  .c-facts dt:not(:first-child) {
+    margin-top: 0.75rem;
+  }
+}
 
 /* ---- One series: the count beside the series' stone art (no series picture) ---------------- */
 .c-series-head {

@@ -107,6 +107,37 @@ const CardTitle = heading ? 'h3' : 'h2';
     object-position: left bottom;
     margin-bottom: 1.1rem;
   }
+  /* Phones, one column (phone polish, 2026-10-24): a 76px icon on a row of its own put about 126px
+     between one card's last line and the next heading (What we believe was a heading every 254px).
+     The icon now sits small beside its title, and the cards are 40px apart. */
+  @media (max-width: 39.99rem) {
+    .icon-cards {
+      row-gap: 2.5rem;
+    }
+    .icon-card:has(> :global(.icon-card__icon)) {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      column-gap: 14px;
+      align-items: center;
+    }
+    .icon-card:has(> :global(.icon-card__icon)) > :global(*) {
+      grid-column: 1 / -1;
+    }
+    .icon-card :global(.icon-card__icon) {
+      grid-column: 1;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 0;
+      object-position: center;
+    }
+    .icon-card:has(> :global(.icon-card__icon)) > .icon-card__title {
+      grid-column: 2;
+      margin-bottom: 0;
+    }
+    .icon-card:has(> :global(.icon-card__icon)) > .icon-card__body {
+      margin-top: 0.6rem;
+    }
+  }
   .icon-card__photo {
     aspect-ratio: 16 / 11;
     overflow: hidden;

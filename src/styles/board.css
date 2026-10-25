@@ -92,6 +92,10 @@ main:is(:has(.board-head), :has(> .hb)) :where(.max-w-content.px-m, .max-w-conte
   font-size: clamp(min(56px, 15vw), 8.4vw, 128px);
   line-height: 0.95;
   letter-spacing: -0.02em;
+  /* A word longer than the column (a placeholder sermon title, "[Placeholder:") breaks instead of
+     pushing the page sideways (phone polish, 2026-10-24: 385px of scroll at 375). */
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 .board-head__title {
   font-family: var(--font-display);
@@ -302,4 +306,64 @@ main:is(:has(.board-head), :has(> .hb)) > svg.bgpath {
 .board-head--times {
   overflow-x: clip;
   padding-bottom: 1rem;
+}
+
+/* ---- Phone polish (2026-10-24, the section-by-section mobile audit). Phones and small tablets
+   only (below 961px, this file's phone width); desktop is untouched. ---- */
+@media (max-width: 960px) {
+  /* The foot of an inner page's section: its 88px bottom padding plus the next rule's 24px left a
+     112px band of nothing, against 28px under each rule. Now about 40px above the rule (16px here,
+     the rule's 24px). A band with a look (Feature, Stone) keeps its own edge, and the page head
+     keeps its own spacing. */
+  main:has(.board-head)
+    section:not(.board-head, .surface-feature, .surface-stone):has(+ .board-rule-wrap)
+    > [class*='py-section'],
+  main:has(.board-head)
+    :has(+ .board-rule-wrap)
+    > section:not(.board-head, .surface-feature, .surface-stone)
+    > [class*='py-section'],
+  main:has(.board-head)
+    section[class*='py-section']:not(.board-head, .surface-feature, .surface-stone):has(
+      + .board-rule-wrap
+    ) {
+    padding-bottom: 16px;
+  }
+  /* ...and the last line's own bottom margin does not add to it. */
+  main:has(.board-head)
+    section:not(.board-head):has(+ .board-rule-wrap)
+    > [class*='py-section']
+    > :last-child:not(.split, .walk-grid),
+  main:has(.board-head)
+    section:not(.board-head):has(+ .board-rule-wrap)
+    > [class*='py-section']
+    > :last-child
+    > :last-child {
+    margin-bottom: 0;
+  }
+  /* A section an editor adds to Home below the board (the "Meet Pastor Jacob" band) ends on Home's
+     rhythm, 48px, like the board's own bands, not the inner pages' 88px. */
+  .hb > section:not(.surface-feature, .surface-stone) > .py-section-lg:first-child {
+    padding-bottom: var(--hb-rhythm);
+  }
+  /* Home's own bands carry worded labels; the bare marker-and-line rule SectionRenderer draws
+     before an editor's section read as a stray mark there, so Home's phones do without it. */
+  .hb > .board-rule-wrap {
+    display: none;
+  }
+  /* A text-and-picture band's one button runs the full width, like the Home hero's. */
+  main:is(:has(.board-head), :has(> .hb)) .split .mt-l > .btn-auburn:only-child {
+    width: 100%;
+    justify-content: center;
+  }
+  /* A picture slot with no photo yet: a 160px strip with the mark on the left edge, not a 335 x 252
+     box around a 125px mark in its middle. */
+  main:is(:has(.board-head), :has(> .hb)) .auburn-arch--empty {
+    aspect-ratio: auto;
+    height: 160px;
+    place-items: center start;
+    padding-inline: var(--pad-card);
+  }
+  main:is(:has(.board-head), :has(> .hb)) .auburn-arch--empty .auburn-arch__mark {
+    width: 112px;
+  }
 }

@@ -245,6 +245,8 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   ROOMS, STOPS, ROUTE), pinned with `position: sticky` beside the stops; an IntersectionObserver on the middle tenth of
   the screen lights the route up to the current stop. Stops not yet reached have a grey heading (colour, not opacity,
   so they pass contrast). Without motion the whole route is shown and the tags are hidden.
+  Below 768px a step is only as tall as its words, with an 18vh gap between steps (about 40vh a step), so the
+  active step's gold edge stops with its words (phone polish, 2026-10-24; it was a 52vh box per step).
 - **Nav**: three tiny stones under the current page's link replace the underline.
 - **Home's stone path** (board E, 2026-10-17; replaced the full-height ribbon): `src/components/home/StonePath.astro`
   inlines the generated mosaic (`stones.generated.ts`, from `npm run gen:stones`), one `<path class="hb-stone">`
