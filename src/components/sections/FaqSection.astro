@@ -17,6 +17,7 @@
 import SectionHeading from '@/components/SectionHeading.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import FaqAccordion from '@/components/FaqAccordion';
+import { faqPageSchema } from '@/lib/schemas';
 
 interface FaqItem {
   _id?: string;
@@ -39,6 +40,11 @@ interface Props {
   headingId?: string;
   /** The section's id, for links like /plan-your-visit/#questions. */
   anchor?: string;
+  /**
+   * Emit the FAQPage JSON-LD for these questions. SectionRenderer sets it on the FIRST questions
+   * block of a page only, because a page may carry one FAQPage (audit DEV-M5, 2026-10-25).
+   */
+  schema?: boolean;
 }
 
 const {
@@ -51,9 +57,11 @@ const {
   cta,
   headingId = 'faq-section-heading',
   anchor,
+  schema = false,
 } = Astro.props as Props;
 
 const validItems = items.filter((i) => i?.question);
+const faqLd = schema && validItems.length > 0 ? faqPageSchema(validItems) : null;
 ---
 
 {validItems.length > 0 && (
@@ -89,5 +97,6 @@ const validItems = items.filter((i) => i?.question);
         </div>
       )}
     </div>
+    {faqLd && <script is:inline type="application/ld+json" set:html={faqLd} />}
   </section>
 )}

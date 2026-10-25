@@ -58,12 +58,24 @@
 # *.sanity.studio for a hosted Studio and the iframe-pane plugin; both are
 # retired. Re-add those origins only if you deliberately run a hosted Studio.)
 
+# HSTS without includeSubDomains or preload until the church's own domain is known (audit DEV-L4,
+# 2026-10-25): on that domain they would force HTTPS on EVERY subdomain for a year, so an old
+# webmail or a CNAME that only speaks HTTP would stop loading. The cutover check in
+# docs/agent/deployment.md ("Putting a site on its real domain") says when to add them back.
+#
+# The second Content-Security-Policy line (form-action) is a SEPARATE policy on purpose: the first
+# line must stay byte-for-byte as it is for scripts/build-csp.mjs. Two policies are both enforced,
+# so this one only adds "forms may post to this site only". A pasted form that posts elsewhere
+# (a PayPal donate button, a mailing-list signup) needs its origin added to that line.
+# Permissions-Policy turns off device features no page uses; embeds keep everything else.
 /*
-  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Strict-Transport-Security: max-age=31536000
   Content-Security-Policy: frame-ancestors 'self'
+  Content-Security-Policy: form-action 'self'
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=(), magnetometer=(), gyroscope=()
 
 # Font files for pasted code (PORTS.md card 121). A "Custom code" block runs in a
 # sandboxed srcdoc iframe with an OPAQUE origin, and a font load is always a CORS
@@ -85,3 +97,22 @@
 # The names are not hashed, so a changed example gets a NEW file name, never the old one.
 /shot-examples/*
   Cache-Control: public, max-age=31536000
+
+# Unhashed files whose names never change (audit DEV-M7, 2026-10-25): a day, then served while it
+# revalidates. The text fonts and the textures moved into src/assets, so Vite hashes them and they
+# get the year-long /_astro/* rule above. What is left here: the Studio's lettering font and the
+# font licences, the share cards and the icons. Never "immutable": these names are fixed.
+/fonts/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/og/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon.ico
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800

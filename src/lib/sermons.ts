@@ -672,18 +672,34 @@ export function sermonJsonLd(
       contentUrl: video.watchUrl,
     };
   }
+  // A recording and no YouTube video: a PodcastEpisode of the sermon podcast (audit DEV-M5,
+  // 2026-10-25), the same episode /sermons/podcast.xml lists, with the file as its media.
+  if (s.audio?.url) {
+    const seconds = typeof s.audioSeconds === 'number' && s.audioSeconds > 0 ? s.audioSeconds : 0;
+    const audio = {
+      '@type': 'AudioObject',
+      contentUrl: s.audio.url,
+      encodingFormat: s.audio.mimeType || 'audio/mpeg',
+      ...(seconds ? { duration: `PT${Math.round(seconds)}S` } : {}),
+    };
+    const origin = pageUrl.replace(/^(https?:\/\/[^/]+).*$/, '$1');
+    return {
+      ...base,
+      '@type': 'PodcastEpisode',
+      ...(s.date ? { datePublished: s.date } : {}),
+      associatedMedia: audio,
+      partOfSeries: {
+        '@type': 'PodcastSeries',
+        name: `${churchName} Sermons`,
+        url: `${origin}/sermons/`,
+        webFeed: `${origin}/sermons/podcast.xml`,
+      },
+    };
+  }
+  // Neither (notes only, or a Facebook link): a plain CreativeWork.
   return {
     ...base,
     '@type': 'CreativeWork',
     ...(s.date ? { datePublished: s.date } : {}),
-    ...(s.audio?.url
-      ? {
-          audio: {
-            '@type': 'AudioObject',
-            contentUrl: s.audio.url,
-            encodingFormat: s.audio.mimeType || 'audio/mpeg',
-          },
-        }
-      : {}),
   };
 }

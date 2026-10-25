@@ -19,6 +19,9 @@ import {
   whenLine,
 } from '@/lib/church-calendar';
 import { keywordsOf, matchesKeywords } from '@/lib/church-blocks';
+import { churchJsonLd } from '@/lib/church-facts';
+import { calendarEventsJsonLd } from '@/lib/structured-data';
+import { site } from '@/data/site';
 import type { ProjectedEventsSection } from '@/lib/churchBlocks.types';
 
 interface Props {
@@ -34,6 +37,12 @@ const count = Math.min(12, Math.max(1, block.count ?? 5));
 const all = events ? nextEvents(whatsOn(events, now), 200) : [];
 const rows = matchesKeywords(all, keywordsOf(block.keywords)).slice(0, count);
 const Title = block.heading ? 'h3' : 'h2';
+// The same rows as schema.org Events for search engines (audit DEV-M5, src/lib/structured-data.ts).
+const eventsLd = calendarEventsJsonLd(rows, {
+  organizerId: `${site.url}/#business`,
+  churchName: site.name,
+  address: churchJsonLd(facts).address,
+});
 ---
 
 <ChurchBand
@@ -66,4 +75,5 @@ const Title = block.heading ? 'h3' : 'h2';
     <p class="cb-empty">{block.emptyText || 'Nothing else is on the calendar just now.'}</p>
   )}
   {block.showSubscribe !== false && <SubscribeButtons />}
+  {eventsLd && <script is:inline type="application/ld+json" set:html={eventsLd} />}
 </ChurchBand>

@@ -106,7 +106,7 @@ const schemas = [
       {list.length > 0 ? (
         <div class="grid grid-cols-1 gap-l md:grid-cols-2 lg:grid-cols-3" data-stagger-grid>
           {list.map((entry: any, i: number) => (
-            <JournalCard entry={entry} featured={i === 0 && entry.featured} />
+            <JournalCard entry={entry} featured={i === 0 && entry.featured} priority={i === 0} />
           ))}
         </div>
       ) : (

@@ -26,8 +26,10 @@ interface Props {
   variant?: 'frame' | 'tag';
   inLink?: boolean;
   class?: string;
+  /** The page's first photo, in the phone's first screen: load the example eagerly, at high priority. */
+  priority?: boolean;
 }
-const { shot, variant = 'frame', inLink = false, class: className } = Astro.props;
+const { shot, variant = 'frame', inLink = false, class: className, priority = false } = Astro.props;
 const hold =
   shot.orientation === 'portrait'
     ? 'Hold the phone upright'
@@ -55,7 +57,8 @@ const tag = shot.video ? 'Example video' : shot.example ? 'Example photo' : 'Pho
         srcset={exampleSrcset(example.file)}
         sizes="auto, (min-width: 768px) 40vw, 100vw"
         alt={`Example: ${shot.title}`}
-        loading="lazy"
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : undefined}
         decoding="async"
       />
       <div class:list={['shot__note', example.note === 'end' && 'shot__note--end']}>

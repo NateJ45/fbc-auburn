@@ -14,7 +14,7 @@ import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import ContactForm from '@/components/ContactForm';
 import ChurchTracFrame from '@/components/church-blocks/ChurchTracFrame.astro';
 import { churchTracFormFor } from '@/lib/church-links';
-import CopyEmailButton from '@/components/CopyEmailButton';
+import CopyEmailButton from '@/components/CopyEmailButton.astro';
 import CalendlyInline from '@/components/CalendlyInline';
 import ChurchAddress from '@/components/church/ChurchAddress.astro';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
@@ -128,7 +128,7 @@ const schemas = [
         <p class="mt-m flex flex-wrap items-center gap-xs text-sm text-foreground/75">
           <Mail size={14} aria-hidden="true" className="text-secondary" />
           <span>Prefer email? Reach us directly at</span>
-          <CopyEmailButton client:visible email={email.display} variant="link" />
+          <CopyEmailButton email={email.display} variant="link" />
           <NotConfirmed confirmed={email.confirmed} />
         </p>
       )}
@@ -208,7 +208,7 @@ const schemas = [
       {email && (
         <div>
           <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Email</p>
-          <CopyEmailButton client:visible email={email.display} variant="link" />
+          <CopyEmailButton email={email.display} variant="link" />
           <NotConfirmed confirmed={email.confirmed} />
         </div>
       )}

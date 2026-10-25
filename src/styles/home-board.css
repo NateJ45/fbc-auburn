@@ -71,7 +71,7 @@
   min-height: min(86vh, 780px);
   padding: 120px 0 0;
   color: #ffffff;
-  background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+  background: var(--auburn-deep) url('../assets/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
 .hb-photo,
 .hb-photo__shade {
@@ -270,7 +270,7 @@
   position: absolute;
   inset: calc(var(--hb-rhythm) + 220px) 0 0; /* the band's top padding, then partway down the photos */
   z-index: -1;
-  background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+  background: var(--auburn-deep) url('../assets/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
 .hb-belong .hb-ph,
 .hb-belong .hb-note {
@@ -284,7 +284,7 @@
   padding: var(--pad-card);
   border-radius: var(--hb-radius);
   background-color: var(--auburn-deep);
-  background-image: url('/textures/tile-deep.svg');
+  background-image: url('../assets/textures/tile-deep.svg');
   background-size: 420px 420px;
   box-shadow: var(--shadow-raised);
   color: #ffffff;
@@ -401,11 +401,11 @@
    and the stone icons carry the bands. */
 .hb-band--sky {
   margin: 0 0 40px;
-  background: #e9eef5 url('/textures/tile-sky.svg') 0 0 / 420px 420px;
+  background: #e9eef5 url('../assets/textures/tile-sky.svg') 0 0 / 420px 420px;
 }
 /* Printed brick in the band's own warm tint (2026-10-23), so the white cards sit on a wall. */
 .hb-band--green {
-  background: #f1e8e2 url('/textures/tile-warm.svg') 0 0 / 420px 420px;
+  background: #f1e8e2 url('../assets/textures/tile-warm.svg') 0 0 / 420px 420px;
 }
 
 /* Through the week: a three-column board on a white panel. */
@@ -530,7 +530,7 @@
 }
 /* Numbered bricks (2026-10-21, the brick brand): the mark's course with a numeral on it,
    alternating auburn and navy. Printed like every brick since 2026-10-23: a darker rim all round,
-   heavier along the bottom, and the linocut flecks (public/textures/print-flecks.svg, from
+   heavier along the bottom, and the linocut flecks (src/assets/textures/print-flecks.svg, from
    npm run gen:stones) over the colour. */
 .hb-walk__stone {
   position: relative;
@@ -541,7 +541,7 @@
   height: 44px;
   margin-bottom: 18px;
   border-radius: 2px;
-  background-image: url('/textures/print-flecks.svg');
+  background-image: url('../assets/textures/print-flecks.svg');
   background-size: 64px 44px;
   box-shadow:
     inset 0 0 0 2px rgb(0 0 0 / 0.2),

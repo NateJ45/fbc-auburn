@@ -79,7 +79,7 @@ the FBC Muncie cream paper this brief rules out below; borders are `#E6DED2`. Th
 the light navy tinted (`#E9EEF5`, gaps `#D3DCE8`). Cards stay pure white. Masters: `brand/logo/`
 (the linocut brick-cross mark and lockups, wired in 2026-10-23) and `brand/icons/` (the stone icons, all drawn in brick courses since round 25 on 2026-10-24,
 printed into `src/assets/brand/`). The old seven colours are gone from the CSS, the textures
-(`public/textures/tile-*.svg`, file names kept), the Studio banner and the OG card.
+(`src/assets/textures/tile-*.svg`, file names kept), the Studio banner and the OG card.
 
 - Roles: **navy** is the everyday colour (links, buttons, H2s). **Auburn** is the cross and at
   most one call to action per page. **Light auburn** and **light navy** are accents only (stepping

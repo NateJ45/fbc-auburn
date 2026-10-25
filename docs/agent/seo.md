@@ -53,6 +53,17 @@ Source the values from `siteSettings`. The `address`, `telephone`, and any Googl
 
 Test every schema with Google's Rich Results Test (https://search.google.com/test/rich-results) before launch. Errors at scale will suppress rich results without loud failures.
 
+**FBC Auburn, what each page carries (audit DEV-M5, 2026-10-25):**
+
+- **Every page: `Church`** (`localBusinessSchema` in `src/lib/schemas.ts`, facts from `churchJsonLd` in `src/lib/church-facts.ts`). The street address, map pin, phone, email and the weekly services are added ONLY once each fact is marked confirmed in Site settings > Church facts, so search engines are never told a provisional fact. Until then it is name, url, image, logo and sameAs. Each confirmed weekly service is an `Event` with a weekly `eventSchedule`, in person, scheduled, at the confirmed address. **Launch check:** confirm every Church fact, then paste a live page into the Rich Results Test and the Schema Markup Validator (validator.schema.org).
+- **The first Questions block on a page: `FAQPage`** (`FaqSection.astro`, `schema` prop, set by `SectionRenderer` on the first `faqSection` only; a page may carry one FAQPage). On Plan your visit today.
+- **An Events block: one `Event` per row it lists** (`calendarEventsJsonLd` in `src/lib/structured-data.ts`, unit-tested): start and end with the church's UTC offset, all-day events as dates, a weekly run with its `eventSchedule`, the place named in the feed or the church (with its confirmed address). Empty until Church facts has a calendar feed.
+- **A sermon page:** `VideoObject` when it has a YouTube video, `PodcastEpisode` (part of the sermon podcast `PodcastSeries`, with the recording as `associatedMedia`) when it has only a recording, else a plain `CreativeWork` (`sermonJsonLd` in `src/lib/sermons.ts`).
+- **A journal post:** `BlogPosting`. **Internal pages:** `BreadcrumbList`.
+- JSON-LD inside the body (FAQ, events) is fine for search engines, and the script policy ignores it (`scripts/lib/csp.mjs` hashes only scripts that run).
+- **No canonical on a noindex page** (404, `/search/`, a hidden page; BaseLayout, DEV-L7): "do not index" and "index this address" contradict each other.
+- **Share images are JPEG** (`og:image` from a Sanity photo uses `format('jpg')`, DEV-L8): some link scrapers skip WebP.
+
 ### Sitemap and robots
 
 `@astrojs/sitemap` generates `sitemap-index.xml` + `sitemap-0.xml` automatically from every prerendered page on `astro build`. The default `<priority>` and `<changefreq>` values are fine for a marketing site of this size.

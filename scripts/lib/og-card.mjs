@@ -19,7 +19,7 @@
 //   brand   optional { name, place } for the lockup; defaults to the church's name.
 //
 // DETERMINISTIC: no clock, no randomness (the bricks are seeded, brick-courses.mjs), fonts come
-// from public/fonts, and the PNG is written only when its bytes change, so re-running the
+// from src/assets/fonts, and the PNG is written only when its bytes change, so re-running the
 // generators leaves git clean unless a title or the design changed.
 //
 // The design ("night", picked 2026-10-24 from five directions in
@@ -51,11 +51,11 @@ const NIGHT = {
 };
 const b64 = (rel) => readFileSync(resolve(root, rel)).toString('base64');
 const FONTS = {
-  serif: b64('public/fonts/young-serif-latin-400.woff2'),
-  sans: b64('public/fonts/familjen-grotesk-latin-wght.woff2'),
+  serif: b64('src/assets/fonts/young-serif-latin-400.woff2'),
+  sans: b64('src/assets/fonts/familjen-grotesk-latin-wght.woff2'),
 };
 const MARK_SVG = `data:image/svg+xml;base64,${b64('src/assets/brand/fbc-auburn-icon-white.svg')}`;
-const TILE_NAVY = `data:image/svg+xml;base64,${b64('public/textures/tile-navy.svg')}`;
+const TILE_NAVY = `data:image/svg+xml;base64,${b64('src/assets/textures/tile-navy.svg')}`;
 // The building sketch's lines (scripts/brand-sketch.mjs), used as a mask so it takes any ink.
 const SKETCH = `data:image/webp;base64,${b64('src/assets/brand/building-sketch.webp')}`;
 

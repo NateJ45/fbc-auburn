@@ -161,6 +161,11 @@ export default defineConfig({
   // on a second round trip for them. Inline, they arrive with the HTML (about 50KB more per page,
   // compressed). Same call as stonesteps-50k and fbcm. The fonts and textures they name stay
   // separate files: Vite only base64-inlines assets under 4KB, and none of those is that small.
+  // 2026-10-25 (audit DEV-M1): measured again against linked sheets, for a first visit AND a
+  // second page through the router (docs/agent/performance.md). Inline still won the first visit
+  // (FCP 1.35 s against 1.65 s), linked won the next page (about 40 KB less each). Kept inline,
+  // and scripts/purge-page-css.mjs (part of `npm run build`) now drops each page's unused rules,
+  // which takes most of the linked sheets' advantage on the second page too.
   build: { inlineStylesheets: 'always' },
   // `imageService: 'compile'` tells @astrojs/cloudflare to process images
   // with Sharp at build time and ship plain static files — no Cloudflare

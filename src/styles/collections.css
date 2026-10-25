@@ -76,14 +76,14 @@
   justify-items: start;
   gap: 0.4rem;
   padding: clamp(0.9rem, 2.4vw, 1.5rem);
-  background: #16304d url('/textures/tile-navy.svg') 0 0 / 420px 420px;
+  background: #16304d url('../assets/textures/tile-navy.svg') 0 0 / 420px 420px;
   color: #fff;
 }
 .c-art--deep {
-  background: #1f3a5f url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+  background: #1f3a5f url('../assets/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
 .c-art--green {
-  background: #2c4f7c url('/textures/tile-green.svg') 0 0 / 420px 420px;
+  background: #2c4f7c url('../assets/textures/tile-green.svg') 0 0 / 420px 420px;
 }
 .c-art--blank svg {
   width: clamp(52px, 16cqi, 96px);

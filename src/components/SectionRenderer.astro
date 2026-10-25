@@ -71,9 +71,17 @@ interface Props {
    * `npm run parity compare` is the standing gate on that promise.
    */
   editDoc?: EditDoc;
+  /**
+   * True where these sections open the page, right under its page head (the Studio pages, About).
+   * The first section after the page head then loads its first photo eagerly at high priority,
+   * since on a phone it sits in the first screen (audit DEV-M8, 2026-10-25: Lighthouse flagged the
+   * lazy-loaded LCP photo on Ministries). Every other photo stays lazy. Off (the default) for extra sections
+   * drawn at the foot of a page and for Home, whose hero photo is already the priority.
+   */
+  leadImage?: boolean;
 }
 
-const { sections = [], idPrefix = 'section', editDoc } = Astro.props as Props;
+const { sections = [], idPrefix = 'section', editDoc, leadImage = false } = Astro.props as Props;
 // Synced sections (the authoring kit, PORTS.md card 109) are swapped for the
 // sections their saved copy holds BEFORE the cadence runs, so a synced band
 // takes its place in the alternating rhythm like any typed-in band (rule 9).
@@ -118,6 +126,10 @@ const ruled = rows.map(({ block }) => !UNRULED.has(block._type));
 // The first Questions block on a page answers to #questions (2026-10-24): /faq/ forwards to
 // /plan-your-visit/#questions since the Questions page was merged into Plan your visit.
 const firstFaq = rows.findIndex(({ block }) => block._type === 'faqSection');
+// The section whose first photo loads eagerly (leadImage above): the first one after the page
+// head, so a hero, a spacer or a notice band is skipped. -1 when leadImage is off.
+const LEAD_SKIP = new Set(['heroSection', 'spacerSection', 'noticeSection']);
+const leadRow = leadImage ? rows.findIndex(({ block }) => !LEAD_SKIP.has(block._type)) : -1;
 
 // A real element in preview, nothing at all on the live site. The wrapper must
 // NOT be `display: contents`: the overlay outlines the element's rect, and a
@@ -208,6 +220,7 @@ const editKeyOf = (block: unknown) => {
           cta={s.cta}
           surface={surface ?? 'background'}
           headingId={headingId}
+          isFirst={rowIndex === leadRow}
         />
       ) : s._type === 'gallerySection' ? (
         <GalleryGrid
@@ -283,6 +296,7 @@ const editKeyOf = (block: unknown) => {
           cta={s.cta}
           headingId={headingId}
           anchor={rowIndex === firstFaq ? 'questions' : undefined}
+          schema={rowIndex === firstFaq}
         />
       ) : s._type === 'logoStripSection' ? (
         <LogoStrip
@@ -322,6 +336,7 @@ const editKeyOf = (block: unknown) => {
           groups={s.groups ?? []}
           surface={lightSurface(surface)}
           headingId={headingId}
+          isFirst={rowIndex === leadRow}
         />
       ) : s._type === 'thisWeekSection' ? (
         <ThisWeekSection
