@@ -10,6 +10,14 @@ whose line stops short of it; the head pads 44px above and 36px below. Heads wit
 175px shorter at 375px, the rest about 34px (`src/styles/board.css`). A head photo still follows the
 words at full width; desktop is unchanged.
 
+_2026-10-24: the phone Home hero is a photo band._
+
+**Decision.** Below 961px the hero was a block 78% of the screen tall with the welcome at its foot,
+so most of a phone's first screen was empty photo (Nathan, from a screenshot). The photo is now a
+band (`--hb-band`, 44svh between 220 and 380px) whose foot fades into the tiled ground, and the
+welcome starts on its last 160px, then carries on over the navy ground. Before launch the "Photo needed" note fills
+the band and the words follow it directly. Desktop is unchanged (`src/styles/home-board.css`).
+
 _2026-10-24: the background stone path no longer stalls phones._
 
 **Decision.** The 362ms long task Lighthouse blamed on the Cloudflare beacon on Plan your visit was
