@@ -18,6 +18,7 @@ import {
   type ChurchFacts,
   type ServiceTime,
 } from './church-facts.ts';
+import { buildIcs, type IcsWeekday } from './ics.ts';
 
 /** "Kids and youth" -> "kids-and-youth". */
 export function slugify(title?: string | null): string {
@@ -119,11 +120,13 @@ export function nextDateFor(dayIndex: number, now: Date): string {
   return addDays(today, ahead);
 }
 
-const BYDAY = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+const BYDAY: IcsWeekday[] = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
 
 /**
  * A weekly calendar file for one gathering, or null while its time is not confirmed (the
- * church's rule since /sunday.ics: never put a provisional time in someone's calendar).
+ * church's rule since /sunday.ics: never put a provisional time in someone's calendar). The file
+ * itself (escaping, line folding, the Eastern VTIMEZONE) comes from the starter's buildIcs
+ * (src/lib/ics.ts, PORTS.md card 158).
  */
 export function gatheringIcs(
   facts: Pick<ChurchFacts, 'serviceTimes' | 'address'> & { title?: string },
@@ -133,48 +136,28 @@ export function gatheringIcs(
 ): string | null {
   const s = facts.serviceTimes.find((x) => x.key === key);
   if (!s || !s.confirmed) return null;
-  const esc = (v: string) => plain(v).replace(/([,;\\])/g, '\\$1');
-  const ymd = nextDateFor(s.dayIndex, now).replace(/-/g, '');
   const hh = String(Math.floor(s.minutes / 60)).padStart(2, '0');
   const mm = String(s.minutes % 60).padStart(2, '0');
-  const stamp = `${now.toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`;
   const host = siteUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-  const name = facts.title ? esc(facts.title) : 'Church';
-  return (
-    [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//fbc-auburn//gatherings//EN',
-      'CALSCALE:GREGORIAN',
-      // Eastern time, so the event keeps its local time through the clock changes.
-      'BEGIN:VTIMEZONE',
-      'TZID:America/New_York',
-      'BEGIN:DAYLIGHT',
-      'TZOFFSETFROM:-0500',
-      'TZOFFSETTO:-0400',
-      'TZNAME:EDT',
-      'DTSTART:19700308T020000',
-      'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU',
-      'END:DAYLIGHT',
-      'BEGIN:STANDARD',
-      'TZOFFSETFROM:-0400',
-      'TZOFFSETTO:-0500',
-      'TZNAME:EST',
-      'DTSTART:19701101T020000',
-      'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU',
-      'END:STANDARD',
-      'END:VTIMEZONE',
-      'BEGIN:VEVENT',
-      `UID:weekly-${s.key}@${host}`,
-      `DTSTAMP:${stamp}`,
-      `DTSTART;TZID=America/New_York:${ymd}T${hh}${mm}00`,
-      'DURATION:PT1H',
-      `RRULE:FREQ=WEEKLY;BYDAY=${BYDAY[s.dayIndex]}`,
-      `SUMMARY:${esc(s.label)}\\, ${name}`,
-      ...(facts.address?.confirmed ? [`LOCATION:${esc(facts.address.oneLine)}`] : []),
-      `URL:${siteUrl}/events/`,
-      'END:VEVENT',
-      'END:VCALENDAR',
-    ].join('\r\n') + '\r\n'
-  );
+  const name = facts.title ? plain(facts.title) : 'Church';
+  return buildIcs({
+    prodId: '-//fbc-auburn//gatherings//EN',
+    now,
+    events: [
+      {
+        uid: `weekly-${s.key}@${host}`,
+        // Eastern time, so the event keeps its local time through the clock changes.
+        start: {
+          date: nextDateFor(s.dayIndex, now),
+          time: `${hh}:${mm}`,
+          tzid: 'America/New_York',
+        },
+        duration: 'PT1H',
+        rrule: { freq: 'WEEKLY', byDay: [BYDAY[s.dayIndex]] },
+        summary: `${plain(s.label)}, ${name}`,
+        ...(facts.address?.confirmed ? { location: plain(facts.address.oneLine) } : {}),
+        url: `${siteUrl}/events/`,
+      },
+    ],
+  });
 }
