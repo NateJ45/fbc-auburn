@@ -66,9 +66,9 @@ export const exampleSrcset = (file: string) =>
 const SHOTS: Record<string, Shot[]> = {
   '/|hero': [
     {
-      title: 'Sunday morning, from the back of the room',
+      title: 'Clips of church life for a short video',
       detail:
-        'The congregation during worship or the welcome, taken from behind the last pews so backs, not faces, fill the frame. The welcome words go over the left side, so keep that part calm.',
+        'Ideally a video: send clips of the church doing what it does (worship, outreach, youth, VBS, a meal, a workday, anything), a few seconds each, phone held sideways and still, no zoom. Clips already on a phone or on Facebook are welcome; send the originals. Nathan cuts them into one silent video that plays behind the welcome words. Any clip with children needs their parents’ permission first. If video is not possible, a still of Sunday worship from behind the last pews works.',
       orientation: 'landscape',
       example: { file: 'hero', credit: 'Christian Harb on Unsplash' },
     },
