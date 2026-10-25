@@ -86,7 +86,7 @@ export const sermon = defineType({
         R.custom((value) =>
           !value || bookOf(value)
             ? true
-            : 'The website does not recognise the book here, so this sermon will not show under a book in the filters. Check the spelling, like "1 John 4:7".',
+            : 'The website does not recognize the book here, so this sermon will not show under a book in the filters. Check the spelling, like "1 John 4:7".',
         ).warning(),
     }),
     defineField({
@@ -146,6 +146,16 @@ export const sermon = defineType({
       description:
         'Copy the address of the video and paste it here. A YouTube video plays right on the page; a Facebook video opens on Facebook.',
       validation: (R) => R.uri({ scheme: ['http', 'https'] }),
+    }),
+    // The length people see in the sermon list and the podcast (audit 2026-10-25). Typed, because
+    // a Facebook or YouTube video's length cannot be read at build time without a key.
+    defineField({
+      name: 'minutes',
+      title: 'Length in minutes (optional)',
+      type: 'number',
+      group: 'media',
+      description: 'About how long the sermon is, like 32. It shows in the list of sermons.',
+      validation: (R) => R.min(1).max(240).integer(),
     }),
     defineField({
       name: 'audio',

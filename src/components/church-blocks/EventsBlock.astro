@@ -72,7 +72,10 @@ const eventsLd = calendarEventsJsonLd(rows, {
       ))}
     </ul>
   ) : (
-    <p class="cb-empty">{block.emptyText || 'Nothing else is on the calendar just now.'}</p>
+    <p class="cb-empty">
+      {block.emptyText ||
+        'Nothing special is on the calendar just now. The weekly gatherings are the best way to meet everyone.'}
+    </p>
   )}
   {block.showSubscribe !== false && <SubscribeButtons />}
   {eventsLd && <script is:inline type="application/ld+json" set:html={eventsLd} />}

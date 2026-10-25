@@ -2,7 +2,8 @@
 // Safe to edit by hand
 // The picture for a sermon or a series, in the one 16:9 frame with 14px corners: the sermon's own
 // picture, else its series' picture, else the YouTube thumbnail, else the stones (three gold steps
-// from the mark on a stone ground) with the series' book or title in cream Young Serif, so a sermon
+// from the mark on a stone ground, the church sketch faint behind) with the series' title, else the
+// book, else the sermon's own title, in cream Young Serif, so a sermon
 // with no picture at all looks like series art, not a missing picture (block polish, 2026-10-18):
 //   - the ground is one of three stone tiles (navy, deep sky, green; scripts/gen-stones.mjs), picked
 //     from the words, so every sermon in a series shares its series' colour and neighbours differ;
@@ -12,7 +13,8 @@
 import SanityImage from '@/components/SanityImage.astro';
 import PlayMark from './PlayMark.astro';
 import { MARKER } from '@/components/home/stones.generated';
-import { sermonVideo, type SermonDoc } from '@/lib/sermons';
+import BuildingSketch from '@/components/church/BuildingSketch.astro';
+import { bookOf, sermonVideo, type SermonDoc } from '@/lib/sermons';
 import type { SanityImageObject } from '@/lib/pageBuilder.types';
 
 interface Props {
@@ -42,7 +44,12 @@ const picked = [sermon?.image, sermon?.series?.art, art].find(
   (img) => (img as { asset?: unknown } | null | undefined)?.asset,
 ) as SanityImageObject | undefined;
 const thumb = !picked ? sermonVideo(sermon?.videoUrl)?.thumbnailUrl : undefined;
-const blankWord = (word ?? sermon?.series?.title ?? '').trim();
+// No series: the book preached from, else the sermon's own title, so the card always says something
+// (audit 2026-10-25: a sermon with no series showed a blank box).
+const blankWord = (
+  word ??
+  (sermon?.series?.title || bookOf(sermon?.passage) || sermon?.title || '')
+).trim();
 const GROUNDS = ['navy', 'deep', 'green'] as const;
 const hash = [...(seed ?? sermon?.series?.title ?? blankWord)].reduce(
   (h, c) => (h * 31 + c.charCodeAt(0)) >>> 0,
@@ -90,8 +97,13 @@ const size = Math.max(7, Math.min(22, Math.round((words.length > 1 ? 74 : 112) /
         <path d={s.d} fill={s.fill} />
       ))}
     </svg>
+    {/* The church building, faint in cream, so the fallback reads as Auburn's own (2026-10-25). */}
+    <BuildingSketch ink="#fbf8f3" draw={false} class="c-art__sketch" />
     {blankWord && (
-      <span class="c-art__word" style={`--word: ${size}cqi`}>
+      <span
+        class:list={['c-art__word', words.length > 2 && 'c-art__word--long']}
+        style={`--word: ${size}cqi`}
+      >
         {blankWord}
       </span>
     )}

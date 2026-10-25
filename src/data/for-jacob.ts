@@ -51,6 +51,16 @@ const NOTES: Record<string, JacobNote[]> = {
       detail:
         'The site says Sunday School 9:45 and worship 11:00. Your Google listing shows the building open 9:30 am to 1 pm, and a Facebook post from the spring says Sunday School 9:15 and 10:30. What are the times today? Once we know, the Google hours may want a tidy too.',
     },
+    {
+      title: 'One honest line about a Sunday.',
+      detail:
+        'Under "Come as you are.": about how many come, the music, and who comes (families, retirees, both). Visitors told us this decides which church they try.',
+    },
+    {
+      title: 'The good news, near the top.',
+      detail:
+        'A new block after "Your first Sunday" asks for two or three sentences of the gospel in plain words. It links to "The gospel, first" on What we believe. Your words only; we have not drafted it.',
+    },
   ],
   '/about/': [
     {
@@ -67,6 +77,16 @@ const NOTES: Record<string, JacobNote[]> = {
       title: 'Which name should the site use?',
       detail:
         'The building says First Baptist Church of Auburn and the road sign says Auburn Baptist Church. One, or both?',
+    },
+    {
+      title: 'A Sunday here.',
+      detail:
+        'A new section: the music, how you preach and for about how long, and who comes. Visitors want this more than the story of the logo, which is now one line at the end.',
+    },
+    {
+      title: 'Something only Auburn could say.',
+      detail:
+        '"Who we are" reads like many church websites. One or two sentences about this church in particular would help most.',
     },
   ],
   '/what-we-believe/': [
@@ -92,7 +112,12 @@ const NOTES: Record<string, JacobNote[]> = {
     },
     {
       title: 'Baptism.',
-      detail: 'What it means here, and what someone should do if they would like to be baptised.',
+      detail: 'What it means here, and what someone should do if they would like to be baptized.',
+    },
+    {
+      title: 'What it means to be Baptist.',
+      detail:
+        'A new section after the beliefs: what makes Auburn Baptist (baptism by immersion, the Lord’s Supper, how the church is governed, the local church, the priesthood of believers, soul liberty) and how Auburn works with other Southern Baptists. Your words; we have not drafted any.',
     },
   ],
   '/leadership/': [
@@ -105,6 +130,26 @@ const NOTES: Record<string, JacobNote[]> = {
       title: 'Deacons and ministry leaders, with their permission.',
       detail:
         'Names and roles of anyone you would like introduced, and only once each of them has said yes.',
+    },
+    {
+      title: 'How decisions are made.',
+      detail:
+        'One sentence: does the church vote on members, the budget and calling a pastor, and what do the deacons do?',
+    },
+    {
+      title: 'A 30-second hello video.',
+      detail:
+        'Filmed on a phone, saying hello. It would sit beside your photo. Visitors say a real voice is what makes them trust a pastor before they visit.',
+    },
+    {
+      title: 'Your TikTok, on this page.',
+      detail:
+        'The page now says you post short videos on TikTok and links to @auburn.pastor. Happy for it to be here as yours?',
+    },
+    {
+      title: 'An email for you and the office, and office hours.',
+      detail:
+        'Put them in Site settings and they show in the new contact card on this page and on Need the pastor?.',
     },
   ],
   '/plan-your-visit/': [
@@ -124,15 +169,6 @@ const NOTES: Record<string, JacobNote[]> = {
         'Parking, the greeter, coffee, children and worship: anything marked "to be confirmed" or in brackets is our guess.',
     },
     {
-      title: 'Getting in.',
-      detail:
-        'Is there an accessible restroom, and anything else a first-time guest should know at the door?',
-    },
-    {
-      title: 'Children during worship.',
-      detail: 'Is there a nursery or children’s room, and who looks after it?',
-    },
-    {
       title: 'The Questions page now lives here.',
       detail:
         'To shorten the menu, the questions moved to the bottom of this page, and the old Questions address comes here. The notes below came with them.',
@@ -150,6 +186,26 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Anything people often ask you?',
       detail: 'Send us the questions and we will add them.',
+    },
+    {
+      title: 'Your kids: the details.',
+      detail:
+        'Nursery ages, where children check in and how parents pick them up, whether it is the whole service, and what a five-year-old does in worship.',
+    },
+    {
+      title: 'Your child safety policy, in one sentence.',
+      detail:
+        'Background checks, two adults in every room, check-in and pick-up. It shows in the same words here and on Ministries, so say it once and we use it everywhere.',
+    },
+    {
+      title: 'What worship is like.',
+      detail:
+        'Hymns or newer songs, piano or organ, your Bible translation and pew Bibles, how you preach and for how long, the invitation, and how often you share the Lord’s Supper and whether visitors may take part.',
+    },
+    {
+      title: 'Getting in and getting around.',
+      detail:
+        'An accessible restroom, wheelchair spaces, steps inside, a hearing loop, large print. Five short answers.',
     },
   ],
   '/ministries/': [
@@ -179,9 +235,14 @@ const NOTES: Record<string, JacobNote[]> = {
         'Greeters, the children’s room, music, the food pantry, workdays and a prayer team are our guesses. Which teams are real, and who should people ask?',
     },
     {
-      title: 'How the church serves its neighbours.',
+      title: 'How the church serves its neighbors.',
       detail:
         'One or two real examples. Does the food pantry run through the year, and when is it open?',
+    },
+    {
+      title: 'One person to ask for each ministry.',
+      detail:
+        'Every card now has an "Ask about ..." link to the contact form, with the ministry named in the message. Tell us who should get each one (a first name is enough), so it reaches the right person.',
     },
   ],
   '/sermons/': [
@@ -207,7 +268,18 @@ const NOTES: Record<string, JacobNote[]> = {
     },
     {
       title: 'What time does the stream start?',
-      detail: 'So we can tell people when to tune in.',
+      detail:
+        'The live button says "Next live: Sunday 11:00 am", from the worship time in Site settings. Is that when the stream starts?',
+    },
+    {
+      title: 'The passage, preacher and series on each sermon.',
+      detail:
+        'Each sermon page shows all three, and people can browse by series and book of the Bible once there are a few. The example sermon has none yet; the yellow lines on its page show where they go.',
+    },
+    {
+      title: 'An audio recording, for the podcast.',
+      detail:
+        'The podcast fills itself from any sermon with an MP3 attached. If you can record Sunday’s message, people can listen in the car. A YouTube link also lets the video play right on the page.',
     },
   ],
   '/prayer/': [
@@ -222,9 +294,14 @@ const NOTES: Record<string, JacobNote[]> = {
         'Right now they would go to you alone, and the website keeps no copy. Should a prayer team see them too?',
     },
     {
-      title: 'May people share a request with the church?',
+      title: 'The prayer chain, and a call back.',
       detail:
-        'The form has a tick box for "You may share this with the church family". Keep it, or keep every request private?',
+        'The form now has two tick boxes: "You may share this with the prayer chain" (off unless someone ticks it) and "I would like Pastor Jacob to call me". Is there a prayer chain, and who is on it?',
+    },
+    {
+      title: 'Is a request ever read aloud or printed?',
+      detail:
+        'The page should say exactly where a request goes, so tell us if any are shared on a Sunday or in the bulletin.',
     },
   ],
   '/events/': [
@@ -236,7 +313,12 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Confirm the weekly times.',
       detail:
-        'The Sunday and Wednesday times here come from the same list as the rest of the site.',
+        'The Sunday and Wednesday times here come from the same list as the rest of the site. We added Youth on Wednesday at 6:00 from your road sign. Each one gets an "Add to calendar" link once its time is confirmed.',
+    },
+    {
+      title: 'Put the big days in Church Trac early.',
+      detail:
+        'Homecoming, revival, VBS, Christmas Eve, Easter, the Thanksgiving meal and baptism Sundays. Added a month or two ahead, they show under "Coming up" here and on Home, and the church looks as busy as it is.',
     },
   ],
   '/give/': [
@@ -248,6 +330,11 @@ const NOTES: Record<string, JacobNote[]> = {
       title: 'Giving by mail.',
       detail: 'If people can mail a check, who should it be made out to and where should it go?',
     },
+    {
+      title: 'How gifts are cared for.',
+      detail:
+        'How the offering is counted, giving statements each January, whether the church votes on the budget, and a line on the Cooperative Program. A new section asks for each.',
+    },
   ],
   '/next-steps/': [
     {
@@ -258,12 +345,17 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Baptism and membership, in your words.',
       detail:
-        'How someone is baptised here, and how they join the church: a class, a talk with you, a vote? Two or three sentences each.',
+        'How someone is baptized here, and how they join the church: a class, a talk with you, a vote? Two or three sentences each.',
     },
     {
       title: 'Coffee with the pastor?',
       detail:
         'An easy first step some churches offer: a coffee to ask anything. Would you like to offer it? If not, we will drop the line.',
+    },
+    {
+      title: 'Know Jesus: your verse.',
+      detail:
+        'Step one now stands on its own above the others. Which verse would you like there (Romans 10:9, or another), in the church’s translation?',
     },
   ],
   '/contact/': [
@@ -295,7 +387,25 @@ const NOTES: Record<string, JacobNote[]> = {
     },
     {
       title: 'Who reads prayer requests?',
-      detail: 'The page says the pastor and the prayer team. Is that right?',
+      detail:
+        'Contact now sends prayer requests to the prayer request page, which says Pastor Jacob reads every one. Should anyone else?',
+    },
+    {
+      title: 'How quickly is a text answered?',
+      detail:
+        'Visitors said they would text before they called. A line like "Someone usually replies the same day, even Saturday" would help, if it is true.',
+    },
+  ],
+  '/pastoral-care/': [
+    {
+      title: 'A new page: Need the pastor?',
+      detail:
+        'For a hard day: how to reach you after hours, hospital and homebound visits, funerals, weddings, the Lord’s Supper at home and help with a bill. Every line in brackets is yours to answer.',
+    },
+    {
+      title: 'After hours.',
+      detail:
+        'Say Mom is taken to the hospital on a Saturday night: who should someone call, and may that number be on the site? A deacon is fine too.',
     },
   ],
   '/journal/': [
@@ -318,6 +428,11 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Send us a recent bulletin.',
       detail: 'One past PDF is enough to show you how it looks.',
+    },
+    {
+      title: 'When is it posted, and by whom?',
+      detail:
+        'Until the new one is up, the page keeps last week’s and says when the next goes up. Tell us the day (say, "by Saturday evening") and who uploads it.',
     },
   ],
   '/privacy/': [

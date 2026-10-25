@@ -417,6 +417,8 @@ export interface ProjectedThisWeekSection {
   _key: string;
   heading?: string;
   intro?: string;
+  /** 'everyWeek' lists each regular gathering once (Events); default the next seven days. */
+  mode?: 'thisWeek' | 'everyWeek';
 }
 /** watchSection (FBC Auburn): words beside the latest YouTube message. Content block. */
 export interface ProjectedWatchSection {

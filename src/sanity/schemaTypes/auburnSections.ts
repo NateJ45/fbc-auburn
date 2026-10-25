@@ -293,6 +293,8 @@ export const letterSection = defineType({
 // ── This week ────────────────────────────────────────────────────────────────
 // The next seven days from Site settings (service times) and the Church Trac calendar, drawn by
 // src/components/church/ThisWeekList.astro. Nothing to type but the heading: the rows derive.
+// "Every week" (2026-10-25, the Events page) lists each regular gathering instead, with a link to
+// its Ministries card and an Add to calendar link (src/components/church/EveryWeekList.astro).
 export const thisWeekSection = defineType({
   name: 'thisWeekSection',
   title: 'This week (times and calendar)',
@@ -312,6 +314,21 @@ export const thisWeekSection = defineType({
       rows: 2,
       description:
         'The list itself comes from the service times in Site settings and the Church Trac calendar.',
+    }),
+    defineField({
+      name: 'mode',
+      title: 'Show',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'The next seven days, with dates (Home)', value: 'thisWeek' },
+          { title: 'Every regular gathering, once each (Events)', value: 'everyWeek' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'thisWeek',
+      description:
+        'Both come from the service times in Site settings, so they always agree. Every week also links each gathering to its Ministries card.',
     }),
   ],
   preview: {

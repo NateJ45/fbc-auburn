@@ -64,6 +64,14 @@
   overflow: hidden;
   border: 0;
   border-radius: 0;
+}
+/* The tint behind a picture while it loads. Not on the no-picture sermon art, which is its own
+   stone ground (it was painted over here, leaving a blank beige box: audit 2026-10-25). */
+.shape-step,
+.shape-gable,
+.watch-band .c-art:not(.c-art--blank),
+.watch-band .watch-card,
+.watch-band .last-sunday__frame {
   background: var(--muted);
 }
 .shape-step > img,
