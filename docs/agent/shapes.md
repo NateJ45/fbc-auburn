@@ -6,19 +6,30 @@ designed family, and a Ministries hub built on them. Styles: `src/styles/shapes.
 
 ## The shapes
 
-| Class                                | What it does                                                                                                                                                                                                                                                                     | Where it is used                                        |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `.shape-step`                        | Cuts the top-left corner away in three brick courses (each step 2 units across, 1 down; one unit is `--step-u`). The picture's top edge climbs left to right, like the stepped bricks of the section marker. The other corners are square. `.shape-step--lg` uses bigger bricks. | Find your place cards                                   |
-| `.shape-gable`                       | Cuts the picture to the roofline of the building. The pitch (`--gable-pitch`, 24%) is a share of the box, so a narrow box reads steep and a wide one reads like the porch roof.                                                                                                  | Every photo in the "Image and text" block (`ImageText`) |
-| `.shape-slab`                        | A navy printed-brick wall (`tile-deep.svg`) behind the picture, from a third of the way in out past the page edge. `.shape-slab--left` runs it to the left. On a phone it is a band behind the lower part of the picture. The section around it needs `.shape-slab-host`.        | ImageText photos (the side follows the picture's side)  |
-| `.shape-zoom` inside a `.shape-card` | The picture grows to 1.08 over 500ms on hover or keyboard focus of the card, inside the clipped frame. No lift, no shadow. Off with reduced motion.                                                                                                                              | Find your place cards                                   |
-| `.shape-tile`                        | A card with no photo: its stone icon on warm printed brick (`tile-warm.svg`), in the same shape.                                                                                                                                                                                 | Find your place cards without a photo                   |
+| Class                                | What it does                                                                                                                                                                                                                                                              | Where it is used                                        |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `.shape-step`                        | A picture inside a card: a plain frame with the 14px inner corner (`.shape-step--lg`, a post's cover, takes the 20px card corner). It cut the top-left corner in three brick courses until 2026-10-25 (see below).                                                        | Find your place cards, people, posts, the Watch band    |
+| `.shape-gable`                       | Cuts the picture to the roofline of the building. The pitch (`--gable-pitch`, 24%) is a share of the box, so a narrow box reads steep and a wide one reads like the porch roof.                                                                                           | Every photo in the "Image and text" block (`ImageText`) |
+| `.shape-slab`                        | A navy printed-brick wall (`tile-deep.svg`) behind the picture, from a third of the way in out past the page edge. `.shape-slab--left` runs it to the left. On a phone it is a band behind the lower part of the picture. The section around it needs `.shape-slab-host`. | ImageText photos (the side follows the picture's side)  |
+| `.shape-zoom` inside a `.shape-card` | The picture grows to 1.08 over 500ms on hover or keyboard focus of the card, inside the clipped frame. No lift, no shadow. Off with reduced motion.                                                                                                                       | Find your place cards                                   |
+| `.shape-tile`                        | A card with no photo: its stone icon at 96px on the flat pale navy panel (`#E9EEF5`, the one tinted surface), in the same frame. It was warm printed brick until 2026-10-25.                                                                                              | Find your place cards without a photo                   |
 
 The shapes are `clip-path` polygons, so an image, a Photo needed example (`ShotRequest`) or a plain panel take them the
 same way. A clipped border shows as a hairline along the cut, so shaped frames have `border: 0`. Board pages give
 `.auburn-arch.shape-gable` square corners and a 5:4.4 box (`src/styles/board.css`).
 
 Drawings in ImageText (the mark, the baptism graphic, the building band) and the empty-slot mark are not shaped.
+
+**The gable is the one photo shape (audit 2026-10-25, GD-M5).** The stepped corner was retired from card photos: at
+card size its three 10 to 15px notches read as jagged cropping, worst on pale photos (the road sign, a post cover), and
+making it bold enough to read as brick (two 30px steps, as on the logo) took a bite out of every face in a 300px card.
+So a picture that stands alone (ImageText, the page head's photo) is cut to the gable over the navy brick slab, and a
+picture in a card is a plain frame. The page head's photo (`.board-head__photo`) takes the gable too.
+
+**The church mark is one moment (UX-M5).** ImageText's "Picture" field has a fifth option, "No picture (the words
+alone)" (`art: 'none'`), which draws the words on the reading measure with no picture column. The big mark panel is
+kept for About ("The story in our mark"); What we believe's "The gospel, first" and Plan your visit's "Bringing
+children" (no children's photos) use "No picture" (`scripts/content/audit-visual.mjs`).
 
 ## Find your place (`findYourPlaceSection`)
 
@@ -32,10 +43,8 @@ A page-builder block, in the Studio as "Find your place (groups of cards)" under
   `/ministries/#serve` deep-links and Back and Forward work natively. A small script marks the group in view with
   `aria-current` and measures the header: the base layout hides the header on a scroll down (`data-state="hidden"`), so
   the index slides up with it and comes back under it.
-- **A card**: a photo (stepped corner) or its stone icon on brick; who it is for, in small caps; the title; **when and
-  where** as a red serif line; a sentence or two; and **one action**, which makes the whole card the link (2026-10-25):
-  the card's own link, else "Ask about <title>" to `/contact/?topic=question&about=<title>` (the shared contact
-  convention). An own link that is the bare contact page gets the same topic and name.
+- **A card**: a photo (a plain frame) or its stone icon on the pale panel; who it is for, in small caps; the title;
+  **when and where** in Familjen 15px, weight 600, muted navy (it was a red serif line until 2026-10-25); a sentence or two; and **one action**, which makes the whole card the link (2026-10-25): the card's own link, else "Ask about <title>" to `/contact/?topic=question&about=<title>` (the shared contact convention). An own link that is the bare contact page gets the same topic and name.
 - **Card anchors** (2026-10-25). Every card has an id, `fyp-<title>` (`/ministries/#fyp-sunday-school`), from `fypIds`
   in `src/lib/gatherings.ts`: one id space with the groups, a repeat numbered. The Events page's "Every week" list
   links each gathering to its card by name through the same function, so the two never drift.
@@ -62,9 +71,10 @@ swapped the page picture from the ABC blocks to the open door, and set American 
 
 Added 2026-10-24, from the hppres.org stories. `src/pages/journal/[slug].astro`, styles `src/styles/article.css`.
 
-- **Head.** A back link ("News and notes" in small caps with a 56px thin arrow pointing left, which draws back a
-  little on hover), the title big in Young Serif (up to about 4.75rem, 20ch), the standfirst (the post's excerpt).
-- **Cover.** The full content width, 16:9 (4:3 on a phone), cut with `.shape-step.shape-step--lg`. A stand-in cover
+- **Head.** The sermon detail's grammar (2026-10-25, GD-M12): the brick marker and "News and notes" as the eyebrow
+  (`.hb-label`), which is also the link back to the list; the title in Young Serif (up to 64px, 20ch); the standfirst
+  (the post's excerpt). Every part sits on the 48px page gutter (`.art-gutter`, 20px below 960px), like every other page.
+- **Cover.** The full content width, 16:9 (4:3 on a phone), framed with `.shape-step.shape-step--lg` (the 20px card corner). A stand-in cover
   still shows its Photo needed example (`journalCoverShot`), in the same shaped frame.
 - **Rail and body.** From 64rem: a 13rem rail on the left, sticky under the header, holding the date (Young Serif),
   reading time, author, categories, the headings list (`CaseStudyTOC`) and the share buttons stacked full width; the
@@ -97,14 +107,14 @@ existing `intro` field) is the place for "what this role is"; it already sits un
   (`heroSection.showTimes`). A pale panel across the bottom of an inner page head, from 30% in out to the window edge:
   "Sundays at Auburn", each Sunday gathering (time big, what it is in small caps), the address and Directions, all from
   Church facts, with the To confirm tag while unconfirmed. Under 64rem it is one bar that opens the map.
-- **Fold-out questions** (`accordionSection`, `src/styles/church-blocks.css`): hairline rows, the question in Young
-  Serif, a thin circled plus that fills red and turns to a minus when open, the answer in the right-hand column on a wide
+- **Fold-out questions** (`accordionSection`, `src/styles/church-blocks.css`): hairline rows, the question in Familjen
+  19px weight 600 (Young Serif until 2026-10-25), a thin circled plus that fills navy and turns to a minus when open, the answer in the right-hand column on a wide
   screen. Plan your visit's "Good to know" uses it.
 - **A letter** (`letterSection`, `src/components/sections/LetterSection.astro`): greeting, the letter, sign-off,
   signature picture or the name in Young Serif, role, optional button, on a sheet of warm paper with a brick-red top
   edge and a slight turn (none with reduced motion). Leadership carries Pastor Jacob's.
 - **Last Sunday** (`WatchSection.astro`): the band's label ("Last Sunday" or "Latest message") huge in outline behind
-  it, half off its bottom edge, and the stepped corner on its media. Use the outline word no more than twice on the site.
+  it, half off its bottom edge, and the 14px inner corner on its media. Use the outline word no more than twice on the site.
 - **The phone menu** (`src/components/MobileNav.astro`, a native `<dialog>` since 2026-10-25; styles in
   `src/styles/auburn.css`): a full-screen sheet of big Young Serif rows with long arrows. A menu group (Site settings >
   Menus) shows its name as a small red label with its pages as rows beneath, always open. The menu is three groups

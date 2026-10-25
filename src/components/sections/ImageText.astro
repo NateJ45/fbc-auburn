@@ -5,10 +5,10 @@ import SanityImage from '@/components/SanityImage.astro';
 import { surfaceClass, type CadenceSurface } from '@/lib/surfaces';
 import PortableText from '@/components/PortableText';
 import CtaLink from '@/components/CtaLink.astro';
+import SectionLabel from '@/components/home/SectionLabel.astro';
 import MarkBuild from '@/components/motion/MarkBuild.astro';
 import BaptismGraphic from '@/components/motion/BaptismGraphic.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
-import Sill from '@/components/Sill.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
 import { shotFor } from '@/data/shot-list';
 import { splitStega } from '@/lib/preview-stega';
@@ -20,7 +20,7 @@ import markPrint from '@/assets/brand/mark-print.png';
 
 interface Props {
   /** FBC Auburn: a photo, or one of the church's drawings with its scroll motion. */
-  art?: 'photo' | 'mark' | 'baptism' | 'building';
+  art?: 'photo' | 'mark' | 'baptism' | 'building' | 'none';
   image?: any;
   imageSide?: 'left' | 'right';
   eyebrow?: string;
@@ -55,18 +55,36 @@ const shot =
 const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebrow ? 'mt-m' : ''}`;
 ---
 
-{art === 'building' ? (
+{art === 'none' ? (
+  // No picture (2026-10-25, the site audit): the words alone, on the page's reading measure.
+  <section class={bg} aria-labelledby={heading ? headingId : undefined}>
+    <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
+      <div class="max-w-3xl">
+        {eyebrow && <SectionLabel text={eyebrow} as="p" />}
+        {heading && (
+          <h2 id={headingId} class="font-display text-h2 auburn-h2">
+            {heading}
+          </h2>
+        )}
+        {body && <PortableText value={body} className={bodyClass} />}
+        {cta?.label && (
+          <div class="mt-l">
+            <CtaLink cta={cta} variant="secondary" />
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+) : art === 'building' ? (
   // THE BUILDING BAND (2026-10-23): the words on one row (heading left, the paragraph and the
   // button right, the split's own tracks), then the pen-and-pencil sketch of the church across the
-  // full column, standing on a brick sill like a foundation. The Muncie site's heritage band is the
+  // full column, standing on the page (its brick sill went in the 2026-10-25 audit: one sill per page). The Muncie site's heritage band is the
   // model: the drawing is the page's centrepiece, not a picture beside a paragraph.
   <section class={bg} aria-labelledby={heading ? headingId : undefined}>
     <div class="mx-auto max-w-content px-m pt-section-lg" data-reveal>
       <div class="split items-start">
         <div>
-          {eyebrow && (
-            <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>
-          )}
+          {eyebrow && <SectionLabel text={eyebrow} as="p" />}
           {heading && (
             <h2 id={headingId} class="font-display text-h2 auburn-h2">
               {heading}
@@ -87,7 +105,6 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
         label="A pen and pencil sketch of the church: the red brick building with its white portico, the ramp up to the front door, the steeple, and the road sign beside the plain roadside cross"
       />
     </div>
-    <Sill class="building-band__sill" />
   </section>
 ) : (
   <section class:list={[bg, 'shape-slab-host']} aria-labelledby={heading ? headingId : undefined}>
@@ -143,9 +160,7 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
       </div>
 
       <div class:list={[imageFirst ? 'lg:order-2' : 'lg:order-1']}>
-        {eyebrow && (
-          <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>
-        )}
+        {eyebrow && <SectionLabel text={eyebrow} as="p" />}
         {heading && (
           <h2 id={headingId} class="font-display text-h2 auburn-h2">
             {heading}

@@ -22,10 +22,14 @@ import { getChurchFacts } from '@/lib/church-data';
 import { earlierSundayLine } from '@/lib/church-facts';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
+import markEnd from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 
 type Props = Omit<ProjectedWalkSection, '_type' | '_key'> & {
   surface?: 'background' | 'muted';
   headingId: string;
+  /** The one-red-button rule (audit 2026-10-25): the opener's ask is red unless an earlier block
+      has the red; the same ask at the walk's end is always navy. */
+  primaryVariant?: 'primary' | 'navy';
 };
 
 const {
@@ -38,6 +42,7 @@ const {
   endLinkHref,
   surface = 'background',
   headingId,
+  primaryVariant = 'primary',
 } = Astro.props as Props;
 
 const list = stops.filter((s) => s?.title);
@@ -88,7 +93,7 @@ const earlier = earlierSundayLine(await getChurchFacts());
         <div class="walk-opener__ask">
           <CtaLink
             cta={{ label: endLinkLabel, href: endLinkHref || '/contact/?visit=sunday-11' }}
-            variant="primary"
+            variant={primaryVariant}
           />
         </div>
       )}
@@ -109,9 +114,9 @@ const earlier = earlierSundayLine(await getChurchFacts());
       ))}
       {endHeading && (
         <li class="walk-step walk-end">
-          {/* The path's last stone: one of the mark's gold stepping stones. */}
+          {/* The path's last stop: the church mark (audit 2026-10-25, GD-M4). */}
           <span class="walk-step__stone walk-step__stone--end" aria-hidden="true">
-            <img src={stones[0]} alt="" width="44" height="20" />
+            <img src={markEnd.src} alt="" width="40" height="40" />
           </span>
           <div class="walk-step__body">
             <h3>{endHeading}</h3>
@@ -120,7 +125,7 @@ const earlier = earlierSundayLine(await getChurchFacts());
               <div class="mt-l">
                 <CtaLink
                   cta={{ label: endLinkLabel, href: endLinkHref || '/contact/?visit=sunday-11' }}
-                  variant="primary"
+                  variant="navy"
                 />
               </div>
             )}

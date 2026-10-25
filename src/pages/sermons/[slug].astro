@@ -6,7 +6,7 @@
 // BibleGateway, worked out from what was typed, rule 15), the notes to download, and more from
 // the same series (or the newest others). JSON-LD: VideoObject or CreativeWork (sermonJsonLd).
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Hero from '@/components/Hero.astro';
+import BoardPageHead from '@/components/home/BoardPageHead.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import SermonPlayer from '@/components/collections/SermonPlayer.astro';
 import SermonRow from '@/components/collections/SermonRow.astro';
@@ -93,13 +93,14 @@ const schemas = [
   searchType="sermon"
 >
   <SearchMeta date={s.date ? longDate(s.date) : undefined} passage={s.passage} />
-  <Hero
+  {/* The board page head straight, so the long title takes the detail size (audit 2026-10-25). */}
+  <BoardPageHead
     eyebrow={s.series?.title || 'Sermon'}
     headline={title}
     subhead={[s.passage, who, longDate(s.date)].filter(Boolean).join(' · ')}
     headingId="sermon-heading"
-    size="short"
     quiet
+    detail
   />
 
   <BoardRule />

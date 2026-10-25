@@ -43,6 +43,8 @@ interface Props {
   headingAccent?: string;
   /** Inner pages: the Sunday times band under the head (TimesBand.astro). */
   showTimes?: boolean;
+  /** The one-red-button rule (audit 2026-10-25). */
+  primaryVariant?: 'primary' | 'navy';
 }
 
 const {
@@ -58,6 +60,7 @@ const {
   quiet = false,
   headingAccent,
   showTimes = false,
+  primaryVariant = 'primary',
 } = Astro.props as Props;
 
 const masthead = size === 'tall';
@@ -97,6 +100,7 @@ const mark =
     {quiet}
     {headingAccent}
     {showTimes}
+    {primaryVariant}
   />
 ) : (
   <section
@@ -116,7 +120,7 @@ const mark =
         {masthead && <ThisSunday class="arch-hero__sunday" />}
         {(primaryCta || secondaryCta) && (
           <div class="arch-hero__ctas">
-            {primaryCta && <CtaLink cta={primaryCta} variant="primary" />}
+            {primaryCta && <CtaLink cta={primaryCta} variant={primaryVariant} />}
             {secondaryCta && <CtaLink cta={secondaryCta} variant="secondary" />}
           </div>
         )}

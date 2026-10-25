@@ -10,8 +10,9 @@
 // already carries the mark or the baptism drawing further down, in which case `quiet` sets it in
 // plain Young Serif. SectionRenderer works that out from the page's blocks.
 //
-// A page photo (Sanity "Background image") sits beside the words in a 20px frame, on the split's
-// narrow track; a stone icon, when chosen, takes that place instead of a photo.
+// A page photo (Sanity "Background image") sits beside the words cut to the gable, on the split's
+// narrow track; a stone icon, when chosen, takes that place instead of a photo, large and
+// right-aligned to the container edge, centred on the title block (audit 2026-10-25, GD-H5).
 import '@/styles/board.css';
 import SanityImage from '@/components/SanityImage.astro';
 import CtaLink from '@/components/CtaLink.astro';
@@ -40,6 +41,10 @@ interface Props {
   headingAccent?: string;
   /** The Sunday times band across the bottom of the head (TimesBand.astro, 2026-10-24). */
   showTimes?: boolean;
+  /** The one-red-button rule (audit 2026-10-25): navy when an earlier block has the red. */
+  primaryVariant?: 'primary' | 'navy';
+  /** A collection item (a sermon): its title runs long, so it is capped at 64px, not 88. */
+  detail?: boolean;
 }
 const {
   eyebrow,
@@ -53,6 +58,8 @@ const {
   quiet,
   headingAccent,
   showTimes = false,
+  primaryVariant = 'primary',
+  detail = false,
 } = Astro.props as Props;
 // The quiet (plain Young Serif) title takes the accent as a coloured span; the brick title draws it.
 const split = splitHeadingAccent(headline, headingAccent);
@@ -61,11 +68,17 @@ const side = hasImage || !!icon;
 ---
 
 <section
-  class:list={['board-head', showTimes && 'board-head--times']}
+  class:list={['board-head', showTimes && 'board-head--times', detail && 'board-head--detail']}
   aria-labelledby={headingId}
   data-hero="board"
 >
-  <div class:list={['board-head__inner', side && 'board-head__inner--side']}>
+  <div
+    class:list={[
+      'board-head__inner',
+      side && 'board-head__inner--side',
+      !hasImage && icon && 'board-head__inner--icon',
+    ]}
+  >
     <div class="board-head__copy">
       {eyebrow && <SectionLabel text={eyebrow} as="p" />}
       {quiet ? (
@@ -86,7 +99,7 @@ const side = hasImage || !!icon;
       {subhead && <p class="board-head__sub">{subhead}</p>}
       {(primaryCta || secondaryCta) && (
         <div class="board-head__ctas">
-          {primaryCta && <CtaLink cta={primaryCta} variant="primary" />}
+          {primaryCta && <CtaLink cta={primaryCta} variant={primaryVariant} />}
           {secondaryCta && <CtaLink cta={secondaryCta} variant="secondary" />}
         </div>
       )}
@@ -103,7 +116,7 @@ const side = hasImage || !!icon;
         />
       </div>
     ) : (
-      icon && <StoneIcon name={icon} size={160} loading="eager" class="board-head__icon" />
+      icon && <StoneIcon name={icon} size={240} loading="eager" class="board-head__icon" />
     )}
   </div>
   {showTimes && <TimesBand />}

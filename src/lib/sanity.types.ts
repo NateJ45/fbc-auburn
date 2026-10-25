@@ -1797,7 +1797,7 @@ export type GallerySection = {
 
 export type ImageTextSection = {
   _type: 'imageTextSection';
-  art?: 'photo' | 'mark' | 'baptism' | 'building';
+  art?: 'photo' | 'mark' | 'baptism' | 'building' | 'none';
   image?: {
     asset?: SanityImageAssetReference;
     media?: unknown;

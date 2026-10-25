@@ -36,7 +36,9 @@ interface CtaBlock {
 
 interface Props {
   cta?: CtaBlock | null;
-  variant?: 'primary' | 'secondary';
+  /** primary: the page's one red button. navy: a solid navy button, for every other strong action
+      (the one-red-button rule, audit 2026-10-25). secondary: the navy outline. */
+  variant?: 'primary' | 'navy' | 'secondary';
   /** When true, swap variant colors for legibility on a dark surface. */
   onDark?: boolean;
   /** Fallback href if the CTA can't be resolved (e.g., siteSettings hasn't been populated). */
@@ -67,9 +69,13 @@ const baseClasses = 'btn-auburn press-tactile';
 const variantClasses =
   variant === 'primary'
     ? 'btn-auburn--primary'
-    : onDark
-      ? 'border border-white/70 text-white hover:bg-white/10 hover:border-white'
-      : 'btn-auburn--secondary';
+    : variant === 'navy'
+      ? onDark
+        ? 'btn-auburn--secondary border-white/70 text-white hover:bg-white/10'
+        : 'btn-auburn--navy'
+      : onDark
+        ? 'border border-white/70 text-white hover:bg-white/10 hover:border-white'
+        : 'btn-auburn--secondary';
 ---
 
 <a

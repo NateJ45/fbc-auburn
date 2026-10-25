@@ -152,67 +152,77 @@ html.motion .reveal:not(.in) {
 .rail__link:hover {
   text-decoration-thickness: 2px;
 }
-/* The path between two icons (2026-10-25): a slender laid brick path, running bond inside a
-   darker soldier-course edge. On desktop it winds out, across and back down the icon column,
-   borrowing a little of the gap beside the text; on phones it makes one gentle bend. Each step
-   mirrors the last, and it stops short of the icons, closed off by a course of the edge brick.
-   The edge is the element, the bricks its ::before; each is painted with an axis-true brick
-   pattern and cut to the curve by a mask whose stroke keeps its width however tall the step's
-   text makes the box, so the bricks never stretch. */
+/* The path between two icons: the site's one step connector (audit 2026-10-25, GD-M4), a 2px
+   dashed line in light navy down the icon column. It replaced a winding laid-brick path that read
+   as a worm between the steps. */
 .rail__col > .rail__stone {
   position: relative;
   z-index: 1;
 }
 .rail__trail {
-  --bricks: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2756%27%20height%3D%2714%27%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27%23E6D9C9%27%2F%3E%3Crect%20x%3D%270.55%27%20y%3D%270.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%23B5503A%27%2F%3E%3Crect%20x%3D%2714.55%27%20y%3D%270.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%23A9472F%27%2F%3E%3Crect%20x%3D%2728.55%27%20y%3D%270.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%23BF5C42%27%2F%3E%3Crect%20x%3D%2742.55%27%20y%3D%270.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%239E4430%27%2F%3E%3Crect%20x%3D%27-6.45%27%20y%3D%277.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%23A2462F%27%2F%3E%3Crect%20x%3D%277.55%27%20y%3D%277.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%23C46A4E%27%2F%3E%3Crect%20x%3D%2721.55%27%20y%3D%277.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%23AE4C36%27%2F%3E%3Crect%20x%3D%2735.55%27%20y%3D%277.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%23B85640%27%2F%3E%3Crect%20x%3D%2749.55%27%20y%3D%277.55%27%20width%3D%2712.9%27%20height%3D%275.9%27%20rx%3D%271%27%20fill%3D%27%23A2462F%27%2F%3E%3C%2Fsvg%3E');
-  --edge: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%276%27%20height%3D%275%27%3E%3Crect%20width%3D%276%27%20height%3D%275%27%20fill%3D%27%23E6D9C9%27%2F%3E%3Crect%20x%3D%270%27%20y%3D%270.5%27%20width%3D%276%27%20height%3D%274%27%20fill%3D%27%238C3B2A%27%2F%3E%3C%2Fsvg%3E');
-  --cut-edge: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2010%2026%2012%2026%2028%20C26%2046%2074%2050%2074%2070%20C74%2086%2050%2090%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2726%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
-  --cut-bricks: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2010%2026%2012%2026%2028%20C26%2046%2074%2050%2074%2070%20C74%2086%2050%2090%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2718%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
-  position: relative;
   flex: 1;
-  align-self: stretch;
+  align-self: center;
+  width: 2px;
   min-height: 7rem;
-  margin-block: 0.5rem; /* clear of the icon above and the one below */
-  margin-inline: -8px; /* room to swing: borrows a little of the gap beside the text */
-  background: var(--edge) center top / 6px 5px repeat;
-  -webkit-mask: var(--cut-edge) center / 100% 100% no-repeat;
-  mask: var(--cut-edge) center / 100% 100% no-repeat;
+  margin-block: 0.75rem;
+  background: var(--step-dash-y);
 }
-.rail__trail::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--bricks) center top / 56px 14px repeat;
-  /* 5px shorter at each end, so the edge brick closes the path off */
-  -webkit-mask: var(--cut-bricks) center / 100% calc(100% - 10px) no-repeat;
-  mask: var(--cut-bricks) center / 100% calc(100% - 10px) no-repeat;
+/* Step 1 set apart (audit 2026-10-25, P-9 and GD-M4): a white card, a bigger title. */
+.rail__step:first-child .rail__body {
+  align-self: start;
+  margin-bottom: clamp(3.5rem, 8vw, 5rem);
+  padding: var(--pad-card);
+  border-radius: var(--radius-card);
+  background: #ffffff;
+  box-shadow: var(--shadow-card);
 }
-.rail__trail--flip {
-  --cut-edge: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2010%2074%2012%2074%2028%20C74%2046%2026%2050%2026%2070%20C26%2086%2050%2090%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2726%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
-  --cut-bricks: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2010%2074%2012%2074%2028%20C74%2046%2026%2050%2026%2070%20C26%2086%2050%2090%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2718%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
+.rail__step:first-child:not(:last-child) .rail__body {
+  padding-bottom: var(--pad-card);
 }
+.rail__step:first-child .rail__title {
+  font-size: var(--text-h2);
+}
+.rail__step:first-child .rail__text {
+  color: var(--foreground);
+}
+/* The path's last stop: the church mark at the icon column's size, the closing line beside it, on
+   the steps' own grid (it was a 300px cross centred under the rail, a second big cross panel). */
 .rail-end {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 98px minmax(0, 1fr);
+  gap: clamp(1.2rem, 3vw, 2.4rem);
   align-items: center;
-  text-align: center;
-  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  max-width: 820px;
+  margin: clamp(0.5rem, 2vw, 1rem) auto 0;
+}
+.rail-end__stop {
+  display: grid;
+  place-items: center;
 }
 .rail-end__mark {
-  width: clamp(200px, 26vw, 300px);
+  width: 72px;
 }
 .rail-end__line {
-  font-size: var(--text-h2);
+  font-size: var(--fs-h3);
   line-height: 1.2;
   max-width: 36rem;
-  margin: 1.6rem 0 1rem;
+  margin: 0 0 0.9rem;
   text-wrap: balance;
 }
 .rail-end__ctas {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 0.7rem;
+}
+@media (max-width: 767px) {
+  .rail-end {
+    grid-template-columns: 56px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: start;
+  }
+  .rail-end__mark {
+    width: 48px;
+  }
 }
 @media (max-width: 560px) {
   .rail__step {
@@ -228,8 +238,8 @@ html.motion .reveal:not(.in) {
   }
 }
 /* Phones (phone polish, 2026-10-24): the 70px stone column left the words 215px wide at 375 (190 at
-   320) and the three pebbles 117px between steps. A 48px stone in a 56px column; the brick path
-   (2026-10-25) narrows to fit it and the gap between steps stays short. */
+   320) and the three pebbles 117px between steps. A 48px stone in a 56px column and a short gap
+   between steps. */
 @media (max-width: 767px) {
   .rail__step {
     grid-template-columns: 56px minmax(0, 1fr);
@@ -247,15 +257,8 @@ html.motion .reveal:not(.in) {
     padding-bottom: 2rem;
   }
   .rail__trail {
-    --cut-edge: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2032%2030%2028%2030%2050%20S50%2068%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2728%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
-    --cut-bricks: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2032%2030%2028%2030%2050%20S50%2068%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2719%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
     min-height: 4rem;
     margin-block: 0.6rem;
-    margin-inline: 0;
-  }
-  .rail__trail--flip {
-    --cut-edge: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2032%2070%2028%2070%2050%20S50%2068%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2728%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
-    --cut-bricks: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M50%200%20C50%2032%2070%2028%2070%2050%20S50%2068%2050%20100%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%2719%27%20vector-effect%3D%27non-scaling-stroke%27%2F%3E%3C%2Fsvg%3E');
   }
 }
 
@@ -499,8 +502,10 @@ html.motion .baptism-motion #ripples {
    way-finding. The dashes are the timeline's (church-blocks.css .cb-moment), so the site keeps one
    path grammar.
    ====================================================================================== */
+/* Every stop's icon sits in the same 56px box (audit 2026-10-25, GD-M4): the pin was clipped at
+   the top and the hands and mug drew bigger than the blocks and the book. */
 .walk {
-  --walk-stone: 64px;
+  --walk-stone: 56px;
 }
 /* The gatherings before worship, under the intro (WalkSection.astro, derived from Church facts). */
 .walk-earlier {
@@ -542,21 +547,22 @@ html.motion .baptism-motion #ripples {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: contain;
 }
+/* The last stop: the church mark at 40px (it was a flat sliver of brick that looked broken). */
 .walk-step__stone--end img {
-  width: 44px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
 }
-/* The path: gold stepping-stone dashes from under this stop's stone down to the next one. */
+/* The path: the site's one step connector, 2px light-navy dashes down to the next stop. */
 .walk-step:not(:last-child)::after {
   content: '';
   position: absolute;
   top: calc(var(--walk-stone) + 0.5rem);
   bottom: 0.5rem;
-  left: calc(var(--walk-stone) / 2 - 3px);
-  width: 6px;
-  border-radius: 3px;
-  background: repeating-linear-gradient(180deg, var(--auburn-gold) 0 10px, transparent 10px 19px);
+  left: calc(var(--walk-stone) / 2 - 1px);
+  width: 2px;
+  background: var(--step-dash-y);
 }
 .walk-step__body {
   padding-top: 0.35rem;
@@ -586,7 +592,7 @@ html.motion .baptism-motion #ripples {
    plan time to light up as you scrolled; with the plan gone they were empty path (2026-10-24). */
 @media (max-width: 767px) {
   .walk {
-    --walk-stone: 52px;
+    --walk-stone: 48px;
   }
   .walk-step:not(:last-child) {
     padding-bottom: 2.5rem;

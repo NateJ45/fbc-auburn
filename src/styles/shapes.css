@@ -2,9 +2,8 @@
    Auburn's shape system (2026-10-24, from the hppres.org audit). Two shapes and one slab, so the
    church's own phone photos read as one designed family across the site:
 
-     .shape-step   a picture with its top-left corner cut away in three brick courses, so its top
-                   edge climbs left to right like the stepped bricks of the section marker. The other corners stay square, like
-                   a laid brick. Cards, events, portraits.
+     .shape-step   a picture inside a card: a plain frame with the card's inner corner (the stepped
+                   corner it once cut was retired 2026-10-25). Cards, events, portraits.
      .shape-gable  a picture cut to the roofline of the building (the front gable in the sketch on
                    About). The pitch is a percentage of the box, so a narrow box reads steeple-steep
                    and a wide one reads like the porch roof: one shape, many proportions.
@@ -15,39 +14,29 @@
                    card (.shape-card), 500ms, no lift and no shadow.
 
    The shapes are clip-paths, so an image, a video, a ShotRequest example or a plain tinted panel
-   (.shape-tile, a stone icon on warm brick for a card with no photo) all take them the same way.
+   (.shape-tile, a stone icon on the pale navy panel for a card with no photo) all take them the same way.
    Docs: docs/agent/shapes.md. */
 
 :root {
-  /* One brick course: the unit the stepped corner is cut in. Three steps, each 2 units across and 1
-     down, so the cut is 6 by 3 units, a brick's proportion. */
-  --step-u: clamp(9px, 0.55rem + 0.35vw, 15px);
   /* How far down the box the eaves sit. */
   --gable-pitch: 24%;
 }
 
-/* The Watch band's media (2026-10-24) take the step too: the sermon art, the poster card and the
-   YouTube frame are drawn by other components, so they are named here rather than given a class. */
+/* The stepped corner is retired (audit 2026-10-25, GD-M5). At card size its three 10 to 15px notches
+   read as jagged cropping, worst on pale photos, and making them bold enough to read as brick (two
+   30px steps) took a bite out of every face and sign in a 300px card. The gable is now the site's
+   one photo shape, kept for the pictures that stand alone (ImageText, the page head); a picture in
+   a card is a plain frame with the card's inner corner. The class name stays, so every card
+   (Find your place, people, posts, the Watch band's media) changes in one place. */
 .shape-step,
 .watch-band .c-art,
 .watch-band .watch-card,
 .watch-band .last-sunday__frame {
-  clip-path: polygon(
-    0 calc(3 * var(--step-u)),
-    calc(2 * var(--step-u)) calc(3 * var(--step-u)),
-    calc(2 * var(--step-u)) calc(2 * var(--step-u)),
-    calc(4 * var(--step-u)) calc(2 * var(--step-u)),
-    calc(4 * var(--step-u)) var(--step-u),
-    calc(6 * var(--step-u)) var(--step-u),
-    calc(6 * var(--step-u)) 0,
-    100% 0,
-    100% 100%,
-    0 100%
-  );
+  border-radius: var(--radius-inner);
 }
-/* A bigger picture gets bigger bricks, so the cut keeps its weight against the photo. */
+/* A big standalone picture (a post's cover) takes the card corner. */
 .shape-step--lg {
-  --step-u: clamp(14px, 0.6rem + 0.8vw, 24px);
+  border-radius: var(--radius-card);
 }
 
 .shape-gable {
@@ -56,6 +45,9 @@
 
 /* Every shape is a frame: the picture inside fills it. No border: a clipped border shows as a
    hairline along the cut (the Photo needed frame has one). */
+.shape-gable {
+  border-radius: 0;
+}
 .shape-step,
 .shape-gable,
 .watch-band .c-art,
@@ -63,7 +55,6 @@
 .watch-band .last-sunday__frame {
   overflow: hidden;
   border: 0;
-  border-radius: 0;
 }
 /* The tint behind a picture while it loads. Not on the no-picture sermon art, which is its own
    stone ground (it was painted over here, leaving a blank beige box: audit 2026-10-25). */
@@ -88,9 +79,11 @@
 
 /* A Photo needed example inside a shape (ShotRequest's frame has its own 20px corners, which would
    round the bottom of the cut): square it. Doubled class to beat the component's scoped rule. */
-.shape-step .shot.shot,
 .shape-gable.shot.shot {
   border-radius: 0;
+}
+.shape-step .shot.shot {
+  border-radius: inherit;
 }
 
 /* The zoom lives on an inner wrapper, so the clip-path never moves. */
@@ -114,14 +107,15 @@
   }
 }
 
-/* A card with no photo: its stone icon on a warm printed-brick wall, in the same shape. */
+/* A card with no photo: its stone icon at 96px on the one tinted panel, flat (audit 2026-10-25,
+   GD-H3: the warm brick wall behind it is retired). */
 .shape-tile {
   display: grid;
   place-items: center;
-  background: #f1e8e2 url('/textures/tile-warm.svg') 0 0 / 420px 420px;
+  background: #e9eef5;
 }
 .shape-tile > :is(img, svg) {
-  width: min(42%, 120px);
+  width: min(42%, 96px);
   height: auto;
   object-fit: contain;
 }
