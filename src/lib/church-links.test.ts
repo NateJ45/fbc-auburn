@@ -61,7 +61,7 @@ test('a blank box falls back to the site’s own page and warns', () => {
     '/contact/',
     '/events/',
     '/contact/',
-    '/watch/',
+    '/sermons/',
   ]);
   assert.equal(warned.length, CHURCH_LINKS.length);
 });

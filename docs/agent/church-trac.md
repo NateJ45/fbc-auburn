@@ -31,7 +31,7 @@ A link box can hold `{giving}`, `{connect}`, `{contact-form}`, `{prayer}`, `{new
   `sanityFetch` (`src/lib/sanity.ts`, PORTABLE, untouched), so the fill never calls itself.
 - **Whole values only**: a token inside a sentence is left alone.
 - **A blank box never ships a broken link**: `{giving}` goes to `/give/`, `{prayer}` to
-  `/prayer/`, `{calendar}` to `/events/`, `{watch}` to `/watch/` (which forwards to `/sermons/` since 2026-10-24), the rest to `/contact/`, and the
+  `/prayer/`, `{calendar}` to `/events/`, `{watch}` to `/sermons/` (it was `/watch/` until that page merged into Sermons, 2026-10-24), the rest to `/contact/`, and the
   build logs `[church-links] {token} is used but ... is empty` once per token.
 - **`{contact-form}`** falls back to the connection card before `/contact/`.
 - **The visit links**: once the connection card is set, any link to `/contact/?visit=...` (the "Tell

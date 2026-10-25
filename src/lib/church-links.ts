@@ -15,7 +15,7 @@
 // sentence. The Studio's Live preview reads through its own client and shows the token unfilled.
 //
 // AN UNFILLED TOKEN NEVER SHIPS AS A BROKEN LINK. A token whose box is blank becomes the site's own
-// page for the same job (/give/, /prayer/, /events/, /watch/, else /contact/), and the build logs
+// page for the same job (/give/, /prayer/, /events/, /sermons/, else /contact/), and the build logs
 // which box was empty, once per token.
 //
 // ONE MORE, ON PURPOSE. Once the connection card is set, a link to the visit form on Contact
@@ -46,7 +46,11 @@ export const CHURCH_LINKS = [
     fallback: '/events/',
   },
   { token: '{members}', box: 'Church Trac > Member sign-in link', fallback: '/contact/' },
-  { token: '{watch}', box: 'Church facts > Live stream link (else Facebook)', fallback: '/watch/' },
+  {
+    token: '{watch}',
+    box: 'Church facts > Live stream link (else Facebook)',
+    fallback: '/sermons/',
+  },
 ] as const;
 
 export type LinkToken = (typeof CHURCH_LINKS)[number]['token'];
