@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-24: a tighter page head on phones._
+
+**Decision.** Below 961px the inner page head carried 66px above the eyebrow and, on nine pages, its
+stone icon as a 112px picture on a row of its own under the title, so it took 144px of the first
+screen for a decoration and pushed What we believe's first words below the fold (Nathan, from a
+screenshot of Plan your visit). The icon is now a 48px mark at the top right, level with the eyebrow,
+whose line stops short of it; the head pads 44px above and 36px below. Heads with an icon are about
+175px shorter at 375px, the rest about 34px (`src/styles/board.css`). A head photo still follows the
+words at full width; desktop is unchanged.
+
 _2026-10-24: the background stone path no longer stalls phones._
 
 **Decision.** The 362ms long task Lighthouse blamed on the Cloudflare beacon on Plan your visit was
