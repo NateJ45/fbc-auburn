@@ -78,9 +78,9 @@ main:is(:has(.board-head), :has(> .hb)) :where(.max-w-content.px-m, .max-w-conte
     column-gap: var(--split-gutter);
     align-items: end;
   }
-  /* An icon, not a photo: the words take the room and the icon sits at the right edge. */
+  /* An icon, not a photo: the same split (so the seam lines up with the bands below), the icon at
+     the right edge of its track and centred on the title block. */
   .board-head__inner--icon {
-    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
   }
 }
