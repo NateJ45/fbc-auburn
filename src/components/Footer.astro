@@ -40,7 +40,7 @@ import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings'
 // The small cut on its paper plate: the cut cross and mortar would show the ink ground otherwise.
 import markAsset from '@/assets/brand/fbc-auburn-icon-white.svg';
 import { getChurchFacts } from '@/lib/church-data';
-import { ctaHref, type CtaTarget } from '@/lib/cta-href';
+import type { CtaTarget } from '@/lib/cta-href';
 import { sundayIcs, thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
@@ -48,6 +48,7 @@ import Sill from '@/components/Sill.astro';
 import WhereNext from '@/components/WhereNext.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+import SundayBar from '@/components/church/SundayBar.astro';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -156,10 +157,19 @@ const hasTouch = !!(
   newsletterAsk ||
   socialLinksToRender.length > 0
 );
-// The closing invitation (Home audit research, 2026-10-17): the footer's first row is the last
-// thing on every page, so it ends with the two next steps a stranger can take. The visit button
-// goes where the header's button goes, so a build without Sanity never links to a missing page.
-const visitCta = chrome.headerCta.show ? chrome.headerCta : null;
+// The page endings (site audit, 2026-10-25): the footer's own "Plan your visit" and "Ask a
+// question" buttons are gone (the header carries the visit button and the link rows cover the
+// rest), the verse runs on Home only, and the This Sunday panel shows only where nothing above it
+// already gives the Sunday times. The where-next rows give way to a page's own closing band (CSS:
+// .where-next in WhereNext.astro hides when <main> holds a [data-final-cta]).
+const path = Astro.url.pathname;
+const here = path.endsWith('/') ? path : `${path}/`;
+const isHome = here === '/';
+// Pages whose own content leads with the Sunday times and address. Other pages that show a
+// This Sunday card or the times band ([data-this-sunday], [data-service-times], .times-band-wrap)
+// hide the panel by CSS (auburn.css, "The page endings").
+const SUNDAY_PAGES = new Set(['/', '/plan-your-visit/']);
+const showSunday = !SUNDAY_PAGES.has(here);
 // The footer's own words (Site settings > Social & footer), each with the built-in fallback.
 const footerAbout = siteSettings?.footerAbout || 'A Southern Baptist church in Ross Township, Ohio';
 // The verse across the top of the footer (2026-10-24), Site settings > Social and footer. The
@@ -170,9 +180,6 @@ const verseText =
 const verseRef = siteSettings?.footerVerse?.text?.trim()
   ? siteSettings.footerVerse.reference?.trim() || ''
   : 'Matthew 11:28';
-const secondaryCta = siteSettings?.footerSecondaryCta?.label
-  ? { label: siteSettings.footerSecondaryCta.label, href: ctaHref(siteSettings.footerSecondaryCta) }
-  : { label: 'Ask a question', href: '/contact/' };
 // The This Sunday panel and its calendar link, from the same facts as Home's card.
 const sunday = thisSunday(footerFacts, churchDataNow());
 const hasCalendar =
@@ -198,14 +205,18 @@ const hasCalendar =
   {/* Where next (2026-10-24): three big rows so no page is a dead end (WhereNext.astro). */}
   <WhereNext path={Astro.url.pathname} />
 
-  <figure class="sf-verse" data-flow-verse>
-    <blockquote class="m-0">
-      <p class="sf-verse__line">
-        <span class="sf-verse__text">&ldquo;{verseText}&rdquo;</span>
-        {verseRef && <cite class="sf-verse__ref">{verseRef}</cite>}
-      </p>
-    </blockquote>
-  </figure>
+  {/* Home only (design audit H1 and L6, 2026-10-25): one signature moment, the same at both widths,
+      instead of an 88px line ending every desktop page and nothing on a phone. */}
+  {isHome && (
+    <figure class="sf-verse" data-flow-verse>
+      <blockquote class="m-0">
+        <p class="sf-verse__line">
+          <span class="sf-verse__text">&ldquo;{verseText}&rdquo;</span>
+          {verseRef && <cite class="sf-verse__ref">{verseRef}</cite>}
+        </p>
+      </blockquote>
+    </figure>
+  )}
 
   <div class="sf-top mx-auto max-w-content px-l">
     {/* The building, faint, behind the footer's own content (2026-10-24): it takes no room of its
@@ -228,23 +239,16 @@ const hasCalendar =
         />
         <span class="sf-invite__name">{brandName}</span>
       </p>
-      <div class="sf-invite__actions">
-        {visitCta && (
-          <a class="btn-auburn btn-auburn--primary" href={visitCta.href}>
-            {visitCta.label}
-          </a>
-        )}
-        <a class="btn-auburn btn-auburn--secondary" href={secondaryCta.href}>
-          {secondaryCta.label}
-        </a>
-      </div>
 
       {/* Link grid. FBC Auburn (Home audit, 2026-10-17): it takes the brand row's own columns
            (.site-footer__links in src/styles/auburn.css), so Visit, Belong and Connect line up under
            the tagline, Sundays and Find us; two columns on phones. When siteSettings.footerColumns is
            non-empty, the custom Sanity columns replace the built-in ones. Get in touch renders only
            when there is an email, a phone or a social link to show. */}
-      <div class="site-footer__links mx-auto grid max-w-content gap-l px-l pt-l pb-m text-left">
+      <div
+        id="site-footer-nav"
+        class="site-footer__links mx-auto grid max-w-content gap-l px-l pt-l pb-m text-left"
+      >
         {/* --- Editor-managed columns (from Sanity siteSettings.footerColumns) --- */}
         {useCustomFooterColumns ? (
           sanityFooterColumns.map((col, colIdx) => (
@@ -485,7 +489,7 @@ const hasCalendar =
         {/* GET IN TOUCH: email, phone, the live stream, Facebook, socials. Skipped when there is none. */}
         {hasTouch && (
           <div class="sf-touch">
-            <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Get in touch</p>
+            <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Contact</p>
             <div class="sf-touch__rows space-y-1 text-sm">
               {email && (
                 <p>
@@ -613,8 +617,7 @@ const hasCalendar =
         )}
       </div>
     </div>
-
-    {sunday && (
+    {sunday && showSunday && (
       <div class="sf-sunday" role="group" aria-labelledby="sf-sunday-title">
         {/* A group, not an aside: Home's This Sunday card is the page's complementary landmark of
             that name, and two would clash (axe landmark-unique). */}
@@ -651,8 +654,13 @@ const hasCalendar =
               <a href={footerAddress.mapsUrl} rel="noopener" target="_blank">
                 Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
               </a>
+              {phone?.confirmed && (
+                <a href={phone.tel} class="sf-sunday__phone">
+                  {phone.display}
+                </a>
+              )}
               {hasCalendar && (
-                <a href="/sunday.ics" download>
+                <a href="/sunday.ics" download class="sf-sunday__ics">
                   Add to my calendar
                 </a>
               )}
@@ -703,3 +711,6 @@ const hasCalendar =
     </div>
   </div>
 </footer>
+
+{/* The phone Sunday bar: Home and Plan your visit (SundayBar.astro). */}
+<SundayBar path={here} />

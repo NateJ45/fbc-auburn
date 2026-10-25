@@ -6,8 +6,8 @@
 //   [data-live-show]   shown only while live (the banner, Home's Live tag); `hidden` otherwise
 //   [data-live-link]   while live, goes to the stream in a new tab: the live video when YouTube
 //                      named one, else the attribute's own address; afterwards, its old address
-//   window.__churchLive and a `church:live` event, for the phone menu (MobileNav.tsx), whose
-//                      rows only exist while it is open
+//   window.__churchLive and a `church:live` event, for the phone menu (MobileNav.astro), whose
+//                      watch links it updates itself
 //
 // The settings come from the first [data-live-start] element, the banner BaseLayout renders on
 // every page when Church facts has somewhere to watch. No banner, nothing runs.

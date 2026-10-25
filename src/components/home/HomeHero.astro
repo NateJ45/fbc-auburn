@@ -21,8 +21,8 @@ import { exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
 import Sill from '@/components/Sill.astro';
 import { getChurchFacts } from '@/lib/church-data';
-import { clockLabel, timesPhrase } from '@/lib/church-facts';
 import { ctaHref } from '@/lib/cta-href';
+import { townOf } from '@/lib/place-line';
 import { splitStega } from '@/lib/preview-stega';
 import type { ProjectedHeroSection, ProjectedImage } from '@/lib/pageBuilder.types';
 
@@ -44,23 +44,15 @@ const isStandIn = (img: ProjectedImage | null | undefined) =>
   (img?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
 
 // The name line: "First Baptist Church of Auburn", then the town from Church facts so "Auburn" is
-// never read as Alabama.
+// never read as Alabama. No ZIP (2026-10-25): it wrapped the line to two on a phone, and the
+// header's place line says the same "Hamilton, OH" (src/lib/place-line.ts).
 const nameLine = [splitStega(block.eyebrow ?? '').cleaned, splitStega(block.headline ?? '').cleaned]
   .filter(Boolean)
   .join(' ');
 const facts = await getChurchFacts();
-const town = facts.address ? facts.address.lines[1] : '';
-const sundayMinutes = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
-const times = sundayMinutes.length ? `Sundays ${timesPhrase(sundayMinutes)}` : '';
-// The bar's short form for the narrowest phones (under 360px): "9:45 & 11:00" under a small
-// "Sundays", so the bar stays one button tall instead of wrapping the long phrase to four lines.
-const timesShort = [...sundayMinutes]
-  .sort((a, b) => a - b)
-  .map((m) => clockLabel(m).replace(/ [ap]m$/, ''))
-  .join(' & ');
+const town = facts.address ? townOf(facts.address.lines[1]) : '';
 const primary = block.primaryCta;
 const secondary = block.secondaryCta;
-const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
 ---
 
 <section class="hb-hero" aria-labelledby="hb-h1" data-photo={photo || example ? 'yes' : 'no'}>
@@ -140,65 +132,5 @@ const barVisitHref = ctaHref(block.primaryCta, '/plan-your-visit/');
   <Sill class="hb-hero__sill" />
 </section>
 
-{times && (
-  <div class="hb-sundaybar" data-sundaybar hidden>
-    <p class="hb-sundaybar__times hb-num">
-      <span class="hb-sundaybar__long">{times}</span>
-      <span class="hb-sundaybar__short">
-        <span class="hb-sundaybar__day">Sundays</span> {timesShort}
-      </span>
-    </p>
-    {facts.address && (
-      <a class="hb-sundaybar__link" href={facts.address.mapsUrl} rel="noopener" target="_blank">
-        {/* Under 360px the word gives way to a map pin; the link keeps its name for screen readers. */}
-        <svg
-          class="hb-sundaybar__pin"
-          viewBox="0 0 24 24"
-          width="24"
-          height="24"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            d="M12 21.5s6.75-5.9 6.75-11.5a6.75 6.75 0 1 0-13.5 0c0 5.6 6.75 11.5 6.75 11.5Z"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linejoin="round"
-          />
-          <circle cx="12" cy="10" r="2.5" fill="currentColor" />
-        </svg>
-        <span class="hb-sundaybar__dir">Directions</span>
-        <span class="sr-only"> (opens Google Maps in a new tab)</span>
-      </a>
-    )}
-    <a class="btn-auburn btn-auburn--primary hb-sundaybar__visit" href={barVisitHref}>
-      Plan your visit
-    </a>
-  </div>
-)}
-<script>
-  // The phone Sunday bar: shown once the This Sunday card has scrolled up out of view, hidden again
-  // while the footer (which carries its own invitation) is on screen. Two IntersectionObservers, no
-  // scroll listener. CSS shows it below 768px only (home-board.css).
-  const bar = document.querySelector<HTMLElement>('[data-sundaybar]');
-  const card = document.querySelector<HTMLElement>('[data-this-sunday]');
-  const footer = document.querySelector<HTMLElement>('.site-footer');
-  if (bar && card && 'IntersectionObserver' in window) {
-    let pastCard = false;
-    let footerIn = false;
-    const sync = () => {
-      bar.hidden = !(pastCard && !footerIn);
-    };
-    new IntersectionObserver(([e]) => {
-      pastCard = !e.isIntersecting && e.boundingClientRect.top < 0;
-      sync();
-    }).observe(card);
-    if (footer) {
-      new IntersectionObserver(([e]) => {
-        footerIn = e.isIntersecting;
-        sync();
-      }).observe(footer);
-    }
-  }
-</script>
+{/* The phone Sunday bar that used to follow the hero is SundayBar.astro since 2026-10-25, rendered
+    by the footer on Home and Plan your visit. */}
