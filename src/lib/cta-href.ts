@@ -19,7 +19,7 @@ export interface CtaTarget {
 const TYPE_TO_PATH: Record<string, string> = {
   homePage: '/',
   aboutPage: '/about/',
-  faqPage: '/faq/',
+  faqPage: '/plan-your-visit/#questions',
   contactPage: '/contact/',
   journalPage: '/journal/', // scaffold: journal
   sermonsPage: '/sermons/',

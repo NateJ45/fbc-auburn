@@ -16,6 +16,16 @@ sequence).
 
 ## Waiting on a human
 
+### 1zx. The menu groups: Jacob's say, and two loose ends (opened 2026-10-24)
+
+The menu is three groups and Watch and Questions folded into Sermons and Plan your visit (changelog,
+2026-10-24). Ask Jacob whether the groups and their names suit him, and what he means by Next steps
+(if it is baptism and membership, it could become a group on the Ministries hub). Loose ends: no page
+emits FAQPage JSON-LD since `/faq/` went (`FaqSection.astro` leaves it out on purpose; emit it
+once per page from the first Questions block if search results matter); and the `{watch}` fallback in
+`src/lib/church-links.ts` still says `/watch/` (the redirect covers it), left alone because another
+branch is editing that file. Change it to `/sermons/` once that lands.
+
 ### 1zy. The hppres.org wayfinding: Jacob's words and the last content move (opened 2026-10-24)
 
 Ministries moved onto the Find your place hub on 2026-10-24 (backup in the session scratchpad, write verified). After

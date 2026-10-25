@@ -451,6 +451,11 @@ html .site-search-dialog {
   align-items: center;
   min-height: 32px;
 }
+/* Inside a group's dropdown each page takes its own line (2026-10-24, when the menu became three
+   groups; inline-flex above ran two short names side by side). */
+.site-header .site-nav__menu a {
+  display: flex;
+}
 .site-header .btn-auburn {
   white-space: nowrap;
   min-height: 44px;
@@ -944,8 +949,7 @@ html .site-search-dialog {
 }
 
 /* The rows. */
-.auburn-menu__rows,
-.auburn-menu__sub {
+.auburn-menu__rows {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1011,8 +1015,7 @@ html .site-search-dialog {
   outline-offset: -3px;
 }
 /* The page you are on: a red stone after its name. */
-.auburn-menu__row[aria-current='page'] .auburn-menu__label::after,
-.auburn-menu__sub a[aria-current='page']::after {
+.auburn-menu__row[aria-current='page'] .auburn-menu__label::after {
   content: '';
   display: inline-block;
   width: 0.4em;
@@ -1023,67 +1026,27 @@ html .site-search-dialog {
   background: var(--auburn-red);
 }
 
-/* An open group: the row fills red (white on #9a3b2a is 6.9:1), the arrow turns down and its
-   pages list underneath on the same red, a size smaller. */
-.auburn-menu__item[data-open] {
-  border-bottom-color: var(--auburn-red);
+/* A menu group (2026-10-24): its name as a small red label, like the card's "This Sunday",
+   then its pages as ordinary rows. The first group's label sits on the menu's top edge, so the
+   outer list drops its own rule and each group's list draws one under its label. */
+.auburn-menu__rows:has(> .auburn-menu__group) {
+  border-top: 0;
 }
-.auburn-menu__row[aria-expanded='true'],
-.auburn-menu__row[aria-expanded='true']:hover {
-  background: var(--auburn-red);
-  color: #ffffff;
+.auburn-menu__group + .auburn-menu__group,
+.auburn-menu__item + .auburn-menu__group {
+  margin-top: 1.75rem;
 }
-.auburn-menu__row[aria-expanded='true'] .auburn-menu__label {
-  transform: none;
-}
-.auburn-menu__row[aria-expanded='true'] .auburn-menu__arrow {
-  color: #ffffff;
-  transform: rotate(90deg);
-}
-.auburn-menu__row[aria-expanded='true']:focus-visible,
-.auburn-menu__sub a:focus-visible {
-  outline: 3px solid #ffffff;
-  outline-offset: -6px;
-}
-.auburn-menu__sub {
-  padding: 0 0 1.1rem;
-  background: var(--auburn-red);
-}
-.auburn-menu__sub[hidden] {
-  display: none;
-}
-.auburn-menu__sub a {
-  display: flex;
-  align-items: center;
-  min-height: 52px;
-  padding: 0.4rem var(--menu-gutter);
-  color: #ffffff;
-  font-family: var(--font-display);
-  font-size: var(--fs-title);
-  line-height: 1.2;
-  text-decoration: none;
-  transition: background-color 160ms ease;
-}
-.auburn-menu__sub a::before {
-  content: '';
-  flex: none;
-  width: 1.1rem;
-  height: 1px;
-  margin-right: 0.85rem;
-  background: rgb(255 255 255 / 0.55);
-  transition: width 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-.auburn-menu__sub a:hover {
-  background: var(--auburn-red-dark);
-}
-.auburn-menu__sub a:hover::before {
-  width: 1.6rem;
-}
-.auburn-menu__sub a[aria-current='page']::after {
-  background: #ffffff;
+.auburn-menu__group-label {
+  margin: 0;
+  padding: 0 var(--menu-gutter) 0.6rem;
+  font-size: var(--fs-tag);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--auburn-red);
 }
 @media (min-width: 64rem) {
-  .auburn-menu__sub a {
+  .auburn-menu__group-label {
     padding-inline: 1.25rem;
   }
 }
@@ -1293,18 +1256,15 @@ html .site-search-dialog {
 }
 
 /* Coming in: the rows rise one after another (12px, 300ms, 40ms apart), the card and the contact
-   details follow on the same count, and the sill lays itself. An opened group's pages rise in the
-   same way. CSS only, keyed on the sheet's data-state; nothing moves under reduced motion. */
+   details follow on the same count, and the sill lays itself. A group's label rises on the count with
+   its rows. CSS only, keyed on the sheet's data-state; nothing moves under reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
   .auburn-menu[data-state='open'] .auburn-menu__search,
   .auburn-menu[data-state='open'] .auburn-menu__item,
+  .auburn-menu[data-state='open'] .auburn-menu__group-label,
   .auburn-menu[data-state='open'] .auburn-menu__side > * {
     animation: menu-rise 300ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
     animation-delay: calc(60ms + var(--i, 0) * 40ms);
-  }
-  .auburn-menu__sub:not([hidden]) > li {
-    animation: menu-rise 300ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    animation-delay: calc(var(--j, 0) * 40ms);
   }
   .auburn-menu[data-state='open'] .auburn-menu__sill .sill-brick {
     transform-box: fill-box;
@@ -1319,8 +1279,6 @@ html .site-search-dialog {
   .auburn-menu__row,
   .auburn-menu__label,
   .auburn-menu__arrow,
-  .auburn-menu__sub a,
-  .auburn-menu__sub a::before,
   .auburn-menu__social a {
     transition: none;
   }

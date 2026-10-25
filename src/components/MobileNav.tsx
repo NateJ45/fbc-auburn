@@ -25,9 +25,9 @@
 // - Top: the lockup on the left and the close button on the right, where the header's own sit, so
 //   opening the menu reads as the page turning over rather than a panel arriving.
 // - Search (when on) as a field-shaped row, then one full-width row per menu item: the label in
-//   Young Serif, a long thin arrow at the right, hairlines between. A row with children is a button
-//   (aria-expanded): open, it fills auburn red, its arrow turns down and its pages list beneath it
-//   in a smaller size. One group is open at a time. The page you are on is marked with a red stone.
+//   Young Serif, a long thin arrow at the right, hairlines between. A menu group (Site settings >
+//   Menus) shows its name as a small red label with its pages as rows beneath, always open
+//   (2026-10-24; it was a tap-to-open row). The page you are on is marked with a red stone.
 // - Below the rows: the This Sunday card (date, times, address, Directions, the watch row, the
 //   visit button), then the tagline, email, phone and socials, then the sill along the bottom.
 // - From 64rem the rows take the left column and the card and contact details the right.
@@ -186,12 +186,6 @@ export default function MobileNav({
   search = false,
 }: Props) {
   const [open, setOpen] = useState(false);
-  // The group that is open, by its label. The one holding the current page starts open, so the
-  // visitor sees where they are; the rest start closed.
-  const currentGroup = links.find(
-    (item) => item.kind === 'dropdown' && item.items.some((sub) => isCurrent(sub.href, current)),
-  )?.label;
-  const [expanded, setExpanded] = useState<string | undefined>(currentGroup);
   const baseId = useId();
   // The live state, kept in step with live-client.ts while the island is on the page.
   const [live, setLive] = useState<{ live: boolean; href?: string } | undefined>(undefined);
@@ -220,11 +214,7 @@ export default function MobileNav({
   const socials = siteSettings?.socials ?? [];
 
   const close = () => setOpen(false);
-  const onOpenChange = (next: boolean) => {
-    setOpen(next);
-    // Each opening starts from the same place: the current page's group, or none.
-    if (next) setExpanded(currentGroup);
-  };
+  const onOpenChange = (next: boolean) => setOpen(next);
 
   // The stagger index runs on past the rows, so the card and contact details follow them in.
   let n = 0;
@@ -318,34 +308,26 @@ export default function MobileNav({
                         </li>
                       );
                     }
-                    const isOpen = expanded === item.label;
-                    const panelId = `${baseId}-group-${item.label.replace(/\W+/g, '-')}`;
+                    // A group (2026-10-24): its name as a small red label, then its pages as
+                    // ordinary rows, always shown. Nothing to open, so a visitor scans three short
+                    // lists instead of one long one.
+                    const labelId = `${baseId}-group-${item.label.replace(/\W+/g, '-')}`;
                     return (
-                      <li
-                        key={item.label}
-                        className="auburn-menu__item"
-                        data-open={isOpen ? '' : undefined}
-                        style={step()}
-                      >
-                        <button
-                          type="button"
-                          className="auburn-menu__row"
-                          aria-expanded={isOpen}
-                          aria-controls={panelId}
-                          onClick={() => setExpanded(isOpen ? undefined : item.label)}
-                        >
-                          <span className="auburn-menu__label">{item.label}</span>
-                          <RowArrow />
-                        </button>
-                        <ul id={panelId} className="auburn-menu__sub" hidden={!isOpen}>
-                          {item.items.map((sub, j) => (
-                            <li key={sub.href} style={{ '--j': j } as React.CSSProperties}>
+                      <li key={item.label} className="auburn-menu__group">
+                        <p id={labelId} className="auburn-menu__group-label" style={step()}>
+                          {item.label}
+                        </p>
+                        <ul className="auburn-menu__rows" aria-labelledby={labelId}>
+                          {item.items.map((sub) => (
+                            <li key={sub.href} className="auburn-menu__item" style={step()}>
                               <a
                                 href={sub.href}
                                 onClick={close}
+                                className="auburn-menu__row"
                                 aria-current={isCurrent(sub.href, current) ? 'page' : undefined}
                               >
-                                {sub.label}
+                                <span className="auburn-menu__label">{sub.label}</span>
+                                <RowArrow />
                               </a>
                             </li>
                           ))}

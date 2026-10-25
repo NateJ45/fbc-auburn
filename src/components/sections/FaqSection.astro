@@ -8,8 +8,12 @@
 // SELF_CONTAINED — manages its own bg-background surface (no surface prop).
 //
 // JSON-LD: this block deliberately does NOT emit FAQPage structured data.
-// The dedicated /faq page owns FAQPage JSON-LD. Emitting it here too would
-// create duplicate FAQPage markup, which Google penalises in rich results.
+// Duplicate FAQPage markup is penalised in rich results, and a page can hold two
+// of these blocks. FBC Auburn retired the /faq page on 2026-10-24 (it forwards to
+// /plan-your-visit/#questions), so no page emits it now; see docs/PENDING.md.
+//
+// FBC Auburn (2026-10-24): on the page's left edge like every other band (rule 17),
+// and the first one on a page carries id="questions" (`anchor`, from SectionRenderer).
 import SectionHeading from '@/components/SectionHeading.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import FaqAccordion from '@/components/FaqAccordion';
@@ -33,6 +37,8 @@ interface Props {
   items?: FaqItem[];
   cta?: any;
   headingId?: string;
+  /** The section's id, for links like /plan-your-visit/#questions. */
+  anchor?: string;
 }
 
 const {
@@ -44,6 +50,7 @@ const {
   items = [],
   cta,
   headingId = 'faq-section-heading',
+  anchor,
 } = Astro.props as Props;
 
 const validItems = items.filter((i) => i?.question);
@@ -51,7 +58,8 @@ const validItems = items.filter((i) => i?.question);
 
 {validItems.length > 0 && (
   <section
-    class="bg-background"
+    id={anchor}
+    class="bg-background scroll-mt-24"
     aria-labelledby={headline ? headingId : undefined}
     aria-label={!headline ? 'Frequently asked questions' : undefined}
   >
@@ -62,21 +70,20 @@ const validItems = items.filter((i) => i?.question);
         subhead={subhead}
         subheadRich={subheadRich}
         headingId={headingId}
-        align="center"
-        class="mx-auto"
+        align="left"
         headingAccent={headingAccent}
       />
 
-      <div class="mx-auto mt-section-lg max-w-3xl">
+      <div class="mt-l max-w-3xl">
         <FaqAccordion client:visible faqs={validItems} idPrefix={headingId} />
       </div>
 
       {cta?.label && (
-        <div class="mt-section-lg flex justify-center">
+        <div class="mt-l flex">
           <CtaLink
             cta={cta}
             variant="secondary"
-            fallbackHref="/faq/"
+            fallbackHref="/plan-your-visit/#questions"
             fallbackLabel="See All Questions"
           />
         </div>

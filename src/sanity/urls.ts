@@ -50,7 +50,7 @@ export function pathForDoc(schemaType: string, doc: any): string | null {
     // scaffold:end
     // scaffold: faq
     case 'faqPage':
-      return '/faq';
+      return '/plan-your-visit'; // the Questions page merged in, 2026-10-24
     // scaffold:end
     case 'contactPage':
       return '/contact';
@@ -78,11 +78,11 @@ export function pathForDoc(schemaType: string, doc: any): string | null {
     // Collections that render inside a parent page
     // scaffold: faq
     case 'faqItem':
-      return '/faq';
+      return '/plan-your-visit'; // the Questions page merged in, 2026-10-24
     // scaffold:end
     // scaffold: faq
     case 'faqCategory':
-      return '/faq';
+      return '/plan-your-visit'; // the Questions page merged in, 2026-10-24
     // scaffold:end
     // scaffold: journal
     case 'journalCategory':

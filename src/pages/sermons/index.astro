@@ -1,7 +1,8 @@
 ---
 // Safe to edit by hand
 // /sermons/: the sermon archive (FBC Auburn, 2026-10-18). The page head from the Sermons page in
-// the Studio, then the newest sermon, then every sermon newest first with three filters (series,
+// the Studio, then the Watch band (the live stream, the Facebook page and the newest message; the
+// Watch page was merged in here on 2026-10-24 and /watch/ redirects to this page), then every sermon newest first with three filters (series,
 // preacher, book of the Bible) and "Show more", then the series, then the podcast, then any extra
 // sections the editor added.
 //
@@ -14,7 +15,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/Hero.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import SectionRenderer from '@/components/SectionRenderer.astro';
-import LatestSermon from '@/components/sections/LatestSermon.astro';
+import WatchSection from '@/components/sections/WatchSection.astro';
 import SermonSeriesGrid from '@/components/sections/SermonSeriesGrid.astro';
 import SermonRow from '@/components/collections/SermonRow.astro';
 import { getSiteSettings } from '@/lib/queries';
@@ -58,11 +59,13 @@ const schemas = [
   />
 
   <BoardRule />
-  <LatestSermon
-    heading="Latest sermon"
-    sermon={list[0] ?? null}
-    bibleVersion={page?.bibleVersion}
-    headingId="sermons-latest-heading"
+  <WatchSection
+    eyebrow="Sundays, wherever you are"
+    heading="Watch live, or catch up"
+    body="Worship is streamed live every Sunday, and the latest message is always here."
+    fallback="Messages will appear here once the church's video channel is connected."
+    latestSermon={list[0] ?? null}
+    headingId="sermons-watch-heading"
   />
 
   {list.length > 1 && (

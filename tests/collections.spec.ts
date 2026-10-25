@@ -1,23 +1,18 @@
 // The sermon archive, the bulletin shortcut and the podcast feed (FBC Auburn, 2026-10-18).
 // Written to hold whatever the dataset holds: with no sermons yet (the case on the day this
-// shipped) the friendly empty line and its link to Watch must show; once there are sermons, the
+// shipped) the Watch band at the top must still show (the Watch page was merged into Sermons on
+// 2026-10-24); once there are sermons, the
 // rows, the filters and "Show more" must work. The feed is checked for Apple's required tags in
 // both cases (src/lib/sermons.test.ts checks them in depth).
 import { test, expect } from './fixtures';
 
 test.describe('Sermons', () => {
-  test('/sermons/ shows sermons, or a friendly line and a way to Watch', async ({ page }) => {
+  test('/sermons/ opens with the Watch band, then the sermons', async ({ page }) => {
     await page.goto('/sermons/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.locator('#sermons-watch-heading')).toBeVisible();
     const rows = page.locator('[data-sermon]');
-    if ((await rows.count()) === 0) {
-      await expect(page.getByText('The first sermons are on their way.')).toBeVisible();
-      // The link to Watch shows only while the Watch page is published (2026-10-24), so a build
-      // without it (CI builds no Studio pages) has the line alone. When it shows, it goes to /watch/.
-      const watch = page.getByRole('link', { name: "watch Sunday's service" });
-      if ((await watch.count()) > 0) await expect(watch.first()).toHaveAttribute('href', '/watch/');
-      return;
-    }
+    if ((await rows.count()) === 0) return;
     // At most twelve rows show at first; the filters appear once the script runs.
     const visible = await rows.evaluateAll(
       (els) => els.filter((e) => !(e as HTMLElement).hidden).length,

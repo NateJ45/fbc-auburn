@@ -44,7 +44,7 @@ const {
   surface = 'background',
   headingId,
 } = Astro.props;
-const posterHref = poster?.asset && link ? ctaHref(link, '/watch/') : null;
+const posterHref = poster?.asset && link ? ctaHref(link, '/sermons/') : null;
 const newTab = link?.linkType === 'external' || !!link?.openInNewTab;
 const { liveUrl, facebookUrl } = await getChurchFacts();
 // The Facebook page only gets its own line when the live link goes somewhere else.

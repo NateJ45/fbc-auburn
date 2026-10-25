@@ -92,7 +92,9 @@ existing `intro` field) is the place for "what this role is"; it already sits un
 - **Last Sunday** (`WatchSection.astro`): the band's label ("Last Sunday" or "Latest message") huge in outline behind
   it, half off its bottom edge, and the stepped corner on its media. Use the outline word no more than twice on the site.
 - **The phone menu** (`src/components/MobileNav.tsx`, styles in `src/styles/auburn.css`): a full-screen sheet of big
-  Young Serif rows with long arrows; a row with pages under it opens in place, filled red.
+  Young Serif rows with long arrows. A menu group (Site settings > Menus) shows its name as a small red label with
+  its pages as rows beneath, always open (2026-10-24; it was a row that opened in place, filled red). The menu is
+  three groups: New here, Get involved, Stay connected (`scripts/content/menu-groups.mjs`).
 - The content moved by `scripts/content/hppres-wayfinding.mjs` (dry by default): Plan your visit's band, accent, the
   three question headings ("What about my kids?", "Where do I park?", "How will I find it?", which are also the shot
   list keys) and Good to know; Ministries' accent; the Leadership letter; Watch's "what is not streamed" ask.

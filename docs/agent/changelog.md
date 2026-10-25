@@ -1,5 +1,22 @@
 # Change history
 
+_2026-10-24: the menu in three groups, and two pages folded into others._
+
+**Decision.** The menu had grown to thirteen links of equal weight, so a visitor on a phone read the
+whole list to find one thing (Nathan, from a screenshot). It is now three labelled groups: New here
+(About, What we believe, Leadership), Get involved (Ministries, Next steps, Events) and Stay
+connected (Sermons, News and notes, Give, Contact). On a phone each group's name is a small red label
+with its pages as rows beneath, always open (`MobileNav.tsx`, `auburn.css`); the tap-to-open group
+row is gone. On a wide screen the header's first items are now the three groups as dropdowns. Watch
+folded into Sermons: `/sermons/` opens with the Watch band (live stream, Facebook, the latest
+message) in place of the Latest sermon block, the Watch page is archived, and `/watch/` forwards
+to `/sermons/`. Questions folded into Plan your visit: two Questions sections above its closing
+band, the first one `id="questions"`, `src/pages/faq.astro` deleted and `/faq/` forwarding to
+`/plan-your-visit/#questions`; the Questions singleton left the Studio's Pages list. The Questions
+block now sits on the page's left edge (rule 17; it was centred). Prayer requests left the menu (it
+stays in the footer) and Contact's "When life happens" gained a card linking to it. Content moved by
+`scripts/content/menu-groups.mjs` (backup, dry run, write, verified); CI snapshot refreshed.
+
 _2026-10-24: a tighter page head on phones._
 
 **Decision.** Below 961px the inner page head carried 66px above the eyebrow and, on nine pages, its
