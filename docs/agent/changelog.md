@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-25: the header no longer shakes near the top._
+
+**Decision.** On desktop, scrolling back up to within a few pixels of the top made the sticky header
+flip between its compact and full sizes every few frames, and the page jumped with it (Nathan). From
+`lg` up the bar is up to 36px taller when open, it sits in the flow, and the browser's scroll anchoring
+moves the scroll position by that much to keep the content still, which crossed the single 8px line
+again. The bar now compacts past 64px and opens again only at 8px or less (`Header.astro`,
+`updateHeaderState`), a gap wider than the change in height. Phones never had it: the bar keeps its
+height there.
+
 _2026-10-24: the menu in three groups, and two pages folded into others._
 
 **Decision.** The menu had grown to thirteen links of equal weight, so a visitor on a phone read the
