@@ -2,8 +2,9 @@
 // Safe to edit by hand
 // One file on the downloads shelf: a document mark, the title as the link (it opens the file),
 // the note, and the date with the kind and size of file ("PDF, 240 KB"), so nobody is surprised
-// by a large download on a phone.
-import { fileLabel, longDate, type DownloadDoc } from '@/lib/sermons';
+// by a large download on a phone. The data-search-* attributes tell site search what the file
+// is, so the text inside it is found under its own title (PORTS.md card 154).
+import { fileLabel, longDate, searchFileType, type DownloadDoc } from '@/lib/sermons';
 
 interface Props {
   item: DownloadDoc;
@@ -25,7 +26,16 @@ const meta = [showDate ? longDate(d.date) : '', label].filter(Boolean).join(' ·
     ></path>
   </svg>
   <div>
-    <a class="c-file__title" href={d.file?.url} target="_blank" rel="noopener">
+    <a
+      class="c-file__title"
+      href={d.file?.url}
+      target="_blank"
+      rel="noopener"
+      data-search-title={d.title}
+      data-search-type={searchFileType(d.category)}
+      data-search-date={longDate(d.date) || undefined}
+      data-search-note={d.note || undefined}
+    >
       {d.title}
       <span class="sr-only"> (opens the file{label ? `, ${label}` : ''})</span>
     </a>

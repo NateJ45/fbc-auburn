@@ -58,6 +58,10 @@ const schemas = [
             href={bulletin.file?.url}
             target="_blank"
             rel="noopener"
+            data-search-title={bulletin.title}
+            data-search-type="bulletin"
+            data-search-date={longDate(bulletin.date) || undefined}
+            data-search-note={bulletin.note || undefined}
           >
             Open the bulletin
             {fileLabel(bulletin.file) && ` (${fileLabel(bulletin.file)})`}

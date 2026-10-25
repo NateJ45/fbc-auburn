@@ -440,6 +440,11 @@ export const DOWNLOAD_CATEGORIES = [
 ] as const;
 export const categoryTitle = (value?: string | null): string =>
   DOWNLOAD_CATEGORIES.find((c) => c.value === value)?.title ?? 'Other';
+/** The type tag a download's search result carries (PORTS.md card 154); "Other" is a plain download. */
+export const searchFileType = (value?: string | null): string =>
+  value && value !== 'other' && DOWNLOAD_CATEGORIES.some((c) => c.value === value)
+    ? value
+    : 'download';
 
 export interface DownloadDoc {
   _id: string;
