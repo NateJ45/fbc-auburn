@@ -145,4 +145,14 @@ const rows = ROWS.filter((r) => r.href !== here && (!r.studio || slugs.has(r.stu
       transition: none;
     }
   }
+  /* Phones (phone polish, 2026-10-24): the rows' words sit on the 20px gutter with the rest of the
+     footer; the band's 24px and each row's own 12px put them at 32px and more. */
+  @media (max-width: 767px) {
+    .where-next {
+      padding-inline: 20px;
+    }
+    .where-next__row {
+      padding-inline: 0;
+    }
+  }
 </style>

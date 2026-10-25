@@ -79,7 +79,8 @@ export default function FaqAccordion({ faqs, categoryOrder, idPrefix = 'faq' }: 
   }
 
   return (
-    <div className="space-y-section-lg">
+    // Phones: 48px between groups (phone polish, 2026-10-24); the section rhythm (88px) from 768px.
+    <div className="space-y-section-lg max-md:space-y-[3rem]">
       {sections.map((section, sectionIdx) => {
         const sectionId = section.category
           ? `${idPrefix}-${slugify(section.category)}`

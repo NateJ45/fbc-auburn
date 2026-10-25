@@ -291,4 +291,11 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
     pointer-events: none;
     user-select: none;
   }
+  /* Phones (phone polish, 2026-10-24): too wide for the screen, the word read as a cropped "ast
+     Sunda". It shows from 640px up. */
+  @media (max-width: 639px) {
+    .watch-band__ghost {
+      display: none;
+    }
+  }
 </style>

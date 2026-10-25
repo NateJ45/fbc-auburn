@@ -196,6 +196,34 @@ html.motion .reveal:not(.in) {
     width: 46px;
   }
 }
+/* Phones (phone polish, 2026-10-24): the 70px stone column left the words 215px wide at 375 (190 at
+   320) and the three pebbles 117px between steps. A 48px stone in a 56px column, and one small
+   pebble between steps, about 8px of path either side of it. */
+@media (max-width: 767px) {
+  .rail__step {
+    grid-template-columns: 56px minmax(0, 1fr);
+    column-gap: 14px;
+  }
+  .rail__stone {
+    width: 56px;
+    height: 56px;
+  }
+  .rail__stone img {
+    width: 48px;
+    height: 48px;
+  }
+  .rail__gap {
+    grid-template-columns: 56px;
+    gap: 0;
+    padding-block: 8px;
+  }
+  .rail__pebble {
+    width: 30px;
+  }
+  .rail__pebble:not(:first-child) {
+    display: none;
+  }
+}
 
 /* ======================================================================================
    The drawings: the mark (MarkBuild.astro) and baptism (BaptismGraphic.astro)
@@ -218,6 +246,16 @@ html.motion .reveal:not(.in) {
 }
 .auburn-art__baptism {
   width: min(520px, 100%);
+}
+/* Phones (phone polish, 2026-10-24): the mark is a 160px drawing on the text's left edge, not a
+   258px one centred above left-aligned words. */
+@media (max-width: 767px) {
+  .auburn-art {
+    justify-content: flex-start;
+  }
+  .auburn-art__mark {
+    width: 160px;
+  }
 }
 
 /* The mark build (MarkBuild.astro, 2026-10-24): the brick print is laid one brick at a time,
@@ -630,6 +668,22 @@ html.motion .walk-plan .stop.here .stop-ring {
   }
   .walk-steps li {
     min-height: 52vh;
+  }
+}
+/* Phones (phone polish, 2026-10-24): each step was 422px for about 140px of words. A step is now
+   its words plus an 18vh gap, about 40vh from one step to the next, and the space sits BETWEEN
+   steps, not inside them, so the active step's gold edge runs the length of its words and stops. */
+@media (max-width: 767px) {
+  .walk-steps li {
+    min-height: 0;
+    justify-content: flex-start;
+    padding-block: 0.25rem;
+  }
+  .walk-steps li + li {
+    margin-top: 18vh;
+  }
+  .walk-steps li.walk-end {
+    min-height: 0;
   }
 }
 

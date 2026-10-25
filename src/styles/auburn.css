@@ -349,6 +349,14 @@ h6 {
 :where(main h3, main h4) {
   line-height: var(--lh-title);
 }
+/* Phones (phone polish, 2026-10-24): no heading ends on one word alone ("Someone meets you at the
+   / door", "Our confession of / faith"). Section headings, the walk's step titles and card titles
+   share their words out evenly; body text keeps its natural wrap. Zero specificity, as above. */
+@media (max-width: 767px) {
+  :where(main h2, main h3, main h4, .final-cta h2) {
+    text-wrap: balance;
+  }
+}
 /* Reading text in the page body sits on one line height. */
 :where(main p, main li, main dd) {
   line-height: var(--lh-body);
@@ -668,6 +676,33 @@ html .site-search-dialog {
   max-width: 40rem;
   margin-inline: auto;
 }
+/* Phones (phone polish, 2026-10-24): the close was the only centred block on Watch, Events, FAQ,
+   the journal and a post. It sits on the 20px gutter like everything above it, the mark smaller and
+   on the left, the button full width like the Home hero's, and about 40px above the mark instead of
+   88px. A close straight under a section rule keeps the rule's 28px (board.css). */
+@media (max-width: 767px) {
+  .final-cta--light > div {
+    padding-top: 40px;
+    padding-inline: 20px;
+    text-align: left;
+  }
+  .final-cta--light .final-cta__mark {
+    width: 96px;
+    margin: 0 0 1.25rem;
+  }
+  .final-cta--light .final-cta__h2,
+  .final-cta--light p {
+    margin-inline: 0;
+  }
+  .final-cta--light .flex {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .final-cta--light .btn-auburn {
+    width: 100%;
+    justify-content: center;
+  }
+}
 
 /* ---- Stone divider (SectionDivider "ornament"): three stepping stones, the last one higher. ---- */
 .stone-divider {
@@ -986,6 +1021,18 @@ html .site-search-dialog {
 @media (min-width: 64rem) {
   .auburn-menu__row {
     padding-inline: 1.25rem;
+  }
+}
+/* Phones (phone polish, 2026-10-24): 64px rows, still well over a 44px fingertip, where 88px rows
+   made the thirteen links 1,145px tall; and the search and the rows on the page's 20px gutter, the
+   header's own edge, rather than 16px. The order and the Sunday card are unchanged. */
+@media (max-width: 767px) {
+  .auburn-menu {
+    --menu-gutter: 20px;
+  }
+  .auburn-menu__row {
+    min-height: 4rem;
+    padding-block: 0.5rem;
   }
 }
 .auburn-menu__label {
@@ -1612,6 +1659,67 @@ html.motion .sill.is-laid .sill-brick {
     flex: 1 1 auto;
   }
 }
+/* Phones (phone polish, 2026-10-24): the two next steps stack full width (they sat side by side at
+   159px each from 375px), and the page links read as a tidy two-column list instead of serif words
+   flowing ragged across the width. */
+@media (max-width: 767px) {
+  .sf-invite__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .sf-invite__actions .btn-auburn {
+    width: 100%;
+  }
+  .site-footer__links > nav ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 16px;
+  }
+  /* 18px, so "What we believe" and "News and notes" keep one line in a 159px column at 375. */
+  .site-footer__links > nav ul a {
+    font-size: var(--fs-body);
+    line-height: 1.2;
+  }
+  /* One rhythm: about 28px of air between the groups (Visit, Belong, Get in touch), and in Get in
+     touch one 44px row per line with nothing added between them (the rows were 46 to 50px apart
+     and the social icons another 16px down). */
+  .site-footer__links {
+    row-gap: 16px;
+  }
+  .sf-touch__rows > * {
+    margin-block: 0;
+  }
+  .sf-touch__rows .fj-mark {
+    display: inline-block;
+    margin-block: 6px;
+  }
+  /* The phone row: the number, Text and the "To confirm" tag about 12px apart, the tag kept with
+     Text if the row has to wrap (at 320 the tag fell to a line of its own). The dot between the
+     number and Text goes: the spacing does its job. */
+  .sf-touch__phone {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 12px;
+  }
+  .sf-touch__text {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .sf-touch__text > [aria-hidden='true'] {
+    display: none;
+  }
+  .sf-touch__text a {
+    justify-content: flex-start;
+  }
+  .sf-touch__phone .not-confirmed[data-not-confirmed] {
+    margin-inline-start: 0;
+  }
+  .sf-touch__social {
+    margin-top: 12px;
+  }
+}
 /* Between 1024px and 1279px the bar is tight with the lockup; close up the menu's gaps. Five links
    since the 2026-10-24 audit, so 1rem between links and 1.25rem around the button (1.5rem left
    "About" touching the lockup at 1024, and 1199px left 24px at 1200). */
@@ -1720,5 +1828,28 @@ html.motion .sill.is-laid .sill-brick {
   .walk-opener__ask .btn-auburn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* ---- Phone polish (2026-10-24, the section-by-section mobile audit) ---- */
+@media (max-width: 767px) {
+  /* The walk opener's caption was the one centred line on a left-aligned page. */
+  .walk-opener figcaption {
+    margin-inline: 0;
+    text-align: left;
+  }
+  /* The walk's last step ("You made it") ends on a full-width button, like the opener's. */
+  .walk-steps .walk-end .btn-auburn {
+    width: 100%;
+  }
+  /* Site search: each result's excerpt stops at three lines, so a long page does not push the next
+     result off the screen. SearchPanel is shared with the starter (PORTABLE), so the clamp lives in
+     the brand layer. */
+  .site-search__result-excerpt {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
   }
 }

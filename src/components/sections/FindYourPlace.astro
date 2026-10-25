@@ -387,6 +387,16 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
       display: none;
     }
   }
+  /* Phones (phone polish, 2026-10-24): the chip row runs past the screen's edge (551px at 375) with
+     nothing to say so; its right edge now fades out, and the row scrolls far enough that the last
+     chip clears the fade. */
+  @media (max-width: 767px) {
+    .fyp__index {
+      padding-right: 3rem;
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 3rem), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 3rem), transparent);
+    }
+  }
 
   /* ---- Groups ---- */
   .fyp__group {
@@ -452,6 +462,12 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
   }
   .fyp-card__pic {
     position: relative;
+  }
+  /* Phones: 16px from a group card's picture to its words (it was 18.4px, a step off the scale). */
+  @media (max-width: 767px) {
+    .fyp-card__pic {
+      margin-bottom: 1rem;
+    }
   }
   .fyp-card__for {
     font-size: var(--fs-tag);
