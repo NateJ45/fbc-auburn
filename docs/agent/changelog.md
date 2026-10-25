@@ -1,5 +1,18 @@
 # Change history
 
+_2026-10-25: CI builds the same site from the snapshot as a local build._
+
+**Decision.** CI's `site` job built 19 pages where a local build of the same snapshot built 28, and
+Plan your visit lost its Church and FAQPage JSON-LD. The cause: `ci.yml` and `lighthouse.yml` set no
+`PUBLIC_SANITY_PROJECT_ID`, and `sanityFetch` treats a missing id as "no Sanity" and returns its
+fallbacks without a request, so the snapshot server was never asked anything (the build log said
+`[sanity] PUBLIC_SANITY_PROJECT_ID is not set`). The nine missing pages were events, leadership,
+ministries, next-steps, pastoral-care, prayer, what-we-believe, the pastor's journal note and the
+placeholder sermon. Both workflows now set the ids at the workflow level (as fbcm and stonesteps-50k do),
+and `tests/page-weight.spec.ts` checks FAQPage, Church and the eager Ministries photo strictly again.
+The guard that stops this happening silently (`snapshot.mjs run` reads the id from the snapshot, or
+fails) is starter card 161, queued behind cards 155 to 160.
+
 _2026-10-25: a Give button, a red visit button, and a wider footer._
 
 **Decision.** Nathan asked for a more obvious Give button in the header and footer, a red Plan your visit in the header, better use of the footer's width now the This Sunday card is often gone, and less padding at its bottom. The header shows Give (solid navy, hand-heart icon, the Give page or the online giving link through `giveHref`) beside a red Plan your visit; each turns to the outline on its own page, because the muted current-page fill hid white text. The phone menu puts the two side by side under This Sunday. The footer's name row ends with a light-outline Give. With no This Sunday panel the footer's links run as four even columns (New here, Get involved, This week, Contact) instead of the left half with Contact below. The pre-launch pill's 64px under the bottom bar became room at the bar's right end from 768px (`ForJacob.astro`).
