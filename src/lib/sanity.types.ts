@@ -1627,7 +1627,8 @@ export type FindYourPlaceSection = {
         | 'handshake'
         | 'open-door'
         | 'toolbox'
-        | 'grocery-bag';
+        | 'grocery-bag'
+        | 'play-screen';
       title?: string;
       forWho?: string;
       day?: string;
@@ -1671,7 +1672,8 @@ export type IconCardsSection = {
       | 'handshake'
       | 'open-door'
       | 'toolbox'
-      | 'grocery-bag';
+      | 'grocery-bag'
+      | 'play-screen';
     image?: IconCardImage;
     title?: string;
     body?: string;
@@ -1899,7 +1901,8 @@ export type HeroSection = {
     | 'handshake'
     | 'open-door'
     | 'toolbox'
-    | 'grocery-bag';
+    | 'grocery-bag'
+    | 'play-screen';
   eyebrow?: string;
   headline?: string;
   scriptAccent?: string;
