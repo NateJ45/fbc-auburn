@@ -58,17 +58,14 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
   (no calendar feed yet); Google's Rich Results test after cutover.
 - **Ask:** whether the sketch draw-in and the stone reveals should stay on inner pages (motion is
   otherwise Home and the 404 only).
-- **CI builds fewer pages than a local snapshot build** (19 against 28 on 2026-10-25, same
-  snapshot), and in CI Plan your visit emits only the BreadcrumbList JSON-LD (no Church, no
-  FAQPage), while the local snapshot build has all three. `tests/page-weight.spec.ts` now skips
-  its FAQPage and eager-photo checks when the content is not there; find the difference (the `site`
-  job has no `PUBLIC_SANITY_*` env, so check what `snapshot.mjs run` resolves there) and make the
-  checks hard again.
 - **Known test noise:** the dark-mode contrast spec on `/` can catch the hero before its photo
   paints (seen once on #176; passed on re-run). The site is light only (rule 3).
 - **At cutover:** run the HSTS subdomain check in `docs/agent/deployment.md` before putting
   `includeSubDomains` and `preload` back. A pasted form that posts off-site needs its origin on the
   `form-action` line.
+- **Starter card 161** (NateJ45/ncs-astro-sanity-starter#197, draft): `snapshot.mjs run` reads the
+  project id from the snapshot, or fails, instead of letting a build with no id ignore it. Merges
+  after cards 155 to 160; then copy `scripts/snapshot.mjs` and `scripts/lib/snapshot.test.mjs` here.
 - **Ports:** the fixes that are not church-specific go to the starter with port cards: the print
   reset and `print.spec`, the regex-backslash guard, the dark-surface ring, the ContactForm changes
   (POST fallback, one-pass errors, sessionStorage), the FaqAccordion landmark fix, the `<dialog>`

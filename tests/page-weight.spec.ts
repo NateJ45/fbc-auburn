@@ -45,11 +45,11 @@ test('Plan your visit has one FAQPage and the Church data', async ({ page }) => 
   await page.goto('/plan-your-visit/');
   const ld = await jsonLd(page);
   const types = ld.map((l) => l['@type']);
-  // Content-dependent: CI's snapshot build emits no Church or FAQPage JSON-LD (only the
-  // breadcrumb; docs/PENDING.md 1zt), so the check runs on builds that carry the church data.
-  test.skip(!types.includes('Church'), 'no Church JSON-LD in this build');
-  const questions = await page.locator('main [data-slot="accordion-trigger"]').count();
-  test.skip(questions === 0, 'no Questions block on Plan your visit in this build');
+  // Strict since 2026-10-25: CI used to build with no project id, so sanityFetch skipped the
+  // snapshot and this page had only the breadcrumb (the env is now set in ci.yml). A snapshot
+  // refresh that drops the Questions block updates this test in the same PR.
+  expect(types).toContain('Church');
+  await expect(page.locator('main [data-slot="accordion-trigger"]').first()).toBeAttached();
   expect(types.filter((t) => t === 'FAQPage')).toHaveLength(1);
   const faq = ld.find((l) => l['@type'] === 'FAQPage');
   expect(faq.mainEntity.length).toBeGreaterThan(0);
@@ -65,10 +65,10 @@ test('the 404 page has no canonical', async ({ page }) => {
 test('the first photo under the page head is eager and high priority', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/ministries/');
-  const photos = page.locator('main img:not(.stone-icon)');
-  // Content-dependent: since the 2026-10-25 audit Ministries can show stone icons only.
-  test.skip((await photos.count()) === 0, 'no photo on Ministries in this build');
-  const img = photos.first();
+  // The pinned snapshot gives Ministries' first Find your place card a photo (pre-launch, a
+  // "Photo needed" example). If a refresh leaves it stone icons only, move this to a page
+  // that keeps a photo first (About or Leadership) in the same PR.
+  const img = page.locator('main img:not(.stone-icon)').first();
   await expect(img).toHaveAttribute('loading', 'eager');
   await expect(img).toHaveAttribute('fetchpriority', 'high');
 });
