@@ -1,5 +1,50 @@
 # Change history
 
+_2026-10-25: the five-reviewer site audit, fixed in seven PRs._
+
+**Decision.** Nathan had the pre-launch site audited by five reviewers (UX, graphic design, web
+development, a pastor and a first-time visitor) and asked for every finding to be fixed and put live.
+Six agents worked in parallel areas; the lead merged one at a time and applied the content.
+
+- **Core (#170):** the flow layer's word splitter had lost its backslashes (`split(/(s+)/)`, so
+  headings were cut on the letter "s"); it moved to `src/lib/flow-split.ts` with a test, and
+  `scripts/lib/regex-backslash.test.mjs` now guards every script against stripped regexes. A print
+  stylesheet (`src/styles/print.css`, `tests/print.spec.ts`): printed pages had been blank below the
+  first screen. The contact form posts without JS, shows every error in one pass, keeps its draft in
+  sessionStorage, and reads `?topic=` and `&about=`. White focus rings on dark surfaces
+  (`data-dark-surface`). Motion: the full flow layer only on Home and the 404 (`data-flow-full`), a
+  200ms fade elsewhere, quicker page transitions.
+- **Pages (#171, `scripts/content/audit-pages.mjs`):** American spelling everywhere; a new
+  "Need the pastor?" page (`/pastoral-care/`); Plan your visit restructured (times band at the top,
+  Good to know, one Your kids block, What worship is like, Getting in and getting around); one prayer
+  path with one privacy promise; named section anchors (`src/lib/section-anchors.ts`, e.g.
+  `/what-we-believe/#the-gospel`). Every fact or doctrine only the church can give is a
+  `[Jacob: ...]` placeholder; none was drafted.
+- **Collections (#172, `scripts/content/audit-collections.mjs`):** the sermon list, the live button
+  by state, the podcast link and the no-picture art; Events' "Every week" mode with card links and a
+  build-time `.ics` per gathering (`/calendar/<key>.ics`); the bulletin falls back to last week's; a
+  plain 404 with search; Ministries as compact rows on phones (14,168px to about 7,150px at 375) with
+  one action per card.
+- **Chrome (#174, `scripts/content/audit-chrome.mjs`):** the phone menu on a native `<dialog>`
+  (`MobileNav.astro`, no React island); one dropdown model; the Menu pill hidden from 1024px; one
+  closing device per page; a slimmer footer; the Sunday bar on Plan your visit too
+  (`church/SundayBar.astro`); the menu's "This week" group (Sermons, Events, Bulletin, Prayer
+  requests, Need the pastor?, Give); "Pastor Jacob on TikTok".
+- **Visual (#173, `scripts/content/audit-visual.mjs`):** one red button per page (`SectionRenderer`
+  assigns it; the rest use `variant="navy"`); less brick; markers only beside a worded eyebrow;
+  shorter page heads; one H2 colour; the gable as the one photo shape (stepped corner retired); H1 at
+  most 88px; Young Serif from 24px up; ImageText's "No picture" option.
+- **CSP (#176):** the deploy of #172 failed because the one CSP line in `_headers` passed
+  Cloudflare's 2,000-character limit; `vite.build.assetsInlineLimit: 0` now ships processed scripts
+  as files (`docs/agent/deployment.md`).
+- **Performance (#177):** per-page CSS purge (`scripts/purge-page-css.mjs`, 56% of the inline CSS);
+  the Toaster removed; fonts and textures hashed under `src/assets/`; the first photo eager; FAQPage,
+  Event and PodcastEpisode JSON-LD; `form-action` and `Permissions-Policy`; HSTS without
+  `includeSubDomains` until cutover.
+
+Content was written by the four scripts in the order collections, pages, visual, chrome (each backed
+up first, dry run read, applied, verified live). CI snapshot refreshed in #177. The Home hero shot request now asks for clips of church life that Nathan cuts into one video (the hero cannot play a video yet: PENDING 1zt).
+
 _2026-10-25: the header no longer shakes near the top._
 
 **Decision.** On desktop, scrolling back up to within a few pixels of the top made the sticky header

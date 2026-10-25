@@ -27,13 +27,66 @@ is found by its title only; ask the office to save bulletins as text PDFs (Word 
 Publisher "Save as PDF", or a scanner's "searchable PDF" option). Also tune
 `site.search.synonyms` in `src/data/site.ts` once the real ministry names are in.
 
-### 1zx. The menu groups: Jacob's say, and one loose end (opened 2026-10-24)
+### 1zt. The site audit: Jacob's answers, and what was left open (opened 2026-10-25)
 
-The menu is three groups and Watch and Questions folded into Sermons and Plan your visit (changelog,
-2026-10-24). Ask Jacob whether the groups and their names suit him, and what he means by Next steps
-(if it is baptism and membership, it could become a group on the Ministries hub). Loose end: no page
-emits FAQPage JSON-LD since `/faq/` went (`FaqSection.astro` leaves it out on purpose; emit it
-once per page from the first Questions block if search results matter).
+All seven audit PRs (#170 to #174, #176, #177) are merged and their content applied (changelog,
+2026-10-25). Open:
+
+- **Jacob's answers.** Every `[Jacob: ...]` placeholder the audit added (the gospel on Home, size and
+  music, kids and the child safety policy, what worship is like, access, Baptist distinctives,
+  governance, who reads prayer requests, Need the pastor?, giving accountability, and more) is
+  collected in the studio's discovery pack for him. Each answer replaces its placeholder; the same
+  child safety words go on Plan your visit, Ministries > Kids and The children's room.
+- **Decisions for Jacob:** whether the TikTok stays in the footer (it now reads "Pastor Jacob on
+  TikTok"); whether News and notes stays in the menu before he has a few posts; the menu group
+  names (New here, Get involved, This week) and what Next steps should hold.
+- **A video for the Home hero.** The shot request now asks for clips of church life (worship,
+  outreach, youth, VBS, a meal, a workday), a few seconds each, which Nathan cuts into one silent video;
+  clips with children need parents’ permission; a still of Sunday worship is the fallback (Nathan,
+  2026-10-25). The hero block has
+  only a background photo field today, so a video field and a muted, looping, poster-first
+  `<video>` in `HomeHero.astro` (off with reduced motion, off on Save-Data) are needed before a clip
+  can go up.
+- **A water stone icon for baptism.** Next steps uses the dove until one is drawn.
+- **Not reached:** the desktop end matter is about 1,000px (target 900) and the phone footer is
+  more than one screen; GD-L5 (one reading measure) is done on Privacy only; the lockup's place
+  line is about 7px on phones (11px needs a lockup redesign).
+- **Plan your visit's times band at 1280:** the address column is squeezed to three lines; give
+  it more room.
+- **Not verified:** printing in Safari; the "Live now" swap during a real service; the bulletin's
+  "Last week's" label with a real bulletin; the copy-email button on a real page; Events JSON-LD
+  (no calendar feed yet); Google's Rich Results test after cutover.
+- **Ask:** whether the sketch draw-in and the stone reveals should stay on inner pages (motion is
+  otherwise Home and the 404 only).
+- **CI builds fewer pages than a local snapshot build** (19 against 28 on 2026-10-25, same
+  snapshot), and in CI Plan your visit emits only the BreadcrumbList JSON-LD (no Church, no
+  FAQPage), while the local snapshot build has all three. `tests/page-weight.spec.ts` now skips
+  its FAQPage and eager-photo checks when the content is not there; find the difference (the `site`
+  job has no `PUBLIC_SANITY_*` env, so check what `snapshot.mjs run` resolves there) and make the
+  checks hard again.
+- **Known test noise:** the dark-mode contrast spec on `/` can catch the hero before its photo
+  paints (seen once on #176; passed on re-run). The site is light only (rule 3).
+- **At cutover:** run the HSTS subdomain check in `docs/agent/deployment.md` before putting
+  `includeSubDomains` and `preload` back. A pasted form that posts off-site needs its origin on the
+  `form-action` line.
+- **Ports:** the fixes that are not church-specific go to the starter with port cards: the print
+  reset and `print.spec`, the regex-backslash guard, the dark-surface ring, the ContactForm changes
+  (POST fallback, one-pass errors, sessionStorage), the FaqAccordion landmark fix, the `<dialog>`
+  phone menu, the dropdown hover/click fix, transform-only header compaction, the one-red-button
+  budget in `SectionRenderer`, `section-anchors`, the 404 search block, per-gathering `.ics`,
+  `purge-page-css`, fonts and textures under `src/assets`, the `_headers` cache and
+  `form-action`/`Permissions-Policy` lines, `assetsInlineLimit: 0` for the CSP length, the noindex
+  canonical rule and JPEG share images. Also in the starter: the PORTABLE docs
+  (`docs/agent/components.md`, `.claude/rules/foundation-files.md`, `OPERATIONS.md`) still name
+  `MobileNav.tsx`, and a few PORTABLE files keep British spellings ("colour" in `UndoRedo.tsx`,
+  "judgement" in `page-checks.ts`, "Website enquiry" in `contact-submission.ts`).
+
+### 1zx. The menu groups: Jacob's say (opened 2026-10-24)
+
+The menu is three groups (changelog, 2026-10-24; since 2026-10-25 New here, Get involved and This
+week). Ask Jacob whether the groups and their names suit him, and what he means by Next steps (if it
+is baptism and membership, it could become a group on the Ministries hub). The FAQPage loose end
+closed on 2026-10-25: the first Questions block on a page emits it (#177).
 
 ### 1zy. The hppres.org wayfinding: Jacob's words and the last content move (opened 2026-10-24)
 
