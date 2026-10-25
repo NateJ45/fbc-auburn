@@ -543,14 +543,14 @@ html.motion .baptism-motion #ripples {
   line-height: 1.6;
   max-width: 36rem;
 }
-/* Phones: a smaller stone, and the spacing from the phone polish pass (2026-10-24) kept: about 18vh
-   of path between one stop's words and the next, so the walk still reads as a walk. */
+/* Phones: a smaller stone and a short stretch of path between stops. The 18vh gaps only gave the old
+   plan time to light up as you scrolled; with the plan gone they were empty path (2026-10-24). */
 @media (max-width: 767px) {
   .walk {
     --walk-stone: 52px;
   }
   .walk-step:not(:last-child) {
-    padding-bottom: 18vh;
+    padding-bottom: 2.5rem;
   }
   .walk-step__body {
     padding-top: 0.15rem;
