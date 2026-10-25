@@ -33,17 +33,30 @@ A page-builder block, in the Studio as "Find your place (groups of cards)" under
   `aria-current` and measures the header: the base layout hides the header on a scroll down (`data-state="hidden"`), so
   the index slides up with it and comes back under it.
 - **A card**: a photo (stepped corner) or its stone icon on brick; who it is for, in small caps; the title; **when and
-  where** as a red serif line; a sentence or two; and an optional link, which makes the whole card the link.
+  where** as a red serif line; a sentence or two; and **one action**, which makes the whole card the link (2026-10-25):
+  the card's own link, else "Ask about <title>" to `/contact/?topic=question&about=<title>` (the shared contact
+  convention). An own link that is the bare contact page gets the same topic and name.
+- **Card anchors** (2026-10-25). Every card has an id, `fyp-<title>` (`/ministries/#fyp-sunday-school`), from `fypIds`
+  in `src/lib/gatherings.ts`: one id space with the groups, a repeat numbered. The Events page's "Every week" list
+  links each gathering to its card by name through the same function, so the two never drift.
+- **Phones** (under 640px, 2026-10-25, UX-H3 and GD-M6). Cards become compact rows: a 96px picture on the left (the
+  stone icon, also where the big frame holds a Photo needed request, which would not read at 96px), the words on the
+  right, the description cut to one line with a "More" button that opens it in place (shown only when the line really
+  is cut; without JavaScript nothing is cut). A card with a real photo keeps it full width. Ministries at 375 went
+  from 14,168px to about 7,900px with the 2026-10-25 content (the hub itself to about 4,350px; the footer is 1,850px).
 - **Times are never typed.** "When" is a day ("Wednesdays"). `dayWithTimes` (`src/lib/church-facts.ts`) adds that day's
   times from Church facts, narrowed to the gathering named after the card when there is one: on a Sunday with Sunday
   School at 9:45 and Worship at 11:00, "Sunday School" gets 9:45 and "Kids" gets both. Home's bands use the same helper.
-- **A card in two groups** is simply in both (Duplicate in the Studio).
+- **A card in two groups** is simply in both (Duplicate in the Studio), but a card that suits everyone belongs once
+  in an "Every age" group instead (Sunday School, 2026-10-25); a repeated title links to the first one.
 - **Photos before launch.** Cards are keyed in `src/data/shot-list.ts` by title (`/ministries/|Kids`), so an empty or
   stand-in photo shows its Photo needed example.
 
 The Ministries content was moved onto the block by `scripts/content/ministries-find-your-place.mjs` (dry by default,
 backs the page up first, carries every card's words over, and writes the "after" page for a look). The page head reads
-"Find your place" and the closing band names Pastor Jacob.
+"Find your place" and the closing band names Pastor Jacob. `scripts/content/audit-collections.mjs` (2026-10-25) moved
+Sunday School and Fellowship into "Every age", turned the Giving section into one Serve card that links to /give/,
+swapped the page picture from the ABC blocks to the open door, and set American spelling.
 
 ## The article page (News and notes posts)
 

@@ -174,9 +174,14 @@ const NOTES: Record<string, JacobNote[]> = {
         'Greeters, the children’s room, music, the food pantry, workdays and a prayer team are our guesses. Which teams are real, and who should people ask?',
     },
     {
-      title: 'How the church serves its neighbours.',
+      title: 'How the church serves its neighbors.',
       detail:
         'One or two real examples. Does the food pantry run through the year, and when is it open?',
+    },
+    {
+      title: 'One person to ask for each ministry.',
+      detail:
+        'Every card now has an "Ask about ..." link to the contact form, with the ministry named in the message. Tell us who should get each one (a first name is enough), so it reaches the right person.',
     },
   ],
   '/sermons/': [
@@ -202,7 +207,18 @@ const NOTES: Record<string, JacobNote[]> = {
     },
     {
       title: 'What time does the stream start?',
-      detail: 'So we can tell people when to tune in.',
+      detail:
+        'The live button says "Next live: Sunday 11:00 am", from the worship time in Site settings. Is that when the stream starts?',
+    },
+    {
+      title: 'The passage, preacher and series on each sermon.',
+      detail:
+        'Each sermon page shows all three, and people can browse by series and book of the Bible once there are a few. The example sermon has none yet; the yellow lines on its page show where they go.',
+    },
+    {
+      title: 'An audio recording, for the podcast.',
+      detail:
+        'The podcast fills itself from any sermon with an MP3 attached. If you can record Sunday’s message, people can listen in the car. A YouTube link also lets the video play right on the page.',
     },
   ],
   '/prayer/': [
@@ -231,7 +247,12 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Confirm the weekly times.',
       detail:
-        'The Sunday and Wednesday times here come from the same list as the rest of the site.',
+        'The Sunday and Wednesday times here come from the same list as the rest of the site. We added Youth on Wednesday at 6:00 from your road sign. Each one gets an "Add to calendar" link once its time is confirmed.',
+    },
+    {
+      title: 'Put the big days in Church Trac early.',
+      detail:
+        'Homecoming, revival, VBS, Christmas Eve, Easter, the Thanksgiving meal and baptism Sundays. Added a month or two ahead, they show under "Coming up" here and on Home, and the church looks as busy as it is.',
     },
   ],
   '/give/': [
@@ -313,6 +334,11 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Send us a recent bulletin.',
       detail: 'One past PDF is enough to show you how it looks.',
+    },
+    {
+      title: 'When is it posted, and by whom?',
+      detail:
+        'Until the new one is up, the page keeps last week’s and says when the next goes up. Tell us the day (say, "by Saturday evening") and who uploads it.',
     },
   ],
   '/privacy/': [

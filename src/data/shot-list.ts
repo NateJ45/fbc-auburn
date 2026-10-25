@@ -147,7 +147,7 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'road-sign', credit: 'goodrich kingrey on Unsplash', note: 'end' },
     },
   ],
-  '/ministries/|Serving our neighbours': [
+  '/ministries/|Serving our neighbors': [
     {
       title: 'Volunteers at the food pantry',
       detail:
@@ -261,8 +261,10 @@ export function isStandInPhoto(img: unknown): boolean {
   return /^(fbca-fb-|stand-in-)/i.test(asset.originalFilename ?? '');
 }
 
+// American spelling (audit 2026-10-25): a heading still spelled "neighbours" in the Studio finds the
+// same shot as the renamed one.
 const keyOf = (path: string, heading: string) =>
-  `${path.endsWith('/') ? path : `${path}/`}|${heading.trim()}`;
+  `${path.endsWith('/') ? path : `${path}/`}|${heading.trim().replace(/neighbour/gi, 'neighbor')}`;
 
 /** Every shot asked for on one page, in slot order. */
 export function shotsForPage(path: string): Shot[] {

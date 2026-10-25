@@ -16,7 +16,8 @@ import { ctaHref } from '@/lib/cta-href';
 import type { ProjectedCtaBlock, SanityImageObject } from '@/lib/pageBuilder.types';
 import { getChurchFacts } from '@/lib/church-data';
 import { churchDataNow } from '@/lib/church-feeds';
-import { monthDay } from '@/lib/church-facts';
+import { clockLabel, monthDay } from '@/lib/church-facts';
+import { worshipStart } from '@/lib/live-service';
 import SermonArt from '@/components/collections/SermonArt.astro';
 import { sermonHref, watchSermon, type SermonDoc } from '@/lib/sermons';
 import { fixtureNewestSermon } from '@/lib/collection-queries';
@@ -46,7 +47,12 @@ const {
 } = Astro.props;
 const posterHref = poster?.asset && link ? ctaHref(link, '/sermons/') : null;
 const newTab = link?.linkType === 'external' || !!link?.openInNewTab;
-const { liveUrl, facebookUrl } = await getChurchFacts();
+const facts = await getChurchFacts();
+const { liveUrl, facebookUrl } = facts;
+// "Next live: Sunday 11:00 am": worship's start (the last Sunday gathering, the same time the Live
+// now banner keys on), never typed here. No Sunday time set: plain "Watch live".
+const start = worshipStart(facts);
+const offLabel = start === null ? 'Watch live' : `Next live: Sunday ${clockLabel(start)}`;
 // The Facebook page only gets its own line when the live link goes somewhere else.
 const facebookLine = facebookUrl && facebookUrl !== liveUrl ? facebookUrl : null;
 // The sermon archive (2026-10-18), first match wins: a sermon preached in the last eight days
@@ -62,12 +68,6 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
 ---
 
 <section class:list={[surfaceClass(surface), 'watch-band']} aria-labelledby={headingId}>
-  {/* The ghost word (2026-10-24, from the hppres.org audit): "Last Sunday" huge in outline behind
-      the band, so the weekly message reads as an event. Decorative; the heading says it in words.
-      Use this device once or twice on the whole site. */}
-  <span class="watch-band__ghost" aria-hidden="true">
-    {sermonLabel}
-  </span>
   <div class="split mx-auto max-w-content items-center px-m py-section-lg" data-reveal>
     <div>
       {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
@@ -83,8 +83,17 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
+              data-live-link={liveUrl}
+              data-watch-live
             >
-              Watch live on Sunday<span class="sr-only"> (opens in a new tab)</span>
+              {/* The label follows the clock (audit 2026-10-25): "Live now" during worship (the
+                  live layer shows [data-live-show], src/lib/live-client.ts), otherwise when the
+                  next stream starts, from Church facts. The script below swaps the two. */}
+              <span data-live-show hidden>
+                Live now
+              </span>
+              <span data-live-off>{offLabel}</span>
+              <span class="sr-only"> (opens in a new tab)</span>
             </a>
           )}
           {link?.label && <CtaLink cta={link} variant="secondary" />}
@@ -154,6 +163,20 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
     </div>
   </div>
 </section>
+
+<script>
+  // The live button's two labels: while the live layer says worship is on, "Live now" shows (it
+  // carries [data-live-show]) and the "Next live" words hide. One listener for every band.
+  const swap = (live: boolean) => {
+    for (const el of document.querySelectorAll<HTMLElement>('[data-watch-live] [data-live-off]')) {
+      el.hidden = live;
+    }
+  };
+  document.addEventListener('church:live', (e) =>
+    swap(Boolean((e as CustomEvent<{ live: boolean }>).detail?.live)),
+  );
+  document.addEventListener('astro:page-load', () => swap(Boolean(window.__churchLive?.live)));
+</script>
 
 <style>
   /* No edge lines of its own (removed 2026-10-24): the board rule above every section already
@@ -269,33 +292,7 @@ const sermonLabel = sermonNow ? 'Last Sunday' : 'Latest message';
   .watch-band {
     position: relative;
     isolation: isolate;
-    /* Clipped both ways: the ghost word sits half off the band's bottom edge. */
-    overflow: clip;
     /* Bigger bricks on the stepped media corner (src/styles/shapes.css). */
     --step-u: clamp(14px, 0.6rem + 0.8vw, 24px);
-  }
-  .watch-band__ghost {
-    position: absolute;
-    z-index: -1;
-    bottom: -0.22em;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    font-family: var(--font-display);
-    font-size: clamp(4.5rem, 2rem + 12vw, 13rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: transparent;
-    -webkit-text-stroke: 1.5px var(--heading-solid);
-    opacity: 0.12;
-    pointer-events: none;
-    user-select: none;
-  }
-  /* Phones (phone polish, 2026-10-24): too wide for the screen, the word read as a cropped "ast
-     Sunda". It shows from 640px up. */
-  @media (max-width: 639px) {
-    .watch-band__ghost {
-      display: none;
-    }
   }
 </style>

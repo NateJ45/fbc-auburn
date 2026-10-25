@@ -53,6 +53,21 @@ gathering is an `Event` with a weekly `eventSchedule` (2026-10-17).
 event per confirmed Sunday gathering, from this Sunday, at the address. The This Sunday card links
 it only once a Sunday time is confirmed.
 
+## Every week (the Events page, 2026-10-25)
+
+The This week block (`thisWeekSection`) has a `mode`: `thisWeek` (the default, Home: the next seven days, merged by
+day, with dates) or `everyWeek` (Events: `EveryWeekList.astro`, each service time once, Sunday first). Both read the
+same Service times, so Home and Events cannot disagree; add a gathering there (Youth on Wednesday was added by
+`scripts/content/audit-collections.mjs`) and it shows in both, in the Plan your visit times and in the Ministries
+card's "when" line. Each Every week row links to the Ministries card it is about (matched by name, `matchMinistry`
+in `src/lib/gatherings.ts`, to the card anchors Find your place draws; a Sunday gathering with no card goes to Plan
+your visit) and, once its time is confirmed, to "Add to calendar": `/calendar/<key>.ics`
+(`src/pages/calendar/[key].ics.ts`, `gatheringIcs`), one weekly event from its next date. An unconfirmed time gets no
+file and no link, the same rule as `/sunday.ics`.
+
+The Events "Coming up" block (`EventsBlock.astro`) shows the block's own empty line when Church Trac has nothing
+dated; on Events that line is warm and carries a `[Jacob: ...]` ask to put the big days in early.
+
 `churchAddress.findUs` is Jacob's optional "how to find us" sentence (parking, which door). It
 shows on the This Sunday card and in the footer under the address; empty hides it.
 
@@ -108,10 +123,30 @@ Facebook now and gets better by itself once the YouTube channel id is filled in.
   `npx wrangler secret put YOUTUBE_API_KEY -c dist/server/wrangler.json`. Two quota units per
   check, cached 90 seconds per isolate. Without the key or channel every answer is "unknown" and
   the clock decides. Facebook has no keyless live check, so on Facebook the clock always decides.
+- **The Watch band's live button** (2026-10-25) says "Next live: Sunday 11:00 am" (worship's start, `worshipStart`,
+  the same time the banner keys on) and turns into "Live now" while the live layer says worship is on (its
+  `[data-live-show]` span shows, a `church:live` listener hides the other) and points at the stream
+  (`data-live-link`).
 - **The replay** (`LastSunday`) is unchanged: YouTube only, Facebook text in its fallback slot.
 
 Nothing live renders unless Church facts has somewhere to watch (a Facebook link in Social links,
 a Live stream link or a YouTube channel id).
+
+## The Sermons page and the Bulletin (2026-10-25 audit)
+
+- `/sermons/` opens with the Watch band (no ghost word any more), then "Every sermon" as soon as there is one, newest
+  first: date, title, passage, preacher, series, length (the sermon's optional `minutes` field, which also feeds the
+  podcast's duration). The series, preacher and book menus appear only when a menu has two or more options, and the
+  tally only when there is a choice or a second page. "Listen on the go" and a "Subscribe to the podcast" link are
+  always there; before the first MP3 a `[Jacob: ...]` line asks for one.
+- A sermon with no picture, series picture or YouTube thumbnail gets the stones art (`SermonArt.astro`) with the
+  church sketch faint in cream and the series, else the book, else its own title. `shapes.css` used to paint the
+  Watch band's art beige over that ground; the tint now skips `.c-art--blank`.
+- Each sermon page lists Passage, Preacher, Series and Length; before launch a missing one shows a `[Jacob: ...]`
+  line in its place (`PRE_LAUNCH_NOTES`). YouTube plays in place; Facebook opens Facebook.
+- `/bulletin/` shows `bulletinToShow` (`src/lib/sermons.ts`): the newest current Bulletin, else the newest one even
+  if it has come down, labelled "Last week's bulletin" when it is more than six days old, with a line saying when
+  the next goes up (`POSTED_WHEN` at the top of `bulletin.astro`; empty shows the ask before launch, nothing after).
 
 ## How it stays current
 
