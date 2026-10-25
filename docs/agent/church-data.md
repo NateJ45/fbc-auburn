@@ -63,7 +63,7 @@ card's "when" line. Each Every week row links to the Ministries card it is about
 in `src/lib/gatherings.ts`, to the card anchors Find your place draws; a Sunday gathering with no card goes to Plan
 your visit) and, once its time is confirmed, to "Add to calendar": `/calendar/<key>.ics`
 (`src/pages/calendar/[key].ics.ts`, `gatheringIcs`), one weekly event from its next date. An unconfirmed time gets no
-file and no link, the same rule as `/sunday.ics`.
+file and no link, the same rule as `/sunday.ics`. The file is written by `buildIcs` (`src/lib/ics.ts`, the starter's PORTABLE copy, card 158), which escapes and folds the lines.
 
 The Events "Coming up" block (`EventsBlock.astro`) shows the block's own empty line when Church Trac has nothing
 dated; on Events that line is warm and carries a `[Jacob: ...]` ask to put the big days in early.
