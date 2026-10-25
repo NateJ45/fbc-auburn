@@ -1,5 +1,9 @@
 # Change history
 
+_2026-10-25: a Give button, a red visit button, and a wider footer._
+
+**Decision.** Nathan asked for a more obvious Give button in the header and footer, a red Plan your visit in the header, better use of the footer's width now the This Sunday card is often gone, and less padding at its bottom. The header shows Give (solid navy, hand-heart icon, the Give page or the online giving link through `giveHref`) beside a red Plan your visit; each turns to the outline on its own page, because the muted current-page fill hid white text. The phone menu puts the two side by side under This Sunday. The footer's name row ends with a light-outline Give. With no This Sunday panel the footer's links run as four even columns (New here, Get involved, This week, Contact) instead of the left half with Contact below. The pre-launch pill's 64px under the bottom bar became room at the bar's right end from 768px (`ForJacob.astro`).
+
 _2026-10-25: the five-reviewer site audit, fixed in seven PRs._
 
 **Decision.** Nathan had the pre-launch site audited by five reviewers (UX, graphic design, web

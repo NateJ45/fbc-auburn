@@ -200,7 +200,9 @@ a:focus-visible > .c-art .c-art__play,
   font-family: var(--font-display);
   font-size: var(--fs-numeral);
   line-height: 1;
-  color: var(--auburn-deep, var(--heading-solid));
+  /* The heading token, which follows the theme (navy on the ground, pale in the stored dark
+     preference; --auburn-deep stayed navy on a dark ground there, axe 2026-10-25). */
+  color: var(--heading-solid);
 }
 .c-date__my {
   margin-top: 0.25rem;

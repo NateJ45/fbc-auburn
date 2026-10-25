@@ -213,6 +213,16 @@ const notes = PRE_LAUNCH_NOTES
   body:has(.fj) .sf-bottom {
     padding-bottom: 64px;
   }
+  /* From a tablet up the bar is one row, so the pill gets room at its right end instead of a band
+     of empty navy under it (Nathan, 2026-10-25: too much padding at the bottom of the footer). */
+  @media (min-width: 768px) {
+    body:has(.fj) .sf-bottom {
+      padding-bottom: 0;
+    }
+    body:has(.fj) .sf-bottom__inner {
+      padding-right: 230px; /* the pill is about 200px wide, 12px from the edge */
+    }
+  }
   @media print {
     .fj {
       display: none;

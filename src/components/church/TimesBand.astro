@@ -50,11 +50,9 @@ const short = sundays.length ? `Sundays ${timesPhrase(sundays.map((t) => t.minut
           </p>
         )}
       </div>
-      <a
-        class="times-band__bar"
-        href={address?.mapsUrl ?? '/plan-your-visit/'}
-        aria-label={`${short}. Directions`}
-      >
+      <a class="times-band__bar" href={address?.mapsUrl ?? '/plan-your-visit/'}>
+        {/* No aria-label: the visible words (the times, the To confirm tag, Directions) are the
+            link's name, which axe's label-content-name-mismatch asks for (2026-10-25). */}
         <span>
           {short}
           {!confirmed && <NotConfirmed confirmed={false} class="times-band__bar-tag" />}
@@ -78,6 +76,12 @@ const short = sundays.length ? `Sundays ${timesPhrase(sundays.map((t) => t.minut
     /* A flat pale sky, so the times read cleanly; a brick-red course along the top edge. */
     background: #e9eef5;
     border-top: 4px solid var(--auburn-red);
+    /* The panel is always pale, so its words keep the light theme's colours whatever the stored
+       preference (axe in dark mode, 2026-10-25: pale text on the pale panel). */
+    --foreground: #16263d;
+    --muted-foreground: #4a5a73;
+    --heading-solid: #1f3a5f;
+    --link: #1f3a5f;
     color: var(--heading-solid);
   }
   /* Wide: from a third of the way in out to the right edge of the window. */
@@ -142,10 +146,12 @@ const short = sundays.length ? `Sundays ${timesPhrase(sundays.map((t) => t.minut
     line-height: 1.45;
     color: var(--foreground);
   }
+  /* The band is always the pale panel (#e9eef5), so its link is the light theme's navy, not the
+     --link token: in the stored dark preference --link turns pale and the arrow fell to 2.54:1. */
   .times-band__directions {
     margin-top: 0.4rem;
     font-weight: 600;
-    color: var(--link);
+    color: #1f3a5f;
   }
   .times-band__bar-tag {
     margin-left: 0.5rem;
