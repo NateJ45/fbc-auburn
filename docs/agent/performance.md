@@ -58,8 +58,9 @@ router after the first page has settled (scripts in the session scratchpad, `nav
   when every selector in it names a class that appears nowhere in the page's HTML (attributes,
   island props, inline scripts) or in the scripts the page loads (followed through their imports),
   so classes the islands and the flow layer add at runtime are kept. Rules without classes,
-  `:not()`, `@font-face`, `@keyframes` and `@property` are never touched. 48% of the inline CSS
-  goes (Plan your visit 250 KB to about 128 KB). Checked by comparing the computed style of
+  `:not()`, `@font-face`, `@keyframes` and `@property` are never touched. About half the inline CSS
+  goes (48% when measured, 56% once the phone menu became a dialog; Plan your visit 250 KB to
+  about 128 KB). Checked by comparing the computed style of
   every element on all 27 built pages at 375 and 1280 (and with the phone menu and search open,
   and with motion on after a full scroll): zero differences. **If a script ever builds a class
   name from pieces** (`'cb-' + kind`), its rule would be dropped: name the prefix in `KEEP` at the
