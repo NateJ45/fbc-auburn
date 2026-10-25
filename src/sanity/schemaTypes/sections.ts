@@ -26,6 +26,7 @@ import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { CodeTextInput } from '../components/CodeTextInput';
 import { codeWarningMessage } from '../../lib/custom-code';
+import { HERO_VIDEO_ACCEPT, heroVideoProblem } from '../../lib/hero-video';
 import { SyncIcon } from '@sanity/icons/Sync';
 import {
   columnsField,
@@ -141,6 +142,34 @@ export const heroSection = defineType({
     }),
     defineField({ name: 'subhead', title: 'Line under the heading', type: 'text', rows: 2 }),
     imageWithAlt({ name: 'backgroundImage', title: 'Background photo (optional)' }),
+    // FBC Auburn Home (2026-10-25, PENDING 1zt): a short silent clip behind the welcome words
+    // (HomeHero.astro). The background photo above is its poster and what shows when the clip does
+    // not play (reduced motion, Save-Data, a slow connection, print). Rules: src/lib/hero-video.ts.
+    defineField({
+      name: 'backgroundVideo',
+      title: 'Background video (Home only, optional)',
+      type: 'file',
+      description:
+        'A short clip of church life that plays silently behind the welcome words. Best: 15 to 30 seconds, landscape (phone held sideways), steady, no sound, an .mp4 under 6 MB (720p is plenty). Keep the background photo too: it shows first, and it is all some visitors see.',
+      options: { accept: HERO_VIDEO_ACCEPT },
+      hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
+      validation: (R) =>
+        R.custom(async (value: { asset?: { _ref?: string } } | undefined, context) => {
+          const ref = value?.asset?._ref;
+          if (!ref) return true;
+          const asset = await context
+            .getClient({ apiVersion: '2024-01-01' })
+            .fetch<{ mimeType?: string; size?: number } | null>(
+              '*[_id == $id][0]{ mimeType, size }',
+              { id: ref },
+            );
+          const problem = heroVideoProblem(asset);
+          if (!problem) return true;
+          return problem.level === 'error'
+            ? problem.message
+            : { message: problem.message, level: 'warning' };
+        }),
+    }),
     defineField({ name: 'primaryCta', title: 'Main button', type: 'ctaBlock' }),
     defineField({ name: 'secondaryCta', title: 'Second button (optional)', type: 'ctaBlock' }),
     defineField({

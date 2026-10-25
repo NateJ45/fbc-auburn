@@ -40,13 +40,6 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
 - **Decisions for Jacob:** whether the TikTok stays in the footer (it now reads "Pastor Jacob on
   TikTok"); whether News and notes stays in the menu before he has a few posts; the menu group
   names (New here, Get involved, This week) and what Next steps should hold.
-- **A video for the Home hero.** The shot request now asks for clips of church life (worship,
-  outreach, youth, VBS, a meal, a workday), a few seconds each, which Nathan cuts into one silent video;
-  clips with children need parents’ permission; a still of Sunday worship is the fallback (Nathan,
-  2026-10-25). The hero block has
-  only a background photo field today, so a video field and a muted, looping, poster-first
-  `<video>` in `HomeHero.astro` (off with reduced motion, off on Save-Data) are needed before a clip
-  can go up.
 - **A water stone icon for baptism.** Next steps uses the dove until one is drawn.
 - **Not reached:** the desktop end matter is about 1,000px (target 900) and the phone footer is
   more than one screen; GD-L5 (one reading measure) is done on Privacy only; the lockup's place
