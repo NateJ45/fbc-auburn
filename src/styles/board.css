@@ -135,17 +135,31 @@ main:is(:has(.board-head), :has(> .hb)) :where(.max-w-content.px-m, .max-w-conte
   object-fit: contain;
   object-position: left bottom;
 }
+/* Phones (2026-10-24): a tighter head, and the stone icon as a small mark at the top right, level
+   with the eyebrow, instead of a 112px picture on a row of its own under the title (it took 144px of
+   the first screen on nine pages and pushed What we believe's first words below the fold). A photo
+   still follows the words at full width. */
 @media (max-width: 960px) {
   .board-head__inner {
-    padding-bottom: 48px;
+    position: relative;
+    padding-top: 44px;
+    padding-bottom: 36px;
+    background-position: var(--board-gutter) 20px;
   }
-  .board-head__photo,
-  .board-head__icon {
-    margin-top: 32px;
+  .board-head__photo {
+    margin-top: 28px;
   }
   .board-head__icon {
-    width: 112px;
-    height: 112px;
+    position: absolute;
+    top: 34px;
+    right: var(--board-gutter);
+    width: 48px;
+    height: 48px;
+    object-position: center;
+  }
+  /* The eyebrow's line stops short of the mark. */
+  .board-head__inner:has(> .board-head__icon) .board-head__copy > :first-child {
+    padding-right: 60px;
   }
 }
 
