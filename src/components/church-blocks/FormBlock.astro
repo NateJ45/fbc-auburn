@@ -61,7 +61,11 @@ const who = form?.recipientName || 'the church office';
   >
     <div class="cb-form-wrap" data-cb-form-wrap>
       {form.mode === 'prayer' && (
-        <p class="cb-form-note" style="max-width: 40rem; margin-bottom: 1.25rem">
+        <p
+          class="cb-form-note"
+          style="max-width: 40rem; margin-bottom: 1.25rem"
+          data-cb-prayer-note
+        >
           Your request goes to {who} by email. It is never shown on the website, and the website
           keeps no copy once it has been sent.
         </p>
@@ -241,6 +245,9 @@ const who = form?.recipientName || 'the church office';
     const switchToFallback = () => {
       show(form, false);
       show(unavailable, true);
+      // One note at a time (site audit, 2026-10-25): with the form off, the prayer privacy note
+      // describes a form that is not there, and two boxes stacked.
+      show(wrap?.querySelector('[data-cb-prayer-note]') ?? null, false);
     };
 
     // Can forms be delivered yet? No Worker, no database and no email all mean "not yet".
