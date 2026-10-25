@@ -86,7 +86,7 @@ export const sermon = defineType({
         R.custom((value) =>
           !value || bookOf(value)
             ? true
-            : 'The website does not recognise the book here, so this sermon will not show under a book in the filters. Check the spelling, like "1 John 4:7".',
+            : 'The website does not recognize the book here, so this sermon will not show under a book in the filters. Check the spelling, like "1 John 4:7".',
         ).warning(),
     }),
     defineField({

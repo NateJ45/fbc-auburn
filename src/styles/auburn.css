@@ -406,6 +406,22 @@ main [data-slot='accordion-trigger']:focus-visible {
 .hb-hero .btn-auburn:focus-visible {
   outline-color: #ffffff;
 }
+/* Dark surfaces re-point the ring (audit 2026-10-25, UX-H5): the navy ring was invisible on the
+   Home hero, the This Sunday card, the letter blocks and the dark photo frames (1:1 on navy).
+   Every ring on the site reads var(--ring) (globals.css base, the rules above, Tailwind's
+   outline-ring / ring-ring through --color-ring), so setting it here once covers every link,
+   button and summary inside, and a new dark section joins by adding data-dark-surface (the
+   .surface-feature look already sets its own light ring). White on these navies is 9:1 or more.
+   The footer and the phone menu keep their own lighter blue (#7f98b8, about 5:1 there). */
+:where(.hb-hero, .hb-sunday, .hb-note, .live-banner, .shot--example, [data-dark-surface]) {
+  --ring: #ffffff;
+  --color-ring: #ffffff;
+}
+/* A light card sitting on one of them (the shot request's note) takes the navy ring back. */
+:where(.shot__note, [data-light-surface]) {
+  --ring: #1f3a5f;
+  --color-ring: #1f3a5f;
+}
 
 /* A 44px tap area for the small standalone links (2026-10-24, measured with
    scripts/measure-tap-targets.mjs at 390px): the header logo (40px tall), Get directions, and the
@@ -480,10 +496,6 @@ html .site-search-dialog {
    the end of Header.astro). ---- */
 .site-header__logo {
   height: 44px;
-  transition: height 0.3s ease;
-}
-.site-header__row {
-  transition: padding 0.3s ease;
 }
 .site-header {
   transition:
@@ -516,16 +528,41 @@ html .site-search-dialog {
     0 1px 0 #e6ded2,
     0 12px 30px -24px rgb(22 38 61 / 0.35);
 }
-/* The bar compacts from lg up only. It is sticky and in the flow, so a height change re-lays the
-   whole page every frame of the transition and nudges the content up as the scroll starts, which
-   read as lag on phones (2026-10-24). Below lg it keeps its height and only gains the ground and
-   shadow; the phone lockup is the same size in both states anyway. */
+/* The bar compacts from lg up only, and with transforms only (web-dev audit L5, 2026-10-25). It is
+   sticky and in the flow, so changing its height moved everything under it (CLS 0.022 on Home at
+   1280). Now it keeps its layout height: the scrolled bar slides up by --hdr-shrink (its top strip
+   goes off screen), its contents slide down by half that so they sit centred in what is left, and
+   the lockup scales to 40px tall. What used to be 12px of padding each side and a 40px lockup is
+   the same look, drawn without re-laying the page. Below lg it keeps its height and only gains the
+   ground and shadow; the phone lockup is the same size in both states anyway. */
 @media (min-width: 64rem) {
-  .site-header[data-scrolled] .site-header__row {
-    padding-block: 12px;
+  .site-header {
+    /* The old compact padding (12px) against py-m, both sides. */
+    --hdr-shrink: calc(2 * (var(--spacing-m) - 12px));
+    --hdr-logo-scale: calc(40 / 44);
+  }
+  .site-header[data-scrolled]:not([data-state='hidden']) {
+    transform: translateY(calc(-1 * var(--hdr-shrink)));
+  }
+  .site-header__row > * {
+    transition: transform 0.3s ease;
+  }
+  .site-header[data-scrolled] .site-header__row > * {
+    transform: translateY(calc(var(--hdr-shrink) / 2));
+  }
+  .site-header__logo {
+    transform-origin: 0 50%;
+    transition: transform 0.3s ease;
   }
   .site-header[data-scrolled] .site-header__logo {
-    height: 40px;
+    transform: scale(var(--hdr-logo-scale));
+  }
+}
+@media (min-width: 1280px) {
+  .site-header {
+    /* The 56px lockup also gave way to the 44px button height. */
+    --hdr-shrink: calc(2 * (var(--spacing-m) - 12px) + 12px);
+    --hdr-logo-scale: calc(40 / 56);
   }
 }
 @media (max-width: 63.99rem) {
@@ -676,6 +713,11 @@ html .site-search-dialog {
   max-width: 40rem;
   margin-inline: auto;
 }
+/* The page endings (site audit, 2026-10-25): less ground under the button. The footer's sill sits
+   half over this band, so 32px of it is the sill's; the rest is air above it. */
+.final-cta--light > div {
+  padding-bottom: clamp(64px, 7vw, 96px);
+}
 /* Phones (phone polish, 2026-10-24): the close was the only centred block on Watch, Events, FAQ,
    the journal and a post. It sits on the 20px gutter like everything above it, the mark smaller and
    on the left, the button full width like the Home hero's, and about 40px above the mark instead of
@@ -801,6 +843,22 @@ html .site-search-dialog {
 .menu-pill:hover {
   background: var(--muted);
 }
+/* The pill is a link (to the footer's page list) until the script makes it a button. */
+.menu-pill {
+  text-decoration: none;
+  cursor: pointer;
+}
+/* From 1024px the header's dropdowns are the menu, so the pill goes when they already hold every
+   item (data-nav-complete; design audit M8, 2026-10-25), and search takes the header button's
+   shape: 44px tall with the control corner, beside the "Plan your visit" button. */
+@media (min-width: 64rem) {
+  .site-header__menu[data-nav-complete] .menu-pill {
+    display: none;
+  }
+  .site-header__menu[data-nav-complete] .search-pill {
+    border-radius: var(--radius-control);
+  }
+}
 /* Visitor search (PORTS.md card 126): a round button in the Menu pill's style, just left of it at
    every width, and a search row at the top of the menu. The dialog itself is styled from the
    theme tokens in src/components/search/. */
@@ -865,15 +923,19 @@ html .site-search-dialog {
    serif rows with hairlines between them, then the This Sunday card and the contact details
    (below 64rem the compact card and the visit button come first, under the search field). The
    rows run edge to edge on phones so an open group's red reaches both sides of the screen. */
+/* A native <dialog> since 2026-10-25 (MobileNav.astro): showModal() puts it in the top layer, so
+   the UA's centred-box defaults are undone here and it fills the screen. Closed, it is display:none
+   (the UA rule), so only [open] lays it out. */
 .auburn-menu {
   --menu-gutter: var(--spacing-m, 1.25rem);
   --menu-rule: rgb(22 38 61 / 0.14);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  width: 100%;
-  max-width: none;
+  position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
   border: 0;
   padding: 0;
   background: var(--background);
@@ -882,9 +944,29 @@ html .site-search-dialog {
   box-shadow: none;
   overflow-y: auto;
   overscroll-behavior: contain;
-  /* The sheet fades in where it stands; the shared slide from the right would read as a drawer. */
-  --tw-enter-translate-x: 0;
-  --tw-exit-translate-x: 0;
+}
+.auburn-menu[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.auburn-menu::backdrop {
+  background: var(--background);
+}
+/* The page behind does not scroll while the menu is open (Radix did this with a body lock). */
+html:has(.auburn-menu[open]) {
+  overflow: hidden;
+}
+/* The sheet fades in where it stands. */
+@media (prefers-reduced-motion: no-preference) {
+  .auburn-menu[open] {
+    animation: menu-fade 180ms ease-out both;
+  }
+}
+@keyframes menu-fade {
+  from {
+    opacity: 0;
+  }
 }
 @media (min-width: 64rem) {
   .auburn-menu {
@@ -894,6 +976,7 @@ html .site-search-dialog {
 
 /* The top bar: the lockup where the header's sits and the close button where the Menu pill was. */
 .auburn-menu__head {
+  display: flex;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -1392,15 +1475,15 @@ html .site-search-dialog {
    details follow on the same count, and the sill lays itself. A group's label rises on the count with
    its rows. CSS only, keyed on the sheet's data-state; nothing moves under reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
-  .auburn-menu[data-state='open'] .auburn-menu__search,
-  .auburn-menu[data-state='open'] .auburn-menu__visit,
-  .auburn-menu[data-state='open'] .auburn-menu__item,
-  .auburn-menu[data-state='open'] .auburn-menu__group-label,
-  .auburn-menu[data-state='open'] .auburn-menu__side > * {
+  .auburn-menu[open] .auburn-menu__search,
+  .auburn-menu[open] .auburn-menu__visit,
+  .auburn-menu[open] .auburn-menu__item,
+  .auburn-menu[open] .auburn-menu__group-label,
+  .auburn-menu[open] .auburn-menu__side > * {
     animation: menu-rise 300ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
     animation-delay: calc(60ms + var(--i, 0) * 40ms);
   }
-  .auburn-menu[data-state='open'] .auburn-menu__sill .sill-brick {
+  .auburn-menu[open] .auburn-menu__sill .sill-brick {
     transform-box: fill-box;
     transform-origin: center;
     animation: sill-lay 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -1524,8 +1607,8 @@ html.motion .sill.is-laid .sill-brick {
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   gap: clamp(32px, 5vw, 80px);
   align-items: start;
-  padding-top: clamp(40px, 5vw, 64px);
-  padding-bottom: clamp(40px, 5vw, 64px);
+  padding-top: clamp(32px, 4vw, 48px);
+  padding-bottom: clamp(28px, 3.5vw, 44px);
 }
 .sf-invite__brand {
   display: flex;
@@ -1544,12 +1627,6 @@ html.motion .sill.is-laid .sill-brick {
   line-height: 1.1;
   color: #ffffff;
   text-wrap: balance;
-}
-.sf-invite__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
 }
 
 /* The This Sunday panel: a lighter ink card, its top edge in the story's four colours. */
@@ -1646,37 +1723,50 @@ html.motion .sill.is-laid .sill-brick {
   text-underline-offset: 3px;
 }
 
-/* The directory: each column is one row, its label then its links in big serif type, so two short
-   columns fill the width instead of leaving half of it empty. The starter's column markup is
-   unchanged; only its layout is. */
+/* The directory (2026-10-25, the page endings): short columns side by side, each its label then
+   its links one under another, the way a footer is read. It was one row per group with the links
+   flowing ragged across the width. The Contact rows take the last column (or the full width once
+   there is no room). The starter's column markup is unchanged; only its layout is. */
 .site-footer__links {
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  gap: 24px 28px;
   border-top: 1px solid #24344d;
 }
 .site-footer__links > nav,
 .site-footer__links > div {
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  align-items: baseline;
-  gap: 4px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.site-footer__links > .sf-touch {
+  grid-column: 1 / -1;
 }
 .site-footer__links > nav > p,
-.site-footer__links > div > p:first-child {
+.site-footer__links > div > p:first-child,
+.sf-touch > p:first-child {
   margin: 0;
   color: #7f98b8 !important;
   font-weight: 700;
 }
 .site-footer__links > nav ul {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0 30px;
+  flex-direction: column;
   margin: 0;
 }
+/* 32px rows for a mouse; phones get 40px (below). */
 .site-footer__links > nav ul a {
-  font-family: var(--font-display);
-  font-size: var(--fs-title-sm);
-  color: #ffffff !important;
+  min-height: 32px !important;
+  min-width: 0 !important;
+}
+/* UI-sized text is in the body face (design audit M2, 2026-10-25): Young Serif is a display face and
+   turned to a dense wall of bold serif at 20px in lists. 17px, weight 500, a light ink. The display
+   face stays for the where-next rows, the church's name and the This Sunday numerals. */
+.site-footer__links > nav ul a {
+  font-family: var(--font-body);
+  font-size: var(--fs-button);
+  font-weight: 500;
+  color: #e9eef5 !important;
   text-decoration: none;
   background: linear-gradient(#b5503a, #b5503a) 0 100% / 0 2px no-repeat;
   transition: background-size 0.25s ease;
@@ -1724,13 +1814,6 @@ html.motion .sill.is-laid .sill-brick {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
   }
-  .site-footer__links > nav,
-  .site-footer__links > div {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .site-footer__links > nav ul {
-    gap: 0 22px;
-  }
   .sf-bottom__about {
     display: block;
   }
@@ -1742,36 +1825,18 @@ html.motion .sill.is-laid .sill-brick {
   .sf-sunday {
     padding: var(--pad-card);
   }
-  .sf-invite__actions .btn-auburn {
-    flex: 1 1 auto;
-  }
 }
-/* Phones (phone polish, 2026-10-24): the two next steps stack full width (they sat side by side at
-   159px each from 375px), and the page links read as a tidy two-column list instead of serif words
-   flowing ragged across the width. */
+/* Phones (phone polish, 2026-10-24; the page endings, 2026-10-25): the groups sit in two short
+   columns, each link a 40px row. */
 @media (max-width: 767px) {
-  .sf-invite__actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .sf-invite__actions .btn-auburn {
-    width: 100%;
-  }
-  .site-footer__links > nav ul {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0 16px;
-  }
-  /* 18px, so "What we believe" and "News and notes" keep one line in a 159px column at 375. */
-  .site-footer__links > nav ul a {
-    font-size: var(--fs-body);
-    line-height: 1.2;
-  }
-  /* One rhythm: about 28px of air between the groups (Visit, Belong, Get in touch), and in Get in
-     touch one 44px row per line with nothing added between them (the rows were 46 to 50px apart
-     and the social icons another 16px down). */
   .site-footer__links {
-    row-gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+  /* 17px in the body face keeps "What we believe" and "Prayer requests" on one line in a column. */
+  .site-footer__links > nav ul a {
+    min-height: 40px !important;
+    line-height: 1.2;
   }
   .sf-touch__rows > * {
     margin-block: 0;
@@ -1867,16 +1932,145 @@ html.motion .sill.is-laid .sill-brick {
   .sf-invite__brand {
     order: 1;
   }
-  .sf-invite__actions {
-    order: 2;
-    margin-top: -12px;
-  }
   .sf-top > .sf-sunday {
     order: 3;
   }
   .sf-invite .site-footer__links {
     order: 4;
     margin-top: 0;
+  }
+}
+
+/* ---- The page endings (site audit, 2026-10-25) ------------------------------------------------
+   One closing device per page, no repeated buttons, and a footer about one screen tall on a phone
+   (it was 1,852px at 375 on every route, 2.3 screens). */
+
+/* The This Sunday panel only where nothing above it gives the times: Footer.astro leaves it out on
+   Home and Plan your visit, and these components mark a page that already shows them. */
+body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap)) .sf-sunday {
+  display: none;
+}
+.sf-sunday__links a.sf-sunday__phone {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* Wide screens: the church's name runs across the top, the page links and the Contact rows sit
+   under it on the left and the This Sunday panel on the right, so neither column hangs below the
+   other. */
+@media (min-width: 961px) {
+  .sf-top .sf-invite {
+    display: contents;
+  }
+  .sf-invite__brand {
+    grid-column: 1 / -1;
+  }
+  .sf-invite .site-footer__links {
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: 0;
+  }
+  .sf-top > .sf-sunday {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .sf-top {
+    row-gap: 24px;
+  }
+  /* No This Sunday panel on this page: the links take the full width. */
+  .sf-top:not(:has(> .sf-sunday)),
+  body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap)) .sf-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* The Contact rows run in two columns from a tablet up, not one 44px line each down the page. */
+@media (min-width: 768px) {
+  .sf-touch__rows {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    gap: 0 32px;
+  }
+  .sf-touch__rows > * {
+    margin: 0 !important;
+  }
+}
+
+/* Phones: the This Sunday panel becomes one compact block (the date and times on two short lines,
+   the street, then Directions and the phone side by side), and the page links sit in two short
+   columns, so the footer is about a screen long. */
+@media (max-width: 767px) {
+  .sf-top {
+    gap: 24px;
+    padding-top: 32px;
+    padding-bottom: 28px;
+  }
+  .sf-invite__mark {
+    width: 44px;
+  }
+  .sf-invite__name {
+    font-size: var(--fs-title);
+  }
+  .sf-sunday {
+    padding: 16px 18px 12px;
+    padding-top: 21px;
+  }
+  .sf-sunday__date {
+    margin: 0 0 6px;
+    font-size: var(--fs-lead);
+  }
+  .sf-sunday__times {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 20px;
+  }
+  .sf-sunday__times > div {
+    display: flex;
+    gap: 8px;
+  }
+  .sf-sunday__times dt {
+    font-size: 1.375rem;
+  }
+  .sf-sunday__times dd {
+    font-size: var(--fs-small);
+  }
+  .sf-sunday__where {
+    margin-top: 10px;
+    padding-top: 8px;
+    font-size: var(--fs-small);
+    line-height: 1.4;
+  }
+  .sf-sunday__findus {
+    display: none;
+  }
+  .sf-sunday__links {
+    margin-top: 2px !important;
+    gap: 0 20px;
+  }
+  .sf-sunday__ics {
+    display: none !important;
+  }
+  /* The groups and Contact flow down two short columns, each block kept whole. */
+  .sf-invite .site-footer__links {
+    display: block;
+    columns: 2;
+    column-gap: 16px;
+    padding-top: 20px;
+  }
+  .sf-invite .site-footer__links > * {
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+  .site-footer__links > nav ul a {
+    min-height: 40px;
+  }
+  .sf-touch__rows {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+  }
+  .sf-touch__rows > p {
+    margin: 0;
+  }
+  .sf-touch__social {
+    margin-top: 4px !important;
   }
 }
 

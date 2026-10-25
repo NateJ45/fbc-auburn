@@ -6,6 +6,11 @@
 // The page you are on drops out of the list and the next one moves up, so there are always three.
 // Hover (or keyboard focus) fills the row with brick red from the left and draws the arrow out.
 // Part of the footer (Footer.astro), so it is outside <main> and every page gets it.
+//
+// One closing device per page (site audit, 2026-10-25): a page that ends on its own closing band
+// (FinalCta.astro, marked data-final-cta) does not also get these rows; the CSS below hides them
+// there. Labels are the menu's own names, one name per destination ("Ministries", not "Find your
+// place"; "About", not "About the church").
 
 import { getAllPageSlugs } from '@/lib/queries';
 
@@ -23,12 +28,12 @@ const ROWS = [
   { href: '/plan-your-visit/', label: 'Plan your visit', note: 'Your first Sunday' },
   {
     href: '/ministries/',
-    label: 'Find your place',
+    label: 'Ministries',
     note: 'Kids, adults, serving, care',
     studio: 'ministries',
   },
   { href: '/sermons/', label: 'Sermons', note: 'Listen or watch again' },
-  { href: '/about/', label: 'About the church', note: 'Who we are' },
+  { href: '/about/', label: 'About', note: 'Who we are' },
   { href: '/give/', label: 'Give', note: 'Sunday, by mail or online' },
 ];
 const slugs = new Set(await getAllPageSlugs());
@@ -65,9 +70,13 @@ const rows = ROWS.filter((r) => r.href !== here && (!r.studio || slugs.has(r.stu
 </nav>
 
 <style>
+  /* The page's own closing band already ends it: one closing device per page. */
+  :global(body:has(main [data-final-cta])) .where-next {
+    display: none;
+  }
   .where-next {
     padding-inline: var(--spacing-l, 1.5rem);
-    padding-block: clamp(1.5rem, 4vw, 3rem) clamp(0.5rem, 2vw, 1.5rem);
+    padding-block: clamp(1.25rem, 3vw, 2.25rem) clamp(0.25rem, 1vw, 0.75rem);
   }
   .where-next__list {
     list-style: none;
@@ -85,7 +94,7 @@ const rows = ROWS.filter((r) => r.href !== here && (!r.studio || slugs.has(r.stu
     grid-template-areas: 'label arrow' 'note arrow';
     align-items: center;
     column-gap: 1.5rem;
-    padding: clamp(1.1rem, 2.4vw, 1.75rem) clamp(0.75rem, 2vw, 1.5rem);
+    padding: clamp(0.8rem, 1.6vw, 1.15rem) clamp(0.75rem, 2vw, 1.5rem);
     color: #fff;
     text-decoration: none;
   }
@@ -111,7 +120,9 @@ const rows = ROWS.filter((r) => r.href !== here && (!r.studio || slugs.has(r.stu
   .where-next__label {
     grid-area: label;
     font-family: var(--font-display);
-    font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3.4rem);
+    /* 26px on a phone to 40px (it was 54px: the rows outweighed the page above them; design
+       audit H1, 2026-10-25). */
+    font-size: clamp(1.625rem, 1.2rem + 1.4vw, 2.5rem);
     line-height: 1.05;
     letter-spacing: -0.01em;
   }
@@ -153,6 +164,10 @@ const rows = ROWS.filter((r) => r.href !== here && (!r.studio || slugs.has(r.stu
     }
     .where-next__row {
       padding-inline: 0;
+      padding-block: 0.7rem;
+    }
+    .where-next__note {
+      margin-top: 0.2rem;
     }
   }
 </style>

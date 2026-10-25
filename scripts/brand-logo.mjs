@@ -110,6 +110,7 @@ function textPath(text, size, tracking, x, y, fill) {
 }
 
 // ---- Lockups --------------------------------------------------------------------------------
+const PLACE_LINE = 'AUBURN · HAMILTON, OH';
 // Horizontal: the mark 100 tall; the name's caps sit level with the top courses and the place
 // line on the lower ones.
 function horizontal(markBody, { reversed = false } = {}) {
@@ -119,14 +120,10 @@ function horizontal(markBody, { reversed = false } = {}) {
     gap = 22;
   const tx = pad + markW + gap;
   const l1 = textPath('First Baptist Church', 44, 0.004, tx, pad + 52, reversed ? '#FFFFFF' : INK);
-  const l2 = textPath(
-    'AUBURN, OHIO',
-    17.5,
-    0.22,
-    tx + 2,
-    pad + 88,
-    reversed ? REVERSED_SUB : SLATE,
-  );
+  // The place line (design audit L1, 2026-10-25): the one place line the site uses
+  // (src/lib/place-line.ts), and big enough to read. At 17.5 units it drew about 6px tall in the
+  // 44px header and 8px at 56px; at 26 units with 0.12em tracking it is about 9px and 12px.
+  const l2 = textPath(PLACE_LINE, 26, 0.12, tx + 2, pad + 90, reversed ? REVERSED_SUB : SLATE);
   const w = tx + Math.max(l1.width, l2.width) + pad,
     h = markH + 2 * pad;
   const ground = reversed ? `<rect width="${n2(w)}" height="${h}" fill="${DARK_GROUND}"/>` : '';
@@ -142,10 +139,10 @@ function stacked(markBody) {
     markW = (markH * MW) / MH,
     pad = 16;
   const r1 = glyphRun('First Baptist Church', 44, 0.004).width;
-  const r2 = glyphRun('AUBURN, OHIO', 17.5, 0.22).width;
+  const r2 = glyphRun(PLACE_LINE, 26, 0.12).width;
   const w = Math.max(markW, r1, r2) + 2 * pad;
   const l1 = textPath('First Baptist Church', 44, 0.004, (w - r1) / 2, pad + markH + 60, INK);
-  const l2 = textPath('AUBURN, OHIO', 17.5, 0.22, (w - r2) / 2, pad + markH + 96, SLATE);
+  const l2 = textPath(PLACE_LINE, 26, 0.12, (w - r2) / 2, pad + markH + 98, SLATE);
   return doc(
     [w, pad + markH + 96 + pad + 4],
     place(markBody, (w - markW) / 2, pad, markH) + l1.svg + l2.svg,

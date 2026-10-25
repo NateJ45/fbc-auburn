@@ -1,0 +1,252 @@
+---
+// Safe to edit by hand
+// The phone Sunday bar (Home audit research, 2026-10-17; its own component since 2026-10-25): a
+// white bar docked to the bottom of a phone screen with the Sunday times, Directions and one red
+// button. Rendered by Footer.astro on two pages only:
+//   Home             "Plan your visit"          -> /plan-your-visit/
+//   Plan your visit  "Tell us you are coming"   -> /contact/?topic=visit (UX audit M1: the page a
+//                    first-timer opens in the car park, so the times and Directions stay in reach)
+// It appears once the page's This Sunday card ([data-this-sunday]) has scrolled up out of view, or
+// on a page with no card, once the page heading has; it hides while the footer is on screen (the
+// footer carries the same facts). Below 768px only. Times come from Church facts, never typed.
+import { getChurchFacts } from '@/lib/church-data';
+import { clockLabel, timesPhrase } from '@/lib/church-facts';
+
+interface Props {
+  /** The current path, with its trailing slash. */
+  path: string;
+}
+const { path } = Astro.props;
+
+const BARS: Record<string, { label: string; href: string }> = {
+  '/': { label: 'Plan your visit', href: '/plan-your-visit/' },
+  '/plan-your-visit/': { label: 'Tell us you are coming', href: '/contact/?topic=visit' },
+};
+const bar = BARS[path];
+
+const facts = bar ? await getChurchFacts() : null;
+const sundayMinutes = (facts?.serviceTimes ?? [])
+  .filter((s) => s.dayIndex === 0)
+  .map((s) => s.minutes);
+const times = sundayMinutes.length ? `Sundays ${timesPhrase(sundayMinutes)}` : '';
+// The short form for the narrowest phones (under 360px): "9:45 & 11:00" under a small "Sundays",
+// so the bar stays one button tall instead of wrapping the long phrase to four lines.
+const timesShort = [...sundayMinutes]
+  .sort((a, b) => a - b)
+  .map((m) => clockLabel(m).replace(/ [ap]m$/, ''))
+  .join(' & ');
+---
+
+{bar && times && (
+  <div class:list={['sundaybar', bar.label.length > 16 && 'sundaybar--long']} data-sundaybar hidden>
+    <p class="sundaybar__times">
+      <span class="sundaybar__long">{times}</span>
+      <span class="sundaybar__short">
+        <span class="sundaybar__day">Sundays</span> {timesShort}
+      </span>
+    </p>
+    {facts?.address && (
+      <a class="sundaybar__link" href={facts.address.mapsUrl} rel="noopener" target="_blank">
+        {/* Under 360px the word gives way to a map pin; the link keeps its name for screen readers. */}
+        <svg
+          class="sundaybar__pin"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M12 21.5s6.75-5.9 6.75-11.5a6.75 6.75 0 1 0-13.5 0c0 5.6 6.75 11.5 6.75 11.5Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+          <circle cx="12" cy="10" r="2.5" fill="currentColor" />
+        </svg>
+        <span class="sundaybar__dir">Directions</span>
+        <span class="sr-only"> (opens Google Maps in a new tab)</span>
+      </a>
+    )}
+    <a class="btn-auburn btn-auburn--primary sundaybar__visit" href={bar.href}>
+      {bar.label}
+    </a>
+  </div>
+)}
+
+<script>
+  // Shown once the This Sunday card (or, with none, the page's h1) has scrolled up out of view,
+  // hidden again while the footer is on screen. Two IntersectionObservers, no scroll listener.
+  // Re-run after every View Transitions navigation; the old observers go with the old page.
+  let observers: IntersectionObserver[] = [];
+  function initSundayBar() {
+    observers.forEach((o) => o.disconnect());
+    observers = [];
+    const bar = document.querySelector<HTMLElement>('[data-sundaybar]');
+    const anchor =
+      document.querySelector<HTMLElement>('main [data-this-sunday]') ??
+      document.querySelector<HTMLElement>('main h1');
+    const footer = document.querySelector<HTMLElement>('.site-footer');
+    if (!bar || !anchor || !('IntersectionObserver' in window)) return;
+    let pastAnchor = false;
+    let footerIn = false;
+    const sync = () => {
+      bar.hidden = !(pastAnchor && !footerIn);
+    };
+    // The root runs on far below the screen, so the only change it reports is the anchor crossing
+    // the top edge. With a plain root, a jump from below the screen to above it (a long swipe, a
+    // jump to an in-page link) crossed nothing and the bar never showed.
+    const a = new IntersectionObserver(
+      ([e]) => {
+        pastAnchor = !e.isIntersecting;
+        sync();
+      },
+      { rootMargin: '0px 0px 100000px 0px' },
+    );
+    a.observe(anchor);
+    observers.push(a);
+    if (footer) {
+      const f = new IntersectionObserver(([e]) => {
+        footerIn = e.isIntersecting;
+        sync();
+      });
+      f.observe(footer);
+      observers.push(f);
+    }
+  }
+  initSundayBar();
+  document.addEventListener('astro:page-load', initSundayBar);
+</script>
+
+<style>
+  /* Docks to the bottom once the anchor has scrolled away. White, with a thin edge in the mark's
+     colours. Phones only. */
+  .sundaybar {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .sundaybar:not([hidden]) {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 45;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px max(16px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
+      border-top: 3px solid transparent;
+      border-image: linear-gradient(
+          90deg,
+          #7f98b8 0 25%,
+          #2c4f7c 25% 50%,
+          #b5503a 50% 75%,
+          #9a3b2a 75% 100%
+        )
+        1;
+      background: #ffffff;
+      box-shadow: 0 -12px 30px -24px rgb(22 38 61 / 0.45);
+    }
+    .sundaybar__times {
+      flex: 1;
+      margin: 0;
+      font-size: var(--fs-small);
+      font-weight: 700;
+      line-height: 1.25;
+      font-variant-numeric: tabular-nums lining-nums;
+      color: var(--auburn-deep);
+    }
+    .sundaybar__link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-weight: 600;
+      color: var(--link);
+      text-underline-offset: 3px;
+    }
+    .sundaybar .sundaybar__visit {
+      min-height: 44px;
+      padding: 8px 16px;
+      font-size: var(--fs-small);
+      white-space: nowrap;
+    }
+    .sundaybar__short,
+    .sundaybar__pin {
+      display: none;
+    }
+  }
+  /* "Tell us you are coming" is twice as long as "Plan your visit": with it, the short times from
+     480px down, and the map pin for Directions from 400px down, so the bar stays one button tall. */
+  @media (max-width: 479px) {
+    .sundaybar--long .sundaybar__long {
+      display: none;
+    }
+    .sundaybar--long .sundaybar__short {
+      display: block;
+      font-size: var(--fs-tag);
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+    .sundaybar--long .sundaybar__day {
+      display: block;
+      font-weight: 600;
+      color: var(--muted-foreground);
+    }
+  }
+  @media (max-width: 399px) {
+    .sundaybar--long .sundaybar__link {
+      justify-content: center;
+      min-width: 44px;
+    }
+    .sundaybar--long .sundaybar__pin {
+      display: block;
+    }
+    .sundaybar--long .sundaybar__dir {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+  /* The narrowest phones (phone polish, 2026-10-24): below 360px the times read "Sundays / 9:45 &
+     11:00" in small type and Directions becomes a map pin, so the bar stays one button tall. */
+  @media (max-width: 359px) {
+    .sundaybar:not([hidden]) {
+      gap: 8px;
+    }
+    .sundaybar__long {
+      display: none;
+    }
+    .sundaybar__short {
+      display: block;
+      font-size: var(--fs-tag);
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+    .sundaybar__day {
+      display: block;
+      font-weight: 600;
+      color: var(--muted-foreground);
+    }
+    .sundaybar__link {
+      justify-content: center;
+      min-width: 44px;
+    }
+    .sundaybar__pin {
+      display: block;
+    }
+    .sundaybar__dir {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .sundaybar .sundaybar__visit {
+      padding-inline: 12px;
+    }
+  }
+</style>

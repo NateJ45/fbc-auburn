@@ -64,6 +64,11 @@ const total = bricks[bricks.length - 1].delay;
   function initMarkLay() {
     const marks = document.querySelectorAll<SVGSVGElement>('.mark-lay:not(.is-laying)');
     if (!marks.length || !document.documentElement.classList.contains('motion')) return;
+    // The brick laying is for Home and the 404 only (audit 2026-10-25): elsewhere (About) the
+    // finished mark shows at once.
+    if (!document.querySelector('#main [data-flow-full]')) {
+      return;
+    }
     const finish = (svg: SVGSVGElement) => svg.classList.add('is-laid');
     const io = new IntersectionObserver(
       (entries) => {

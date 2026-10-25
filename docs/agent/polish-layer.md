@@ -86,7 +86,7 @@ Journal posts open with a floated display-font drop cap on the first paragraph a
 
 ### Print stylesheet
 
-A `@media print` block in `globals.css` suppresses nav, footer, CTAs, and decorative elements, and sets `color: black; background: white` on the body so journal post content prints cleanly. This is intentionally minimal -- the goal is a legible print, not a designed one.
+A `@media print` block in `globals.css` suppresses nav, footer, CTAs, and decorative elements, and sets `color: black; background: white` on the body so journal post content prints cleanly. This is intentionally minimal -- the goal is a legible print, not a designed one. FBC Auburn adds `src/styles/print.css` on top (audit 2026-10-25): every motion unit at rest (the flow layer, reveals, the mark, the sill; `motion.ts` also drops `html.motion` on `beforeprint`), no Sunday bar, For Jacob notes, footer verse, sill, textures or brick slabs, every surface black on white with buttons outlined, and no printed URLs after external links. `tests/print.spec.ts` checks that no text in `main` prints at opacity 0.
 
 ### View Transitions discipline
 

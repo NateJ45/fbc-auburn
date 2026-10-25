@@ -594,7 +594,7 @@ export const guides: Guide[] = [
     category: 'Pages and words',
     title: 'Change how a section looks',
     icon: 'blocks',
-    lead: 'Make one section stand out in the church blue or on the pale stones, without picking colours.',
+    lead: 'Make one section stand out in the church blue or on the pale stones, without picking colors.',
     diy: 'self',
     body: [
       {
@@ -626,7 +626,7 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: '_There is no colour picker on purpose. The looks use the church colours the design was made with, and they are checked for easy reading._',
+        text: '_There is no color picker on purpose. The looks use the church colors the design was made with, and they are checked for easy reading._',
       },
     ],
   },
@@ -1189,7 +1189,7 @@ export const guides: Guide[] = [
           'Fill in the event name and when it starts. Add how many places there are if there is a limit, and whether to keep a waiting list.',
           'Add any questions you need, like allergies or an age group. Ask only for what you will use.',
           'Publish the page. People who reply get a confirmation email with the details.',
-          'Click `RSVPs` in the top bar to see who is coming. `Download for a spreadsheet` gives the organiser a list that opens in Excel or Google Sheets.',
+          'Click `RSVPs` in the top bar to see who is coming. `Download for a spreadsheet` gives the organizer a list that opens in Excel or Google Sheets.',
         ],
       },
       {
@@ -1571,7 +1571,7 @@ guides.push({
       tone: 'primary',
       title: 'It cannot restyle the rest of the site.',
       text:
-        'Colours and fonts inside the box start out matching the website, but the code only ever styles itself. To change how the whole website looks, ask ' +
+        'Colors and fonts inside the box start out matching the website, but the code only ever styles itself. To change how the whole website looks, ask ' +
         SITE.contactName +
         ': design changes go through the theme.',
     },

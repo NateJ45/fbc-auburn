@@ -116,7 +116,8 @@ const wrapAttrs = (key: string) =>
 const hid = (key: string) => `home-${key}`;
 ---
 
-<div class="hb">
+{/* data-flow-full: Home keeps the full flow layer (brick laying, line-by-line headings); other pages only fade (src/scripts/flow.ts). */}
+<div class="hb" data-flow-full>
   {rows.map((r) =>
     r.kind === 'other' ? (
       <SectionRenderer sections={[r.block]} idPrefix={hid(r.key)} {editDoc} />

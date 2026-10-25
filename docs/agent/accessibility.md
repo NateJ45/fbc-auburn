@@ -24,6 +24,7 @@ Target: WCAG 2.1 AA in both light and dark modes. Aim for 100 Lighthouse Accessi
 
 - Icon-only buttons and links require `aria-label`. SVG icons carry no accessible name on their own; the label lives on the wrapper.
 - Hover and focus states must not be color-only. Pair color changes with underline, motion, or icon swap.
+- **Focus rings on dark surfaces** (FBC Auburn, audit 2026-10-25): every ring reads `--ring` (and Tailwind's `--color-ring`), so a dark surface re-points both once and everything inside inherits a white ring. The list is in `src/styles/auburn.css` (`.hb-hero`, `.hb-sunday`, `.hb-note`, `.live-banner`, `.shot--example`); a new dark section adds `data-dark-surface`, and a light card on a dark one adds `data-light-surface`. The footer and phone menu use #7f98b8.
 - Stick to native interactive elements (`<button>`, `<a>`, `<details>`, `<summary>`) whenever possible.
 - The before/after slider (if the portfolio module is active) needs keyboard support: arrow keys move the divider, the handle is focusable, and the focus indicator is visible.
 
@@ -51,7 +52,7 @@ Adjacent independent controls (two side-by-side icon buttons, two stacked nav li
 
 ### Focus traps in modals and drawers
 
-The mobile nav uses shadcn Sheet (Radix Dialog under the hood) and gets focus trap for free. Same applies to any shadcn Dialog. Don't roll your own modal. If you build a custom overlay, you owe: focus moves into the overlay on open, Tab cycles within the overlay, Escape closes, focus returns to the trigger on close. Test with keyboard before merging.
+The phone menu (`MobileNav.astro`, 2026-10-25) is a native `<dialog>` opened with `showModal()`, which gives the focus trap, Escape, the inert page behind and focus back on the trigger for free; the site search dialog works the same way. shadcn Dialogs (Radix) get the same from Radix. Don't roll your own modal. If you build a custom overlay, you owe: focus moves into the overlay on open, Tab cycles within the overlay, Escape closes, focus returns to the trigger on close. Test with keyboard before merging.
 
 ### Screen reader pass
 
@@ -73,6 +74,7 @@ When the contact form fails validation or submission:
 - Error text is visible AND descriptive ("Please enter an email address" not "Invalid input")
 - Inline validation runs on blur, not on every keystroke (avoids announcer spam)
 - Success states get a confirmation message in the same region so the reader announces it
+- FBC Auburn contact form (audit 2026-10-25): every error shows in ONE pass, built-in and editor-written questions alike, each under its field with `id="<name>-error"`, `aria-invalid` and `aria-describedby`; every required field carries the same red star (`RequiredCue`) and the form says "Boxes marked * are needed". With JavaScript off it posts to `/api/contact/`, never a GET, and `contact.astro` shows a noscript notice. The draft lives in `sessionStorage`.
 
 ### Animation discipline
 
