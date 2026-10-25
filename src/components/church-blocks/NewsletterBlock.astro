@@ -1,10 +1,14 @@
 ---
 // Safe to edit by hand
-// Newsletter sign-up: the site's own email box (NewsletterSignup, the one the footer uses) under
-// the block's heading, using the email service set once in Site settings > Newsletter (rule 15:
-// the provider address is never typed per block). Until that box is switched on and connected,
-// the block's sign-up page link shows as a button instead; with neither, the block draws nothing.
+// Newsletter sign-up. The church's email list lives in Church Trac (2026-10-24), so once Site
+// settings > Church Trac > Newsletter sign-up form is set, the block shows that form in the site's
+// frame and nothing else. Without it: the site's own email box (NewsletterSignup, the one the
+// footer uses), using the email service set once in Site settings > Newsletter (rule 15: the
+// provider address is never typed per block); until that box is switched on and connected, the
+// block's sign-up page link shows as a button instead; with none of them, the block draws nothing.
 import ChurchBand from './ChurchBand.astro';
+import ChurchTracFrame from './ChurchTracFrame.astro';
+import { getChurchFacts } from '@/lib/church-data';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { getSiteSettings } from '@/lib/queries';
 import type { ProjectedNewsletterSection } from '@/lib/churchBlocks.types';
@@ -17,6 +21,7 @@ interface Props {
 }
 const { block, surface, headingId } = Astro.props;
 const settings = await getSiteSettings().catch(() => null);
+const { newsletterFormUrl } = await getChurchFacts();
 const newsletter = (settings?.newsletter ?? null) as NewsletterConfig | null;
 const boxReady = Boolean(
   newsletter?.enabled && (newsletter.formActionUrl || import.meta.env.PUBLIC_WEB3FORMS_KEY),
@@ -24,7 +29,7 @@ const boxReady = Boolean(
 const signupUrl = /^https:\/\//.test(block.signupUrl ?? '') ? block.signupUrl : null;
 ---
 
-{(boxReady || signupUrl) && (
+{(newsletterFormUrl || boxReady || signupUrl) && (
   <ChurchBand
     type={block._type}
     heading={block.heading}
@@ -34,7 +39,11 @@ const signupUrl = /^https:\/\//.test(block.signupUrl ?? '') ? block.signupUrl : 
     label="Newsletter sign-up"
     beside
   >
-    {boxReady && newsletter ? (
+    {newsletterFormUrl ? (
+      <div class="cb-sky">
+        <ChurchTracFrame src={newsletterFormUrl} title="Newsletter sign-up" size="short" />
+      </div>
+    ) : boxReady && newsletter ? (
       <div class="cb-sky">
         <NewsletterSignup
           client:visible

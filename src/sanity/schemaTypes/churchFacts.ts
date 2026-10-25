@@ -271,6 +271,16 @@ export const churchTracFields = [
     validation: (Rule) => Rule.uri({ scheme: ['https'] }),
   }),
   defineField({
+    name: 'newsletterFormUrl',
+    title: 'Newsletter sign-up form',
+    type: 'url',
+    group: 'churchTrac',
+    fieldset: 'churchTrac',
+    description:
+      'A Church Trac form that adds the person to the church’s email list (set the form to add them to your newsletter group). Once it is set, the footer shows "Get the church newsletter" and every Newsletter section shows the form. Links can use {newsletter}.',
+    validation: (Rule) => Rule.uri({ scheme: ['https'] }),
+  }),
+  defineField({
     name: 'givingUrl',
     title: 'Online giving link',
     type: 'url',

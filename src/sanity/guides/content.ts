@@ -854,7 +854,7 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: 'Any link box can also take a placeholder instead of an address: `{giving}`, `{connect}`, `{contact-form}`, `{prayer}`, `{calendar}`, `{members}` or `{watch}`. The website fills it from the boxes above, so if a form moves you change one box, not every button. A placeholder whose box is empty goes to the website’s own page for the same thing.',
+        text: 'Any link box can also take a placeholder instead of an address: `{giving}`, `{connect}`, `{contact-form}`, `{prayer}`, `{newsletter}`, `{calendar}`, `{members}` or `{watch}`. The website fills it from the boxes above, so if a form moves you change one box, not every button. A placeholder whose box is empty goes to the website’s own page for the same thing.',
       },
       {
         kind: 'p',
