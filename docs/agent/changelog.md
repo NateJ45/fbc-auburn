@@ -1,5 +1,32 @@
 # Change history
 
+_2026-10-24: the phone polish pass._
+
+**Decision.** A section-by-section audit of every page at 320, 375 and 414 turned up 21 phone fixes;
+all are phone only (below 768px, or below 961px in the board and Home files) and desktop is unchanged
+(every element's box identical at 1280 on eight pages). Page head titles break a word longer than the
+column instead of scrolling the page (the placeholder sermon title pushed it to 385px), and a title
+still holding a yellow placeholder opens its lines so the next line's highlight no longer cuts the
+descenders. Section headings, walk steps and card titles balance their lines, so none ends on one
+word. An inner page's section ends about 40px above the next rule (it was 112px), Home drops the bare
+rule before an editor's section, and that band ends on Home's 48px rhythm. Plan your visit's walk
+steps are their words plus an 18vh gap (they were 422px boxes) and the caption sits left; the Next
+steps rail uses a 48px stone in a 56px column with one pebble between steps (117px to 28px); What we
+believe's icon cards put a 48px icon beside the title, a heading every 189px (it was 254px). The
+closing invitation, the 404 and a text-and-picture band's one button go left and full width; the
+footer's two buttons stack, its page links are a two-column list in 18px type, Get in touch is one
+44px row per line with Text and the "To confirm" tag kept together, the Where next rows sit on the
+20px gutter, and the 140px of navy under the bottom bar is gone (the Sunday bar hides while the footer
+shows, so nothing is reserved for it; the For Jacob pill lifts above the bar only while it shows).
+Under 360px the Sunday bar reads "Sundays / 9:45 & 11:00" with a map pin for Directions, so it stays
+67px (it was 98px). The phone menu rows are 64px (88px) on the 20px gutter. Also: the Watch ghost
+word is hidden below 640px, the Ministries chip row fades at its right edge, empty picture slots are
+a 160px strip with the mark on the left, About's mark is 160px on the left, journal cards pad 20px,
+a sermon's facts stack label over value, the Contact phone links are 44px tall, the Ways cards share
+one height, FAQ groups are 48px apart, and search excerpts stop at three lines (in auburn.css, since
+SearchPanel is PORTABLE). Files: `board.css`, `auburn.css`, `motion.css`, `home-board.css`,
+`collections.css`, and the components named above.
+
 _2026-10-24: a tighter page head on phones._
 
 **Decision.** Below 961px the inner page head carried 66px above the eyebrow and, on nine pages, its

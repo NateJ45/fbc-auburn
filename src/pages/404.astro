@@ -41,7 +41,7 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
       {headline}
     </h1>
     <p class="mx-auto mt-m max-w-xl text-lg leading-relaxed text-muted-foreground">{body}</p>
-    <div class="mt-l flex flex-wrap justify-center gap-s">
+    <div class="lost__ctas mt-l flex flex-wrap justify-center gap-s">
       <a href={primaryHref} class="btn-auburn btn-auburn--primary press-tactile">
         {primaryLabel}
       </a>
@@ -97,5 +97,27 @@ const secondaryHref = withTrailingSlash(notFoundPage?.secondaryCtaHref) ?? '/con
   }
   .lost :global(.lost__h1) {
     font-size: clamp(3rem, 1.5rem + 6vw, 6rem);
+  }
+  /* Phones (phone polish, 2026-10-24): on the 20px gutter and left-aligned like every other page,
+     the path stepping off from the left, both buttons full width, 12px apart. */
+  @media (max-width: 767px) {
+    .lost {
+      padding-inline: 20px;
+      text-align: left;
+    }
+    .lost__path {
+      justify-content: flex-start;
+    }
+    .lost > p {
+      margin-inline: 0;
+    }
+    .lost__ctas {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .lost__ctas .btn-auburn {
+      width: 100%;
+    }
   }
 </style>

@@ -1104,9 +1104,63 @@
     font-size: var(--fs-small);
     white-space: nowrap;
   }
-  /* Room under the footer's last line for the bar, should it ever overlap. */
-  body:has(.hb-sundaybar:not([hidden])) .site-footer {
-    padding-bottom: 72px;
+  .hb-sundaybar__short,
+  .hb-sundaybar__pin {
+    display: none;
+  }
+  /* No room is kept under the footer for the bar (phone polish, 2026-10-24): the script hides the
+     bar whenever the footer is on screen, so the 72px it reserved only ever showed as empty navy. */
+}
+/* The narrowest phones (phone polish, 2026-10-24): at 320px "Sundays 9:45 and 11:00 am" wrapped to
+   four lines beside the two actions and the bar grew to 98px, a sixth of the screen. Below 360px
+   the times read "Sundays / 9:45 & 11:00" in small type and Directions becomes a map pin, so the
+   bar stays one button tall (about 64px). */
+@media (max-width: 359px) {
+  .hb-sundaybar:not([hidden]) {
+    gap: 8px;
+  }
+  .hb-sundaybar__long {
+    display: none;
+  }
+  .hb-sundaybar__short {
+    display: block;
+    font-size: var(--fs-tag);
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+  .hb-sundaybar__day {
+    display: block;
+    font-weight: 600;
+    color: var(--hb-muted);
+  }
+  .hb-sundaybar__link {
+    justify-content: center;
+    min-width: 44px;
+  }
+  .hb-sundaybar__pin {
+    display: block;
+  }
+  .hb-sundaybar__dir {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .hb-sundaybar .hb-sundaybar__visit {
+    padding-inline: 12px;
+  }
+}
+
+/* Phones (phone polish, 2026-10-24): the three Ways cards one height (they were 128, 128 and 156),
+   and the walk's closing "Plan your visit" full width, like the hero's buttons. */
+@media (max-width: 960px) {
+  .hb-ways {
+    grid-auto-rows: 1fr;
+  }
+  .hb-walk__end .btn-auburn {
+    width: 100%;
   }
 }
 
