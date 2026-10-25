@@ -17,6 +17,28 @@ block now sits on the page's left edge (rule 17; it was centred). Prayer request
 stays in the footer) and Contact's "When life happens" gained a card linking to it. Content moved by
 `scripts/content/menu-groups.mjs` (backup, dry run, write, verified); CI snapshot refreshed.
 
+_2026-10-24: three phone decisions (the Sunday strip, the menu order, no walk plan)._
+
+**Decision.** Three calls from Nathan after the phone polish pass. (1) Home's This Sunday card is a
+compact strip on phones and tablets (961px down): the label and "To confirm" tag, the date with one
+44px Directions button beside it, then the two times, 162px tall at 320, 375 and 414 (it was 395 to
+423px). The forecast, the calendar link, the watch line and the full address are hidden there (the
+address is a span of its own in `SundayCard.astro`, so Directions stays); the footer card still
+carries the address. The phone Sunday bar still docks once the strip has scrolled away. Desktop is
+untouched. (2) The phone menu (below 64rem) opens on the search field, then a compact This Sunday card
+(date, times, Directions; a "Live now" row only while worship streams) and a full-width Plan your
+visit button, then the 64px rows; the full card stays in the right column from 64rem, and each card
+is `display: none` at the other width so only one is ever focusable. A menu row pointing where the
+visit button does is dropped. (3) The Walk in with us plan (the stone-mosaic map of the lot, labels
+about 6px on a phone) is gone on every width: the stops are one column down a gold stepping-stone
+path, each with a stone icon picked in code from its words (`src/lib/walk-stops.ts` and its test),
+46rem wide on desktop, the 18vh phone spacing kept. Removed with it: `src/lib/walk-plan.ts` and its
+test, the plan lighting in `motion.ts`, the plan CSS in `motion.css`. No schema fields changed (the
+plan had none); the walkSection title and descriptions no longer mention a drawing, and typegen gave
+no diff. The section went from 4188px to 2176px tall at 1280. Files: `SundayCard.astro`,
+`home-board.css`, `MobileNav.tsx`, `auburn.css`, `WalkSection.astro`, `motion.css`, `motion.ts`,
+`board.css`, `auburnMotionSections.ts`.
+
 _2026-10-24: the phone polish pass._
 
 **Decision.** A section-by-section audit of every page at 320, 375 and 414 turned up 21 phone fixes;

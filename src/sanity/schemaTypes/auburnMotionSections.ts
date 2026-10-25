@@ -4,9 +4,11 @@
 //   stepsRailSection  The stepping-stone rail ("A Sunday with us, one step at a time" on Home):
 //                     numbered steps, each with a big stone icon, gold stepping stones laid
 //                     between them, ending in the mark building itself stone by stone.
-//   walkSection       "Walk in with us" (Plan your visit): a stone-mosaic plan of the lot and
-//                     building pinned beside the steps, the route laid leg by leg as each stop
-//                     scrolls past. Each stop carries its time, so it is also the visit timeline.
+//   walkSection       "Walk in with us" (Plan your visit): the stops of a first Sunday down a gold
+//                     stepping-stone path, each with a stone icon picked in code from its words
+//                     (src/lib/walk-stops.ts). Each stop carries its time, so it is also the visit
+//                     timeline. The drawn plan of the lot beside it was removed on 2026-10-24; it
+//                     had no fields of its own, so nothing here changed shape.
 //
 // Both are CONTENT blocks: SectionRenderer gives them the alternating surface (rule 9, no colour
 // field here). The motion is CSS and a small script (src/styles/motion.css,
@@ -191,11 +193,11 @@ export const stepsRailSection = defineType({
 
 export const walkSection = defineType({
   name: 'walkSection',
-  title: 'Walk in with us (map of the visit)',
+  title: 'Walk in with us (the visit, stop by stop)',
   type: 'object',
   icon: PinIcon,
   description:
-    'Your first Sunday, stop by stop, beside a drawing of the lot and building. The drawing is a placeholder until the church shares a plan of the building.',
+    'Your first Sunday, stop by stop, down a path of stepping stones. Each stop gets a stone icon to match its words (parking, the door, coffee, the children, worship).',
   fields: [
     defineField({
       name: 'heading',
@@ -209,7 +211,7 @@ export const walkSection = defineType({
       name: 'stops',
       title: 'Stops, in order',
       description:
-        'Five stops match the drawing: parking, the front doors, coffee, the children’s room, the sanctuary. Keep that order; the words are yours.',
+        'Up to five stops, in the order a visitor meets them: parking, the front doors, coffee, the children’s room, the sanctuary. The words are yours.',
       type: 'array',
       validation: (R) => R.required().min(1).max(5),
       of: [

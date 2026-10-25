@@ -211,7 +211,7 @@ movement and runs everywhere.
 Ported from the studio mockups' v3 motion pass (`motion.js`, `walk.js`). Files: `src/styles/motion.css`,
 `src/scripts/motion.ts` (imported once by BaseLayout, re-run on `astro:page-load`), `src/components/motion/`
 (`MarkBuild`, `BaptismGraphic`, `stones.ts`), `src/components/sections/StepsRail.astro` and
-`WalkSection.astro`, `src/lib/walk-plan.ts`.
+`WalkSection.astro`, `src/lib/walk-stops.ts`.
 
 Nathan's rules, which every piece keeps: motion follows the scroll and never takes it over; transforms and opacity
 only; one moving moment per page; the cross never rotates or tilts; reduced motion shows everything at rest.
@@ -241,12 +241,12 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   write; never append inside the loop or go back to `getPointAtLength` (each call forced a page style
   recalculation: about 940ms per load on a phone, 2026-10-24). Hidden on the
   board E inner pages since 2026-10-17 (`src/styles/board.css`): its stones drifted under body text.
-- **Walk in with us** (`walkSection`): the plan is drawn at BUILD time from `walk-plan.ts` (placeholder geometry:
-  ROOMS, STOPS, ROUTE), pinned with `position: sticky` beside the stops; an IntersectionObserver on the middle tenth of
-  the screen lights the route up to the current stop. Stops not yet reached have a grey heading (colour, not opacity,
-  so they pass contrast). Without motion the whole route is shown and the tags are hidden.
-  Below 768px a step is only as tall as its words, with an 18vh gap between steps (about 40vh a step), so the
-  active step's gold edge stops with its words (phone polish, 2026-10-24; it was a 52vh box per step).
+- **Walk in with us** (`walkSection`): since 2026-10-24 a single column of stops down a gold stepping-stone path
+  (the timeline's dashes), each stop beside its stone icon, picked in code from the stop's words
+  (`src/lib/walk-stops.ts`; the schema has no icon field). No script of its own: the flow layer fades the stops up.
+  The drawn stone-mosaic plan of the lot that used to pin beside the stops, and the IntersectionObserver that lit
+  its route, were removed on every width (its labels were about 6px on a phone). Desktop caps the column at 46rem;
+  below 768px the stone is 52px and 18vh of path runs between one stop's words and the next (phone polish).
 - **Nav**: three tiny stones under the current page's link replace the underline.
 - **Home's stone path** (board E, 2026-10-17; replaced the full-height ribbon): `src/components/home/StonePath.astro`
   inlines the generated mosaic (`stones.generated.ts`, from `npm run gen:stones`), one `<path class="hb-stone">`

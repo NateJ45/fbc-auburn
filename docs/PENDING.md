@@ -332,10 +332,10 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
 - DONE 2026-10-17: the motion layer and "Walk in with us" (`src/styles/motion.css`,
   `src/scripts/motion.ts`): reveals, the rail, the mark building itself with wave drift (About,
   "The story in our mark"), the baptism ring and ripples, the background path, stone dividers and
-  nav stones. Waiting on the church: a rough plan of the building (which door guests use, where
-  the fellowship hall, children's room and sanctuary are). Since 2026-10-24 the outside of the
-  Walk's plan follows the aerial and street photos (lot, drive, sign, doors, annex); the rooms inside
-  (`src/lib/walk-plan.ts` ROOMS, STOPS, ROUTE) are still a guess until he shares a plan.
+  nav stones. The Walk's drawn plan of the lot was dropped on 2026-10-24 (phone and desktop); the
+  stops down a stepping-stone path are the way-finding now, so a building plan is no longer needed
+  for it. The stops' words (which door, where coffee and the children's room are) still want the
+  church's check.
 - Events and Prayer requests are in the menu (2026-10-24, Studio pages `/events/` and `/prayer/`);
   Events fills from Church Trac once the calendar link is set, and the prayer form sends once a
   church email is connected. Still open: Give is in the menu

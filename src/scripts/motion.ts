@@ -12,7 +12,8 @@
 //     (src/styles/motion.css); elsewhere an IntersectionObserver adds `.in` here.
 //   - Wave drift and the baptism ring: CSS view timelines where supported; elsewhere a passive,
 //     rAF-throttled scroll listener sets --drift / --turn here.
-//   - The background path and the Walk in with us plan always run here (they need layout).
+//   - The background path always runs here (it needs layout). The Walk in with us plan it used
+//     to light up was removed on 2026-10-24; the walk is a plain list now (WalkSection.astro).
 
 import { initFlow } from './flow';
 
@@ -255,41 +256,6 @@ function initMotion() {
   document.fonts?.ready.then(() => {
     layPath();
     onScroll();
-  });
-
-  // ---- 4. Walk in with us: light the route up to the stop in the middle of the screen --------
-  document.querySelectorAll<HTMLElement>('[data-walk]').forEach((walk) => {
-    const stage = walk.querySelector<HTMLElement>('.walk-stage');
-    const plan = walk.querySelector<SVGSVGElement>('.walk-plan');
-    if (!stage || !plan) return;
-    const stones = [...plan.querySelectorAll<SVGElement>('.pstone')];
-    const marks = [...plan.querySelectorAll<SVGElement>('.stop')];
-    const items = [...walk.querySelectorAll<HTMLElement>('.walk-steps li')];
-    const show = (n: number) => {
-      stage.dataset.stop = String(n);
-      // The stones that led you to this stop, and every leg before it.
-      stones.forEach((s) => s.classList.toggle('in', still || Number(s.dataset.leg) <= n));
-      marks.forEach((m, i) => {
-        m.classList.toggle('on', still || i + 1 <= n);
-        m.classList.toggle('here', !still && i + 1 === n);
-      });
-      items.forEach((li) => li.classList.toggle('active', Number(li.dataset.stop) === n));
-    };
-    if (still || !('IntersectionObserver' in window)) {
-      show(items.length + 1);
-      return;
-    }
-    show(0);
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) show(Number((e.target as HTMLElement).dataset.stop));
-        }
-      },
-      { rootMargin: '-45% 0px -45% 0px' },
-    );
-    items.forEach((li) => io.observe(li));
-    disposers.push(() => io.disconnect());
   });
 
   cleanup = () => {

@@ -862,7 +862,8 @@ html .site-search-dialog {
   }
 }
 /* The sheet (2026-10-24, after hppres.org): the light page ground over everything, a stack of big
-   serif rows with hairlines between them, then the This Sunday card and the contact details. The
+   serif rows with hairlines between them, then the This Sunday card and the contact details
+   (below 64rem the compact card and the visit button come first, under the search field). The
    rows run edge to edge on phones so an open group's red reaches both sides of the screen. */
 .auburn-menu {
   --menu-gutter: var(--spacing-m, 1.25rem);
@@ -1242,6 +1243,91 @@ html .site-search-dialog {
 .auburn-menu__side > .btn-auburn {
   width: 100%;
 }
+
+/* Below 64rem (2026-10-24): the compact This Sunday card and a full-width visit button straight
+   under the search field, before the rows (MobileNav.tsx). The full card in the side column is
+   hidden there, and the compact one from 64rem, so only one is ever in the focus order. */
+.auburn-menu__visit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0 var(--menu-gutter) 1.5rem;
+}
+.auburn-menu__visit > .btn-auburn {
+  width: 100%;
+}
+.auburn-menu__card--compact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.9rem;
+  padding: 0.85rem 1rem 0.9rem;
+  padding-top: calc(0.85rem + 5px);
+}
+.auburn-menu__card--compact .auburn-menu__card-top {
+  grid-column: 1 / -1;
+  margin-bottom: 0.4rem;
+}
+.auburn-menu__card--compact .auburn-menu__card-date {
+  grid-column: 1;
+  margin: 0;
+  font-size: var(--fs-title);
+}
+.auburn-menu__card--compact .auburn-menu__where--compact {
+  grid-row: 2;
+  grid-column: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+/* Directions, the card's one action: an outline button 44px tall. */
+.auburn-menu__card--compact .auburn-menu__where--compact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.auburn-menu__card--compact .auburn-menu__where--compact a:hover {
+  border-color: var(--foreground);
+}
+.auburn-menu__card--compact .auburn-menu__card-times,
+.auburn-menu__card--compact .auburn-menu__times {
+  grid-column: 1 / -1;
+  gap: 0.2rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+}
+.auburn-menu__card--compact .auburn-menu__card-times > div {
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+}
+.auburn-menu__card--compact .auburn-menu__card-times dt {
+  font-size: var(--fs-lead);
+}
+.auburn-menu__card--compact .auburn-menu__watch {
+  grid-column: 1 / -1;
+  margin: 0.3rem 0 -0.4rem;
+}
+.auburn-menu__visit a:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+@media (max-width: 63.999rem) {
+  .auburn-menu__card--full,
+  .auburn-menu__side-cta {
+    display: none;
+  }
+}
+@media (min-width: 64rem) {
+  .auburn-menu__visit {
+    display: none;
+  }
+}
 .auburn-menu__about {
   display: flex;
   flex-direction: column;
@@ -1307,6 +1393,7 @@ html .site-search-dialog {
    its rows. CSS only, keyed on the sheet's data-state; nothing moves under reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
   .auburn-menu[data-state='open'] .auburn-menu__search,
+  .auburn-menu[data-state='open'] .auburn-menu__visit,
   .auburn-menu[data-state='open'] .auburn-menu__item,
   .auburn-menu[data-state='open'] .auburn-menu__group-label,
   .auburn-menu[data-state='open'] .auburn-menu__side > * {

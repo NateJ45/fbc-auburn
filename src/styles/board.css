@@ -332,7 +332,7 @@ main:is(:has(.board-head), :has(> .hb)) > svg.bgpath {
   main:has(.board-head)
     section:not(.board-head):has(+ .board-rule-wrap)
     > [class*='py-section']
-    > :last-child:not(.split, .walk-grid),
+    > :last-child:not(.split),
   main:has(.board-head)
     section:not(.board-head):has(+ .board-rule-wrap)
     > [class*='py-section']

@@ -1,6 +1,6 @@
 /* Safe to edit by hand.
    FBC Auburn: the stone path and its motion (2026-10-17), ported from the studio mockups' v3
-   pass (site.css "v3 path and motion" and "Walk in with us", motion.js, walk.js).
+   pass (site.css "v3 path and motion", motion.js).
 
    Nathan's motion rules, which every rule below keeps:
    - motion follows the scroll and never takes it over (no scroll-jacking, no pinning the page);
@@ -454,23 +454,14 @@ html.motion .baptism-motion #ripples {
 }
 
 /* ======================================================================================
-   Walk in with us (WalkSection.astro, walkSection): the plan stays pinned beside the stops
-   while the page scrolls normally. Tile colours are the plan's own (the site is light only).
+   Walk in with us (WalkSection.astro, walkSection): one readable column of stops down a gold
+   stepping-stone path, each stop beside its stone icon (2026-10-24). The drawn plan of the lot
+   that used to pin beside the stops is gone on every width; the path and the icons do the
+   way-finding. The dashes are the timeline's (church-blocks.css .cb-moment), so the site keeps one
+   path grammar.
    ====================================================================================== */
 .walk {
-  --plan-ground: #f4efe7;
-  --t-lawn: #d3dce8;
-  --t-lot: #e4dcd0;
-  --t-road: #c4ccd7;
-  --t-sanct: #dbe3ee;
-  --t-hall: #f3ddd5;
-  --t-kids: #e1e8f1;
-  --t-door: #9a3b2a;
-  --t-drive: #ece6dc;
-  --t-sign: #7e2e20;
-  --label: #4a5a73;
-  --tag-bg: #16263d;
-  --tag-fg: #ffffff;
+  --walk-stone: 64px;
 }
 /* The gatherings before worship, under the intro (WalkSection.astro, derived from Church facts). */
 .walk-earlier {
@@ -481,42 +472,58 @@ html.motion .baptism-motion #ripples {
   font-weight: 600;
   color: var(--foreground);
 }
-.walk-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
-  gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: start;
-}
-.walk-stage {
-  grid-column: 2;
-  grid-row: 1;
-  position: sticky;
-  top: 7vh;
-  height: 86vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* A comfortable measure on a wide screen: the steps take the content width the plan used to share,
+   capped so a line of text stays readable. */
 .walk-steps {
-  grid-column: 1;
-  grid-row: 1;
-  list-style: none;
-  margin: 0;
+  max-width: 46rem;
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
   padding: 0;
+  list-style: none;
 }
-.walk-steps li {
-  min-height: 68vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-left: 1.4rem;
-  border-left: 4px solid transparent;
-  transition: border-color 0.4s;
+.walk-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--walk-stone) minmax(0, 1fr);
+  column-gap: clamp(1rem, 2.5vw, 1.75rem);
+  align-items: start;
+  padding-bottom: clamp(2.5rem, 5vw, 3.75rem);
 }
-.walk-steps h3 {
-  transition: color 0.4s;
+.walk-step:last-child {
+  padding-bottom: 0;
+}
+.walk-step__stone {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--walk-stone);
+  height: var(--walk-stone);
+}
+.walk-step__stone img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.walk-step__stone--end img {
+  width: 44px;
+  height: 20px;
+}
+/* The path: gold stepping-stone dashes from under this stop's stone down to the next one. */
+.walk-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--walk-stone) + 0.5rem);
+  bottom: 0.5rem;
+  left: calc(var(--walk-stone) / 2 - 3px);
+  width: 6px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(180deg, var(--auburn-gold) 0 10px, transparent 10px 19px);
+}
+.walk-step__body {
+  padding-top: 0.35rem;
 }
 .walk-steps__t {
+  margin: 0;
   font-size: var(--fs-small);
   font-weight: 600;
   color: var(--foreground);
@@ -530,160 +537,23 @@ html.motion .baptism-motion #ripples {
   margin: 0.2rem 0 0.6rem;
 }
 .walk-steps p:not(.walk-steps__t) {
+  margin: 0;
   color: var(--muted-foreground);
   font-size: var(--fs-body);
   line-height: 1.6;
-  max-width: 30rem;
+  max-width: 36rem;
 }
-.walk-steps li.walk-end {
-  min-height: 60vh;
-}
-/* Steps not yet reached are dimmed by colour, not opacity, so every line still passes contrast
-   (2026-10-17: a 0.45 fade measured 2.2:1 on white once nothing sat behind it). The active step
-   takes its heading colour back and the gold edge. */
-html.motion .walk-steps li:not(.active) h3 {
-  color: var(--muted-foreground);
-}
-html.motion .walk-steps li.active {
-  opacity: 1;
-  border-left-color: var(--auburn-gold);
-}
-.walk-plan {
-  width: 100%;
-  height: auto;
-  max-height: 100%;
-  background: var(--plan-ground);
-  border-radius: var(--radius-card);
-}
-.walk-plan .room rect {
-  fill: var(--t-lot);
-}
-.walk-plan .r-lawn rect {
-  fill: var(--t-lawn);
-}
-.walk-plan .r-road rect {
-  fill: var(--t-road);
-}
-.walk-plan .r-sanct rect {
-  fill: var(--t-sanct);
-}
-.walk-plan .r-hall rect {
-  fill: var(--t-hall);
-}
-.walk-plan .r-kids rect {
-  fill: var(--t-kids);
-}
-.walk-plan .r-door rect {
-  fill: var(--t-door);
-}
-.walk-plan .r-drive rect {
-  fill: var(--t-drive);
-}
-.walk-plan .r-sign rect {
-  fill: var(--t-sign);
-}
-.walk-plan .room-label {
-  font: 600 15px var(--font-body);
-  fill: var(--label);
-  /* color mirrors fill so contrast checks that read color see the real pair */
-  color: var(--label);
-  paint-order: stroke;
-  stroke: var(--plan-ground);
-  stroke-width: 4px;
-  text-anchor: middle;
-  letter-spacing: 0.04em;
-}
-.walk-plan .stop-ring {
-  fill: var(--background);
-  stroke: var(--border);
-  stroke-width: 2;
-}
-.walk-plan .tag rect {
-  fill: var(--tag-bg);
-}
-.walk-plan .tag text {
-  font: 600 15px var(--font-body);
-  fill: var(--tag-fg);
-  color: var(--tag-fg);
-  text-anchor: middle;
-}
-/* At rest (no JS or reduced motion) the whole route and every stop are shown; the small tags
-   would collide, so the numbered list carries the words. */
-.walk-plan .tag {
-  display: none;
-}
-/* With motion: the route is laid leg by leg and the current stop shows its tag. */
-html.motion .walk-plan .tag {
-  display: inline;
-  opacity: 0;
-  transition: opacity 0.35s;
-}
-html.motion .walk-plan .stop.here .tag {
-  opacity: 1;
-}
-html.motion .walk-plan .pstone {
-  transition: opacity 0.35s ease-out calc(var(--n) * 45ms);
-}
-html.motion .walk-plan .pstone:not(.in) {
-  opacity: 0;
-}
-html.motion .walk-plan .stop {
-  transition: opacity 0.4s;
-}
-html.motion .walk-plan .stop:not(.on) {
-  opacity: 0.35;
-}
-html.motion .walk-plan .stop.here .stop-ring {
-  stroke: var(--auburn-gold);
-  stroke-width: 4;
-}
-/* Phones: the plan pins to the top of the screen and the stops scroll underneath it. */
-@media (max-width: 860px) {
-  .walk-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-  .walk-stage {
-    grid-column: 1;
-    grid-row: 1;
-    top: 0;
-    height: auto;
-    padding: 0.6rem 0;
-    background: inherit;
-    z-index: 4;
-  }
-  .walk.bg-muted .walk-stage {
-    background: var(--muted);
-  }
-  .walk.bg-background .walk-stage {
-    background: var(--background);
-  }
-  .walk-plan {
-    max-height: 44vh;
-    width: auto;
-    max-width: 100%;
-  }
-  .walk-steps {
-    grid-row: 2;
-  }
-  .walk-steps li {
-    min-height: 52vh;
-  }
-}
-/* Phones (phone polish, 2026-10-24): each step was 422px for about 140px of words. A step is now
-   its words plus an 18vh gap, about 40vh from one step to the next, and the space sits BETWEEN
-   steps, not inside them, so the active step's gold edge runs the length of its words and stops. */
+/* Phones: a smaller stone and a short stretch of path between stops. The 18vh gaps only gave the old
+   plan time to light up as you scrolled; with the plan gone they were empty path (2026-10-24). */
 @media (max-width: 767px) {
-  .walk-steps li {
-    min-height: 0;
-    justify-content: flex-start;
-    padding-block: 0.25rem;
+  .walk {
+    --walk-stone: 52px;
   }
-  .walk-steps li + li {
-    margin-top: 18vh;
+  .walk-step:not(:last-child) {
+    padding-bottom: 2.5rem;
   }
-  .walk-steps li.walk-end {
-    min-height: 0;
+  .walk-step__body {
+    padding-top: 0.15rem;
   }
 }
 
@@ -692,8 +562,7 @@ html.motion .walk-plan .stop.here .stop-ring {
   .mark-build path,
   .mark-lay,
   .mark-lay__brick,
-  .bgstone,
-  .walk-steps li {
+  .bgstone {
     transition: none !important;
     animation: none !important;
   }

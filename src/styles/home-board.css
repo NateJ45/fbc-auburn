@@ -1038,9 +1038,6 @@
   }
 }
 @media (max-width: 420px) {
-  .hb-sunday {
-    padding: var(--pad-card);
-  }
   .hb-intro {
     font-size: var(--fs-lead);
   }
@@ -1051,6 +1048,82 @@
   .hb-way .stone-icon {
     width: 84px;
     height: 84px;
+  }
+}
+
+/* ---- The This Sunday strip (phones, 961px down; 2026-10-24) ------------------------------------
+   Under the hero buttons the card was about 400px of facts the footer card and the menu card
+   repeat. Here it is a strip of about 150px: the label and the "To confirm" tag, the date with one
+   Directions button (44px tall) beside it, then the two times. The forecast, the calendar link, the
+   watch line and the full address are dropped; Directions and the footer card carry the address.
+   Every value is still the card's own, drawn from Church facts. Desktop is untouched. */
+@media (max-width: 960px) {
+  .hb-sunday {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 14px;
+    padding: 14px 18px 12px;
+  }
+  /* A little air between the tag and the Directions button under it. */
+  .hb-sunday__top {
+    grid-column: 1 / -1;
+    margin-bottom: 6px;
+  }
+  .hb-sunday__date {
+    grid-column: 1;
+    margin: 0;
+    font-size: var(--fs-title);
+  }
+  .hb-sunday .sunday-weather,
+  .hb-sunday__cal,
+  .hb-sunday__watch,
+  .hb-sunday__addr {
+    display: none;
+  }
+  .hb-sunday__times {
+    grid-row: 3;
+    grid-column: 1 / -1;
+    gap: 2px 12px;
+    margin-top: 6px;
+    padding-top: 8px;
+    font-size: var(--fs-small);
+    line-height: 1.35;
+  }
+  .hb-sunday__times dt {
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .hb-sunday__where {
+    grid-row: 2;
+    grid-column: 2;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .hb-sunday__where p {
+    font-size: var(--fs-small);
+  }
+  /* One Directions button, the strip's only action: a white outline, 44px tall. */
+  .hb-sunday a.hb-sunday__dir {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1.5px solid rgb(255 255 255 / 0.75);
+    border-radius: var(--radius-control);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .hb-sunday a.hb-sunday__dir:hover {
+    background: #ffffff;
+    color: var(--auburn-deep);
+  }
+  .hb-sunday a.hb-sunday__dir:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 3px;
   }
 }
 

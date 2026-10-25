@@ -8,6 +8,11 @@
 // address and its map link. The forecast line is SundayWeather in reserve mode (fetched by the
 // browser, Wednesday to Sunday noon). The pill shows while any of it is unconfirmed.
 //
+// Phones (961px down, 2026-10-24): the card becomes a compact strip under the hero buttons, about
+// 140px instead of about 400: the date, the two times, the tag and one Directions button. The
+// forecast, the calendar link, the watch line and the full address are hidden there by CSS
+// (home-board.css); the address stays one tap away through Directions and in the footer card.
+//
 // Renders nothing when no Sunday gathering is set.
 import SundayWeather from '@/components/church/SundayWeather.astro';
 import { getChurchFacts } from '@/lib/church-data';
@@ -89,15 +94,18 @@ const streamHref = stream?.watchUrl ?? live?.href;
     {address && (
       <div class="hb-sunday__where">
         <p>
-          {[address.street, address.city, address.state].filter(Boolean).join(', ')}
-          <br />
-          {address.findUs && (
-            <>
-              <span class="hb-sunday__findus">{address.findUs}</span>
-              <br />
-            </>
-          )}
-          <a href={address.mapsUrl} rel="noopener" target="_blank">
+          {/* The address in its own span, so the phone strip can drop it and keep Directions. */}
+          <span class="hb-sunday__addr">
+            {[address.street, address.city, address.state].filter(Boolean).join(', ')}
+            <br />
+            {address.findUs && (
+              <>
+                <span class="hb-sunday__findus">{address.findUs}</span>
+                <br />
+              </>
+            )}
+          </span>
+          <a class="hb-sunday__dir" href={address.mapsUrl} rel="noopener" target="_blank">
             Directions<span class="sr-only"> (opens Google Maps in a new tab)</span>
           </a>
         </p>
