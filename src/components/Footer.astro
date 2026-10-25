@@ -29,7 +29,8 @@ import { site } from '@/data/site';
 import { IconBrandFacebook, IconMail, IconPlayerPlay, IconUser } from '@tabler/icons-react';
 import { resolveSocialLinks, socialLabel, type SocialLink } from '@/lib/social-links';
 import { socialIcon } from '@/lib/social-icons';
-import { Mail, Phone } from 'lucide-react';
+import { HandHeart, Mail, Phone } from 'lucide-react';
+import { GIVE_PATH, giveHref } from '@/lib/give';
 import CopyEmailButton from '@/components/CopyEmailButton.astro';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { getAllProjects, getNavPages, type CoreProjectCard } from '@/lib/queries';
@@ -129,6 +130,7 @@ const latestProjects = allProjects.slice(0, 3);
 // FBC Auburn, board E (2026-10-17): the ink footer's brand row. The mark with the tagline, then
 // Sundays, Find us and Follow, all from Site settings (facts derived, never typed).
 const footerFacts = await getChurchFacts();
+const footerGive = giveHref(GIVE_PATH, footerFacts.givingUrl);
 const footerSundays = footerFacts.serviceTimes.filter((t) => t.dayIndex === 0);
 const footerSundaysConfirmed = footerSundays.every((t) => t.confirmed);
 const footerAddress = footerFacts.address;
@@ -238,6 +240,12 @@ const hasCalendar =
           decoding="async"
         />
         <span class="sf-invite__name">{brandName}</span>
+        {/* Give, as a button (Nathan, 2026-10-25), at the end of the name row: the Give page, or
+            online giving once it is set. A light outline: navy would vanish on the ink footer. */}
+        <a href={footerGive} class="btn-auburn sf-invite__give">
+          <HandHeart size={18} aria-hidden="true" />
+          Give
+        </a>
       </p>
 
       {/* Link grid. FBC Auburn (Home audit, 2026-10-17): it takes the brand row's own columns

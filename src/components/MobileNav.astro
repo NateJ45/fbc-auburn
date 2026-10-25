@@ -33,7 +33,7 @@
 // Data: the links, tagline, email, socials and the Sunday facts all come from the Header (Sanity
 // Site settings and Church facts), with sensible defaults so the menu renders before content does.
 
-import { Mail, Phone, Search, XIcon } from 'lucide-react';
+import { HandHeart, Mail, Phone, Search, XIcon } from 'lucide-react';
 import { socialLabel, type SocialLink } from '@/lib/social-links';
 import { socialIcon } from '@/lib/social-icons';
 import { telHref } from '@/lib/phone';
@@ -72,6 +72,8 @@ interface Props {
   current?: string;
   /** Visitor search is on (src/data/site.ts search.enabled, PORTS.md card 126). */
   search?: boolean;
+  /** The Give button's link: the Give page, or online giving once it is set (src/lib/give.ts). */
+  give?: string;
   /** Every menu item is already in the desktop row, so the pill can hide from 1024px. */
   navComplete?: boolean;
 }
@@ -86,6 +88,7 @@ const {
   current,
   search = false,
   navComplete = false,
+  give,
 } = Astro.props;
 
 const isCurrent = (href: string) =>
@@ -216,6 +219,12 @@ const groupId = (label: string) => `menu-group-${label.replace(/\W+/g, '-').toLo
                 {cta.label}
               </a>
             )}
+            {give && (
+              <a href={give} class="btn-auburn btn-auburn--navy auburn-menu__give">
+                <HandHeart size={18} aria-hidden="true" />
+                Give
+              </a>
+            )}
           </div>
         )}
         <nav aria-label="All pages" class="auburn-menu__nav">
@@ -342,6 +351,12 @@ const groupId = (label: string) => `menu-group-${label.replace(/\W+/g, '-').toLo
             {cta.show && (
               <a href={cta.href} class="btn-auburn btn-auburn--primary">
                 {cta.label}
+              </a>
+            )}
+            {give && (
+              <a href={give} class="btn-auburn btn-auburn--navy auburn-menu__give">
+                <HandHeart size={18} aria-hidden="true" />
+                Give
               </a>
             )}
           </section>

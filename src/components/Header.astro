@@ -27,7 +27,8 @@ import { Mail, Phone } from 'lucide-react';
 import { resolveSocialLinks, socialLabel } from '@/lib/social-links';
 import { socialIcon } from '@/lib/social-icons';
 import MobileNav from './MobileNav.astro';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, HandHeart } from 'lucide-react';
+import { GIVE_PATH, giveHref } from '@/lib/give';
 import { getChurchFacts } from '@/lib/church-data';
 import { getNavPages } from '@/lib/queries';
 import { mergePageSwitches } from '@/lib/page-switches';
@@ -95,6 +96,8 @@ const logoSrcset = logo
 // Phone, email and the Facebook page come through Church facts (src/lib/church-facts.ts), the
 // same values the footer and Contact show (visitor audit, 2026-10-18).
 const allFacts = await getChurchFacts();
+// The Give button (2026-10-25): the site's Give page, or the online giving link once it is set.
+const giveLink = giveHref(GIVE_PATH, allFacts.givingUrl);
 const email = chrome.showEmail ? (allFacts.email?.display ?? '') : '';
 // The phone shows in the menu and Home's header line only once the church has confirmed it: neither
 // has room for the "To confirm" tag the footer and Contact carry (2026-10-24).
@@ -499,14 +502,32 @@ function isGroupActive(items: { href: string }[]) {
         )}
       </nav>
       <span class="h-6 w-px bg-border-soft" aria-hidden="true"></span>
+      {/* Give, as a button (Nathan, 2026-10-25): it was one link inside the This week dropdown.
+          Solid navy so it reads as a button beside the red visit button without competing with
+          it; on the Give page itself it turns to the outline, the "you are here" state. */}
+      <a
+        href={giveLink}
+        class:list={[
+          'btn-auburn press-tactile site-header__give',
+          isActive(GIVE_PATH) ? 'btn-auburn--secondary btn-auburn--current' : 'btn-auburn--navy',
+        ]}
+        aria-current={isActive(GIVE_PATH) ? 'page' : undefined}
+      >
+        <HandHeart size={18} aria-hidden="true" />
+        Give
+      </a>
       {headerCta.show && (
         <a
           href={headerCta.href}
           class:list={[
-            // Outline, not red (2026-10-17): the page's own main button is the one red button in
-            // view (board E), so the header's stays quiet beside it.
-            'btn-auburn press-tactile btn-auburn--secondary',
-            isActive(headerCta.href) && 'btn-auburn--current',
+            // Red (Nathan, 2026-10-25; it was the outline from 2026-10-17): the header's visit
+            // button is the site's standing invitation. The page body keeps its own one red
+            // button (SectionRenderer). On the visit page itself it turns to the outline, because
+            // the muted current-page fill would hide white text.
+            'btn-auburn press-tactile',
+            isActive(headerCta.href)
+              ? 'btn-auburn--secondary btn-auburn--current'
+              : 'btn-auburn--primary',
           ]}
         >
           {headerCta.label}
@@ -525,6 +546,7 @@ function isGroupActive(items: { href: string }[]) {
       current={pathname}
       search={site.search.enabled}
       cta={headerCta}
+      give={giveLink}
       navComplete={navComplete}
     />
   </div>

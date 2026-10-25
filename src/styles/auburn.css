@@ -2023,6 +2023,61 @@ body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap)) .
   body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap)) .sf-top {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* ...as four even columns, the three page groups and Contact, so the width is used (Nathan,
+     2026-10-25: the groups sat in the left half with Contact in a full-width row below). */
+  .sf-top:not(:has(> .sf-sunday)) .site-footer__links,
+  body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap))
+    .sf-top
+    .site-footer__links {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .sf-top:not(:has(> .sf-sunday)) .site-footer__links > .sf-touch,
+  body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap))
+    .sf-top
+    .site-footer__links
+    > .sf-touch {
+    grid-column: auto;
+  }
+  .sf-top:not(:has(> .sf-sunday)) .sf-touch__rows,
+  body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap)) .sf-touch__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+/* The Give buttons (Nathan, 2026-10-25): header, phone menu and footer, each with the hand icon. */
+.site-header__give,
+.auburn-menu__give,
+.sf-invite__give {
+  gap: 0.45rem;
+}
+.sf-invite__give {
+  margin-left: auto;
+  min-height: 44px;
+  padding: 0.5rem 1.15rem;
+  border: 1.5px solid #e9eef5;
+  color: #ffffff !important;
+  background: transparent;
+  text-decoration: none;
+}
+.sf-invite__give:hover {
+  background: #16304d;
+}
+/* Phone menu: Plan your visit and Give share one row under the This Sunday card. */
+.auburn-menu__visit {
+  flex-flow: row wrap;
+}
+.auburn-menu__visit > section {
+  flex: 1 0 100%;
+}
+.auburn-menu__visit > .btn-auburn--primary {
+  flex: 1 1 auto;
+  width: auto;
+}
+.auburn-menu__visit > .auburn-menu__give {
+  flex: 0 0 auto;
+  width: auto;
 }
 /* The Contact rows run in two columns from a tablet up, not one 44px line each down the page. */
 @media (min-width: 768px) {
