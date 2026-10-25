@@ -24,7 +24,10 @@ import Footer from '@/components/Footer.astro';
 import ForJacob from '@/components/ForJacob.astro';
 import LiveBanner from '@/components/church/LiveBanner.astro';
 import Analytics from '@/components/Analytics.astro';
-import { Toaster } from '@/components/ui/sonner';
+// The text fonts' Latin files, as the same hashed URLs auburn.css's @font-face rules use, so the
+// preloads below fetch the files the page draws with (DEV-M7, 2026-10-25).
+import youngSerifLatin from '@/assets/fonts/young-serif-latin-400.woff2?url';
+import familjenLatin from '@/assets/fonts/familjen-grotesk-latin-wght.woff2?url';
 import '@/styles/globals.css';
 // Starwind UI CSS — accordion keyframes + @theme inline for new semantic tokens.
 // Imported AFTER globals.css so the brand :root declarations in globals.css win
@@ -93,7 +96,8 @@ function ogPathForRoute(pathname: string): string {
 // to the next source) or if the URL builder throws on a malformed object.
 function ogUrlFromImage(img: any): string | null {
   if (!img?.asset) return null;
-  try { return urlFor(img).width(1200).height(630).fit('crop').auto('format').url(); } catch { return null; }
+  // JPEG, not auto/WebP: some link scrapers (older LinkedIn, some chat apps) skip WebP (DEV-L8).
+  try { return urlFor(img).width(1200).height(630).fit('crop').format('jpg').quality(80).url(); } catch { return null; }
 }
 
 // OG image priority: explicit ogImage prop (a real photo passed by detail
@@ -162,7 +166,9 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {/* No canonical on a noindex page (the 404, /search/, a hidden page): "do not index this" and
+        "this is the address to index" contradict each other (audit DEV-L7, 2026-10-25). */}
+    {!noindex && <link rel="canonical" href={canonical} />}
     {/* scaffold: journal */}
     <link rel="alternate" type="application/rss+xml" title={`${site.name} Journal`} href="/journal/rss.xml" />
     {/* scaffold:end */}
@@ -188,9 +194,9 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    {/* The text fonts' Latin faces (fixed paths, src/styles/auburn.css), preloaded so the hero does not rewrap on load. */}
-    <link rel="preload" href="/fonts/young-serif-latin-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/familjen-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
+    {/* The text fonts' Latin faces (src/assets/fonts, hashed by Vite, so cached for a year), preloaded so the hero does not rewrap on load. */}
+    <link rel="preload" href={youngSerifLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={familjenLatin} as="font" type="font/woff2" crossorigin />
     {/* Note: Cormorant Garamond is loaded via @fontsource @import in globals.css.
         Vite hashes the woff2 filename at build time so a static preload here
         would 404. If hero h1 LCP needs faster fonts, switch to font-display: optional
@@ -372,20 +378,12 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
         Off at launch (PRE_LAUNCH_NOTES in src/data/for-jacob.ts). */}
     <ForJacob />
 
-    {/*
-      Both islands were previously `client:load` which forced the JS to
-      execute before the first paint completed. Neither is interactive
-      until later in the page lifecycle (BackToTop only appears after the
-      visitor scrolls 600px; Toaster only mounts a region, the toast call
-      sites import it on demand). Hydrating with `client:idle` lets the
-      browser settle the main thread first and shifts ~10–20ms of TBT off
-      the critical path on mobile.
-    */}
     {/* FBC Auburn (2026-10-18): no floating back-to-top button. It sat over content in two critic
         passes; the footer's bottom bar has a "Back to top" link, and Home phones have the Sunday bar. */}
 
-    {/* Sonner toast region. Used by CopyEmailButton and ContactForm. Position bottom-right by default. */}
-    <Toaster client:idle position="bottom-right" />
+    {/* No toast region (audit DEV-M2, 2026-10-25). The only caller was the copy-email button, which
+        now says "copied" in its own live region (CopyEmailButton.astro), so React, sonner and
+        next-themes no longer load on every page for it. The forms keep their own aria-live status. */}
 
     {/* No Lenis (removed 2026-10-17, PORTS.md card 102, ported from fbcm's
         2026-09-24 removal). It added only a wheel glide, at a few KB of

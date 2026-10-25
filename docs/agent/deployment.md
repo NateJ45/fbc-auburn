@@ -17,6 +17,8 @@ As of early 2026, Cloudflare merged Pages into Workers. Pages is in maintenance 
 
 `npm run cutover` (`scripts/cutover.mjs`) takes a site from "the zone is not on Cloudflare" to "live on its domain, mail intact": it finds or creates the zone, audits and imports a registrar's zone export, attaches the Worker to the apex and www as custom domains, files the 301 from www, sets the four TLS settings this studio uses everywhere, and verifies the result from outside. **Dry run by default**; `--write` is the only thing that lets it act. Read the plan first, every time. Full detail in PORTS.md card 48.
 
+**HSTS check at cutover (audit DEV-L4, 2026-10-25).** `public/_headers` sends `Strict-Transport-Security: max-age=31536000` with NO `includeSubDomains` and NO `preload` until the church's domain is known. Before adding them back, read the zone audit `cutover.mjs` prints and open every subdomain it lists (`mail.`, `webmail.`, a Church Trac or giving CNAME, anything old) over `https://`. Only when every one of them answers on HTTPS, change the line to `max-age=31536000; includeSubDomains` and, if the church wants it, add `; preload` and submit the apex at hstspreload.org (that commits every subdomain to HTTPS for good, so it is the church's call). One HTTP-only subdomain under `includeSubDomains` stops loading for a year for anyone who has visited the site.
+
 Two commands it deliberately does not run, and prints instead: `npx wrangler email sending enable <domain>` (a beta command with no stable API behind it) and `npx sanity cors add https://<domain> --credentials` (needs the interactive Sanity login). Without the second one the embedded Studio loads on the new origin and then fails every request, which looks like a broken build rather than a missing CORS entry.
 
 ### Sanity -> live site rebuild model (READ THIS BEFORE CHANGING CONTENT EXPECTATIONS)
@@ -141,20 +143,47 @@ response (every prerendered page, `/studio/`, and the `/_astro/*` files). It doe
 apply to responses the Worker generates itself, so the SSR routes (`/preview/**`,
 `/api/draft-mode/*`) carry none of these headers. Site-wide:
 
-- `Strict-Transport-Security` (HSTS, one year, includeSubDomains, preload). The `preload`
-  directive alone enrolls nothing: a domain joins browsers' preload list only when someone
-  submits it at hstspreload.org, and that waits for the church's own domain (a workers.dev
-  subdomain cannot be submitted). Submitting commits every subdomain to HTTPS for good.
+- `Strict-Transport-Security` (HSTS, one year). Since 2026-10-25 (audit DEV-L4) WITHOUT
+  `includeSubDomains` and `preload` until the church's domain is known: on that domain they
+  would force HTTPS on every subdomain. The check that says when to add them back is under
+  "Putting a site on its real domain" above.
 - `Content-Security-Policy`: `frame-ancestors 'self'` (replaces the legacy
   `X-Frame-Options`; `DENY` would break the Presentation tool's iframe of `/preview/*`),
   plus, since 2026-10-24, `object-src 'none'`, `base-uri 'self'` and a `script-src`
   written at build time (below)
+- A second `Content-Security-Policy: form-action 'self'` (2026-10-25, DEV-L4): forms may post
+  to this site only, which stops an injected form sending what a visitor types elsewhere. It is
+  a separate line because build-csp.mjs needs the first line byte-for-byte; two policies are
+  both enforced, so it only adds this one rule. Every form on the site posts to itself today
+  (`/api/form/`, `/search/`, the private pages). **A pasted form that posts elsewhere** (a
+  PayPal donate button, a mailing-list signup in a Custom code block, whose srcdoc frame
+  inherits the page's policy) needs its origin added to that line, e.g.
+  `form-action 'self' https://www.paypal.com`.
+- `Permissions-Policy: camera=(), microphone=(), geolocation=(), usb=(), magnetometer=(), gyroscope=()`
+  (2026-10-25): device features no page uses, refused for the page and every frame in it.
+  Autoplay, fullscreen and encrypted media are not listed, so the YouTube and Facebook players
+  keep working. `interest-cohort` is left out on purpose: Chrome logs an "unrecognized feature"
+  error for it, which costs the Best Practices score.
 - `X-Content-Type-Options: nosniff`
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `Cross-Origin-Opener-Policy: same-origin`
 
+Caching (2026-10-25, audit DEV-M7):
+
+- `/_astro/*`: a year, immutable (the names carry a content hash). The text fonts
+  (`src/assets/fonts/`) and the brick textures (`src/assets/textures/`) live here now: they
+  moved out of `public/` so Vite hashes them. CSS names them by relative path
+  (`url('../assets/textures/tile-deep.svg')`) and BaseLayout preloads the fonts through a
+  `?url` import, so the preload and the `@font-face` are the same hashed file.
+  `npm run gen:stones` writes the textures to `src/assets/textures/`.
+- `/fonts/*` (the Studio's lettering font and the font licences), `/og/*`, `/favicon.svg`,
+  `/favicon.ico`, `/apple-touch-icon.png`: a day plus a week of `stale-while-revalidate`. These
+  names are fixed, so never mark them immutable; a new file that must reach visitors at once
+  gets a new name or goes under `src/assets/`.
 - `/shot-examples/*` (the pre-launch example photos): a year's `Cache-Control`. The names
   are not hashed, so a changed example gets a new file name.
+- HTML: no rule, so Cloudflare's `max-age=0, must-revalidate` with an ETag (every page is
+  rebuilt on publish).
 
 **The script policy (2026-10-24, from a Lighthouse "Ensure CSP is effective against XSS" flag).**
 `public/_headers` says only `frame-ancestors 'self'` on the `/*` rule. `scripts/build-csp.mjs`

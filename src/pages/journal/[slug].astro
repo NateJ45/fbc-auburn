@@ -106,7 +106,7 @@ const description = entry.seoDescription ?? entry.excerpt ?? `News and notes fro
 // Before launch, a stand-in cover gives way to a "Photo needed" box (src/data/shot-list.ts).
 const coverShot = journalCoverShot(entry.coverImage);
 const coverOg = entry.coverImage?.asset
-  ? urlFor(entry.coverImage).width(1200).height(630).fit('crop').quality(80).format('webp').url()
+  ? urlFor(entry.coverImage).width(1200).height(630).fit('crop').quality(80).format('jpg').url()
   : undefined;
 
 // Derived
@@ -114,6 +114,32 @@ const readMinutes = readingTimeFromPortableText(entry.body);
 // The headings list sits in the rail on a wide screen when the body has h2/h3/h4 headings.
 const headings = extractHeadings(entry.body);
 const hasToc = headings.length > 0;
+// The same ids, by block key, for the body's own headings (JournalPortableText). Walks the body
+// with extractHeadings' rule (h2 to h4 with some text), so the n-th such block gets the n-th id
+// and the TOC links always land (audit DEV-M2, 2026-10-25: built here, not in the browser).
+const headingIds: Record<string, string> = {};
+{
+  let n = 0;
+  for (const b of (entry.body ?? []) as {
+    _type?: string;
+    _key?: string;
+    style?: string;
+    children?: { text?: string }[];
+  }[]) {
+    if (b?._type !== 'block' || !['h2', 'h3', 'h4'].includes(b.style ?? '')) continue;
+    const text = (b.children ?? [])
+      .map((c) => c?.text ?? '')
+      .join('')
+      .trim();
+    if (!text) continue;
+    const h = headings[n++];
+    if (b._key && h) headingIds[b._key] = h.id;
+  }
+}
+// Only the before/after slider needs React in the browser; a post without one is plain HTML.
+const bodyNeedsJs = ((entry.body ?? []) as { _type?: string }[]).some(
+  (b) => b?._type === 'beforeAfter',
+);
 const dateLabel = formatDate(entry.publishedAt);
 const updatedLabel =
   entry.updatedAt && entry.updatedAt !== entry.publishedAt ? formatDate(entry.updatedAt) : '';
@@ -181,7 +207,7 @@ const schemas = [
     {coverShot && (
       <div class="art-cover mx-auto max-w-content art-gutter">
         <div class="art-cover__frame shape-step shape-step--lg">
-          <ShotRequest shot={coverShot} class="shot--fill" />
+          <ShotRequest shot={coverShot} class="shot--fill" priority />
         </div>
       </div>
     )}
@@ -193,6 +219,7 @@ const schemas = [
             width={2000}
             height={1125}
             loading="eager"
+            fetchpriority="high"
             sizes="(min-width: 82.5rem) 1280px, 100vw"
           />
         </div>
@@ -257,11 +284,13 @@ const schemas = [
       </aside>
 
       <div class="art-body">
-        {/* `client:visible` defers Sanity client + the journal-specific renderers
-            (inline images, before/after slider, source cards, galleries) until
-            the visitor scrolls the body into view. The article HTML is still
-            server-rendered above the fold, so reading starts immediately. */}
-        <JournalPortableText client:visible value={entry.body} />
+        {/* Server-rendered either way. Hydrated (`client:visible`) only when the post has a
+            before/after slider, the one part that needs React; the photo viewer is Lightbox below. */}
+        {bodyNeedsJs ? (
+          <JournalPortableText client:visible value={entry.body} headingIds={headingIds} />
+        ) : (
+          <JournalPortableText value={entry.body} headingIds={headingIds} />
+        )}
         {/* The post's photos open full screen (inline images and galleries). */}
         <Lightbox />
 

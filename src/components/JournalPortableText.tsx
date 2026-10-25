@@ -11,8 +11,11 @@
 //   - divider      (line / ornament / space)
 //   - videoEmbed   (YouTube/Vimeo URL → responsive iframe)
 //
-// Headings get a stable id (derived from the heading text via slugify) so
-// the auto-generated TOC and deep-link anchors work. Default block styles
+// Headings get a stable id so the TOC and deep-link anchors work. The ids are worked out at
+// build time by the page (extractHeadings, the same list the TOC draws) and passed in by block
+// key, so slugify never ships to the browser (audit DEV-M2, 2026-10-25). The page hydrates this
+// island only when the post has a before/after slider, the one interactive part; otherwise it is
+// plain server-rendered HTML with no React at all. Default block styles
 // mirror the existing PortableText component, with one extra: "lead" style
 // for the large intro paragraph.
 
@@ -21,27 +24,13 @@ import { PortableText as PT, type PortableTextComponents } from '@portabletext/r
 import type { PortableTextBlock } from '@portabletext/types';
 import { urlFor, parseSanityAssetDimensions } from '@/lib/sanity';
 import { viewerSources } from '@/lib/lightbox';
-import { slugify } from '@/lib/slugify';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 
 interface Props {
   value: PortableTextBlock[] | undefined | null;
   className?: string;
-}
-
-// Stable, unique heading ids per render so anchors don't collide if a post
-// repeats a heading text.
-function makeHeadingId(seen: Map<string, number>, children: any): string {
-  const text = Array.isArray(children)
-    ? children
-        .map((c) => (typeof c === 'string' ? c : (c?.props?.children ?? '')))
-        .join('')
-        .trim()
-    : String(children ?? '').trim();
-  const base = slugify(text);
-  const count = (seen.get(base) ?? 0) + 1;
-  seen.set(base, count);
-  return count === 1 ? base : `${base}-${count}`;
+  /** Heading id by block _key, from the page (see the header). A heading with no entry gets no id. */
+  headingIds?: Record<string, string>;
 }
 
 // Parse a YouTube or Vimeo URL into an embed src. Returns null for anything else.
@@ -99,8 +88,9 @@ function lightboxProps(img: { alt?: string; caption?: string } & Record<string, 
   };
 }
 
-function makeComponents(): PortableTextComponents {
-  const seen = new Map<string, number>();
+function makeComponents(headingIds: Record<string, string> = {}): PortableTextComponents {
+  const idOf = (value: { _key?: string } | undefined) =>
+    value?._key ? headingIds[value._key] : undefined;
   let firstNormalRendered = false;
 
   return {
@@ -125,25 +115,25 @@ function makeComponents(): PortableTextComponents {
       ),
       // Headings inside a post sit one step below the page's own section headings (2026-10-24):
       // a body H2 was the full 48px section size with 140px above it.
-      h2: ({ children }) => (
+      h2: ({ children, value }) => (
         <h2
-          id={makeHeadingId(seen, children)}
+          id={idOf(value)}
           className="mt-l mb-s scroll-mt-24 font-display text-h3 text-foreground"
         >
           {children}
         </h2>
       ),
-      h3: ({ children }) => (
+      h3: ({ children, value }) => (
         <h3
-          id={makeHeadingId(seen, children)}
+          id={idOf(value)}
           className="mt-l mb-xs scroll-mt-24 font-display text-h4 text-foreground"
         >
           {children}
         </h3>
       ),
-      h4: ({ children }) => (
+      h4: ({ children, value }) => (
         <h4
-          id={makeHeadingId(seen, children)}
+          id={idOf(value)}
           className="mt-m mb-xs scroll-mt-24 font-display text-h5 text-foreground"
         >
           {children}
@@ -491,11 +481,11 @@ function makeComponents(): PortableTextComponents {
   };
 }
 
-export default function JournalPortableText({ value, className }: Props) {
+export default function JournalPortableText({ value, className, headingIds }: Props) {
   if (!value || value.length === 0) return null;
   return (
     <div className={className}>
-      <PT value={value} components={makeComponents()} />
+      <PT value={value} components={makeComponents(headingIds)} />
     </div>
   );
 }

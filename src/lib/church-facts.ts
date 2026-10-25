@@ -678,9 +678,14 @@ export function churchJsonLd(
   if (services.length > 0) {
     const hhmm = (m: number) =>
       `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+    // In person, at the church (the confirmed address when there is one), every week. The
+    // attendance mode and status are what validators ask an Event for (audit DEV-M5, 2026-10-25).
     out.event = services.map((s) => ({
       '@type': 'Event',
       name: plain(s.label),
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      eventStatus: 'https://schema.org/EventScheduled',
+      ...(out.address ? { location: { '@type': 'Place', address: out.address } } : {}),
       eventSchedule: {
         '@type': 'Schedule',
         byDay: `https://schema.org/${s.day[0].toUpperCase()}${s.day.slice(1)}`,

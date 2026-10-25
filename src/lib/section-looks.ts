@@ -24,7 +24,7 @@
 // Standard band is white and a BoardRule separates sections (src/styles/
 // board.css), so the starter's Quiet look (always the plain page) would look
 // exactly like Standard here and is left out. In its place is Stone: the pale
-// stepping-stone tiles (public/textures/tile-sky.svg) that the church's sky
+// stepping-stone tiles (src/assets/textures/tile-sky.svg) that the church's sky
 // panels already use. Feature is the church's deep blue (--auburn-deep).
 // =============================================================================
 

@@ -157,7 +157,7 @@ export const SECTION_SURFACES: SurfacePair[] = [
     },
   },
   // The Stone look (2026-10-18): the pale stepping-stone tiles
-  // (public/textures/tile-sky.svg) the church's sky panels use, with dark text.
+  // (src/assets/textures/tile-sky.svg) the church's sky panels use, with dark text.
   // The band paints #E9EEF5 under the tiles, but the pair is MEASURED on
   // --stone, the darkest colour in the tile (#D3DCE8, the gaps between stones),
   // so the gate checks the worst spot any word can land on.

@@ -378,16 +378,26 @@ describe('structured data', () => {
     assert.equal(ld.embedUrl, 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     assert.ok(ld.description);
   });
-  it('anything else is a CreativeWork, with its recording', () => {
+  it('a recording with no YouTube video is a PodcastEpisode of the sermon podcast', () => {
     const ld = sermonJsonLd(
-      sermon({ audio: { url: 'https://cdn.sanity.io/files/a.mp3', mimeType: 'audio/mpeg' } }),
+      sermon({
+        audio: { url: 'https://cdn.sanity.io/files/a.mp3', mimeType: 'audio/mpeg' },
+        audioSeconds: 1830,
+      }),
       'https://example.org/sermons/a-message/',
       'FBC',
     );
+    assert.equal(ld['@type'], 'PodcastEpisode');
+    const media = ld.associatedMedia as { contentUrl: string; duration: string };
+    assert.equal(media.contentUrl, 'https://cdn.sanity.io/files/a.mp3');
+    assert.equal(media.duration, 'PT1830S');
+    const series = ld.partOfSeries as { webFeed: string; name: string };
+    assert.equal(series.webFeed, 'https://example.org/sermons/podcast.xml');
+    assert.equal(series.name, 'FBC Sermons');
+  });
+  it('with neither, a plain CreativeWork', () => {
+    const ld = sermonJsonLd(sermon({}), 'https://example.org/sermons/a-message/', 'FBC');
     assert.equal(ld['@type'], 'CreativeWork');
-    assert.equal(
-      (ld.audio as { contentUrl: string }).contentUrl,
-      'https://cdn.sanity.io/files/a.mp3',
-    );
+    assert.equal(ld.datePublished, '2026-10-11');
   });
 });

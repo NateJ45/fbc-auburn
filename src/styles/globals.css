@@ -20,6 +20,12 @@
 @source not '../../scripts/.parity';
 @source not '../../docs';
 @source not '../../*.md';
+/* FBC Auburn (audit DEV-M1, 2026-10-25): the build and data scripts, the Playwright specs and
+   their saved Church Trac pages are never rendered with this sheet, but their words ("--name",
+   "--color-gray-300", CLI flags) still minted about 3.4 KB of rules on every page. The repo-root
+   scripts/ folder only; src/scripts/ (the flow layer and motion) is still scanned. */
+@source not '../../scripts';
+@source not '../../tests';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -637,7 +643,7 @@ html.motion [data-reveal].is-visible {
   --border: #d3dce8;
   --section-accent: var(--stone-accent);
   background-color: var(--stone-paint);
-  background-image: url('/textures/tile-sky.svg');
+  background-image: url('../assets/textures/tile-sky.svg');
   background-size: 420px 420px;
   color: var(--stone-foreground);
 }

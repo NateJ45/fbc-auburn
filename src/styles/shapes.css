@@ -139,7 +139,7 @@
   /* From a third of the way into the picture out past the right edge of the window. */
   left: 34%;
   right: -100vw;
-  background: var(--auburn-deep) url('/textures/tile-deep.svg') 0 0 / 420px 420px;
+  background: var(--auburn-deep) url('../assets/textures/tile-deep.svg') 0 0 / 420px 420px;
 }
 .shape-slab--left::before {
   left: -100vw;

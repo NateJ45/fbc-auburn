@@ -4,8 +4,8 @@
 // build never runs the generators.
 //
 //   src/components/home/stones.generated.ts   the wide and phone stone paths, the section marker
-//   public/textures/tile-deep.svg             the This Sunday card's stone ground
-//   public/textures/tile-{green,navy,sky}.svg the section library's panels and sermon art
+//   src/assets/textures/tile-deep.svg             the This Sunday card's stone ground
+//   src/assets/textures/tile-{green,navy,sky}.svg the section library's panels and sermon art
 //                                             (church-blocks.css, collections.css)
 //   public/studio-banner/stone-path*.svg      the stone path along the Studio Home banner's foot
 //                                             (kit.config.ts homeBanner.motif, card 118)
@@ -134,12 +134,12 @@ outputs.set('public/studio-banner/marker.svg', svgOf({ width: 78, height: 36 }, 
   const rnd = lcg(59);
   const d = fleckPath(4, 4, 56, 36, 30, 11, rnd);
   outputs.set(
-    'public/textures/print-flecks.svg',
+    'src/assets/textures/print-flecks.svg',
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 44" width="64" height="44"><path d="${d}" fill="#FBF8F3" fill-opacity="0.9"/></svg>\n`,
   );
 }
 for (const [name, opts] of Object.entries(TILES)) {
-  outputs.set(`public/textures/tile-${name}.svg`, brickTile(opts));
+  outputs.set(`src/assets/textures/tile-${name}.svg`, brickTile(opts));
 }
 
 let stale = 0;

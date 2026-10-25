@@ -17,6 +17,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { printMask } from './lib/brick-print.mjs';
+// The path data is written in its shortest exact form (audit DEV-L10, 2026-10-25): about 40 percent
+// fewer bytes, not a point moved (scripts/lib/svg-path-compact.mjs and its test).
+import { compactSvgPaths } from './lib/svg-path-compact.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const srcDir = path.join(root, 'brand/icons');
@@ -68,7 +71,9 @@ for (const name of fs
     seed,
     density: 4,
   });
-  const out = `${open}${title}<defs>${filter}</defs>${mask}<g mask="url(#fl)"><g filter="url(#pr)">${body.trim()}</g></g></svg>\n`;
+  const out = compactSvgPaths(
+    `${open}${title}<defs>${filter}</defs>${mask}<g mask="url(#fl)"><g filter="url(#pr)">${body.trim()}</g></g></svg>\n`,
+  );
   const file = path.join(outDir, name);
   const current = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
   if (current === out) continue;

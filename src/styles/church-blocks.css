@@ -641,7 +641,7 @@
   padding: clamp(1.75rem, 6vw, 4rem) clamp(1.5rem, 6vw, 4.5rem) clamp(2rem, 6vw, 3.75rem);
   border-radius: var(--radius-card);
   background-color: var(--auburn-green);
-  background-image: url('/textures/tile-green.svg');
+  background-image: url('../assets/textures/tile-green.svg');
   background-size: 420px 420px;
   box-shadow: var(--shadow-raised);
   color: #ffffff;
@@ -829,7 +829,7 @@
   height: 100%;
   padding: clamp(1rem, 3vw, 1.5rem);
   border: 0;
-  background: #16304d url('/textures/tile-navy.svg') 0 0 / 420px 420px;
+  background: #16304d url('../assets/textures/tile-navy.svg') 0 0 / 420px 420px;
   color: #ffffff;
   font: inherit;
   text-align: left;
@@ -950,7 +950,7 @@
   padding: var(--pad-panel);
   border-radius: var(--radius-card);
   background-color: #e9eef5;
-  background-image: url('/textures/tile-sky.svg');
+  background-image: url('../assets/textures/tile-sky.svg');
   background-size: 420px 420px;
   color: var(--foreground);
 }

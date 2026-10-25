@@ -34,6 +34,63 @@ A mobile run on Home scored 91 / 100 / 100 / 100. What it flagged and what chang
   it means rewriting the menu without React. The weather fetch in the dependency tree already waits
   for idle time.
 
+### FBC Auburn, the 2026-10-25 page-weight pass (site audit, DEV-M1, M2, M7, M8, L1, L10)
+
+Measured on `scripts/serve-dist.mjs` (brotli, the deploy's `/_astro/` caching), before and after,
+medians of three. "Lighthouse" is 12.x mobile (simulated slow 4G). "Throttled" is Playwright at
+375px, DPR 2, 1.6 Mbps / 150 ms RTT, CPU 4x, cache off; "next page" is a click through the page
+router after the first page has settled (scripts in the session scratchpad, `nav.mjs`).
+
+|                                                    | Before               | Linked sheets (tried)     | After                |
+| -------------------------------------------------- | -------------------- | ------------------------- | -------------------- |
+| Lighthouse Home / Plan your visit / Ministries     | 99 / 98 / 91         | 98 / 87 / 99              | 99 / 97 / 99         |
+| Lighthouse LCP, same pages                         | 2.10 / 2.40 / 3.46 s | 2.26 / 3.54 / 1.95 s      | 2.18 / 2.48 / 1.88 s |
+| Throttled first visit FCP (Home, Ministries, Plan) | 808 / 872 / 852 ms   | 1036 / 1032 / 1100 ms     | 596 / 672 / 624 ms   |
+| Next page through the router (3 pairs)             | 1097 / 924 / 728 ms  | 1107 / 704 / 477 ms       | 889 / 708 / 584 ms   |
+| Bytes for that next page                           | 170 / 199 / 72 KB    | 64 / 158 / 31 KB          | 86 / 179 / 52 KB     |
+| Home HTML (brotli) / its CSS                       | 62.6 / 41.1 KB       | 23.2 KB + 44 KB of sheets | 45.0 / 23.7 KB       |
+| Journal post JS (files, brotli)                    | 29 files, 167 KB     |                           | 20 files, 113 KB     |
+
+- **CSS stays inline, and each page is purged** (`scripts/purge-page-css.mjs`, run by
+  `npm run build` after `astro build`; helpers and tests in `scripts/lib/css-purge.mjs`). Astro
+  gives every page the CSS of every component its module graph reaches, and SectionRenderer
+  imports every section, so every page carried every block's styles. The purge drops a rule only
+  when every selector in it names a class that appears nowhere in the page's HTML (attributes,
+  island props, inline scripts) or in the scripts the page loads (followed through their imports),
+  so classes the islands and the flow layer add at runtime are kept. Rules without classes,
+  `:not()`, `@font-face`, `@keyframes` and `@property` are never touched. About half the inline CSS
+  goes (48% when measured, 56% once the phone menu became a dialog; Plan your visit 250 KB to
+  about 128 KB). Checked by comparing the computed style of
+  every element on all 27 built pages at 375 and 1280 (and with the phone menu and search open,
+  and with motion on after a full scroll): zero differences. **If a script ever builds a class
+  name from pieces** (`'cb-' + kind`), its rule would be dropped: name the prefix in `KEEP` at the
+  top of the script.
+- **Linked sheets were measured again and lost the first visit** (about 0.3 to 0.4 s later first
+  paint, one more round trip before anything draws) while winning the next page by 20 to 40 KB.
+  The purge closes most of that gap, so inline stays (`astro.config.mjs` comment).
+- **Tailwind no longer scans `scripts/` and `tests/`** (`@source not` in `globals.css`): their
+  words minted about 3 KB of rules nobody uses.
+- **No toaster on every page** (DEV-M2): the copy-email button was its only caller; it is now an
+  Astro component with a live region, so React, sonner and next-themes left the page.
+  `JournalPortableText` hydrates only on a post with a before/after slider, and its heading ids
+  are worked out at build time, so `slugify` no longer ships.
+- **Fonts and textures are hashed** (DEV-M7): `src/assets/fonts/` and `src/assets/textures/`,
+  cached a year under `/_astro/`; no more five revalidations per page view. Detail:
+  `docs/agent/deployment.md`, "Caching".
+- **First photo eager** (DEV-M8): `SectionRenderer`'s `leadImage` (set by `[slug].astro` and
+  `about.astro`) gives the first section after the page head `isFirst`; `ImageText`,
+  `FindYourPlace` (first card) and `ShotRequest` then load it `eager` with `fetchpriority="high"`.
+  The journal cover and the first journal card do the same. Ministries' Lighthouse LCP went from
+  3.46 s to 1.88 s. Check the real-photo path the same way when photos land.
+- **The empty-arch mark is WebP at 150 and 300px** (DEV-L1), not the 128 KB master PNG.
+- **Stone icons about 40% lighter** (DEV-L10): `scripts/print-icons.mjs` writes their path data in
+  its shortest exact form (`scripts/lib/svg-path-compact.mjs`, which checks every point stays
+  put): 1.45 MB to 0.90 MB for the 47 icons, brotli 464 to 313 KB. Side by side they look the
+  same; a pixel compare finds a few anti-aliased edge pixels.
+- **Build target left alone** (DEV-L11): the only "legacy JavaScript" Lighthouse lists is
+  Cloudflare's analytics beacon (third party); the site's bundles already use Vite's modern
+  default, and the matched dependency set is not moved for it (rule 8).
+
 ### Bundle budgets
 
 | Slot                                            | Target  |
@@ -63,7 +120,7 @@ Use `<SanityImage />`'s `width` prop to drive these. **Never request larger than
 - **Libre Baskerville** (display serif): self-hosted via `@fontsource/libre-baskerville`. Load only the weights you use -- each unused weight file is ~50KB wasted across latin + latin-ext woff/woff2.
 - **Inter** (body sans-serif): self-hosted via `@fontsource-variable/inter`. The variable file covers all weights in a single request.
 - **Script accent font** (opt-in): no script font is loaded by default. To enable the `font-script` utility, add a `@fontsource` import in `globals.css` and point `--font-script` at the family. See `animation.md` for the full opt-in steps.
-- No `<link rel="preload">` on font URLs. Vite hashes the filenames at build time, so a static preload tag would 404. The cost is one extra paint; the benefit is no broken preload (and Lighthouse stays at 100 Best Practices).
+- No hand-written `<link rel="preload">` on a font URL: Vite hashes the filenames at build time, so a typed path would 404. FBC Auburn preloads its two Latin text faces through a `?url` import instead (`src/assets/fonts/`, BaseLayout), which gives the same hashed URL the `@font-face` uses (2026-10-25).
 
 ### Lighthouse scorecard
 
@@ -83,14 +140,14 @@ Target: 100 on all four categories (Performance, Accessibility, Best Practices, 
 
 ### Hydration strategy
 
-| Component          | Directive         | Why                                                                                                                                                                                                                                                                               |
-| ------------------ | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ThemeToggle`      | `client:idle`     | Anti-FOUC inline script in `BaseLayout` already applies the correct theme class before first paint, so the React island only needs to hydrate by the time the visitor moves to click it. Demoting from `client:load` shaves real TBT off mobile Lighthouse runs.                  |
-| `MobileNav`        | none (2026-10-25) | No longer an island: server markup on a native `<dialog>` plus a small inline script (`MobileNav.astro`). Dropped the 22 KB MobileNav chunk and its Radix and shadcn helpers: about 130 KB to 93 KB of gzipped JS on every page. React itself still loads for the `Toaster` below |
-| `ContactForm`      | `client:visible`  | Below the fold on most pages                                                                                                                                                                                                                                                      |
-| `BackToTop`        | `client:idle`     | Doesn't appear until the visitor scrolls 600px, so the JS doesn't need to race first paint                                                                                                                                                                                        |
-| `Toaster` (Sonner) | `client:idle`     | Region only -- toast calls fire from elsewhere, plenty of time for the region to mount                                                                                                                                                                                            |
-| `FaqAccordion`     | `client:visible`  | Interactive but not critical-path                                                                                                                                                                                                                                                 |
+| Component             | Directive                                                      | Why                                                                                                                                                                                                                                                                                                                                                      |
+| --------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ThemeToggle`         | `client:idle`                                                  | Anti-FOUC inline script in `BaseLayout` already applies the correct theme class before first paint, so the React island only needs to hydrate by the time the visitor moves to click it. Demoting from `client:load` shaves real TBT off mobile Lighthouse runs.                                                                                         |
+| `MobileNav`           | none (2026-10-25)                                              | No longer an island: server markup on a native `<dialog>` plus a small inline script (`MobileNav.astro`). Dropped the 22 KB MobileNav chunk and its Radix and shadcn helpers: about 130 KB to 93 KB of gzipped JS on every page. With the Toaster gone too (below), the copy-email button and the remaining islands no longer pull React onto every page |
+| `ContactForm`         | `client:visible`                                               | Below the fold on most pages                                                                                                                                                                                                                                                                                                                             |
+| `BackToTop`           | `client:idle`                                                  | Doesn't appear until the visitor scrolls 600px, so the JS doesn't need to race first paint                                                                                                                                                                                                                                                               |
+| `JournalPortableText` | `client:visible`, only when the post has a before/after slider | Every other post renders it as plain HTML with no React; heading ids are worked out at build time by the page, so `slugify` never ships. The Toaster is gone (2026-10-25): its only caller, the copy-email button, has its own live region                                                                                                               |
+| `FaqAccordion`        | `client:visible`                                               | Interactive but not critical-path                                                                                                                                                                                                                                                                                                                        |
 
 Default to `client:visible` or `client:idle` for anything not immediately above the fold. Astro ships less JS up front. `client:load` is reserved for islands that genuinely must be live before first interaction -- and even then, ask twice whether `client:idle` is acceptable.
 

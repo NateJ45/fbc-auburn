@@ -24,9 +24,11 @@ interface Props {
     featured?: boolean;
   };
   featured?: boolean;
+  /** The first card on the page, in the phone's first screen: its cover loads eagerly (DEV-M8). */
+  priority?: boolean;
 }
 
-const { entry, featured = false } = Astro.props as Props;
+const { entry, featured = false, priority = false } = Astro.props as Props;
 const href = entry.slug?.current ? `/journal/${entry.slug.current}/` : '#';
 const primaryCategory = entry.categories?.[0];
 
@@ -52,7 +54,7 @@ const titleClass = featured
 
   <div class:list={[aspectClass, 'img-zoom relative overflow-hidden bg-muted']}>
     {coverShot ? (
-      <ShotRequest shot={coverShot} class="shot--fill" inLink />
+      <ShotRequest shot={coverShot} class="shot--fill" inLink {priority} />
     ) : entry.coverImage?.asset ? (
       <SanityImage
         source={entry.coverImage}
@@ -62,6 +64,8 @@ const titleClass = featured
             ? '(min-width: 1024px) 66vw, 100vw'
             : '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw'
         }
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : undefined}
         class="h-full w-full object-cover"
       />
     ) : (

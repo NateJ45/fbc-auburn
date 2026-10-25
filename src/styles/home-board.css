@@ -543,7 +543,7 @@
 }
 /* Numbered bricks (2026-10-21, the brick brand): the mark's course with a numeral on it,
    alternating auburn and navy. Printed like every brick since 2026-10-23: a darker rim all round,
-   heavier along the bottom, and the linocut flecks (public/textures/print-flecks.svg, from
+   heavier along the bottom, and the linocut flecks (src/assets/textures/print-flecks.svg, from
    npm run gen:stones) over the colour. */
 .hb-walk__stone {
   position: relative;
@@ -554,7 +554,7 @@
   height: 44px;
   margin-bottom: 18px;
   border-radius: 2px;
-  background-image: url('/textures/print-flecks.svg');
+  background-image: url('../assets/textures/print-flecks.svg');
   background-size: 64px 44px;
   box-shadow:
     inset 0 0 0 2px rgb(0 0 0 / 0.2),

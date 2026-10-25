@@ -17,6 +17,7 @@ import { splitStega } from '@/lib/preview-stega';
 import '@/styles/shapes.css';
 // With no photo yet, the slot holds the church's mark, not an empty grey shape (2026-10-24).
 import markPrint from '@/assets/brand/mark-print.png';
+import { getImage } from 'astro:assets';
 
 interface Props {
   /** FBC Auburn: a photo, or one of the church's drawings with its scroll motion. */
@@ -30,6 +31,8 @@ interface Props {
   /** From SectionRenderer's cadence, including the band an editor's look asks for. */
   surface?: CadenceSurface;
   headingId: string;
+  /** The page's first section (SectionRenderer leadImage): the photo loads eagerly, at high priority. */
+  isFirst?: boolean;
 }
 
 const {
@@ -42,12 +45,16 @@ const {
   cta,
   surface = 'background',
   headingId,
+  isFirst = false,
 } = Astro.props as Props;
 
 // Surface classes come from src/lib/surfaces.ts (the measured pairs). Same
 // strings as the ternary that was here for 'background' and 'muted'.
 const bg = surfaceClass(surface);
 const imageFirst = imageSide === 'left';
+// The empty-arch mark as WebP at the sizes it is drawn (up to 150px, so 150 and 300 for 2x screens),
+// not the 720px master PNG (about 128 KB; audit DEV-L1, 2026-10-25).
+const markImg = await getImage({ src: markPrint, widths: [150, 300], format: 'webp' });
 // Before launch, a photo slot that is empty or holds a stand-in names the photo we want instead
 // (src/data/shot-list.ts, keyed by page and heading). Drawings ('mark', 'baptism', 'building') never.
 const shot =
@@ -133,13 +140,15 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
           // A photo (or its Photo needed request): the gable over the brick slab.
           <div class:list={['shape-slab', imageFirst && 'shape-slab--left']}>
             {shot ? (
-              <ShotRequest shot={shot} class="auburn-arch shape-gable" />
+              <ShotRequest shot={shot} class="auburn-arch shape-gable" priority={isFirst} />
             ) : (
               <SanityImage
                 source={image}
                 width={800}
                 sizes="(min-width: 1024px) 45vw, 100vw"
                 quality={75}
+                loading={isFirst ? 'eager' : 'lazy'}
+                fetchpriority={isFirst ? 'high' : undefined}
                 class="auburn-arch shape-gable h-auto w-full object-cover"
               />
             )}
@@ -148,7 +157,9 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
           <div class="auburn-arch auburn-arch--empty" aria-hidden="true">
             <img
               class="auburn-arch__mark"
-              src={markPrint.src}
+              src={markImg.src}
+              srcset={markImg.srcSet.attribute}
+              sizes="150px"
               width="720"
               height="703"
               alt=""

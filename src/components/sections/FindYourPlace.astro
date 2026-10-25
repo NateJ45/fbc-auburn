@@ -44,6 +44,8 @@ interface Props {
   headingId: string;
   /** The page's path, for the shot list ("/ministries/"). */
   path?: string;
+  /** The page's first section (SectionRenderer leadImage): the first card's photo loads eagerly. */
+  isFirst?: boolean;
 }
 const {
   eyebrow,
@@ -53,6 +55,7 @@ const {
   surface = 'background',
   headingId,
   path = Astro.url.pathname,
+  isFirst = false,
 } = Astro.props;
 
 const facts = await getChurchFacts();
@@ -141,7 +144,7 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
       )}
 
       <div class="fyp__groups">
-        {shown.map((g) => (
+        {shown.map((g, gi) => (
           <section id={g.id} class="fyp__group" aria-labelledby={`${g.id}-h`} data-fyp-group>
             <div class="fyp__group-head">
               <GroupTitle id={`${g.id}-h`} class="fyp__group-title">
@@ -155,6 +158,7 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
                 const shot = shotFor(path, card.title, 0, card.image);
                 const photo = !shot && Boolean(card.image?.asset);
                 const ww = whenWhere(card.day, card.place, card.title);
+                const lead = isFirst && gi === 0 && ci === 0;
                 return (
                   <li
                     id={g.cardIds[ci]}
@@ -163,7 +167,7 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
                   >
                     <div class="fyp-card__pic shape-step">
                       {shot ? (
-                        <ShotRequest shot={shot} inLink class="shot--fill" />
+                        <ShotRequest shot={shot} inLink class="shot--fill" priority={lead} />
                       ) : photo ? (
                         <div class="shape-zoom">
                           <SanityImage
@@ -172,6 +176,8 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
                             height={600}
                             sizes="(min-width: 80rem) 22rem, (min-width: 40rem) 45vw, 100vw"
                             quality={70}
+                            loading={lead ? 'eager' : 'lazy'}
+                            fetchpriority={lead ? 'high' : undefined}
                           />
                         </div>
                       ) : (
