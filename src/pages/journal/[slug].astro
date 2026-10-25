@@ -42,6 +42,7 @@ import CaseStudyTOC from '@/components/CaseStudyTOC';
 import FinalCta from '@/components/FinalCta.astro';
 import Lightbox from '@/components/Lightbox.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
+import { MARKER } from '@/components/home/stones.generated';
 import { formatDate } from '@/lib/format-date';
 import ShareButtons from '@/components/ShareButtons.astro';
 import SearchMeta from '@/components/search/SearchMeta.astro';
@@ -180,17 +181,21 @@ const schemas = [
 
   <article class="art">
     {/* ------- 1. Back link, title, standfirst ----------------------------- */}
-    <header class="art-head mx-auto max-w-content px-m">
-      <a href="/journal/" class="art-back">
+    <header class="art-head mx-auto max-w-content art-gutter">
+      {/* The page-head grammar of the sermon detail (audit 2026-10-25, GD-M12): the brick marker and
+          the section's name as the eyebrow, here also the way back to the list. */}
+      <a href="/journal/" class="art-back hb-label">
         <svg
-          class="art-back__arrow"
-          viewBox="0 0 56 12"
-          width="56"
-          height="12"
+          class="hb-marker"
+          viewBox="0 0 78 36"
+          width="78"
+          height="36"
           aria-hidden="true"
           focusable="false"
         >
-          <path d="M55 6H2M7 1 2 6l5 5" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+          {MARKER.map((m) => (
+            <path d={m.d} fill={m.fill} />
+          ))}
         </svg>
         <span>News and notes</span>
       </a>
@@ -200,14 +205,14 @@ const schemas = [
 
     {/* ------- 2. Cover: wide, the stepped brick corner -------------------- */}
     {coverShot && (
-      <div class="art-cover mx-auto max-w-content px-m">
+      <div class="art-cover mx-auto max-w-content art-gutter">
         <div class="art-cover__frame shape-step shape-step--lg">
           <ShotRequest shot={coverShot} class="shot--fill" priority />
         </div>
       </div>
     )}
     {entry.coverImage?.asset && !coverShot && (
-      <figure class="art-cover mx-auto max-w-content px-m">
+      <figure class="art-cover mx-auto max-w-content art-gutter">
         <div class="art-cover__frame shape-step shape-step--lg">
           <SanityImage
             source={entry.coverImage}
@@ -225,7 +230,7 @@ const schemas = [
     )}
 
     {/* ------- 3. The rail and the body ------------------------------------ */}
-    <div class="art-layout mx-auto max-w-content px-m">
+    <div class="art-layout mx-auto max-w-content art-gutter">
       <aside class="art-rail" aria-label="About this post">
         <div class="art-rail__inner">
           <dl class="art-meta">
@@ -315,7 +320,7 @@ const schemas = [
     <>
       <BoardRule />
       <section class="art-more bg-background" aria-labelledby="art-more-heading">
-        <div class="mx-auto max-w-content px-m py-section-lg">
+        <div class="mx-auto max-w-content art-gutter py-section-lg">
           <div class="art-more__head">
             <div>
               <p class="art-eyebrow">Keep reading</p>

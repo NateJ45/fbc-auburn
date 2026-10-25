@@ -136,6 +136,22 @@ const firstFaq = rows.findIndex(({ block }) => block._type === 'faqSection');
 // head, so a hero, a spacer or a notice band is skipped. -1 when leadImage is off.
 const LEAD_SKIP = new Set(['heroSection', 'spacerSection', 'noticeSection']);
 const leadRow = leadImage ? rows.findIndex(({ block }) => !LEAD_SKIP.has(block._type)) : -1;
+// One red button per page (audit 2026-10-25, GD-H2; DESIGN.md): the filled auburn button is the
+// page's single primary next step. The first block that draws a primary button keeps the red; every
+// later one draws it in solid navy. A closing band always draws a button (it has a fallback).
+const drawsRed = (block: unknown): boolean => {
+  const b = block as {
+    _type?: string;
+    primaryCta?: { label?: string } | null;
+    endLinkLabel?: string;
+  };
+  if (b._type === 'ctaBandSection') return true;
+  if (b._type === 'heroSection' || b._type === 'stepsRailSection') return !!b.primaryCta?.label;
+  if (b._type === 'walkSection') return !!b.endLinkLabel;
+  return false;
+};
+const redRow = rows.findIndex(({ block }) => drawsRed(block));
+const primaryVariant = (i: number): 'primary' | 'navy' => (i === redRow ? 'primary' : 'navy');
 
 // A real element in preview, nothing at all on the live site. The wrapper must
 // NOT be `display: contents`: the overlay outlines the element's rect, and a
@@ -172,6 +188,7 @@ const editKeyOf = (block: unknown) => {
           icon={s.icon}
           quiet={quietTitle}
           headingId={headingId}
+          primaryVariant={primaryVariant(rowIndex)}
         />
       ) : s._type === 'ctaBandSection' ? (
         <FinalCta
@@ -184,6 +201,7 @@ const editKeyOf = (block: unknown) => {
           headingAccent={s.headingAccent}
           backgroundImage={s.backgroundImage}
           headingId={headingId}
+          primaryVariant={primaryVariant(rowIndex)}
         />
       ) : s._type === 'statSection' ? (
         <StatsRow
@@ -407,6 +425,7 @@ const editKeyOf = (block: unknown) => {
           secondaryCta={s.secondaryCta}
           surface={lightSurface(surface)}
           headingId={headingId}
+          primaryVariant={primaryVariant(rowIndex)}
         />
       ) : s._type === 'walkSection' ? (
         <WalkSection
@@ -419,6 +438,7 @@ const editKeyOf = (block: unknown) => {
           endLinkHref={s.endLinkHref}
           surface={lightSurface(surface)}
           headingId={headingId}
+          primaryVariant={primaryVariant(rowIndex)}
         />
       ) : s._type === 'latestSermonSection' ? (
         <LatestSermon

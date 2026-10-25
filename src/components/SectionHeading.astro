@@ -42,6 +42,7 @@
 import { splitHeadingAccent } from '@/lib/heading-accent';
 import { hasInlineRich } from '@/lib/inline-rich';
 import InlineRich from '@/components/InlineRich.astro';
+import SectionLabel from '@/components/home/SectionLabel.astro';
 
 interface Props {
   eyebrow?: string;
@@ -107,28 +108,26 @@ const headingClass =
       : 'font-display text-h3 leading-tight';
 
 const wrapperAlign = align === 'center' ? 'text-center mx-auto' : 'text-left';
-const toneHeadline = tone === 'inverse' ? 'text-bg' : 'text-foreground';
+// Audit 2026-10-25 (GD-H6): one heading colour on the ground, navy (--heading-solid); it was ink
+// here and navy in the church blocks, mixed on one page.
+const toneHeadline = tone === 'inverse' ? 'text-bg' : 'text-[color:var(--heading-solid)]';
 // Default tone swapped from text-secondary (Warm Taupe, fails AA at 12px) to
 // text-foreground/80 (4.77:1 on Cream). Inverse tone (used on FinalCta's
 // dark Charcoal panel) keeps cream-on-dark.
 const toneEyebrow = tone === 'inverse' ? 'text-bg/75' : 'text-foreground/80';
-const toneSub = tone === 'inverse' ? 'text-bg/80' : 'text-foreground/80';
-
-// Bronze hairline accent beneath the eyebrow. Matches the brand-stripe
-// signature now repeating on every marketing card so section headings read
-// with the same editorial vocabulary. On inverse tone (dark FinalCta panel)
-// the hairline switches to lifted cream so it stays visible.
-const accentColor = tone === 'inverse' ? 'bg-bg/40' : 'bg-primary/60';
-const accentAlign = align === 'center' ? 'mx-auto' : '';
+// A section intro reads as the lead under its heading (GD-M3): muted navy, not ink at 80%.
+const toneSub = tone === 'inverse' ? 'text-bg/80' : 'text-muted-foreground';
 ---
 
 <div class:list={[wrapperAlign, 'max-w-3xl', extraClass]}>
-  {eyebrow && (
-    <>
-      <p class:list={['text-xs tracking-eyebrow uppercase', toneEyebrow]}>{eyebrow}</p>
-      <div class:list={['mt-s mb-m h-px w-12', accentAlign, accentColor]} aria-hidden="true" />
-    </>
-  )}
+  {/* The site's one eyebrow (audit 2026-10-25, GD-H4 and GD-M9): the brick marker beside a worded
+      label, 13px navy caps. On a dark band it keeps the old light caps, with no marker. */}
+  {eyebrow &&
+    (tone === 'inverse' ? (
+      <p class:list={['text-xs tracking-eyebrow uppercase mb-m', toneEyebrow]}>{eyebrow}</p>
+    ) : (
+      <SectionLabel text={eyebrow} as="p" />
+    ))}
   {headline &&
     (level === 'h1' ? (
       <h1 id={headingId} class:list={[headingClass, toneHeadline]}>
@@ -186,7 +185,7 @@ const accentAlign = align === 'center' ? 'mx-auto' : '';
       </h3>
     ))}
   {(subhead || richSubhead) && (
-    <p class:list={['mt-m text-lg', toneSub]}>
+    <p class:list={['mt-4 text-xl leading-relaxed', toneSub]}>
       {richSubhead ? <InlineRich value={subheadRich} /> : subhead}
     </p>
   )}

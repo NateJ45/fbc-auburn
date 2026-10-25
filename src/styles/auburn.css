@@ -66,6 +66,7 @@
   --fs-body: 1.125rem; /* 18px: all reading text, card bodies, list items (DESIGN.md minimum) */
   --fs-lead: clamp(1.1875rem, 1.1rem + 0.3vw, 1.3125rem); /* 19 to 21px: a page or band intro */
   --fs-button: 1.0625rem; /* 17px: every button, header and footer included */
+  --fs-action: 1rem; /* 16px: the one inline action link (Read the good news, See ministries) */
   --text-xs: var(--fs-tag);
   --text-sm: var(--fs-small);
   --text-base: var(--fs-body);
@@ -104,6 +105,31 @@
   --shadow-card: 0 18px 40px -32px rgb(22 38 61 / 0.4); /* a card sitting on the page */
   --shadow-raised: 0 30px 60px -36px rgb(22 38 61 / 0.6); /* a panel over another layer */
   --shadow-button: 0 10px 24px -12px rgb(15 25 38 / 0.6); /* a round play button on a photo */
+
+  /* Audit 2026-10-25 (GD-H3, GD-M4). One brick course, 12px, for the top edge of a plain navy
+     card (the This Sunday card), so the brick shows as a line rather than a wall behind text. */
+  --brick-course: repeating-linear-gradient(
+    90deg,
+    #9a3b2a 0 34px,
+    #5a1f15 34px 36px,
+    #b5503a 36px 70px,
+    #5a1f15 70px 72px,
+    #7e2e20 72px 106px,
+    #5a1f15 106px 108px
+  );
+  /* The one step connector: a 2px dashed line, 10px dashes with 8px gaps, in light navy (#7F98B8,
+     decoration only, never text). Across on Home's walk, down on every rail and timeline. */
+  --step-dash-color: #7f98b8;
+  --step-dash-x: repeating-linear-gradient(
+    90deg,
+    var(--step-dash-color) 0 10px,
+    transparent 10px 18px
+  );
+  --step-dash-y: repeating-linear-gradient(
+    180deg,
+    var(--step-dash-color) 0 10px,
+    transparent 10px 18px
+  );
 }
 /* Dark values. The site is light only (no toggle, the system setting is ignored), so no visitor
    sees these; they stay because the shared dark test suites (a11y-dark, contrast) still force
@@ -302,6 +328,17 @@ h6 {
 .btn-auburn--primary:hover {
   background: var(--auburn-red-dark);
 }
+/* The one red button rule (audit 2026-10-25, GD-H2): auburn fills ONE button per page, the page's
+   primary next step (SectionRenderer hands the red to the first block that asks for it). Every
+   other button is navy: solid (.btn-auburn--navy, white on #1F3A5F is 11.5:1) for a second strong
+   action, or the outline (--secondary) for a quiet one. */
+.btn-auburn--navy {
+  background: var(--auburn-deep);
+  color: #ffffff;
+}
+.btn-auburn--navy:hover {
+  background: #16304d;
+}
 .btn-auburn--secondary {
   color: var(--link);
   border: 1.5px solid currentColor;
@@ -353,11 +390,15 @@ h6 {
 /* Phones (phone polish, 2026-10-24): no heading ends on one word alone ("Someone meets you at the
    / door", "Our confession of / faith"). Section headings, the walk's step titles and card titles
    share their words out evenly; body text keeps its natural wrap. Zero specificity, as above. */
-@media (max-width: 767px) {
-  :where(main h2, main h3, main h4, .final-cta h2) {
-    text-wrap: balance;
-  }
+/* Audit 2026-10-25 (GD-M1, GD-L7): every H1 and H2 balances at every width ("Questions? Ask Pastor
+   / Jacob."); H3s do not, since balancing a short title broke it in odd places ("Kids check / in,
+   if you like"). */
+:where(main h1, main h2, .final-cta h2) {
+  text-wrap: balance;
 }
+/* One H2 colour on the ground (GD-H6): navy, the documented role; ink is for body text. Set where
+   each heading is drawn (SectionHeading, FinalCta, the FAQ, Home's bands), not by a blanket rule,
+   so an H2 on a navy band or a photo keeps its white. */
 /* Reading text in the page body sits on one line height. */
 :where(main p, main li, main dd) {
   line-height: var(--lh-body);
@@ -1130,7 +1171,8 @@ html:has(.auburn-menu[open]) {
   flex: none;
   width: clamp(40px, 8vw, 56px);
   height: auto;
-  color: var(--auburn-red);
+  /* Navy, not auburn (audit 2026-10-25, GD-H2): auburn is the mark and the one main button. */
+  color: var(--heading-solid);
   transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .auburn-menu__row:hover {
@@ -2134,4 +2176,85 @@ body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap)) .
     line-clamp: 3;
     overflow: hidden;
   }
+}
+
+/* ==========================================================================================
+   The restraint pass (audit 2026-10-25, the graphic design and UX reviews). One eyebrow, one
+   inline action link, bigger fold-out chevrons, optical icon sizes and long-form reading pages.
+   ========================================================================================== */
+
+/* One eyebrow (GD-M9): 13px, weight 600, 0.14em, navy. The small caps over steps, stops, roles and
+   "Step 1" lines were a second, grey, wider-tracked style. */
+.rail__n,
+.walk-steps__t,
+.hb-walk__when,
+.c-person__role {
+  font-size: var(--fs-tag);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--heading-solid);
+}
+
+/* One inline action (GD-M9): Familjen 16px, weight 600, navy, a 1.5px underline 3px below. An
+   arrow only on links that go to another page (the words say so; no arrow is drawn here). */
+.rail__link,
+.hb-walk__link,
+.fyp-card__more,
+.hb-board__body a,
+.hb-week-foot a {
+  font-family: var(--font-body);
+  font-size: var(--fs-action);
+  font-weight: 600;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.rail__link:hover,
+.hb-walk__link:hover,
+.fyp-card__more:hover,
+.hb-board__body a:hover,
+.hb-week-foot a:hover {
+  text-decoration-thickness: 2.5px;
+}
+
+/* Fold-out chevrons (UX-L6): 22px and navy, so a question row reads as something to tap (they were
+   16px in the muted grey). */
+html main [data-slot='accordion-trigger'] [data-slot='accordion-trigger-icon'] {
+  width: 22px;
+  height: 22px;
+  color: var(--heading-solid);
+  stroke-width: 2.25;
+}
+
+/* Optical sizes (GD-L3): the stone icons are drawn to their bounding box, so the dove, the crown,
+   the praying hands and the coffee cup read bigger than the cross, the heart, the blocks and the
+   Bible beside them. These scale the heavy ones down to sit at one weight in a row. */
+.stone-icon:is(
+  [data-icon='dove'],
+  [data-icon='crown'],
+  [data-icon='praying-hands'],
+  [data-icon='coffee'],
+  [data-icon='map-pin']
+) {
+  scale: 0.86;
+}
+
+/* Long-form pages (GD-L4): Privacy and any page marked .long-form read as a document, not a
+   marketing page. A 720px measure, 32px from the head to the body, H2s at 30 to 32px. */
+.long-form > div {
+  padding-top: 2rem;
+}
+.long-form > div > div,
+.long-form .prose-friendly {
+  max-width: 45rem;
+}
+.long-form h2 {
+  color: var(--heading-solid);
+  font-size: clamp(1.875rem, 1.7rem + 0.4vw, 2rem);
+}
+/* The closing band's H2 is navy on every page, a journal post's too (GD-H6). */
+.final-cta--light .final-cta__h2 {
+  color: var(--heading-solid);
 }

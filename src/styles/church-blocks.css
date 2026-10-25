@@ -194,15 +194,22 @@
 }
 
 /* ---- The deep stone card: the This Sunday card's ground (home-board.css .hb-sunday) ---- */
+/* Plain navy with one brick course along the top (audit 2026-10-25, GD-H3), like Home's card. */
 .cb-deep {
   position: relative;
-  padding: var(--pad-panel);
+  overflow: hidden;
+  padding: calc(var(--pad-panel) + 12px) var(--pad-panel) var(--pad-panel);
   border-radius: var(--radius-card);
   background-color: var(--auburn-deep);
-  background-image: url('../assets/textures/tile-deep.svg');
-  background-size: 420px 420px;
   box-shadow: var(--shadow-raised);
   color: #ffffff;
+}
+.cb-deep::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 12px;
+  background: var(--brick-course);
 }
 
 /* ---- Service times: the times by day on the deep card ---- */
@@ -413,22 +420,21 @@
   width: 30px;
   height: 27px;
   margin-top: 0.2rem;
-  background: var(--auburn-gold);
+  background: var(--auburn-deep);
 }
 .cb-moment__body,
 .cb-moment__photo {
   grid-column: 2;
 }
-/* The rail: gold stepping-stone dashes from this stone down to the next. */
+/* The rail: the site's one step connector (audit 2026-10-25, GD-M4), 2px light-navy dashes. */
 .cb-moment:not(:last-child)::after {
   content: '';
   position: absolute;
   top: 2.5rem;
   bottom: 0.4rem;
-  left: calc(1.125rem - 3px);
-  width: 6px;
-  border-radius: 3px;
-  background: repeating-linear-gradient(180deg, var(--auburn-gold) 0 10px, transparent 10px 19px);
+  left: calc(1.125rem - 1px);
+  width: 2px;
+  background: var(--step-dash-y);
 }
 .cb-moment__title {
   margin: 0.3rem 0 0.35rem;
@@ -498,7 +504,7 @@
   }
   .cb-moment:not(:last-child)::after {
     top: 3rem;
-    left: calc(8rem + 1.5rem + 1.125rem - 3px);
+    left: calc(8rem + 1.5rem + 1.125rem - 1px);
   }
 }
 
@@ -522,10 +528,12 @@
   justify-content: space-between;
   gap: 1.5rem;
   min-height: 48px;
-  padding: clamp(1.2rem, 2.4vw, 1.9rem) 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.75rem);
-  line-height: 1.25;
+  padding: clamp(1.1rem, 2vw, 1.5rem) 0;
+  /* Familjen Grotesk at 19px, weight 600 (audit 2026-10-25, GD-M2): Young Serif is for 24px up. */
+  font-family: var(--font-body);
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.35;
   color: var(--heading-solid);
   cursor: pointer;
   list-style: none;
@@ -556,8 +564,8 @@
 }
 .cb-accordion details[open] summary::after {
   content: '\2212';
-  background: var(--auburn-red);
-  border-color: var(--auburn-red);
+  background: var(--heading-solid);
+  border-color: var(--heading-solid);
   color: #fff;
 }
 .cb-accordion__answer {

@@ -103,7 +103,7 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
       <div class="fyp__head">
         {eyebrow && <p class="arch-hero__eyebrow">{eyebrow}</p>}
         {heading && (
-          <h2 id={headingId} class="font-display text-h2 leading-tight">
+          <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
             {heading}
           </h2>
         )}
@@ -445,7 +445,10 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
       padding: 0 1rem;
       border: 1px solid color-mix(in srgb, var(--heading-solid) 25%, transparent);
       border-radius: var(--radius-pill);
-      font-size: 1.05rem;
+      /* Familjen at chip size (audit 2026-10-25, GD-M2: Young Serif is for 24px up). */
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
       color: var(--heading-solid);
       background: var(--background);
       white-space: nowrap;
@@ -573,13 +576,15 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
     outline: 3px solid var(--ring, var(--heading-solid));
     outline-offset: 6px;
   }
-  /* When and where: the second thing read, in the brick red serif. */
+  /* When and where: the second thing read. Familjen 15px, weight 600, muted navy (audit
+     2026-10-25, GD-H2 and GD-M2: it was a 17px auburn serif, red text that read as a warning). */
   .fyp-card__when {
     margin-top: 0.35rem;
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    line-height: 1.35;
-    color: var(--auburn-red);
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--muted-foreground);
   }
   .fyp-card__body {
     margin-top: 0.6rem;

@@ -244,6 +244,9 @@ export const imageTextSection = defineType({
           { title: 'The baptism drawing (old stone art, to be redrawn)', value: 'baptism' },
           // 2026-10-23: the pen-and-pencil sketch of the building, as a full-width band.
           { title: 'The building drawing (a wide band)', value: 'building' },
+          // 2026-10-25 (the site audit): the church mark is kept for one moment (About); a band
+          // that needs no picture says so, instead of borrowing the mark as filler.
+          { title: 'No picture (the words alone)', value: 'none' },
         ],
         layout: 'radio',
       },

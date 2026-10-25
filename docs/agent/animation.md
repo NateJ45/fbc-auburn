@@ -228,8 +228,8 @@ squashed, settles).
   slots to run the line and the next starts one slot later, so courses rack back like a wall
   going up. A faint copy of the letters (`.bl-ghost`, `opacity="0"` at rest) shows while it is
   laid, like a chalk line. The share card (unit `px`) keeps the flat markup.
-- The sill (`Sill.astro`) and the stepped section markers (`SectionLabel`, `BoardRule`, which
-  is now a flow unit through `data-flow-item`) have one path per brick, so each brick gets the
+- The sill (`Sill.astro`) and the stepped section markers (`SectionLabel`, the only marker since
+  2026-10-25: `BoardRule` is whitespace now) have one path per brick, so each brick gets the
   tap in turn; `src/lib/brick-lay.ts` works out the turns from the paths (a face and its rim
   share one).
 - The clip on the letters is the one place this layer animates something other than a transform
@@ -256,7 +256,7 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   `animation-timeline: view()` where supported (Chrome, Edge, Safari 26), an IntersectionObserver adding `.in`
   elsewhere. Used by the rail's icons and stones and the stone dividers; the icon cards and page icons can opt in with
   the same class.
-- **The rail** (`stepsRailSection`): a laid brick path (running bond inside a darker soldier-course edge) runs down the icon column from each icon to the next (slender, winding out, across and back on desktop; one gentle bend on phones; mirrored each step), stopping short of the icons and filling whatever height the text takes. The bricks are a CSS pattern cut to the curve by an SVG mask whose stroke keeps its px width (`vector-effect: non-scaling-stroke`), so they never stretch (2026-10-25; it was three big loose stones in a fixed gap, which left a hole after long text). Then the mark builds itself in story order.
+- **The rail** (`stepsRailSection`): the site's one step connector, a 2px dashed light-navy line (`--step-dash-y`, auburn.css), runs down the icon column from each icon to the next and fills whatever height the text takes (2026-10-25, audit GD-M4; it was a winding laid-brick path that read as a worm). Step 1 sits on a white card. The path ends at the church mark as its last stop, at the icon column's size (72px, 48px on a phone), which builds itself in story order beside the closing line.
 - **The mark build** (`MarkBuild.astro`, 2026-10-24): once 45% of the brick print is on screen the wall is laid
   one brick at a time, bottom course first and back and forth like a mason, each brick dropping with weight and
   settling, about two and a half seconds in all (five until 2026-10-25), until the last course seals the top of the cross; then the mark gives one
