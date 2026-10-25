@@ -96,6 +96,22 @@ const schemas = [
   <section class="mx-auto grid max-w-content grid-cols-1 gap-section-md px-m py-section-lg lg:grid-cols-3">
     {/* Form column */}
     <div class="lg:col-span-2">
+      {/* Phones (site audit, 2026-10-25): people who would rather ring or text should not have to
+          scroll past every field to find the number, so it leads the column under 1024px, where
+          the sidebar falls below the form. The number comes from Church facts. */}
+      {phone && (
+        <p class="mb-s flex flex-wrap items-center gap-xs text-base text-foreground lg:hidden">
+          <Phone size={16} aria-hidden="true" className="text-secondary" />
+          <span>{phone.sms ? 'Call or text' : 'Call'}</span>
+          <a
+            href={phone.tel}
+            class="inline-flex min-h-[44px] items-center font-semibold text-link underline underline-offset-2 hover:text-primary-dark"
+          >
+            {phone.display}
+          </a>
+          <NotConfirmed confirmed={phone.confirmed} />
+        </p>
+      )}
       {formIntroNote && <p class="mb-m text-base text-foreground/80">{formIntroNote}</p>}
 
       {/* Satisfaction guarantee line — renders above the form when set in
@@ -142,8 +158,9 @@ const schemas = [
           <NotConfirmed confirmed={email.confirmed} />
         </p>
       )}
+      {/* Under 1024px the line above the form and the sidebar already give the number. */}
       {phone && (
-        <p class="mt-s flex flex-wrap items-center gap-xs text-sm text-foreground/75">
+        <p class="mt-s flex flex-wrap items-center gap-xs text-sm text-foreground/75 max-lg:hidden">
           <Phone size={14} aria-hidden="true" className="text-secondary" />
           <span>{phone.sms ? 'Or call or text' : 'Or call'}</span>
           {/* Phones (phone polish, 2026-10-24): each link a 44px fingertip tall, and the "To confirm"
