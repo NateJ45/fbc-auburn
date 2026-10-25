@@ -176,7 +176,8 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
             .items([
               singletonWithPreview(S, 'homePage', 'Home'),
               singletonWithPreview(S, 'aboutPage', 'About'), // scaffold: about
-              singletonWithPreview(S, 'faqPage', 'Questions'), // scaffold: faq
+              // No "Questions" page here since 2026-10-24: it was merged into Plan your visit, where
+              // the questions show as "Questions (open and close)" sections, and /faq/ forwards there.
               singletonWithPreview(S, 'contactPage', 'Contact'),
               singletonWithPreview(S, 'journalPage', 'News and notes (the list page)'), // scaffold: journal
               singletonWithPreview(S, 'notFoundPage', 'Page not found'),
@@ -261,7 +262,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 title: 'Question groups',
                 icon: typeIcon('faqCategory'),
                 explain:
-                  'Headings that gather the questions on the Questions page, like "Sunday mornings" or "Children".',
+                  'Headings that gather the questions, like "Sunday mornings" or "Children".',
               }),
               emptyAwareList(S, context, {
                 id: 'faqItem',
@@ -269,7 +270,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 title: 'Questions',
                 icon: typeIcon('faqItem'),
                 explain:
-                  'The questions visitors ask, with your answers. They show on the Questions page, in their groups.',
+                  'The questions visitors ask, with your answers. They show wherever a page has a "Questions (open and close)" section, such as Plan your visit.',
               }),
               // scaffold:end
 

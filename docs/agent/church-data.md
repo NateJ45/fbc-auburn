@@ -65,7 +65,7 @@ and draw only themselves: the section, heading and band around them belong to th
 | --------------------- | -------------------------------------- | --------------------------------------------------------------------------------------- |
 | `ThisSunday.astro`    | Home hero, Watch band, Plan your visit | "This Sunday, October 25 · Sunday School for all ages 9:45 am · Worship 11:00 am"       |
 | `ThisWeekList.astro`  | Home "This week at Auburn"             | The next 7 days: service times merged per day, plus Church Trac events; "Full calendar" |
-| `LastSunday.astro`    | Watch band, Watch page                 | Latest YouTube message: thumbnail, label, title; press to play. `slot="fallback"`       |
+| `LastSunday.astro`    | Watch band (Home, top of Sermons)      | Latest YouTube message: thumbnail, label, title; press to play. `slot="fallback"`       |
 | `SundayWeather.astro` | Plan your visit, under the address     | "Sunday: 62°, sunny." (browser fetch, Wednesday to Sunday noon, hidden on any failure)  |
 | `ServiceTimes.astro`  | Plan your visit "When" facts           | Each gathering: time (and day if not Sunday), label, note                               |
 | `ChurchAddress.astro` | Footer, Contact, Plan your visit       | `<address>` lines plus "Get directions" (Google Maps search from the same fields)       |

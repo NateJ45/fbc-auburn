@@ -115,6 +115,9 @@ const quietTitle = (sections as PageBuilderBlock[]).some(
 // A dated notice is a strip between bands, so it takes no rule of its own (church library).
 const UNRULED = new Set(['heroSection', 'spacerSection', 'noticeSection']);
 const ruled = rows.map(({ block }) => !UNRULED.has(block._type));
+// The first Questions block on a page answers to #questions (2026-10-24): /faq/ forwards to
+// /plan-your-visit/#questions since the Questions page was merged into Plan your visit.
+const firstFaq = rows.findIndex(({ block }) => block._type === 'faqSection');
 
 // A real element in preview, nothing at all on the live site. The wrapper must
 // NOT be `display: contents`: the overlay outlines the element's rect, and a
@@ -279,6 +282,7 @@ const editKeyOf = (block: unknown) => {
           items={s.items ?? []}
           cta={s.cta}
           headingId={headingId}
+          anchor={rowIndex === firstFaq ? 'questions' : undefined}
         />
       ) : s._type === 'logoStripSection' ? (
         <LogoStrip

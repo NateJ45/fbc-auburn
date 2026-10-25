@@ -172,7 +172,15 @@ export default defineConfig({
   // read at build time above. The Cloudflare adapter turns these into real
   // 301/302s. A repo that also needs hand-written launch redirects puts them
   // BEFORE the spread, so an editor entry can correct one without a code change.
-  redirects: { ...cmsRedirects },
+  //
+  // FBC Auburn (2026-10-24): the menu was cut down, and two pages were merged into others. The
+  // Questions page now lives on Plan your visit (src/pages/faq.astro is gone) and the Watch page on
+  // Sermons (its Studio page is archived, so it is not built).
+  redirects: {
+    '/faq': { status: 301, destination: '/plan-your-visit/#questions' }, // scaffold: faq
+    '/watch': { status: 301, destination: '/sermons/' },
+    ...cmsRedirects,
+  },
   integrations: [
     mdx(),
     // Embedded Sanity Studio at /studio (added 2026-08-28). This is the ONE

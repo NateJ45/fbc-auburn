@@ -516,7 +516,6 @@ export const kitConfig: KitConfig = {
         fixedPaths: [
           '/',
           '/about/', // scaffold: about
-          '/faq/', // scaffold: faq
           '/journal/', // scaffold: journal
           '/contact/',
           '/privacy/',

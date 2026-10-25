@@ -24,7 +24,7 @@ import { withTrailingSlash } from './href.ts';
 export const SINGLETON_LIVE_PATHS: Record<string, string> = {
   homePage: '/',
   aboutPage: '/about/', // scaffold: about
-  faqPage: '/faq/', // scaffold: faq
+  faqPage: '/plan-your-visit/#questions', // scaffold: faq
   contactPage: '/contact/',
   journalPage: '/journal/', // scaffold: journal
   privacyPage: '/privacy/',

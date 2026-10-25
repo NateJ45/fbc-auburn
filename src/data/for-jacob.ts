@@ -117,6 +117,25 @@ const NOTES: Record<string, JacobNote[]> = {
       title: 'Children during worship.',
       detail: 'Is there a nursery or children’s room, and who looks after it?',
     },
+    {
+      title: 'The Questions page now lives here.',
+      detail:
+        'To shorten the menu, the questions moved to the bottom of this page, and the old Questions address comes here. The notes below came with them.',
+    },
+    {
+      title: 'Check the answers.',
+      detail:
+        'What to wear, parking, children and the rest are our drafts in brackets. Change anything that is not how Auburn does it.',
+    },
+    {
+      title: 'Communion and baptism.',
+      detail:
+        'Those two answers are yours to write: how often you share the Lord’s Supper, and how to ask about baptism.',
+    },
+    {
+      title: 'Anything people often ask you?',
+      detail: 'Send us the questions and we will add them.',
+    },
   ],
   '/ministries/': [
     {
@@ -150,17 +169,6 @@ const NOTES: Record<string, JacobNote[]> = {
         'One or two real examples. Does the food pantry run through the year, and when is it open?',
     },
   ],
-  '/watch/': [
-    {
-      title: 'Facebook live, and YouTube?',
-      detail:
-        'The page points to your Facebook page for the live stream. If you have or want a YouTube channel, the latest message can show here automatically.',
-    },
-    {
-      title: 'What time does the stream start?',
-      detail: 'So we can tell people when to tune in.',
-    },
-  ],
   '/sermons/': [
     {
       title: 'Do you want a Sermons page?',
@@ -171,6 +179,20 @@ const NOTES: Record<string, JacobNote[]> = {
       title: 'Where would the recordings come from?',
       detail:
         'A YouTube link, an audio file, or both. Whoever posts them would add each one in the editor.',
+    },
+    {
+      title: 'The Watch page now lives here.',
+      detail:
+        'The live stream and the latest message sit at the top of this page, and the old Watch address comes here. The notes below came with it.',
+    },
+    {
+      title: 'Facebook live, and YouTube?',
+      detail:
+        'The Watch band points to your Facebook page for the live stream. If you have or want a YouTube channel, the latest message can show here automatically.',
+    },
+    {
+      title: 'What time does the stream start?',
+      detail: 'So we can tell people when to tune in.',
     },
   ],
   '/prayer/': [
@@ -258,22 +280,6 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Who reads prayer requests?',
       detail: 'The page says the pastor and the prayer team. Is that right?',
-    },
-  ],
-  '/faq/': [
-    {
-      title: 'Check the answers.',
-      detail:
-        'What to wear, parking, children and the rest are our drafts in brackets. Change anything that is not how Auburn does it.',
-    },
-    {
-      title: 'Communion and baptism.',
-      detail:
-        'Those two answers are yours to write: how often you share the Lord’s Supper, and how to ask about baptism.',
-    },
-    {
-      title: 'Anything people often ask you?',
-      detail: 'Send us the questions and we will add them.',
     },
   ],
   '/journal/': [
