@@ -49,7 +49,7 @@ describe('the address', () => {
 
 describe('clashes', () => {
   it('a built-in route, a page, another short link and a redirect are all errors', () => {
-    assert.equal(shortLinkClash('give', ctx)?.level, 'error');
+    assert.equal(shortLinkClash('contact', ctx)?.level, 'error');
     assert.match(String(shortLinkClash('sermons', ctx)?.message), /already part of the website/);
     assert.match(String(shortLinkClash('/Plan-Your-Visit/', ctx)?.message), /A page already lives/);
     assert.match(String(shortLinkClash('easter', ctx)?.message), /Another short link/);
@@ -133,7 +133,7 @@ describe('planShortLinks and the _redirects lines', () => {
         { address: 'old', linkKind: 'page', pagePath: '/', expires: '2026-10-25' },
         { address: 'still', linkKind: 'page', pagePath: '/', expires: '2026-10-26' },
         { address: 'ministries', linkKind: 'page', pagePath: '/' },
-        { address: 'give', linkKind: 'page', pagePath: '/' },
+        { address: 'contact', linkKind: 'page', pagePath: '/' },
         { address: 'watch', linkKind: 'page', pagePath: '/' },
         { address: 'loop', linkKind: 'page', pagePath: '/loop' },
         { address: 'nowhere', linkKind: 'url', url: '' },
@@ -148,7 +148,7 @@ describe('planShortLinks and the _redirects lines', () => {
     );
     assert.deepEqual(
       plan.skipped.map((s) => s.address),
-      ['old', 'ministries', 'give', 'watch', 'loop', 'nowhere', 'bad word!'],
+      ['old', 'ministries', 'contact', 'watch', 'loop', 'nowhere', 'bad word!'],
     );
   });
 
