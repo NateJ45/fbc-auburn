@@ -686,19 +686,10 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
       display: grid;
       width: 96px;
       height: 96px;
-      --step-u: 6px;
-      clip-path: polygon(
-        0 calc(3 * var(--step-u)),
-        calc(2 * var(--step-u)) calc(3 * var(--step-u)),
-        calc(2 * var(--step-u)) calc(2 * var(--step-u)),
-        calc(4 * var(--step-u)) calc(2 * var(--step-u)),
-        calc(4 * var(--step-u)) var(--step-u),
-        calc(6 * var(--step-u)) var(--step-u),
-        calc(6 * var(--step-u)) 0,
-        100% 0,
-        100% 100%,
-        0 100%
-      );
+      /* A plain frame with the inner corner, like every card picture: the stepped corner is retired
+         (shapes.css, 2026-10-25), and the thumbnail still cut it on phones until 2026-10-26. */
+      border-radius: var(--radius-inner);
+      overflow: hidden;
     }
     .fyp-card .shape-tile > :global(:is(img, svg)) {
       width: 56%;

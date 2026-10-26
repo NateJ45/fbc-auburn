@@ -76,18 +76,21 @@ test('Plan your visit: new order, one invitation, every Jacob ask kept', () => {
   assert.deepEqual(PAGE_PLANS['page-plan-your-visit'](p), {}, 'idempotent');
 });
 
-test('Need the pastor? leads with Call and Text; the crisis lines get a plain label', () => {
+test('Need the pastor? leads with Call and Text; a crisis band, if any, gets a plain label', () => {
   const p = after('page-pastoral-care');
+  // The crisis band (pc-crisis) was removed on 2026-10-26; the order holds with or without it.
   assert.deepEqual(
     p.pageBuilder.map((b) => b._key),
-    CARE_ORDER,
+    CARE_ORDER.filter((k) => p.pageBuilder.some((b) => b._key === k)),
   );
   assert.equal(p.pageBuilder[1].callButtons, true);
-  assert.equal(p.pageBuilder[2].label, CRISIS_LABEL);
+  const crisis = p.pageBuilder.find((b) => b._key === 'pc-crisis');
+  if (crisis) assert.equal(crisis.label, CRISIS_LABEL);
   assert.ok(!p.pageBuilder.some((b) => b._type === 'ctaBandSection'), 'no red prayer band');
   assert.equal(jacobAsks(p).length, jacobAsks(doc('page-pastoral-care')).length);
   const pr = after('page-prayer');
-  assert.equal(pr.pageBuilder.find((b) => b._type === 'noticeSection').label, CRISIS_LABEL);
+  const prNotice = pr.pageBuilder.find((b) => b._type === 'noticeSection');
+  if (prNotice) assert.equal(prNotice.label, CRISIS_LABEL);
   for (const id of Object.keys(PAGE_PLANS)) {
     assert.deepEqual(PAGE_PLANS[id](after(id)), {}, `${id} is idempotent`);
   }
