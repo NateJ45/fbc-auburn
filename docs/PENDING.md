@@ -16,6 +16,29 @@ sequence).
 
 ## Waiting on a human
 
+### 1zs. Studio self-serve: switch-ons and ports (opened 2026-10-26)
+
+The self-serve additions are merged and live (#205, #206, #212; changelog 2026-10-26). To finish:
+
+- **People tool:** set the Worker secret `SANITY_MEMBERS_TOKEN` (a Sanity robot token with
+  "Access Manager", no content access; `npx wrangler secret put SANITY_MEMBERS_TOKEN`), then send one
+  invite signed in. Until then the tool shows Jacob the manual steps at sanity.io/manage.
+- **Sanity plan:** the project is on a Growth trial. If it ends without an upgrade, non-admins become
+  Viewers and a Helper cannot edit. Nathan's decision.
+- **Form addresses:** migration `0005_form_recipients.sql` applies with the other four when the form
+  database is created (`wrangler.jsonc` still has the placeholder binding; see 1v). A new address must
+  also be verified in Cloudflare Email Sending.
+- **Embeds:** check the script hosts for Givelify, Subsplash and SignUpGenius against real snippets.
+- **QR codes:** remake any printed before the domain cutover; they point at the workers.dev address.
+- **Not seen signed in:** the People, Short links, QR, form-address and A different Sunday panels in
+  `/studio` (unit-tested and audited only). Try each once signed in.
+- **Ports to the starter** (each with a card): staff view by role (patch kept in the session
+  scratchpad; `studio-kit.ts` is PORTABLE), the People tool, build-time share cards and the brand icon
+  set, popups, short links and the QR action, the embed registry (could fold into `build-csp.mjs`),
+  form recipients in D1 and `/api/contact/`'s D1 lookup, the date and multi question kinds, `buildIcs`
+  exception fields, URL-based social icons, and the reword of `_seoFields.ts` "Leave blank to use the
+  site default" (share cards are generated now).
+
 ### 1zu. Millville and WhatsApp: apply one script, and the church's WhatsApp link (opened 2026-10-26)
 
 - Apply `scripts/content/millville-whatsapp.mjs` under the write protocol (backup folder outside

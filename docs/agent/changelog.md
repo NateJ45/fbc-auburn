@@ -1,5 +1,9 @@
 # Change history
 
+_2026-10-26: the self-serve PRs landed together, and CI stops hanging._
+
+**Decision.** #207 to #210 kept conflicting with each other in the changelog and waiting on CI, so they landed as one PR (#212) after the People tool (#206). The "Install Playwright system libraries" step in `ci.yml` hung for 30 minutes or more five times in two days; each try is now capped at 5 minutes, with three tries. Visual baselines regenerated for the new header, footer, Contact and share cards.
+
 _2026-10-26: short links, QR codes and paste-and-go embeds._ Jacob can make `/vbs`-style short
 links (Pages > Short links, or Quick update's "Make a short link"), for now (302) or for good (301),
 with an optional last day; the build writes them at the top of `_redirects` and skips clashes,

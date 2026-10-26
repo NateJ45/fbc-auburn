@@ -289,8 +289,11 @@ jobs:
         if: steps.pw-cache.outputs.cache-hit == 'true'
         run: |
           sudo rm -f /etc/apt/sources.list.d/google-chrome* /etc/apt/sources.list.d/microsoft*
-          npx playwright install-deps chromium webkit ||
-            npx playwright install-deps chromium webkit
+          # Each try is capped at 5 minutes (2026-10-26): apt on the runner hung for 30 minutes or
+          # more five times in two days, and a hung step only ends at the job's 6-hour limit.
+          timeout 300 npx playwright install-deps chromium webkit ||
+            timeout 300 npx playwright install-deps chromium webkit ||
+            timeout 300 npx playwright install-deps chromium webkit
 
       # smoke (every route 200s and carries the site name in its title), axe in
       # light, axe in dark as a separate sweep plus a focus-indicator check, and
