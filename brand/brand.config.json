@@ -175,7 +175,8 @@
         "visibility": "preview"
       },
       "tools": {
-        "structure": "pages"
+        "structure": "pages",
+        "people": "people"
       },
       "tile": {
         "dark": "#CDC3AF"
