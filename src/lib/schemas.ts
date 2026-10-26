@@ -9,6 +9,7 @@
 
 import { site } from '@/data/site';
 import { churchJsonLd, resolveChurchFacts, type RawChurchFacts } from '@/lib/church-facts';
+import { resolveSocialLink } from '@/lib/social-links';
 
 // ---------- Types (loose — Sanity provides the actual document shapes) ----
 
@@ -72,11 +73,15 @@ export function localBusinessSchema(settings: SiteSettings | null | undefined): 
     logo: `${site.url}/icon-512.png`,
     // The email joins below from churchJsonLd, and only once the church has confirmed it.
     // Merge legacy fields + socialLinks urls, deduplicating by url string.
+    // Only links the site would draw (src/lib/social-links.ts), so an unusable WhatsApp address
+    // is never sent to Google either (2026-10-26).
     sameAs: Array.from(
       new Set(
-        [s.socialInstagram, s.socialFacebook, ...(s.socialLinks ?? []).map((l) => l.url)].filter(
-          (u): u is string => Boolean(u),
-        ),
+        [
+          s.socialInstagram,
+          s.socialFacebook,
+          ...(s.socialLinks ?? []).map((l) => resolveSocialLink(l)?.url),
+        ].filter((u): u is string => Boolean(u)),
       ),
     ),
   };
@@ -103,11 +108,13 @@ export function localBusinessSchema(settings: SiteSettings | null | undefined): 
     };
   }
 
-  // Omit areaServed when the only entry is the placeholder default.
+  // Omit placeholder entries. With no service areas of its own, the church's (site.areaServed:
+  // Millville, Ross Township and Hamilton, 2026-10-26) stand in, so this always has places.
   const areas = (s.serviceAreas ?? []).filter((a) => a && a !== PLACEHOLDER_CITY);
-  if (areas.length > 0) {
-    schema.areaServed = areas.map((city) => ({ '@type': 'City', name: city }));
-  }
+  schema.areaServed =
+    areas.length > 0
+      ? areas.map((city) => ({ '@type': 'City', name: city }))
+      : site.areaServed.map((a) => ({ '@type': a.type, name: a.name }));
 
   // A price range only means something for a business that sells; never for a church.
   if (!['Church', 'PlaceOfWorship', 'NGO', 'EducationalOrganization'].includes(schema['@type'])) {
