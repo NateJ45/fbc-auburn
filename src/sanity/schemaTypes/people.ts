@@ -94,7 +94,7 @@ export const person = defineType({
       title: 'Email (optional)',
       type: 'string',
       description:
-        'Shown on the website only when the box below is ticked. Even unticked, this is not secret: the church’s content is public, so only type an address that is fine to be public.',
+        'Shown on the website only when the box below is checked. Even unchecked, this is not secret: the church’s content is public, so only type an address that is fine to be public.',
       validation: (R) =>
         R.custom((v) =>
           !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v as string)
@@ -120,7 +120,7 @@ export const person = defineType({
       title: 'Keep the location off the website',
       type: 'boolean',
       initialValue: true,
-      description: 'Ticked, the website never shows where they serve. Untick to show it.',
+      description: 'Checked, the website never shows where they serve. Uncheck to show it.',
       hidden: ({ document }) => !document?.location,
     }),
     defineField({
