@@ -184,12 +184,13 @@ log in Sanity, then GitHub → Actions for a failed Deploy run. Run the Deploy w
 The webhook lives at manage.sanity.io → API → Webhooks. The GROQ filter is a deny-list:
 
 ```
-!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek", "previewShare", "privatePage", "linkReport"])
+!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek", "studioStaff", "previewShare", "privatePage", "linkReport"])
 ```
 
 This filter skips rebuilds triggered by draft saves and internal Sanity asset-management events (tagging an uploaded photo, rotating an image, etc.), which don't affect live HTML. New content types are covered automatically because the filter excludes only the named system types and lets everything else through. The old hand-maintained allow-list approach (explicitly listing every `_type` that should trigger a rebuild) silently dropped new types until a developer remembered to add them. The deny-list is safer: add a new schema type and it triggers rebuilds out of the box.
 
 `studioWeek` (added 2026-10-18, card 111) is the Studio Home checklist's weekly tick document: ticking a box writes it, and without it in the filter every tick would rebuild the website.
+`studioStaff` (added 2026-10-26, starter card 175) is the kit's "Simple view" marks document, written by the People tool; skipped for the same reason.
 
 `previewShare` (added 2026-10-18, card 117) is the record behind each private preview link: making or stopping a link writes it, and without it in the filter every link would rebuild the website.
 

@@ -67,12 +67,11 @@ also writes content and makes tokens, so prefer Access Manager. Without the secr
 
 ## The staff view by role
 
-`kitConfig.staff` stays empty, so the staff view follows the role: everyone who is not an
-administrator (a Helper) gets it with no code change. The id list is meant as an override that ADDS
-administrators (the pastor) to the staff view. Today's `isStaffUser` in `src/lib/studio-kit.ts`
-(PORTABLE) lets a non-empty list REPLACE the role rule, so adding an id would give every Helper the
-full Studio and its permanent Delete. The fix (the list adds to the role rule) is a starter card;
-until it is synced here, keep `staff: []`.
+Since starter card 175 (`src/lib/studio-kit.ts`, PORTABLE) the staff view goes to three groups that add up: everyone
+who is not an administrator (a Helper) by role, with no code change; the Sanity user ids in `kitConfig.staff`
+(administrators who should see the simple view too, the pastor); and any account marked "Simple view" on the kit's
+`kit.studioStaff` document. The list ADDS to the role rule, so listing an administrator no longer gives every Helper the
+full Studio. Detail: `docs/agent/studio-kit.md`, "The staff view".
 
 ## Still needs a signed-in test
 

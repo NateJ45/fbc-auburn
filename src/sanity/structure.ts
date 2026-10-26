@@ -31,7 +31,7 @@ import { staffDesk } from './kit/shared';
 import { trashListItem } from './kit/trash';
 import { brandIcon, typeIcon, type BrandIcon } from './brandIcons';
 import { emptyAwareList } from './kit/emptyList';
-import { WEEK_TYPE } from '../lib/studio-kit';
+import { STAFF_TYPE, WEEK_TYPE } from '../lib/studio-kit';
 import { tableListItem } from './workflow';
 import { TABLES } from './tables.config';
 import { kitConfig } from './kit.config';
@@ -89,6 +89,8 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'media.tag',
   // The Studio kit's weekly tick document (card 111): Home's bookkeeping, never edited here.
   WEEK_TYPE,
+  // The kit's "Simple view" marks (card 175): written by the People tool only.
+  STAFF_TYPE,
   // Private preview link records (card 117): managed from "Share a preview" only.
   'previewShare',
   // processStep is placed explicitly under Content → Process Steps

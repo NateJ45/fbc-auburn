@@ -1,5 +1,12 @@
 # Change history
 
+_2026-10-26: the staff view by role, with a list that adds to it (starter card 175)._ The kit's staff view now goes
+to everyone who is not a Sanity administrator, PLUS the ids in `kitConfig.staff`, PLUS any account marked "Simple
+view" on the kit's new `studioStaff` document (id `kit.studioStaff`). Before, a non-empty list replaced the role
+rule. Synced from the starter (`studio-kit.ts`, `kit/shared.tsx`, `kit/index.tsx`, new `kit/staffType.ts` and the
+rest); `structure.ts` hides the type; typegen. Add `"studioStaff"` to the publish webhook's filter next to
+`"studioWeek"`. Detail: `docs/agent/studio-kit.md`, "The staff view".
+
 _2026-10-26: the self-serve PRs landed together, and CI stops hanging._
 
 **Decision.** #207 to #210 kept conflicting with each other in the changelog and waiting on CI, so they landed as one PR (#212) after the People tool (#206). The "Install Playwright system libraries" step in `ci.yml` hung for 30 minutes or more five times in two days; each try is now capped at 5 minutes, with three tries. Visual baselines regenerated for the new header, footer, Contact and share cards.
