@@ -66,6 +66,7 @@ import { ncsWritingHelp } from './src/sanity/ai';
 import { kitConfig } from './src/sanity/kit.config';
 import { ncsWorkflowTools } from './src/sanity/workflow';
 import { ncsMailTools } from './src/sanity/mail';
+import { ncsPeopleTool } from './src/sanity/people';
 import { brandIcons, typeIcon, withBrandPreviews } from './src/sanity/brandIcons';
 import { OWN_NEWSLETTER } from './src/sanity/ownNewsletter';
 
@@ -253,6 +254,9 @@ export default defineConfig({
     // Before the kit, so the kit's tool order and staff view place "rsvps".
     ncsMailTools(),
     ncsStudioKit(kitConfig),
+    // People: invite a Helper or an Administrator (src/sanity/people/, 2026-10-26).
+    // AFTER the kit: it adds the tool for administrators only, in either view.
+    ncsPeopleTool(),
     // Icons by meaning on every tool, and on plugin-registered types (card 119,
     // src/sanity/brandIcons.tsx). After the kit so its tools get icons too; it
     // only swaps icons, so the kit still decides what shows and in what order.

@@ -38,17 +38,23 @@ picker.
 
 ## Roles, honestly
 
-Sanity's free plan has two roles: Administrator and Editor. Give
-clients Editor. That means:
+Corrected 2026-10-26 from Sanity's roles docs and this project's own roles
+list: the free plan has two roles, Administrator and **Viewer** (read only).
+Editor, Developer and Contributor come with Growth, and with the Growth trial
+every new project starts on; when a trial ends without an upgrade, every
+non-administrator becomes a Viewer. So on the free plan a client who edits
+has to be an Administrator, and the staff view (`kitConfig.staff`) is what
+keeps their Studio simple. On Growth, give clients Editor (the People tool's
+"Helper", `docs/agent/studio-people.md`). With Editor:
 
 - Editors can create, edit, publish, and delete content - everything
   the promise above needs.
-- There is no read-only role, no per-document permissions, and no
-  custom roles on the free plan. Field-level locking is done in
+- There are no per-document permissions and no custom roles on the free
+  plan or on Growth (custom roles are Enterprise). Field-level locking is done in
   schema (readOnly), not in roles.
 - Custom roles, more granular permissions, SSO, and Sanity's own
-  scheduled publishing arrive with the Growth plan (~$15/seat/month,
-  2026 pricing). Do not promise granularity you have not paid for.
+  scheduled publishing arrive with Sanity's paid Growth plan (see
+  sanity.io/pricing). Do not promise granularity you have not paid for.
   The family's publishAt cron (card 20) exists precisely so
   scheduling does not require the paid plan.
 - Seats are limited on the free plan (check the current limit before

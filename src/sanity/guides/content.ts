@@ -40,6 +40,7 @@
 // =============================================================================
 
 import { collectionGuides } from './collections.ts';
+import { peopleGuides } from './people.ts';
 import { EVERY_WEEK, WEEKLY_CATEGORY, weeklyGuides } from './weekly.ts';
 import { linkGuides } from './links.ts';
 
@@ -1467,6 +1468,8 @@ guides.push(...collectionGuides);
 
 // Short links and QR codes (FBC Auburn, 2026-10-26, guides/links.ts).
 guides.push(...linkGuides);
+// Adding someone to help: the People tool (FBC Auburn, 2026-10-26).
+guides.push(...peopleGuides);
 
 // ── Workflow tools (PORTS.md card 117) ───────────────────────────────────────
 // Appended like the kit helpers above, so a site rewriting its guides keeps them.
