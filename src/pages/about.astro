@@ -18,7 +18,7 @@ const [page, siteSettings] = await Promise.all([getAboutPage(), getSiteSettings(
 const title = page?.seoTitle ?? `About · ${site.name}`;
 const description =
   page?.seoDescription ??
-  `Who we are at ${site.name}, a Southern Baptist church in Ross Township, Ohio.`;
+  `Who we are at ${site.name}, a Southern Baptist church in Ross Township, Ohio, serving Millville, Ross and Hamilton.`;
 
 const sections = page?.pageBuilder?.length ? page.pageBuilder : DEFAULT_ABOUT_SECTIONS;
 

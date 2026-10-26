@@ -822,7 +822,7 @@ const allGuides: Guide[] = [
           '**Phone and email** are typed under `Identity & contact`. They show in the menu, the footer and on Contact. Check `Confirmed by the church` for each under `Church facts` once it is right; until then they carry a "To confirm" tag and are kept away from Google.',
           '**Online giving link** (on the `Church Trac` tab): paste the giving page address and every Give link goes straight there. Leave it empty and Give opens the site’s own page about giving on Sunday or by mail.',
           '**Live stream link**: where people watch on Sunday. It shows at the top of Sermons and in the footer, and the home page’s "Live now" card goes there during worship. Empty uses the Facebook link.',
-          '**Facebook**: add it under `Social & footer`, `Social links`, platform Facebook.',
+          '**Facebook, YouTube, WhatsApp and the rest**: under `Social and footer`, `Social links`, add a row and paste the link to the church’s page. The icon is picked from the link, so there is nothing to choose. The label is optional: it is what a screen reader says for the button. For WhatsApp, paste a group invite (https://chat.whatsapp.com/...) or a number link (https://wa.me/...); any other WhatsApp link is left off the site.',
         ],
       },
       { kind: 'p', text: 'Publish, and the links appear on the next update of the site.' },
