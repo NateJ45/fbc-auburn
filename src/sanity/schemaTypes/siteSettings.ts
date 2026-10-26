@@ -15,6 +15,8 @@ import {
 } from './churchFacts';
 import { formSettingsFields } from './form';
 import { imageWithAlt } from './_imageWithAlt';
+import { IconImageInput, LogoImageInput } from '../components/BrandImageInput';
+import { checkIcon, checkLogo } from '../../lib/brand-uploads';
 
 export const siteSettings = defineType({
   name: 'siteSettings',
@@ -275,15 +277,36 @@ export const siteSettings = defineType({
       of: [defineArrayMember({ type: 'navLink' })],
     }),
 
-    // An uploaded logo replaces the built-in image logo at the top of every
-    // page. Left blank, the template's own logo files keep rendering.
+    // The logo and icon from the Studio (2026-10-26, docs/agent/studio-kit.md, "Logo and icon
+    // from the Studio"). Left blank, the brand kit's files keep rendering. The logo replaces the
+    // lockup at the top of every page and in the phone menu (Header.astro, MobileNav.astro); the
+    // icon becomes the favicon set, the footer mark and the share cards' mark
+    // (scripts/build-brand-icons.mjs, scripts/build-og-cards.mjs). Size rules:
+    // src/lib/brand-uploads.ts. The preview under each is BrandImageInput.
     imageWithAlt({
       name: 'logo',
       title: 'Logo (optional)',
       group: 'identity',
       description:
-        'A logo image for the top of every page. Leave blank and the site keeps the logo files that ship with the template. When set, this image replaces them and is scaled to the header height, so upload it with any spare space already trimmed off. One image is used in both light and dark mode.',
+        "Leave this empty unless the church's logo has changed: the brand kit's logo is already on the website and is the recommended one. An upload replaces it at the top of every page and in the phone menu. Use a wide logo (the cross with the name beside it), at least 560 pixels wide, with the spare space trimmed off. An SVG file is best. The website switches over a few minutes after you publish.",
       altRequired: false,
+      options: { accept: 'image/svg+xml,image/png,image/webp,image/jpeg' },
+      components: { input: LogoImageInput },
+      validation: (Rule: any) => [
+        Rule.custom((v: any) => checkLogo(v).error ?? true),
+        Rule.custom((v: any) => checkLogo(v).warning ?? true).warning(),
+      ],
+    }),
+    defineField({
+      name: 'siteIcon',
+      title: 'Square icon (optional)',
+      type: 'image',
+      group: 'identity',
+      description:
+        "Leave this empty unless the church's icon has changed: the brand kit's cross is already the website's icon and is the recommended one. An upload becomes the little picture in the browser tab, the icon on a phone's home screen, the mark in the footer and on the pictures shown when a page is shared. It must be square, at least 512 by 512 pixels (or an SVG), with its own background color rather than see-through, and simple enough to read when it is tiny.",
+      options: { accept: 'image/svg+xml,image/png,image/webp,image/jpeg' },
+      components: { input: IconImageInput },
+      validation: (Rule) => Rule.custom((v) => checkIcon(v as never).error ?? true),
     }),
 
     defineField({
@@ -456,7 +479,7 @@ export const siteSettings = defineType({
       name: 'seoImage',
       title: 'Default social share image',
       description:
-        'The image shown when any page of the site is shared on social media or in a text message (the Open Graph image). Use a wide image, about 1200 by 630 pixels. Individual pages can override this in their own SEO section. Leave blank to use the auto-generated branded cards.',
+        "You can leave this empty. Every page already makes its own share picture (the church's card with the page title on it), and a page with its own share image in its SEO section uses that instead. This picture is only used for the few pages the website cannot make a card for, like password pages. Use a wide image, about 1200 by 630 pixels.",
       altRequired: false,
     }),
     // FBC Auburn (2026-10-18): the footer's own words, so the pastor can change them himself.

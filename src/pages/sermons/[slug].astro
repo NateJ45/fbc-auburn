@@ -66,7 +66,10 @@ const ogImage = picture
       .quality(80)
       .format('jpg')
       .url()
-  : (video?.thumbnailUrl ?? '/og/sermons.png');
+  : undefined;
+// No picture in the Studio: the build draws the sermon its own card (title, with the series or
+// "Sermon" over it), which says more in a text message than a video still (2026-10-26).
+const shareKicker = s.series?.title || 'Sermon';
 
 const title = s.title ?? 'Sermon';
 const description =
@@ -89,6 +92,7 @@ const schemas = [
   {schemas}
   {siteSettings}
   {ogImage}
+  ogCard={{ kicker: shareKicker }}
   ogType="article"
   searchType="sermon"
 >

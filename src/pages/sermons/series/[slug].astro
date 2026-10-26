@@ -58,7 +58,7 @@ const schemas = [
   {schemas}
   {siteSettings}
   seoImage={art ?? undefined}
-  ogImage={art ? undefined : '/og/sermons.png'}
+  ogCard={{ title: series.title ?? 'Sermon series', kicker: 'Sermon series' }}
   searchType="series"
 >
   <SearchMeta date={span || undefined} passage={series.book} />

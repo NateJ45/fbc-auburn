@@ -1,5 +1,28 @@
 # Change history
 
+_2026-10-26: share images, logo and icon, and popups from the Studio._
+
+**Decision.** Part of making the Studio complete for Jacob (self-serve additions). Three things:
+
+- **Share images make themselves.** The committed `public/og/*.png` and `scripts/generate-og-pages.mjs`
+  (and `npm run og:pages`) are gone. BaseLayout marks each prerendered page that has no picture of
+  its own (`src/lib/og-card-marker.ts`); `scripts/build-og-cards.mjs` draws its card as a JPEG at
+  build time, cached by content hash (29 pages: 3.2 s cold, 0.1 s warm; about 100 KB a card against
+  240 KB for the old PNGs). Sermons without a Studio picture now share their own card (series or
+  "Sermon" over the title) instead of the YouTube still. Site settings' default share image moved
+  below the cards. The card generator was already broken on main (it read the retired
+  `building-sketch.webp`; now `building-sketch-lines.webp`).
+- **Logo and icon from the Studio.** The existing `logo` field got guard rails and a preview and now
+  also feeds the phone menu; a new `siteIcon` feeds the favicon set (`scripts/build-brand-icons.mjs`),
+  the footer mark, Home's small mark, the share cards and the podcast artwork. Empty, the brand kit's
+  files ship as before.
+- **Popups.** A new `popup` type with one-at-a-time, 4 seconds plus scroll, once per visitor or
+  visit, native `<dialog>` (docs/agent/studio-kit.md, "Popups"), a fixture at `/styleguide/popup/`
+  and `tests/popup.spec.ts`.
+
+Three new Site Guide pages: "Put up a popup", "Change the logo or the icon", "The picture when a page
+is shared".
+
 _2026-10-26: search waits for its index to be written whole (starter card 165)._ This PR's CI artifact carried `pagefind/pagefind.js` cut at 32,768 of 45,555 bytes, so every search said "Search is not available right now". `build-search-index.mjs` closed Pagefind before its binary had flushed; it now waits for `dist/client/pagefind/` to settle, then syntax-checks every script it wrote and fails the build on a cut one.
 
 _2026-10-26: American spelling everywhere (starter cards 163 and 164)._ Nathan's call: every family site is American English. Starter cards 163 and 164 copied byte-identical (164 moves the shared Studio and site text to American spelling, including "check" for a checkbox and "Website inquiry" as the contact email subject, and makes `build-csp.mjs` fail when the CSP line passes 2,000 characters). This site's own strings had the same pass: text only, no field name, option value, key, slug or CSS class renamed. The live Sanity content was checked the same day and fixed where needed.

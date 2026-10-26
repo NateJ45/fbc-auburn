@@ -50,7 +50,14 @@ const schemas = [
 const hasSanityBody = Boolean(page?.body);
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={page?.seoImage}
+  ogCard={{ kicker: heroEyebrow }}
+>
   {/* Hero — text variant, short height. */}
   <Hero
     eyebrow={heroEyebrow}

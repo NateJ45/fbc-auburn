@@ -17,11 +17,14 @@ import { layout } from '@/data/layout';
 import { layoutAttrs } from '@/lib/site-layout';
 import { urlFor } from '@/lib/sanity';
 import { localBusinessSchema } from '@/lib/schemas';
-import { getActiveAnnouncement, getSiteCode } from '@/lib/queries';
+import { getActiveAnnouncement, getPopups, getSiteCode } from '@/lib/queries';
+import { pickPopup, popupShowsOn } from '@/lib/popup';
 import { isSiteCodeRoute } from '@/lib/custom-code';
+import { resolveShareImage, type CardRequest } from '@/lib/og-card-marker';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import ForJacob from '@/components/ForJacob.astro';
+import SitePopup from '@/components/SitePopup.astro';
 import LiveBanner from '@/components/church/LiveBanner.astro';
 import Analytics from '@/components/Analytics.astro';
 // The text fonts' Latin files, as the same hashed URLs auburn.css's @font-face rules use, so the
@@ -42,7 +45,7 @@ import '@/styles/print.css';
 interface Props {
   title: string;
   description: string;
-  /** Override the default OG image. If omitted, BaseLayout looks for a per-page OG at /og/&lt;slug&gt;.png, falling back to /og-default.png. */
+  /** A picture this page shares instead of its generated card (a post's cover, a sermon's picture). If omitted, the build draws /og/&lt;route&gt;.jpg for the page (src/lib/og-card-marker.ts). */
   ogImage?: string;
   /** Raw Sanity image object for a per-page social share override (seoImage on the page singleton). Resolved through the Sanity image pipeline to a 1200x630 OG URL. Lower priority than ogImage, higher than the siteSettings default. */
   seoImage?: any;
@@ -58,6 +61,8 @@ interface Props {
   ogArticle?: { publishedAt?: string; author?: string };
   /** What kind of page this is in visitor search results (PORTS.md card 126): 'page' (the default), 'sermon', 'series', 'news', 'question' and so on. Only used when src/data/site.ts search.enabled is on. */
   searchType?: string;
+  /** The generated share card's words (2026-10-26): `kicker` is the small line over the title (the section or a date), `title` overrides the page title, `home` draws the masthead card. Ignored when the page shares a picture of its own. */
+  ogCard?: Partial<CardRequest>;
 }
 
 const {
@@ -71,6 +76,7 @@ const {
   ogType = 'website',
   ogArticle,
   searchType = 'page',
+  ogCard = {},
 } = Astro.props as Props;
 
 // Visitor search (PORTS.md card 126). With search on, <main> carries
@@ -82,15 +88,6 @@ const searchable = site.search.enabled && !noindex;
 
 const canonical = new URL(Astro.url.pathname, site.url).toString();
 
-// Per-page OG image: convention is /og/<route-slug>.png generated at build time.
-// `/` → /og/home.png, `/contact` → /og/contact.png, `/portfolio/foo` → /og/portfolio-foo.png.
-// Falls back to og-default.png if the slug-specific file isn't there.
-function ogPathForRoute(pathname: string): string {
-  const trimmed = pathname.replace(/^\/|\/$/g, '');
-  if (!trimmed) return '/og/home.png';
-  return `/og/${trimmed.replace(/\//g, '-')}.png`;
-}
-
 // Resolve a raw Sanity image object to a 1200x630 OG URL through the image
 // pipeline. Returns null when there's no asset (so the ?? chain falls through
 // to the next source) or if the URL builder throws on a malformed object.
@@ -99,14 +96,6 @@ function ogUrlFromImage(img: any): string | null {
   // JPEG, not auto/WebP: some link scrapers (older LinkedIn, some chat apps) skip WebP (DEV-L8).
   try { return urlFor(img).width(1200).height(630).fit('crop').format('jpg').quality(80).url(); } catch { return null; }
 }
-
-// OG image priority: explicit ogImage prop (a real photo passed by detail
-// pages) > per-page seoImage override (page singleton) > global seoImage
-// default (siteSettings) > the build-time /og/<route>.png convention.
-const perPageOg = ogUrlFromImage(seoImage);
-const globalOg = ogUrlFromImage(siteSettings?.seoImage);
-const resolvedOg = ogImage ?? perPageOg ?? globalOg ?? ogPathForRoute(Astro.url.pathname);
-const absOg = resolvedOg.startsWith('http') ? resolvedOg : new URL(resolvedOg, site.url).toString();
 
 // Build the document title. If the editor-supplied seoTitle already contains
 // the brand name anywhere, use it verbatim. Otherwise append " | {site.name}"
@@ -121,6 +110,24 @@ const hasBrandInline = cleanTitle.toLowerCase().includes(site.name.toLowerCase()
 const fullTitle = cleanTitle === site.name || hasBrandInline
   ? cleanTitle
   : `${cleanTitle} | ${site.name}`;
+
+// The share image (2026-10-26, src/lib/og-card-marker.ts has the order). Every prerendered page
+// without a picture of its own gets a card drawn at build time by scripts/build-og-cards.mjs,
+// which reads the x-og-card marker below and removes it. The password pages render on request,
+// so they take Site settings' default share image, then og-default.png.
+const share = resolveShareImage({
+  pageImage: ogImage,
+  pageShareImage: ogUrlFromImage(seoImage),
+  siteDefault: ogUrlFromImage(siteSettings?.seoImage),
+  prerendered: Astro.isPrerendered,
+  pathname: Astro.url.pathname,
+  card: {
+    title: ogCard.title ?? (ogCard.home ? (siteSettings?.tagline || 'A close-knit church with the door open.') : cleanTitle),
+    kicker: ogCard.kicker || undefined,
+    home: ogCard.home,
+  },
+});
+const absOg = share.url.startsWith('http') ? share.url : new URL(share.url, site.url).toString();
 
 // Auto-inject LocalBusiness on every page when siteSettings is available.
 // Pages can still pass their own additional schemas (Service, FAQPage, BreadcrumbList).
@@ -143,6 +150,12 @@ const siteCode = isSiteCodeRoute(Astro.url.pathname)
   ? await getSiteCode().catch(() => null)
   : null;
 const showAnnouncement = !!(announcement?.message);
+// The popup (2026-10-26, src/lib/popup.ts): at most one, only on the pages it is meant for, never
+// on the Studio, the preview or a password page. Absent, the page carries no popup markup or script.
+const popup = isSiteCodeRoute(Astro.url.pathname)
+  ? pickPopup(await getPopups().catch(() => []), Date.now())
+  : null;
+const showPopup = popupShowsOn(popup, Astro.url.pathname);
 
 // Map announcement style -> semantic Tailwind token classes.
 // Uses only existing semantic tokens (no new custom tokens introduced).
@@ -215,6 +228,7 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    {share.marker && <meta name="x-og-card" content={share.marker} />}
     <meta property="og:image" content={absOg} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -377,6 +391,9 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     {/* Pre-launch notes for the pastor: the "For Jacob" pill and the yellow placeholder marks.
         Off at launch (PRE_LAUNCH_NOTES in src/data/for-jacob.ts). */}
     <ForJacob />
+
+    {/* The popup, when one is live for this page (SitePopup.astro has the rules). */}
+    {showPopup && popup && <SitePopup popup={popup} />}
 
     {/* FBC Auburn (2026-10-18): no floating back-to-top button. It sat over content in two critic
         passes; the footer's bottom bar has a "Back to top" link, and Home phones have the Sunday bar. */}

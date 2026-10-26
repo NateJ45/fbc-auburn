@@ -65,6 +65,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'businessInfo',
   ...ORDERABLE_TYPES,
   'announcement', // placed explicitly under Content → Notices
+  'popup', // placed explicitly under Content → Popups, after Notices
   'faqItem', // scaffold: faq
   'faqCategory', // scaffold: faq
   'journalEntry', // scaffold: journal
@@ -288,6 +289,15 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 icon: typeIcon('announcement'),
                 explain:
                   'A short line across the top of every page, like a weather closing or a special service. Each one can take itself down on a date you pick.',
+              }),
+              // Popups (2026-10-26, schemaTypes/popup.ts): one at a time, with dates.
+              emptyAwareList(S, context, {
+                id: 'popup',
+                type: 'popup',
+                title: 'Popups',
+                icon: typeIcon('popup'),
+                explain:
+                  'A box with a short message and one button that appears over the page, like an invitation to Christmas Eve. Only one shows at a time, never straight away, and each visitor sees it once.',
               }),
 
               S.divider(),

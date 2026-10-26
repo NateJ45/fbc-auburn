@@ -50,7 +50,14 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={page?.seoImage}
+  ogCard={{ kicker: page?.heroEyebrow ?? 'Sunday by Sunday' }}
+>
   <Hero
     eyebrow={page?.heroEyebrow ?? 'Sunday by Sunday'}
     headline={page?.heroHeadline || 'Sermons'}
