@@ -141,7 +141,8 @@
         "person": "person",
         "personGroup": "people",
         "form": "form",
-        "popup": "notice"
+        "popup": "notice",
+        "shortLink": "link"
       },
       "groups": {
         "church": "times",

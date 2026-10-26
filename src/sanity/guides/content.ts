@@ -42,6 +42,7 @@
 import { collectionGuides } from './collections.ts';
 import { peopleGuides } from './people.ts';
 import { EVERY_WEEK, WEEKLY_CATEGORY, weeklyGuides } from './weekly.ts';
+import { linkGuides } from './links.ts';
 
 import type { KitGuideBlock } from '../kit/guide/GuidePage';
 import { phoneGuides } from './phoneGuides.ts';
@@ -1547,6 +1548,8 @@ guides.push(
 // The sermon, people and downloads guides (FBC Auburn, 2026-10-18).
 guides.push(...collectionGuides);
 
+// Short links and QR codes (FBC Auburn, 2026-10-26, guides/links.ts).
+guides.push(...linkGuides);
 // Adding someone to help: the People tool (FBC Auburn, 2026-10-26).
 guides.push(...peopleGuides);
 
@@ -1642,13 +1645,18 @@ guides.push({
       kind: 'p',
       text: 'Describe the widget, then add this sentence: _"Give me a single self-contained HTML snippet with inline CSS and JS, no external build step."_ That gets you one block of code you can paste in one go, instead of several files.',
     },
+    { kind: 'h', text: 'A video, map, calendar or giving page' },
+    {
+      kind: 'p',
+      text: 'For a service the website knows (YouTube, Vimeo, Facebook video, Google Maps, Google Calendar, Google Forms, Spotify, Apple Podcasts, Church Trac, Planning Center, Tithe.ly, Givelify, Subsplash, SignUpGenius, Calendly), paste its link or its embed code into the box at the top of the block, `Paste a link or embed code here`. The block fills itself in: the right shape for a video, the right height for a map or a podcast, and whether a giving widget runs on the page. A line under the box says what it recognized.',
+    },
     { kind: 'h', text: 'Put it on the page' },
     {
       kind: 'steps',
       items: [
         'Open the page and click `+ Add item` where you want the widget.',
         'Pick `Custom code or embed`.',
-        'Give it a headline if you like, then paste the whole snippet into `Custom code`. The count under the box tells you it all went in.',
+        'Give it a headline if you like, then paste the link or the whole snippet into the box at the top. The block puts it in the right place below.',
         'Open `Presentation` and look at the page. The widget runs in the preview exactly as it will on the website.',
         'If it looks right, click `Publish`.',
       ],
@@ -1683,6 +1691,15 @@ guides.push({
       tone: 'caution',
       title: 'Leave it off unless a provider you trust needs it.',
       text: 'Some giving or booking services give you code that only works on the page itself. The switch lets it. With it on, the code can do anything the website can, including reading what a signed-in editor is doing, so never turn it on for code you are not sure about. The Checkup lists every page where it is on.',
+    },
+    {
+      kind: 'callout',
+      tone: 'primary',
+      title: 'Code from a service the website does not know stays in its box.',
+      text:
+        'Even with the switch on, code that runs scripts from an unknown service is kept in its own box, for safety. If it needs the page, ask ' +
+        SITE.contactName +
+        ' to approve that service. A plain link from any service still works: it is shown in a frame.',
     },
     { kind: 'seealso', items: ['Change the words on a page'] },
   ],

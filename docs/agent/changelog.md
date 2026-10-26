@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-26: short links, QR codes and paste-and-go embeds._ Jacob can make `/vbs`-style short
+links (Pages > Short links, or Quick update's "Make a short link"), for now (302) or for good (301),
+with an optional last day; the build writes them at the top of `_redirects` and skips clashes,
+which the Studio flags first. Every short link and page has a **QR code** button (SVG and PNG;
+new dependency `qrcode-generator` 2.0.4, MIT, no dependencies, Studio only). The Custom code or
+embed block takes a pasted link or embed code from fifteen known services and sizes and sets
+itself; unknown script code never runs on the page; a known service's script origins join the
+policy only on builds that use it (`build-embed-csp.mjs`). Docs: `studio-links.md`, `seo.md` (Short links, QR
+codes), `custom-code.md` (Paste-and-go).
+
 _2026-10-26: "Invite a helper" (the People tool)._ An administrator can now add someone from inside the Studio: `People` in the top bar takes a name, an email and Helper (Sanity Editor: edits and publishes, the simple staff view, no permanent delete) or Administrator, lists the members and the pending invitations, and resends or cancels one. It calls Sanity's Access API through `/api/studio/people/`, which only an administrator can use, with the new Worker secret `SANITY_MEMBERS_TOKEN` (an Access Manager robot token); Administrator invites go out as the caller, since Sanity lets only administrators invite administrators. On a plan with no Editor role (the free plan) Helper is greyed out and the tool shows the sanity.io/manage steps. New guide "Add someone to help with the website". The staff view already follows the role while `kitConfig.staff` is empty; making the id list add to the role rule is a starter change to `studio-kit.ts`. Detail: `docs/agent/studio-people.md`.
 
 _2026-10-26: searching your own misspelling finds nothing honestly (starter card 166)._ Nathan: fix it. Pressing "Search for "cnotact" instead" said "1 result" and showed the Give page, which has no such word: Pagefind 1.5 returns loose pages for some typos. That search now drops pages that matched no word (`matchedOnly()` in `src/lib/site-search-client.ts`), so it says "Nothing found"; every other search is unchanged. It also turned up intermittently as a failed `tests/search.spec.ts` misspelling test in CI.
