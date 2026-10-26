@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-26: two search fixes (starter card 165)._
+
+**Decision.** Nathan: fix it. Pressing "Search for "cnotact" instead" said "1 result" and showed the Give page,
+which has no such word: Pagefind 1.5 returns loose pages for some typos. Searching the original spelling now drops
+pages that matched no word, so it says "Nothing found" (`matchedOnly()` in `src/lib/site-search-client.ts`); every
+other search is unchanged. Chasing a second CI failure the same day found a CI-built `pagefind.js` cut off at 32,768
+bytes, which broke every search on that build without failing it; `scripts/build-search-index.mjs` now stops the build
+when the written index is incomplete (`scripts/lib/search-index-check.mjs`). In CI, re-run the whole workflow after
+that error: re-running failed jobs reuses the built `dist-client`.
+
 _2026-10-26: the Studio catches up with the re-audit._
 
 **Decision.** Nathan asked whether the re-audit left the Studio behind. It had mostly kept up (the

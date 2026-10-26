@@ -274,6 +274,8 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 161 | `snapshot.mjs run` reads the project id from the snapshot when the job env has none | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
 | 162 | `studio.look.splash: motif`: the site's own art replaces the splash's stone path    | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | no                  | yes            |
 | 163 | `features.newsletter: false` hides Home's Newsletter card, RSVPs kept               | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 164 | American spelling in every string a visitor or editor reads; CSP line-length guard  | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 165 | Original-spelling search drops loose pages; build stops on a cut-off Pagefind index | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
 
 Rows 106 to 135 (2026-10-19) are recorded from the five-site rollout report. fbcm is not a column, so its rollout is on the card status lines only. A cell becomes `yes` only where the report names that card for that site. A broad round or a sync alone leaves the cell as it was, and the card says "synced, not individually verified". Rows 132 and 133 were missing from the matrix and are added here. PRs: fbcm #74 to #81, presacademy #107 to #116, reid-design-site #157 to #165, mas-monograms #117 to #126, stonesteps-50k #131 to #140 (#136 is its design-language PR).
 
@@ -10654,3 +10656,71 @@ see its PR.
 sync-check green.
 
 **Who should take it.** Any site whose email list is kept outside the website.
+
+## Card 164: American spelling everywhere a visitor or editor reads, and a CSP line-length guard (2026-10-26)
+
+**Origin:** first-baptist-auburn's 2026-10-25 audit asked for American spelling. Nathan's call (2026-10-26): every
+site in the family is American English. The starter still had British spellings in strings people read: Studio
+labels and help, block descriptions, the editor guide, the Writing helper's prompt, contact email subjects and
+build warnings. Drafted as a card 160 branch (`port/card-160`), parked, renumbered here when 160 went to
+file-style redirects.
+
+**Canonical:** PORTABLE `src/lib/contact-submission.ts` (+ test), `src/lib/page-checks.ts`,
+`src/sanity/components/UndoRedo.tsx`, `scripts/build-csp.mjs`, `src/lib/section-looks.ts`,
+`src/lib/studio-ai.ts`, `src/lib/studio-banner-style.ts`, `src/lib/studio-look.ts`, `src/lib/studio-theme.ts`,
+`src/lib/contrast.ts`, `src/sanity/guides/content.ts`, `src/sanity/components/BrandKit.tsx`,
+`src/components/preview/overlay/HeadingAccentPicker.tsx`, `src/sanity/schemaTypes/_appearanceFields.ts`,
+`contactPage.ts`, `newsletter.ts`, `src/pages/styleguide/looks.astro`, `sections.astro`,
+`brand/brand.config.schema.json`.
+
+**What it does.**
+
+1. **Spelling.** Text people read now says color, neighbor, neighborhoods, recognize, organizer, gray, labeled,
+   inquiry ("Website inquiry" is the contact email's default subject), judgment; and American words for a
+   checkbox ("Please check this box.", "Checked for you.", "Jobs checked by hand", "Yes / no checkbox"), "come
+   around". Only strings changed: no
+   identifier, CSS class, Sanity field name or stored value was renamed (a renamed field would orphan stored
+   content). Code comments are left as they are. Check with a sweep of quoted strings for British spellings.
+2. **CSP guard.** `build-csp.mjs` fails the build when the `Content-Security-Policy` line in `_headers` passes
+   Cloudflare's 2,000 characters, and warns within 100 of it (the limit failed a first-baptist-auburn deploy,
+   card 159).
+
+**Verified in the starter (2026-10-26):** `npm run test:unit` (1425 + 147 pass), `npm run check` (0 errors).
+
+**Applied:** starter (this card). Sites take the copies; each site's own strings get the same pass in the same PR.
+
+**Who should take it.** Every site (they are all American English).
+
+## Card 165: Searching the original spelling drops pages that matched no word; the build stops on a cut-off index (2026-10-26)
+
+**Origin:** first-baptist-auburn. Its CI failed `tests/search.spec.ts` ("a misspelt word is corrected, with a way
+back to the original") on a PR that touched no search code; the same build failed locally every time, while `main`'s
+CI had passed. Pressing "Search for "cnotact" instead" showed "1 result for "cnotact"": the Give page, which has no
+such word. Pagefind 1.5 sometimes returns a page for a typo without matching any word on it (its `locations` are
+empty). The corrected path already treated that as nothing found (card 154's `missed()`); the original-spelling path
+showed it as a match.
+
+**Canonical:** PORTABLE `src/lib/site-search-client.ts` (`matchedOnly()`), `scripts/build-search-index.mjs`,
+`scripts/lib/search-index-check.mjs` (+ test); docs in `docs/agent/site-search.md`.
+
+**What it does.** When the visitor presses "Search for "<their spelling>" instead", results whose data has no
+matched `locations` are dropped, and with none left the filter chips hide. Every other search is unchanged: loose
+pages still count as "missed" and trigger the correction, as before.
+
+**Second find, the same day.** Auburn's card 164 PR then failed every search test in CI three times running: its
+built `dist-client` artifact held a `pagefind/pagefind.js` cut off at exactly 32,768 of 45,555 bytes, so the page said
+"Search is not available right now". Re-running failed jobs reuses that artifact, which is why the failure repeated;
+a fresh run of the whole workflow builds it again. The likeliest cause is `pagefind.close()` stopping Pagefind's helper
+process before its last write flushed. Nothing failed at build time, and `deploy.yml` runs the same build, so it could
+have shipped. `build-search-index.mjs` now checks the index after closing (`incompleteIndexFiles()`: `pagefind.js`
+must end with its `export{...}` list, `pagefind-entry.json` must parse and name a language) and exits 1 with a plain
+line if not, so CI goes red and a deploy keeps the last good site.
+
+**Verified (2026-10-26):** `npm run check`, `npm run test:unit` in the starter. On first-baptist-auburn's snapshot
+build: `tests/search.spec.ts` 8 passed (the misspelling test failed before); "cnotact" then "Search for
+"cnotact" instead" reads "Nothing found"; "baptism" still finds its pages. `incompleteIndexFiles()` passes a real build
+and names the CI artifact's cut-off file ("pagefind.js is cut off (32768 bytes, no closing export)").
+
+**Applied:** starter (this card). first-baptist-auburn: origin. Every site with search on (card 126) takes the copy.
+
+**Who should take it.** Every site with `site.search.enabled`.
