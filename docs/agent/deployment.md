@@ -164,6 +164,9 @@ apply to responses the Worker generates itself, so the SSR routes (`/preview/**`
   Autoplay, fullscreen and encrypted media are not listed, so the YouTube and Facebook players
   keep working. `interest-cohort` is left out on purpose: Chrome logs an "unrecognized feature"
   error for it, which costs the Best Practices score.
+- No `media-src` (2026-10-25): `default-src` is not set, so the Home hero's video from
+  cdn.sanity.io loads without a grant. A full policy would need
+  `media-src 'self' https://cdn.sanity.io` (also listed in `public/_headers`).
 - `X-Content-Type-Options: nosniff`
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `Cross-Origin-Opener-Policy: same-origin`

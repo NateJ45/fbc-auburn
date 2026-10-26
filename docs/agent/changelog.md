@@ -1,5 +1,20 @@
 # Change history
 
+_2026-10-25: the Home hero can play a video._
+
+**Decision.** The audit asked for a video in the Home hero, and the shot request asks Pastor Jacob for
+clips of church life that Nathan cuts into one silent video. The hero block gains **Background video
+(Home only, optional)** (`heroSection.backgroundVideo`, a Sanity file limited to .mp4 and .webm; the
+Studio errors on another type and warns over 6 MB). `HomeHero.astro` keeps the background photo as
+the first paint and the LCP, then after the load event adds a muted, looping, inline `<video>` with
+that photo as its poster, under the same shade; it fades in once it plays. Never with reduced motion,
+Save-Data, a 2G or 3G connection, or in print (`src/lib/hero-video.ts`, unit tested); those
+visitors get the still and download nothing. A Pause / Play button at the top right (WCAG 2.2.2)
+remembers the choice on the device, and the clip pauses while the hero is off screen. A video fills
+the hero's shot request, so its "Photo needed" note goes. Checked on
+`/styleguide/home-hero/` (fixed data, the stock `sermon.mp4`) by `tests/hero-video.spec.ts`. No
+CSP change: no `default-src` is set, so `media-src` is open to cdn.sanity.io.
+
 _2026-10-25: CI builds the same site from the snapshot as a local build._
 
 **Decision.** CI's `site` job built 19 pages where a local build of the same snapshot built 28, and

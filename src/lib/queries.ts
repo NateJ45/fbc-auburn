@@ -84,6 +84,7 @@ const SECTION_ARMS = `
     _type == "heroSection" => {
       ...,
       backgroundImage${IMAGE_PROJECTION},
+      backgroundVideo{ "url": asset->url, "mimeType": asset->mimeType },
       primaryCta${CTA_PROJECTION},
       secondaryCta${CTA_PROJECTION}
     },

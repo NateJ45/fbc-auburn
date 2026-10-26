@@ -1,8 +1,8 @@
-// Safe to edit by hand
-// Finds regular expressions that look like they lost their backslashes (audit 2026-10-25,
-// DEV-H2). Git Bash heredocs on this PC strip backslashes, so `/(\s+)/` written through one comes
-// out as `/(s+)/`, which is still valid JavaScript and silently matches the letter "s". The flow
-// layer shipped exactly that for a week.
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Finds regular expressions that look like they lost their backslashes (PORTS.md card 155).
+// Git Bash heredocs on this PC strip backslashes, so `/(\s+)/` written through one comes out as
+// `/(s+)/`, which is still valid JavaScript and silently matches the letter "s". A site shipped
+// exactly that for a week once.
 //
 // A regex is suspect when it has NO backslash at all and still holds a class-letter quantifier
 // that only makes sense escaped: `s+`, `d*`, `w{2}`, `(s`, `[^s]` and friends, for s d w b (and

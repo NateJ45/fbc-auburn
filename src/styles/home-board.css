@@ -109,6 +109,80 @@
 .hb-hero[data-photo='no'] .hb-photo__shade {
   display: none;
 }
+/* The hero's clip (2026-10-25, HomeHero.astro): laid over the photo, under the shade, invisible
+   until it actually plays so the photo is all anyone sees before then. Nothing on it is clickable. */
+.hb-photo .hb-photo__video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.hb-hero.is-video-playing .hb-photo__video {
+  opacity: 1;
+}
+/* Pause / Play (WCAG 2.2.2): small, top right, white on the navy shade, keyboard reachable. */
+.hb-video-toggle {
+  position: absolute;
+  top: 16px;
+  right: var(--hb-gutter, 24px);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgb(255 255 255 / 0.55);
+  border-radius: 999px;
+  background: rgb(15 34 56 / 0.6);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+.hb-video-toggle[hidden] {
+  display: none;
+}
+.hb-video-toggle:hover {
+  background: rgb(15 34 56 / 0.85);
+}
+.hb-video-toggle:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+/* Two bars for Pause, a triangle for Play. */
+.hb-video-toggle__icon {
+  width: 10px;
+  height: 12px;
+  border-inline: 3px solid currentColor;
+}
+.hb-video-toggle[aria-pressed='true'] .hb-video-toggle__icon {
+  width: 0;
+  height: 0;
+  border-block: 6px solid transparent;
+  border-inline-start: 10px solid currentColor;
+  border-inline-end: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hb-photo .hb-photo__video {
+    display: none;
+  }
+  .hb-video-toggle {
+    display: none;
+  }
+}
+@media print {
+  .hb-photo .hb-photo__video,
+  .hb-video-toggle {
+    display: none !important;
+  }
+}
 /* Before launch, the "Photo needed" note above the welcome (ShotRequest.astro, tag look). */
 .hb-hero__shot {
   position: relative;

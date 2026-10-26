@@ -27,6 +27,7 @@
 #                 https://fonts.gstatic.com                (brand fonts, if used)
 #   style-src     https://fonts.googleapis.com             (brand fonts, if used)
 #   img-src       https: data:                             (cdn.sanity.io images)
+#   media-src     'self' https://cdn.sanity.io              (the Home hero video)
 #   worker-src    'self' blob:                             (the Studio uses blob workers)
 #
 # TWO TRAPS BEFORE ADDING ANY RULE OTHER THAN /* (PORTS.md card 59, measured under

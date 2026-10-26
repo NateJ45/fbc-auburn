@@ -1920,6 +1920,11 @@ export type HeroSection = {
     alt?: string;
     _type: 'image';
   };
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
   primaryCta?: CtaBlock;
   secondaryCta?: CtaBlock;
   size?: 'tall' | 'short';

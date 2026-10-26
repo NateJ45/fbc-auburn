@@ -1,0 +1,46 @@
+---
+// Safe to edit by hand
+//
+// THE HOME HERO WITH A VIDEO (2026-10-25): Home's hero drawn by the real HomeBoard with FIXED data
+// and a Background video set, so tests/hero-video.spec.ts can check the clip's rules (reduced
+// motion shows the still and no video; otherwise the photo is the poster, the clip plays, and the
+// Pause button works) without a video in the dataset. The clip is the stock pre-launch example in
+// public/shot-examples/ (sermon.mp4, credited in CREDITS.md); the photo is a fake Sanity reference
+// that the spec answers with a local fixture. Like the other walls: noindex, out of the sitemap
+// ('/styleguide' is filtered in astro.config.mjs) and under a reserved slug.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HomeBoard from '@/components/home/HomeBoard.astro';
+import { site } from '@/data/site';
+
+const hero = {
+  _type: 'heroSection',
+  _key: 'hero',
+  eyebrow: 'First Baptist Church of',
+  headline: 'Auburn',
+  welcome: 'Come as you are.',
+  subhead: 'A small church family that opens the Bible together every Sunday.',
+  backgroundImage: {
+    _type: 'image',
+    alt: '',
+    asset: {
+      _type: 'reference',
+      _ref: 'image-0123456789abcdef0123456789abcdef01234567-1600x900-jpg',
+    },
+  },
+  backgroundVideo: { url: '/shot-examples/sermon.mp4', mimeType: 'video/mp4' },
+  primaryCta: {
+    _type: 'ctaBlock',
+    label: 'Plan your visit',
+    linkType: 'external',
+    externalUrl: '/plan-your-visit/',
+  },
+};
+---
+
+<BaseLayout
+  title={`Home hero with video | ${site.name}`}
+  description="Fixed-data Home hero with a background video. Not for visitors."
+  noindex
+>
+  <HomeBoard sections={[hero]} />
+</BaseLayout>
