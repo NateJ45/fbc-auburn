@@ -538,3 +538,9 @@ export const ABOUT_SECTION_TYPES = [
   { type: 'dynamicListSection' },
 ];
 // (SERVICES_ and PROCESS_SECTION_TYPES went with those pages: nothing used them.)
+
+// FBC Auburn (2026-10-26): every main page is a page builder. Contact and Privacy also take the
+// block their page is built around (collectionSections.ts, pageOnlySectionSchemas), which no other
+// page offers. News and notes and Sermons use the About list: their blocks are in the library.
+export const CONTACT_SECTION_TYPES = [...ABOUT_SECTION_TYPES, { type: 'contactFormSection' }];
+export const PRIVACY_SECTION_TYPES = [...ABOUT_SECTION_TYPES, { type: 'privacyPolicySection' }];

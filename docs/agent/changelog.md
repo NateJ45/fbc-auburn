@@ -1,5 +1,52 @@
 # Change history
 
+_2026-10-26: holiday and event templates use the event blocks._ A new "Seasonal: Event page" template
+(replacing "Event (any)") opens on a photo and runs Event details, a Schedule, Cards with photos, the map
+and an invitation band. The VBS, Easter, Christmas, Homecoming, Revival week, Trunk-or-treat and
+Thanksgiving templates are rebuilt on the same blocks. The "Easter services" and "Christmas services"
+saved sections now open with Event details and a Schedule (the unedited drafts were replaced, backed up
+first), and "Advent Sundays" and "Christmas Eve candlelight" are new saved sections. The Schedule block
+now keeps one time column for the whole section, so "4 pm" under one day and "10:30 am" under another
+start their titles on the same edge. Docs: `docs/agent/sanity.md` (the authoring kit).
+
+_2026-10-26: no "empty section" warning on blocks that fill themselves._ Checked signed in, the
+Contact page's form and the News and notes post list each carried "This section is empty... Fill it in or
+remove it", because their content comes from another tab or a collection. Eleven such blocks (sermons,
+series, archive, podcast, downloads, bulletin, posts, contact form, privacy policy, Watch, This week) are
+now in `SELF_FILLING_SECTIONS` (`src/sanity/pageBuilderConfig.ts`), and `authoring.test.ts` checks a
+fresh one of each raises no warning.
+
+_2026-10-26: every main page is a page builder._
+
+**Decision.** Pastor Jacob should be able to rearrange, remove and add sections on every main page,
+as on Squarespace. Contact, Privacy, News and notes and Sermons kept a fixed top and an "Extra
+sections" zone; Give and Bulletin were code with no Studio document. Now Contact, Privacy, News and
+notes and Sermons render a Page layout through `SectionRenderer` (defaults in `defaultSections.ts`),
+and Give and This week's bulletin are Studio `page` documents that `[slug].astro` always builds
+(`BUILT_IN_PAGES`), so `give.astro` and `bulletin.astro` are gone. Six new blocks hold what those
+pages drew in code: Contact form and Privacy policy text (offered on their own page only), News and
+notes posts, Every sermon, Podcast and This week's bulletin; the series grid can hide itself until
+there is a series. The old fields are hidden fossils; `scripts/content/builder-pages.mjs` moved the
+live content (run before the deploy, which the old code ignored). The orphaned Questions page left
+the Studio's page lists. Pages look the same; the differences are in the parity notes of the PR.
+Docs: `page-architecture.md`, `sanity.md`, `routes.md`.
+
+_2026-10-26: event and holiday page blocks._ Three new page-builder blocks so Jacob can build an event
+page himself: **Event details** (dates and times from a list, the place or the church's own address from
+Church facts, a photo, a sign-up button, an automatic "Add to my calendar" file and Directions; past dates
+drop off and the block comes down after the last one), **Schedule** (times and what happens, by day) and
+**Cards with photos** (two to six, columns from the count). The opening banner gains a Style, "Photo behind
+the words", which draws Home's photo hero on any page; Home's hero now shares that frame
+(`PhotoHero.astro`, styles moved to `photo-hero.css`, Home parity unchanged). `look` reaches six more
+blocks. Docs: `docs/agent/sanity.md` ("Event and holiday page blocks").
+
+_2026-10-26: the embed registry moves to the starter (card 172)._ `src/lib/embed-providers.ts`,
+its test and `EmbedPasteInput.tsx` are PORTABLE copies now, and the PORTABLE `build-csp.mjs`
+adds a known embed service's script origins itself, so `build-embed-csp.mjs` and
+`scripts/lib/embed-csp.mjs` are gone (one CSP writer). The Studio wording stays this site's
+(`EMBED_WORDS` in `sections.ts`), and a one-off approved origin now goes in
+`site.embeds.approvedScriptOrigins`. Nothing visible changes.
+
 _2026-10-26: the self-serve PRs landed together, and CI stops hanging._
 
 **Decision.** #207 to #210 kept conflicting with each other in the changelog and waiting on CI, so they landed as one PR (#212) after the People tool (#206). The "Install Playwright system libraries" step in `ci.yml` hung for 30 minutes or more five times in two days; each try is now capped at 5 minutes, with three tries. Visual baselines regenerated for the new header, footer, Contact and share cards.

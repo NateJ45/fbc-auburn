@@ -1,0 +1,352 @@
+/* Safe to edit by hand.
+   The photo hero (PhotoHero.astro): a full-width photograph with white words over it. Home opens
+   on it (HomeHero.astro, 2026-10-23), and since 2026-10-26 any page whose opening banner is set to
+   "Photo behind the words" does too (Hero.astro). Moved here verbatim from home-board.css, in the
+   same order, so Home draws exactly as before; the two custom properties the rules read from
+   Home's .hb wrapper are set on the hero itself, with Home's values, so it works on any page.
+   An inner page's hero is a little shorter (.hb-hero--page). Light only (rule 3). */
+
+.hb-hero {
+  --hb-gutter: var(--spacing-l);
+  --hb-ink: #16263d;
+}
+.hb-hero .hb-wrap {
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding-inline: var(--hb-gutter);
+}
+
+/* ---- Hero: the photograph with the welcome over it (2026-10-23) --------------------------------
+   The photo fills the hero; a navy shade, darkest at the lower left where the words sit, keeps the
+   white text above 4.5:1 on any picture. The This Sunday card sits at the right from 961px and
+   follows the words below that. A printed brick sill runs along the foot. */
+.hb-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: min(86vh, 780px);
+  padding: 120px 0 0;
+  color: #ffffff;
+  /* Flat navy with no photo (audit 2026-10-25, GD-H3: the navy brick tile is retired here). */
+  background: var(--auburn-deep);
+}
+.hb-photo,
+.hb-photo__shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.hb-photo {
+  overflow: hidden;
+}
+.hb-photo picture,
+.hb-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+/* Desktop (audit 2026-10-25, GD-M10): a left-to-right shade, 0.85 behind the words easing to about
+   0.25 on the right, so the congregation reads instead of sitting under an even navy veil. A
+   bottom-up shade keeps the foot of the words dark on a bright picture. */
+.hb-photo__shade {
+  z-index: 1; /* above the hero's video (.hb-photo__video, z-index 0) */
+  background:
+    linear-gradient(to top, rgb(15 34 56 / 0.55) 0%, rgb(15 34 56 / 0) 45%),
+    linear-gradient(
+      to right,
+      rgb(15 34 56 / 0.85) 0%,
+      rgb(15 34 56 / 0.7) 40%,
+      rgb(15 34 56 / 0.25) 100%
+    );
+}
+.hb-hero[data-photo='no'] .hb-photo__shade {
+  display: none;
+}
+/* The hero's clip (2026-10-25, HomeHero.astro): laid over the photo, under the shade, invisible
+   until it actually plays so the photo is all anyone sees before then. Nothing on it is clickable.
+   It sits on an explicit layer below the shade, and plays at 0.99 opacity, not 1: Chrome on Windows
+   hands a fully opaque video to the GPU as a hardware overlay plane, drawn outside the page, and
+   when it switched to that mid-scroll the shade's wash vanished (it never shows in a browser
+   screenshot, only on screen). A video that is not fully opaque is always composited with the page. */
+.hb-photo .hb-photo__video {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.hb-hero.is-video-playing .hb-photo__video {
+  opacity: 0.99;
+}
+/* Pause / Play (WCAG 2.2.2): small, top right, white on the navy shade, keyboard reachable. */
+.hb-video-toggle {
+  position: absolute;
+  top: 16px;
+  right: var(--hb-gutter, 24px);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgb(255 255 255 / 0.55);
+  border-radius: 999px;
+  background: rgb(15 34 56 / 0.6);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+.hb-video-toggle[hidden] {
+  display: none;
+}
+.hb-video-toggle:hover {
+  background: rgb(15 34 56 / 0.85);
+}
+.hb-video-toggle:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+/* Two bars for Pause, a triangle for Play. */
+.hb-video-toggle__icon {
+  width: 10px;
+  height: 12px;
+  border-inline: 3px solid currentColor;
+}
+.hb-video-toggle[aria-pressed='true'] .hb-video-toggle__icon {
+  width: 0;
+  height: 0;
+  border-block: 6px solid transparent;
+  border-inline-start: 10px solid currentColor;
+  border-inline-end: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hb-photo .hb-photo__video {
+    display: none;
+  }
+  .hb-video-toggle {
+    display: none;
+  }
+}
+@media print {
+  .hb-photo .hb-photo__video,
+  .hb-video-toggle {
+    display: none !important;
+  }
+}
+/* Before launch, the "Photo needed" note above the welcome (ShotRequest.astro, tag look). */
+.hb-hero__shot {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin-bottom: 32px;
+}
+.hb-hero__inner {
+  position: relative;
+  z-index: 2; /* above the sill, so the hanging card covers it */
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 56px;
+  align-items: end;
+  padding-bottom: 64px;
+}
+.hb-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 0 0 14px;
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+.hb-name__town {
+  font-weight: 600;
+  color: #ffffff;
+}
+/* A dot between the name and the town, so the two caps runs do not read as one (2026-10-24). */
+.hb-name__town::before {
+  content: '·';
+  margin-right: 14px;
+  font-weight: 700;
+}
+/* On a phone the town wraps to its own line, where a leading dot would dangle. */
+@media (max-width: 600px) {
+  .hb-name__town::before {
+    display: none;
+  }
+}
+.hb-h1 {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: #ffffff;
+  text-shadow: 0 2px 24px rgb(15 34 56 / 0.35);
+}
+.hb-intro {
+  max-width: 34rem;
+  margin: 0 0 18px;
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  color: #f4efe7;
+}
+.hb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 14px;
+}
+/* The hero's buttons are the site's own 48px pair (they were a 52px one-off until the
+   2026-10-24 standardising pass). */
+/* The second action: a white outline button on the photo, the outline button's shape in white. */
+.hb-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.7rem 1.4rem;
+  border: 1.5px solid #ffffff;
+  border-radius: var(--radius-control);
+  font-size: var(--fs-button);
+  font-weight: 600;
+  line-height: 1.2;
+  color: #ffffff;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.hb-ghost:hover {
+  background: #ffffff;
+  color: var(--hb-ink);
+}
+.hb-ghost:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+/* The stand-in label, top right of the photo, until the church's own picture replaces it. */
+.hb-standin {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgb(15 34 56 / 0.72);
+  font-size: var(--fs-tag);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+}
+/* Under the hero's content (layer 2), so the hanging This Sunday card covers it. Scoped to the hero
+   so it outranks the general .sill rule in auburn.css (also layer 2, and loaded later), which let
+   the bricks paint across the card's lower lines (contrast.spec.ts, 2026-10-23). */
+.hb-hero .hb-hero__sill {
+  position: relative;
+  z-index: 1;
+}
+
+/* An inner page (2026-10-26): the photo band without Home's This Sunday card, a little shorter. */
+.hb-hero--page {
+  min-height: min(68vh, 620px);
+}
+.hb-hero--page .hb-h1 {
+  font-size: clamp(44px, 6vw, 80px);
+}
+
+/* ---- Narrow screens (below 960px), moved from home-board.css with the rules above ---------- */
+@media (max-width: 960px) {
+  .hb-hero {
+    --hb-gutter: 20px;
+  }
+  .hb-hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+  /* The photo hero on a phone: the words on the photo (it fills the first screen), then the This
+     Sunday card on the navy ground under it, then the sill. */
+  /* The phone hero is a photo band with the welcome starting on its darkened foot (2026-10-24).
+     It was a block 78% of the screen tall with the words at the bottom, which left most of the first
+     screen as empty photo. svh, not vh: the screen with the browser's bars showing. */
+  .hb-hero {
+    --hb-band: clamp(220px, 44svh, 380px);
+    min-height: 0;
+    padding-top: 0;
+  }
+  /* Audit 2026-10-25 (GD-M10): the photo runs behind the whole hero, words, buttons and the This
+     Sunday strip included, under a bottom-up shade; no brick ground under the type. */
+  .hb-hero__inner {
+    gap: 28px;
+    padding-bottom: 32px;
+  }
+  /* The words start partway down the photo, leaving the top of the picture clear. */
+  .hb-hero__copy {
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--hb-band) - 160px) 0 4px;
+  }
+  /* Before launch the "Photo needed" note fills the band itself, so the words follow it directly. */
+  .hb-hero__shot {
+    margin-bottom: 20px;
+    padding-top: 16px;
+  }
+  /* With a clip, the note starts below the Pause button instead of under it. Keyed on the hero's
+     data attribute, not on the button appearing: the script shows the button after load, and
+     moving the note then was a layout shift (CLS 0.063). Reduced motion never gets the button. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hb-hero[data-hero-video] .hb-hero__shot {
+      padding-top: 76px;
+    }
+  }
+  .hb-hero__shot + .hb-hero__inner .hb-hero__copy {
+    padding-top: 0;
+  }
+  .hb-photo__shade {
+    background: linear-gradient(
+      to top,
+      rgb(22 38 61 / 0.92) 0%,
+      rgb(22 38 61 / 0.6) 45%,
+      rgb(22 38 61 / 0.1) 80%
+    );
+  }
+  .hb-intro {
+    font-size: var(--fs-lead);
+  }
+}
+/* Phones: the two hero buttons stack full width, the usual pattern on the best church sites. */
+@media (max-width: 520px) {
+  .hb-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hb-actions .btn-auburn {
+    width: 100%;
+  }
+  .hb-ghost {
+    width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  .hb-intro {
+    font-size: var(--fs-lead);
+  }
+}

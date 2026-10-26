@@ -54,6 +54,7 @@ import { SplitVerticalIcon } from '@sanity/icons/SplitVertical';
 import { SyncIcon } from '@sanity/icons/Sync';
 import { TimelineIcon } from '@sanity/icons/Timeline';
 import { imageWithAlt } from './_imageWithAlt';
+import { lookField } from './_appearanceFields';
 import { rsvpSection } from './rsvpSection';
 import { checkPaste } from '../../lib/church-trac-form';
 import { churchTracPageName } from '../../lib/church-trac-address';
@@ -871,6 +872,8 @@ export const buttonRowSection = defineType({
         }),
       ],
     }),
+    // 2026-10-26: Standard or Stone (src/lib/section-looks.ts); rule 9's one appearance field.
+    lookField('buttonRowSection'),
   ],
   preview: {
     select: { title: 'heading', links: 'links' },
@@ -940,6 +943,8 @@ export const columnsSection = defineType({
         }),
       ],
     }),
+    // 2026-10-26: Standard, Feature or Stone (src/lib/section-looks.ts).
+    lookField('columnsSection'),
   ],
   preview: {
     select: { title: 'heading', columns: 'textColumns' },

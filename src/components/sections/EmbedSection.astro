@@ -14,21 +14,23 @@
 //                            directly on the page").
 // Trust model in full: docs/agent/custom-code.md.
 //
-// Paste-and-go (2026-10-26, src/lib/embed-providers.ts): what was pasted is
-// read against a registry of known services. A YouTube, Spotify or Maps link
+// Paste-and-go (PORTS.md card 172, src/lib/embed-providers.ts): what was pasted
+// is read against a registry of known services. A YouTube, Spotify or Maps link
 // (or their iframe embed code) becomes the service's own player at the right
 // shape; a known service's script code may run on the page; code that runs
 // scripts from an UNKNOWN service never runs on the page, even with the switch
-// on: it is shown in its own box instead (the Studio says the studio must
-// approve it). The registry's id is written on the wrapper as
-// data-embed-provider, and scripts/build-embed-csp.mjs adds that service's
-// script origins to the security policy of the build that uses it.
+// on: it is shown in its own box instead (the Studio says who must approve it;
+// a site approves a one-off origin in site.embeds.approvedScriptOrigins). The
+// registry's id is written on the wrapper as data-embed-provider, and
+// scripts/build-csp.mjs adds that service's script origins to the security
+// policy of the build that uses it.
 //
 // SELF_CONTAINED — manages its own bg-background surface (no surface prop).
 import SectionHeading from '@/components/SectionHeading.astro';
 import CustomCodeFrame from '@/components/CustomCodeFrame.astro';
 import { stegaClean } from '@sanity/client/stega';
 import { planEmbed, type EmbedPlan } from '@/lib/embed-providers';
+import { site } from '@/data/site';
 
 interface Props {
   eyebrow?: string;
@@ -57,11 +59,14 @@ const {
 } = Astro.props as Props;
 
 // The preview stega-encodes strings; the plan must read what was pasted.
-const planned = planEmbed({
-  embedUrl: embedUrl ? stegaClean(embedUrl) : undefined,
-  embedCode: embedCode ? stegaClean(embedCode) : undefined,
-  runsOnPage,
-});
+const planned = planEmbed(
+  {
+    embedUrl: embedUrl ? stegaClean(embedUrl) : undefined,
+    embedCode: embedCode ? stegaClean(embedCode) : undefined,
+    runsOnPage,
+  },
+  site.embeds.approvedScriptOrigins,
+);
 // Repo-written probes skip the approval guard; nothing from Sanity reaches this.
 const plan =
   trustedCode && planned.kind === 'box' && planned.blocked
@@ -81,7 +86,7 @@ const frameStyle =
       ? `height: ${plan.height}px`
       : undefined;
 // Only code runs under this page's policy (a framed page has its own), so only
-// code carries the marker build-embed-csp.mjs reads.
+// code carries the marker build-csp.mjs reads.
 const providerId = plan.kind === 'box' || plan.kind === 'page' ? plan.provider?.id : undefined;
 const hasHeading = !!(eyebrow || headline);
 

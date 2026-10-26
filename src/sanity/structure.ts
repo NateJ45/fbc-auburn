@@ -45,7 +45,7 @@ const SINGLETON_TYPES = [
   // Core pages
   'homePage',
   'aboutPage', // scaffold: about
-  'faqPage', // scaffold: faq
+  'faqPage', // scaffold: faq (hidden: no desk item; /faq/ forwards to Plan your visit)
   'contactPage',
   'journalPage', // scaffold: journal
   'notFoundPage',

@@ -28,6 +28,7 @@ import {
   todayIn,
 } from './src/lib/short-links.ts';
 import { RESERVED_SLUGS } from './src/lib/reservedSlugs.ts';
+import { CHURCH_TIME_ZONE } from './src/lib/church-calendar.ts';
 import { pathForDoc } from './src/sanity/urls.ts';
 
 // The Sanity project id is PUBLIC by design: it ships in every client bundle.
@@ -155,7 +156,7 @@ function fileStyleRedirects() {
 }
 
 // SHORT LINKS (2026-10-26, src/lib/short-links.ts). The pastor's /vbs and /easter,
-// made under Pages > Short links. Read here with every page's address, then
+// made under Pages > Short links (starter card 171). Read here with every page's address, then
 // written by the integration below at the TOP of dist/client/_redirects, as
 // "/vbs" and "/vbs/" (one hop either way) with a 302 for a temporary link or a
 // 301 for a permanent one. Expired links (the day after "Last day", in Ohio
@@ -208,7 +209,7 @@ function shortLinks() {
             // Launch redirects and the Studio's Redirects, as the config holds them.
             redirects: Object.keys(resolved.redirects ?? {}),
           },
-          todayIn(new Date()),
+          todayIn(new Date(), CHURCH_TIME_ZONE),
         );
         for (const s of plan.skipped) logger.warn(`skipped /${s.address}: ${s.reason}`);
         const file = new URL('./_redirects', resolved.build.client);
