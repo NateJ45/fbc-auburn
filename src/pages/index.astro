@@ -16,7 +16,7 @@ const [page, siteSettings] = await Promise.all([getHomePage(), getSiteSettings()
 const title = page?.seoTitle ?? site.name;
 const description =
   page?.seoDescription ??
-  'A Southern Baptist church on Hamilton-Scipio Road in Ross Township, Ohio. Come as you are this Sunday.';
+  'A Southern Baptist church on Hamilton-Scipio Road in Ross Township, Ohio, serving Millville, Ross and Hamilton. Come as you are this Sunday.';
 
 const sections = page?.pageBuilder?.length ? page.pageBuilder : DEFAULT_HOME_SECTIONS;
 ---

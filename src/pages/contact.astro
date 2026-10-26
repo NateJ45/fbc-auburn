@@ -21,6 +21,8 @@ import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { Mail, Phone } from 'lucide-react';
 import PostInquiryRoadmap from '@/components/PostInquiryRoadmap.astro';
+import { resolveSocialLinks, socialLabel } from '@/lib/social-links';
+import { socialIcon } from '@/lib/social-icons';
 
 const [page, siteSettings] = await Promise.all([getContactPage(), getSiteSettings()]);
 
@@ -69,6 +71,9 @@ const { email, phone } = contactFacts;
 // Church Trac (2026-10-24, docs/agent/church-trac.md): once Church facts has a contact form or a
 // connection card, it takes the site form's place, so messages land in Church Trac.
 const churchTracForm = churchTracFormFor('contact', contactFacts);
+// The church's social accounts (2026-10-26), the same list as the footer and the phone menu
+// (Site settings > Social links, src/lib/social-links.ts). Empty draws nothing.
+const socials = resolveSocialLinks(siteSettings, contactFacts.facebookUrl);
 
 // Satisfaction guarantee — renders near the form CTA when set in siteSettings.
 const satisfactionGuarantee = siteSettings?.satisfactionGuarantee;
@@ -318,6 +323,32 @@ const schemas = [
         <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Find us</p>
         <ChurchAddress />
       </div>
+
+      {socials.length > 0 && (
+        <div>
+          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase" id="contact-social">
+            Follow along
+          </p>
+          <ul class="flex list-none flex-wrap gap-s p-0" aria-labelledby="contact-social">
+            {socials.map((link) => {
+              const Icon = socialIcon(link.platform);
+              return (
+                <li>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={socialLabel(link)}
+                    class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-primary-dark hover:bg-primary-dark hover:text-white"
+                  >
+                    <Icon size={20} stroke={1.5} aria-hidden="true" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </aside>
   </section>
   {/* Extra sections (2026-10-18): anything the editor adds from the section library, Studio:

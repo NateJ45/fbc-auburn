@@ -221,7 +221,7 @@ export const DEFAULT_PLAN_VISIT_SECTIONS: PageBuilderBlock[] = [
     body: [
       para(
         'default-pyv-here-p1',
-        '4241 Hamilton-Scipio Road, Hamilton, Ohio, in the hamlet of Auburn, Ross Township. Parking is free in the church lot next to the building (to be confirmed).',
+        '4241 Hamilton-Scipio Road, Hamilton, Ohio, in the hamlet of Auburn, Ross Township, easy to reach from Millville, Ross and Hamilton. Parking is free in the church lot next to the building (to be confirmed).',
       ),
     ],
   },
@@ -243,7 +243,7 @@ export const DEFAULT_ABOUT_SECTIONS: PageBuilderBlock[] = [
     eyebrow: 'Our church',
     headline: 'About us',
     subhead:
-      'A Southern Baptist church in the hamlet of Auburn, Ross Township, since 1959 (to be confirmed).',
+      'A Southern Baptist church in the hamlet of Auburn, Ross Township, since 1959 (to be confirmed), serving Millville, Ross and Hamilton.',
     size: 'short',
   },
   {
