@@ -487,7 +487,7 @@ export const siteSettings = defineType({
       type: 'object',
       group: 'social',
       description:
-        'One verse across the top of the footer on every page, in big type. It slides along as people scroll down to the footer. Leave empty for Matthew 11:28.',
+        'One verse across the top of the footer on Home, in big type. It slides along as people scroll down to the footer. Leave empty for Hebrews 13:8 (KJV), the verse on the church’s Facebook page.',
       options: { collapsible: false },
       fields: [
         defineField({
@@ -501,7 +501,7 @@ export const siteSettings = defineType({
           name: 'reference',
           title: 'Where it is from',
           type: 'string',
-          description: 'For example "Matthew 11:28" or "Matthew 11:28 (CSB)".',
+          description: 'For example "Hebrews 13:8" or "Hebrews 13:8 (KJV)".',
           validation: (Rule) => Rule.max(40),
         }),
       ],

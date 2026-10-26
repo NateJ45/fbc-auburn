@@ -395,7 +395,7 @@ dividers, the "Off the path" 404, and church copy on Home, About, Contact, FAQ, 
   `docs/agent/animation.md` "The flow layer"): line-by-line headings, staggered fade-ups, photo
   zoom and drift, the home hero drift, magnetic buttons, page-to-page lift and rise, and the footer
   verse (Site settings > Social and footer). Waiting on Pastor Jacob: which verse and translation
-  for the footer (Matthew 11:28, CSB, until he picks). Open: the flow layer could go back to the
+  for the footer (Hebrews 13:8, KJV, since 2026-10-26: the verse on the church's Facebook page; it was Matthew 11:28, CSB; he is asked to confirm). Open: the flow layer could go back to the
   starter as a port card once it has run on the live preview for a while.
 - DONE 2026-10-17: the motion layer and "Walk in with us" (`src/styles/motion.css`,
   `src/scripts/motion.ts`): reveals, the rail, the mark building itself with wave drift (About,
