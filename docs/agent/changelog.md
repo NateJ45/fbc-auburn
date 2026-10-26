@@ -1,5 +1,11 @@
 # Change history
 
+_2026-10-26: "The story in our mark" off the About page._
+
+Nathan asked for the section to go. It was Sanity content (the `about-mark` text-and-picture block),
+so `scripts/content/about-remove-mark-story.mjs` backed up `aboutPage` and removed the block. The
+"The church mark" picture option and its brick-laying animation stay, unused, for any page that wants them.
+
 _2026-10-24: the menu in three groups, and two pages folded into others._
 
 **Decision.** The menu had grown to thirteen links of equal weight, so a visitor on a phone read the

@@ -232,7 +232,9 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   shown underneath once it is laid, so the finished picture is exactly the logo. Timer, not scroll-scrubbed: it plays
   once. Styles in `motion.css` (`.mark-lay`); the old `.mark-build` stone rules there match nothing. In a
   text-and-picture band, pick
-  "The church mark" under Picture (`imageTextSection.art = mark`); About uses it for "The story in our mark".
+  "The church mark" under Picture (`imageTextSection.art = mark`). About used it for "The story in our mark"
+  until 2026-10-26, when that section came off the page (`scripts/content/about-remove-mark-story.mjs`); no
+  page uses it now, but the option stays.
 - **Baptism** (`BaptismGraphic.astro`, `art = baptism`): the green ring turns about 14 degrees across the scroll
   and the ripples swell; `#cross` is never transformed.
 - **Background path**: on a page with a rail or a walk, faint stones on an S-curve behind `<main>`, laid just ahead
