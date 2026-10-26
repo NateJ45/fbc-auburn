@@ -53,8 +53,8 @@ keeps their Studio simple. On Growth, give clients Editor (the People tool's
   plan or on Growth (custom roles are Enterprise). Field-level locking is done in
   schema (readOnly), not in roles.
 - Custom roles, more granular permissions, SSO, and Sanity's own
-  scheduled publishing arrive with the Growth plan (~$15/seat/month,
-  2026 pricing). Do not promise granularity you have not paid for.
+  scheduled publishing arrive with Sanity's paid Growth plan (see
+  sanity.io/pricing). Do not promise granularity you have not paid for.
   The family's publishAt cron (card 20) exists precisely so
   scheduling does not require the paid plan.
 - Seats are limited on the free plan (check the current limit before
