@@ -1,5 +1,12 @@
 # Change history
 
+_2026-10-26: the embed registry moves to the starter (card 172)._ `src/lib/embed-providers.ts`,
+its test and `EmbedPasteInput.tsx` are PORTABLE copies now, and the PORTABLE `build-csp.mjs`
+adds a known embed service's script origins itself, so `build-embed-csp.mjs` and
+`scripts/lib/embed-csp.mjs` are gone (one CSP writer). The Studio wording stays this site's
+(`EMBED_WORDS` in `sections.ts`), and a one-off approved origin now goes in
+`site.embeds.approvedScriptOrigins`. Nothing visible changes.
+
 _2026-10-26: the self-serve PRs landed together, and CI stops hanging._
 
 **Decision.** #207 to #210 kept conflicting with each other in the changelog and waiting on CI, so they landed as one PR (#212) after the People tool (#206). The "Install Playwright system libraries" step in `ci.yml` hung for 30 minutes or more five times in two days; each try is now capped at 5 minutes, with three tries. Visual baselines regenerated for the new header, footer, Contact and share cards.
