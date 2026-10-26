@@ -52,6 +52,21 @@ the code renders right before and after they run.
   and Call takes the page's red. Notices make 988, 911 and phone numbers tap-to-call, and take an
   optional `label` ("If it cannot wait" on the two crisis lines, by script). The prayer form becomes a
   link card at the end instead of the red closing band (content).
+  _2026-10-26: phones get a small copy of the Home hero video._
+
+**Decision.** The re-audit found phones downloading the full 1 MB, 1280px hero clip on 4G, and the
+Studio allowed 6 MB. Nathan asked for a phone-sized copy. Sanity serves files as uploaded (no
+transcoding), so the Home banner gains an optional **Phone video** upload (`backgroundVideoPhone`):
+under 768px the hero's script picks it before building the `<video>`, so only one copy is fetched,
+and phones fall back to the main clip when it is empty. The example clip has a 640px copy
+(`public/shot-examples/hero-pews-640.mp4`, 267 KB). The clip is also skipped when the browser
+measures a downlink under 1 Mbps, on top of 2G/3G, Save-Data, reduced motion and print. The Studio
+warns above 3 MB for the main clip (was 6 MB) and above 1 MB for the phone copy.
+
+**Measured** on Home at 375px, throttled 4G (1.6 Mbps, 150 ms, CPU 4x, Playwright, three runs):
+video 1,000 KB before, 267 KB after; LCP about 2.55 s both ways and still the poster image. At
+1280px the full clip still plays. Lighthouse mobile on a local build scored the same before and
+after (80 and 86 over two runs), with page weight down from 1,654 KB to 922 KB.
 
 _2026-10-25: the Studio catches up with the day's site changes._
 

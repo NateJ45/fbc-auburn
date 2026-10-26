@@ -113,11 +113,13 @@ export interface ProjectedCtaBlock {
 
 export type ProjectedHeroSection = { _key: string } & Omit<
   _HeroSection,
-  'backgroundImage' | 'backgroundVideo' | 'primaryCta' | 'secondaryCta'
+  'backgroundImage' | 'backgroundVideo' | 'backgroundVideoPhone' | 'primaryCta' | 'secondaryCta'
 > & {
     backgroundImage?: ProjectedImage | null;
     /** Home only (2026-10-25): the clip's URL and type, projected in SECTION_ARMS. */
     backgroundVideo?: { url?: string | null; mimeType?: string | null } | null;
+    /** Home only (2026-10-26): the phone copy, played under 768px. */
+    backgroundVideoPhone?: { url?: string | null; mimeType?: string | null } | null;
     primaryCta?: ProjectedCtaBlock | null;
     secondaryCta?: ProjectedCtaBlock | null;
   };

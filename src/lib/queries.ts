@@ -85,6 +85,7 @@ const SECTION_ARMS = `
       ...,
       backgroundImage${IMAGE_PROJECTION},
       backgroundVideo{ "url": asset->url, "mimeType": asset->mimeType },
+      backgroundVideoPhone{ "url": asset->url, "mimeType": asset->mimeType },
       primaryCta${CTA_PROJECTION},
       secondaryCta${CTA_PROJECTION}
     },

@@ -4,8 +4,10 @@ import assert from 'node:assert/strict';
 import {
   FAST_START_PROBE_BYTES,
   checkFastStart,
+  HERO_PHONE_VIDEO_BUDGET,
   HERO_VIDEO_BUDGET,
   heroVideoAllowed,
+  heroVideoPick,
   heroVideoProblem,
   heroVideoSource,
   mp4FastStart,
@@ -35,7 +37,34 @@ test('heroVideoProblem: an error for the wrong type, a warning over budget', () 
   assert.equal(heroVideoProblem({ mimeType: 'video/quicktime', size: 1 })?.level, 'error');
   const big = heroVideoProblem({ mimeType: 'video/mp4', size: HERO_VIDEO_BUDGET + 1 });
   assert.equal(big?.level, 'warning');
-  assert.match(big?.message ?? '', /6\.0 MB/);
+  assert.match(big?.message ?? '', /3\.0 MB\. Keep it under 3 MB/);
+});
+
+test('heroVideoProblem: the phone copy has its own 1 MB budget', () => {
+  assert.equal(heroVideoProblem({ mimeType: 'video/mp4', size: 280_000 }, 'phone'), null);
+  const big = heroVideoProblem(
+    { mimeType: 'video/mp4', size: HERO_PHONE_VIDEO_BUDGET + 1 },
+    'phone',
+  );
+  assert.equal(big?.level, 'warning');
+  assert.match(big?.message ?? '', /phone video is 1\.0 MB\. Keep it under 1 MB/);
+  // 1.5 MB is fine for the main clip but over the phone budget.
+  assert.equal(heroVideoProblem({ mimeType: 'video/mp4', size: 1_500_000 }), null);
+  assert.equal(
+    heroVideoProblem({ mimeType: 'video/mp4', size: 1_500_000 }, 'phone')?.level,
+    'warning',
+  );
+});
+
+test('heroVideoPick: the phone copy on a phone, the main clip elsewhere', () => {
+  const main = { url: '/big.mp4', type: 'video/mp4' };
+  const phone = { url: '/small.mp4', type: 'video/mp4' };
+  assert.equal(heroVideoPick(main, phone, true), phone);
+  assert.equal(heroVideoPick(main, phone, false), main);
+  // No phone copy: phones play the main clip; only a phone copy: everyone gets it.
+  assert.equal(heroVideoPick(main, null, true), main);
+  assert.equal(heroVideoPick(null, phone, false), phone);
+  assert.equal(heroVideoPick(null, null, true), null);
 });
 
 test('heroVideoAllowed keeps the still for reduced motion, print, Save-Data and slow links', () => {
@@ -47,6 +76,11 @@ test('heroVideoAllowed keeps the still for reduced motion, print, Save-Data and 
   for (const slow of ['slow-2g', '2g', '3g']) {
     assert.equal(heroVideoAllowed({ reducedMotion: false, effectiveType: slow }), false, slow);
   }
+  // A measured downlink under 1 Mbps keeps the still even on "4g"; 0 means unknown.
+  const fourG = { reducedMotion: false, effectiveType: '4g' };
+  assert.equal(heroVideoAllowed({ ...fourG, downlink: 0.45 }), false);
+  assert.equal(heroVideoAllowed({ ...fourG, downlink: 1.6 }), true);
+  assert.equal(heroVideoAllowed({ ...fourG, downlink: 0 }), true);
 });
 
 /** An mp4's top-level boxes, each `[type, size]`, with empty bodies. */
@@ -90,10 +124,21 @@ test('mp4FastStart: cannot tell for a non-mp4 or when neither box is in reach', 
   assert.equal(mp4FastStart(new Uint8Array(0)), null);
 });
 
-test('mp4FastStart: the stock sample clip is saved for fast start', async () => {
+test('mp4FastStart: the stock sample clips are saved for fast start', async () => {
   const { readFile } = await import('node:fs/promises');
-  const file = await readFile(new URL('../../public/shot-examples/sermon.mp4', import.meta.url));
-  assert.equal(mp4FastStart(new Uint8Array(file).subarray(0, FAST_START_PROBE_BYTES)), true);
+  for (const name of ['sermon.mp4', 'hero-pews-640.mp4']) {
+    const file = await readFile(new URL(`../../public/shot-examples/${name}`, import.meta.url));
+    assert.equal(
+      mp4FastStart(new Uint8Array(file).subarray(0, FAST_START_PROBE_BYTES)),
+      true,
+      name,
+    );
+  }
+  // The phone example stays a phone-sized download (2026-10-26).
+  const phone = await readFile(
+    new URL('../../public/shot-examples/hero-pews-640.mp4', import.meta.url),
+  );
+  assert.ok(phone.byteLength < HERO_PHONE_VIDEO_BUDGET / 2, `${phone.byteLength} bytes`);
 });
 
 test('checkFastStart asks for the first 64 KB and never warns on a failed request', async () => {

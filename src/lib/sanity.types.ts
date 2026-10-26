@@ -1927,6 +1927,11 @@ export type HeroSection = {
     media?: unknown;
     _type: 'file';
   };
+  backgroundVideoPhone?: {
+    asset?: SanityFileAssetReference;
+    media?: unknown;
+    _type: 'file';
+  };
   primaryCta?: CtaBlock;
   secondaryCta?: CtaBlock;
   size?: 'tall' | 'short';

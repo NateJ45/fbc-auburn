@@ -4,16 +4,28 @@
 // is all that shows when the clip should not play. This file holds the two decisions, so they are
 // unit tested (hero-video.test.ts) and shared by the Studio field (sections.ts) and the hero's
 // script (HomeHero.astro):
-//   - which uploads count as a hero video (mp4 or webm only), and the size budget;
+//   - which uploads count as a hero video (mp4 or webm only), and the size budgets;
+//   - which copy a visitor gets: the "Phone video" (2026-10-26, about 640px wide and a few hundred
+//     KB) below 768px when one is uploaded, else the main clip. Sanity serves files as uploaded and
+//     does not transcode them, so the small copy is a second upload, chosen by the hero's script
+//     before any request is made;
 //   - whether this visitor gets the clip at all: never with reduced motion, Save-Data or a slow
-//     connection (2G, 3G), and never in print, which shows the photo.
+//     connection (2G, 3G, or a measured downlink under 1 Mbps), and never in print, which shows
+//     the photo.
 
 /** The file types the field takes; the Studio's file picker is limited to these too. */
 export const HERO_VIDEO_TYPES = ['video/mp4', 'video/webm'] as const;
 export const HERO_VIDEO_ACCEPT = HERO_VIDEO_TYPES.join(',');
 
-/** The size budget the Studio warns above (bytes). A 20 second 720p clip with no sound is 3 to 5 MB. */
-export const HERO_VIDEO_BUDGET = 6 * 1024 * 1024;
+/**
+ * The size budget the Studio warns above (bytes). Lowered from 6 MB on 2026-10-26: a 20 second
+ * 720p clip with no sound exported for the web is 1 to 3 MB.
+ */
+export const HERO_VIDEO_BUDGET = 3 * 1024 * 1024;
+/** The phone copy's budget (bytes): 640px wide, 15 to 20 seconds, is 200 to 500 KB. */
+export const HERO_PHONE_VIDEO_BUDGET = 1024 * 1024;
+/** Below this width the hero plays the phone copy (the site's phone breakpoint). */
+export const HERO_PHONE_QUERY = '(max-width: 767px)';
 
 export interface HeroVideoAsset {
   url?: string | null;
@@ -33,23 +45,47 @@ export function heroVideoSource(
 
 /**
  * The Studio's note on an upload: an error for a type the hero cannot play, a warning over the
- * size budget, else nothing. Plain words, because Pastor Jacob reads them.
+ * size budget (the main clip's, or the phone copy's), else nothing. Plain words, because Pastor
+ * Jacob reads them.
  */
 export function heroVideoProblem(
   asset: HeroVideoAsset | null | undefined,
+  kind: 'main' | 'phone' = 'main',
 ): { level: 'error' | 'warning'; message: string } | null {
   if (!asset) return null;
   if (asset.mimeType && !(HERO_VIDEO_TYPES as readonly string[]).includes(asset.mimeType)) {
     return { level: 'error', message: 'The video must be an .mp4 or .webm file.' };
   }
-  if (typeof asset.size === 'number' && asset.size > HERO_VIDEO_BUDGET) {
-    const mb = (asset.size / 1024 / 1024).toFixed(1);
+  const budget = kind === 'phone' ? HERO_PHONE_VIDEO_BUDGET : HERO_VIDEO_BUDGET;
+  if (typeof asset.size === 'number' && asset.size > budget) {
+    const size =
+      asset.size < 1024 * 1024
+        ? `${Math.round(asset.size / 1024)} KB`
+        : `${(asset.size / 1024 / 1024).toFixed(1)} MB`;
     return {
       level: 'warning',
-      message: `This video is ${mb} MB. Keep it under 6 MB (shorter, or exported at 720p with no sound) so Home loads quickly on a phone.`,
+      message:
+        kind === 'phone'
+          ? `This phone video is ${size}. Keep it under 1 MB (640 pixels wide, no sound, 15 to 20 seconds) so it plays quickly on a phone signal.`
+          : `This video is ${size}. Keep it under 3 MB (shorter, or exported at 720p with no sound) so Home loads quickly.`,
     };
   }
   return null;
+}
+
+export interface HeroVideoChoice {
+  url: string;
+  type: string;
+}
+
+/** The copy this visitor gets: the phone copy on a phone screen when there is one, else the main clip. */
+export function heroVideoPick(
+  main: HeroVideoChoice | null,
+  phone: HeroVideoChoice | null,
+  isPhone: boolean,
+): HeroVideoChoice | null {
+  if (isPhone && phone) return phone;
+  return main ?? phone;
 }
 
 /** How many bytes of an upload the Studio reads to judge fast start (one range request). */
@@ -113,16 +149,22 @@ export interface MotionContext {
   saveData?: boolean;
   /** navigator.connection.effectiveType: 'slow-2g', '2g', '3g' or '4g' */
   effectiveType?: string;
+  /** navigator.connection.downlink: the browser's estimate in Mbps (0 or missing when unknown) */
+  downlink?: number;
   /** matchMedia('print').matches */
   print?: boolean;
 }
 
 const SLOW = new Set(['slow-2g', '2g', '3g']);
+/** A measured downlink under this (Mbps) keeps the still, even when the browser calls it 4G. */
+export const SLOW_DOWNLINK_MBPS = 1;
 
 /** True when this visitor should get the clip; false keeps the still photo. */
 export function heroVideoAllowed(ctx: MotionContext): boolean {
   if (ctx.reducedMotion || ctx.print) return false;
   if (ctx.saveData) return false;
   if (ctx.effectiveType && SLOW.has(ctx.effectiveType)) return false;
+  if (typeof ctx.downlink === 'number' && ctx.downlink > 0 && ctx.downlink < SLOW_DOWNLINK_MBPS)
+    return false;
   return true;
 }
