@@ -285,11 +285,18 @@ const secondary = block.secondaryCta;
       if (toggle) toggle.hidden = true;
     };
     reduce.addEventListener('change', onReduce);
+    // Chrome pauses a muted video in a hidden tab and does not always start it again, so a Home
+    // opened in a background tab showed the still photo after switching to it. Pick up again here.
+    const onVisible = () => {
+      if (!document.hidden && clip.isConnected) run();
+    };
+    document.addEventListener('visibilitychange', onVisible);
     document.addEventListener(
       'astro:before-swap',
       () => {
         io.disconnect();
         reduce.removeEventListener('change', onReduce);
+        document.removeEventListener('visibilitychange', onVisible);
         clip.pause();
       },
       { once: true },
