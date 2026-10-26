@@ -56,15 +56,21 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
 - **At cutover:** run the HSTS subdomain check in `docs/agent/deployment.md` before putting
   `includeSubDomains` and `preload` back. A pasted form that posts off-site needs its origin on the
   `form-action` line.
-- **Starter card 161** (NateJ45/ncs-astro-sanity-starter#197, draft): `snapshot.mjs run` reads the
-  project id from the snapshot, or fails, instead of letting a build with no id ignore it. Merges
-  after card 159; then copy `scripts/snapshot.mjs` and `scripts/lib/snapshot.test.mjs` here.
-- **Starter card 160 is parked** (Nathan, 2026-10-25): branch `port/card-160`, pushed to the starter
-  with no PR and no PORTS.md card yet. It fails `build-csp.mjs` when the CSP line passes
-  2,000 characters, and moves user-facing words in five marked files to American spelling
-  ("Website inquiry" in contact emails, "color", "judgment" in the Studio). Shipping it means copy PRs
-  to fbcm, presacademy, stonesteps-50k, reid-design-site, mas-monograms and this repo, and a choice
-  about those sites' wording. Card 161 went ahead of it.
+- **Starter card 161 is on hold** (Nathan, 2026-10-25; NateJ45/ncs-astro-sanity-starter#197, green
+  and mergeable, auto-merge off): `snapshot.mjs run` reads the project id from the snapshot, or fails,
+  instead of letting a build with no id ignore it. Merge it only after starter card 160 (file-style
+  redirects, starter #204, merged 2026-10-26) has its `src/lib/redirects.ts` copy landed in fbcm,
+  presacademy, stonesteps-50k, reid-design-site and this repo; until then those sites' PRs show
+  DRIFT. Then open the waiting 161 copy PRs: branches `port/starter-card-161` are pushed in fbcm and
+  stonesteps-50k (worktrees `_worktrees/c161-*`); this repo copies `scripts/snapshot.mjs`,
+  `scripts/lib/snapshot.test.mjs` and PORTS.md, and drops this bullet.
+- **The spelling card is parked, unnumbered** (Nathan, 2026-10-25): starter branch `port/card-160`
+  with no PR and no PORTS.md card. Its number went to the redirects card, so it needs the next free
+  one (`node scripts/next-port-card.mjs`). It fails `build-csp.mjs` when the CSP line passes 2,000
+  characters, and moves user-facing words in five marked files to American spelling ("Website
+  inquiry" in contact emails, "color", "judgment" in the Studio). Site branches
+  `port/card-160-spelling` are pushed in fbcm, mas-monograms, presacademy, reid-design-site and
+  stonesteps-50k. Shipping it needs a choice about those sites' wording.
 - **Ports:** the fixes that are not church-specific go to the starter with port cards: the print
   reset and `print.spec`, the regex-backslash guard, the dark-surface ring, the ContactForm changes
   (POST fallback, one-pass errors, sessionStorage), the FaqAccordion landmark fix, the `<dialog>`
