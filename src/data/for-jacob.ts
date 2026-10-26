@@ -363,7 +363,7 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'When life happens.',
       detail:
-        'Hospital visits, funerals, weddings and a hand when someone is struggling: the drafts at the foot of this page are ours. Tell us how each works here, and how to reach you in an emergency.',
+        'Hospital visits, funerals, weddings and a hand when someone is struggling now live on the Need the pastor? page, which this page links to. Tell us how each works here, and how to reach you in an emergency, in the notes on that page.',
     },
     {
       title: 'Can people text the church phone?',

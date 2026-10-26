@@ -28,8 +28,9 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
   (`src/pages/api/form.ts`). The form says so once, beside the button (`FormBlock.astro`). Contact
   points prayer requests there; the Privacy policy says the same. Contact messages ARE kept, and
   the Privacy policy says that too, so the three never disagree.
-- **The crisis line**, a "Good to know" notice on the Prayer page and on Need the pastor?: "If you
-  are in danger or thinking of harming yourself, call or text 988, or call 911."
+- **No crisis band** (Nathan, 2026-10-26): the 988/911 notice ("If it cannot wait") was removed from
+  the Prayer page (`pr-crisis`) and Need the pastor? (`pc-crisis`); backups of both pages were kept.
+  Notices can still make 988 and 911 tap-to-call if one is added back.
 
 ## Named anchors
 
@@ -72,9 +73,9 @@ A section whose block key is in `src/lib/section-anchors.ts` gets that name as i
 - **Leadership**: the pastor (photo slot, a hello-video ask, his TikTok named as his), How we are
   led (congregational government ask, deacons with permission), Contact details (office email and
   hours once they are in Church facts).
-- **Prayer requests**: page head (who reads it), the crisis line, the form (prayer chain box off by
+- **Prayer requests**: page head (who reads it), the form (prayer chain box off by
   default, "call me" box and an optional phone), and a band to Need the pastor?.
-- **Need the pastor?** (`page-pastoral-care`, `/pastoral-care/`, new): the crisis line, How to reach
+- **Need the pastor?** (`page-pastoral-care`, `/pastoral-care/`, new): Call and Text first, How to reach
   him (after-hours and office asks), Contact details, When life happens (hospital and home, the
   Lord's Supper at home, a funeral, a wedding, a hand when you need it), and a band to the Prayer
   page. Contact's "When life happens" now holds two cards that lead here and to Prayer, and
