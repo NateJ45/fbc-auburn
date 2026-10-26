@@ -1,13 +1,15 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Safe to edit by hand (in the starter; site copies stay byte-identical, PORTS.md card 167)
 //
-// One list of the church's social accounts for every place that shows the round icon buttons:
-// the header strip, the phone menu, the footer and Contact (2026-10-24, Contact 2026-10-26).
+// One list of the site's social accounts for every place that shows the round icon buttons
+// (the footer in the starter; a site may also draw them in its header strip, phone menu or
+// Contact page).
 //
-// Editor-managed (2026-10-26): Pastor Jacob adds a row in Site settings > Social links by pasting
-// a link (and, if he likes, a label). The platform, and so the icon and the button's name, is read
-// from the link's address by `platformFromUrl()` below, so a new account needs no code change and
-// no dropdown. An address this file does not know gets the plain link icon and his label, or the
-// site's name (the domain) when he gave none.
+// Editor-managed: the editor adds a row in Site settings > Social links by pasting a link (and,
+// if they like, a label). The platform, and so the icon and the button's name, is read from the
+// link's address by `platformFromUrl()` below, so a new account needs no code change and no
+// dropdown. An address this file does not know gets the plain link icon and the editor's label,
+// or the site's name (the domain) when they gave none.
 //
 // Older rows carry a `platform` the editor picked from a dropdown (the field is now hidden). The
 // address wins when it is known; the stored platform stands in only for an address this file does
@@ -15,13 +17,13 @@
 //
 // WhatsApp is the one platform with a rule on the address: only an invite (chat.whatsapp.com/...)
 // or a number link (wa.me/...) is a link a visitor can use, so any other WhatsApp address is left
-// out rather than drawn as a broken button. A link is never built from the church phone.
+// out rather than drawn as a broken button. A link is never built from a phone number.
 //
 // Order: the editor's Social links list as typed. With that list empty, the legacy Instagram /
-// Facebook fields stand in so an older dataset keeps its buttons. A Facebook page from Church
-// facts joins the front when no Facebook entry is in the list, so the menu never loses it.
-// Icons for each platform live in social-icons.ts (kept apart so this file stays plain data, and
-// so the Studio schema can import it for its warnings).
+// Facebook fields stand in so an older dataset keeps its buttons. A caller may pass a Facebook
+// address kept elsewhere (a site's own facts field, say); it joins the front when no Facebook
+// entry is in the list. Icons for each platform live in social-icons.ts (kept apart so this file
+// stays plain data, and so the Studio schema can import it for its warnings and previews).
 
 export interface SocialLink {
   /** A key from PLATFORMS below, or 'Other'. */
@@ -48,8 +50,8 @@ interface Platform {
   hosts: string[];
 }
 
-// The common accounts a church keeps. Add a row here (and an icon in social-icons.ts) to teach
-// the site a new one; until then it still shows, with the plain link icon.
+// The common accounts a small organization keeps. Add a row here (and an icon in social-icons.ts)
+// to teach the site a new one; until then it still shows, with the plain link icon.
 export const PLATFORMS: Platform[] = [
   { key: 'Facebook', name: 'Facebook', hosts: ['facebook.com', 'fb.com', 'fb.me', 'fb.watch'] },
   { key: 'Instagram', name: 'Instagram', hosts: ['instagram.com', 'instagr.am'] },
@@ -66,6 +68,9 @@ export const PLATFORMS: Platform[] = [
   { key: 'Nextdoor', name: 'Nextdoor', hosts: ['nextdoor.com'] },
   { key: 'Flickr', name: 'Flickr', hosts: ['flickr.com', 'flic.kr'] },
   { key: 'Linktree', name: 'Linktree', hosts: ['linktr.ee', 'linktree.com'] },
+  // The starter's old dropdown offered Houzz; Tabler has no icon for it, so it keeps the plain
+  // link icon but is still named "Houzz" for screen readers.
+  { key: 'Houzz', name: 'Houzz', hosts: ['houzz.com'] },
 ];
 
 const BY_KEY = new Map(PLATFORMS.map((p) => [p.key, p]));
@@ -105,7 +110,7 @@ export function isValidWhatsAppUrl(url: string | null | undefined): boolean {
   return (host === 'wa.me' || host === 'chat.whatsapp.com') && path.length > 0;
 }
 
-/** The site's own name for an unknown address, like "churchblog.org". */
+/** The site's own name for an unknown address, like "example.org". */
 export function domainOf(url: string | null | undefined): string {
   const u = parse(url);
   return u ? bareHost(u) : '';
@@ -132,9 +137,13 @@ export function resolveSocialLink(row: {
   return { platform, url, ...(label ? { label } : {}) };
 }
 
+/**
+ * The buttons to draw, in order. `pinnedFacebook` is an optional Facebook address kept outside the
+ * list (a site's facts field); it joins the front only when the list has no Facebook entry.
+ */
 export function resolveSocialLinks(
   settings: RawSocialSettings | null | undefined,
-  facebookFact?: string | null,
+  pinnedFacebook?: string | null,
 ): SocialLink[] {
   const listed = (settings?.socialLinks ?? [])
     .map((l) => (l ? resolveSocialLink(l) : null))
@@ -146,8 +155,8 @@ export function resolveSocialLinks(
           resolveSocialLink({ platform: 'Instagram', url: settings?.socialInstagram }),
           resolveSocialLink({ platform: 'Facebook', url: settings?.socialFacebook }),
         ].filter((l): l is SocialLink => l !== null);
-  if (facebookFact && !links.some((l) => l.platform === 'Facebook')) {
-    const fb = resolveSocialLink({ platform: 'Facebook', url: facebookFact });
+  if (pinnedFacebook && !links.some((l) => l.platform === 'Facebook')) {
+    const fb = resolveSocialLink({ platform: 'Facebook', url: pinnedFacebook });
     if (fb) links.unshift(fb);
   }
   return links.slice(0, MAX_SOCIAL_LINKS);
@@ -177,8 +186,8 @@ export function socialUrlWarning(url: string | null | undefined): string | null 
     return 'This WhatsApp link will not show. Use a group invite (https://chat.whatsapp.com/...) or a number link (https://wa.me/...).';
   const path = u.pathname.replace(/^\/+|\/+$/g, '');
   if (found && !path && !u.search)
-    return `This is the ${found.name} home page, not the church's own page. Open the church's page and copy its address.`;
+    return `This is the ${found.name} home page, not your own page there. Open your page and copy its address.`;
   if (/(^|\.)(google\.[a-z.]+|bing\.com)$/.test(bareHost(u)) && /search/.test(u.pathname))
-    return 'This looks like a search results page. Open the church page itself and copy its address.';
+    return 'This looks like a search results page. Open the page itself and copy its address.';
   return null;
 }

@@ -769,6 +769,11 @@ there is nothing to remember after a title changes or a page is added.
    runner's Chrome). With no browser it never fails the build: those pages share
    `og-default.png` and the log says why.
 
+The machinery is the starter's (PORTS.md card 169): `scripts/build-og-cards.mjs`,
+`scripts/lib/og-build.mjs`, `src/lib/og-card-marker.ts` and their tests are PORTABLE, so change
+them in the starter. The design is Auburn's own: `scripts/lib/og-card.mjs` keeps the three exports
+the build calls (`cardHtml`, `renderHtml`, `closeCards`).
+
 `npm run og` still draws `public/og-default.png` (committed) from the Site settings tagline. A
 square icon uploaded in Site settings replaces the brand kit's mark on every card at the next
 build. Titles up to about 70 characters fit (108px down to 60px, three lines at most); em and en

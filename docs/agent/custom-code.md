@@ -78,7 +78,7 @@ is for, and the Checkup keeps it visible.
 
 ## Paste-and-go and the provider registry (2026-10-26)
 
-The block has one paste box at the top (`src/sanity/components/EmbedPasteInput.tsx`). A link, or
+The block has one paste box at the top (`src/sanity/components/EmbedPasteInput.tsx`; it, the registry and their tests are PORTABLE copies from the starter, card 172). A link, or
 code that is only an iframe, goes into `embedUrl`; other code into `embedCode`, with
 `runsOnPage` switched on when every script in it comes from a known service. Nothing new is
 stored: `src/lib/embed-providers.ts` works the plan out again in the Studio and on every build
@@ -95,16 +95,16 @@ stored: `src/lib/embed-providers.ts` works the plan out again in the Studio and 
   nothing for it. A known service's frame also gets `allow-popups-to-escape-sandbox` and its
   `allow` list (payment, fullscreen). The Height choice hides when the service sets the size.
 - **The guard rail.** With "Runs directly on the page" on, code still goes in its box unless
-  every `<script src>` belongs to a known service or to `APPROVED_SCRIPT_ORIGINS` (empty), and
+  every `<script src>` belongs to a known service or to `site.embeds.approvedScriptOrigins` in `src/data/site.ts` (empty), and
   inline scripts or `on*` handlers only ride along with such a script. The Studio says the
   studio must approve it. An unknown LINK still works, framed in the sandboxed iframe. To
-  approve a service, add it to the registry with a test.
+  approve a service, add it to the registry in the starter with a test, then copy it here.
 - **CSP**: a known service's code (boxed or on the page) carries `data-embed-provider="<id>"` on
-  its wrapper. `scripts/build-embed-csp.mjs` runs after `build-csp.mjs`, reads those ids from the
+  its wrapper. `scripts/build-csp.mjs` (PORTABLE, card 172; one CSP writer) reads those ids from the
   built pages, and adds that service's script hosts and their subdomains (`https://tithe.ly`,
   `https://*.tithe.ly`) to the `script-src` line, only when a page uses the service, and fails
-  the build past 2,000 characters. Kept out of the PORTABLE `build-csp.mjs` on purpose. Tests:
-  `embed-providers.test.ts`, `scripts/lib/embed-csp.test.mjs`.
+  the build past 2,000 characters. The Studio wording (who approves, which examples) is `EMBED_WORDS` in `src/sanity/schemaTypes/sections.ts`. Tests:
+  `embed-providers.test.ts`, `scripts/lib/csp.test.mjs`.
 - **Not verified against real snippets**: the script hosts for Givelify, Subsplash and
   SignUpGenius are each service's main domain. If a real snippet loads from elsewhere, the
   Studio will say "not known" and the fix is a registry line.

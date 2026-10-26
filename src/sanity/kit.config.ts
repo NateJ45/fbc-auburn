@@ -636,9 +636,10 @@ export const kitConfig: KitConfig = {
   // Home's "Your pages" card (card 115): every page the pastor can change, in
   // the menu's own words, one click each. The five built pages are custom pages
   // (type 'page', ids from the seed); "Other pages you built" lists any new
-  // custom page by name without touching this file. Give has no document of its
-  // own (src/pages/give.astro builds it from Church facts), so it opens the
-  // online giving link. Desk ids are load-bearing (structure.ts).
+  // custom page by name without touching this file. Give and This week's bulletin
+  // are Studio pages since 2026-10-26 (scripts/content/builder-pages.mjs), and the
+  // old Questions page is not listed (it forwards to Plan your visit). Desk ids are
+  // load-bearing (structure.ts).
   pages: [
     {
       title: 'Main pages',
@@ -650,13 +651,11 @@ export const kitConfig: KitConfig = {
         { title: 'Ministries', target: { doc: 'page-ministries', type: 'page' } },
         { title: 'Leadership', target: { doc: 'page-leadership', type: 'page' } },
         { title: 'Watch', target: { doc: 'page-watch', type: 'page' } },
-        {
-          title: 'Give',
-          detail: 'The online giving link',
-          target: { doc: 'siteSettings', field: 'givingUrl' },
-        },
+        { title: 'Sermons', target: { doc: 'sermonsPage' } },
+        { title: "This week's bulletin", target: { doc: 'page-bulletin', type: 'page' } },
+        { title: 'News and notes', target: { doc: 'journalPage' } }, // scaffold: journal
+        { title: 'Give', target: { doc: 'page-give', type: 'page' } },
         { title: 'Contact', target: { doc: 'contactPage' } },
-        { title: 'Questions', target: { doc: 'faqPage' } },
         { title: 'Privacy policy', target: { doc: 'privacyPage' } },
       ],
     },

@@ -1,4 +1,4 @@
-// Seeds the church-year saved sections (Easter, Christmas, Homecoming, Revival, Trunk-or-treat,
+// Seeds the church-year saved sections (Easter, Christmas, Advent Sundays, Christmas Eve candlelight, Homecoming, Revival, Trunk-or-treat,
 // Thanksgiving, Building fund, Anniversary year, Snow Sunday, Lottie Moon, Annie Armstrong,
 // Memorial) so the pastor can add them to any page with "Insert a saved section" (2026-10-18).
 //
@@ -20,7 +20,8 @@
 //   NCS_PRODUCTION_WRITE=yes node --experimental-strip-types scripts/content/seed-section-patterns.mjs --apply
 // PowerShell:
 //   $env:NCS_PRODUCTION_WRITE='yes'; node --experimental-strip-types scripts/content/seed-section-patterns.mjs --apply; Remove-Item Env:NCS_PRODUCTION_WRITE
-// Verify afterwards: Pages > Saved sections lists the twelve, each marked as a draft.
+// Verify afterwards: Pages > Saved sections lists the fourteen, each marked as a draft.
+// A pattern rewritten in code later: refresh-section-patterns.mjs replaces an unedited draft.
 
 import { client, apply, done } from '../lib/sanity-lib.mjs';
 import { SECTION_PATTERNS } from '../../src/sanity/sectionPatterns.ts';

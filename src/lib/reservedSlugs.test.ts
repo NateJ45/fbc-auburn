@@ -57,11 +57,9 @@ test('every reserved slug is a route this repo serves, a scaffolded one, or a bu
     'journal',
     'contact',
     'privacy',
-    // src/pages/give.astro (visitor audit, 2026-10-18).
-    'give',
-    // src/pages/sermons/ and src/pages/bulletin.astro (the collections, 2026-10-18).
+    // src/pages/sermons/ (the collections, 2026-10-18). Give and the bulletin are Studio pages
+    // since 2026-10-26, built by [slug].astro, so they are not reserved.
     'sermons',
-    'bulletin',
     '404',
     // Served, but never for visitors: the fixed-data design-system wall the
     // visual suite screenshots. Reserved so a custom page cannot shadow it.
