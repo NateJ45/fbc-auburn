@@ -93,7 +93,7 @@ a short silent clip: Studio > Home > Page layout > Opening banner > **Background
   and in print as a second guard (`.hb-photo` is already hidden in print).
 - A Pause / Play button (`[data-hero-video-toggle]`, `aria-pressed`) sits at the top right
   (WCAG 2.2.2, motion longer than five seconds). The choice is kept in `localStorage`
-  (`fbc-hero-video-paused`). The clip pauses while the hero is off screen.
+  (`fbc-hero-video-paused`). The clip pauses while the hero is off screen, and starts again when a tab opened in the background comes to the front (Chrome pauses a muted video in a hidden tab and does not always resume it).
 - It drifts with the photo on scroll (class `hb-photo__img`), sits at `z-index: 0` under the shade's
   `z-index: 1`, and plays at `opacity: 0.99`, never 1. Chrome on Windows promotes a fully opaque video
   to a hardware overlay plane drawn outside the page; when it switched to that mid-scroll the navy
