@@ -1,5 +1,13 @@
 # Change history
 
+_2026-10-26: an optional button left empty no longer blocks Publish._ Building a Christmas page in
+the live Studio, a fresh Event details block stopped Publish with "Button text: Required" and "Link type:
+Required" on its optional button: `ctaBlock`'s "Open in new tab" had `initialValue: false`, so every new
+block carried a half-made button whose required fields then fired. `ctaBlock` now has no initial value
+and asks for the words and link type only once any part of the button is filled in; `CtaLink` draws
+nothing for an empty button object (it used to fall back to "Get in touch"), and an empty Invitation
+band button no longer takes the page's red. No published page had an empty button.
+
 _2026-10-26: every main page is a page builder._
 
 **Decision.** Pastor Jacob should be able to rearrange, remove and add sections on every main page,
