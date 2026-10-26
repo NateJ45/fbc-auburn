@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-26: Playwright installs time out instead of hanging (starter card 70)._ Three docs-only PRs across the family sat 40 to 60 minutes in "Install Playwright system libraries" on 2026-10-26: the runner's Azure Ubuntu mirror fed a normal 30-second `install-deps` at 29 kB/s, and the workflows had no timeout, so a stuck apt could hold a required check for GitHub's 6-hour default. Each install attempt now runs under `timeout` (180s for `install-deps`, 360s for a full browser download), so a crawling first try is killed and the retry resumes the partial download; the step has `timeout-minutes` (8 and 15) and the Playwright job 30. This replaces the three 5-minute tries the self-serve PR put on `install-deps` the same morning, so the step matches the rest of the family.
+
 _2026-10-26: the embed registry moves to the starter (card 172)._ `src/lib/embed-providers.ts`,
 its test and `EmbedPasteInput.tsx` are PORTABLE copies now, and the PORTABLE `build-csp.mjs`
 adds a known embed service's script origins itself, so `build-embed-csp.mjs` and
