@@ -49,7 +49,7 @@ ministries, next-steps, pastoral-care, prayer, what-we-believe, the pastor's jou
 placeholder sermon. Both workflows now set the ids at the workflow level (as fbcm and stonesteps-50k do),
 and `tests/page-weight.spec.ts` checks FAQPage, Church and the eager Ministries photo strictly again.
 The guard that stops this happening silently (`snapshot.mjs run` reads the id from the snapshot, or
-fails) is starter card 161, queued behind cards 155 to 160.
+fails) is starter card 161, now copied here too.
 
 _2026-10-25: a Give button, a red visit button, and a wider footer._
 
