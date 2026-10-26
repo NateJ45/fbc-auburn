@@ -19,7 +19,7 @@ import {
   type ChurchFacts,
   type ServiceTime,
 } from './church-facts.ts';
-import { buildIcs, escapeText, foldLine, type IcsWeekday } from './ics.ts';
+import { buildIcs, type IcsWeekday } from './ics.ts';
 
 /** "Kids and youth" -> "kids-and-youth". */
 export function slugify(title?: string | null): string {
@@ -122,12 +122,16 @@ export function nextDateFor(dayIndex: number, now: Date): string {
 }
 
 const BYDAY: IcsWeekday[] = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
-
 /**
  * A weekly calendar file for one gathering, or null while its time is not confirmed (the
  * church's rule since /sunday.ics: never put a provisional time in someone's calendar). The file
  * itself (escaping, line folding, the Eastern VTIMEZONE) comes from the starter's buildIcs
  * (src/lib/ics.ts, PORTS.md card 158).
+ *
+ * A different Sunday (2026-10-26): the dates this gathering does not meet as usual go in as
+ * buildIcs exceptions (starter card 173). A cancelled date is an EXDATE on the weekly event; a
+ * new time is the same event again with a RECURRENCE-ID, so calendar apps move that one date and
+ * no other. Past dates and dates before the file's start are left out.
  */
 export function gatheringIcs(
   facts: Pick<ChurchFacts, 'serviceTimes' | 'address'> &
@@ -138,82 +142,43 @@ export function gatheringIcs(
 ): string | null {
   const s = facts.serviceTimes.find((x) => x.key === key);
   if (!s || !s.confirmed) return null;
-  const hh = String(Math.floor(s.minutes / 60)).padStart(2, '0');
-  const mm = String(s.minutes % 60).padStart(2, '0');
   const host = siteUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
   const name = facts.title ? plain(facts.title) : 'Church';
   const start = nextDateFor(s.dayIndex, now);
-  const file = buildIcs({
+  // Eastern time, so the event keeps its local time through the clock changes.
+  const at = (date: string, minutes: number) => ({
+    date,
+    time: `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`,
+    tzid: 'America/New_York',
+  });
+  const uid = `weekly-${s.key}@${host}`;
+  const words = {
+    summary: `${plain(s.label)}, ${name}`,
+    ...(facts.address?.confirmed ? { location: plain(facts.address.oneLine) } : {}),
+    url: `${siteUrl}/events/`,
+  };
+  const { skip, moved } = gatheringExceptions(facts, key, now);
+  const movedOn = moved.filter((m) => m.date >= start);
+  const cancelledOn = skip.filter((d) => d >= start && !moved.some((m) => m.date === d));
+  return buildIcs({
     prodId: '-//fbc-auburn//gatherings//EN',
     now,
     events: [
       {
-        uid: `weekly-${s.key}@${host}`,
-        // Eastern time, so the event keeps its local time through the clock changes.
-        start: {
-          date: start,
-          time: `${hh}:${mm}`,
-          tzid: 'America/New_York',
-        },
+        uid,
+        start: at(start, s.minutes),
         duration: 'PT1H',
         rrule: { freq: 'WEEKLY', byDay: [BYDAY[s.dayIndex]] },
-        summary: `${plain(s.label)}, ${name}`,
-        ...(facts.address?.confirmed ? { location: plain(facts.address.oneLine) } : {}),
-        url: `${siteUrl}/events/`,
+        ...(cancelledOn.length ? { exdate: cancelledOn.map((d) => at(d, s.minutes)) } : {}),
+        ...words,
       },
+      ...movedOn.map((m) => ({
+        uid,
+        recurrenceId: at(m.date, s.minutes),
+        start: at(m.date, m.minutes),
+        duration: 'PT1H',
+        ...words,
+      })),
     ],
   });
-  return withExceptions(file, `weekly-${s.key}@${host}`, s.minutes, start, facts, key, now, {
-    summary: `${plain(s.label)}, ${name}`,
-    location: facts.address?.confirmed ? plain(facts.address.oneLine) : '',
-    url: `${siteUrl}/events/`,
-  });
-}
-
-const icsAt = (date: string, minutes: number) =>
-  `TZID=America/New_York:${date.replace(/-/g, '')}T${String(Math.floor(minutes / 60)).padStart(2, '0')}${String(minutes % 60).padStart(2, '0')}00`;
-
-/**
- * A different Sunday (2026-10-26): the starter's buildIcs writes plain weekly events, so the
- * dates this gathering does not meet as usual are added here. A cancelled date becomes an EXDATE
- * on the weekly event; a new time is the same event again with a RECURRENCE-ID, so calendar apps
- * move that one date and no other. Past dates and dates before the file's start are left out.
- */
-function withExceptions(
-  file: string,
-  uid: string,
-  usualMinutes: number,
-  start: string,
-  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'timeChanges'>>,
-  key: string,
-  now: Date,
-  words: { summary: string; location: string; url: string },
-): string {
-  const { skip, moved } = gatheringExceptions(facts, key, now);
-  const movedOn = moved.filter((m) => m.date >= start);
-  const cancelledOn = skip.filter((d) => d >= start && !moved.some((m) => m.date === d));
-  if (!movedOn.length && !cancelledOn.length) return file;
-  const lines = file.replace(/\r\n$/, '').split('\r\n');
-  // The weekly event's own RRULE (the VTIMEZONE block above it has RRULEs of its own).
-  const event = lines.indexOf('BEGIN:VEVENT');
-  const rrule = lines.findIndex((l, i) => i > event && l.startsWith('RRULE:'));
-  if (rrule >= 0) {
-    lines.splice(rrule + 1, 0, ...cancelledOn.map((d) => `EXDATE;${icsAt(d, usualMinutes)}`));
-  }
-  const stamp = lines.find((l) => l.startsWith('DTSTAMP:')) ?? '';
-  const overrides = movedOn.flatMap((m) => [
-    'BEGIN:VEVENT',
-    `UID:${uid}`,
-    stamp,
-    `RECURRENCE-ID;${icsAt(m.date, usualMinutes)}`,
-    `DTSTART;${icsAt(m.date, m.minutes)}`,
-    'DURATION:PT1H',
-    `SUMMARY:${escapeText(words.summary)}`,
-    ...(words.location ? [`LOCATION:${escapeText(words.location)}`] : []),
-    `URL:${words.url}`,
-    'END:VEVENT',
-  ]);
-  const end = lines.lastIndexOf('END:VCALENDAR');
-  lines.splice(end, 0, ...overrides.map(foldLine));
-  return lines.join('\r\n') + '\r\n';
 }
