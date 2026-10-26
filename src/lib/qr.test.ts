@@ -1,4 +1,5 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
 // Tests for the QR file helpers (src/lib/qr.ts), against the real library.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
@@ -13,7 +14,7 @@ function grid(text: string): QrGrid {
 }
 
 describe('qr files', () => {
-  const g = grid('https://fbc-auburn.nathanjnixon86.workers.dev/vbs');
+  const g = grid('https://example-site.workers.dev/spring');
   const n = g.getModuleCount();
 
   it('draws every dark square, and only those', () => {
@@ -25,12 +26,12 @@ describe('qr files', () => {
   });
 
   it('keeps the quiet border and stays crisp', () => {
-    const svg = qrSvg(g, { title: 'QR code for /vbs <test>' });
+    const svg = qrSvg(g, { title: 'QR code for /spring <test>' });
     const size = n + QUIET_ZONE * 2;
     assert.ok(svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg"'));
     assert.ok(svg.includes(`viewBox="0 0 ${size} ${size}"`));
     assert.ok(svg.includes('shape-rendering="crispEdges"'));
-    assert.ok(svg.includes('<title>QR code for /vbs &lt;test&gt;</title>'));
+    assert.ok(svg.includes('<title>QR code for /spring &lt;test&gt;</title>'));
     // The top-left finder square starts at the quiet border.
     assert.ok(qrPath(g).startsWith(`M${QUIET_ZONE} ${QUIET_ZONE}h7`));
   });
@@ -42,9 +43,9 @@ describe('qr files', () => {
   });
 
   it('names the file after what it points at', () => {
-    assert.equal(qrFileName('https://fbcauburn.org/vbs'), 'qr-vbs');
-    assert.equal(qrFileName('https://fbcauburn.org/sermons/advent-1/'), 'qr-sermons-advent-1');
-    assert.equal(qrFileName('https://fbcauburn.org/'), 'qr-fbcauburn');
+    assert.equal(qrFileName('https://example.com/spring'), 'qr-spring');
+    assert.equal(qrFileName('https://example.com/journal/first-post/'), 'qr-journal-first-post');
+    assert.equal(qrFileName('https://example.com/'), 'qr-example');
     assert.equal(qrFileName('nonsense'), 'qr-link');
   });
 });

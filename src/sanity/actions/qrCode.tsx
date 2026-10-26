@@ -1,16 +1,17 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
 // =============================================================================
-// "QR code" in a document's menu (2026-10-26)
+// "QR code" in a document's menu (PORTS.md card 171)
 // =============================================================================
 // On every short link and every document with a page of its own (a page, a
-// sermon, Home), this opens a dialog with the code and two buttons: download an
+// journal post, Home), this opens a dialog with the code and two buttons: download an
 // SVG (sharp at any size, for a print shop or Publisher) and a PNG (for Word,
 // Canva or a slide).
 //
 // WHAT THE CODE POINTS AT. A short link's code holds the short address
-// ("https://<site domain>/vbs"); a page's holds its full address on the site's
+// ("https://<site domain>/spring"); a page's holds its full address on the site's
 // own domain (src/data/site.ts), never the Studio's preview address. Codes
-// made before the church's own domain is set point at the temporary address,
+// made before the site's own domain is set point at the temporary address,
 // and the dialog says so: those are the ones to make again after the move. A
 // short link's code also survives a page being renamed, since the short link
 // follows the page.
@@ -33,14 +34,18 @@ import { pathForDoc } from '../urls';
 /** True while the website is still on its temporary workers.dev address. */
 const TEMPORARY_DOMAIN = /\.workers\.dev$/.test(site.domain);
 
+/** Types with an address that never get a code. */
+const NO_QR_TYPES = new Set(['privatePage', 'notFoundPage']);
+
 /** The address a document's QR code holds, or null when it has none. */
 export function qrTargetFor(type: string, doc: unknown): string | null {
   if (!doc) return null;
   if (type === 'shortLink') {
     return shortLinkUrl(site.url, (doc as { address?: unknown }).address);
   }
-  // Private pages are not shared by QR: the password would have to travel with it.
-  if (type === 'privatePage') return null;
+  // Private pages are not shared by QR (the password would have to travel with
+  // it), and nobody prints a code for the not-found page.
+  if (NO_QR_TYPES.has(type)) return null;
   const path = pathForDoc(type, doc);
   if (path === null) return null;
   return `${site.url}${withTrailingSlash(path)}`;
@@ -88,7 +93,7 @@ function QrDialogBody({ url, isShortLink }: { url: string; isShortLink: boolean 
     import('qrcode-generator')
       .then((mod) => {
         const qrcode = (mod as unknown as { default?: unknown }).default ?? mod;
-        // 'M' corrects about 15% damage: a fold or a smudge on a bulletin.
+        // 'M' corrects about 15% damage: a fold or a smudge on a flyer.
         const qr = (
           qrcode as unknown as (
             t: 0,
@@ -185,7 +190,7 @@ function QrDialogBody({ url, isShortLink }: { url: string; isShortLink: boolean 
         <Card padding={3} radius={2} tone="caution">
           <Text size={1}>
             The website is still on its temporary address. Codes made now point there, so make them
-            again once the website moves to the church’s own address.
+            again once the website moves to its own address.
           </Text>
         </Card>
       )}
@@ -203,13 +208,13 @@ export const qrCodeAction: DocumentActionComponent = (props) => {
   // Only types that can have a public address get the action at all.
   const hasAddress =
     props.type === 'shortLink' || pathForDoc(props.type, { slug: { current: 'x' } }) !== null;
-  if (!hasAddress || props.type === 'privatePage') return null;
+  if (!hasAddress || NO_QR_TYPES.has(props.type)) return null;
   return {
     label: 'QR code',
     icon: ThLargeIcon,
     disabled: !url,
     title: url
-      ? 'Download a QR code for bulletins and flyers.'
+      ? 'Download a QR code for flyers and print.'
       : 'Publish it first. The QR code opens the published address.',
     onHandle: () => setOpen(true),
     dialog:

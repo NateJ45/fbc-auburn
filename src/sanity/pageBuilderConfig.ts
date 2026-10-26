@@ -55,6 +55,20 @@ const SELF_FILLING_SECTIONS = [
   // Holds no words of its own: they live in the saved section it shows
   // (the authoring kit, card 109). Nothing picked is its own warning.
   'syncedSection',
+  // Blocks that draw from a collection or another document, so a freshly added one with
+  // nothing typed is already full (2026-10-26: Contact's form and the News and notes list
+  // were told they were empty and could be removed).
+  'latestSermonSection',
+  'sermonSeriesSection',
+  'sermonArchiveSection',
+  'podcastSection',
+  'downloadsSection',
+  'bulletinSection',
+  'journalPostsSection',
+  'contactFormSection',
+  'privacyPolicySection',
+  'watchSection',
+  'thisWeekSection',
   // FBC Auburn church library: blocks that fill themselves from Church facts or the calendar.
   ...CHURCH_SELF_FILLING,
 ];
