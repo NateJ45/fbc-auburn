@@ -7,7 +7,7 @@
 // corner mark (/favicon.svg) and the Studio app manifest all follow with no edit.
 //
 // Nothing uploaded, or Sanity unreachable: prints one line and leaves the brand kit's files.
-// docs/agent/studio-kit.md, "Logo and icon from the Studio".
+// docs/agent/studio-brand.md.
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';

@@ -2,7 +2,7 @@
 // Popups (2026-10-26): which one is live, which pages it shows on, and the overlap check the
 // Studio warns with. Pure, so BaseLayout, the Studio validation (schemaTypes/popup.ts) and the
 // unit tests (popup.test.ts) share it. The component is src/components/SitePopup.astro; the
-// behaviour (when it opens, how often) is in its script. docs/agent/studio-kit.md ("Popups").
+// behaviour (when it opens, how often) is in its script. docs/agent/studio-brand.md ("Popups").
 //
 // ONE AT A TIME. A popup is a strong interruption, so the site never shows two: of the popups
 // switched on and not yet ended, the one that started most recently wins, else the one that

@@ -283,7 +283,7 @@ export const siteSettings = defineType({
       of: [defineArrayMember({ type: 'navLink' })],
     }),
 
-    // The logo and icon from the Studio (2026-10-26, docs/agent/studio-kit.md, "Logo and icon
+    // The logo and icon from the Studio (2026-10-26, docs/agent/studio-brand.md, "Logo and icon
     // from the Studio"). Left blank, the brand kit's files keep rendering. The logo replaces the
     // lockup at the top of every page and in the phone menu (Header.astro, MobileNav.astro); the
     // icon becomes the favicon set, the footer mark and the share cards' mark

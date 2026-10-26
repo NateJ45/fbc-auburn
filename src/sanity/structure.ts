@@ -295,7 +295,7 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 id: 'popup',
                 type: 'popup',
                 title: 'Popups',
-                icon: typeIcon('popup'),
+                icon: brandIcon('notice'), // the Notice icon; studio-icons.ts is PORTABLE
                 explain:
                   'A box with a short message and one button that appears over the page, like an invitation to Christmas Eve. Only one shows at a time, never straight away, and each visitor sees it once.',
               }),

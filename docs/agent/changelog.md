@@ -17,7 +17,7 @@ _2026-10-26: share images, logo and icon, and popups from the Studio._
   the footer mark, Home's small mark, the share cards and the podcast artwork. Empty, the brand kit's
   files ship as before.
 - **Popups.** A new `popup` type with one-at-a-time, 4 seconds plus scroll, once per visitor or
-  visit, native `<dialog>` (docs/agent/studio-kit.md, "Popups"), a fixture at `/styleguide/popup/`
+  visit, native `<dialog>` (docs/agent/studio-brand.md, "Popups"), a fixture at `/styleguide/popup/`
   and `tests/popup.spec.ts`.
 
 Three new Site Guide pages: "Put up a popup", "Change the logo or the icon", "The picture when a page
