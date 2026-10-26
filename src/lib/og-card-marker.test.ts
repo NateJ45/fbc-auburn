@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { cardPathForRoute, encodeCardRequest, resolveShareImage } from './og-card-marker.ts';
@@ -11,7 +12,7 @@ const base = {
 test('card paths follow the route', () => {
   assert.equal(cardPathForRoute('/'), '/og/home.jpg');
   assert.equal(cardPathForRoute('/about/'), '/og/about.jpg');
-  assert.equal(cardPathForRoute('/sermons/series/hope/'), '/og/sermons-series-hope.jpg');
+  assert.equal(cardPathForRoute('/journal/series/hope/'), '/og/journal-series-hope.jpg');
   assert.equal(cardPathForRoute('/404'), '/og/404.jpg');
 });
 

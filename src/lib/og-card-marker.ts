@@ -1,11 +1,12 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care (PORTS.md card 169)
 // Which share image a page uses, and the marker that asks the build to draw its card
-// (2026-10-26, share images that make themselves). BaseLayout calls `resolveShareImage`; the
+// (share images that make themselves). BaseLayout calls `resolveShareImage`; the
 // build step scripts/build-og-cards.mjs reads the marker (scripts/lib/og-build.mjs decodes it),
-// draws /og/<route>.jpg in the Auburn card design and removes the marker from the page.
+// draws /og/<route>.jpg in the site's card design (scripts/lib/og-card.mjs) and removes the marker from the page.
 //
 // THE ORDER, first match wins:
-//   1. a picture the page passes itself (a post's cover photo, a sermon's picture);
+//   1. a picture the page passes itself (a post's cover photo);
 //   2. the page's own share image from the Studio (its SEO tab, `seoImage`);
 //   3. the generated card, /og/<route>.jpg, on every prerendered page;
 //   4. Site settings' default share image (only reachable on a page the build cannot draw a card
@@ -15,15 +16,15 @@
 // build, and a page with its own picture keeps it.
 
 export interface CardRequest {
-  /** The card's big line. The page title, without the church's name (the card carries it). */
+  /** The card's big line. The page title, without the site's name (the card carries it). */
   title: string;
-  /** The small line above it: the section ("Sermon series"), a date, the page head's eyebrow. */
+  /** The small line above it: the section ("Journal"), a date, the page head's eyebrow. */
   kicker?: string;
-  /** Home draws the masthead card: the church's name with `title` (the tagline) under it. */
+  /** Home draws the masthead card: the site's name with `title` (the tagline) under it. */
   home?: boolean;
 }
 
-/** /about/ -> /og/about.jpg; / -> /og/home.jpg; /sermons/x/ -> /og/sermons-x.jpg. */
+/** /about/ -> /og/about.jpg; / -> /og/home.jpg; /journal/x/ -> /og/journal-x.jpg. */
 export function cardPathForRoute(pathname: string): string {
   const trimmed = pathname.replace(/^\/+|\/+$/g, '');
   if (!trimmed) return '/og/home.jpg';
