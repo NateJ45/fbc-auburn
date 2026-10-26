@@ -96,7 +96,7 @@
    0.25 on the right, so the congregation reads instead of sitting under an even navy veil. A
    bottom-up shade keeps the foot of the words dark on a bright picture. */
 .hb-photo__shade {
-  z-index: 0;
+  z-index: 1; /* above the hero's video (.hb-photo__video, z-index 0) */
   background:
     linear-gradient(to top, rgb(15 34 56 / 0.55) 0%, rgb(15 34 56 / 0) 45%),
     linear-gradient(
@@ -110,9 +110,12 @@
   display: none;
 }
 /* The hero's clip (2026-10-25, HomeHero.astro): laid over the photo, under the shade, invisible
-   until it actually plays so the photo is all anyone sees before then. Nothing on it is clickable. */
+   until it actually plays so the photo is all anyone sees before then. Nothing on it is clickable.
+   It stays still while the page scrolls (no flow drift) and sits on an explicit layer below the
+   shade: a moving video was drawn above the shade in Chrome, so the wash vanished mid-scroll. */
 .hb-photo .hb-photo__video {
   position: absolute;
+  z-index: 0;
   inset: 0;
   display: block;
   width: 100%;
