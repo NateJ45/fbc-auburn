@@ -3,9 +3,12 @@
 _2026-10-25: a stock clip plays in the Home hero before launch._
 
 **Decision.** Nathan asked for a placeholder church video until Jacob's clips are cut. The hero's
-shot request (`'/|hero'` in `src/data/shot-list.ts`) gains `video: hero-clip`, a 9 second Pexels
-clip of a congregation in wooden pews (RDNE Stock project, re-encoded silent at 720p with fast
-start, 470 KB, credited in `public/shot-examples/CREDITS.md`). `HomeHero.astro` plays it exactly
+shot request (`'/|hero'` in `src/data/shot-list.ts`) gains `video: hero-pews`, a 19 second Pexels
+clip of a congregation reading in pews under stained glass (RDNE Stock project, 5875502, re-encoded
+silent at 720p with fast start, 1 MB, credited in `public/shot-examples/CREDITS.md`). The first pick
+(8675023) was swapped out the same day because a woman in a clerical robe walks through it, which
+would not suit a Southern Baptist church; the new clip has no clergy in any frame. It has a new file
+name because `/shot-examples/*` is cached for a year. `HomeHero.astro` plays it exactly
 like an uploaded Background video (after load, over the example photo as poster, never with reduced
 motion, Save-Data, slow connections or print, with the Pause button). It goes with the shot request
 at launch (`PRE_LAUNCH_NOTES`), and an uploaded video replaces it straight away.

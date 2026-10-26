@@ -23,4 +23,4 @@ free use without attribution, but the photographers are listed here anyway.
 | baptism.webp | Vince Fleming | https://unsplash.com/photos/4I6VIZI79HE |
 | news-cover.webp | Ray Kim | https://unsplash.com/photos/UwMsV25n8HM |
 | sermon.mp4, sermon-poster.webp | cottonbro studio | https://www.pexels.com/video/6267382/ (re-encoded silent, 960px) |
-| hero-clip.mp4 | RDNE Stock project | https://www.pexels.com/video/8675023/ (re-encoded silent, 720p, fast start, 470 KB) |
+| hero-pews.mp4 | RDNE Stock project | https://www.pexels.com/video/5875502/ (re-encoded silent, 720p, fast start, 1 MB) |

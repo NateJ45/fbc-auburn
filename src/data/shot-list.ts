@@ -72,7 +72,7 @@ const SHOTS: Record<string, Shot[]> = {
       orientation: 'landscape',
       example: { file: 'hero', credit: 'Christian Harb on Unsplash' },
       // 2026-10-25: a stock clip plays over the example photo until the church's own video is in.
-      video: { file: 'hero-clip', credit: 'RDNE Stock project on Pexels' },
+      video: { file: 'hero-pews', credit: 'RDNE Stock project on Pexels' },
     },
   ],
   '/|A place to belong': [

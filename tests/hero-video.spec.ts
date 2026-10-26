@@ -87,14 +87,14 @@ test.describe('by default', () => {
 });
 
 // Before launch Home has no uploaded clip, so the hero's shot request plays its stock example
-// (shot-list.ts, hero-clip.mp4) over the example photo, by the same rules as a real upload.
+// (shot-list.ts, hero-pews.mp4) over the example photo, by the same rules as a real upload.
 test.describe('Home before launch', () => {
   test.use({ reducedMotion: 'no-preference' });
 
   test('plays the example clip over the example photo, with the Pause button', async ({ page }) => {
     await page.goto('/', { waitUntil: 'load' });
     const hero = page.locator('.hb-hero');
-    await expect(hero).toHaveAttribute('data-hero-video', '/shot-examples/hero-clip.mp4');
+    await expect(hero).toHaveAttribute('data-hero-video', '/shot-examples/hero-pews.mp4');
     await expect(hero.locator('video')).toHaveCount(1);
     const still = await hero
       .locator('.hb-photo img')
