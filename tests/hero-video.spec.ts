@@ -5,7 +5,7 @@
 //   - reduced motion: the still photo, and no <video> at all (nothing is downloaded);
 //   - otherwise: the photo paints first and is the clip's poster, the clip is muted, has no
 //     controls and takes no clicks, and the Pause button is a real, keyboard-reachable toggle;
-//   - Home with no clip: the photo hero exactly as before, no video and no button.
+//   - Home before launch: the shot request's stock example clip plays the same way (reduced motion: still).
 // Playback itself is not asserted: Playwright's browsers differ on H.264.
 import { test, expect, type Page } from '@playwright/test';
 import { join } from 'node:path';
@@ -86,10 +86,34 @@ test.describe('by default', () => {
   });
 });
 
-test('Home with no clip keeps the photo hero and adds no video', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'load' });
-  await expect(page.locator('.hb-hero')).toBeVisible();
-  await expect(page.locator('.hb-hero')).not.toHaveAttribute('data-hero-video', /.+/);
-  await expect(page.locator('.hb-hero video')).toHaveCount(0);
-  await expect(page.locator('[data-hero-video-toggle]')).toHaveCount(0);
+// Before launch Home has no uploaded clip, so the hero's shot request plays its stock example
+// (shot-list.ts, hero-clip.mp4) over the example photo, by the same rules as a real upload.
+test.describe('Home before launch', () => {
+  test.use({ reducedMotion: 'no-preference' });
+
+  test('plays the example clip over the example photo, with the Pause button', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'load' });
+    const hero = page.locator('.hb-hero');
+    await expect(hero).toHaveAttribute('data-hero-video', '/shot-examples/hero-clip.mp4');
+    await expect(hero.locator('video')).toHaveCount(1);
+    const still = await hero
+      .locator('.hb-photo img')
+      .first()
+      .evaluate((img) => (img as HTMLImageElement).currentSrc);
+    expect(still).toContain('/shot-examples/hero');
+    expect(await hero.locator('video').evaluate((v) => (v as HTMLVideoElement).poster)).toBe(still);
+    await expect(page.locator('[data-hero-video-toggle]')).toBeVisible();
+  });
+});
+
+test.describe('Home before launch, reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('keeps the example photo and adds no video', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'load' });
+    await expect(page.locator('.hb-photo img').first()).toBeVisible();
+    await page.waitForTimeout(500);
+    await expect(page.locator('.hb-hero video')).toHaveCount(0);
+    await expect(page.locator('[data-hero-video-toggle]')).toBeHidden();
+  });
 });

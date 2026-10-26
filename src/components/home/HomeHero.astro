@@ -46,6 +46,11 @@ const video = heroVideoSource({
   mimeType: block.backgroundVideo?.mimeType,
 });
 const shot = video ? null : shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
+// Before launch the shot's example clip (a stock Pexels video, shot-list.ts) plays the same way as a
+// real upload, over the example photo, so Home shows what the hero video will look like. It goes
+// with the shot request at launch (PRE_LAUNCH_NOTES), like the example photo.
+const clip =
+  video ?? (shot?.video ? { url: exampleSrc(shot.video.file, 'mp4'), type: 'video/mp4' } : null);
 const photo = !shot && block.backgroundImage?.asset ? block.backgroundImage : null;
 // Before launch the shot's example photo fills the hero behind its note, so Home reads as finished.
 // It is the page's LCP element, so phones get a smaller copy (29 KB, not the 2000px 166 KB file
@@ -72,9 +77,9 @@ const secondary = block.secondaryCta;
 <section
   class="hb-hero"
   aria-labelledby="hb-h1"
-  data-photo={photo || example || video ? 'yes' : 'no'}
-  data-hero-video={video?.url}
-  data-hero-video-type={video?.type}
+  data-photo={photo || example || clip ? 'yes' : 'no'}
+  data-hero-video={clip?.url}
+  data-hero-video-type={clip?.type}
 >
   <div class="hb-photo" aria-hidden={photo ? undefined : 'true'}>
     {example && (
@@ -103,7 +108,7 @@ const secondary = block.secondaryCta;
     )}
     <div class="hb-photo__shade"></div>
   </div>
-  {video && (
+  {clip && (
     <button
       type="button"
       class="hb-video-toggle"
@@ -267,6 +272,10 @@ const secondary = block.secondaryCta;
       run();
     });
     io.observe(hero);
+    // Start now rather than on the observer's first report, which a browser may hold back (a
+    // background tab runs no observer callbacks); the hero is on screen at load, and the observer
+    // pauses the clip if it is not.
+    run();
     const onReduce = () => {
       if (!reduce.matches) return;
       clip.pause();
