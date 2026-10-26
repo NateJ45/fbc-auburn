@@ -1,0 +1,60 @@
+---
+// Safe to edit by hand
+// "A different Sunday" (2026-10-26): the one line that says the coming Sunday is not as usual,
+// "THIS SUNDAY ONLY  Worship at 10:30 am instead of 11:00 am. Weather: no Sunday School today."
+// Drawn beside the times wherever they show (the This Sunday cards, the times band, the Sunday
+// bar, the phone menu card and the footer), from Site settings > Church facts > A different
+// Sunday through thisSunday() in src/lib/church-facts.ts. Nothing is typed here.
+//
+// Renders nothing on a usual Sunday, so callers drop it in without a conditional. The tag is a
+// small brick-red label with white letters (about 7:1), so it reads on the white board, the pale
+// stone panels and the deep sky card alike; the sentence takes the colour of what it sits on.
+import type { ThisSunday } from '@/lib/church-facts';
+
+interface Props {
+  sunday: Pick<ThisSunday, 'changed' | 'change' | 'isToday'> | null | undefined;
+  class?: string;
+  /** "compact" drops the tag to one line height for the narrow bars. */
+  size?: 'default' | 'compact';
+}
+
+const { sunday, class: className = '', size = 'default' } = Astro.props;
+---
+
+{sunday?.changed && sunday.change && (
+  <p
+    class:list={['sunday-change', size === 'compact' && 'sunday-change--compact', className]}
+    data-sunday-change
+  >
+    <span class="sunday-change__tag">{sunday.isToday ? 'Today only' : 'This Sunday only'}</span>{' '}
+    <span class="sunday-change__text">{sunday.change}</span>
+  </p>
+)}
+
+<style>
+  .sunday-change {
+    margin: 0.5rem 0 0;
+    font-size: var(--fs-small, 0.9375rem);
+    line-height: 1.45;
+    font-weight: 600;
+    max-width: 40rem;
+    overflow-wrap: anywhere;
+  }
+  .sunday-change__tag {
+    display: inline-block;
+    margin-right: 0.35em;
+    padding: 0.1em 0.5em;
+    border-radius: 3px;
+    background: #9a3b2a;
+    color: #fff;
+    font-size: 0.75em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    vertical-align: 0.1em;
+  }
+  .sunday-change--compact {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+  }
+</style>

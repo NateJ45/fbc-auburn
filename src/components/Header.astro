@@ -32,7 +32,7 @@ import { GIVE_PATH, giveHref } from '@/lib/give';
 import { getChurchFacts } from '@/lib/church-data';
 import { getNavPages } from '@/lib/queries';
 import { mergePageSwitches } from '@/lib/page-switches';
-import { namedTimes, thisSunday } from '@/lib/church-facts';
+import { namedTimes, sundayLineServices, thisSunday } from '@/lib/church-facts';
 import { watchLabel, watchLive } from '@/lib/live-service';
 import { churchDataNow } from '@/lib/church-feeds';
 import logoLightAsset from '@/assets/logo-light.svg';
@@ -161,8 +161,9 @@ const sundayMinutes = (noteFacts?.serviceTimes ?? [])
   .filter((t) => t.dayIndex === 0)
   .map((t) => t.minutes);
 // Each time named (re-audit 2026-10-26): "Sunday School 9:45 · Worship 11:00".
+// A different Sunday (2026-10-26): the coming Sunday's times when it is changed.
 const sundayNote = sundayMinutes.length
-  ? namedTimes((noteFacts?.serviceTimes ?? []).filter((t) => t.dayIndex === 0))
+  ? namedTimes(sundayLineServices(allFacts, churchDataNow()).services)
   : '';
 const noteAddress = noteFacts?.address ?? null;
 const menuMinutes = allFacts.serviceTimes.filter((t) => t.dayIndex === 0).map((t) => t.minutes);
@@ -170,7 +171,7 @@ const menuMinutes = allFacts.serviceTimes.filter((t) => t.dayIndex === 0).map((t
 const menuThisSunday = thisSunday(allFacts, churchDataNow());
 const menuSunday = menuMinutes.length
   ? {
-      times: namedTimes(allFacts.serviceTimes.filter((t) => t.dayIndex === 0)),
+      times: namedTimes(sundayLineServices(allFacts, churchDataNow()).services),
       street: allFacts.address?.street,
       mapsUrl: allFacts.address?.mapsUrl,
       title: menuThisSunday?.isToday ? 'Today' : 'This Sunday',
@@ -180,6 +181,8 @@ const menuSunday = menuMinutes.length
         label: s.label,
       })),
       confirmed: menuThisSunday?.confirmed ?? true,
+      // A different Sunday (2026-10-26): "Worship at 10:30 am instead of 11:00 am." or ''.
+      change: menuThisSunday?.change ?? '',
     }
   : undefined;
 // The menu's watch row (2026-10-24): where Sunday streams, from Church facts (live-service.ts).

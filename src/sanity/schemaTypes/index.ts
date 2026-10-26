@@ -11,6 +11,7 @@ import { faqItem } from './faqItem'; // scaffold: faq
 import { faqPage } from './faqPage'; // scaffold: faq
 import { form } from './form';
 import { formQuestion } from './formQuestion';
+import { formDateQuestion, formTickQuestion } from './formQuestionMore';
 import { homePage } from './homePage';
 import { journalCategory } from './journalCategory'; // scaffold: journal
 import { journalEntry } from './journalEntry'; // scaffold: journal
@@ -39,6 +40,8 @@ export const schemaTypes = [
   navLink,
   // One editor-written form question (contactPage.formFields).
   formQuestion,
+  formDateQuestion,
+  formTickQuestion,
   // Page-builder section blocks (objects). Registered before the documents
   // whose pageBuilder arrays reference them.
   ...pageSectionSchemas,

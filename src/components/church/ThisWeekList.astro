@@ -35,16 +35,20 @@ const rows = thisWeek(facts, events, now).slice(0, limit);
 
 <ul class:list={['week-list', className]} data-this-week>
   {rows.map((r) => (
-    <li class="week-list__row" data-source={r.source}>
+    <li class:list={['week-list__row', r.cancelled && 'is-cancelled']} data-source={r.source}>
       <span class="week-list__when">
         {r.when}
         <time class="week-list__date" datetime={r.date}>
           {r.dateLabel}
         </time>
       </span>
-      <span class="week-list__what">{r.what}</span>
+      <span class="week-list__what">
+        {r.cancelled ? <s>{r.what}</s> : r.what}
+        {/* A different Sunday (2026-10-26): "Instead of 11:00 am", "Cancelled this week". */}
+        {(r.note || r.cancelled) && <span class="week-list__note">{r.note || 'Cancelled'}</span>}
+      </span>
       <span class="week-list__time">
-        {r.time}
+        {r.cancelled ? <s>{r.time}</s> : r.time}
         {r.where && <span class="week-list__where">, {r.where}</span>}
         <NotConfirmed confirmed={r.confirmed} />
       </span>
@@ -103,6 +107,15 @@ const rows = thisWeek(facts, events, now).slice(0, limit);
   }
   .week-list__time {
     color: var(--muted-foreground);
+  }
+  /* A different Sunday: the change in small brick-red words under the name (about 7:1 on white). */
+  .week-list__note {
+    display: block;
+    margin-top: 0.15rem;
+    font-family: var(--font-body, inherit);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: #9a3b2a;
   }
   .week-list__link {
     font-weight: 600;

@@ -1,5 +1,23 @@
 # Change history
 
+_2026-10-26: a different Sunday, form addresses in the Studio, and two new question kinds (Studio self-serve)._
+
+**Decision.** Nathan wants Pastor Jacob to do the everyday changes himself. Three of them land here.
+(1) **A different Sunday**: Church facts > A different Sunday holds dated changes (a different time,
+cancelled, an extra service, a note). The This Sunday cards, the times band, the Sunday bar, the
+menu card, the footer panel, This week, the Live now banner, the JSON-LD (`exceptDate` plus dated
+Events) and both `.ics` files show it for that date, and the next morning's rebuild puts the usual
+times back; Quick update gains "Change this Sunday's times". Build time, not a browser check, because
+the JSON-LD and calendar files cannot be fixed in a browser and the site already rebuilds on publish
+and every morning (`docs/agent/church-data.md`). (2) **Where form messages go**: an administrator sets
+each recipient's address (and the Contact page's) under Site settings > Forms; addresses live in D1
+(`migrations/0005_form_recipients.sql`, not yet applied), are confirmed by an emailed link before use,
+and `/api/form/` reads them before `FORM_RECIPIENTS` (OPERATIONS.md, "Forms"). `/api/contact/` is the
+starter's PORTABLE route and still reads `CONTACT_TO`. (3) **A date** and **Tick any that apply**
+join the form builder as Auburn's own question types (`formQuestionMore.ts`), checked on the server,
+laid out in the email and stored with `kind` and `values` in D1; the shared `formQuestion` is
+untouched.
+
 _2026-10-26: search waits for its index to be written whole (starter card 165)._ This PR's CI artifact carried `pagefind/pagefind.js` cut at 32,768 of 45,555 bytes, so every search said "Search is not available right now". `build-search-index.mjs` closed Pagefind before its binary had flushed; it now waits for `dist/client/pagefind/` to settle, then syntax-checks every script it wrote and fails the build on a cut one.
 
 _2026-10-26: American spelling everywhere (starter cards 163 and 164)._ Nathan's call: every family site is American English. Starter cards 163 and 164 copied byte-identical (164 moves the shared Studio and site text to American spelling, including "check" for a checkbox and "Website inquiry" as the contact email subject, and makes `build-csp.mjs` fail when the CSP line passes 2,000 characters). This site's own strings had the same pass: text only, no field name, option value, key, slug or CSS class renamed. The live Sanity content was checked the same day and fixed where needed.

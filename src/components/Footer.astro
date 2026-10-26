@@ -50,6 +50,7 @@ import WhereNext from '@/components/WhereNext.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
 import SundayBar from '@/components/church/SundayBar.astro';
+import SundayChange from '@/components/church/SundayChange.astro';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -651,6 +652,8 @@ const hasCalendar =
             </div>
           ))}
         </dl>
+        {/* A different Sunday (2026-10-26): the times above are that date's. */}
+        <SundayChange sunday={sunday} size="compact" />
         {footerAddress && (
           <div class="sf-sunday__where">
             <p>

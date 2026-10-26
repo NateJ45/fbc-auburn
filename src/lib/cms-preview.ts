@@ -188,6 +188,10 @@ const NON_STEGA_FIELDS = new Set([
   // leaves booleans alone today, listed so the rule 8b audit finds it.
   'embedCode',
   'runsOnPage',
+  // A different Sunday, 2026-10-26 (churchFacts.ts `timeChanges`): `change` is the dropdown the
+  // times branch on and `date` is compared with the build's day. `service` and `time` are above.
+  'change',
+  'date',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

@@ -73,6 +73,54 @@ Two rules in `src/lib/church-facts.ts`, unit-tested in `church-facts.test.ts`:
 The times band (`TimesBand.astro`) also carries the address on phones since 2026-10-26, with Directions
 (Google Maps) and Apple Maps under it, so Plan your visit gives the where on its first screen.
 
+## A different Sunday (dated changes that undo themselves, 2026-10-26)
+
+Church facts > **A different Sunday** (`timeChanges[]` on Site settings, `churchFacts.ts`): each
+entry is a date, what changes (`change`: `time` a different time, `cancelled`, `extra` an extra
+service), which gathering (`service`: a Service times row's key, its name such as "Worship" or the
+short name "Sunday School", or `all`), the time ("10:30 am", "6 pm", "18:00"; `parseFriendlyTime`),
+an extra service's name (`label`) and an optional note. The usual Service times are never touched,
+and nothing is retyped (rule 15).
+
+- **The logic** is pure, in `src/lib/church-facts.ts`: `resolveTimeChanges` (half-filled entries
+  dropped), `dayPlan(facts, date)` (one date's gatherings with its entries made: a cancellation beats
+  a new time; a time or cancel entry only matches gatherings that meet on that weekday, so a
+  Worship change dated on a Thursday changes nothing, and an extra service can be any day),
+  `changeSummary` (the sentence), `upcomingChanges` (today on, church clock; past entries are
+  ignored everywhere), `sundayLineServices` (what the chrome's short lines name). Tested in
+  `sunday-changes.test.ts`: America/New_York either side of midnight and the clock change, past
+  entries, other weekdays, the JSON-LD and both calendar files.
+- **Where it shows.** `thisSunday()` returns that date's `services` (plus `regular`, `cancelled`,
+  `changed`, `change`), so the This Sunday cards (`ThisSunday.astro`, Home's `SundayCard.astro`),
+  the phone menu card (`Header.astro` to `MobileNav.astro`), the footer This Sunday panel, the times
+  band (title "This Sunday at Auburn" that week), the Sunday bar ("This Sunday only"), Home's phone
+  fact line and the Live now banner's start (`worshipStartThisSunday`) all follow it.
+  `SundayChange.astro` draws the one line ("THIS SUNDAY ONLY Worship at 10:30 am instead of
+  11:00 am. Weather: ..."), white on brick red for the tag. `thisWeek()` rows carry a `note`
+  ("Instead of 11:00 am", "This week only", "Cancelled this week", the day's note) and a cancelled
+  gathering stays struck through; Home's This week lists changed gatherings beside the calendar's.
+- **Search engines and calendars.** With the build moment (`churchJsonLd(facts, now)`), each
+  confirmed weekly Event's `eventSchedule` gets `exceptDate` for upcoming changed dates, and each
+  change is told as a dated Event (`EventRescheduled` with `previousStartDate`, `EventCancelled`, or
+  `EventScheduled` for an extra service; a change to an unconfirmed gathering is kept back).
+  `/sunday.ics` and `/calendar/<key>.ics` write an `EXDATE` for a cancelled date and the same `UID`
+  again with a `RECURRENCE-ID` for a new time (gatherings.ts adds these around the starter's
+  `buildIcs`, which has no exception fields); `/sunday.ics` also carries a coming Sunday's extra
+  service.
+- **Why build time, not a browser check.** Every place above is already derived at build time from
+  the build's clock, and the site already rebuilds on the publish webhook (the change appears about
+  two minutes after Jacob publishes) and every morning at 10:00 UTC (`deploy.yml`), so the first
+  build of the day after drops it. That one rule covers the HTML, the JSON-LD and the `.ics` files,
+  which a browser script could not reach. The cost is the same as for "This Sunday" itself: if the
+  scheduled rebuild did not run, yesterday's change would linger until the next one.
+- **Studio.** "Which gathering" is a dropdown of the Service times rows plus "Everything that day"
+  (`ServicePickerInput.tsx`); warnings (never errors) for a past date, a gathering that does not meet
+  that weekday or no longer exists, "all" with a new time, and a time with no am/pm before 7.
+  Quick update's **Change this Sunday's times** (`kit.config.ts`, id `sunday-times`) appends an entry
+  in a few taps; it stores the gathering by name ("Worship", "Sunday School"), which the matcher
+  accepts. Guide: "A different Sunday: change the times for one day" (Housekeeping).
+- `change` and `date` are in `NON_STEGA_FIELDS` (`service` and `time` already were).
+
 ## Every week (the Events page, 2026-10-25)
 
 The This week block (`thisWeekSection`) has a `mode`: `thisWeek` (the default, Home: the next seven days, one row per
@@ -202,3 +250,8 @@ The grid is cached in `src/lib/sunday-weather.ts` (ILN 28,51, resolved from the 
 - Fixture build: `CHURCH_DATA_FIXTURE=1 CHURCH_DATA_NOW=2026-10-21T16:00:00Z npm run dev` reads
   `tests/fixtures/church-youtube.xml` and `church-calendar.ics` at a fixed Wednesday;
   `CHURCH_DATA_FIXTURE=unavailable` proves the fallbacks. No deploy sets either.
+- A different Sunday: `CHURCH_DATA_FIXTURE=changes CHURCH_DATA_NOW=2026-10-28T16:00:00Z npm run build`
+  adds a made-up change for the coming Sunday (Worship at 10:30, no Sunday School, a note) and an
+  extra service that Thursday (`withFixtureChanges` in `church-data.ts`), so every place that shows
+  it can be screenshotted without touching the dataset. The JSON-LD reads the raw settings, so it
+  is covered by the unit tests instead.

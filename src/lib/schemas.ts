@@ -9,6 +9,7 @@
 
 import { site } from '@/data/site';
 import { churchJsonLd, resolveChurchFacts, type RawChurchFacts } from '@/lib/church-facts';
+import { churchDataNow } from '@/lib/church-feeds';
 
 // ---------- Types (loose — Sanity provides the actual document shapes) ----
 
@@ -118,7 +119,8 @@ export function localBusinessSchema(settings: SiteSettings | null | undefined): 
   // pin, the phone, the email and the service times, each ONLY once the church
   // has confirmed it, so search engines are never told a provisional fact.
   // Replaces the city-only address. sameAs above already carries the social links.
-  Object.assign(schema, churchJsonLd(resolveChurchFacts(s)));
+  // With the build moment, so an upcoming "A different Sunday" entry is told too (2026-10-26).
+  Object.assign(schema, churchJsonLd(resolveChurchFacts(s), churchDataNow()));
   return JSON.stringify(schema);
 }
 

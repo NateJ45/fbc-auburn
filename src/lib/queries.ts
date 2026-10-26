@@ -344,6 +344,8 @@ export const SITE_SETTINGS_PROJECTION = `{
     // src/lib/church-facts.ts. Read them from there, never off this object.
     churchAddress{ street, city, state, zip, findUs, lat, lng, confirmed },
     serviceTimes[]{ _key, label, day, time, note, confirmed },
+    // A different Sunday (2026-10-26): dated changes to the times, applied by church-facts.ts.
+    timeChanges[]{ _key, date, change, service, time, label, note },
     phoneConfirmed,
     phoneTakesTexts,
     memberLoginUrl,
