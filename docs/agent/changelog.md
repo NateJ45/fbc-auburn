@@ -1,5 +1,11 @@
 # Change history
 
+_2026-10-26: the Studio drops the old stone lettering and pebbles._ The Studio still wore two pieces of the
+early logo work: banner and tool titles in the Auburn Stone brick letters, and hand-laid pebbles behind the
+numbered steps. `brand.config.json` `studio.look` now has `stone: round` and no `lettering`, and the Home banner in
+`kit.config.ts` has no `lettering`, so titles set in plain Young Serif and the numbers sit on plain round tokens.
+The unused `public/fonts/auburn-stone.woff2` and its licence are deleted.
+
 _2026-10-26: an open Studio reloads itself after a deploy (PORTS card 179)._ Signed in to the live
 Studio, a tab opened before a deploy showed a raw red "Failed to fetch dynamically imported module" inside the
 image field's Unsplash picker: every merge and every publish redeploys, and Workers keep only the newest build's

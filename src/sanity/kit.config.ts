@@ -695,19 +695,13 @@ export const kitConfig: KitConfig = {
   // Home's banner (card 118, 2026-10-18): the navy welcome at the top of Home, dressed in the
   // church's own brand. The full-colour mark on a light disc (it carries the story colours the
   // white mark loses), the stone path from the water to the red cross along the foot
-  // (npm run gen:stones writes it), the editor's name in gold, and "Auburn" in Auburn Stone with
-  // on-navy letter colours (white, water, gold).
+  // (npm run gen:stones writes it) and the editor's name in gold. The Auburn Stone brick lettering
+  // was dropped on 2026-10-26 (old logo work); titles set in the plain display face.
   homeBanner: {
     mark: '/studio-banner/mark.svg',
     motif: '/studio-banner/stone-path.svg',
     motifNarrow: '/studio-banner/stone-path-phone.svg',
     accent: '#B5503A',
-    lettering: {
-      text: 'Auburn',
-      family: 'Auburn Stone',
-      src: '/fonts/auburn-stone.woff2',
-      colors: ['#FFFFFF', '#7F98B8', '#D98A74'],
-    },
   },
 
   // Home's big buttons (card 110): the pastor's most common jobs, as intent

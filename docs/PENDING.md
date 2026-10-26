@@ -408,9 +408,10 @@ DONE 2026-10-21: the letterforms went brick (the queued item below, as built). `
 rebuilt by `npm run gen:letters`) draws the Home masthead, the footer signature, the page H1s
 (`StoneHeading.astro`) and the share cards as A, and the 404 headline and the sermon and series art
 with no picture as B; the person initials (`.c-photo--blank`) are plain Young Serif. The Auburn Stone
-preload and `@font-face` are gone. What still uses the Auburn Stone font: only the Studio banner
-lettering (`src/sanity/kit.config.ts`, `studio-banner.test.ts`, `public/fonts/auburn-stone.woff2`), until the
-Studio kit gets the generator. One social tile in brick-wall letters is not drawn yet.
+preload and `@font-face` are gone. DONE 2026-10-26: the Studio dropped it too (old logo work, not the
+latest brand): the banner and tool titles set in plain Young Serif (no `lettering` in `kit.config.ts` or
+`brand.config.json` `studio.look`), the numbered steps are plain round tokens (`look.stone: round`, no
+pebbles), and `public/fonts/auburn-stone.woff2` is deleted. One social tile in brick-wall letters is not drawn yet.
 
 Original brief (kept for the record): the letterforms go brick (decision and sheet 13 in
 `docs/design-directions/2026-10-21-brick-path/README.md`, "The letterforms"). Treatment A
