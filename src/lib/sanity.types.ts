@@ -515,8 +515,8 @@ export type Popup = {
     | AboutPageReference
     | ContactPageReference
     | JournalPageReference
-    | SermonsPageReference
     | PrivacyPageReference
+    | SermonsPageReference
   >;
   frequency?: 'visitor' | 'visit';
   enabled?: boolean;
