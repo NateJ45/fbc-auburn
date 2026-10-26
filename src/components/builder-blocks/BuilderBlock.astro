@@ -1,0 +1,47 @@
+---
+// Safe to edit by hand
+// Picks the component for one of the event and holiday page blocks (builderSections.ts,
+// 2026-10-26). SectionRenderer hands every builder block here in one branch, like the church
+// library's ChurchBlock.astro. Every component is empty-safe: an event whose dates have all passed,
+// or a schedule with nothing in it, renders nothing at all.
+import '@/styles/church-blocks.css';
+import '@/styles/builder-blocks.css';
+import type { BuilderPageBlock } from '@/lib/builderBlocks.types';
+import type { CadenceSurface } from '@/lib/surfaces';
+import EventDetailsBlock from './EventDetailsBlock.astro';
+import ScheduleBlock from './ScheduleBlock.astro';
+import PhotoCardsBlock from './PhotoCardsBlock.astro';
+
+interface Props {
+  block: BuilderPageBlock;
+  /** The cadence's surface, including a Stone or Feature look the block asked for. */
+  surface?: CadenceSurface;
+  headingId: string;
+  /** The page's one red button, when SectionRenderer hands it to this block (the event's button). */
+  primaryVariant?: 'primary' | 'navy';
+  /** True for the first section under the page head: its photo loads first. */
+  isFirst?: boolean;
+}
+
+const {
+  block: b,
+  surface = 'background',
+  headingId,
+  primaryVariant = 'navy',
+  isFirst,
+} = Astro.props;
+---
+
+{b._type === 'eventDetailsSection' ? (
+  <EventDetailsBlock
+    block={b}
+    surface={surface}
+    headingId={headingId}
+    primaryVariant={primaryVariant}
+    isFirst={isFirst}
+  />
+) : b._type === 'scheduleSection' ? (
+  <ScheduleBlock block={b} surface={surface} headingId={headingId} />
+) : b._type === 'photoCardsSection' ? (
+  <PhotoCardsBlock block={b} surface={surface} headingId={headingId} isFirst={isFirst} />
+) : null}

@@ -36,6 +36,7 @@ import type {
 import type { DownloadDoc, PersonDoc, SeriesDoc, SermonDoc } from './sermons';
 import type { PortableTextBlock } from '@portabletext/types';
 import type { ChurchPageBlock } from './churchBlocks.types';
+import type { BuilderPageBlock } from './builderBlocks.types';
 
 // ---------------------------------------------------------------------------
 // Shared projected shapes
@@ -575,4 +576,6 @@ export type PageBuilderBlock =
   | ProjectedPeopleSection
   | ProjectedDownloadsSection
   // FBC Auburn: the church section library (churchBlocks.types.ts)
-  | ChurchPageBlock;
+  | ChurchPageBlock
+  // FBC Auburn: the event and holiday page blocks (builderBlocks.types.ts, 2026-10-26)
+  | BuilderPageBlock;

@@ -61,6 +61,8 @@ import {
 import { collectionSectionSchemas } from './collectionSections';
 import { auburnSectionSchemas } from './auburnMotionSections';
 import { CHURCH_INSERT_GROUPS, churchSectionSchemas } from './churchSections';
+// FBC Auburn: the event and holiday page blocks (builderSections.ts, 2026-10-26)
+import { BUILDER_INSERT_GROUPS, builderSectionSchemas } from './builderSections';
 import { imageMember, imageWithAlt } from './_imageWithAlt';
 
 // The hero video checks, shared by the main clip and the phone copy (2026-10-25/26): an error for a
@@ -179,6 +181,24 @@ export const heroSection = defineType({
     }),
     defineField({ name: 'subhead', title: 'Line under the heading', type: 'text', rows: 2 }),
     imageWithAlt({ name: 'backgroundImage', title: 'Background photo (optional)' }),
+    // FBC Auburn (2026-10-26): an inner page's opener can take Home's photo treatment (the photo
+    // behind white words, PhotoHero.astro). Home always draws it, so the choice is hidden there.
+    defineField({
+      name: 'heroStyle',
+      title: 'Style',
+      type: 'string',
+      description:
+        'Arch is the standard page opening: the title beside the photo. Photo behind the words puts the background photo across the whole opening with the title over it in white, good for an event or holiday page. It needs a background photo; without one the page shows the arch.',
+      initialValue: 'arch',
+      options: {
+        list: [
+          { title: 'Arch (standard)', value: 'arch' },
+          { title: 'Photo behind the words', value: 'photo' },
+        ],
+        layout: 'radio',
+      },
+      hidden: ({ document }: { document?: { _type?: string } }) => document?._type === 'homePage',
+    }),
     // FBC Auburn Home (2026-10-25, PENDING 1zt): a short silent clip behind the welcome words
     // (HomeHero.astro). The background photo above is its poster and what shows when the clip does
     // not play (reduced motion, Save-Data, a slow connection, print). Rules: src/lib/hero-video.ts.
@@ -833,6 +853,8 @@ export const pageSectionSchemas = [
   ...collectionSectionSchemas,
   // FBC Auburn: the general church section library (churchSections.ts, 2026-10-18)
   ...churchSectionSchemas,
+  // FBC Auburn: event details, a schedule and cards with photos (builderSections.ts, 2026-10-26)
+  ...builderSectionSchemas,
 ];
 
 // The general blocks on their own. A saved section accepts these (plus the rich
@@ -884,7 +906,7 @@ function withChurchGroups<G extends { name: string; title: string; of: string[] 
   groups: G[],
 ): G[] {
   const out = groups.map((g) => ({ ...g, of: [...g.of] }));
-  for (const extra of CHURCH_INSERT_GROUPS) {
+  for (const extra of [...CHURCH_INSERT_GROUPS, ...BUILDER_INSERT_GROUPS]) {
     const found = out.find((g) => g.name === extra.name);
     if (found) found.of.push(...extra.of);
     else out.push({ ...extra } as G);

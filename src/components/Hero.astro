@@ -13,6 +13,8 @@
 import HeroBackground from '@/components/HeroBackground.astro';
 // FBC Auburn: the "split" hero layout renders as the arched hero (ArchHero.astro).
 import ArchHero from '@/components/ArchHero.astro';
+// FBC Auburn (2026-10-26): "Photo behind the words", Home's photo hero on any page.
+import PageHeroPhoto from '@/components/PageHeroPhoto.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import { splitHeadingAccent } from '@/lib/heading-accent';
@@ -79,6 +81,8 @@ interface Props {
   quiet?: boolean;
   /** The one-red-button rule (audit 2026-10-25): navy when an earlier block has the red. */
   primaryVariant?: 'primary' | 'navy';
+  /** FBC Auburn (2026-10-26): 'photo' draws Home's photo hero when there is a photo; else the arch. */
+  heroStyle?: string | null;
 }
 
 const {
@@ -99,6 +103,7 @@ const {
   icon,
   quiet = false,
   primaryVariant = 'primary',
+  heroStyle,
 } = Astro.props as Props;
 
 const heroVariant = variant ?? layout.hero;
@@ -258,7 +263,18 @@ const wrapperHeight =
   </script>
 )}
 
-{heroVariant === 'split' ? (
+{heroStyle === 'photo' && effectiveImages[0] ? (
+  <PageHeroPhoto
+    eyebrow={eyebrow}
+    headline={headline}
+    subhead={subhead}
+    image={effectiveImages[0]}
+    primaryCta={primaryCta}
+    secondaryCta={secondaryCta}
+    headingId={headingId}
+    primaryVariant={primaryVariant}
+  />
+) : heroVariant === 'split' ? (
   <ArchHero
     eyebrow={eyebrow}
     headline={headline}
