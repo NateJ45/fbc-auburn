@@ -88,7 +88,8 @@ a short silent clip: Studio > Home > Page layout > Opening banner > **Background
   always win), and fades it in (0.6s opacity) on `playing`. It carries `aria-hidden`, `tabindex=-1`, no
   controls and `pointer-events: none`.
 - `heroVideoAllowed()` (`src/lib/hero-video.ts`) says no for reduced motion, Save-Data, an
-  `effectiveType` of slow-2g, 2g or 3g, and print. Then there is no `<video>` element at all.
+  `effectiveType` of slow-2g, 2g or 3g, a measured `downlink` under 1 Mbps (2026-10-26; 0 counts as
+  unknown), and print. Then there is no `<video>` element at all.
   Switching reduced motion on while the page is open removes it. CSS hides it under reduced motion
   and in print as a second guard (`.hb-photo` is already hidden in print).
 - A Pause / Play button (`[data-hero-video-toggle]`, `aria-pressed`) sits at the top right
@@ -99,12 +100,20 @@ a short silent clip: Studio > Home > Page layout > Opening banner > **Background
   to a hardware overlay plane drawn outside the page; when it switched to that mid-scroll the navy
   shade vanished on screen (2026-10-25). It never shows in a browser screenshot (Playwright,
   DevTools, the extension), only in an OS screen capture, so check it by eye.
+- **Phone video (2026-10-26).** Sanity serves a file as uploaded and does not transcode, so the
+  small copy is a second upload: **Phone video** under Background video (`backgroundVideoPhone`).
+  Under 768px (`HERO_PHONE_QUERY`) the script picks it with `heroVideoPick()` before it builds
+  the `<video>`, so a phone fetches only the small copy; with no phone copy, phones play the main
+  clip. The choice is made once, so turning a tablet does not swap the clip mid-play. Measured on
+  Home at 375px, 1.6 Mbps / 150 ms, CPU 4x: 1,000 KB of video before, 267 KB after, LCP unchanged
+  (about 2.55 s, the poster image).
 - `tests/hero-video.spec.ts` drives `/styleguide/home-hero/` (fixed data). Playback itself is not
   asserted, since Playwright's browsers differ on H.264.
 
 **Before launch (2026-10-25)** the hero's shot request carries a stock example clip
 (`public/shot-examples/hero-pews.mp4`, Pexels), which plays by the same rules when no video is uploaded
-and goes with the shot request at launch.
+and goes with the shot request at launch. Its phone copy is `hero-pews-640.mp4` (267 KB; the shot's
+`video.phone` flag, `examplePhoneVideoSrc()` in `src/data/shot-list.ts`).
 
 **Streaming and fast start (2026-10-25).** The clip is not downloaded before it plays: the browser
 fetches it in pieces with HTTP range requests, which Sanity's CDN answers (`206 Partial Content`),
@@ -117,10 +126,14 @@ before the first frame. hppres.org's 54 MB hero works the same way (a fast-start
   range request (`checkFastStart()` / `mp4FastStart()` in `src/lib/hero-video.ts`) and warns
   if the video data comes first. A failed request or a file it cannot read raises nothing.
 - Exporting the hero clip: 1280x720 (720p), H.264, 24 to 30 fps, no audio track, about 1.5 to
-  2.5 Mbps, 15 to 30 seconds, which lands at 3 to 6 MB. Tick "Web optimized" (HandBrake), "Fast
+  2 Mbps, 15 to 30 seconds, under 3 MB (the Studio warns above 3 MB since 2026-10-26). Tick "Web optimized" (HandBrake), "Fast
   start" / "Optimize for web" (Premiere, Media Encoder, CapCut, Shotcut). With ffmpeg:
   `ffmpeg -i in.mov -an -vf scale=1280:-2 -c:v libx264 -preset slow -crf 26 -movflags +faststart out.mp4`.
   An existing mp4 can be fixed without re-encoding: `ffmpeg -i in.mp4 -c copy -movflags +faststart out.mp4`.
+- Exporting the phone copy: the same clip at 640 wide, no audio, fast start, under 1 MB (the
+  Studio warns above 1 MB). The example was made with
+  `ffmpeg -i in.mp4 -an -vf scale=640:-2 -c:v libx264 -profile:v main -preset veryslow -crf 30 -maxrate 160k -bufsize 320k -pix_fmt yuv420p -movflags +faststart out-640.mp4`
+  (19 s, 267 KB). The navy shade sits over it, so the softer picture does not show.
 
 ## View-transition cross-fade
 

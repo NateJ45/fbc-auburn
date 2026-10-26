@@ -93,13 +93,14 @@ router after the first page has settled (scripts in the session scratchpad, `nav
 
 ### Bundle budgets
 
-| Slot                                             | Target  |
-| ------------------------------------------------ | ------- |
-| Total JS on home page (compressed)               | < 100KB |
-| Largest single React island bundle (compressed)  | < 50KB  |
-| Total CSS (compressed)                           | < 30KB  |
-| Hero image (any viewport)                        | < 200KB |
-| Home hero video (FBC Auburn, Studio warns above) | < 6MB   |
+| Slot                                                   | Target  |
+| ------------------------------------------------------ | ------- |
+| Total JS on home page (compressed)                     | < 100KB |
+| Largest single React island bundle (compressed)        | < 50KB  |
+| Total CSS (compressed)                                 | < 30KB  |
+| Hero image (any viewport)                              | < 200KB |
+| Home hero video (FBC Auburn, Studio warns above)       | < 3MB   |
+| Home hero phone video (FBC Auburn, Studio warns above) | < 1MB   |
 
 If a new dependency pushes a budget, that's a discussion before merging. Some are worth it (motion is the interaction language); some aren't (a 60KB icon library when three lucide-react icons would cover it).
 
@@ -136,7 +137,7 @@ Target: 100 on all four categories (Performance, Accessibility, Best Practices, 
 - SanityImage emits real width-descriptor srcset with 11 breakpoints (160-2400; small steps added in card 93, see images.md)
 - AVIF as default format (`'auto'`) -- Sanity picks AVIF on supporting browsers
 - `fetchpriority="high"` on hero LCP image
-- FBC Auburn's Home hero video (2026-10-25) is added by script after the load event, with the already-chosen photo (`currentSrc`) as its poster, so the photo stays the LCP and nothing extra is fetched for the poster; reduced motion, Save-Data and 2G/3G get no `<video>` at all (`src/lib/hero-video.ts`, `HomeHero.astro`)
+- FBC Auburn's Home hero video (2026-10-25) is added by script after the load event, with the already-chosen photo (`currentSrc`) as its poster, so the photo stays the LCP and nothing extra is fetched for the poster; reduced motion, Save-Data, 2G/3G and a downlink under 1 Mbps get no `<video>` at all, and phones under 768px get the optional 640px "Phone video" instead of the full clip (2026-10-26: 1,000 KB to 267 KB of video at 375px on throttled 4G, LCP unchanged; `src/lib/hero-video.ts`, `HomeHero.astro`)
 - Portrait inline images capped to `max-w-[600px]` (smaller files at the smaller cap)
 - Cloudflare adapter `imageService: 'compile'` (build-time Sharp, no runtime image binding)
 

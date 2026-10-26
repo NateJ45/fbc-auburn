@@ -23,10 +23,12 @@
 // print), so those visitors get the still and download nothing. The clip fades in once it plays, a
 // small Pause button (WCAG 2.2.2: motion longer than five seconds) sits at the top right, the choice
 // is remembered on this device, and the clip pauses while the hero is off screen. A video fills the
-// shot request, so the "Photo needed" note goes once one is uploaded.
+// shot request, so the "Photo needed" note goes once one is uploaded. Phones (under 768px) play the
+// "Phone video" copy when there is one (2026-10-26, about 640px and a few hundred KB, not the full
+// clip); the script picks the source before it builds the <video>, so only one copy is fetched.
 import SanityImage from '@/components/SanityImage.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
-import { exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
+import { examplePhoneVideoSrc, exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { ctaHref } from '@/lib/cta-href';
@@ -45,12 +47,20 @@ const video = heroVideoSource({
   url: splitStega(block.backgroundVideo?.url ?? '').cleaned,
   mimeType: block.backgroundVideo?.mimeType,
 });
-const shot = video ? null : shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
+const phoneVideo = heroVideoSource({
+  url: splitStega(block.backgroundVideoPhone?.url ?? '').cleaned,
+  mimeType: block.backgroundVideoPhone?.mimeType,
+});
+const shot =
+  video || phoneVideo ? null : shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
 // Before launch the shot's example clip (a stock Pexels video, shot-list.ts) plays the same way as a
 // real upload, over the example photo, so Home shows what the hero video will look like. It goes
 // with the shot request at launch (PRE_LAUNCH_NOTES), like the example photo.
 const clip =
   video ?? (shot?.video ? { url: exampleSrc(shot.video.file, 'mp4'), type: 'video/mp4' } : null);
+const phoneClip =
+  phoneVideo ??
+  (shot?.video?.phone ? { url: examplePhoneVideoSrc(shot.video.file), type: 'video/mp4' } : null);
 const photo = !shot && block.backgroundImage?.asset ? block.backgroundImage : null;
 // Before launch the shot's example photo fills the hero behind its note, so Home reads as finished.
 // It is the page's LCP element, so phones get a smaller copy (29 KB, not the 2000px 166 KB file
@@ -77,9 +87,11 @@ const secondary = block.secondaryCta;
 <section
   class="hb-hero"
   aria-labelledby="hb-h1"
-  data-photo={photo || example || clip ? 'yes' : 'no'}
-  data-hero-video={clip?.url}
-  data-hero-video-type={clip?.type}
+  data-photo={photo || example || clip || phoneClip ? 'yes' : 'no'}
+  data-hero-video={clip?.url ?? phoneClip?.url}
+  data-hero-video-type={clip?.type ?? phoneClip?.type}
+  data-hero-video-phone={phoneClip?.url}
+  data-hero-video-phone-type={phoneClip?.type}
 >
   <div class="hb-photo" aria-hidden={photo ? undefined : 'true'}>
     {example && (
@@ -175,7 +187,7 @@ const secondary = block.secondaryCta;
 <script>
   // The hero's clip (see the header comment). Built here, not in the HTML, so a visitor who should
   // get the still downloads nothing and the photo is always the first thing painted.
-  import { heroVideoAllowed } from '@/lib/hero-video';
+  import { HERO_PHONE_QUERY, heroVideoAllowed, heroVideoPick } from '@/lib/hero-video';
 
   const PAUSED_KEY = 'fbc-hero-video-paused';
   const readPaused = () => {
@@ -203,13 +215,16 @@ const secondary = block.secondaryCta;
       return;
     }
     const conn = (
-      navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
+      navigator as Navigator & {
+        connection?: { saveData?: boolean; effectiveType?: string; downlink?: number };
+      }
     ).connection;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)');
     const allowed = heroVideoAllowed({
       reducedMotion: reduce.matches,
       saveData: conn?.saveData,
       effectiveType: conn?.effectiveType,
+      downlink: conn?.downlink,
       print: matchMedia('print').matches,
     });
     if (!allowed) return;
@@ -235,9 +250,18 @@ const secondary = block.secondaryCta;
     clip.disablePictureInPicture = true;
     // The photo the browser already chose is the poster, so nothing new is fetched for it.
     if (still?.currentSrc) clip.poster = still.currentSrc;
+    // One copy only: the phone video on a phone screen when there is one, else the main clip. Read
+    // once here, so turning a tablet does not swap (and re-download) the clip mid-play.
+    const { heroVideo, heroVideoType, heroVideoPhone, heroVideoPhoneType } = hero.dataset;
+    const pick = heroVideoPick(
+      heroVideo ? { url: heroVideo, type: heroVideoType ?? 'video/mp4' } : null,
+      heroVideoPhone ? { url: heroVideoPhone, type: heroVideoPhoneType ?? 'video/mp4' } : null,
+      matchMedia(HERO_PHONE_QUERY).matches,
+    );
+    if (!pick) return;
     const source = document.createElement('source');
-    source.src = hero.dataset.heroVideo ?? '';
-    source.type = hero.dataset.heroVideoType ?? 'video/mp4';
+    source.src = pick.url;
+    source.type = pick.type;
     clip.append(source);
     frame.insertBefore(clip, frame.querySelector('.hb-photo__shade'));
 

@@ -36,13 +36,20 @@ export interface Shot {
    * subject. Never shipped at launch: it goes with the placeholder.
    */
   example?: { file: string; credit: string; note?: 'end' };
-  /** A short silent clip shown instead of the example photo (the Last Sunday card, the Home hero). */
-  video?: { file: string; credit: string };
+  /**
+   * A short silent clip shown instead of the example photo (the Last Sunday card, the Home hero).
+   * `phone`: a 640px copy sits beside it as `<file>-640.mp4` (2026-10-26, the Home hero's phone
+   * video; ffmpeg, CRF 30, no sound, fast start, about 270 KB).
+   */
+  video?: { file: string; credit: string; phone?: boolean };
 }
 
 /** The public path of an example's photo, video (.mp4) or video poster. */
 export const exampleSrc = (file: string, ext: 'webp' | 'mp4' = 'webp') =>
   `/shot-examples/${file}.${ext}`;
+
+/** The public path of an example clip's phone copy (`video.phone`). */
+export const examplePhoneVideoSrc = (file: string) => `/shot-examples/${file}-640.mp4`;
 
 /**
  * The srcset for an example drawn full-width above the fold (the Home hero, its LCP element). The
@@ -72,7 +79,7 @@ const SHOTS: Record<string, Shot[]> = {
       orientation: 'landscape',
       example: { file: 'hero', credit: 'Christian Harb on Unsplash' },
       // 2026-10-25: a stock clip plays over the example photo until the church's own video is in.
-      video: { file: 'hero-pews', credit: 'RDNE Stock project on Pexels' },
+      video: { file: 'hero-pews', credit: 'RDNE Stock project on Pexels', phone: true },
     },
   ],
   '/|A place to belong': [

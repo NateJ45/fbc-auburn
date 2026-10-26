@@ -747,7 +747,7 @@ export const guides: Guide[] = [
         kind: 'bullets',
         items: [
           'The **Opening banner** is the welcome at the top, with the This Sunday card. Keep it first.',
-          'The banner’s `Background video` plays a short silent clip behind the welcome: 15 to 30 seconds, landscape, an .mp4 under 6 MB, saved with "Fast start" or "Web optimized" turned on (the box warns you if it was not). Keep the `Background photo` too: it shows first, and it is all some visitors see. To change the clip, upload the new one in the same box and publish.',
+          'The banner’s `Background video` plays a short silent clip behind the welcome: 15 to 30 seconds, landscape, an .mp4 under 3 MB, saved with "Fast start" or "Web optimized" turned on (the box warns you if it was not). Then add the same clip again in `Phone video`, exported 640 pixels wide (under 1 MB): phones play that small copy, so nobody waits on the big file over a phone signal. Keep the `Background photo` too: it shows first, and it is all some visitors see. To change the clip, upload the new ones in the same boxes and publish.',
           'The first **Stepping-stone steps** section is drawn as "Your first Sunday", the numbered walk. Steps marked as a Sunday gathering show their time by themselves.',
           'The first **Image + text** section is "Who we are": the photos and your signed welcome.',
           '**This week** and **Watch** sit side by side when they are next to each other.',
