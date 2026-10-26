@@ -94,9 +94,11 @@ a short silent clip: Studio > Home > Page layout > Opening banner > **Background
 - A Pause / Play button (`[data-hero-video-toggle]`, `aria-pressed`) sits at the top right
   (WCAG 2.2.2, motion longer than five seconds). The choice is kept in `localStorage`
   (`fbc-hero-video-paused`). The clip pauses while the hero is off screen.
-- It does not drift with the photo on scroll (no `hb-photo__img` class) and sits at `z-index: 0` under
-  the shade's `z-index: 1`. It used to drift, and the moving video got its own GPU layer that Chrome
-  drew above the shade, so the navy wash vanished partway down the page (fixed 2026-10-25).
+- It drifts with the photo on scroll (class `hb-photo__img`), sits at `z-index: 0` under the shade's
+  `z-index: 1`, and plays at `opacity: 0.99`, never 1. Chrome on Windows promotes a fully opaque video
+  to a hardware overlay plane drawn outside the page; when it switched to that mid-scroll the navy
+  shade vanished on screen (2026-10-25). It never shows in a browser screenshot (Playwright,
+  DevTools, the extension), only in an OS screen capture, so check it by eye.
 - `tests/hero-video.spec.ts` drives `/styleguide/home-hero/` (fixed data). Playback itself is not
   asserted, since Playwright's browsers differ on H.264.
 
