@@ -233,7 +233,7 @@ a Live stream link or a YouTube channel id).
   line in its place (`PRE_LAUNCH_NOTES`). YouTube plays in place; Facebook opens Facebook.
 - `/bulletin/` shows `bulletinToShow` (`src/lib/sermons.ts`): the newest current Bulletin, else the newest one even
   if it has come down, labelled "Last week's bulletin" when it is more than six days old, with a line saying when
-  the next goes up (`POSTED_WHEN` at the top of `bulletin.astro`; empty shows the ask before launch, nothing after).
+  the next goes up (the block's "When a new bulletin goes up" field since 2026-10-26, when /bulletin/ became a Studio page; empty shows the ask before launch, nothing after).
 
 ## How it stays current
 

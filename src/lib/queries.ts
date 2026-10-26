@@ -186,6 +186,12 @@ const SECTION_ARMS = `
     _type == "countdownSection" => { ..., link${CTA_PROJECTION} },
     _type == "progressSection" => { ..., link${CTA_PROJECTION} },
     _type == "photoSection" => { ..., image${IMAGE_PROJECTION} },
+    // The event and holiday page blocks (builderSections.ts, 2026-10-26). The schedule needs no arm.
+    _type == "eventDetailsSection" => { ..., image${IMAGE_PROJECTION}, button${CTA_PROJECTION} },
+    _type == "photoCardsSection" => {
+      ...,
+      cards[]{ ..., image${IMAGE_PROJECTION}, link${CTA_PROJECTION} }
+    },
     // The form's words only. The recipient's NAME is looked up for the page; its address is
     // never in the dataset (src/lib/church-form.ts).
     // The RSVP form names its event "<document id>:<block key>" (card 127).
@@ -543,6 +549,7 @@ export async function getContactPage() {
   return sanityFetch(
     `*[_type == "contactPage"][0]{
     ${sectionsProjection('additionalSections')},
+    ${sectionsProjection('pageBuilder')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -641,6 +648,7 @@ export async function getJournalPage() {
   return sanityFetch(
     `*[_type == "journalPage"][0]{
     ${sectionsProjection('additionalSections')},
+    ${sectionsProjection('pageBuilder')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -744,6 +752,7 @@ export async function getPrivacyPage() {
   return sanityFetch(
     `*[_type == "privacyPage"][0]{
     ${sectionsProjection('additionalSections')},
+    ${sectionsProjection('pageBuilder')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
