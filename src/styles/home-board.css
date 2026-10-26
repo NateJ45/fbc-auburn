@@ -111,8 +111,10 @@
 }
 /* The hero's clip (2026-10-25, HomeHero.astro): laid over the photo, under the shade, invisible
    until it actually plays so the photo is all anyone sees before then. Nothing on it is clickable.
-   It stays still while the page scrolls (no flow drift) and sits on an explicit layer below the
-   shade: a moving video was drawn above the shade in Chrome, so the wash vanished mid-scroll. */
+   It sits on an explicit layer below the shade, and plays at 0.99 opacity, not 1: Chrome on Windows
+   hands a fully opaque video to the GPU as a hardware overlay plane, drawn outside the page, and
+   when it switched to that mid-scroll the shade's wash vanished (it never shows in a browser
+   screenshot, only on screen). A video that is not fully opaque is always composited with the page. */
 .hb-photo .hb-photo__video {
   position: absolute;
   z-index: 0;
@@ -127,7 +129,7 @@
   transition: opacity 0.6s ease;
 }
 .hb-hero.is-video-playing .hb-photo__video {
-  opacity: 1;
+  opacity: 0.99;
 }
 /* Pause / Play (WCAG 2.2.2): small, top right, white on the navy shade, keyboard reachable. */
 .hb-video-toggle {
