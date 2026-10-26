@@ -60,9 +60,9 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
   and mergeable, auto-merge off): `snapshot.mjs run` reads the project id from the snapshot, or fails,
   instead of letting a build with no id ignore it. Merge it only after starter card 160 (file-style
   redirects, starter #204, merged 2026-10-26) has its `src/lib/redirects.ts` copy landed in fbcm,
-  presacademy, stonesteps-50k, reid-design-site and this repo; until then those sites' PRs show
-  DRIFT. Then open the waiting 161 copy PRs: branches `port/starter-card-161` are pushed in fbcm and
-  stonesteps-50k (worktrees `_worktrees/c161-*`); this repo copies `scripts/snapshot.mjs`,
+  presacademy, stonesteps-50k and reid-design-site (this repo took it with this PR); until then
+  those sites' PRs show DRIFT. Then open the waiting 161 copy PRs: branches
+  `port/starter-card-161` are pushed in fbcm and stonesteps-50k (worktrees `_worktrees/c161-*`); this repo copies `scripts/snapshot.mjs`,
   `scripts/lib/snapshot.test.mjs` and PORTS.md, and drops this bullet.
 - **The spelling card is parked, unnumbered** (Nathan, 2026-10-25): starter branch `port/card-160`
   with no PR and no PORTS.md card. Its number went to the redirects card, so it needs the next free
