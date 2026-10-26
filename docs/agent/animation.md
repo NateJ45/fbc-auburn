@@ -98,6 +98,22 @@ a short silent clip: Studio > Home > Page layout > Opening banner > **Background
 - `tests/hero-video.spec.ts` drives `/styleguide/home-hero/` (fixed data). Playback itself is not
   asserted, since Playwright's browsers differ on H.264.
 
+**Streaming and fast start (2026-10-25).** The clip is not downloaded before it plays: the browser
+fetches it in pieces with HTTP range requests, which Sanity's CDN answers (`206 Partial Content`),
+and starts after the first few hundred KB. That only works when the .mp4 is saved for **fast
+start**, with its index (`moov`) before the video data (`mdat`); with the index at the end, as
+many phone recordings and some export presets leave it, the browser needs nearly the whole file
+before the first frame. hppres.org's 54 MB hero works the same way (a fast-start mp4 on S3, no HLS).
+
+- The Studio checks it: on an .mp4 upload the Background video field reads the first 64 KB with one
+  range request (`checkFastStart()` / `mp4FastStart()` in `src/lib/hero-video.ts`) and warns
+  if the video data comes first. A failed request or a file it cannot read raises nothing.
+- Exporting the hero clip: 1280x720 (720p), H.264, 24 to 30 fps, no audio track, about 1.5 to
+  2.5 Mbps, 15 to 30 seconds, which lands at 3 to 6 MB. Tick "Web optimized" (HandBrake), "Fast
+  start" / "Optimize for web" (Premiere, Media Encoder, CapCut, Shotcut). With ffmpeg:
+  `ffmpeg -i in.mov -an -vf scale=1280:-2 -c:v libx264 -preset slow -crf 26 -movflags +faststart out.mp4`.
+  An existing mp4 can be fixed without re-encoding: `ffmpeg -i in.mp4 -c copy -movflags +faststart out.mp4`.
+
 ## View-transition cross-fade
 
 On FBC Auburn the cross-fade below is replaced by the flow layer's lift-and-rise (see "The flow layer").
