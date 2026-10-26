@@ -31,13 +31,14 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
   Facebook page), all unconfirmed. There is no fallback phone.
 - The round social buttons (header strip, phone menu, footer, and Contact's "Follow along" since
   2026-10-26) all come from one list, `resolveSocialLinks()` in `src/lib/social-links.ts` (icons in
-  `social-icons.ts`): Site settings > Social links in order, with the Facebook fact added when the
+  `social-icons.ts`; both PORTABLE since starter card 167, so edit them in the starter; the Facebook fact goes
+  in as the generic `pinnedFacebook` argument): Site settings > Social links in order, with the Facebook fact added when the
   list has no Facebook entry (2026-10-24). At most `MAX_SOCIAL_LINKS` (10) rows.
 - **Social links are editor-managed (2026-10-26).** The editor pastes a link and, optionally, a
   label; `platformFromUrl()` reads the platform from the address's host (Facebook, Instagram,
   YouTube, TikTok, WhatsApp, X/Twitter, Threads, Spotify, Apple Podcasts, Vimeo, LinkedIn,
-  Pinterest, Nextdoor, Flickr, Linktree; a new one is a row in `PLATFORMS` plus an icon). An unknown
-  site gets the plain link icon and the label, or its domain. The old `platform` dropdown is
+  Pinterest, Nextdoor, Flickr, Linktree, Houzz; a new one is a row in `PLATFORMS` plus an icon, in the
+  starter). An unknown site gets the plain link icon and the label, or its domain. The old `platform` dropdown is
   hidden, not removed (rule 1): it only stands in for an address the site does not know, so
   existing rows keep their icon. It stays in `NON_STEGA_FIELDS`.
 - **WhatsApp** shows only for an https group invite (`chat.whatsapp.com/<code>`) or number link

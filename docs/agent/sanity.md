@@ -238,6 +238,22 @@ What a WordPress block-editor handover gives a client, built on the page builder
    template, which stays registered so intents that name it keep working. Every example line starts `Example:`.
    `src/lib/authoring.test.ts` fails if a template uses a block a custom page does not accept, leaves an array member
    without a `_key`, repeats keys between two pages, or forgets the marker.
+
+   **Seasonal templates on the event blocks (2026-10-26).** "Seasonal: Event page" (id `page-event`, was "Event
+   (any)") is the generic one: a photo opening (`hero({ photo: true })`, heroStyle "Photo behind the words"; the
+   arch shows until a photo is added), Event details, a Schedule, Cards with photos, the map and an invitation
+   band. VBS, Easter, Christmas, Homecoming, Revival week, Trunk-or-treat and Thanksgiving use the same blocks
+   where they fit (countdowns, forms, the live stream and verses kept). Builders: `eventDetails`/`eventDate`,
+   `schedule`/`scheduleDay`/`slot`, `photoCards`/`photoCard`. A template never fills in a date (the Studio asks
+   for it, and an undated line shows nothing), an Event details line carries no time (picked with the date), and
+   a schedule time sits on a row whose title starts `Example:`; photos are left for the editor. The authoring test
+   also checks these blocks' lengths and counts and that every time is on the Studio's quarter-hour list.
+   Patterns: "Easter services" and "Christmas services" now open with Event details and a Schedule; "Advent
+   Sundays" and "Christmas Eve candlelight" are new (14 in all). The seeder never overwrites, so a pattern
+   rewritten in code goes to the dataset through `scripts/content/refresh-section-patterns.mjs` (dry by default;
+   it replaces a draft only when it is unpublished and still matches a snapshot of the old pattern, and backs it
+   up first).
+
 2. **The picture picker.** `SECTION_INSERT_MENU` in `schemaTypes/sections.ts` carries
    `views: [grid, list]`; the grid's `previewImageUrl` is `/section-thumbnails/<type>.jpg`, served by the site (the
    Studio's own origin). The pictures are shot by `npm run thumbnails` (`scripts/shoot-section-thumbnails.mjs`, build
@@ -294,7 +310,7 @@ wall checks `tests/builder-blocks.spec.ts`.
   else a white outline on the navy.
 - **Schedule (times and what happens)**, `scheduleSection`, under "Dates and notices". Optional heading and intro,
   one to six days (an optional name), each with up to twenty rows: a time from the same list (optional), what
-  happens, a short note. Times in Young Serif in a column sized to the longest (subgrid), two or three days side by
+  happens, a short note. Times in Young Serif in ONE column for the whole section, as wide as the longest time in any day (`--sched-time-chars` in `ch`, then subgrid), so every title starts on one edge; two or three days side by
   side from 64rem. Not the timeline.
 - **Cards with photos**, `photoCardsSection`, under Basics. Two to six cards, each a required photo (with its
   description, card 111), a title, a few words and an optional link (the whole card becomes the link, the button

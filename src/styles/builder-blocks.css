@@ -207,8 +207,10 @@
   line-height: 1.2;
   color: var(--heading-solid, var(--foreground));
 }
-/* The time column is as wide as the day's longest time ("10:30 am"), shared by every row through
-   subgrid, so the words line up down the list. */
+/* One time column for the whole section (2026-10-26): ScheduleBlock.astro sets
+   --sched-time-chars to the longest time in ANY day, and every time reserves that many
+   characters of its own face (min-width below), so the titles of every day and every row start
+   on one left edge. Subgrid then shares the column down each day's rows. */
 .sched__rows {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -236,6 +238,7 @@
   font-size: var(--fs-title);
   line-height: 1.15;
   white-space: nowrap;
+  min-width: calc((var(--sched-time-chars, 8) + 0.5) * 1ch);
   font-variant-numeric: tabular-nums lining-nums;
   color: var(--heading-solid, var(--foreground));
 }

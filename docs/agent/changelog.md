@@ -8,6 +8,15 @@ and asks for the words and link type only once any part of the button is filled 
 nothing for an empty button object (it used to fall back to "Get in touch"), and an empty Invitation
 band button no longer takes the page's red. No published page had an empty button.
 
+_2026-10-26: holiday and event templates use the event blocks._ A new "Seasonal: Event page" template
+(replacing "Event (any)") opens on a photo and runs Event details, a Schedule, Cards with photos, the map
+and an invitation band. The VBS, Easter, Christmas, Homecoming, Revival week, Trunk-or-treat and
+Thanksgiving templates are rebuilt on the same blocks. The "Easter services" and "Christmas services"
+saved sections now open with Event details and a Schedule (the unedited drafts were replaced, backed up
+first), and "Advent Sundays" and "Christmas Eve candlelight" are new saved sections. The Schedule block
+now keeps one time column for the whole section, so "4 pm" under one day and "10:30 am" under another
+start their titles on the same edge. Docs: `docs/agent/sanity.md` (the authoring kit).
+
 _2026-10-26: no "empty section" warning on blocks that fill themselves._ Checked signed in, the
 Contact page's form and the News and notes post list each carried "This section is empty... Fill it in or
 remove it", because their content comes from another tab or a collection. Eleven such blocks (sermons,
