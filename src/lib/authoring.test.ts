@@ -406,6 +406,32 @@ describe('page templates (src/sanity/pageTemplates.ts)', () => {
   }
 });
 
+// A block that draws from a collection or another document is already full when it is
+// added, so the "this section is empty" warning must not tell an editor to remove it.
+describe('blocks that fill themselves never warn empty', () => {
+  const FILLS_ITSELF = [
+    'contactFormSection',
+    'journalPostsSection',
+    'privacyPolicySection',
+    'sermonArchiveSection',
+    'podcastSection',
+    'bulletinSection',
+    'latestSermonSection',
+    'sermonSeriesSection',
+    'downloadsSection',
+    'watchSection',
+    'thisWeekSection',
+  ];
+  for (const type of FILLS_ITSELF) {
+    it(`${type}: a fresh one raises no warning`, () => {
+      assert.deepEqual(
+        pageWarnings([{ _type: type, _key: 'k' }], 'contactPage', SITE_RULES, CHECKS),
+        [],
+      );
+    });
+  }
+});
+
 describe('section patterns (src/sanity/sectionPatterns.ts)', () => {
   // A saved section accepts the general blocks plus the rich ones (sectionPreset.ts),
   // but never a synced section.

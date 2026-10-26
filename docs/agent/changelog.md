@@ -1,5 +1,12 @@
 # Change history
 
+_2026-10-26: no "empty section" warning on blocks that fill themselves._ Checked signed in, the
+Contact page's form and the News and notes post list each carried "This section is empty... Fill it in or
+remove it", because their content comes from another tab or a collection. Eleven such blocks (sermons,
+series, archive, podcast, downloads, bulletin, posts, contact form, privacy policy, Watch, This week) are
+now in `SELF_FILLING_SECTIONS` (`src/sanity/pageBuilderConfig.ts`), and `authoring.test.ts` checks a
+fresh one of each raises no warning.
+
 _2026-10-26: every main page is a page builder._
 
 **Decision.** Pastor Jacob should be able to rearrange, remove and add sections on every main page,
