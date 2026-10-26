@@ -99,7 +99,7 @@ a short silent clip: Studio > Home > Page layout > Opening banner > **Background
   asserted, since Playwright's browsers differ on H.264.
 
 **Before launch (2026-10-25)** the hero's shot request carries a stock example clip
-(`public/shot-examples/hero-clip.mp4`, Pexels), which plays by the same rules when no video is uploaded
+(`public/shot-examples/hero-pews.mp4`, Pexels), which plays by the same rules when no video is uploaded
 and goes with the shot request at launch.
 
 **Streaming and fast start (2026-10-25).** The clip is not downloaded before it plays: the browser
