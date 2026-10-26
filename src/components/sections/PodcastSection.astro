@@ -1,0 +1,77 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-26): "Podcast". How to get the sermons as a podcast: the
+// Apple Podcasts and Spotify buttons (their links are on the Sermons page document, tab Podcast),
+// the feed link and its address for any other app. Moved here from sermons/index.astro. Renders
+// nothing until the first sermon is published; before the first recording is uploaded, the
+// pre-launch note asks for one (audit 2026-10-25: the feed existed and nobody could find it).
+import { getAllSermons, getSermonsPage } from '@/lib/collection-queries';
+import { site } from '@/data/site';
+import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  headingId: string;
+}
+const { heading, intro, headingId } = Astro.props;
+const [page, sermons] = await Promise.all([getSermonsPage(), getAllSermons()]);
+const list = sermons.filter((s) => s.title && s.slug);
+const hasAudio = list.some((s) => s.audio?.url);
+---
+
+{list.length > 0 && (
+  <section id="sermons-podcast" class="bg-background" aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <div class="c-head">
+        <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
+          {heading || 'Listen on the go'}
+        </h2>
+        <p class="c-intro">
+          {intro ||
+            'Sermons with a recording are also a podcast, so they come to your phone each week.'}
+        </p>
+        {!hasAudio && PRE_LAUNCH_NOTES && (
+          <p class="c-meta mt-s">
+            [Jacob: the podcast fills itself from any sermon with an MP3 recording attached. Is
+            there an audio recording of Sunday's message we could upload each week? Many people
+            listen in the car or at work.]
+          </p>
+        )}
+      </div>
+      <div class="c-actions">
+        {page?.applePodcastsUrl && (
+          <a
+            class="btn-auburn btn-auburn--secondary press-tactile"
+            href={page.applePodcastsUrl}
+            target="_blank"
+            rel="noopener"
+          >
+            Apple Podcasts<span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        )}
+        {page?.spotifyUrl && (
+          <a
+            class="btn-auburn btn-auburn--secondary press-tactile"
+            href={page.spotifyUrl}
+            target="_blank"
+            rel="noopener"
+          >
+            Spotify<span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        )}
+      </div>
+      <p class="mt-m">
+        <a class="c-link" href="/sermons/podcast.xml">
+          Subscribe to the podcast
+        </a>
+      </p>
+      <p class="c-meta mt-s">
+        Another podcast app? Add this address to it:{' '}
+        <a class="c-link" href="/sermons/podcast.xml">
+          {`${site.url}/sermons/podcast.xml`}
+        </a>
+      </p>
+    </div>
+  </section>
+)}

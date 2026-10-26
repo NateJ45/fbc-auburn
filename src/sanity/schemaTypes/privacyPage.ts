@@ -4,7 +4,8 @@
 // Safe to edit by hand.
 
 import { defineType, defineField, defineArrayMember, type Rule } from 'sanity';
-import { additionalSectionsField } from './sections';
+import { additionalSectionsField, sectionArrayOptions } from './sections';
+import { PRIVACY_SECTION_TYPES } from './richSections';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 import { imageWithAlt } from './_imageWithAlt';
 
@@ -15,12 +16,27 @@ export const privacyPage = defineType({
   // Configuration, not prose the editor writes — exclude from Canvas.
   options: { canvasApp: { exclude: true } },
   groups: [
+    { name: 'pageBuilder', title: 'Page layout', default: true },
     { name: 'seo', title: 'SEO' },
     { name: 'hero', title: 'Hero' },
     { name: 'content', title: 'Content' },
     { name: 'extra', title: 'Extra sections' },
   ],
   fields: [
+    // Every main page a page builder (2026-10-26): the sections of this page, in order. The old
+    // banner and extra-section fields below are hidden fossils (rule 1); scripts/content/builder-pages.mjs
+    // moved their content in here.
+    defineField({
+      name: 'pageBuilder',
+      title: 'Page layout',
+      type: 'array',
+      group: 'pageBuilder',
+      description:
+        "Sections on this page. Drag to reorder, remove a section to hide it, or add a new block from the library. Edit each section's content by clicking into it.",
+      of: PRIVACY_SECTION_TYPES,
+      options: sectionArrayOptions,
+      ...pageBuilderAuthoring,
+    }),
     // SEO
     defineField({
       name: 'seoTitle',
@@ -59,6 +75,9 @@ export const privacyPage = defineType({
     // Hero
     defineField({
       name: 'heroEyebrow',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Hero eyebrow',
       type: 'string',
       group: 'hero',
@@ -66,14 +85,20 @@ export const privacyPage = defineType({
     }),
     defineField({
       name: 'heroHeadline',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Hero headline',
       type: 'string',
       group: 'hero',
       initialValue: 'Privacy Policy',
-      validation: (Rule) => Rule.required(),
+      // No longer required: a hidden fossil since 2026-10-26.
     }),
     defineField({
       name: 'heroSubhead',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Hero subhead',
       type: 'text',
       rows: 2,
@@ -81,11 +106,17 @@ export const privacyPage = defineType({
     }),
     imageWithAlt({
       name: 'heroImage',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Hero background image (optional)',
       group: 'hero',
     }),
     defineField({
       name: 'heroScriptAccent',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Script-font accent word (optional)',
       type: 'string',
       group: 'hero',
@@ -96,14 +127,20 @@ export const privacyPage = defineType({
     // Content
     defineField({
       name: 'lastUpdated',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Last updated date',
       type: 'date',
       group: 'content',
       description: 'Shown at the top of the policy. Update whenever the policy content changes.',
-      validation: (Rule) => Rule.required(),
+      // No longer required: a hidden fossil since 2026-10-26.
     }),
     defineField({
       name: 'body',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Policy body',
       type: 'array',
       group: 'content',
@@ -152,12 +189,18 @@ export const privacyPage = defineType({
           },
         }),
       ],
-      validation: (Rule) => Rule.required(),
+      // No longer required: a hidden fossil since 2026-10-26.
     }),
     // FBC Auburn (2026-10-18): an append zone, so the pastor can add a photo, a callout or
     // anything from the section library to this page himself.
     // The authoring kit (card 109): Insert a saved section, plus gentle warnings.
-    defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
+    // Fossil (2026-10-26): the extra sections moved into the Page layout; kept, never deleted.
+    defineField({
+      ...additionalSectionsField,
+      ...pageBuilderAuthoring,
+      hidden: true,
+      readOnly: true,
+    }),
   ],
   preview: { prepare: () => ({ title: 'Privacy page' }) },
 });
