@@ -185,7 +185,12 @@ const drawsRed = (block: unknown): boolean => {
     endLinkHref?: string;
   };
   const own = (href: string) => !repeatsHeaderCta(href, headerCta);
-  if (b._type === 'ctaBandSection') return own(ctaHref(b.cta, '/plan-your-visit/'));
+  if (b._type === 'ctaBandSection') {
+    // A button left empty draws nothing (CtaLink), so it cannot hold the red either.
+    const c = b.cta as (CtaTarget & { label?: string }) | null | undefined;
+    if (c && !c.label && !c.linkType && !c.href) return false;
+    return own(ctaHref(b.cta, '/plan-your-visit/'));
+  }
   if (b._type === 'heroSection' || b._type === 'stepsRailSection')
     return !!b.primaryCta?.label && own(ctaHref(b.primaryCta));
   if (b._type === 'walkSection') return !!b.endLinkLabel && own(b.endLinkHref ?? '');
