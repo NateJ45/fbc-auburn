@@ -5,7 +5,8 @@
 //   - reduced motion: the still photo, and no <video> at all (nothing is downloaded);
 //   - otherwise: the photo paints first and is the clip's poster, the clip is muted, has no
 //     controls and takes no clicks, and the Pause button is a real, keyboard-reachable toggle;
-//   - Home before launch: the shot request's stock example clip plays the same way (reduced motion: still).
+//   - Home before launch: the shot request's stock example clip plays the same way (reduced motion: still);
+//   - phones get the 640px copy and never request the full clip; a slow link keeps the still.
 // Playback itself is not asserted: Playwright's browsers differ on H.264.
 import { test, expect, type Page } from '@playwright/test';
 import { join } from 'node:path';
@@ -125,6 +126,41 @@ test.describe('Home before launch', () => {
     expect(still).toContain('/shot-examples/hero');
     expect(await hero.locator('video').evaluate((v) => (v as HTMLVideoElement).poster)).toBe(still);
     await expect(page.locator('[data-hero-video-toggle]')).toBeVisible();
+  });
+});
+
+// Phones get the small copy (2026-10-26): about 270 KB at 640px, not the 1 MB 1280px clip. The
+// script picks it before building the <video>, so the big file is never requested.
+test.describe('Home before launch, on a phone', () => {
+  test.use({ reducedMotion: 'no-preference', viewport: { width: 375, height: 812 } });
+
+  test('plays the phone copy and never asks for the full clip', async ({ page }) => {
+    const asked: string[] = [];
+    page.on('request', (r) => {
+      if (r.url().endsWith('.mp4')) asked.push(new URL(r.url()).pathname);
+    });
+    await page.goto('/', { waitUntil: 'load' });
+    const hero = page.locator('.hb-hero');
+    await expect(hero).toHaveAttribute('data-hero-video-phone', '/shot-examples/hero-pews-640.mp4');
+    await expect(hero.locator('video source')).toHaveAttribute(
+      'src',
+      '/shot-examples/hero-pews-640.mp4',
+    );
+    await page.waitForTimeout(500);
+    expect(asked).not.toContain('/shot-examples/hero-pews.mp4');
+  });
+
+  test('keeps the still on a slow link', async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'connection', {
+        configurable: true,
+        get: () => ({ effectiveType: '4g', downlink: 0.4, saveData: false }),
+      });
+    });
+    await page.goto('/', { waitUntil: 'load' });
+    await expect(page.locator('.hb-photo img').first()).toBeVisible();
+    await page.waitForTimeout(500);
+    await expect(page.locator('.hb-hero video')).toHaveCount(0);
   });
 });
 

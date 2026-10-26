@@ -12,7 +12,13 @@
 // blocks a page-builder array accepts. Use it everywhere a pageBuilder array is
 // defined so every builder offers the same library.
 
-import { defineType, defineField, defineArrayMember, type ArrayOptions } from 'sanity';
+import {
+  defineType,
+  defineField,
+  defineArrayMember,
+  type ArrayOptions,
+  type ValidationContext,
+} from 'sanity';
 import { BlockElementIcon } from '@sanity/icons/BlockElement';
 import { ImageIcon } from '@sanity/icons/Image';
 import { ImagesIcon } from '@sanity/icons/Images';
@@ -54,6 +60,30 @@ import { collectionSectionSchemas } from './collectionSections';
 import { auburnSectionSchemas } from './auburnMotionSections';
 import { CHURCH_INSERT_GROUPS, churchSectionSchemas } from './churchSections';
 import { imageMember, imageWithAlt } from './_imageWithAlt';
+
+// The hero video checks, shared by the main clip and the phone copy (2026-10-25/26): an error for a
+// type the hero cannot play, a warning over the size budget, and a warning when an .mp4 is not
+// saved for fast start (reads the first 64 KB of the upload). Rules in src/lib/hero-video.ts.
+const heroVideoCheck =
+  (kind: 'main' | 'phone') =>
+  async (value: { asset?: { _ref?: string } } | undefined, context: ValidationContext) => {
+    const ref = value?.asset?._ref;
+    if (!ref) return true;
+    const asset = await context
+      .getClient({ apiVersion: '2024-01-01' })
+      .fetch<{ url?: string; mimeType?: string; size?: number } | null>(
+        '*[_id == $id][0]{ url, mimeType, size }',
+        { id: ref },
+      );
+    const problem = heroVideoProblem(asset, kind);
+    if (problem?.level === 'error') return problem.message;
+    const slowStart =
+      asset?.url && asset.mimeType === 'video/mp4'
+        ? (await checkFastStart(asset.url)) === false
+        : false;
+    const warnings = [problem?.message, slowStart ? FAST_START_MESSAGE : undefined].filter(Boolean);
+    return warnings.length ? { message: warnings.join(' '), level: 'warning' as const } : true;
+  };
 
 // Short rich-text body: paragraphs, bold/italic, links, simple headings/lists.
 const proseBody = (name = 'body', title = 'Text') =>
@@ -150,37 +180,26 @@ export const heroSection = defineType({
     // FBC Auburn Home (2026-10-25, PENDING 1zt): a short silent clip behind the welcome words
     // (HomeHero.astro). The background photo above is its poster and what shows when the clip does
     // not play (reduced motion, Save-Data, a slow connection, print). Rules: src/lib/hero-video.ts.
+    // The phone copy below it (2026-10-26) plays under 768px: Sanity does not transcode files.
     defineField({
       name: 'backgroundVideo',
       title: 'Background video (Home only, optional)',
       type: 'file',
       description:
-        'A short clip of church life that plays silently behind the welcome words. Best: 15 to 30 seconds, landscape (phone held sideways), steady, no sound, an .mp4 under 6 MB (720p is plenty), exported with "Fast start" or "Web optimized" turned on so it starts playing straight away. Keep the background photo too: it shows first, and it is all some visitors see.',
+        'A short clip of church life that plays silently behind the welcome words. Best: 15 to 30 seconds, landscape (phone held sideways), steady, no sound, an .mp4 under 3 MB (720p is plenty), exported with "Fast start" or "Web optimized" turned on so it starts playing straight away. Keep the background photo too: it shows first, and it is all some visitors see. Add the phone video below as well, so phones get a small copy.',
       options: { accept: HERO_VIDEO_ACCEPT },
       hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
-      validation: (R) =>
-        R.custom(async (value: { asset?: { _ref?: string } } | undefined, context) => {
-          const ref = value?.asset?._ref;
-          if (!ref) return true;
-          const asset = await context
-            .getClient({ apiVersion: '2024-01-01' })
-            .fetch<{ url?: string; mimeType?: string; size?: number } | null>(
-              '*[_id == $id][0]{ url, mimeType, size }',
-              { id: ref },
-            );
-          const problem = heroVideoProblem(asset);
-          if (problem?.level === 'error') return problem.message;
-          // An .mp4 must be saved for fast start or it cannot begin until most of it has loaded
-          // (2026-10-25; reads the first 64 KB of the upload, hero-video.ts).
-          const slowStart =
-            asset?.url && asset.mimeType === 'video/mp4'
-              ? (await checkFastStart(asset.url)) === false
-              : false;
-          const warnings = [problem?.message, slowStart ? FAST_START_MESSAGE : undefined].filter(
-            Boolean,
-          );
-          return warnings.length ? { message: warnings.join(' '), level: 'warning' } : true;
-        }),
+      validation: (R) => R.custom(heroVideoCheck('main')),
+    }),
+    defineField({
+      name: 'backgroundVideoPhone',
+      title: 'Phone video (Home only, optional)',
+      type: 'file',
+      description:
+        'A small copy of the same clip for phones, so a visitor on a phone signal is not waiting on the big file. Export the clip again at 640 pixels wide (in HandBrake, CapCut or your editor, set the width or resolution to 640), no sound, 15 to 20 seconds, with "Fast start" or "Web optimized" turned on. It should come out under 1 MB, usually a few hundred KB. Phones play the main video if this is empty.',
+      options: { accept: HERO_VIDEO_ACCEPT },
+      hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
+      validation: (R) => R.custom(heroVideoCheck('phone')),
     }),
     defineField({ name: 'primaryCta', title: 'Main button', type: 'ctaBlock' }),
     defineField({ name: 'secondaryCta', title: 'Second button (optional)', type: 'ctaBlock' }),
