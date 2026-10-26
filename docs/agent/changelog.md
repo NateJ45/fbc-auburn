@@ -1,5 +1,13 @@
 # Change history
 
+_2026-10-26: the People tool moves to the starter (card 176), with a Simple view switch._ The People tool's files are
+now the starter's PORTABLE copies (`studio-people.ts` and test, `/api/studio/people/`, `src/sanity/people/`). The
+church's words and plan moved to `kitConfig.people` (`plan: 'free'`, the Helper description, the lead line), and
+`ncsPeopleTool(kitConfig)` takes the config. New: a **Simple view** switch beside each administrator under "Who can edit
+the website" (card 175), so a helper invited as an Administrator on the free plan gets the simple Studio with no
+deploy; the free-plan steps and the guide now say so instead of "ask Nathan". With Helper greyed out the form starts on
+Administrator. Detail: `docs/agent/studio-people.md`.
+
 _2026-10-26: the staff view by role, with a list that adds to it (starter card 175)._ The kit's staff view now goes
 to everyone who is not a Sanity administrator, PLUS the ids in `kitConfig.staff`, PLUS any account marked "Simple
 view" on the kit's new `studioStaff` document (id `kit.studioStaff`). Before, a non-empty list replaced the role

@@ -371,7 +371,8 @@ Worker has its key the tool shows the sanity.io/manage steps instead. Once per s
    address as a Helper, check the email arrives, and `Cancel` it.
 
 Helper is Sanity's Editor role, which only exists on the Growth plan (and the Growth trial a new project starts on).
-On the free plan the tool greys Helper out and says why. Detail: `docs/agent/studio-people.md`.
+On the free plan (`kitConfig.people.plan = 'free'`, this site) the tool greys Helper out and says why; invite helpers as
+Administrators and turn on their `Simple view` (starter cards 175 and 176). Detail: `docs/agent/studio-people.md`.
 
 ### Studio deploy
 

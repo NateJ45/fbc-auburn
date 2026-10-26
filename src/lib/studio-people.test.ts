@@ -1,6 +1,7 @@
-// "Invite a helper": role mapping, request validation and the route's order of
-// checks (src/lib/studio-people.ts). Sanity is a fake fetch here; what still
-// needs a signed-in test is listed in docs/agent/studio-people.md.
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// The People tool (PORTS.md card 176): role mapping, request validation and the
+// route's order of checks (src/lib/studio-people.ts). Sanity is a fake fetch
+// here; what still needs a signed-in test is listed in docs/agent/studio-people.md.
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
@@ -13,13 +14,17 @@ import {
   isProjectAdmin,
   memberRows,
   noHelperSteps,
-  plainRoleOf,
+  PLAIN_ROLES,
+  planOf,
+  roleKeyOf,
+  roleLabel,
+  roleWords,
   sanityRoleFor,
   validatePeopleRequest,
   type PeopleDeps,
 } from './studio-people.ts';
 
-const PROJECT = 'wdpzvn6m';
+const PROJECT = 'abc123xy';
 const GROWTH = ['roleEditor', 'roleViewer', 'roleContributor', 'roleDeveloper'];
 const FREE = ['roleViewer'];
 
@@ -27,7 +32,7 @@ describe('role mapping', () => {
   it('a Helper is an Editor, an Administrator is an administrator', () => {
     assert.equal(sanityRoleFor('helper', GROWTH, 'auto'), 'editor');
     assert.equal(sanityRoleFor('administrator', GROWTH, 'auto'), 'administrator');
-    // Free for good (2026-10-26): a Growth trial still lists roleEditor, but no Helper is offered.
+    // Free for good: a Growth trial still lists roleEditor, but no Helper is offered.
     assert.equal(sanityRoleFor('helper', GROWTH, 'free'), null);
     assert.equal(sanityRoleFor('administrator', GROWTH, 'free'), 'administrator');
   });
@@ -38,13 +43,32 @@ describe('role mapping', () => {
     assert.equal(sanityRoleFor('administrator', FREE), 'administrator');
   });
 
-  it('reads Sanity roles back in plain words, administrator first', () => {
-    assert.equal(plainRoleOf(['editor', 'administrator']).title, 'Administrator');
-    assert.equal(plainRoleOf(['editor']).title, 'Helper');
-    assert.equal(plainRoleOf(['developer']).key, 'helper');
-    assert.match(plainRoleOf(['contributor']).title, /cannot publish/);
-    assert.equal(plainRoleOf(['viewer']).title, 'Can look, cannot edit');
-    assert.equal(plainRoleOf([]).title, 'No role');
+  it('reads Sanity roles back, administrator first', () => {
+    assert.equal(roleKeyOf(['editor', 'administrator']), 'administrator');
+    assert.equal(roleKeyOf(['editor']), 'helper');
+    assert.equal(roleKeyOf(['developer']), 'helper');
+    assert.equal(roleKeyOf(['contributor']), 'drafts');
+    assert.equal(roleKeyOf(['viewer']), 'viewer');
+    assert.equal(roleKeyOf([]), 'other');
+  });
+
+  it("words a role in the site's own words, over the defaults", () => {
+    const words = roleWords({ helper: { title: 'Volunteer' } });
+    assert.equal(words.helper.title, 'Volunteer');
+    assert.equal(words.helper.description, PLAIN_ROLES.helper.description);
+    assert.equal(roleLabel('helper', words), 'Volunteer');
+    assert.match(roleLabel('drafts', words), /^Volunteer .*cannot publish/);
+    assert.equal(roleLabel('administrator', words), 'Administrator');
+    assert.equal(roleLabel('viewer', words), 'Can look, cannot edit');
+    assert.equal(roleLabel('other', words, 'custom-role'), 'custom-role');
+    assert.equal(roleLabel('other', words), 'No role');
+  });
+
+  it("anything but 'free' is 'auto'", () => {
+    assert.equal(planOf('free'), 'free');
+    assert.equal(planOf('auto'), 'auto');
+    assert.equal(planOf('Free'), 'auto');
+    assert.equal(planOf(undefined), 'auto');
   });
 
   it('only a real administrator role counts as an admin', () => {
@@ -54,11 +78,15 @@ describe('role mapping', () => {
     assert.equal(isProjectAdmin(null), false);
   });
 
-  it('the free-plan steps name the helper and the manage page, with no em-dashes', () => {
-    const steps = noHelperSteps(PROJECT, 'Nathan').join(' ');
-    assert.match(steps, /Nathan/);
-    assert.match(steps, /sanity\.io\/manage\/project\/wdpzvn6m\/members/);
-    assert.doesNotMatch(steps, /—/);
+  it('the free-plan steps use the role words, name Simple view and the manage page', () => {
+    const words = roleWords({ helper: { title: 'Volunteer' } });
+    const free = noHelperSteps(PROJECT, words, 'free').join(' ');
+    assert.match(free, /no Volunteer in between/);
+    assert.match(free, /stays on the free plan/);
+    assert.match(free, /Simple view/);
+    assert.match(free, /sanity\.io\/manage\/project\/abc123xy\/members/);
+    assert.doesNotMatch(free, /\u2014/);
+    assert.match(noHelperSteps(PROJECT, words, 'auto').join(' '), /Growth plan/);
   });
 });
 
@@ -76,11 +104,15 @@ describe('request validation', () => {
     });
   });
 
-  it('says what is wrong with each field', () => {
-    const v = validatePeopleRequest({ action: 'invite', name: '', email: 'ruth', role: 'owner' });
+  it('says what is wrong with each field, in the role words', () => {
+    const v = validatePeopleRequest(
+      { action: 'invite', name: '', email: 'ruth', role: 'owner' },
+      roleWords({ helper: { title: 'Volunteer' } }),
+    );
     assert.equal(v.ok, false);
     if (v.ok) return;
-    assert.ok(v.errors.name && v.errors.email && v.errors.role);
+    assert.ok(v.errors.name && v.errors.email);
+    assert.equal(v.errors.role, 'Pick Volunteer or Administrator.');
   });
 
   it('caps the name and the email', () => {
@@ -120,7 +152,7 @@ describe('rows', () => {
       [
         {
           sanityUserId: 'g1',
-          profile: { displayName: 'Jacob', email: 'j@x.org', isCurrentUser: true },
+          profile: { displayName: 'Sam', email: 's@x.org', isCurrentUser: true },
           memberships: [
             {
               resourceType: 'project',
@@ -141,14 +173,16 @@ describe('rows', () => {
     );
     assert.equal(rows.length, 1);
     assert.equal(rows[0].isYou, true);
-    assert.equal(rows[0].role, 'Administrator');
+    assert.equal(rows[0].roleKey, 'administrator');
+    // The project user id is what a "Simple view" mark uses (card 175).
+    assert.equal(rows[0].userId, 'p1');
     const invites = inviteRows([
       { id: 'a', status: 'pending', role: 'editor', email: 'r@x.org', createdAt: '2026-10-01' },
       { id: 'b', status: 'accepted', role: 'editor', createdAt: '2026-10-02' },
     ]);
     assert.deepEqual(
-      invites.map((i) => [i.id, i.role]),
-      [['a', 'Helper']],
+      invites.map((i) => [i.id, i.roleKey]),
+      [['a', 'helper']],
     );
   });
 
@@ -218,20 +252,18 @@ function deps(over: Partial<PeopleDeps> = {}, f = fakeSanity()): PeopleDeps {
     verify: async () => admin,
     membersToken: 'robot',
     projectId: PROJECT,
-    helperName: 'Nathan',
-    plan: 'auto',
     fetchImpl: f.fetchImpl,
     ...over,
   };
 }
 
-const post = (body: unknown) =>
+const post = (body: Record<string, unknown>, plan = 'auto') =>
   new Request('https://site.test/api/studio/people/', {
     method: 'POST',
-    body: JSON.stringify(body),
+    body: JSON.stringify({ ...body, plan }),
     headers: { 'Content-Type': 'application/json' },
   });
-const get = () => new Request('https://site.test/api/studio/people/');
+const get = (plan = 'auto') => new Request(`https://site.test/api/studio/people/?plan=${plan}`);
 
 describe('handlePeople', () => {
   it('if Sanity refuses the robot key, it tries once more as the administrator', async () => {
@@ -260,22 +292,46 @@ describe('handlePeople', () => {
     const r = await handlePeople(get(), deps({ membersToken: undefined }, f));
     const body = (await r.json()) as { configured: boolean; manageUrl: string };
     assert.equal(body.configured, false);
-    assert.match(body.manageUrl, /wdpzvn6m/);
+    assert.match(body.manageUrl, /abc123xy/);
     assert.equal(f.calls.length, 0);
   });
 
   it('lists with the robot key and reports the plan', async () => {
     const f = fakeSanity({ features: FREE });
     const r = await handlePeople(get(), deps({}, f));
-    const body = (await r.json()) as {
-      ok: boolean;
-      helperAvailable: boolean;
-      helperSteps: string[];
-    };
+    const body = (await r.json()) as { ok: boolean; helperAvailable: boolean };
     assert.equal(body.ok, true);
     assert.equal(body.helperAvailable, false);
-    assert.ok(body.helperSteps.length > 0);
     assert.ok(f.calls.every((c) => c.auth === 'Bearer robot'));
+  });
+
+  it("plan 'free' greys Helper out even while a Growth trial lists the Editor role", async () => {
+    const f = fakeSanity({ features: GROWTH });
+    const free = (await (await handlePeople(get('free'), deps({}, f))).json()) as {
+      helperAvailable: boolean;
+    };
+    assert.equal(free.helperAvailable, false);
+    const auto = (await (await handlePeople(get('auto'), deps({}, f))).json()) as {
+      helperAvailable: boolean;
+    };
+    assert.equal(auto.helperAvailable, true);
+    const r = await handlePeople(
+      post({ action: 'invite', name: 'Ruth', email: 'ruth@x.org', role: 'helper' }, 'free'),
+      deps({}, f),
+    );
+    assert.equal(r.status, 409);
+    assert.equal(f.calls.filter((c) => c.method === 'POST').length, 0);
+  });
+
+  it('never puts the members key in an answer', async () => {
+    const f = fakeSanity({ inviteStatus: 403 });
+    for (const req of [
+      get(),
+      post({ action: 'invite', name: 'Ruth', email: 'ruth@x.org', role: 'helper' }),
+    ]) {
+      const res = await handlePeople(req, deps({ membersToken: 'robot-secret' }, f));
+      assert.doesNotMatch(await res.text(), /robot-secret/);
+    }
   });
 
   it('invites a Helper as an Editor with the robot key', async () => {
@@ -310,13 +366,9 @@ describe('handlePeople', () => {
       deps({}, f),
     );
     assert.equal(r.status, 409);
-    const body = (await r.json()) as {
-      planLimit: boolean;
-      helperSteps: string[];
-      manageUrl: string;
-    };
+    const body = (await r.json()) as { planLimit: boolean; manageUrl: string };
     assert.equal(body.planLimit, true);
-    assert.ok(body.helperSteps.length > 0 && body.manageUrl);
+    assert.ok(body.manageUrl);
     assert.equal(f.calls.filter((c) => c.method === 'POST').length, 0);
   });
 
