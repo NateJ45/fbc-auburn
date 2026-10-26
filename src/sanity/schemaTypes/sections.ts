@@ -972,6 +972,8 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'watchSection',
         'latestSermonSection',
         'sermonSeriesSection',
+        'sermonArchiveSection', // 2026-10-26
+        'podcastSection', // 2026-10-26
         'gallerySection',
         'videoSection',
         'embedSection',
@@ -987,6 +989,11 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'faqSection', // scaffold: faq
         'peopleSection',
         'downloadsSection',
+        // Every main page a page builder (2026-10-26); the last two only on their own page.
+        'bulletinSection',
+        'journalPostsSection',
+        'contactFormSection',
+        'privacyPolicySection',
         'thisWeekSection',
         'dynamicListSection',
         'ctaBandSection',

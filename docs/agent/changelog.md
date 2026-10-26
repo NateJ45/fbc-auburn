@@ -1,5 +1,20 @@
 # Change history
 
+_2026-10-26: every main page is a page builder._
+
+**Decision.** Pastor Jacob should be able to rearrange, remove and add sections on every main page,
+as on Squarespace. Contact, Privacy, News and notes and Sermons kept a fixed top and an "Extra
+sections" zone; Give and Bulletin were code with no Studio document. Now Contact, Privacy, News and
+notes and Sermons render a Page layout through `SectionRenderer` (defaults in `defaultSections.ts`),
+and Give and This week's bulletin are Studio `page` documents that `[slug].astro` always builds
+(`BUILT_IN_PAGES`), so `give.astro` and `bulletin.astro` are gone. Six new blocks hold what those
+pages drew in code: Contact form and Privacy policy text (offered on their own page only), News and
+notes posts, Every sermon, Podcast and This week's bulletin; the series grid can hide itself until
+there is a series. The old fields are hidden fossils; `scripts/content/builder-pages.mjs` moved the
+live content (run before the deploy, which the old code ignored). The orphaned Questions page left
+the Studio's page lists. Pages look the same; the differences are in the parity notes of the PR.
+Docs: `page-architecture.md`, `sanity.md`, `routes.md`.
+
 _2026-10-26: event and holiday page blocks._ Three new page-builder blocks so Jacob can build an event
 page himself: **Event details** (dates and times from a list, the place or the church's own address from
 Church facts, a photo, a sign-up button, an automatic "Add to my calendar" file and Directions; past dates

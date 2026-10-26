@@ -461,6 +461,8 @@ export interface ProjectedSermonSeriesSection {
   heading?: string;
   intro?: string;
   limit?: number;
+  /** Draw nothing while there is no series to show (the Sermons page, 2026-10-26). */
+  hideWhenEmpty?: boolean;
   series?: SeriesDoc[] | null;
 }
 export interface ProjectedPeopleSection {
@@ -483,6 +485,71 @@ export interface ProjectedDownloadsSection {
   featureBulletin?: boolean;
   items?: DownloadDoc[] | null;
   bulletins?: DownloadDoc[] | null;
+}
+
+// ---------------------------------------------------------------------------
+// FBC Auburn: every main page a page builder (2026-10-26). The parts of Contact, Privacy, News and
+// notes, Sermons and Bulletin that were drawn in code (collectionSections.ts). The collection
+// blocks read their rows from the route loaders, so they carry only their own switches.
+// ---------------------------------------------------------------------------
+
+/** The Contact page's form settings, read into the Contact form block by its GROQ arm. */
+export interface ContactFormSettings {
+  formIntroNote?: string | null;
+  formProjectTypeOptions?: string[] | null;
+  formLocationOptions?: string[] | null;
+  formBudgetOptions?: string[] | null;
+  formTimelineOptions?: string[] | null;
+  formSourceOptions?: string[] | null;
+  formFields?: { label?: string; kind?: string; options?: string[]; required?: boolean }[] | null;
+  whatToExpectEyebrow?: string | null;
+  whatToExpectHeadline?: string | null;
+  whatToExpectContent?: PortableTextBlock[] | null;
+  postInquiryRoadmap?: { title?: string; body?: string; timeEstimate?: string }[] | null;
+  schedulingLink?: string | null;
+  schedulingLinkLabel?: string | null;
+  availabilityNote?: string | null;
+}
+/** contactFormSection: the contact form and its sidebar. Self-contained. */
+export interface ProjectedContactFormSection {
+  _type: 'contactFormSection';
+  _key: string;
+  sidebar?: boolean;
+  settings?: ContactFormSettings | null;
+}
+/** privacyPolicySection: the policy text and its date. Self-contained. */
+export interface ProjectedPrivacyPolicySection {
+  _type: 'privacyPolicySection';
+  _key: string;
+  lastUpdated?: string | null;
+  body?: PortableTextBlock[] | null;
+}
+/** journalPostsSection: the category chips, every post and the newsletter. Self-contained. */
+export interface ProjectedJournalPostsSection {
+  _type: 'journalPostsSection';
+  _key: string;
+  showCategories?: boolean;
+  showNewsletter?: boolean;
+}
+/** sermonArchiveSection: every sermon, with filters. Self-contained. */
+export interface ProjectedSermonArchiveSection {
+  _type: 'sermonArchiveSection';
+  _key: string;
+  heading?: string;
+}
+/** podcastSection: the podcast links. Self-contained. */
+export interface ProjectedPodcastSection {
+  _type: 'podcastSection';
+  _key: string;
+  heading?: string;
+  intro?: string;
+}
+/** bulletinSection: this week's bulletin and the earlier ones. Self-contained. */
+export interface ProjectedBulletinSection {
+  _type: 'bulletinSection';
+  _key: string;
+  postedWhen?: string | null;
+  earlierHeading?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -575,6 +642,13 @@ export type PageBuilderBlock =
   | ProjectedSermonSeriesSection
   | ProjectedPeopleSection
   | ProjectedDownloadsSection
+  // FBC Auburn: every main page a page builder (2026-10-26)
+  | ProjectedContactFormSection
+  | ProjectedPrivacyPolicySection
+  | ProjectedJournalPostsSection
+  | ProjectedSermonArchiveSection
+  | ProjectedPodcastSection
+  | ProjectedBulletinSection
   // FBC Auburn: the church section library (churchBlocks.types.ts)
   | ChurchPageBlock
   // FBC Auburn: the event and holiday page blocks (builderBlocks.types.ts, 2026-10-26)

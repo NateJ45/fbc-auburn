@@ -52,6 +52,13 @@ export const SELF_CONTAINED_TYPES = new Set([
   'dynamicListSection',
   // FBC Auburn church library: the dated notice draws its own band (churchSections.ts)
   'noticeSection',
+  // Every main page a page builder (2026-10-26): each draws the white band its page drew.
+  'contactFormSection',
+  'privacyPolicySection',
+  'journalPostsSection',
+  'sermonArchiveSection',
+  'podcastSection',
+  'bulletinSection',
 ]);
 
 /** _type strings for blocks that receive alternating surface assignment. */
