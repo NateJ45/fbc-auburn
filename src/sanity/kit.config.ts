@@ -135,6 +135,7 @@ export const kitConfig: KitConfig = {
   trashTypes: {
     // One name per thing, matching the desk (FBC Auburn, 2026-10-18).
     announcement: 'Notice',
+    popup: 'Popup',
     faqItem: 'Question',
     faqCategory: 'Question group',
     journalEntry: 'Post',
@@ -591,6 +592,7 @@ export const kitConfig: KitConfig = {
         { title: 'Downloads and bulletins', target: { pane: 'downloads;download' } },
         { title: 'News and notes', target: { pane: 'journal;journalEntry' } },
         { title: 'Notices', target: { pane: 'content;announcement' } },
+        { title: 'Popups', target: { pane: 'content;popup' } },
         { title: 'Questions and answers', target: { pane: 'content;faqItem' } },
       ],
     },

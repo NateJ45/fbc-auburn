@@ -88,6 +88,13 @@ const logoSrcset = logo
       .map((w) => `${urlFor(logo).width(w).quality(80).auto('format').url()} ${w}w`)
       .join(', ')
   : undefined;
+// The phone menu's logo: the uploaded one when set (2026-10-26), else the brand kit's lockup.
+const menuLogoSrc = logo ? urlFor(logo).width(560).quality(80).auto('format').url() : undefined;
+// Home's small mark (below 1280px): Site settings' square icon when set, else the brand kit's.
+const icon = chrome.icon;
+const markSrc = icon
+  ? urlFor(icon).width(128).height(128).fit('crop').auto('format').url()
+  : markAsset.src;
 
 // Utility toggles (Site Settings -> Navigation). Both read "unset means yes",
 // so an untouched site is unchanged. Turning one off is expressed by handing
@@ -390,7 +397,7 @@ function isGroupActive(items: { href: string }[]) {
             when that lockup passes under the bar (data-past). CSS in src/styles/auburn.css. */}
         {isHome && (
           <img
-            src={markAsset.src}
+            src={markSrc}
             width={64}
             height={64}
             alt=""
@@ -543,7 +550,7 @@ function isGroupActive(items: { href: string }[]) {
     <MobileNav
       links={NAV_ITEMS}
       siteSettings={mobileNavSettings}
-      logoUrl={logoLightImg.src}
+      logoUrl={menuLogoSrc ?? logoLightImg.src}
       sunday={menuSunday}
       watch={menuWatch}
       current={pathname}

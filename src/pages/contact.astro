@@ -91,7 +91,14 @@ const schemas = [
 ];
 ---
 
-<BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+<BaseLayout
+  {title}
+  {description}
+  {schemas}
+  {siteSettings}
+  seoImage={page?.seoImage}
+  ogCard={{ kicker: heroEyebrow }}
+>
   {/* The old prayer side door (re-audit 2026-10-26): /contact/?topic=prayer goes to the prayer page,
       whose form keeps the prayer privacy promise. Runs on a full load and on a router swap. */}
   <script is:inline>

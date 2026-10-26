@@ -40,6 +40,7 @@ import { getSectionVisibility } from '@/lib/sectionVisibility';
 import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings';
 // The small cut on its paper plate: the cut cross and mortar would show the ink ground otherwise.
 import markAsset from '@/assets/brand/fbc-auburn-icon-white.svg';
+import { urlFor } from '@/lib/sanity';
 import { getChurchFacts } from '@/lib/church-data';
 import type { CtaTarget } from '@/lib/cta-href';
 import { sundayIcs, thisSunday } from '@/lib/church-facts';
@@ -96,6 +97,11 @@ const chrome = resolveSiteSettings(siteSettings);
 const visible = getSectionVisibility(siteSettings?.sectionVisibility);
 
 const brandName = siteSettings?.title ?? site.name;
+// The footer mark: Site settings' square icon when one is uploaded (2026-10-26), else the brand
+// kit's white mark on its paper plate.
+const footerMarkSrc = chrome.icon
+  ? urlFor(chrome.icon).width(144).height(144).fit('crop').auto('format').url()
+  : markAsset.src;
 
 // Social links: the one shared list (src/lib/social-links.ts), the same one the header strip
 // and the phone menu show. The footer's own "show social buttons" switch (Site Settings ->
@@ -235,7 +241,7 @@ const hasCalendar =
       <p class="sf-invite__brand">
         <img
           class="sf-invite__mark"
-          src={markAsset.src}
+          src={footerMarkSrc}
           width={72}
           height={72}
           alt=""

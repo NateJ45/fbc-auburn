@@ -32,6 +32,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | Deployment + env vars + rebuild model                                                                    | `docs/agent/deployment.md`                                           |
 | Studio kit (Home, Site Guide, Checkup, staff view, Trash)                                                | `docs/agent/studio-kit.md`                                           |
 | People: invite a Helper or an Administrator from the Studio, roles by plan, the members secret           | `docs/agent/studio-people.md`                                        |
+| Logo and icon uploads, build-time share cards, popups (site-only)                                        | `docs/agent/studio-brand.md`                                         |
 | Studio plan (who edits, weekly jobs, which surface)                                                      | `docs/agent/studio-plan.md`                                          |
 | Hidden pages, password pages (security note), Checkup link and heading checks                            | `docs/agent/private-pages.md`                                        |
 | Church facts, This Sunday, This week, YouTube replay, weather (drop-in components)                       | `docs/agent/church-data.md`                                          |

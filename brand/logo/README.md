@@ -44,7 +44,7 @@ the header, OG cards and the Studio), `src/assets/brand/fbc-auburn-icon-white.sv
 plate, for the ink footer), `src/assets/brand/mark-print.png` (the full print as a raster for the
 large slots: the Home hero, the arch page head and the closing band, served as WebP),
 `public/favicon.svg` and `public/studio-banner/mark.svg`. After `npm run logo`, run
-`npm run favicon -- --force-maskable`, `npm run og` and `npm run og:pages`, then restore
+`npm run favicon -- --force-maskable`, `npm run og` (the per-page cards redraw at the next build), then restore
 `public/site.webmanifest` (the favicon script rewrites it; `git checkout` it). `npm run logo` also
 prints the crop for the Studio wordmark (`src/sanity/studioEdges.config.ts`) when the lockup moves.
 

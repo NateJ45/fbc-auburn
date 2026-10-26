@@ -4,6 +4,29 @@ _2026-10-26: "Invite a helper" (the People tool)._ An administrator can now add 
 
 _2026-10-26: searching your own misspelling finds nothing honestly (starter card 166)._ Nathan: fix it. Pressing "Search for "cnotact" instead" said "1 result" and showed the Give page, which has no such word: Pagefind 1.5 returns loose pages for some typos. That search now drops pages that matched no word (`matchedOnly()` in `src/lib/site-search-client.ts`), so it says "Nothing found"; every other search is unchanged. It also turned up intermittently as a failed `tests/search.spec.ts` misspelling test in CI.
 
+_2026-10-26: share images, logo and icon, and popups from the Studio._
+
+**Decision.** Part of making the Studio complete for Jacob (self-serve additions). Three things:
+
+- **Share images make themselves.** The committed `public/og/*.png` and `scripts/generate-og-pages.mjs`
+  (and `npm run og:pages`) are gone. BaseLayout marks each prerendered page that has no picture of
+  its own (`src/lib/og-card-marker.ts`); `scripts/build-og-cards.mjs` draws its card as a JPEG at
+  build time, cached by content hash (29 pages: 3.2 s cold, 0.1 s warm; about 100 KB a card against
+  240 KB for the old PNGs). Sermons without a Studio picture now share their own card (series or
+  "Sermon" over the title) instead of the YouTube still. Site settings' default share image moved
+  below the cards. The card generator was already broken on main (it read the retired
+  `building-sketch.webp`; now `building-sketch-lines.webp`).
+- **Logo and icon from the Studio.** The existing `logo` field got guard rails and a preview and now
+  also feeds the phone menu; a new `siteIcon` feeds the favicon set (`scripts/build-brand-icons.mjs`),
+  the footer mark, Home's small mark, the share cards and the podcast artwork. Empty, the brand kit's
+  files ship as before.
+- **Popups.** A new `popup` type with one-at-a-time, 4 seconds plus scroll, once per visitor or
+  visit, native `<dialog>` (docs/agent/studio-brand.md, "Popups"), a fixture at `/styleguide/popup/`
+  and `tests/popup.spec.ts`.
+
+Three new Site Guide pages: "Put up a popup", "Change the logo or the icon", "The picture when a page
+is shared".
+
 _2026-10-26: Millville, and social links Pastor Jacob can add himself._
 
 **Decision.** Pastor Jacob's goal is a "digital front door for Millville, Ross and Hamilton", and
