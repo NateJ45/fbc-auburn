@@ -1,9 +1,10 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Safe to edit by hand (in the starter; site copies stay byte-identical, PORTS.md card 167)
 //
 // The Tabler icon for each social platform (the keys in PLATFORMS, src/lib/social-links.ts, which
-// reads the platform from the link's address), shared by the header strip, the phone menu, the
-// footer and Contact. Tabler has no Nextdoor icon; it gets the neighborhood (community) icon.
-// Any other site, and "Other", get the plain link icon.
+// reads the platform from the link's address), shared by every place that draws the round social
+// buttons. Tabler has no Nextdoor icon; it gets the neighborhood (community) icon. Houzz, any
+// other site, and "Other" get the plain link icon.
 
 import {
   IconBrandApplePodcast,
