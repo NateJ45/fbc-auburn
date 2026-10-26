@@ -1,5 +1,5 @@
-// Safe to edit by hand
-// The pieces of scripts/purge-page-css.mjs (audit DEV-M1, 2026-10-25): a small reader for Lightning
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// The pieces of scripts/purge-page-css.mjs (PORTS.md card 159): a small reader for Lightning
 // CSS's minified output and the rule that decides whether a selector can match. Pure; tested in
 // css-purge.test.mjs. The why and the safety rules are in the header of purge-page-css.mjs.
 

@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // The page CSS purge must only ever drop rules that cannot match (css-purge.mjs).
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
