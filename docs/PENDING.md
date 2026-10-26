@@ -58,7 +58,13 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
   `form-action` line.
 - **Starter card 161** (NateJ45/ncs-astro-sanity-starter#197, draft): `snapshot.mjs run` reads the
   project id from the snapshot, or fails, instead of letting a build with no id ignore it. Merges
-  after cards 155 to 160; then copy `scripts/snapshot.mjs` and `scripts/lib/snapshot.test.mjs` here.
+  after card 159; then copy `scripts/snapshot.mjs` and `scripts/lib/snapshot.test.mjs` here.
+- **Starter card 160 is parked** (Nathan, 2026-10-25): branch `port/card-160`, pushed to the starter
+  with no PR and no PORTS.md card yet. It fails `build-csp.mjs` when the CSP line passes
+  2,000 characters, and moves user-facing words in five marked files to American spelling
+  ("Website inquiry" in contact emails, "color", "judgment" in the Studio). Shipping it means copy PRs
+  to fbcm, presacademy, stonesteps-50k, reid-design-site, mas-monograms and this repo, and a choice
+  about those sites' wording. Card 161 went ahead of it.
 - **Ports:** the fixes that are not church-specific go to the starter with port cards: the print
   reset and `print.spec`, the regex-backslash guard, the dark-surface ring, the ContactForm changes
   (POST fallback, one-pass errors, sessionStorage), the FaqAccordion landmark fix, the `<dialog>`
