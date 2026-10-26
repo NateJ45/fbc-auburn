@@ -1035,9 +1035,13 @@
     margin-bottom: 20px;
     padding-top: 16px;
   }
-  /* With the clip's Pause button showing, the note starts below it instead of under it. */
-  .hb-hero:has(.hb-video-toggle:not([hidden])) .hb-hero__shot {
-    padding-top: 76px;
+  /* With a clip, the note starts below the Pause button instead of under it. Keyed on the hero's
+     data attribute, not on the button appearing: the script shows the button after load, and
+     moving the note then was a layout shift (CLS 0.063). Reduced motion never gets the button. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hb-hero[data-hero-video] .hb-hero__shot {
+      padding-top: 76px;
+    }
   }
   .hb-hero__shot + .hb-hero__inner .hb-hero__copy {
     padding-top: 0;
