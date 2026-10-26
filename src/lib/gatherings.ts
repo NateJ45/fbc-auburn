@@ -129,7 +129,7 @@ const BYDAY: IcsWeekday[] = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
  * (src/lib/ics.ts, PORTS.md card 158).
  *
  * A different Sunday (2026-10-26): the dates this gathering does not meet as usual go in as
- * buildIcs exceptions (starter card 173). A cancelled date is an EXDATE on the weekly event; a
+ * buildIcs exceptions (starter card 177). A cancelled date is an EXDATE on the weekly event; a
  * new time is the same event again with a RECURRENCE-ID, so calendar apps move that one date and
  * no other. Past dates and dates before the file's start are left out.
  */

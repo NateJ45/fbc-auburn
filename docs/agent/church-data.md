@@ -124,7 +124,7 @@ and nothing is retyped (rule 15).
   `EventScheduled` for an extra service; a change to an unconfirmed gathering is kept back).
   `/sunday.ics` and `/calendar/<key>.ics` write an `EXDATE` for a cancelled date and the same `UID`
   again with a `RECURRENCE-ID` for a new time (gatherings.ts passes them to the starter's
-  `buildIcs` as its `exdate` and `recurrenceId` fields, starter card 173; `/sunday.ics` is still
+  `buildIcs` as its `exdate` and `recurrenceId` fields, starter card 177; `/sunday.ics` is still
   written by hand in church-facts.ts); `/sunday.ics` also carries a coming Sunday's extra service.
 - **Why build time, not a browser check.** Every place above is already derived at build time from
   the build's clock, and the site already rebuilds on the publish webhook (the change appears about
