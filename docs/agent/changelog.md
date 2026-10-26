@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-26: holiday and event templates use the event blocks._ A new "Seasonal: Event page" template
+(replacing "Event (any)") opens on a photo and runs Event details, a Schedule, Cards with photos, the map
+and an invitation band. The VBS, Easter, Christmas, Homecoming, Revival week, Trunk-or-treat and
+Thanksgiving templates are rebuilt on the same blocks. The "Easter services" and "Christmas services"
+saved sections now open with Event details and a Schedule (the unedited drafts were replaced, backed up
+first), and "Advent Sundays" and "Christmas Eve candlelight" are new saved sections. The Schedule block
+now keeps one time column for the whole section, so "4 pm" under one day and "10:30 am" under another
+start their titles on the same edge. Docs: `docs/agent/sanity.md` (the authoring kit).
+
 _2026-10-26: event and holiday page blocks._ Three new page-builder blocks so Jacob can build an event
 page himself: **Event details** (dates and times from a list, the place or the church's own address from
 Church facts, a photo, a sign-up button, an automatic "Add to my calendar" file and Directions; past dates
