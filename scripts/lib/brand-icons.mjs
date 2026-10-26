@@ -1,7 +1,8 @@
-// Safe to edit by hand
-// The church's icon from the Studio (Site settings > Name and contact > Square icon), turned into
-// the whole icon set at build time (2026-10-26). Used by scripts/build-brand-icons.mjs (the
-// favicon set) and scripts/build-og-cards.mjs (the mark on each share card).
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care (PORTS.md card 168)
+// The site's icon from the Studio (Site settings > Square icon, `siteIcon`), turned into the
+// whole icon set at build time. Used by scripts/build-brand-icons.mjs (the
+// favicon set) and, on a site that draws share cards with its mark, iconDataUri.
 //
 // Nothing uploaded: nothing here runs, and the brand kit's committed files in public/ ship as
 // they always have (they are drawn by `npm run favicon` from public/favicon.svg). Uploaded: the
@@ -77,7 +78,7 @@ export function pngAt(bytes, mime, size, { flatten } = {}) {
  * the home-screen icons (iOS composites a transparent icon on its own white, so they are made
  * opaque here; see the note in generate-favicons.mjs).
  */
-export async function iconSet(bytes, mime, { plate = '#FBF8F3' } = {}) {
+export async function iconSet(bytes, mime, { plate = '#FFFFFF' } = {}) {
   const out = {};
   const ico = [];
   for (const s of [16, 32, 48]) ico.push({ size: s, buffer: await pngAt(bytes, mime, s) });
