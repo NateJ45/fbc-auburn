@@ -7,7 +7,7 @@ which the Studio flags first. Every short link and page has a **QR code** button
 new dependency `qrcode-generator` 2.0.4, MIT, no dependencies, Studio only). The Custom code or
 embed block takes a pasted link or embed code from fifteen known services and sizes and sets
 itself; unknown script code never runs on the page; a known service's script origins join the
-policy only on builds that use it (`build-embed-csp.mjs`). Docs: `seo.md` (Short links, QR
+policy only on builds that use it (`build-embed-csp.mjs`). Docs: `studio-links.md`, `seo.md` (Short links, QR
 codes), `custom-code.md` (Paste-and-go).
 
 _2026-10-26: Millville, and social links Pastor Jacob can add himself._
