@@ -18,6 +18,19 @@ join the form builder as Auburn's own question types (`formQuestionMore.ts`), ch
 laid out in the email and stored with `kind` and `values` in D1; the shared `formQuestion` is
 untouched.
 
+_2026-10-26: Millville, and social links Pastor Jacob can add himself._
+
+**Decision.** Pastor Jacob's goal is a "digital front door for Millville, Ross and Hamilton", and
+Millville was nowhere on the site; his round 1 reply also listed WhatsApp with Facebook and TikTok.
+The phrase now appears in the footer line, the Home and About descriptions and About subhead, Plan
+your visit's "Find us" intro (content via `scripts/content/millville-whatsapp.mjs`, dry by
+default) and the Church JSON-LD `areaServed` (`site.areaServed`). Nathan asked that the church
+can add social accounts without us: Social links now take a pasted link and read the icon and name
+from the address (fifteen platforms, a plain link icon otherwise), with https required, gentle
+warnings and a cap of ten. WhatsApp shows only for a real invite or number link, and none is set
+yet; a For Jacob note on Contact asks for it. Contact gains a "Follow along" row of the same
+buttons. Detail: `docs/agent/church-data.md`.
+
 _2026-10-26: search waits for its index to be written whole (starter card 165)._ This PR's CI artifact carried `pagefind/pagefind.js` cut at 32,768 of 45,555 bytes, so every search said "Search is not available right now". `build-search-index.mjs` closed Pagefind before its binary had flushed; it now waits for `dist/client/pagefind/` to settle, then syntax-checks every script it wrote and fails the build on a cut one.
 
 _2026-10-26: American spelling everywhere (starter cards 163 and 164)._ Nathan's call: every family site is American English. Starter cards 163 and 164 copied byte-identical (164 moves the shared Studio and site text to American spelling, including "check" for a checkbox and "Website inquiry" as the contact email subject, and makes `build-csp.mjs` fail when the CSP line passes 2,000 characters). This site's own strings had the same pass: text only, no field name, option value, key, slug or CSS class renamed. The live Sanity content was checked the same day and fixed where needed.

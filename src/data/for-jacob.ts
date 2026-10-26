@@ -361,6 +361,11 @@ const NOTES: Record<string, JacobNote[]> = {
   '/contact/': [
     CHURCH_TRAC,
     {
+      title: 'The church’s WhatsApp link.',
+      detail:
+        '[Jacob: you listed WhatsApp as one of the church’s accounts, with Facebook and TikTok. Do you want it on the website? If so, send us the link: a group invite (it starts https://chat.whatsapp.com/) or a number link (https://wa.me/ and the number). It then shows as a WhatsApp button beside Facebook here, in the footer and in the phone menu. You can add it yourself too: Site settings > Social and footer > Social links, paste the link.]',
+    },
+    {
       title: 'When life happens.',
       detail:
         'Hospital visits, funerals, weddings and a hand when someone is struggling now live on the Need the pastor? page, which this page links to. Tell us how each works here, and how to reach you in an emergency, in the notes on that page.',

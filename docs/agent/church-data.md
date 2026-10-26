@@ -29,10 +29,29 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
   time or an address into a component.
 - With Sanity empty, each fact falls back to `FALLBACK_FACTS` (the values from the church's
   Facebook page), all unconfirmed. There is no fallback phone.
-- The round social buttons (header strip, phone menu, footer) all come from one list,
-  `resolveSocialLinks()` in `src/lib/social-links.ts` (icons in `social-icons.ts`): Site settings >
-  Social links in order, with the Facebook fact added when the list has no Facebook entry
-  (2026-10-24). A platform added in the Studio shows in every place at once.
+- The round social buttons (header strip, phone menu, footer, and Contact's "Follow along" since
+  2026-10-26) all come from one list, `resolveSocialLinks()` in `src/lib/social-links.ts` (icons in
+  `social-icons.ts`): Site settings > Social links in order, with the Facebook fact added when the
+  list has no Facebook entry (2026-10-24). At most `MAX_SOCIAL_LINKS` (10) rows.
+- **Social links are editor-managed (2026-10-26).** The editor pastes a link and, optionally, a
+  label; `platformFromUrl()` reads the platform from the address's host (Facebook, Instagram,
+  YouTube, TikTok, WhatsApp, X/Twitter, Threads, Spotify, Apple Podcasts, Vimeo, LinkedIn,
+  Pinterest, Nextdoor, Flickr, Linktree; a new one is a row in `PLATFORMS` plus an icon). An unknown
+  site gets the plain link icon and the label, or its domain. The old `platform` dropdown is
+  hidden, not removed (rule 1): it only stands in for an address the site does not know, so
+  existing rows keep their icon. It stays in `NON_STEGA_FIELDS`.
+- **WhatsApp** shows only for an https group invite (`chat.whatsapp.com/<code>`) or number link
+  (`wa.me/<number>`); any other WhatsApp address is left out (and out of the JSON-LD `sameAs`),
+  so there is never a broken button. Never build a wa.me link from the church phone. Until the
+  church sends its link, no WhatsApp button shows (For Jacob note on Contact).
+- The Studio requires https and warns (never blocks) on an odd address: a platform's home page,
+  a search results page, an unusable WhatsApp link (`socialUrlWarning()`).
+- **Places served.** `site.areaServed` (`src/data/site.ts`: Millville, Ross Township and
+  Hamilton, OH, in Pastor Jacob's phrase "Millville, Ross and Hamilton") is the Church JSON-LD's
+  `areaServed` whenever businessInfo has no service areas. Not a confirmable fact, so it always
+  shows. The footer line, the Home and About descriptions, the About subhead and Plan your visit's
+  "Find us" intro carry the same phrase (`scripts/content/millville-whatsapp.mjs` for the Sanity
+  side).
 - `day`, `time`, `youtubeChannelId` and `churchTracIcalUrl` are in `NON_STEGA_FIELDS` (rule 8b).
 
 ## The "To confirm" tag

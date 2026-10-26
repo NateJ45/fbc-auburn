@@ -558,9 +558,10 @@ export type SiteSettings = {
   socialInstagram?: string;
   socialFacebook?: string;
   socialLinks?: Array<{
-    platform?: 'Instagram' | 'Facebook' | 'LinkedIn' | 'YouTube' | 'TikTok' | 'X' | 'Other';
     url?: string;
     label?: string;
+    platform?:
+      'Instagram' | 'Facebook' | 'LinkedIn' | 'YouTube' | 'TikTok' | 'WhatsApp' | 'X' | 'Other';
     _type: 'socialLink';
     _key: string;
   }>;
