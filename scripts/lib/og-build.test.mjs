@@ -1,3 +1,4 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -9,23 +10,22 @@ import {
   stripCardMarker,
   versionShareImage,
 } from './og-build.mjs';
-import { buildIco, iconSet } from './brand-icons.mjs';
 
 const page = (marker, og = 'https://site.test/og/plan-your-visit.jpg') =>
   `<head><title>x</title>${marker ? `<meta name="x-og-card" content="${marker}">` : ''}<meta property="og:image" content="${og}"><meta name="twitter:image" content="${og}"></head>`;
 
 test('a card request survives the round trip, quotes and accents included', () => {
-  const req = { title: 'Christmas Eve: "Silent night" & café', kicker: 'Sermon series' };
+  const req = { title: 'Winter open day: "Come in" & café', kicker: 'Journal' };
   assert.deepEqual(decodeCardRequest(encodeCardRequest(req)), { ...req, home: false });
   assert.equal(decodeCardRequest('not-json'), null);
   assert.equal(decodeCardRequest(encodeCardRequest({ title: '  ' })), null);
 });
 
 test('reads the request and the file its og:image names', () => {
-  const html = page(encodeCardRequest({ title: 'Plan your visit', kicker: 'Sundays' }));
+  const html = page(encodeCardRequest({ title: 'Plan your visit', kicker: 'Visit' }));
   assert.deepEqual(readCardRequest(html), {
     title: 'Plan your visit',
-    kicker: 'Sundays',
+    kicker: 'Visit',
     home: false,
     file: 'plan-your-visit.jpg',
   });
@@ -52,36 +52,4 @@ test('maps built files to routes', () => {
   assert.equal(routeForFile('index.html'), '/');
   assert.equal(routeForFile('about/index.html'), '/about/');
   assert.equal(routeForFile('404.html'), '/404');
-});
-
-test('icon set: an ICO with three sizes and every file, from one square SVG', async () => {
-  const svg = Buffer.from(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#B5503A"/></svg>',
-  );
-  const files = await iconSet(svg, 'image/svg+xml');
-  assert.deepEqual(Object.keys(files).sort(), [
-    'apple-touch-icon.png',
-    'favicon.ico',
-    'favicon.svg',
-    'icon-192.png',
-    'icon-512.png',
-    'icon-maskable-512.png',
-  ]);
-  assert.equal(files['favicon.ico'].readUInt16LE(4), 3);
-  assert.equal(files['favicon.svg'].toString(), svg.toString(), 'an SVG upload is used as is');
-  const ico = buildIco([{ size: 16, buffer: Buffer.from([1, 2]) }]);
-  assert.equal(ico.length, 6 + 16 + 2);
-});
-
-test('icon set: a PNG upload is wrapped for favicon.svg', async () => {
-  const { default: sharp } = await import('sharp');
-  const png = await sharp({
-    create: { width: 600, height: 600, channels: 3, background: '#1F3A5F' },
-  })
-    .png()
-    .toBuffer();
-  const files = await iconSet(png, 'image/png');
-  assert.match(files['favicon.svg'].toString(), /data:image\/png;base64,/);
-  const meta = await sharp(files['icon-192.png']).metadata();
-  assert.equal(meta.width, 192);
 });

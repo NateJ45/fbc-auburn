@@ -1,10 +1,12 @@
-// Foundation, edit with care
-// Share images that make themselves (2026-10-26). Post-build step, part of `npm run build`: every
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care (PORTS.md card 169)
+// Share images that make themselves. Post-build step, part of `npm run build`: every
 // prerendered page that has no picture of its own carries an x-og-card marker in its <head>
 // (BaseLayout, src/lib/og-card-marker.ts). This reads each marker, draws that page's card in the
-// Auburn design (scripts/lib/og-card.mjs) as dist/client/og/<route>.jpg, stamps the og:image URL
-// with a short version (?v=<hash>) so Facebook and text apps fetch a changed card instead of a
-// cached one, and removes the marker.
+// site's design (scripts/lib/og-card.mjs, the site's own file, exporting cardHtml, renderHtml and
+// closeCards) as dist/client/og/<route>.jpg, stamps the og:image URL with a short version
+// (?v=<hash>) so Facebook and text apps fetch a changed card instead of a cached one, and removes
+// the marker.
 //
 // FAST: each card is cached by a hash of its full HTML (title, kicker, fonts, textures, the
 // mark), in node_modules/.cache/og-cards (kept between CI and deploy runs by actions/cache).
@@ -13,7 +15,9 @@
 // NEVER BREAKS A BUILD: with no browser on the machine (or a card that fails), that page's
 // og:image falls back to /og-default.png with a warning, so a content change always goes live.
 //
-// Re-run by hand on an existing build with `npm run og:pages`.
+// It runs on a fresh astro build only: it removes the markers it reads, so a second run on the
+// same dist finds nothing to do. No project id (a fresh clone) still draws every card; only the
+// Studio icon is skipped. docs/agent/seo.md, "Share images".
 
 import { createHash } from 'node:crypto';
 import {
@@ -54,8 +58,8 @@ function* htmlFiles(dir) {
   }
 }
 
-// The church's icon from Site settings, when one is uploaded, takes the brand kit's mark's place
-// in the lockup. Part of the card's HTML, so a new icon redraws every card.
+// The square icon from Site settings (PORTS.md card 168), when one is uploaded, is handed to the
+// card as `mark` (a data: URI); the site's card decides where it goes. Part of the card's HTML, so a new icon redraws every card.
 const client = buildSanityClient(root);
 const icon = client
   ? await fetchIcon(client, resolve(root, 'node_modules/.cache/brand-icon'))
