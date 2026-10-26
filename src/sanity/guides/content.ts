@@ -45,6 +45,7 @@ import { EVERY_WEEK, WEEKLY_CATEGORY, weeklyGuides } from './weekly.ts';
 import type { KitGuideBlock } from '../kit/guide/GuidePage';
 import { phoneGuides } from './phoneGuides.ts';
 import type { FieldGuideMap } from '../../lib/studio-kit';
+import { OWN_NEWSLETTER, OWN_NEWSLETTER_GUIDE } from '../ownNewsletter.ts';
 
 export type DiyLevel = 'self' | 'ask' | 'mixed';
 
@@ -97,7 +98,7 @@ export interface Guide {
   video?: string;
 }
 
-export const guides: Guide[] = [
+const allGuides: Guide[] = [
   {
     slug: 'start-here',
     category: 'Start here',
@@ -1211,6 +1212,7 @@ export const guides: Guide[] = [
     ],
   },
 ];
+export const guides = allGuides.filter((g) => OWN_NEWSLETTER || g.slug !== OWN_NEWSLETTER_GUIDE);
 
 // ── Studio kit helpers (PORTS.md card 110) ───────────────────────────────────
 // Appended rather than written into the list above, so a site rewriting its
@@ -1416,7 +1418,6 @@ guides.push(
           '**Cancel or change something this week**: a notice in red that comes down by itself after Sunday.',
           '**Tell people about an event**: a notice with the day and time that comes down after the event.',
           '**Write a short news post**: a headline and a few lines for News and notes.',
-          "**Start this week's newsletter**: the subject and opening words. It is saved, not sent, until you send it from the full editor.",
         ],
       },
       {
@@ -1826,7 +1827,6 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   privatePage: ['make-a-page-private', 'edit-a-page'],
   form: ['make-a-form', 'prayer-requests', 'messages'],
   homePage: ['home-page', 'add-sermon', 'images-and-alt', 'seo-fields'],
-  newsletter: ['send-the-newsletter', 'tell-about-an-event', 'your-week'],
   siteSettings: [
     'church-facts',
     'contact-give-live',
@@ -1876,7 +1876,6 @@ export const GUIDE_FOR_FIELD: FieldGuideMap = {
     videoUrl: { guide: 'add-sermon', section: 'Copying the video link' },
     excerpt: { guide: 'news-post', section: 'A longer post, at a desk' },
     givingUrl: { guide: 'contact-give-live' },
-    preheader: { guide: 'send-the-newsletter' },
     capacity: { guide: 'rsvps' },
   },
   // Schema type name -> section, for a type used in many places (none yet).

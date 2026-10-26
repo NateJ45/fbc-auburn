@@ -69,6 +69,11 @@ the person to the church's newsletter group.
 - **The site's own list** (Site settings > Newsletter, D1 and an email provider, PORTS.md card 127)
   stays switched off here. If it is ever switched on, the footer shows its box only while the Church
   Trac box is empty.
+- **The Studio** (2026-10-26) leaves out every screen for writing and sending the site's own issues
+  (Home's Newsletter card, the Quick update job and tile, Content > Newsletter, the "+" menu entry, the
+  Site Guide page and its tours), driven by one constant, `OWN_NEWSLETTER` in
+  `src/sanity/ownNewsletter.ts` (Home's card through the kit's `features.newsletter`, starter card 163).
+  The weekly guide says to send the newsletter from Church Trac. RSVPs are unchanged.
 
 ## Pages
 
