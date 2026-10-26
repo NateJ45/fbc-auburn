@@ -6,7 +6,8 @@
 // that part of the form anyway (src/lib/custom-form-fields.ts).
 
 import { defineType, defineField, defineArrayMember } from 'sanity';
-import { additionalSectionsField } from './sections';
+import { additionalSectionsField, sectionArrayOptions } from './sections';
+import { CONTACT_SECTION_TYPES } from './richSections';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 import { imageWithAlt } from './_imageWithAlt';
 
@@ -17,12 +18,27 @@ export const contactPage = defineType({
   // Locked and structural: edit fields directly in Studio, not Canvas.
   options: { canvasApp: { exclude: true } },
   groups: [
+    { name: 'pageBuilder', title: 'Page layout', default: true },
     { name: 'seo', title: 'Google and sharing' },
     { name: 'hero', title: 'Opening banner' },
     { name: 'form', title: 'The form' },
     { name: 'extra', title: 'Extra sections' },
   ],
   fields: [
+    // Every main page a page builder (2026-10-26): the sections of this page, in order. The old
+    // banner and extra-section fields below are hidden fossils (rule 1); scripts/content/builder-pages.mjs
+    // moved their content in here.
+    defineField({
+      name: 'pageBuilder',
+      title: 'Page layout',
+      type: 'array',
+      group: 'pageBuilder',
+      description:
+        "Sections on this page. Drag to reorder, remove a section to hide it, or add a new block from the library. Edit each section's content by clicking into it.",
+      of: CONTACT_SECTION_TYPES,
+      options: sectionArrayOptions,
+      ...pageBuilderAuthoring,
+    }),
     defineField({
       name: 'seoTitle',
       title: 'Google title',
@@ -59,6 +75,9 @@ export const contactPage = defineType({
 
     defineField({
       name: 'heroEyebrow',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Small line above the heading',
       type: 'string',
       group: 'hero',
@@ -66,6 +85,9 @@ export const contactPage = defineType({
     }),
     defineField({
       name: 'heroHeadline',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Heading',
       type: 'string',
       group: 'hero',
@@ -73,6 +95,9 @@ export const contactPage = defineType({
     }),
     defineField({
       name: 'heroSubhead',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Line under the heading',
       type: 'text',
       rows: 2,
@@ -80,6 +105,9 @@ export const contactPage = defineType({
     }),
     imageWithAlt({
       name: 'heroImage',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Banner photo',
       group: 'hero',
       description:
@@ -87,6 +115,9 @@ export const contactPage = defineType({
     }),
     defineField({
       name: 'heroScriptAccent',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Script-font accent word (optional)',
       type: 'string',
       group: 'hero',
@@ -288,7 +319,13 @@ export const contactPage = defineType({
     // FBC Auburn (2026-10-18): an append zone, so the pastor can add a photo, a callout or
     // anything from the section library to this page himself.
     // The authoring kit (card 109): Insert a saved section, plus gentle warnings.
-    defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
+    // Fossil (2026-10-26): the extra sections moved into the Page layout; kept, never deleted.
+    defineField({
+      ...additionalSectionsField,
+      ...pageBuilderAuthoring,
+      hidden: true,
+      readOnly: true,
+    }),
   ],
   preview: { prepare: () => ({ title: 'Contact page' }) },
 });

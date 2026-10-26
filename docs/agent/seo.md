@@ -163,7 +163,8 @@ not a Redirect: a Redirect keeps an OLD address working; a short link is new, of
 - **Limits**: Cloudflare allows 2,000 static rules and 1,000 characters a line in `_redirects`.
   Short links are capped at 200 (400 lines); an over-long target is skipped; the build fails if
   the whole file passes 2,000 rules.
-- Rules and tests: `src/lib/short-links.ts` (`short-links.test.ts`). Checked on `wrangler dev`
+- Rules and tests: `src/lib/short-links.ts` (`short-links.test.ts`), PORTABLE copies from the
+  starter (card 171); the expiry zone is passed in by `astro.config.mjs` as `CHURCH_TIME_ZONE`. Checked on `wrangler dev`
   2026-10-26 with fixture content: `/vbs` and `/vbs/` 302 to the page in one hop, a permanent one
   301s, an expired one and one over a page are not served.
 

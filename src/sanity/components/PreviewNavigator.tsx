@@ -62,7 +62,8 @@ const MAIN_PAGES: { type: string; label: string }[] = [
   { type: 'homePage', label: 'Home' },
   { type: 'aboutPage', label: 'About' }, // scaffold: about
   { type: 'journalPage', label: 'Journal' }, // scaffold: journal
-  { type: 'faqPage', label: 'FAQ' }, // scaffold: faq
+  // No FAQ: that page forwards to Plan your visit (2026-10-24) and is hidden (2026-10-26).
+  { type: 'sermonsPage', label: 'Sermons' },
   { type: 'contactPage', label: 'Contact' },
   { type: 'privacyPage', label: 'Privacy' },
   { type: 'notFoundPage', label: '404 page' },

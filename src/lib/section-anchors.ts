@@ -18,6 +18,8 @@ export const SECTION_ANCHORS: Readonly<Record<string, string>> = {
   'pyv-here': 'getting-around',
   // Need the pastor? (pastoral care)
   'pc-reach': 'reach',
+  // Sermons (2026-10-26, a page builder now): the Watch band keeps the id it had as fixed code.
+  'sermons-watch': 'sermons-watch-heading',
 };
 
 /** The heading id for a section: its named anchor, else the numbered id it would have had. */

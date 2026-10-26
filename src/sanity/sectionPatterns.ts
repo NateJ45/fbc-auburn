@@ -33,6 +33,8 @@ import {
   button,
   card,
   countdown,
+  eventDate,
+  eventDetails,
   example,
   externalButton,
   iconCards,
@@ -41,7 +43,10 @@ import {
   paras,
   progress,
   richText,
+  schedule,
+  scheduleDay,
   scripture,
+  slot,
   buttonRow,
   link,
 } from './templateBlocks.ts';
@@ -63,38 +68,44 @@ const list = (...sections: Rec[]) => freshKeys(sections);
 
 // ── The sections, as functions so templates can reuse them ───────────────────
 
+// Easter and Christmas use the event blocks (2026-10-26): "Event details" for the date, the place,
+// "Add to my calendar" and directions, and "Schedule" for the times. Neither date is filled in
+// (the Studio asks for it), and every time sits on a row whose title starts "Example:".
 export const easterSections = (): Rec[] => [
-  countdown({
-    eventName: 'Easter Sunday',
-    intro: example(
+  eventDetails({
+    eyebrow: 'Easter',
+    title: 'Easter Sunday at Auburn',
+    dates: [eventDate(example('Easter worship'))],
+    note: example(
       'Come and celebrate the risen Lord with us. Everyone is welcome, and you do not need to dress up.',
     ),
-    duringText: 'He is risen! Happy Easter from all of us.',
-    afterText: 'He is risen indeed. Thank you to everyone who worshiped with us.',
   }),
-  iconCards(
-    'Easter at Auburn',
+  schedule(
+    'Holy Week and Easter',
     [
-      card(
-        'praying-hands',
+      scheduleDay(
         example('Good Friday'),
-        example('A quiet evening service remembering the cross. About an hour.'),
-        example('Friday at 7:00 pm'),
+        slot(
+          '19:00',
+          example('Good Friday service'),
+          example('A quiet evening remembering the cross. About an hour.'),
+        ),
       ),
-      card(
-        'coffee',
-        example('Easter breakfast'),
-        example('Breakfast in the fellowship hall before Sunday School. Bring the family.'),
-        example('Sunday at 9:00 am'),
-      ),
-      card(
-        'bible',
-        example('Easter worship'),
-        example('Singing, the Lord’s Supper and a message from the empty tomb.'),
-        example('Sunday at 11:00 am'),
+      scheduleDay(
+        example('Easter Sunday'),
+        slot(
+          '09:00',
+          example('Easter breakfast'),
+          example('In the fellowship hall before Sunday School. Bring the family.'),
+        ),
+        slot(
+          '11:00',
+          example('Easter worship'),
+          example('Singing, the Lord’s Supper and a message from the empty tomb.'),
+        ),
       ),
     ],
-    example('Times for each service this Holy Week. Change or remove any card.'),
+    example('Times for each service this Holy Week. Change or remove any line.'),
   ),
   scripture(
     'He is not here: for he is risen, as he said. Come, see the place where the Lord lay.',
@@ -103,26 +114,40 @@ export const easterSections = (): Rec[] => [
 ];
 
 export const christmasSections = (): Rec[] => [
-  iconCards(
+  eventDetails({
+    eyebrow: 'Christmas',
+    title: 'Christmas Eve candlelight service',
+    dates: [eventDate(example('Candlelight service'))],
+    note: example(
+      'Carols, the Christmas story from Luke 2 and candles at the end. About an hour, and everyone is welcome.',
+    ),
+  }),
+  schedule(
     'Christmas at Auburn',
     [
-      card(
-        'music',
-        example('Christmas music Sunday'),
-        example('The choir and the congregation sing the story of Christmas.'),
-        example('A Sunday in December, at 11:00 am'),
+      scheduleDay(
+        example('A Sunday in December'),
+        slot(
+          '11:00',
+          example('Christmas music Sunday'),
+          example('The choir and the congregation sing the story of Christmas.'),
+        ),
       ),
-      card(
-        'praying-hands',
-        example('Christmas Eve candlelight service'),
-        example('Carols, the Christmas story from Luke 2 and candles at the end. About an hour.'),
-        example('Christmas Eve at 6:00 pm'),
+      scheduleDay(
+        example('Another Sunday in December'),
+        slot(
+          '11:00',
+          example('Children’s program'),
+          example('The children tell the Christmas story. Grandparents, bring your camera.'),
+        ),
       ),
-      card(
-        'blocks',
-        example('Children’s program'),
-        example('The children tell the Christmas story. Grandparents, bring your camera.'),
-        example('A Sunday in December, at 11:00 am'),
+      scheduleDay(
+        'Christmas Eve',
+        slot(
+          '18:00',
+          example('Candlelight service'),
+          example('Carols, Luke 2 and candles. About an hour.'),
+        ),
       ),
     ],
     example('Everyone is welcome at every one of these. Bring a friend.'),
@@ -131,6 +156,69 @@ export const christmasSections = (): Rec[] => [
     'For unto you is born this day in the city of David a Saviour, which is Christ the Lord.',
     'Luke 2:11',
   ),
+];
+
+export const adventSections = (): Rec[] => [
+  schedule(
+    'Advent Sundays',
+    [
+      scheduleDay(
+        example('First Sunday of Advent'),
+        slot(
+          '11:00',
+          example('Hope'),
+          example('The first candle is lit. The reading and who lights it.'),
+        ),
+      ),
+      scheduleDay(
+        example('Second Sunday of Advent'),
+        slot(
+          '11:00',
+          example('Peace'),
+          example('The second candle. The reading and who lights it.'),
+        ),
+      ),
+      scheduleDay(
+        example('Third Sunday of Advent'),
+        slot('11:00', example('Joy'), example('The third candle. The reading and who lights it.')),
+      ),
+      scheduleDay(
+        example('Fourth Sunday of Advent'),
+        slot(
+          '11:00',
+          example('Love'),
+          example('The fourth candle. The reading and who lights it.'),
+        ),
+      ),
+    ],
+    example(
+      'Each Sunday in December a family lights a candle on the Advent wreath as we wait for Christmas together.',
+    ),
+  ),
+  scripture(
+    'For unto us a child is born, unto us a son is given: and the government shall be upon his shoulder: and his name shall be called Wonderful, Counsellor, The mighty God, The everlasting Father, The Prince of Peace.',
+    'Isaiah 9:6',
+  ),
+];
+
+export const candlelightSections = (): Rec[] => [
+  eventDetails({
+    eyebrow: 'Christmas Eve',
+    title: 'Christmas Eve candlelight service',
+    dates: [eventDate(example('Candlelight service'))],
+    note: example(
+      'An hour of carols, the Christmas story from Luke 2, and a candle for everyone at the end. Children are welcome, and there is a nursery.',
+    ),
+  }),
+  schedule('The evening', [
+    scheduleDay(
+      '',
+      slot('17:30', example('Doors open'), example('Carols on the piano as people arrive.')),
+      slot('18:00', example('Candlelight service'), example('Carols, Luke 2 and a short message.')),
+      slot('19:00', example('Cookies and cocoa'), example('In the fellowship hall afterward.')),
+    ),
+  ]),
+  scripture('Glory to God in the highest, and on earth peace, good will toward men.', 'Luke 2:14'),
 ];
 
 export const homecomingSections = (): Rec[] => [
@@ -358,14 +446,26 @@ export const SECTION_PATTERNS: SectionPattern[] = [
   {
     id: 'easter-services',
     title: 'Easter services',
-    note: 'Countdown, the Holy Week times and a verse. For the home page or Plan a visit in spring.',
+    note: 'Easter Sunday with a calendar link and directions, the Holy Week times and a verse. For the home page or Plan a visit in spring.',
     sections: () => list(...easterSections()),
   },
   {
     id: 'christmas-services',
     title: 'Christmas services',
-    note: 'The December services and a verse. For the home page in December.',
+    note: 'Christmas Eve with a calendar link and directions, the December services and a verse. For the home page in December.',
     sections: () => list(...christmasSections()),
+  },
+  {
+    id: 'advent-sundays',
+    title: 'Advent Sundays',
+    note: 'The four Sundays of Advent and a verse. For the home page from late November.',
+    sections: () => list(...adventSections()),
+  },
+  {
+    id: 'christmas-eve-candlelight',
+    title: 'Christmas Eve candlelight',
+    note: 'The candlelight service with a calendar link and directions, the evening’s times and a verse.',
+    sections: () => list(...candlelightSections()),
   },
   {
     id: 'homecoming',

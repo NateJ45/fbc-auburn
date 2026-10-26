@@ -1,27 +1,36 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// embed-providers - paste-and-go for the "Custom code or embed" block (2026-10-26)
+// embed-providers - paste-and-go for the "Custom code or embed" block (PORTS.md card 172)
 // =============================================================================
-// The pastor pastes a link or the embed code a service gave him. This file
+// An editor pastes a link or the embed code a service gave them. This file
 // answers, from that alone:
 //   - which service it is (the registry below);
 //   - how to show it: a framed page with the right shape (16 by 9 for a video,
 //     a fixed height for a podcast player or a calendar), code in its own box,
 //     or code that runs directly on the page;
 //   - which script origins the page's security policy must allow for it
-//     (scripts/build-embed-csp.mjs adds them only to the build that uses them).
+//     (scripts/build-csp.mjs adds them only to the build that uses them).
 //
-// Nothing here is stored in Sanity: the block keeps what he pasted (embedUrl or
+// Nothing here is stored in Sanity: the block keeps what was pasted (embedUrl or
 // embedCode, plus the "Runs directly on the page" switch) and the plan is worked
 // out again on every build and in the Studio (rule 15).
 //
 // THE GUARD RAIL. Code that runs scripts from a service this registry does not
 // know may not run directly on the page, even with the switch on: it is shown in
-// its own sandboxed box instead, and the Studio says the studio must approve it.
-// Approving means adding the service to EMBED_PROVIDERS, or (for a one-off
-// widget) its script origin to APPROVED_SCRIPT_ORIGINS below. Either way the
-// script's own origin is in the built HTML, so build-csp.mjs allows it. A link
-// from an unknown service still works: it is framed in a sandboxed iframe.
+// its own sandboxed box instead, and the Studio says who must approve it.
+// Approving means adding the service to EMBED_PROVIDERS here (in the starter,
+// with a test), or, for a one-off widget on one site, its script origin to
+// `site.embeds.approvedScriptOrigins` in src/data/site.ts, which callers pass
+// in. Either way the script's own origin is in the built HTML, so build-csp.mjs
+// allows it. A link from an unknown service still works: it is framed in a
+// sandboxed iframe.
+//
+// The registry is generic on purpose: church services (Church Trac, Planning
+// Center, Tithe.ly, Givelify, Subsplash, SignUpGenius) sit beside YouTube and
+// Calendly and cost a site that never pastes them nothing. Their script hosts
+// are each service's main domain, not yet checked against every real snippet:
+// if one loads from elsewhere the Studio says "not known", and the fix is a
+// registry line here.
 //
 // Pure string work, no imports: the Astro component, the Studio input and the
 // build script all use it. Tested in embed-providers.test.ts.
@@ -39,7 +48,7 @@ export interface FrameSpec {
 
 export interface EmbedProvider {
   id: string;
-  /** The service's name as the pastor knows it. */
+  /** The service's name as an editor knows it. */
   name: string;
   /** What it usually is, for the Studio's sentence ("a video"). */
   what: string;
@@ -48,7 +57,7 @@ export interface EmbedProvider {
   /** Hostnames its embed SCRIPTS load from; code using one is this provider's. */
   scriptHosts?: string[];
   /**
-   * Turn a link he copied (a share link, a watch page) into the address that
+   * Turn a link an editor copied (a share link, a watch page) into the address that
    * can be framed. Return a problem sentence when the link cannot be framed.
    * Absent: the link is framed as it is.
    */
@@ -122,7 +131,7 @@ function facebook(url: URL): FrameSpec | { problem: string } {
   if (!isVideo) {
     return {
       problem:
-        'Only Facebook videos can be shown here. For the church page itself, use the social links in Site settings.',
+        'Only Facebook videos can be shown here. For a Facebook page itself, use the social links in Site settings.',
     };
   }
   return {
@@ -358,13 +367,6 @@ export const EMBED_PROVIDERS: readonly EmbedProvider[] = [
   },
 ];
 
-/**
- * Script origins the studio has approved to run on the page although no
- * provider above owns them ("https://widget.example.com"). Empty on purpose:
- * prefer a registry entry, which also sizes and names the service.
- */
-export const APPROVED_SCRIPT_ORIGINS: readonly string[] = [];
-
 const BY_ID = new Map(EMBED_PROVIDERS.map((p) => [p.id, p]));
 
 /** One provider by id (the build script reads ids off the page). */
@@ -493,7 +495,7 @@ export type EmbedPlan =
       height?: number;
       allow?: string;
     }
-  /** Pasted code in its own sandboxed box. `blocked`: he asked for the page and it was refused. */
+  /** Pasted code in its own sandboxed box. `blocked`: the page was asked for and refused. */
   | { kind: 'box'; provider?: EmbedProvider; blocked?: boolean }
   /** Pasted code straight into the page (switch on, and the code is from a known service). */
   | { kind: 'page'; provider?: EmbedProvider }
@@ -525,13 +527,10 @@ function framePlan(src: string): EmbedPlan {
 
 /**
  * How the block shows what was pasted. `approvedOrigins` are the script origins
- * the studio has approved (APPROVED_SCRIPT_ORIGINS): code from them may run on
- * the page like a known provider's.
+ * this site has approved (site.embeds.approvedScriptOrigins in src/data/site.ts):
+ * code from them may run on the page like a known provider's.
  */
-export function planEmbed(
-  input: EmbedInput,
-  approvedOrigins: readonly string[] = APPROVED_SCRIPT_ORIGINS,
-): EmbedPlan {
+export function planEmbed(input: EmbedInput, approvedOrigins: readonly string[] = []): EmbedPlan {
   const url = typeof input.embedUrl === 'string' ? input.embedUrl.trim() : '';
   const code = typeof input.embedCode === 'string' ? input.embedCode.trim() : '';
   if (url) return framePlan(url);
@@ -577,7 +576,7 @@ export interface PasteResult {
  */
 export function readPaste(
   text: string,
-  approvedOrigins: readonly string[] = APPROVED_SCRIPT_ORIGINS,
+  approvedOrigins: readonly string[] = [],
 ): PasteResult | null {
   const value = text.trim();
   if (!value) return null;
@@ -626,15 +625,29 @@ export function cspOriginsFor(plan: EmbedPlan): string[] {
   return providerCspOrigins(plan.provider);
 }
 
+/** The Studio's per-site words (the site's schema passes them; see EmbedPasteInput). */
+export interface EmbedWords {
+  /** Who approves a new service ("your web designer"). */
+  approver?: string;
+  /** The services named as examples in the empty block's sentence. */
+  examples?: string;
+}
+
+export const DEFAULT_EMBED_WORDS: Required<EmbedWords> = {
+  approver: 'your web designer',
+  examples: 'YouTube, Google Maps, Spotify or Calendly',
+};
+
 /**
  * One plain sentence for the Studio: what the block recognized and what it will
- * do. `contact` names who approves new services.
+ * do. `words` carries the site's own wording (who approves, which examples).
  */
-export function describePlan(plan: EmbedPlan, contact = 'the studio'): string {
+export function describePlan(plan: EmbedPlan, words: EmbedWords = {}): string {
+  const { approver, examples } = { ...DEFAULT_EMBED_WORDS, ...words };
   const name = 'provider' in plan && plan.provider ? plan.provider.name : '';
   switch (plan.kind) {
     case 'none':
-      return 'Paste a link or the embed code from a service such as YouTube, Google Maps, Spotify, Church Trac or Tithe.ly.';
+      return `Paste a link or the embed code from a service such as ${examples}.`;
     case 'problem':
       return plan.message;
     case 'frame': {
@@ -648,7 +661,7 @@ export function describePlan(plan: EmbedPlan, contact = 'the studio'): string {
     }
     case 'box':
       if (plan.blocked) {
-        return `This code runs scripts from a service the website does not know, so it stays in its own box for safety, even with "Runs directly on the page" on. To let it run on the page, ask ${contact} to approve it.`;
+        return `This code runs scripts from a service the website does not know, so it stays in its own box for safety, even with "Runs directly on the page" on. To let it run on the page, ask ${approver} to approve it.`;
       }
       return name
         ? `Recognized code from ${name}. It runs in its own box. If it does not work there, turn on "Runs directly on the page".`
