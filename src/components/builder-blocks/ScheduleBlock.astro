@@ -32,6 +32,14 @@ const DayTitle = block.heading ? 'h3' : 'h2';
 const depth = (block.heading ? 1 : 0) + (days.some((d) => d.title) ? 1 : 0);
 const ItemTitle = depth === 2 ? 'h4' : depth === 1 ? 'h3' : 'h2';
 const across = days.length >= 2 && days.length <= 3 ? days.length : 1;
+// One time column for the whole section (2026-10-26): every day's rows reserve room for the
+// longest time in ANY day, so "4 pm" under one day and "10:30 am" under another start their
+// titles on the same left edge. Counted in characters and drawn in `ch` of the time's own face
+// (builder-blocks.css .sched__time), with half a character spare for the wide "m".
+const timeChars = Math.max(
+  4,
+  ...days.flatMap((d) => d.items.map((i) => timeOf(i.startTime).length)),
+);
 ---
 
 {days.length > 0 && (
@@ -43,7 +51,11 @@ const across = days.length >= 2 && days.length <= 3 ? days.length : 1;
     surface={surface}
     label="Schedule"
   >
-    <div class:list={['sched', `sched--${across}`]} data-builder-block="scheduleSection">
+    <div
+      class:list={['sched', `sched--${across}`]}
+      style={`--sched-time-chars: ${timeChars}`}
+      data-builder-block="scheduleSection"
+    >
       {days.map((d) => (
         <div class="sched__day">
           {d.title && <DayTitle class="sched__name">{d.title}</DayTitle>}

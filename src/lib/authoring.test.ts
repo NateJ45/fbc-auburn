@@ -22,6 +22,7 @@ import { PAGE_TEMPLATES, TEMPLATE_GROUPS, templateMenuTitle } from '../sanity/pa
 import { SECTION_PATTERNS } from '../sanity/sectionPatterns.ts';
 import { pageWarnings, type PageRules } from './page-guardrails.ts';
 import { STONE_ICONS } from './stone-icons.ts';
+import { TIME_OPTIONS } from './builder-blocks.ts';
 
 const counter = () => {
   let n = 0;
@@ -273,6 +274,12 @@ const MAX_LENGTH: Record<string, Record<string, number>> = {
   quickLink: { note: 120 },
   affiliation: { name: 80, note: 120 },
   scriptureSection: { verse: 700, reference: 60 },
+  // The event and holiday blocks (builderSections.ts), 2026-10-26.
+  eventDetailsSection: { eyebrow: 40, title: 80 },
+  eventDate: { label: 60 },
+  scheduleDay: { title: 50 },
+  scheduleItem: { title: 80, note: 140 },
+  photoCard: { title: 60, body: 240 },
 };
 const COUNT: Record<string, [string, number, number]> = {
   buttonRowSection: ['links', 2, 6],
@@ -285,6 +292,10 @@ const COUNT: Record<string, [string, number, number]> = {
   beliefsSection: ['beliefs', 1, 20],
   timelineSection: ['entries', 1, 30],
   affiliationsSection: ['items', 1, 8],
+  eventDetailsSection: ['occurrences', 1, 12],
+  scheduleSection: ['days', 1, 6],
+  scheduleDay: ['items', 1, 20],
+  photoCardsSection: ['cards', 2, 6],
 };
 const REQUIRED: Record<string, string[]> = {
   heroSection: ['headline'],
@@ -295,8 +306,18 @@ const REQUIRED: Record<string, string[]> = {
   scriptureSection: ['verse', 'reference'],
   countdownSection: ['eventName'],
   noticeSection: ['message'],
+  eventDetailsSection: ['title'],
+  scheduleItem: ['title'],
+  photoCard: ['title'],
+};
+// A schedule or event time must be one the Studio's time list offers (TIME_OPTIONS), or the
+// dropdown opens blank.
+const TIME_FIELDS: Record<string, string[]> = {
+  scheduleItem: ['startTime'],
+  eventDate: ['startTime', 'endTime'],
 };
 const ICONS = new Set<string>(STONE_ICONS.map((i) => i.value));
+const TIMES = new Set<string>(TIME_OPTIONS.map((t) => t.value));
 
 function checkLimits(id: string, value: unknown) {
   for (const obj of [value, ...arrayMembers(value)].flatMap((v) => (Array.isArray(v) ? v : [v]))) {
@@ -316,6 +337,10 @@ function checkLimits(id: string, value: unknown) {
     }
     for (const field of REQUIRED[type] ?? []) {
       assert.ok(typeof o[field] === 'string' && o[field], `${id}: ${type}.${field} is required`);
+    }
+    for (const field of TIME_FIELDS[type] ?? []) {
+      if (o[field] === undefined) continue;
+      assert.ok(TIMES.has(String(o[field])), `${id}: ${type}.${field} "${String(o[field])}"`);
     }
     if ((type === 'iconCard' || type === 'railStep') && o.icon !== undefined) {
       assert.ok(ICONS.has(String(o.icon)), `${id}: ${String(o.icon)} is not a stone icon`);

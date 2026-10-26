@@ -56,6 +56,8 @@ import {
   countdown,
   ctaBand,
   downloads,
+  eventDate,
+  eventDetails,
   events,
   example,
   externalButton,
@@ -74,11 +76,16 @@ import {
   para,
   paras,
   people,
+  photoCard,
+  photoCards,
   qa,
   railStep,
   richText,
+  schedule,
+  scheduleDay,
   scripture,
   serviceTimes,
+  slot,
   sermonSeries,
   stepsRail,
   tab,
@@ -1379,30 +1386,56 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
   },
 
   // ── Seasonal ───────────────────────────────────────────────────────────────
+  // Built on the event blocks (2026-10-26): the opening takes "Photo behind the words" (the arch
+  // shows until a photo is added), "Event details" carries the date, the place, "Add to my
+  // calendar" and directions, "Schedule" the times, and "Cards with photos" what to expect. No
+  // date is filled in (the Studio asks for each one) and every time sits on a row whose title
+  // starts "Example:", so nothing invented can go live unnoticed.
   {
     id: 'page-event',
     group: 'Seasonal',
-    title: 'Event (any)',
-    description: 'One event: what it is, when and where, and what to expect.',
+    title: 'Event page',
+    description:
+      'Any event: a photo opening, the date and place with a calendar link, the schedule, what to expect and the map.',
     sections: () =>
       page(
         hero({
+          eyebrow: example('Small line'),
           headline: example('Name of the event'),
-          subhead: example('The date and time, and one line about what it is.'),
+          subhead: example('One line about what it is and who it is for.'),
+          primary: button(example('Sign up')),
+          photo: true,
         }),
-        iconCards(example('The details'), [
-          card('clock', 'When', example('The date, the start time and roughly when it ends.')),
-          card('map-pin', 'Where', example('Where it is, at the church or somewhere else.')),
-          card('coffee', 'Bring', example('Anything people should bring, or "just yourself".')),
-        ]),
-        richText(example('What to expect'), [
-          ...paras(
-            example(
-              'A short paragraph about what will happen, so someone new knows what they are coming to.',
-            ),
-            example('Say whether children are welcome, and if there is food.'),
+        eventDetails({
+          title: example('Name of the event'),
+          dates: [eventDate(example('Label, like Evening program'))],
+          note: example(
+            'What it is, who it is for and what to bring. Two or three sentences read best.',
           ),
-        ]),
+          cta: button(example('Sign up')),
+        }),
+        schedule(
+          example('The evening'),
+          [
+            scheduleDay(
+              '',
+              slot('17:30', example('Doors open'), example('A line about what happens.')),
+              slot('18:00', example('The main part'), example('A line about what happens.')),
+              slot('19:30', example('Wrapping up'), example('A line about what happens.')),
+            ),
+          ],
+          example('Change the times and add or remove any line.'),
+        ),
+        photoCards(
+          example('What to expect'),
+          [
+            photoCard(example('Food'), example('Is there a meal or snacks, and is it free?')),
+            photoCard(example('For the kids'), example('What there is for children to do.')),
+            photoCard(example('Getting here'), example('Where to park and which door to use.')),
+          ],
+          example('Add a photo to each card. Pictures from last year work well.'),
+        ),
+        map('Find us'),
         ctaBand(
           'Questions about the event?',
           'Get in touch and we will be glad to help.',
@@ -1414,7 +1447,8 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
     id: 'page-vbs',
     group: 'Seasonal',
     title: 'Vacation Bible School',
-    description: 'VBS: a countdown, the details, a sign-up form, and photos afterward.',
+    description:
+      'VBS: a countdown, the dates with a calendar link, a morning’s schedule, a sign-up form and photos.',
     sections: () =>
       page(
         hero({
@@ -1422,6 +1456,7 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
           subhead: example(
             'A week of songs, Bible stories, crafts and games for children. Free, and every child is welcome.',
           ),
+          photo: true,
         }),
         countdown({
           eventName: 'Vacation Bible School',
@@ -1429,21 +1464,46 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
           duringText: 'VBS is happening now. Come join us!',
           afterText: 'Thank you to every child, parent and volunteer who came!',
         }),
-        iconCards('The details', [
-          card('clock', 'When', example('Monday to Friday, 9:00 am to noon.')),
-          card('blocks', 'Who', example('Children who are four years old through fifth grade.')),
-          card('map-pin', 'Where', example('At the church. Drop off at the front doors.')),
-        ]),
-        form(),
-        imageText({
-          heading: example('Last year at VBS'),
-          body: paras(
-            example(
-              'A few words about last year: the theme and a favorite moment. Add a photo here, and after this year’s VBS add a Photo gallery section with the best pictures (with parents’ permission).',
-            ),
+        eventDetails({
+          eyebrow: 'VBS',
+          title: 'Vacation Bible School',
+          dates: [
+            eventDate(example('Day one')),
+            eventDate(example('Day two')),
+            eventDate(example('Day three')),
+            eventDate(example('Day four')),
+            eventDate(example('Day five')),
+          ],
+          note: example(
+            'For children who are four years old through fifth grade. Drop off at the front doors.',
           ),
-          side: 'right',
         }),
+        schedule(
+          'A morning at VBS',
+          [
+            scheduleDay(
+              '',
+              slot('09:00', example('Check-in and opening songs')),
+              slot('09:30', example('Bible story'), example('The day’s story, told for children.')),
+              slot('10:15', example('Crafts')),
+              slot('10:45', example('Snack and games')),
+              slot('11:30', example('Closing and pick-up'), example('Parents meet us inside.')),
+            ),
+          ],
+          example('Every day follows the same pattern.'),
+        ),
+        form(),
+        photoCards(
+          example('Last year at VBS'),
+          [
+            photoCard(example('Bible stories'), example('A favorite moment from last year.')),
+            photoCard(example('Crafts'), example('What the children made.')),
+            photoCard(example('Games'), example('The game everyone still talks about.')),
+          ],
+          example(
+            'Add a photo to each card, with parents’ permission. After this year, add a Photo gallery with the best pictures.',
+          ),
+        ),
         askBand(
           'Want to help with VBS?',
           'Teachers, helpers, snacks and crafts: we need you.',
@@ -1455,7 +1515,8 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
     id: 'page-easter',
     group: 'Seasonal',
     title: 'Easter',
-    description: 'Holy Week and Easter Sunday: a countdown, the services, a verse and the map.',
+    description:
+      'Holy Week and Easter Sunday: the day with a calendar link, the services, a verse and the map.',
     sections: () =>
       page(
         hero({
@@ -1463,6 +1524,7 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
           headline: 'Christ is risen',
           subhead: 'Come and celebrate Easter with us. Everyone is welcome.',
           primary: planVisit(),
+          photo: true,
         }),
         ...easterSections(),
         map('Find us'),
@@ -1477,7 +1539,8 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
     id: 'page-christmas',
     group: 'Seasonal',
     title: 'Christmas',
-    description: 'The Christmas services, a verse, the live stream and the map.',
+    description:
+      'Christmas Eve with a calendar link, the December services, a verse, the live stream and the map.',
     sections: () =>
       page(
         hero({
@@ -1485,6 +1548,7 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
           headline: 'Christmas at Auburn',
           subhead: 'Come and celebrate the birth of Jesus with us. Everyone is welcome.',
           primary: planVisit(),
+          photo: true,
         }),
         ...christmasSections(),
         livestream('Watch from home'),
@@ -1495,7 +1559,8 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
     id: 'page-homecoming',
     group: 'Seasonal',
     title: 'Homecoming',
-    description: 'Homecoming Sunday: a countdown, the day, and the map.',
+    description:
+      'Homecoming Sunday: a countdown, the day with a calendar link, its schedule and the map.',
     sections: () =>
       page(
         hero({
@@ -1504,8 +1569,22 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
           subhead: example(
             'Come home to Auburn for a day of worship, memories and dinner on the grounds.',
           ),
+          photo: true,
         }),
         ...homecomingSections(),
+        eventDetails({
+          title: 'Homecoming Sunday',
+          dates: [eventDate(example('Homecoming worship and dinner'))],
+          note: example('Former members, old friends and new faces are all welcome.'),
+        }),
+        schedule('The day', [
+          scheduleDay(
+            '',
+            slot('11:00', example('Worship'), example('Special music and our guest speaker.')),
+            slot('12:30', example('Dinner on the grounds'), example('Bring a covered dish.')),
+            slot('14:00', example('Afternoon singing'), example('Old hymns, all together.')),
+          ),
+        ]),
         map('Find us'),
         askBand(
           'Coming home this year?',
@@ -1519,47 +1598,119 @@ export const PAGE_TEMPLATES: PageTemplate[] = [
     group: 'Seasonal',
     title: 'Revival week',
     description:
-      'Revival meetings: a countdown, the preacher, the nightly times and the live stream.',
-    sections: () =>
-      page(
+      'Revival meetings: a countdown, the nights with a calendar link, an evening’s schedule, the preacher and the live stream.',
+    sections: () => {
+      // The shared Revival pattern's countdown and verse; the nightly times move into the event
+      // blocks, and the preacher and the music onto cards with photos.
+      const [revivalCountdown, , revivalVerse] = revivalSections();
+      return page(
         hero({
           eyebrow: 'Revival',
           headline: example('Revival services'),
           subhead: example('Nightly preaching, singing and prayer. Everyone is welcome.'),
+          photo: true,
         }),
-        ...revivalSections(),
+        revivalCountdown,
+        eventDetails({
+          title: example('Revival services'),
+          dates: [
+            eventDate(example('First night')),
+            eventDate(example('Second night')),
+            eventDate(example('Third night')),
+            eventDate(example('Fourth night')),
+          ],
+          note: example('A nursery is open each night for little ones.'),
+        }),
+        schedule('Each evening', [
+          scheduleDay(
+            '',
+            slot('18:30', example('Prayer before the service')),
+            slot(
+              '19:00',
+              example('Singing'),
+              example('Special music from a different singer each night.'),
+            ),
+            slot('19:30', example('Preaching')),
+          ),
+        ]),
+        photoCards(example('Who you will hear'), [
+          photoCard(
+            example('Rev. Name of the evangelist'),
+            example('From the name of their church or ministry. A sentence about them.'),
+          ),
+          photoCard(
+            example('Special music'),
+            example('The singers for each night, once the list is set.'),
+          ),
+        ]),
+        revivalVerse,
         livestream('Watch each night live'),
         map('Find us'),
-      ),
+      );
+    },
   },
   {
     id: 'page-fall-festival',
     group: 'Seasonal',
     title: 'Trunk-or-treat and fall festival',
-    description: 'An October evening for families: the invitation, the details and the map.',
-    sections: () =>
-      page(
+    description:
+      'An October evening for families: the invitation, the date with a calendar link, the evening and the map.',
+    sections: () => {
+      // The shared pattern's invitation; its details cards are replaced by the event blocks.
+      const [invitation] = fallFestivalSections();
+      return page(
         hero({
           headline: example('Trunk-or-treat'),
           subhead: example(
             'Candy, games and chili for the whole family. Free and open to everyone.',
           ),
+          photo: true,
         }),
-        ...fallFestivalSections(),
+        invitation,
+        eventDetails({
+          title: example('Trunk-or-treat and fall festival'),
+          dates: [eventDate(example('Trunk-or-treat'))],
+          note: example('In the church parking lot, or inside the fellowship hall if it rains.'),
+        }),
+        schedule('The evening', [
+          scheduleDay(
+            '',
+            slot('17:30', example('Trunks open'), example('Decorated cars full of candy.')),
+            slot('18:00', example('Chili supper'), example('Chili, hot dogs and cider, free.')),
+            slot('18:30', example('Games for the kids')),
+            slot('19:30', example('Last call for candy')),
+          ),
+        ]),
+        photoCards(example('What is happening'), [
+          photoCard(example('Trunks full of candy'), example('A photo from last year.')),
+          photoCard(example('Games'), example('A photo from last year.')),
+          photoCard(
+            example('Decorate a trunk'),
+            example('Church families: sign up to decorate a car and bring candy.'),
+            button(example('Sign up to decorate')),
+          ),
+        ]),
         map('Find us'),
-      ),
+      );
+    },
   },
   {
     id: 'page-thanksgiving',
     group: 'Seasonal',
     title: 'Thanksgiving meal',
     description:
-      'An invitation to the church Thanksgiving meal, with a ride or a plate for anyone who needs one.',
+      'An invitation to the church Thanksgiving meal, the date with a calendar link, and a ride or a plate for anyone who needs one.',
     sections: () =>
       page(
         hero({
           headline: 'Thanksgiving meal',
           subhead: example('A seat at the table for everyone. Come and give thanks with us.'),
+          photo: true,
+        }),
+        eventDetails({
+          title: 'Thanksgiving meal',
+          dates: [eventDate(example('Thanksgiving meal'))],
+          note: example('In the fellowship hall. The turkey is provided; bring a side if you can.'),
         }),
         ...thanksgivingSections(),
         map('Find us'),
