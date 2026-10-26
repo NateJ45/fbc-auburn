@@ -73,6 +73,12 @@ export const hero = (o: {
   eyebrow?: string;
   primary?: Rec;
   secondary?: Rec;
+  /**
+   * "Photo behind the words" (heroStyle 'photo'): the background photo across
+   * the whole opening with the title over it in white. Until a photo is added
+   * the page shows the standard arch, so it is safe to set in a template.
+   */
+  photo?: boolean;
 }): Rec => ({
   _type: 'heroSection',
   ...(o.eyebrow ? { eyebrow: o.eyebrow } : {}),
@@ -80,6 +86,7 @@ export const hero = (o: {
   ...(o.subhead ? { subhead: o.subhead } : {}),
   ...(o.primary ? { primaryCta: o.primary } : {}),
   ...(o.secondary ? { secondaryCta: o.secondary } : {}),
+  ...(o.photo ? { heroStyle: 'photo' } : {}),
   size: 'short',
 });
 
@@ -400,6 +407,87 @@ export const countdown = (o: {
   duringText: o.duringText ?? 'It is happening now. Come join us!',
   afterText: o.afterText ?? 'Thank you to everyone who came!',
   ...(o.link ? { link: o.link } : {}),
+});
+
+// ── Event and holiday blocks (builderSections.ts) ────────────────────────────
+
+/**
+ * One date line in "Event details". The date itself is the church's own fact,
+ * so it is never filled in: the Studio asks for it before Publish, and until
+ * then the block shows nothing (a line with no date is not upcoming). The time
+ * is left empty too, to be picked with the date, so no invented time can ride
+ * along once the label is rewritten. The label carries the marker.
+ */
+export const eventDate = (label: string): Rec => ({
+  _type: 'eventDate',
+  label,
+});
+
+/**
+ * The when and where of one event, with "Add to my calendar" and directions.
+ * Leave `place` empty for an event at the church: the address comes from
+ * Church facts (rule 15).
+ */
+export const eventDetails = (o: {
+  title: string;
+  dates: Rec[];
+  eyebrow?: string;
+  place?: string;
+  note?: string;
+  cta?: Rec;
+}): Rec => ({
+  _type: 'eventDetailsSection',
+  ...(o.eyebrow ? { eyebrow: o.eyebrow } : {}),
+  title: o.title,
+  occurrences: o.dates,
+  ...(o.place ? { place: o.place } : {}),
+  ...(o.note ? { note: o.note } : {}),
+  ...(o.cta ? { button: o.cta } : {}),
+  showCalendar: true,
+});
+
+/**
+ * One line of a schedule. `time` is a value from the Studio's time list
+ * ("18:00", quarter hours from 6 am); the row's title carries the marker, so the
+ * page builder warns until the church has checked the time beside it.
+ */
+export const slot = (time: string | null, title: string, note?: string): Rec => ({
+  _type: 'scheduleItem',
+  ...(time ? { startTime: time } : {}),
+  title,
+  ...(note ? { note } : {}),
+});
+
+/** A day of a schedule. Pass an empty name for a single evening. */
+export const scheduleDay = (title: string, ...items: Rec[]): Rec => ({
+  _type: 'scheduleDay',
+  ...(title ? { title } : {}),
+  items,
+});
+
+export const schedule = (heading: string, days: Rec[], intro?: string): Rec => ({
+  _type: 'scheduleSection',
+  heading,
+  ...(intro ? { intro } : {}),
+  days,
+});
+
+/**
+ * One card in "Cards with photos". The photo is required and is the church's
+ * own, so it is left for the editor: the Studio asks for it before Publish.
+ */
+export const photoCard = (title: string, body?: string, cta?: Rec): Rec => ({
+  _type: 'photoCard',
+  title,
+  ...(body ? { body } : {}),
+  ...(cta ? { link: cta } : {}),
+});
+
+export const photoCards = (heading: string, cards: Rec[], intro?: string): Rec => ({
+  _type: 'photoCardsSection',
+  heading,
+  ...(intro ? { intro } : {}),
+  cards,
 });
 
 /**

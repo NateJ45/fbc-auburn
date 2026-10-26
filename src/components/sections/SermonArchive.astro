@@ -1,0 +1,172 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-26): "Every sermon". Every sermon newest first with three
+// filters (series, preacher, book of the Bible) and "Show more". Moved here from
+// sermons/index.astro so the Sermons page is a page builder like the others. Renders nothing until
+// the first sermon is published (the rule SectionRenderer draws before it then goes too, board.css).
+//
+// THE FILTERS. Every sermon is in the HTML (the list is small: a sermon a week is about fifty a
+// year), so without JavaScript the whole archive reads top to bottom. The script below only hides
+// rows: it shows twelve, filters on the data- attributes SermonRow writes, keeps the choice in the
+// address (?series=mark&book=Mark) so a filtered list can be shared, and says how many match.
+// The filter values are worked out from the sermons themselves (src/lib/sermons.ts).
+import SermonRow from '@/components/collections/SermonRow.astro';
+import { getAllSermons } from '@/lib/collection-queries';
+import { sermonFilters, sortSermons } from '@/lib/sermons';
+
+interface Props {
+  heading?: string;
+  headingId: string;
+}
+const { heading, headingId } = Astro.props;
+const list = sortSermons((await getAllSermons()).filter((s) => s.title && s.slug));
+const filters = sermonFilters(list);
+const PAGE = 12;
+---
+
+{list.length > 0 && (
+  <section class="bg-background" aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg">
+      <div class="c-head">
+        <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
+          {heading || 'Every sermon'}
+        </h2>
+        <p class="c-intro">
+          Newest first. Listen in the car?{' '}
+          <a class="c-link" href="#sermons-podcast">
+            Subscribe to the podcast
+          </a>
+          .
+        </p>
+      </div>
+      {/* The filters show once there is a choice to make: two or more series, preachers or
+          books (audit 2026-10-25), so one sermon does not come with three empty menus. */}
+      <form class="c-filters" data-sermon-filters hidden aria-label="Filter the sermons">
+        {filters.series.length > 1 && (
+          <label>
+            Series
+            <select name="series">
+              <option value="">All series</option>
+              {filters.series.map((o) => (
+                <option value={o.value}>{o.title}</option>
+              ))}
+            </select>
+          </label>
+        )}
+        {filters.preachers.length > 1 && (
+          <label>
+            Preacher
+            <select name="preacher">
+              <option value="">Everyone</option>
+              {filters.preachers.map((p) => (
+                <option value={p}>{p}</option>
+              ))}
+            </select>
+          </label>
+        )}
+        {filters.books.length > 1 && (
+          <label>
+            Book of the Bible
+            <select name="book">
+              <option value="">All books</option>
+              {filters.books.map((b) => (
+                <option value={b}>{b}</option>
+              ))}
+            </select>
+          </label>
+        )}
+        <button type="reset" class="c-filters__clear" hidden>
+          Clear
+        </button>
+      </form>
+      <p class="c-count" data-sermon-count aria-live="polite" hidden />
+      <ul class="c-rows" role="list" data-sermon-list data-page={PAGE}>
+        {list.map((s) => (
+          <SermonRow sermon={s} />
+        ))}
+      </ul>
+      <p class="c-empty" data-sermon-none hidden>
+        No sermons match those choices.{' '}
+        <button type="button" class="c-filters__clear" data-sermon-reset>
+          Show every sermon
+        </button>
+      </p>
+      <div class="c-more" data-sermon-more hidden>
+        <button type="button" class="btn-auburn btn-auburn--secondary press-tactile">
+          Show more sermons
+        </button>
+      </div>
+    </div>
+  </section>
+)}
+
+<script>
+  // The sermon filters and "Show more". See the note at the top of this file.
+  const list = document.querySelector<HTMLElement>('[data-sermon-list]');
+  const form = document.querySelector<HTMLFormElement>('[data-sermon-filters]');
+  if (list && form) {
+    const rows = [...list.querySelectorAll<HTMLElement>('[data-sermon]')];
+    const count = document.querySelector<HTMLElement>('[data-sermon-count]')!;
+    const none = document.querySelector<HTMLElement>('[data-sermon-none]')!;
+    const more = document.querySelector<HTMLElement>('[data-sermon-more]')!;
+    const clear = form.querySelector<HTMLButtonElement>('button[type="reset"]')!;
+    const page = Number(list.dataset.page) || 12;
+    const keys = ['series', 'preacher', 'book'] as const;
+    let shown = page;
+
+    const read = () =>
+      Object.fromEntries(
+        keys.map((k) => [k, (form.elements.namedItem(k) as HTMLSelectElement | null)?.value ?? '']),
+      ) as Record<(typeof keys)[number], string>;
+
+    const draw = () => {
+      const want = read();
+      const match = rows.filter((r) => keys.every((k) => !want[k] || r.dataset[k] === want[k]));
+      rows.forEach((r) => (r.hidden = true));
+      match.slice(0, shown).forEach((r) => (r.hidden = false));
+      const filtered = keys.some((k) => want[k]);
+      clear.hidden = !filtered;
+      none.hidden = match.length > 0;
+      more.hidden = match.length <= shown;
+      // Nothing to count until there is a choice or a second page (one sermon needs no tally).
+      count.hidden = !filtered && match.length <= page;
+      count.textContent = filtered
+        ? `${match.length} ${match.length === 1 ? 'sermon matches' : 'sermons match'}.`
+        : `Showing ${Math.min(shown, match.length)} of ${match.length} sermons.`;
+      const url = new URL(window.location.href);
+      keys.forEach((k) =>
+        want[k] ? url.searchParams.set(k, want[k]) : url.searchParams.delete(k),
+      );
+      history.replaceState(null, '', url);
+    };
+
+    // Start from the address, so a shared filtered link opens filtered.
+    const params = new URLSearchParams(window.location.search);
+    keys.forEach((k) => {
+      const select = form.elements.namedItem(k) as HTMLSelectElement | null;
+      const v = params.get(k);
+      if (select && v && [...select.options].some((o) => o.value === v)) select.value = v;
+    });
+    form.hidden = !form.querySelector('select');
+    form.addEventListener('change', () => {
+      shown = page;
+      draw();
+    });
+    form.addEventListener('reset', () =>
+      setTimeout(() => {
+        shown = page;
+        draw();
+      }),
+    );
+    document.querySelector('[data-sermon-reset]')?.addEventListener('click', () => form.reset());
+    more.querySelector('button')?.addEventListener('click', () => {
+      const firstNew = shown;
+      shown += page;
+      draw();
+      // Move focus to the first newly shown sermon, so keyboard users land on it.
+      const visible = rows.filter((r) => !r.hidden);
+      visible[firstNew]?.querySelector('a')?.focus();
+    });
+    draw();
+  }
+</script>

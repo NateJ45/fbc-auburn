@@ -57,6 +57,9 @@ const {
   class: extraClass = '',
 } = Astro.props as Props;
 
+// A button object with nothing filled in (an optional button left empty) draws nothing, rather
+// than the fallback "Get in touch". No cta at all still takes the fallbacks.
+const isEmpty = cta != null && !cta.label && !cta.linkType && !cta.href;
 const href = ctaHref(cta, fallbackHref);
 const label = cta?.label ?? fallbackLabel;
 const isExternal = cta?.linkType === 'external';
@@ -78,11 +81,13 @@ const variantClasses =
         : 'btn-auburn--secondary';
 ---
 
-<a
-  href={href}
-  class:list={[baseClasses, variantClasses, extraClass]}
-  target={newTab ? '_blank' : undefined}
-  rel={newTab ? 'noopener noreferrer' : undefined}
->
-  {label}
-</a>
+{!isEmpty && (
+  <a
+    href={href}
+    class:list={[baseClasses, variantClasses, extraClass]}
+    target={newTab ? '_blank' : undefined}
+    rel={newTab ? 'noopener noreferrer' : undefined}
+  >
+    {label}
+  </a>
+)}

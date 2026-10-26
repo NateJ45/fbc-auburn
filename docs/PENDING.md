@@ -16,6 +16,37 @@ sequence).
 
 ## Waiting on a human
 
+### 1zq. Every main page a page builder: Jacob's two asks and a signed-in look (opened 2026-10-26)
+
+Contact, Privacy, News and notes and Sermons are page builders, and Give and This week's bulletin
+are Studio pages (`page-give`, `page-bulletin`; changelog 2026-10-26). Left:
+
+- **Give, "How gifts are cared for":** the section holds Jacob's four asks as text now (it was code
+  that hid itself at launch). Before launch, answer them in the section or remove it in the Studio.
+  The payee ask moved into the Ways to give block (still behind `PRE_LAUNCH_NOTES`).
+- **Bulletin, "When a new bulletin goes up":** a field on the This week's bulletin block; until it is
+  filled the pre-launch ask shows in its place.
+- **Signed in:** Contact was opened signed in on the live Studio (2026-10-26) and opens on the Page
+  layout tab; drag a section on each of the others once.
+
+### 1zr. The Christmas page test: Jacob's facts, and three Studio rough edges (opened 2026-10-26)
+
+/christmas/ was built in the live Studio as Jacob would (signed in, from "Seasonal: Christmas", photos
+from the Studio's Unsplash picker), published from the Studio and checked live at 320, 375 and 1280.
+Two bugs it found are fixed (no false "empty section" warning on self-filling blocks; an optional
+button left empty no longer blocks Publish). The "Seasonal: Event page" template is in. Left:
+
+- **Jacob:** the Christmas Eve time (6 to 7 pm is a stand-in), and the Christmas Sunday plans. Both
+  carry a `[Jacob: ...]` note on the page. The page is in no menu; add it from Menu placement when ready.
+- **Stale Studio after a deploy:** a Studio tab opened before a deploy shows a raw "Failed to fetch
+  dynamically imported module" error inside a field (the Unsplash picker) until it is reloaded, because
+  the old code files are gone. The desk recovers on its own; fields do not. Wants a reload prompt.
+- **Two accent fields and two "Line under the heading" fields** on the opening banner and the
+  Invitation band (handwritten accent and colour accent; plain and formatted line). One of each would
+  read clearer to a pastor.
+- **Signed in, the other new blocks:** Event details, Schedule and Cards with photos were driven
+  signed in; the converted pages (1zq) were opened, not all dragged.
+
 ### 1zs. Studio self-serve: switch-ons and ports (opened 2026-10-26)
 
 The self-serve additions are merged and live (#205, #206, #212; changelog 2026-10-26). To finish:

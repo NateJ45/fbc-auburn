@@ -9,6 +9,7 @@ import { UsersIcon } from '@sanity/icons/Users';
 import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { STONE_ICONS } from '../../lib/stone-icons';
 import { imageWithAlt } from './_imageWithAlt';
+import { lookField } from './_appearanceFields';
 
 /** A stone-icon picker. Always named `icon` (on NON_STEGA_FIELDS, so the preview keeps it clean). */
 export const stoneIconField = (title = 'Stone icon (optional)', description?: string) =>
@@ -78,6 +79,8 @@ export const iconCardsSection = defineType({
         }),
       ],
     }),
+    // 2026-10-26: Standard or Stone (src/lib/section-looks.ts); rule 9's one appearance field.
+    lookField('iconCardsSection'),
   ],
   preview: {
     select: { title: 'heading', cards: 'cards' },

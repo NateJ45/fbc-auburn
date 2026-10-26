@@ -1,4 +1,5 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care (PORTS.md card 169)
 // The pure half of the build-time share cards (scripts/build-og-cards.mjs): how BaseLayout tells
 // the build which card a page wants, how the build finds those requests in the built HTML, and
 // how it tidies the HTML afterwards. No browser, no network, no file system, so it is unit tested

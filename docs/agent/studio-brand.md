@@ -23,7 +23,11 @@ icon in a browser tab, on a home screen and in the footer (the brand kit's files
   `node_modules/.cache/brand-icon`. Any failure keeps the brand kit's files.
 
 The size rules read the size from the asset id (`image-<hash>-<w>x<h>-<ext>`, `src/lib/brand-uploads.ts`,
-unit tested), so they run the moment a file is chosen. `studio-theme.test.ts` is untouched: the
+unit tested), so they run the moment a file is chosen. The rules, the icon set and the build's Sanity read are the
+starter's now (PORTS.md card 168): `src/lib/brand-uploads.ts`, `scripts/build-brand-icons.mjs`,
+`scripts/lib/brand-icons.mjs` (tested by `brand-icons.test.mjs`) and `scripts/lib/build-sanity-client.mjs` are
+PORTABLE, so change them in the starter. `BrandImageInput.tsx`, the field wording and the footer, Home, share-card
+and podcast uses of `siteIcon` stay Auburn's. `studio-theme.test.ts` is untouched: the
 Studio's colours still come from `brand.config.json`. Guide: "Change the logo or the icon".
 
 ## Share images make themselves (2026-10-26)
