@@ -27,6 +27,7 @@
 // "Phone video" copy when there is one (2026-10-26, about 640px and a few hundred KB, not the full
 // clip); the script picks the source before it builds the <video>, so only one copy is fetched.
 import SanityImage from '@/components/SanityImage.astro';
+import PhotoHero from '@/components/PhotoHero.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
 import { examplePhoneVideoSrc, exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
@@ -96,44 +97,49 @@ const primaryClass = repeatsHeaderCta(
   : 'btn-auburn--primary';
 ---
 
-<section
-  class="hb-hero"
-  aria-labelledby="hb-h1"
-  data-photo={photo || example || clip || phoneClip ? 'yes' : 'no'}
-  data-hero-video={clip?.url ?? phoneClip?.url}
-  data-hero-video-type={clip?.type ?? phoneClip?.type}
-  data-hero-video-phone={phoneClip?.url}
-  data-hero-video-phone-type={phoneClip?.type}
+{/* The frame (the photo, its shade, the stand-in label, the layout) is PhotoHero.astro since
+    2026-10-26, shared with the inner pages' "Photo behind the words" opening. */}
+<PhotoHero
+  headingId="hb-h1"
+  photo={!!(photo || example || clip || phoneClip)}
+  frameHidden={!photo}
+  standIn={isStandIn(photo)}
+  data={{
+    'data-hero-video': clip?.url ?? phoneClip?.url,
+    'data-hero-video-type': clip?.type ?? phoneClip?.type,
+    'data-hero-video-phone': phoneClip?.url,
+    'data-hero-video-phone-type': phoneClip?.type,
+  }}
 >
-  <div class="hb-photo" aria-hidden={photo ? undefined : 'true'}>
-    {example && (
-      <img
-        src={example}
-        srcset={exampleSrcset}
-        sizes="(max-width: 767px) 150vw, 100vw"
-        alt=""
-        width="2000"
-        height="1333"
-        loading="eager"
-        fetchpriority="high"
-        class="hb-photo__img"
-      />
-    )}
-    {photo && (
-      <SanityImage
-        source={photo as never}
-        width={2000}
-        sizes="100vw"
-        quality={65}
-        loading="eager"
-        fetchpriority="high"
-        class="hb-photo__img"
-      />
-    )}
-    <div class="hb-photo__shade"></div>
-  </div>
+  {example && (
+    <img
+      slot="media"
+      src={example}
+      srcset={exampleSrcset}
+      sizes="(max-width: 767px) 150vw, 100vw"
+      alt=""
+      width="2000"
+      height="1333"
+      loading="eager"
+      fetchpriority="high"
+      class="hb-photo__img"
+    />
+  )}
+  {photo && (
+    <SanityImage
+      slot="media"
+      source={photo as never}
+      width={2000}
+      sizes="100vw"
+      quality={65}
+      loading="eager"
+      fetchpriority="high"
+      class="hb-photo__img"
+    />
+  )}
   {clip && (
     <button
+      slot="controls"
       type="button"
       class="hb-video-toggle"
       data-hero-video-toggle
@@ -144,54 +150,42 @@ const primaryClass = repeatsHeaderCta(
       <span class="hb-video-toggle__label">Pause video</span>
     </button>
   )}
-  {isStandIn(photo) && (
-    <p class="hb-standin">
-      <span>Stand-in photograph</span>
-    </p>
-  )}
 
   {shot && (
-    <div class="hb-wrap hb-hero__shot">
+    <div slot="shot" class="hb-wrap hb-hero__shot">
       <ShotRequest shot={shot} variant="tag" />
     </div>
   )}
 
-  <div class="hb-wrap hb-hero__inner">
-    <div class="hb-hero__copy">
-      {nameLine && (
-        <p class="hb-name">
-          {nameLine}
-          {town && <span class="hb-name__town">{town}</span>}
-        </p>
-      )}
-      <h1 class="hb-h1" id="hb-h1">
-        {block.welcome || 'Come as you are.'}
-      </h1>
-      {/* The times and the address are the This Sunday card's job; saying them here too was the
+  {nameLine && (
+    <p class="hb-name">
+      {nameLine}
+      {town && <span class="hb-name__town">{town}</span>}
+    </p>
+  )}
+  <h1 class="hb-h1" id="hb-h1">
+    {block.welcome || 'Come as you are.'}
+  </h1>
+  {/* The times and the address are the This Sunday card's job; saying them here too was the
           same fact twice on one screen (review, 2026-10-23). */}
-      {block.subhead && <p class="hb-intro">{block.subhead}</p>}
-      {(primary?.label || secondary?.label) && (
-        <div class="hb-actions">
-          {primary?.label && (
-            <a class:list={['btn-auburn', primaryClass]} href={primaryHref}>
-              {primary.label}
-            </a>
-          )}
-          {/* A space between the buttons so site search does not run their words together. */}{' '}
-          {secondary?.label && (
-            <a class="hb-ghost" href={ctaHref(secondary, '/sermons/')}>
-              {secondary.label}
-            </a>
-          )}
-        </div>
+  {block.subhead && <p class="hb-intro">{block.subhead}</p>}
+  {(primary?.label || secondary?.label) && (
+    <div class="hb-actions">
+      {primary?.label && (
+        <a class:list={['btn-auburn', primaryClass]} href={primaryHref}>
+          {primary.label}
+        </a>
+      )}
+      {/* A space between the buttons so site search does not run their words together. */}{' '}
+      {secondary?.label && (
+        <a class="hb-ghost" href={ctaHref(secondary, '/sermons/')}>
+          {secondary.label}
+        </a>
       )}
     </div>
-    <div class="hb-hero__card">
-      <SundayCard />
-    </div>
-  </div>
-  {/* No brick sill here (audit 2026-10-25, GD-H3): one sill per page, the footer's. */}
-</section>
+  )}
+  <SundayCard slot="card" />
+</PhotoHero>
 
 {/* The phone Sunday bar that used to follow the hero is SundayBar.astro since 2026-10-25, rendered
     by the footer on Home and Plan your visit. */}

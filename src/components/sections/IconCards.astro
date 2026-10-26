@@ -6,6 +6,7 @@
 // A card with a photo (the bold home pass, 2026-10-17) shows a rounded photo in place of the icon,
 // like the Kids / Youth / Adults cards in the Gemini comp.
 import CtaLink from '@/components/CtaLink.astro';
+import type { CadenceSurface } from '@/lib/surfaces';
 import StoneIcon from '@/components/StoneIcon.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import { surfaceClass } from '@/lib/surfaces';
@@ -16,7 +17,7 @@ interface Props {
   heading?: string;
   intro?: string;
   cards?: ProjectedIconCard[];
-  surface?: 'background' | 'muted';
+  surface?: CadenceSurface;
   headingId: string;
 }
 const { eyebrow, heading, intro, cards = [], surface = 'background', headingId } = Astro.props;

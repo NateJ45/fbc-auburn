@@ -66,6 +66,8 @@ const AUBURN_TYPES = [
   // The collection-fed blocks (latest sermon, series grid, people, downloads), 2026-10-18.
   ...declaredTypes('collectionSections.ts'),
   ...declaredTypes('churchSections.ts'),
+  // The event and holiday page blocks, 2026-10-26.
+  ...declaredTypes('builderSections.ts'),
 ];
 
 describe('freshKeys', () => {

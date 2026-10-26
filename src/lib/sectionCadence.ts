@@ -104,6 +104,10 @@ export const CONTENT_TYPES = new Set([
   'churchTracPageSection',
   // The email backbone (card 127)
   'rsvpSection',
+  // FBC Auburn event and holiday page blocks (builderSections.ts, 2026-10-26)
+  'eventDetailsSection',
+  'scheduleSection',
+  'photoCardsSection',
 ]);
 
 /**
