@@ -52,6 +52,60 @@ export function heroVideoProblem(
   return null;
 }
 
+/** How many bytes of an upload the Studio reads to judge fast start (one range request). */
+export const FAST_START_PROBE_BYTES = 64 * 1024;
+
+/**
+ * Whether an .mp4 is saved for fast start (2026-10-25): its index (`moov`) comes before the video
+ * data (`mdat`), so a browser can start playing after the first few hundred KB and stream the rest
+ * through range requests. With the index at the end it must fetch nearly the whole file before the
+ * first frame. Reads the top-level boxes in the first bytes of the file: true when `moov` comes
+ * first, false when `mdat` does, null when it cannot tell (not an mp4, or neither box in reach).
+ */
+export function mp4FastStart(bytes: Uint8Array): boolean | null {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let offset = 0;
+  while (offset + 8 <= bytes.byteLength) {
+    let size = view.getUint32(offset);
+    const type = String.fromCharCode(...bytes.subarray(offset + 4, offset + 8));
+    if (offset === 0 && type !== 'ftyp') return null;
+    if (type === 'moov') return true;
+    if (type === 'mdat') return false;
+    // size 1: a 64-bit size follows; size 0: the box runs to the end of the file.
+    if (size === 1) {
+      if (offset + 16 > bytes.byteLength) return null;
+      size = Number(view.getBigUint64(offset + 8));
+    }
+    if (size < 8) return null;
+    offset += size;
+  }
+  return null;
+}
+
+/**
+ * Reads the first bytes of an uploaded .mp4 (one range request; Sanity's CDN answers ranges and
+ * CORS) and judges fast start. null when it cannot tell or the request fails, so a network
+ * hiccup in the Studio never raises a false warning.
+ */
+export async function checkFastStart(
+  url: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<boolean | null> {
+  try {
+    const res = await fetchImpl(url, {
+      headers: { Range: `bytes=0-${FAST_START_PROBE_BYTES - 1}` },
+    });
+    if (!res.ok) return null;
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    return mp4FastStart(bytes.subarray(0, FAST_START_PROBE_BYTES));
+  } catch {
+    return null;
+  }
+}
+
+export const FAST_START_MESSAGE =
+  'This video is not set up to start playing straight away: visitors would wait for most of it to download before it moves. Export it again with "Fast start" or "Web optimized" turned on (in HandBrake, Premiere, CapCut and most editors), then upload that file.';
+
 export interface MotionContext {
   /** matchMedia('(prefers-reduced-motion: reduce)').matches */
   reducedMotion: boolean;

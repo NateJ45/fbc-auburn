@@ -26,7 +26,12 @@ import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { CodeTextInput } from '../components/CodeTextInput';
 import { codeWarningMessage } from '../../lib/custom-code';
-import { HERO_VIDEO_ACCEPT, heroVideoProblem } from '../../lib/hero-video';
+import {
+  FAST_START_MESSAGE,
+  HERO_VIDEO_ACCEPT,
+  checkFastStart,
+  heroVideoProblem,
+} from '../../lib/hero-video';
 import { SyncIcon } from '@sanity/icons/Sync';
 import {
   columnsField,
@@ -150,7 +155,7 @@ export const heroSection = defineType({
       title: 'Background video (Home only, optional)',
       type: 'file',
       description:
-        'A short clip of church life that plays silently behind the welcome words. Best: 15 to 30 seconds, landscape (phone held sideways), steady, no sound, an .mp4 under 6 MB (720p is plenty). Keep the background photo too: it shows first, and it is all some visitors see.',
+        'A short clip of church life that plays silently behind the welcome words. Best: 15 to 30 seconds, landscape (phone held sideways), steady, no sound, an .mp4 under 6 MB (720p is plenty), exported with "Fast start" or "Web optimized" turned on so it starts playing straight away. Keep the background photo too: it shows first, and it is all some visitors see.',
       options: { accept: HERO_VIDEO_ACCEPT },
       hidden: ({ document }: { document?: { _type?: string } }) => document?._type !== 'homePage',
       validation: (R) =>
@@ -159,15 +164,22 @@ export const heroSection = defineType({
           if (!ref) return true;
           const asset = await context
             .getClient({ apiVersion: '2024-01-01' })
-            .fetch<{ mimeType?: string; size?: number } | null>(
-              '*[_id == $id][0]{ mimeType, size }',
+            .fetch<{ url?: string; mimeType?: string; size?: number } | null>(
+              '*[_id == $id][0]{ url, mimeType, size }',
               { id: ref },
             );
           const problem = heroVideoProblem(asset);
-          if (!problem) return true;
-          return problem.level === 'error'
-            ? problem.message
-            : { message: problem.message, level: 'warning' };
+          if (problem?.level === 'error') return problem.message;
+          // An .mp4 must be saved for fast start or it cannot begin until most of it has loaded
+          // (2026-10-25; reads the first 64 KB of the upload, hero-video.ts).
+          const slowStart =
+            asset?.url && asset.mimeType === 'video/mp4'
+              ? (await checkFastStart(asset.url)) === false
+              : false;
+          const warnings = [problem?.message, slowStart ? FAST_START_MESSAGE : undefined].filter(
+            Boolean,
+          );
+          return warnings.length ? { message: warnings.join(' '), level: 'warning' } : true;
         }),
     }),
     defineField({ name: 'primaryCta', title: 'Main button', type: 'ctaBlock' }),

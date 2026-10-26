@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-25: the hero video field checks for fast start._
+
+**Decision.** Nathan asked whether the hero video streams like hppres.org's. It does: Sanity's CDN
+answers range requests, so the browser plays an .mp4 as it arrives (hppres is a plain fast-start
+mp4 on S3 too, not HLS). The catch is the file's layout, so the Background video field now reads the
+first 64 KB of an .mp4 upload and warns when it is not saved for fast start
+(`mp4FastStart()`, `checkFastStart()` in `src/lib/hero-video.ts`, unit tested), and its
+description asks for "Fast start" or "Web optimized". Export settings and the ffmpeg commands:
+`docs/agent/animation.md`, "Streaming and fast start".
+
 _2026-10-25: the Home hero can play a video._
 
 **Decision.** The audit asked for a video in the Home hero, and the shot request asks Pastor Jacob for
