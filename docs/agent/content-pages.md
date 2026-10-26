@@ -52,7 +52,8 @@ A section whose block key is in `src/lib/section-anchors.ts` gets that name as i
 
 - **Home** (`homePage`, drawn by HomeBoard): hero (the welcome is the one "Come as you are"; the
   subhead asks Jacob for one honest line about size, music and who comes; second button "Watch a
-  sermon" to `/sermons/`), Your first Sunday (Sunday School explained and optional; Worship links
+  sermon" to `/sermons/`; an optional silent Background video plays over the photo, see
+  `docs/agent/animation.md`), Your first Sunday (Sunday School explained and optional; Worship links
   to `#kids`), **The good news** (`home-gospel`, a Text block drawn by SectionRenderer inside the
   board, an ask plus a link to `#the-gospel`), A place to belong, This week and Last Sunday (to
   `/sermons/`), Meet Pastor Jacob, Other ways in (giving says Sunday or by mail until online giving

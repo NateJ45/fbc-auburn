@@ -76,6 +76,28 @@ The first slide stays the eager `fetchpriority="high"` LCP image; the rest lazy-
 
 ---
 
+## Home hero video (FBC Auburn, 2026-10-25)
+
+Home's hero (`src/components/home/HomeHero.astro`, not the starter's `HeroBackground`) can play
+a short silent clip: Studio > Home > Page layout > Opening banner > **Background video**. The rules:
+
+- The photo is drawn first and stays the LCP. After the `load` event the hero's script builds a
+  `<video muted playsinline loop preload="none">` with the photo's `currentSrc` as the
+  poster, puts it over the photo and under `.hb-photo__shade` (so the words keep their contrast),
+  starts it with `play()` (no `autoplay` attribute, so the Pause choice and the off-screen pause
+  always win), and fades it in (0.6s opacity) on `playing`. It carries `aria-hidden`, `tabindex=-1`, no
+  controls and `pointer-events: none`.
+- `heroVideoAllowed()` (`src/lib/hero-video.ts`) says no for reduced motion, Save-Data, an
+  `effectiveType` of slow-2g, 2g or 3g, and print. Then there is no `<video>` element at all.
+  Switching reduced motion on while the page is open removes it. CSS hides it under reduced motion
+  and in print as a second guard (`.hb-photo` is already hidden in print).
+- A Pause / Play button (`[data-hero-video-toggle]`, `aria-pressed`) sits at the top right
+  (WCAG 2.2.2, motion longer than five seconds). The choice is kept in `localStorage`
+  (`fbc-hero-video-paused`). The clip pauses while the hero is off screen.
+- It takes the class `hb-photo__img`, so the flow layer's hero drift moves it with the photo.
+- `tests/hero-video.spec.ts` drives `/styleguide/home-hero/` (fixed data). Playback itself is not
+  asserted, since Playwright's browsers differ on H.264.
+
 ## View-transition cross-fade
 
 On FBC Auburn the cross-fade below is replaced by the flow layer's lift-and-rise (see "The flow layer").

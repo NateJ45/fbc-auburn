@@ -15,6 +15,15 @@
 // "Stand-in photograph" in the corner until the church's own photo replaces it. Before launch a
 // stand-in is not shown at all: the hero keeps the navy ground and a pinned "Photo needed" note
 // names the shot we want (src/data/shot-list.ts, key "hero").
+//
+// The video (2026-10-25, "Background video" on the same block, Home only): a short silent clip of
+// church life plays over the photo, under the same shade. The photo is still drawn first and stays
+// the page's LCP; the script below adds the <video> after load, with the photo as its poster, and
+// only when hero-video.ts allows it (never with reduced motion, Save-Data, a slow connection or in
+// print), so those visitors get the still and download nothing. The clip fades in once it plays, a
+// small Pause button (WCAG 2.2.2: motion longer than five seconds) sits at the top right, the choice
+// is remembered on this device, and the clip pauses while the hero is off screen. A video fills the
+// shot request, so the "Photo needed" note goes once one is uploaded.
 import SanityImage from '@/components/SanityImage.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
 import { exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
@@ -23,6 +32,7 @@ import { getChurchFacts } from '@/lib/church-data';
 import { ctaHref } from '@/lib/cta-href';
 import { townOf } from '@/lib/place-line';
 import { splitStega } from '@/lib/preview-stega';
+import { heroVideoSource } from '@/lib/hero-video';
 import type { ProjectedHeroSection, ProjectedImage } from '@/lib/pageBuilder.types';
 
 interface Props {
@@ -30,7 +40,12 @@ interface Props {
 }
 const { block } = Astro.props;
 
-const shot = shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
+// The clip's URL, cleaned of preview markers so the src is a real address in the draft preview too.
+const video = heroVideoSource({
+  url: splitStega(block.backgroundVideo?.url ?? '').cleaned,
+  mimeType: block.backgroundVideo?.mimeType,
+});
+const shot = video ? null : shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
 const photo = !shot && block.backgroundImage?.asset ? block.backgroundImage : null;
 // Before launch the shot's example photo fills the hero behind its note, so Home reads as finished.
 // It is the page's LCP element, so phones get a smaller copy (29 KB, not the 2000px 166 KB file
@@ -54,7 +69,13 @@ const primary = block.primaryCta;
 const secondary = block.secondaryCta;
 ---
 
-<section class="hb-hero" aria-labelledby="hb-h1" data-photo={photo || example ? 'yes' : 'no'}>
+<section
+  class="hb-hero"
+  aria-labelledby="hb-h1"
+  data-photo={photo || example || video ? 'yes' : 'no'}
+  data-hero-video={video?.url}
+  data-hero-video-type={video?.type}
+>
   <div class="hb-photo" aria-hidden={photo ? undefined : 'true'}>
     {example && (
       <img
@@ -82,6 +103,18 @@ const secondary = block.secondaryCta;
     )}
     <div class="hb-photo__shade"></div>
   </div>
+  {video && (
+    <button
+      type="button"
+      class="hb-video-toggle"
+      data-hero-video-toggle
+      aria-pressed="false"
+      hidden
+    >
+      <span class="hb-video-toggle__icon" aria-hidden="true"></span>
+      <span class="hb-video-toggle__label">Pause video</span>
+    </button>
+  )}
   {isStandIn(photo) && (
     <p class="hb-standin">
       <span>Stand-in photograph</span>
@@ -133,3 +166,125 @@ const secondary = block.secondaryCta;
 
 {/* The phone Sunday bar that used to follow the hero is SundayBar.astro since 2026-10-25, rendered
     by the footer on Home and Plan your visit. */}
+
+<script>
+  // The hero's clip (see the header comment). Built here, not in the HTML, so a visitor who should
+  // get the still downloads nothing and the photo is always the first thing painted.
+  import { heroVideoAllowed } from '@/lib/hero-video';
+
+  const PAUSED_KEY = 'fbc-hero-video-paused';
+  const readPaused = () => {
+    try {
+      return localStorage.getItem(PAUSED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  };
+  const writePaused = (paused: boolean) => {
+    try {
+      if (paused) localStorage.setItem(PAUSED_KEY, '1');
+      else localStorage.removeItem(PAUSED_KEY);
+    } catch {
+      /* private window: the choice lasts for this page only */
+    }
+  };
+
+  function initHeroVideo() {
+    const hero = document.querySelector<HTMLElement>('.hb-hero[data-hero-video]');
+    if (!hero || hero.dataset.videoOn) return;
+    // After the load event, so the clip never competes with the photo (the LCP) for the network.
+    if (document.readyState !== 'complete') {
+      addEventListener('load', initHeroVideo, { once: true });
+      return;
+    }
+    const conn = (
+      navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
+    ).connection;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    const allowed = heroVideoAllowed({
+      reducedMotion: reduce.matches,
+      saveData: conn?.saveData,
+      effectiveType: conn?.effectiveType,
+      print: matchMedia('print').matches,
+    });
+    if (!allowed) return;
+    hero.dataset.videoOn = '1';
+
+    const frame = hero.querySelector<HTMLElement>('.hb-photo');
+    const still = frame?.querySelector<HTMLImageElement>('img');
+    const toggle = hero.querySelector<HTMLButtonElement>('[data-hero-video-toggle]');
+    if (!frame) return;
+
+    const clip = document.createElement('video');
+    clip.className = 'hb-photo__img hb-photo__video';
+    clip.muted = true;
+    clip.defaultMuted = true;
+    clip.loop = true;
+    clip.playsInline = true;
+    clip.preload = 'none';
+    clip.setAttribute('muted', '');
+    clip.setAttribute('playsinline', '');
+    clip.setAttribute('aria-hidden', 'true');
+    clip.tabIndex = -1;
+    clip.disablePictureInPicture = true;
+    // The photo the browser already chose is the poster, so nothing new is fetched for it.
+    if (still?.currentSrc) clip.poster = still.currentSrc;
+    const source = document.createElement('source');
+    source.src = hero.dataset.heroVideo ?? '';
+    source.type = hero.dataset.heroVideoType ?? 'video/mp4';
+    clip.append(source);
+    frame.insertBefore(clip, frame.querySelector('.hb-photo__shade'));
+
+    let paused = readPaused();
+    let onScreen = true;
+    const label = toggle?.querySelector('.hb-video-toggle__label');
+    const sync = () => {
+      if (!toggle || !label) return;
+      toggle.setAttribute('aria-pressed', String(paused));
+      label.textContent = paused ? 'Play video' : 'Pause video';
+    };
+    const run = () => {
+      if (paused || !onScreen) clip.pause();
+      else clip.play().catch(() => {});
+    };
+    clip.addEventListener('playing', () => hero.classList.add('is-video-playing'), { once: true });
+    clip.addEventListener('error', () => clip.remove(), { once: true });
+    source.addEventListener('error', () => clip.remove(), { once: true });
+    if (toggle) {
+      toggle.hidden = false;
+      toggle.addEventListener('click', () => {
+        paused = !paused;
+        writePaused(paused);
+        sync();
+        run();
+      });
+    }
+    sync();
+
+    // Pause while the hero is scrolled away; turn the clip off if reduced motion is switched on.
+    const io = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      run();
+    });
+    io.observe(hero);
+    const onReduce = () => {
+      if (!reduce.matches) return;
+      clip.pause();
+      clip.remove();
+      hero.classList.remove('is-video-playing');
+      if (toggle) toggle.hidden = true;
+    };
+    reduce.addEventListener('change', onReduce);
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        io.disconnect();
+        reduce.removeEventListener('change', onReduce);
+        clip.pause();
+      },
+      { once: true },
+    );
+  }
+  initHeroVideo();
+  document.addEventListener('astro:page-load', initHeroVideo);
+</script>
