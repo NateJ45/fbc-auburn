@@ -173,7 +173,9 @@ const isHome = here === '/';
 const SUNDAY_PAGES = new Set(['/', '/plan-your-visit/']);
 const showSunday = !SUNDAY_PAGES.has(here);
 // The footer's own words (Site settings > Social & footer), each with the built-in fallback.
-const footerAbout = siteSettings?.footerAbout || 'A Southern Baptist church in Ross Township, Ohio';
+const footerAbout =
+  siteSettings?.footerAbout ||
+  'A Southern Baptist church in Ross Township, Ohio, serving Millville, Ross and Hamilton';
 // The verse across the top of the footer (2026-10-24), Site settings > Social and footer. The
 // default is Hebrews 13:8 in the KJV, the verse on the church's Facebook page in the wording it
 // quotes (2026-10-26; it was Matthew 11:28), until Pastor Jacob confirms or picks another.
@@ -602,7 +604,7 @@ const hasCalendar =
               )}
             </div>
             {socialLinksToRender.length > 0 && (
-              <ul class="sf-touch__social mt-m flex list-none justify-start gap-s p-0 text-sm">
+              <ul class="sf-touch__social mt-m flex list-none flex-wrap justify-start gap-s p-0 text-sm">
                 {socialLinksToRender.map((link) => {
                   const Icon = socialIcon(link.platform);
                   const ariaLabel = socialLabel(link);

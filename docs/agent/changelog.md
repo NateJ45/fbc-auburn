@@ -1,5 +1,18 @@
 # Change history
 
+_2026-10-26: Millville, and social links Pastor Jacob can add himself._
+
+**Decision.** Pastor Jacob's goal is a "digital front door for Millville, Ross and Hamilton", and
+Millville was nowhere on the site; his round 1 reply also listed WhatsApp with Facebook and TikTok.
+The phrase now appears in the footer line, the Home and About descriptions and About subhead, Plan
+your visit's "Find us" intro (content via `scripts/content/millville-whatsapp.mjs`, dry by
+default) and the Church JSON-LD `areaServed` (`site.areaServed`). Nathan asked that the church
+can add social accounts without us: Social links now take a pasted link and read the icon and name
+from the address (fifteen platforms, a plain link icon otherwise), with https required, gentle
+warnings and a cap of ten. WhatsApp shows only for a real invite or number link, and none is set
+yet; a For Jacob note on Contact asks for it. Contact gains a "Follow along" row of the same
+buttons. Detail: `docs/agent/church-data.md`.
+
 _2026-10-26: the Studio catches up with the re-audit._
 
 **Decision.** Nathan asked whether the re-audit left the Studio behind. It had mostly kept up (the

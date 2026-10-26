@@ -58,6 +58,16 @@ export const site = {
     border: '#E6DED2', // Faint dividers
   },
 
+  // The places the church serves, in Pastor Jacob's own words ("a digital front door for
+  // Millville, Ross and Hamilton", 2026-10-26). Sent to search engines as the Church JSON-LD's
+  // areaServed (src/lib/schemas.ts) whenever businessInfo has no service areas of its own. Not a
+  // confirmable fact like the address, so it always shows.
+  areaServed: [
+    { type: 'City', name: 'Millville, OH' },
+    { type: 'AdministrativeArea', name: 'Ross Township, OH' },
+    { type: 'City', name: 'Hamilton, OH' },
+  ],
+
   // Static asset paths under public/
   // Note: the logo files are in `src/assets/` and are imported directly
   // by Header.astro / Footer.astro so Astro's <Image> component can emit

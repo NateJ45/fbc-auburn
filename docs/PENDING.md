@@ -16,6 +16,17 @@ sequence).
 
 ## Waiting on a human
 
+### 1zu. Millville and WhatsApp: apply one script, and the church's WhatsApp link (opened 2026-10-26)
+
+- Apply `scripts/content/millville-whatsapp.mjs` under the write protocol (backup folder outside
+  the repo, dry run, `--apply` with `NCS_PRODUCTION_WRITE=yes`, verify), then refresh the CI
+  snapshot. It adds "serving Millville, Ross and Hamilton" to the Home and About descriptions and
+  the About subhead, and "Easy to reach from Millville, Ross and Hamilton." under Plan your visit's
+  "Find us". The code already carries the phrase in the footer and the JSON-LD.
+- Waiting on Pastor Jacob: whether he wants WhatsApp on the site, and its link (a group invite or
+  a number link). Asked in the For Jacob note on Contact. He, or we, paste it into Site settings >
+  Social links; nothing else is needed.
+
 ### 1zv. The re-audit's content: apply two scripts, then refresh the snapshot (opened 2026-10-26)
 
 The re-audit PR's code renders right before and after its content. To finish it: under the write
