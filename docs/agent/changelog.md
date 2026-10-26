@@ -6,6 +6,8 @@ numbered steps. `brand.config.json` `studio.look` now has `stone: round` and no 
 `kit.config.ts` has no `lettering`, so titles set in plain Young Serif and the numbers sit on plain round tokens.
 The unused `public/fonts/auburn-stone.woff2` and its licence are deleted.
 
+_2026-10-26: Playwright installs time out instead of hanging (starter card 70)._ Three docs-only PRs across the family sat 40 to 60 minutes in "Install Playwright system libraries" on 2026-10-26: the runner's Azure Ubuntu mirror fed a normal 30-second `install-deps` at 29 kB/s, and the workflows had no timeout, so a stuck apt could hold a required check for GitHub's 6-hour default. Each install attempt now runs under `timeout` (180s for `install-deps`, 360s for a full browser download), so a crawling first try is killed and the retry resumes the partial download; the step has `timeout-minutes` (8 and 15) and the Playwright job 30. This replaces the three 5-minute tries the self-serve PR put on `install-deps` the same morning, so the step matches the rest of the family.
+
 _2026-10-26: an open Studio reloads itself after a deploy (PORTS card 179)._ Signed in to the live
 Studio, a tab opened before a deploy showed a raw red "Failed to fetch dynamically imported module" inside the
 image field's Unsplash picker: every merge and every publish redeploys, and Workers keep only the newest build's
