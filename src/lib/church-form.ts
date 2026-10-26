@@ -154,7 +154,7 @@ export function validateFormSubmission(form: ChurchForm, raw: RawFormSubmission)
     let value = '';
     if (q.kind === 'checkbox') {
       if (v === true || v === 'true' || v === 'on' || v === 'Yes') value = 'Yes';
-      if (q.required && value !== 'Yes') errors[`q${i}`] = 'Please tick this box to go on.';
+      if (q.required && value !== 'Yes') errors[`q${i}`] = 'Please check this box to go on.';
       answers.push({ label: q.label, value: value || 'No' });
       return;
     }

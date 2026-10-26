@@ -86,7 +86,7 @@ export const form = defineType({
       type: 'boolean',
       initialValue: false,
       description:
-        'Adds a "Send this without my name" tick box. Good for prayer requests. You will not be able to reply to those.',
+        'Adds a "Send this without my name" checkbox. Good for prayer requests. You will not be able to reply to those.',
       hidden: ({ parent }) => parent?.askForContact === false,
     }),
     defineField({

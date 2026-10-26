@@ -32,7 +32,7 @@ const confirmedField = (name: string, what: string) =>
     type: 'boolean',
     initialValue: false,
     group: 'church',
-    description: `Tick once the church has confirmed ${what}. Until then the site shows a small "To confirm" tag beside it.`,
+    description: `Check once the church has confirmed ${what}. Until then the site shows a small "To confirm" tag beside it.`,
   });
 
 export const WEEKDAYS = [
@@ -93,7 +93,7 @@ export const churchFactsFields = [
         type: 'boolean',
         initialValue: false,
         description:
-          'Tick once the church has confirmed the address. Until then the site shows a small "To confirm" tag beside it.',
+          'Check once the church has confirmed the address. Until then the site shows a small "To confirm" tag beside it.',
       }),
     ],
   }),
@@ -149,7 +149,7 @@ export const churchFactsFields = [
             type: 'boolean',
             initialValue: false,
             description:
-              'Tick once the church has confirmed this time. Until then the site shows a small "To confirm" tag beside it.',
+              'Check once the church has confirmed this time. Until then the site shows a small "To confirm" tag beside it.',
           }),
         ],
         preview: {
@@ -171,7 +171,7 @@ export const churchFactsFields = [
     initialValue: false,
     group: 'church',
     description:
-      'Tick if people can text the church phone. The site then says "Call or text" and adds a Text link on phones.',
+      'Check if people can text the church phone. The site then says "Call or text" and adds a Text link on phones.',
   }),
   confirmedField('emailConfirmed', 'the email address (Identity & contact)'),
   defineField({

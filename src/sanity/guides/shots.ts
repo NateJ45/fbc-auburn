@@ -278,7 +278,7 @@ export const GUIDE_SHOTS: Record<string, GuideShotData> = {
         x: 92.7,
         y: 63,
         label:
-          'Publish is at the bottom right of every page. It is grey here because nothing has changed yet, and it lights up once you edit.',
+          'Publish is at the bottom right of every page. It is gray here because nothing has changed yet, and it lights up once you edit.',
       },
     ],
   },

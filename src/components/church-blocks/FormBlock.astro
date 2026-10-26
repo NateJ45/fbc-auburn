@@ -333,7 +333,7 @@ const who = form?.recipientName || 'the church office';
       for (const el of form.querySelectorAll<HTMLInputElement>('input, select, textarea')) {
         if (el.closest('[hidden]') || el.name === 'company' || el.checkValidity()) continue;
         const key = el.name;
-        if (el.type === 'checkbox') local[key] = 'Please tick this box to go on.';
+        if (el.type === 'checkbox') local[key] = 'Please check this box to go on.';
         else if (el.validity.typeMismatch && el.type === 'email')
           local[key] = 'That email address does not look right.';
         else if (key === 'name') local[key] = 'Please tell us your name.';

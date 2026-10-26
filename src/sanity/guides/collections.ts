@@ -190,7 +190,7 @@ export const collectionGuides: Guide[] = [
         kind: 'callout',
         tone: 'caution',
         title: 'What is typed here is public.',
-        text: 'The website only shows an email when `Show the email on the website` is ticked, and a missionary’s place only when `Keep the location off the website` is unticked. But anything typed in the Studio can be read by someone who knows how. Only type what is fine to be public.',
+        text: 'The website only shows an email when `Show the email on the website` is checked, and a missionary’s place only when `Keep the location off the website` is unchecked. But anything typed in the Studio can be read by someone who knows how. Only type what is fine to be public.',
       },
       { kind: 'h', text: 'Showing people on a page' },
       {

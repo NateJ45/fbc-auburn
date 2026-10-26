@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-26: American spelling everywhere (starter cards 163 and 164)._ Nathan's call: every family site is American English. Starter cards 163 and 164 copied byte-identical (164 moves the shared Studio and site text to American spelling, including "check" for a checkbox and "Website inquiry" as the contact email subject, and makes `build-csp.mjs` fail when the CSP line passes 2,000 characters). This site's own strings had the same pass: text only, no field name, option value, key, slug or CSS class renamed. The live Sanity content was checked the same day and fixed where needed.
+
 _2026-10-26: the Studio's own newsletter is hidden._
 
 **Decision.** Nathan: hide it. Auburn's email list lives in Church Trac (2026-10-24), so the Studio's
