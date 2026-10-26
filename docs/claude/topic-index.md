@@ -26,6 +26,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | SEO + JSON-LD                                                                                            | `docs/agent/seo.md`                                                  |
 | Performance budgets + Lighthouse                                                                         | `docs/agent/performance.md`                                          |
 | Content data + Sanity integration                                                                        | `docs/agent/sanity.md`                                               |
+| Event and holiday page blocks (event details, schedule, photo cards, the photo opening banner)           | `docs/agent/sanity.md` ("Event and holiday page blocks")             |
 | The content pages: what each is for, anchors, the doctrine and facts rules, the prayer path              | `docs/agent/content-pages.md`                                        |
 | Visitor site search (Pagefind, opt-in; reads uploaded files, typo help) + share buttons                  | `docs/agent/site-search.md`                                          |
 | Custom code: the trust model (pasted widgets, the box, the opt-outs)                                     | `docs/agent/custom-code.md`                                          |

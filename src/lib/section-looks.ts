@@ -72,6 +72,9 @@ export const LOOK_BY_VALUE: Record<string, LookOption> = Object.fromEntries(
 );
 
 const ALL: SectionLook[] = ['standard', 'feature', 'stone'];
+// Blocks whose cards or buttons are drawn on the white board: Stone sets them apart on pale tiles,
+// but the Feature navy would swallow their navy buttons and white cards (2026-10-26).
+const STONE_ONLY: SectionLook[] = ['standard', 'stone'];
 
 /**
  * Which blocks offer a look, and which looks each one offers.
@@ -89,6 +92,14 @@ export const LOOKS_BY_TYPE: Record<string, SectionLook[]> = {
   gallerySection: ALL,
   quoteSection: ALL,
   videoSection: ALL,
+  // 2026-10-26, the event and holiday page pass: the builder blocks and three church blocks an
+  // event page stacks (builderSections.ts, churchSections.ts, auburnSections.ts).
+  columnsSection: ALL,
+  scheduleSection: ALL,
+  iconCardsSection: STONE_ONLY,
+  buttonRowSection: STONE_ONLY,
+  photoCardsSection: STONE_ONLY,
+  eventDetailsSection: STONE_ONLY,
 };
 
 /** The options a block's `look` field offers, in display order. */

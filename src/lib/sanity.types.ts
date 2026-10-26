@@ -71,6 +71,15 @@ export type Logo = {
   _type: 'image';
 };
 
+export type PhotoCardImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "photoCard.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type PageReference = {
   _ref: string;
   _type: 'reference';
@@ -251,6 +260,18 @@ export type PrivatePage = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -321,6 +342,15 @@ export type PrivatePage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -858,6 +888,35 @@ export type NavLink = {
   href?: string;
 };
 
+export type PrivacyPolicySection = {
+  _type: 'privacyPolicySection';
+  lastUpdated?: string;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: 'span';
+      _key: string;
+    }>;
+    style?: 'normal' | 'h2' | 'h3';
+    listItem?: 'bullet' | 'number';
+    markDefs?: Array<{
+      href?: string;
+      openInNewTab?: boolean;
+      _type: 'link';
+      _key: string;
+    }>;
+    level?: number;
+    _type: 'block';
+    _key: string;
+  }>;
+};
+
+export type ContactFormSection = {
+  _type: 'contactFormSection';
+  sidebar?: boolean;
+};
+
 export type DynamicListSection = {
   _type: 'dynamicListSection';
   eyebrow?: string;
@@ -1127,6 +1186,18 @@ export type SectionPreset = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -1199,12 +1270,298 @@ export type SectionPreset = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & FaqSection)
     | ({
         _key: string;
       } & DynamicListSection)
   >;
   note?: string;
+};
+
+export type PhotoCardsSection = {
+  _type: 'photoCardsSection';
+  heading?: string;
+  intro?: string;
+  cards?: Array<{
+    image?: PhotoCardImage;
+    title?: string;
+    body?: string;
+    link?: CtaBlock;
+    _type: 'photoCard';
+    _key: string;
+  }>;
+  look?: 'standard' | 'stone';
+};
+
+export type ScheduleSection = {
+  _type: 'scheduleSection';
+  heading?: string;
+  intro?: string;
+  days?: Array<{
+    title?: string;
+    items?: Array<{
+      startTime?:
+        | '06:00'
+        | '06:15'
+        | '06:30'
+        | '06:45'
+        | '07:00'
+        | '07:15'
+        | '07:30'
+        | '07:45'
+        | '08:00'
+        | '08:15'
+        | '08:30'
+        | '08:45'
+        | '09:00'
+        | '09:15'
+        | '09:30'
+        | '09:45'
+        | '10:00'
+        | '10:15'
+        | '10:30'
+        | '10:45'
+        | '11:00'
+        | '11:15'
+        | '11:30'
+        | '11:45'
+        | '12:00'
+        | '12:15'
+        | '12:30'
+        | '12:45'
+        | '13:00'
+        | '13:15'
+        | '13:30'
+        | '13:45'
+        | '14:00'
+        | '14:15'
+        | '14:30'
+        | '14:45'
+        | '15:00'
+        | '15:15'
+        | '15:30'
+        | '15:45'
+        | '16:00'
+        | '16:15'
+        | '16:30'
+        | '16:45'
+        | '17:00'
+        | '17:15'
+        | '17:30'
+        | '17:45'
+        | '18:00'
+        | '18:15'
+        | '18:30'
+        | '18:45'
+        | '19:00'
+        | '19:15'
+        | '19:30'
+        | '19:45'
+        | '20:00'
+        | '20:15'
+        | '20:30'
+        | '20:45'
+        | '21:00'
+        | '21:15'
+        | '21:30'
+        | '21:45'
+        | '22:00'
+        | '22:15'
+        | '22:30'
+        | '22:45'
+        | '23:00'
+        | '23:15'
+        | '23:30'
+        | '23:45';
+      title?: string;
+      note?: string;
+      _type: 'scheduleItem';
+      _key: string;
+    }>;
+    _type: 'scheduleDay';
+    _key: string;
+  }>;
+  look?: 'standard' | 'feature' | 'stone';
+};
+
+export type EventDetailsSection = {
+  _type: 'eventDetailsSection';
+  eyebrow?: string;
+  title?: string;
+  occurrences?: Array<{
+    date?: string;
+    startTime?:
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    endTime?:
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    label?: string;
+    _type: 'eventDate';
+    _key: string;
+  }>;
+  place?: string;
+  note?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  button?: CtaBlock;
+  showCalendar?: boolean;
+  look?: 'standard' | 'stone';
 };
 
 export type RsvpSection = {
@@ -1320,6 +1677,7 @@ export type ColumnsSection = {
     _type: 'textColumn';
     _key: string;
   }>;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type ContactCardSection = {
@@ -1340,6 +1698,7 @@ export type ButtonRowSection = {
     _type: 'quickLink';
     _key: string;
   }>;
+  look?: 'standard' | 'stone';
 };
 
 export type AffiliationsSection = {
@@ -1531,6 +1890,29 @@ export type ServiceTimesSection = {
   intro?: string;
 };
 
+export type BulletinSection = {
+  _type: 'bulletinSection';
+  postedWhen?: string;
+  earlierHeading?: string;
+};
+
+export type PodcastSection = {
+  _type: 'podcastSection';
+  heading?: string;
+  intro?: string;
+};
+
+export type SermonArchiveSection = {
+  _type: 'sermonArchiveSection';
+  heading?: string;
+};
+
+export type JournalPostsSection = {
+  _type: 'journalPostsSection';
+  showCategories?: boolean;
+  showNewsletter?: boolean;
+};
+
 export type DownloadsSection = {
   _type: 'downloadsSection';
   heading?: string;
@@ -1578,6 +1960,7 @@ export type SermonSeriesSection = {
   heading?: string;
   intro?: string;
   limit?: number;
+  hideWhenEmpty?: boolean;
 };
 
 export type LatestSermonSection = {
@@ -1784,6 +2167,7 @@ export type IconCardsSection = {
     _type: 'iconCard';
     _key: string;
   }>;
+  look?: 'standard' | 'stone';
 };
 
 export type EmbedSection = {
@@ -2020,6 +2404,7 @@ export type HeroSection = {
     alt?: string;
     _type: 'image';
   };
+  heroStyle?: 'arch' | 'photo';
   backgroundVideo?: {
     asset?: SanityFileAssetReference;
     media?: unknown;
@@ -2063,6 +2448,176 @@ export type PrivacyPage = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  pageBuilder?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
+      } & ServiceTimesSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
+      } & BeliefsSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & ScriptureSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & GivingSection)
+    | ({
+        _key: string;
+      } & LivestreamSection)
+    | ({
+        _key: string;
+      } & EventsSection)
+    | ({
+        _key: string;
+      } & NewsletterSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & ProgressSection)
+    | ({
+        _key: string;
+      } & AffiliationsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
+    | ({
+        _key: string;
+      } & FaqSection)
+    | ({
+        _key: string;
+      } & DynamicListSection)
+    | ({
+        _key: string;
+      } & PrivacyPolicySection)
+  >;
   seoTitle?: string;
   seoDescription?: string;
   seoImage?: {
@@ -2171,6 +2726,18 @@ export type PrivacyPage = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -2241,6 +2808,15 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2321,6 +2897,18 @@ export type Page = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -2391,6 +2979,15 @@ export type Page = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2586,6 +3183,173 @@ export type SermonsPage = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  pageBuilder?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
+      } & ServiceTimesSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
+      } & BeliefsSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & ScriptureSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & GivingSection)
+    | ({
+        _key: string;
+      } & LivestreamSection)
+    | ({
+        _key: string;
+      } & EventsSection)
+    | ({
+        _key: string;
+      } & NewsletterSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & ProgressSection)
+    | ({
+        _key: string;
+      } & AffiliationsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
+    | ({
+        _key: string;
+      } & FaqSection)
+    | ({
+        _key: string;
+      } & DynamicListSection)
+  >;
   heroEyebrow?: string;
   heroHeadline?: string;
   heroSubhead?: string;
@@ -2679,6 +3443,18 @@ export type SermonsPage = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -2749,6 +3525,15 @@ export type SermonsPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2894,6 +3679,173 @@ export type JournalPage = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  pageBuilder?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
+      } & ServiceTimesSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
+      } & BeliefsSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & ScriptureSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & GivingSection)
+    | ({
+        _key: string;
+      } & LivestreamSection)
+    | ({
+        _key: string;
+      } & EventsSection)
+    | ({
+        _key: string;
+      } & NewsletterSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & ProgressSection)
+    | ({
+        _key: string;
+      } & AffiliationsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
+    | ({
+        _key: string;
+      } & FaqSection)
+    | ({
+        _key: string;
+      } & DynamicListSection)
+  >;
   seoTitle?: string;
   seoDescription?: string;
   seoImage?: {
@@ -2995,6 +3947,18 @@ export type JournalPage = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -3067,6 +4031,15 @@ export type JournalPage = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -3077,6 +4050,176 @@ export type ContactPage = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  pageBuilder?: Array<
+    | ({
+        _key: string;
+      } & HeroSection)
+    | ({
+        _key: string;
+      } & RichTextSection)
+    | ({
+        _key: string;
+      } & ImageTextSection)
+    | ({
+        _key: string;
+      } & GallerySection)
+    | ({
+        _key: string;
+      } & QuoteSection)
+    | ({
+        _key: string;
+      } & StatSection)
+    | ({
+        _key: string;
+      } & CtaBandSection)
+    | ({
+        _key: string;
+      } & VideoSection)
+    | ({
+        _key: string;
+      } & SpacerSection)
+    | ({
+        _key: string;
+      } & EmbedSection)
+    | ({
+        _key: string;
+      } & IconCardsSection)
+    | ({
+        _key: string;
+      } & FindYourPlaceSection)
+    | ({
+        _key: string;
+      } & LetterSection)
+    | ({
+        _key: string;
+      } & ThisWeekSection)
+    | ({
+        _key: string;
+      } & WatchSection)
+    | ({
+        _key: string;
+      } & StepsRailSection)
+    | ({
+        _key: string;
+      } & WalkSection)
+    | ({
+        _key: string;
+      } & LatestSermonSection)
+    | ({
+        _key: string;
+      } & SermonSeriesSection)
+    | ({
+        _key: string;
+      } & PeopleSection)
+    | ({
+        _key: string;
+      } & DownloadsSection)
+    | ({
+        _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
+      } & ServiceTimesSection)
+    | ({
+        _key: string;
+      } & MapSection)
+    | ({
+        _key: string;
+      } & BeliefsSection)
+    | ({
+        _key: string;
+      } & TimelineSection)
+    | ({
+        _key: string;
+      } & AccordionSection)
+    | ({
+        _key: string;
+      } & TabsSection)
+    | ({
+        _key: string;
+      } & ScriptureSection)
+    | ({
+        _key: string;
+      } & NoticeSection)
+    | ({
+        _key: string;
+      } & CountdownSection)
+    | ({
+        _key: string;
+      } & GivingSection)
+    | ({
+        _key: string;
+      } & LivestreamSection)
+    | ({
+        _key: string;
+      } & EventsSection)
+    | ({
+        _key: string;
+      } & NewsletterSection)
+    | ({
+        _key: string;
+      } & CalendarSubscribeSection)
+    | ({
+        _key: string;
+      } & ProgressSection)
+    | ({
+        _key: string;
+      } & AffiliationsSection)
+    | ({
+        _key: string;
+      } & ButtonRowSection)
+    | ({
+        _key: string;
+      } & ContactCardSection)
+    | ({
+        _key: string;
+      } & ColumnsSection)
+    | ({
+        _key: string;
+      } & PhotoSection)
+    | ({
+        _key: string;
+      } & FormSection)
+    | ({
+        _key: string;
+      } & ChurchTracFormSection)
+    | ({
+        _key: string;
+      } & ChurchTracPageSection)
+    | ({
+        _key: string;
+      } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & SyncedSection)
+    | ({
+        _key: string;
+      } & FaqSection)
+    | ({
+        _key: string;
+      } & DynamicListSection)
+    | ({
+        _key: string;
+      } & ContactFormSection)
+  >;
   seoTitle?: string;
   seoDescription?: string;
   seoImage?: {
@@ -3203,6 +4346,18 @@ export type ContactPage = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -3273,6 +4428,15 @@ export type ContactPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3389,6 +4553,18 @@ export type FaqPage = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -3459,6 +4635,15 @@ export type FaqPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3537,6 +4722,18 @@ export type AboutPage = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -3607,6 +4804,15 @@ export type AboutPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3792,6 +4998,18 @@ export type HomePage = {
       } & DownloadsSection)
     | ({
         _key: string;
+      } & JournalPostsSection)
+    | ({
+        _key: string;
+      } & SermonArchiveSection)
+    | ({
+        _key: string;
+      } & PodcastSection)
+    | ({
+        _key: string;
+      } & BulletinSection)
+    | ({
+        _key: string;
       } & ServiceTimesSection)
     | ({
         _key: string;
@@ -3862,6 +5080,15 @@ export type HomePage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -4136,6 +5363,7 @@ export type AllSanitySchemaTypes =
   | LastMessage
   | TimelineEntryImage
   | Logo
+  | PhotoCardImage
   | PageReference
   | HomePageReference
   | AboutPageReference
@@ -4168,6 +5396,8 @@ export type AllSanitySchemaTypes =
   | FaqPageReference
   | CtaBlock
   | NavLink
+  | PrivacyPolicySection
+  | ContactFormSection
   | DynamicListSection
   | TeamSection
   | FaqItemReference
@@ -4179,6 +5409,9 @@ export type AllSanitySchemaTypes =
   | SectionPresetReference
   | SyncedSection
   | SectionPreset
+  | PhotoCardsSection
+  | ScheduleSection
+  | EventDetailsSection
   | RsvpSection
   | ChurchTracPageSection
   | ChurchTracFormSection
@@ -4205,6 +5438,10 @@ export type AllSanitySchemaTypes =
   | BeliefsSection
   | MapSection
   | ServiceTimesSection
+  | BulletinSection
+  | PodcastSection
+  | SermonArchiveSection
+  | JournalPostsSection
   | DownloadsSection
   | PersonGroupReference
   | PersonReference

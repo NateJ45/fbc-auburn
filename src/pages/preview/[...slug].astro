@@ -81,6 +81,7 @@ const SINGLETON_BY_PATH: Record<string, string> = {
   contact: 'contactPage',
   journal: 'journalPage', // scaffold: journal
   privacy: 'privacyPage',
+  sermons: 'sermonsPage',
   '404': 'notFoundPage',
 };
 
@@ -90,6 +91,11 @@ const SINGLETON_BY_PATH: Record<string, string> = {
 const BUILDER_SINGLETONS = new Set([
   'homePage',
   'aboutPage', // scaffold: about
+  // Every main page a page builder (2026-10-26).
+  'contactPage',
+  'journalPage', // scaffold: journal
+  'privacyPage',
+  'sermonsPage',
 ]);
 
 // The heading-id prefix each live page passes to SectionRenderer. Matching it
@@ -98,6 +104,10 @@ const BUILDER_SINGLETONS = new Set([
 const ID_PREFIX: Record<string, string> = {
   homePage: 'home',
   aboutPage: 'about',
+  contactPage: 'contact',
+  journalPage: 'journal',
+  privacyPage: 'privacy',
+  sermonsPage: 'sermons',
 };
 
 // Every hero / builder / CTA field any of the page types may carry. Absent

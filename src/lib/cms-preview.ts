@@ -106,6 +106,11 @@ const NON_STEGA_FIELDS = new Set([
   'columns',
   // stepsRailSection steps: which Sunday gathering a step is (its time comes from Church facts).
   'gathering',
+  // 2026-10-26: the page opener's style (arch or photo behind the words), and the time dropdowns
+  // on Event details and Schedule (src/lib/builder-blocks.ts reads them as times).
+  'heroStyle',
+  'startTime',
+  'endTime',
   // 2026-10-26: a popup's "Which pages" and "How often" (src/lib/popup.ts compares both).
   'where',
   'frequency',

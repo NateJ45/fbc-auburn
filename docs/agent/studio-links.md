@@ -13,7 +13,7 @@ edit them there. The schema, the guides, the Quick update tile and the `astro.co
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Short links        | `src/sanity/schemaTypes/shortLink.ts`, `src/sanity/components/ShortLinkAddressInput.tsx`, `src/lib/short-links.ts`, `astro.config.mjs` (`shortLinks()`) | Quick update tile "Make a short link" (opens a new short link), or Pages > Short links      |
 | QR codes           | `src/sanity/actions/qrCode.tsx`, `src/lib/qr.ts`                                                                                                        | "QR code" in the Publish menu of every short link and every document with a page of its own |
-| Paste-and-go embed | `src/sanity/components/EmbedPasteInput.tsx`, `src/lib/embed-providers.ts`, `src/components/sections/EmbedSection.astro`, `scripts/build-embed-csp.mjs`  | The paste box at the top of a Custom code or embed block                                    |
+| Paste-and-go embed | `src/sanity/components/EmbedPasteInput.tsx`, `src/lib/embed-providers.ts`, `src/components/sections/EmbedSection.astro`, `scripts/build-csp.mjs`        | The paste box at the top of a Custom code or embed block                                    |
 
 - **Short links**: `/vbs`-style addresses to a page (a reference, so it follows a rename) or
   another website. "For now" is a 302 (the default), "For good" a 301, with an optional last day.
@@ -29,4 +29,4 @@ edit them there. The schema, the guides, the Quick update tile and the `astro.co
 - **Guides**: `src/sanity/guides/links.ts` ("Make a short link like /vbs", "Make a QR code for a
   bulletin"), plus the paste box in "Add a widget from an AI or a website" (`content.ts`).
 - **Tests**: `src/lib/short-links.test.ts`, `src/lib/qr.test.ts`, `src/lib/embed-providers.test.ts`,
-  `scripts/lib/embed-csp.test.mjs`, `tests/embed-guard.spec.ts`.
+  `scripts/lib/csp.test.mjs`, `tests/embed-guard.spec.ts`.
