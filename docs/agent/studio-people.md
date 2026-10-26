@@ -51,6 +51,7 @@ the lock.
 https://api.sanity.io/v2021-06-07/projects/<id>/features`): `roleEditor` there means Helper is
   available. Without it the tool greys out Helper and shows the steps (ask about Growth, or invite
   as an Administrator and add them to `kitConfig.staff`), with a link to sanity.io/manage.
+- **This site stays on Free** (Nathan, 2026-10-26): `SANITY_PLAN = 'free'` in `src/lib/studio-people.ts` keeps Helper greyed out even while a Growth trial still lists `roleEditor`, so nobody is invited into a role that turns read-only when the trial ends. Helpers are invited as Administrators. Set it to `'auto'` only if the church moves to a paid plan.
 - Seats: the Free plan and the Growth trial allow 20 users. A refusal for the seat limit comes back
   in plain words.
 

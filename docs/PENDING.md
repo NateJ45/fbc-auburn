@@ -23,8 +23,10 @@ The self-serve additions are merged and live (#205, #206, #212; changelog 2026-1
 - **People tool:** set the Worker secret `SANITY_MEMBERS_TOKEN` (a Sanity robot token with
   "Access Manager", no content access; `npx wrangler secret put SANITY_MEMBERS_TOKEN`), then send one
   invite signed in. Until then the tool shows Jacob the manual steps at sanity.io/manage.
-- **Sanity plan:** the project is on a Growth trial. If it ends without an upgrade, non-admins become
-  Viewers and a Helper cannot edit. Nathan's decision.
+- **Sanity plan: Free** (decided 2026-10-26). Free has Administrator and Viewer only, so the People
+  tool invites helpers as Administrators (Helper stays greyed out with its explanation) and they get
+  the full Studio, because the staff view applies to non-admins. Optional: let the People tool mark a
+  helper so the simple view applies to that admin too (needs a starter card for `studio-kit.ts`).
 - **Form addresses:** migration `0005_form_recipients.sql` applies with the other four when the form
   database is created (`wrangler.jsonc` still has the placeholder binding; see 1v). A new address must
   also be verified in Cloudflare Email Sending.
