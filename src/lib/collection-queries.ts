@@ -54,6 +54,8 @@ export interface SermonsPageDoc {
   seoDescription?: string | null;
   seoImage?: { asset?: unknown } | null;
   additionalSections?: unknown[] | null;
+  /** The page's sections (2026-10-26, every main page a page builder). */
+  pageBuilder?: unknown[] | null;
 }
 
 let pageShared: Promise<SermonsPageDoc | null> | null = null;
@@ -66,7 +68,8 @@ export function getSermonsPage(): Promise<SermonsPageDoc | null> {
           ...,
           podcastArtwork${IMG},
           seoImage${IMG},
-          ${sectionsProjection('additionalSections')}
+          ${sectionsProjection('additionalSections')},
+          ${sectionsProjection('pageBuilder')}
         }`,
         {},
         null,

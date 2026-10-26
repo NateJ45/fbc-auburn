@@ -42,7 +42,8 @@ All publicly-visible content lives in Sanity, not in code or markdown files. San
 **Core page singletons (section-driven):**
 
 - `homePage`, `aboutPage`, `servicesPage`, `processPage` — each has a `pageBuilder` array field using its page-specific section type list, plus SEO fields. Renders from `src/data/defaultSections.ts` when `pageBuilder` is empty.
-- `faqPage`, `contactPage`, `journalPage` + `journalEntry` + `journalCategory`, `privacyPage`, `notFoundPage` — these pages keep their own structured fields (they are not fully section-driven).
+- FBC Auburn (2026-10-26, every main page a page builder): `contactPage`, `privacyPage`, `journalPage` and `sermonsPage` are section-driven too (`CONTACT_SECTION_TYPES`, `PRIVACY_SECTION_TYPES`, `ABOUT_SECTION_TYPES`), each with a `DEFAULT_*_SECTIONS` fallback. Their old banner, closing-band and Extra sections fields are hidden fossils (rule 1); the Contact form settings (`formFields` and "What happens next") and the podcast fields stay live. Give and This week's bulletin are `page` documents (`page-give`, `page-bulletin`). The blocks and the migration (`scripts/content/builder-pages.mjs`): `docs/agent/page-architecture.md`.
+- `faqPage` (orphaned: `/faq/` forwards to `/plan-your-visit/#questions`; registered, never deleted, shown nowhere in the Studio), `notFoundPage` — these keep their own structured fields.
 - `studioGuide` — the starter's old in-Studio handbook singleton. Registered but not in the desk (a document still exists); the handbook is the Site Guide, from `src/sanity/guides/content.ts`. `studioNotes` was removed on 2026-10-18 and its one document retired with `scripts/content/retire-studio-notes.mjs`.
 
 **Reusable collections:**

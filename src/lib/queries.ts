@@ -543,6 +543,7 @@ export async function getContactPage() {
   return sanityFetch(
     `*[_type == "contactPage"][0]{
     ${sectionsProjection('additionalSections')},
+    ${sectionsProjection('pageBuilder')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -641,6 +642,7 @@ export async function getJournalPage() {
   return sanityFetch(
     `*[_type == "journalPage"][0]{
     ${sectionsProjection('additionalSections')},
+    ${sectionsProjection('pageBuilder')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},
@@ -744,6 +746,7 @@ export async function getPrivacyPage() {
   return sanityFetch(
     `*[_type == "privacyPage"][0]{
     ${sectionsProjection('additionalSections')},
+    ${sectionsProjection('pageBuilder')},
     seoTitle,
     seoDescription,
     seoImage${IMAGE_PROJECTION},

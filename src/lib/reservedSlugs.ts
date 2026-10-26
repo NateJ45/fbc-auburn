@@ -31,11 +31,9 @@ export const RESERVED_SLUGS = new Set([
   'journal', // scaffold: journal
   'contact',
   'privacy',
-  // The Give page (src/pages/give.astro), 2026-10-18.
-  'give',
-  // The sermon archive and the newest-bulletin shortcut (2026-10-18).
+  // The sermon archive (2026-10-18). Give and the bulletin are Studio pages since 2026-10-26
+  // ([slug].astro always builds them), so their slugs are no longer reserved.
   'sermons',
-  'bulletin',
   // The fixed-data wall the visual-regression suite shoots (PORTS.md card 37).
   // noindex and out of the sitemap, but a real built route, so a custom page
   // must not be able to shadow it.

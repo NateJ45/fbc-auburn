@@ -41,6 +41,13 @@ import LatestSermon from '@/components/sections/LatestSermon.astro';
 import SermonSeriesGrid from '@/components/sections/SermonSeriesGrid.astro';
 import PeopleSection from '@/components/sections/PeopleSection.astro';
 import DownloadsList from '@/components/sections/DownloadsList.astro';
+// Every main page a page builder (2026-10-26): the parts those pages drew in code.
+import ContactFormSection from '@/components/sections/ContactFormSection.astro';
+import PrivacyPolicy from '@/components/sections/PrivacyPolicy.astro';
+import JournalPosts from '@/components/sections/JournalPosts.astro';
+import SermonArchive from '@/components/sections/SermonArchive.astro';
+import PodcastSection from '@/components/sections/PodcastSection.astro';
+import BulletinSection from '@/components/sections/BulletinSection.astro';
 import SectionDivider from '@/components/SectionDivider.astro';
 import BoardRule from '@/components/home/BoardRule.astro';
 import { classifySections } from '@/lib/sectionCadence';
@@ -483,6 +490,7 @@ const editKeyOf = (block: unknown) => {
           heading={s.heading}
           intro={s.intro}
           limit={s.limit}
+          hideWhenEmpty={s.hideWhenEmpty === true}
           series={s.series ?? []}
           surface={lightSurface(surface)}
           headingId={headingId}
@@ -508,6 +516,26 @@ const editKeyOf = (block: unknown) => {
           items={s.items ?? []}
           bulletins={s.bulletins}
           surface={lightSurface(surface)}
+          headingId={headingId}
+        />
+      ) : s._type === 'contactFormSection' ? (
+        <ContactFormSection settings={s.settings} sidebar={s.sidebar !== false} />
+      ) : s._type === 'privacyPolicySection' ? (
+        <PrivacyPolicy lastUpdated={s.lastUpdated} body={s.body} />
+      ) : s._type === 'journalPostsSection' ? (
+        <JournalPosts
+          showCategories={s.showCategories !== false}
+          showNewsletter={s.showNewsletter !== false}
+          headingId={headingId}
+        />
+      ) : s._type === 'sermonArchiveSection' ? (
+        <SermonArchive heading={s.heading} headingId={headingId} />
+      ) : s._type === 'podcastSection' ? (
+        <PodcastSection heading={s.heading} intro={s.intro} headingId={headingId} />
+      ) : s._type === 'bulletinSection' ? (
+        <BulletinSection
+          postedWhen={s.postedWhen}
+          earlierHeading={s.earlierHeading}
           headingId={headingId}
         />
       ) : isChurchBlock(s) ? (

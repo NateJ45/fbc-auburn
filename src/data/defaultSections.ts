@@ -233,6 +233,138 @@ export const DEFAULT_PLAN_VISIT_SECTIONS: PageBuilderBlock[] = [
   },
 ];
 
+// ── Every main page a page builder (2026-10-26) ──────────────────────────────
+// Contact, Privacy, News and notes and Sermons render their Page layout; these are what they show
+// with none (a fresh clone, CI's empty build). The same shape as the live documents
+// (scripts/content/builder-pages.mjs). The blocks they are built around fetch their own rows, so
+// each still renders the form, the posts or the sermons with no section data at all.
+
+export const DEFAULT_CONTACT_SECTIONS: PageBuilderBlock[] = [
+  {
+    _type: 'heroSection',
+    _key: 'default-ct-hero',
+    eyebrow: 'Get in touch',
+    headline: 'Contact us',
+    size: 'short',
+  },
+  { _type: 'contactFormSection', _key: 'default-ct-form', sidebar: true },
+];
+
+export const DEFAULT_PRIVACY_SECTIONS: PageBuilderBlock[] = [
+  {
+    _type: 'heroSection',
+    _key: 'default-pv-hero',
+    eyebrow: 'Your privacy',
+    headline: 'Privacy policy',
+    size: 'short',
+  },
+  // No words typed: the block shows the church's built-in policy (PrivacyPolicy.astro).
+  { _type: 'privacyPolicySection', _key: 'default-pv-policy' },
+];
+
+// scaffold: journal
+export const DEFAULT_JOURNAL_SECTIONS: PageBuilderBlock[] = [
+  {
+    _type: 'heroSection',
+    _key: 'default-jn-hero',
+    eyebrow: 'From the church',
+    headline: 'News and notes',
+    subhead: 'News, sermon notes and stories from the church family.',
+    size: 'short',
+  },
+  {
+    _type: 'journalPostsSection',
+    _key: 'default-jn-posts',
+    showCategories: true,
+    showNewsletter: true,
+  },
+  // No fields: FinalCta's own closing words and button.
+  { _type: 'ctaBandSection', _key: 'default-jn-cta' },
+];
+// scaffold:end
+
+export const DEFAULT_SERMONS_SECTIONS: PageBuilderBlock[] = [
+  {
+    _type: 'heroSection',
+    _key: 'default-sm-hero',
+    eyebrow: 'Sunday by Sunday',
+    headline: 'Sermons',
+    subhead: 'Catch up on a Sunday you missed, or listen again.',
+    size: 'short',
+  },
+  {
+    _type: 'watchSection',
+    // This key gives the heading the id #sermons-watch-heading (src/lib/section-anchors.ts).
+    _key: 'sermons-watch',
+    eyebrow: 'Sundays, wherever you are',
+    heading: 'Watch live, or catch up',
+    body: 'Worship is streamed live every Sunday, and the latest message is always here.',
+    fallback: "Messages will appear here once the church's video channel is connected.",
+  },
+  { _type: 'sermonArchiveSection', _key: 'default-sm-archive', heading: 'Every sermon' },
+  {
+    _type: 'sermonSeriesSection',
+    _key: 'default-sm-series',
+    heading: 'Sermon series',
+    limit: 24,
+    hideWhenEmpty: true,
+  },
+  { _type: 'podcastSection', _key: 'default-sm-podcast', heading: 'Listen on the go' },
+];
+
+// Give and This week's bulletin (2026-10-26) are Studio pages like Plan your visit: [slug].astro
+// always builds their addresses (the menus point at them) and renders these with no such page.
+export const DEFAULT_GIVE_SECTIONS: PageBuilderBlock[] = [
+  {
+    _type: 'heroSection',
+    _key: 'default-gv-hero',
+    eyebrow: 'Giving',
+    headline: 'Give',
+    subhead:
+      'Giving is part of worship here. Every gift supports the ministry in Auburn and the work of Southern Baptist churches around the world. Nobody is expected to give on a first visit.',
+    icon: 'giving-hand',
+    size: 'short',
+  },
+  // The three ways, from Church facts (GivingBlock.astro).
+  { _type: 'givingSection', _key: 'default-gv-ways', heading: 'Ways to give' },
+];
+
+export const DEFAULT_BULLETIN_SECTIONS: PageBuilderBlock[] = [
+  {
+    _type: 'heroSection',
+    _key: 'default-bl-hero',
+    eyebrow: 'Sunday bulletin',
+    headline: "This week's bulletin",
+    subhead: "The order of service, this week's news and the dates to keep.",
+    size: 'short',
+  },
+  { _type: 'bulletinSection', _key: 'default-bl-bulletin', earlierHeading: 'Earlier bulletins' },
+];
+
+/**
+ * The Studio pages whose addresses are always built (the built-in buttons and menus point at
+ * them), with what each shows when there is no such page in Sanity. Keyed by slug; the slugs are
+ * repeated as literals inside getStaticPaths in [slug].astro (rule 10).
+ */
+export const BUILT_IN_PAGES: Record<
+  string,
+  { title: string; seoDescription?: string; pageBuilder: PageBuilderBlock[] }
+> = {
+  [PLAN_VISIT_SLUG]: { title: DEFAULT_PLAN_VISIT_TITLE, pageBuilder: DEFAULT_PLAN_VISIT_SECTIONS },
+  give: {
+    title: 'Give',
+    seoDescription:
+      'How to give to First Baptist Church of Auburn: in the offering on Sunday, by mail, or online.',
+    pageBuilder: DEFAULT_GIVE_SECTIONS,
+  },
+  bulletin: {
+    title: "This week's bulletin",
+    seoDescription:
+      "The newest Sunday bulletin from First Baptist Church of Auburn: the order of service, the week's news and the dates to keep.",
+    pageBuilder: DEFAULT_BULLETIN_SECTIONS,
+  },
+};
+
 // ── About page ───────────────────────────────────────────────────────────────
 
 // scaffold: about

@@ -569,6 +569,15 @@ const SECTIONS: Record<string, unknown>[] = [
       }),
     ),
   },
+  // ── Every main page a page builder (2026-10-26) ──
+  // These read their rows themselves (the posts, the sermons, the bulletins, the Contact page's
+  // form settings), so what they show here follows the dataset; the policy shows the built-in text.
+  { _type: 'journalPostsSection', _key: 'journal-posts', showCategories: true },
+  { _type: 'sermonArchiveSection', _key: 'sermon-archive', heading: 'Every sermon' },
+  { _type: 'podcastSection', _key: 'podcast', heading: 'Listen on the go' },
+  { _type: 'bulletinSection', _key: 'bulletin', postedWhen: 'by Saturday evening' },
+  { _type: 'contactFormSection', _key: 'contact-form', sidebar: true },
+  { _type: 'privacyPolicySection', _key: 'privacy-policy', lastUpdated: '2026-10-18' },
   // ── The church section library (churchSections.ts, 2026-10-18) ──
   // Facts-fed blocks (service times, map, giving, contact details, events, calendar buttons,
   // live stream) read Church facts, so what they show here follows Site settings. Dates are
