@@ -1,5 +1,14 @@
 # Change history
 
+_2026-10-26: the Studio catches up with the re-audit._
+
+**Decision.** Nathan asked whether the re-audit left the Studio behind. It had mostly kept up (the
+menus guide, the hero video text and the new fields' help came with it). The Site Guide's "What
+each section is for" now mentions Contact details' `Lead with big Call and Text buttons` and the
+Notice's `Small label` and tap-to-call numbers. The block picker's Walk and This week pictures are
+reshot (`npm run thumbnails`); the other pictures came out the same to the eye and were left as they
+were.
+
 _2026-10-26: no crisis band, and two leftovers._
 
 **Decision.** Nathan removed the 988/911 "If it cannot wait" band from the Prayer page and from Need the pastor? (content, `pr-crisis` and `pc-crisis` unset after a backup of each page). The Ministries phone thumbnails still cut the retired stepped corner (`FindYourPlace.astro`); they are now a plain frame with the inner corner like every card picture. Contact's For Jacob note no longer points at care drafts that moved to Need the pastor?. CI snapshot refreshed.
