@@ -143,6 +143,50 @@ const who = form?.recipientName || 'the church office';
           const id = fid(`q${i}`);
           const err = `${id}-error`;
           const label = q.required || /optional/i.test(q.label) ? q.label : `${q.label} (optional)`;
+          // Tick any that apply (2026-10-26): a fieldset whose legend is the question, one box per
+          // choice. "Must tick one" is checked by the script below and by the server, not by
+          // `required` on each box (that would demand every box).
+          if (q.kind === 'multi') {
+            return (
+              <fieldset
+                class="cb-field cb-ticks"
+                data-q={i}
+                data-q-multi
+                data-required={q.required ? '' : undefined}
+                aria-describedby={`${id}-hint ${err}`}
+              >
+                <legend>{label}</legend>
+                <p class="cb-ticks__hint" id={`${id}-hint`}>
+                  Tick any that apply.
+                </p>
+                {q.options.map((o) => (
+                  <label class="cb-check">
+                    <input type="checkbox" name={`q${i}`} value={o} />
+                    {o}
+                  </label>
+                ))}
+                <p class="cb-error" id={err} data-error-for={`q${i}`} hidden />
+              </fieldset>
+            );
+          }
+          // A date (2026-10-26): the phone's own date picker. "Only from today on" sets `min`
+          // from the visitor's clock in the script below (a build-time date would go stale).
+          if (q.kind === 'date') {
+            return (
+              <div class="cb-field" data-q={i}>
+                <label for={id}>{label}</label>
+                <input
+                  id={id}
+                  name={`q${i}`}
+                  type="date"
+                  required={q.required}
+                  data-not-past={q.notPast ? '' : undefined}
+                  aria-describedby={err}
+                />
+                <p class="cb-error" id={err} data-error-for={`q${i}`} hidden />
+              </div>
+            );
+          }
           return q.kind === 'checkbox' ? (
             <div class="cb-field" data-q={i}>
               <label class="cb-check">
@@ -248,7 +292,7 @@ const who = form?.recipientName || 'the church office';
 )}
 
 <script>
-  type Answer = string | boolean;
+  type Answer = string | boolean | string[];
 
   const show = (el: Element | null, on: boolean) => {
     if (el instanceof HTMLElement) el.hidden = !on;
@@ -277,6 +321,15 @@ const who = form?.recipientName || 'the church office';
         if (!s.ready) switchToFallback();
       })
       .catch(switchToFallback);
+
+    // "Only from today on": the earliest date is today on the visitor's own clock (the server
+    // checks again on the church's).
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const d = new Date();
+    const today = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    for (const input of form.querySelectorAll<HTMLInputElement>('input[data-not-past]')) {
+      input.min = today;
+    }
 
     // "Send without my name" hides the name and email boxes.
     const anon = form.querySelector<HTMLInputElement>('[data-cb-anonymous]');
@@ -324,16 +377,28 @@ const who = form?.recipientName || 'the church office';
       const questions = [...form.querySelectorAll<HTMLElement>('[data-q]')];
       const answers: Answer[] = questions.map((q) => {
         const i = q.dataset.q;
+        // Tick any that apply: the ticked choices, as a list.
+        if (q.hasAttribute('data-q-multi')) return data.getAll(`q${i}`).map(String);
         const box = q.querySelector<HTMLInputElement>('input[type="checkbox"]');
         return box ? box.checked : String(data.get(`q${i}`) ?? '');
       });
 
       // The browser's own check first, worded the same way the server words it.
       const local: Record<string, string> = {};
+      for (const q of questions) {
+        if (!q.hasAttribute('data-q-multi') || !q.hasAttribute('data-required')) continue;
+        if (!q.querySelector('input:checked'))
+          local[`q${q.dataset.q}`] = 'Please tick at least one.';
+      }
       for (const el of form.querySelectorAll<HTMLInputElement>('input, select, textarea')) {
         if (el.closest('[hidden]') || el.name === 'company' || el.checkValidity()) continue;
         const key = el.name;
-        if (el.type === 'checkbox') local[key] = 'Please check this box to go on.';
+        if (el.type === 'date' && el.validity.rangeUnderflow)
+          local[key] = 'Please pick today or a day after.';
+        else if (el.type === 'date' && el.validity.badInput)
+          local[key] = 'That date does not look right.';
+        else if (el.type === 'date') local[key] = 'Please pick a date.';
+        else if (el.type === 'checkbox') local[key] = 'Please check this box to go on.';
         else if (el.validity.typeMismatch && el.type === 'email')
           local[key] = 'That email address does not look right.';
         else if (key === 'name') local[key] = 'Please tell us your name.';

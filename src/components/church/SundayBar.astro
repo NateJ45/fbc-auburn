@@ -10,7 +10,8 @@
 // on a page with no card, once the page heading has; it hides while the footer is on screen (the
 // footer carries the same facts). Below 768px only. Times come from Church facts, never typed.
 import { getChurchFacts } from '@/lib/church-data';
-import { clockLabel, namedTimes } from '@/lib/church-facts';
+import { clockLabel, namedTimes, sundayLineServices } from '@/lib/church-facts';
+import { churchDataNow } from '@/lib/church-feeds';
 
 interface Props {
   /** The current path, with its trailing slash. */
@@ -25,10 +26,13 @@ const BARS: Record<string, { label: string; href: string }> = {
 const bar = BARS[path];
 
 const facts = bar ? await getChurchFacts() : null;
-const sundayServices = (facts?.serviceTimes ?? []).filter((s) => s.dayIndex === 0);
+// A different Sunday (2026-10-26): the coming Sunday's times when it is changed, else the usual.
+const line = facts ? sundayLineServices(facts, churchDataNow()) : null;
+const sundayServices = line?.services ?? [];
+const changed = line?.sunday?.changed === true;
 const sundayMinutes = sundayServices.map((s) => s.minutes);
 // "Sunday School 9:45 · Worship 11:00" (re-audit 2026-10-26: each time named, from Church facts).
-const times = namedTimes(sundayServices);
+const times = namedTimes(sundayServices) || (changed ? 'No services this Sunday' : '');
 // The short form for the narrowest phones (under 360px): "9:45 & 11:00" under a small "Sundays",
 // so the bar stays one button tall instead of wrapping the long phrase to four lines.
 const timesShort = [...new Set(sundayMinutes)]
@@ -40,9 +44,12 @@ const timesShort = [...new Set(sundayMinutes)]
 {bar && times && (
   <div class:list={['sundaybar', bar.label.length > 16 && 'sundaybar--long']} data-sundaybar hidden>
     <p class="sundaybar__times">
-      <span class="sundaybar__long">{times}</span>
+      <span class="sundaybar__long">
+        {changed && <span class="sundaybar__changed">This Sunday only</span>}
+        {times}
+      </span>
       <span class="sundaybar__short">
-        <span class="sundaybar__day">Sundays</span> {timesShort}
+        <span class="sundaybar__day">{changed ? 'This Sunday' : 'Sundays'}</span> {timesShort}
       </span>
     </p>
     {facts?.address && (
@@ -155,6 +162,14 @@ const timesShort = [...new Set(sundayMinutes)]
       line-height: 1.25;
       font-variant-numeric: tabular-nums lining-nums;
       color: var(--auburn-deep);
+    }
+    /* A different Sunday: a small brick-red line over the times (about 7:1 on the white bar). */
+    .sundaybar__changed {
+      display: block;
+      font-size: var(--fs-tag);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9a3b2a;
     }
     .sundaybar__link {
       display: inline-flex;

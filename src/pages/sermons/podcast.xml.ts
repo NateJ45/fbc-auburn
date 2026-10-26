@@ -39,6 +39,8 @@ export const GET: APIRoute = async () => {
   const channelImage =
     square(page?.podcastArtwork, 3000) ??
     square(settings?.seoImage, 3000) ??
+    // The square icon (2026-10-26) before the wide logo, which crops badly to a square.
+    square(settings?.siteIcon, 3000) ??
     square(settings?.logo, 3000);
   const episodeImage = (s: SermonDoc) => square(s.image, 1400) ?? square(s.series?.art, 1400);
 

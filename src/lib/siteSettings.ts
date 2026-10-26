@@ -68,6 +68,8 @@ export interface RawFooterColumn {
 export interface RawChromeSettings {
   /** Optional logo image. When set it replaces the template's own logo files. */
   logo?: { asset?: { _ref?: string; _id?: string } | null; alt?: string | null } | null;
+  /** Site settings > Square icon (2026-10-26): the footer mark and Home's small mark when set. */
+  siteIcon?: { asset?: { _ref?: string; _id?: string } | null; alt?: string | null } | null;
   navItems?: RawNavItem[] | null;
   footerColumns?: RawFooterColumn[] | null;
   legalNav?: (RawNavLink | null)[] | null;
@@ -84,6 +86,8 @@ export interface RawChromeSettings {
 export interface ResolvedChromeSettings {
   /** Logo image for the header. undefined keeps the template's own logo files. */
   logo?: { asset?: { _ref?: string; _id?: string } | null; alt?: string | null };
+  /** The square icon. undefined keeps the brand kit's marks. */
+  icon?: { asset?: { _ref?: string; _id?: string } | null; alt?: string | null };
   /** Header menu. Falls back to the built-in menu when Sanity has none. */
   headerNav: NavItem[];
   /** The header's single button, already resolved to a label + href. */
@@ -193,6 +197,7 @@ export function resolveSiteSettings(raw?: RawChromeSettings | null): ResolvedChr
 
   return {
     logo: s.logo?.asset ? s.logo : undefined,
+    icon: s.siteIcon?.asset ? s.siteIcon : undefined,
     headerNav: nav.map((item) =>
       item.kind === 'flat'
         ? { ...item, href: give(item.href) }

@@ -23,6 +23,66 @@
 
 import { defineArrayMember, defineField } from 'sanity';
 import { ClockIcon } from '@sanity/icons/Clock';
+import { CalendarIcon } from '@sanity/icons/Calendar';
+import {
+  clockLabel,
+  parseFriendlyTime,
+  resolveChurchFacts,
+  matchGatherings,
+  weekdayOf,
+  type RawChurchFacts,
+  type RawTimeChange,
+} from '../../lib/church-facts';
+import { ServicePickerInput } from '../components/ServicePickerInput';
+
+/** "What is different" choices (A different Sunday). Kept here so the Quick update job uses them too. */
+export const TIME_CHANGE_KINDS = [
+  { title: 'A different time', value: 'time' },
+  { title: 'Cancelled', value: 'cancelled' },
+  { title: 'An extra service', value: 'extra' },
+] as const;
+
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+/** "Sunday, November 1" for a YYYY-MM-DD. */
+function longDate(iso: string): string {
+  const d = new Date(`${iso}T12:00:00Z`);
+  return Number.isNaN(d.getTime())
+    ? iso
+    : d.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'UTC',
+      });
+}
+
+/** The list line: "Worship at 10:30 am", "Sunday School cancelled", "Extra: Christmas Eve, 6 pm". */
+function changeTitle(c: { change?: string; service?: string; time?: string; label?: string }) {
+  const who = !c.service || c.service === 'all' ? 'Everything' : c.service;
+  if (c.change === 'cancelled') return `${who} cancelled`;
+  if (c.change === 'extra') return `Extra: ${c.label || '(no name)'}${c.time ? `, ${c.time}` : ''}`;
+  return `${who} at ${c.time || '?'}`;
+}
+
+/**
+ * A warning when the picked gathering does not meet on that day (a Worship change dated on a
+ * Thursday changes nothing on the website), or is no longer in Service times. Null when fine.
+ */
+function gatheringProblem(service: string, date: unknown, doc: unknown): string | null {
+  const facts = resolveChurchFacts((doc ?? {}) as RawChurchFacts);
+  const any = matchGatherings(service, facts.serviceTimes);
+  if (any.length === 0) {
+    return 'This gathering is no longer in Service times, so this change does nothing. Pick another.';
+  }
+  if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+  const wd = weekdayOf(date);
+  if (!any.some((s) => s.dayIndex === wd)) {
+    const usual = DAY_NAMES[any[0].dayIndex];
+    return `${any[0].label} meets on ${usual}s, but this day is a ${DAY_NAMES[wd]}, so nothing changes. For a service on another day, choose "An extra service".`;
+  }
+  return null;
+}
 
 /** The standard unconfirmed flag, with a description naming what it covers. */
 const confirmedField = (name: string, what: string) =>
@@ -157,6 +217,131 @@ export const churchFactsFields = [
           prepare: ({ title, day, time, confirmed }) => ({
             title: title ?? '(no name)',
             subtitle: `${day ?? '?'} ${time ?? '?'}${confirmed ? '' : ' · to confirm'}`,
+          }),
+        },
+      }),
+    ],
+  }),
+  // A different Sunday (2026-10-26, docs/agent/church-data.md): dated changes to the times above
+  // that undo themselves. Applied by dayPlan() in src/lib/church-facts.ts; nothing is retyped.
+  defineField({
+    name: 'timeChanges',
+    title: 'A different Sunday',
+    type: 'array',
+    group: 'church',
+    description:
+      'For one day only: a different time, something cancelled, or an extra service (like Christmas Eve). The This Sunday card, the times across the website, This week, the calendar files and Google all show it on that day, and the usual times come back by themselves the day after. You never have to change the times above. Live in about two minutes after you publish.',
+    of: [
+      defineArrayMember({
+        type: 'object',
+        name: 'timeChange',
+        title: 'Change',
+        icon: CalendarIcon,
+        fields: [
+          defineField({
+            name: 'date',
+            title: 'Which day',
+            type: 'date',
+            options: { dateFormat: 'dddd, MMMM D, YYYY' },
+            description: 'The day it is different. Usually a Sunday.',
+            validation: (Rule) =>
+              Rule.required()
+                .custom((value) => {
+                  if (typeof value !== 'string') return true;
+                  const today = new Intl.DateTimeFormat('en-CA', {
+                    timeZone: 'America/New_York',
+                  }).format(new Date());
+                  return value >= today
+                    ? true
+                    : 'This day has passed, so the website ignores this change. You can remove it.';
+                })
+                .warning(),
+          }),
+          defineField({
+            name: 'change',
+            title: 'What is different',
+            type: 'string',
+            options: {
+              list: [...TIME_CHANGE_KINDS],
+              layout: 'radio',
+            },
+            initialValue: 'time',
+            validation: (Rule) => Rule.required(),
+          }),
+          defineField({
+            name: 'service',
+            title: 'Which gathering',
+            type: 'string',
+            description: 'Pick from your service times above.',
+            components: { input: ServicePickerInput },
+            hidden: ({ parent }) => parent?.change === 'extra',
+            validation: (Rule) =>
+              Rule.custom((value, context) => {
+                const parent = context.parent as RawTimeChange | undefined;
+                if (!parent || parent.change === 'extra') return true;
+                if (!value) return 'Pick which gathering this is about.';
+                if (value === 'all') {
+                  return parent.change === 'time'
+                    ? 'A new time needs one gathering. Pick it, or add a change for each one.'
+                    : true;
+                }
+                return gatheringProblem(value, parent.date, context.document) ?? true;
+              }).warning(),
+          }),
+          defineField({
+            name: 'time',
+            title: 'The time that day',
+            type: 'string',
+            description: 'Like "10:30 am" or "6 pm".',
+            hidden: ({ parent }) => parent?.change === 'cancelled',
+            validation: (Rule) =>
+              Rule.custom((value, context) => {
+                const parent = context.parent as RawTimeChange | undefined;
+                if (!parent || parent.change === 'cancelled') return true;
+                if (!value) return 'Type the time, like "10:30 am".';
+                const minutes = parseFriendlyTime(value);
+                if (minutes === null) return 'Type a time like "10:30 am" or "6 pm".';
+                if (!/[ap]\.?m?\.?\s*$|noon/i.test(value) && minutes < 7 * 60) {
+                  return `That reads as ${clockLabel(minutes)}. Add "am" or "pm" to be sure.`;
+                }
+                return true;
+              }).warning(),
+          }),
+          defineField({
+            name: 'label',
+            title: 'What the extra service is called',
+            type: 'string',
+            description: 'Like "Christmas Eve candlelight service".',
+            hidden: ({ parent }) => parent?.change !== 'extra',
+            validation: (Rule) =>
+              Rule.max(80).custom((value, context) => {
+                const parent = context.parent as RawTimeChange | undefined;
+                return parent?.change === 'extra' && !value
+                  ? 'Give the extra service a name.'
+                  : true;
+              }),
+          }),
+          defineField({
+            name: 'note',
+            title: 'A short note (optional)',
+            type: 'string',
+            description:
+              'One line people see beside the times, like "Weather: no Sunday School today".',
+            validation: (Rule) => Rule.max(120),
+          }),
+        ],
+        preview: {
+          select: {
+            date: 'date',
+            change: 'change',
+            service: 'service',
+            time: 'time',
+            label: 'label',
+            note: 'note',
+          },
+          prepare: ({ date, change, service, time, label, note }) => ({
+            title: changeTitle({ change, service, time, label }),
+            subtitle: [date ? longDate(date) : 'No day picked', note].filter(Boolean).join(' · '),
           }),
         },
       }),

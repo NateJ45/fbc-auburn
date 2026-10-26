@@ -52,7 +52,11 @@ const rhythm = weeklyRhythm(facts.serviceTimes).map((r) => ({
   confirmed: r.confirmed,
 }));
 const dated = week
-  ? thisWeek(facts, await loadChurchEvents(facts), now).filter((r) => r.source === 'calendar')
+  ? thisWeek(facts, await loadChurchEvents(facts), now).filter(
+      // The calendar's dated things, and (A different Sunday, 2026-10-26) any gathering whose
+      // time is different this week: a new time, a cancellation or an extra service.
+      (r) => r.source === 'calendar' || r.note !== '' || r.cancelled,
+    )
   : [];
 const MAX_ROWS = 4;
 const rows = dated.slice(0, MAX_ROWS);
@@ -155,6 +159,7 @@ const CardTag = cardHref ? 'a' : 'div';
                     {r.what} · {r.time}
                     {r.where && `, ${r.where}`}
                   </span>
+                  {r.note && !r.cancelled && <span class="hb-week__note">{r.note}</span>}
                 </p>
               </li>
             ))}
@@ -311,6 +316,13 @@ const CardTag = cardHref ? 'a' : 'div';
     color: #7e2e20;
     font-size: var(--fs-tag);
     font-weight: 700;
+  }
+  /* A different Sunday (2026-10-26): "Instead of 11:00 am", "This week only", the day's note. */
+  .hb-week__note {
+    display: block;
+    color: #7e2e20;
+    font-size: var(--fs-small);
+    font-weight: 600;
   }
 </style>
 

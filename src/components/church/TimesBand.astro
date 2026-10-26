@@ -10,23 +10,28 @@
 // carries the "To confirm" tag. Switched on per page by the page head's "Show the Sunday times
 // band" box (heroSection.showTimes), drawn by BoardPageHead.
 import NotConfirmed from './NotConfirmed.astro';
+import SundayChange from './SundayChange.astro';
 import { getChurchFacts } from '@/lib/church-data';
-import { namedTimes } from '@/lib/church-facts';
+import { namedTimes, sundayLineServices } from '@/lib/church-facts';
+import { churchDataNow } from '@/lib/church-feeds';
 
 const facts = await getChurchFacts();
-const sundays = facts.serviceTimes.filter((t) => t.dayIndex === 0);
+// A different Sunday (2026-10-26): the coming Sunday's times when it is changed, with the change
+// in a line under them; the usual ones otherwise.
+const regular = facts.serviceTimes.filter((t) => t.dayIndex === 0);
+const { services: sundays, sunday } = sundayLineServices(facts, churchDataNow());
 const address = facts.address;
 const confirmed = sundays.every((t) => t.confirmed);
 // The phone bar's line, each time named (re-audit 2026-10-26): "Sunday School 9:45 · Worship 11:00".
 const short = namedTimes(sundays);
 ---
 
-{sundays.length > 0 && (
+{regular.length > 0 && (
   <div class="times-band-wrap">
     <aside class="times-band" aria-label="Sunday times">
       <div class="times-band__wide">
         <p class="times-band__title">
-          Sundays
+          {sunday?.changed ? (sunday.isToday ? 'Today' : 'This Sunday') : 'Sundays'}
           <br />
           at Auburn
           {!confirmed && <NotConfirmed confirmed={false} class="times-band__tag" />}
@@ -40,6 +45,7 @@ const short = namedTimes(sundays);
             </li>
           ))}
         </ul>
+        <SundayChange sunday={sunday} class="times-band__change" />
         {address && (
           <p class="times-band__where">
             {address.lines.map((l) => (
@@ -75,6 +81,7 @@ const short = namedTimes(sundays);
           {short}
           {!confirmed && <NotConfirmed confirmed={false} class="times-band__bar-tag" />}
         </p>
+        <SundayChange sunday={sunday} size="compact" />
         {address ? (
           <>
             <p class="times-band__bar-where">{address.oneLine}</p>
@@ -137,6 +144,11 @@ const short = namedTimes(sundays);
       padding: 2.25rem 2.5rem;
       max-width: calc(var(--container-content) * 0.78);
     }
+  }
+  /* A different Sunday: the change line runs under the whole row. */
+  .times-band__wide :global(.times-band__change) {
+    grid-column: 1 / -1;
+    margin: -0.75rem 0 0;
   }
   .times-band__title {
     font-family: var(--font-display);

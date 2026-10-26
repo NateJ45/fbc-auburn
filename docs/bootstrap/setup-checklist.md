@@ -99,7 +99,7 @@ is right and this one needs fixing.
 - [ ] `public/favicon.svg` replaced
 - [ ] `public/og-default.png` regenerated (`npm run og`) with real brand colours
       and tagline
-- [ ] Per-page OG variants generated if wanted (`npm run og:pages`)
+- [ ] Per-page OG cards checked in a build (`dist/client/og/`, drawn by `npm run build`)
 - [ ] No starter or forked-client residue anywhere: names, colours, logos or
       seeded copy from another project (CLAUDE.md rule 11)
 - [ ] No em-dashes in any site copy

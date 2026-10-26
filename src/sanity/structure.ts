@@ -65,6 +65,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'businessInfo',
   ...ORDERABLE_TYPES,
   'announcement', // placed explicitly under Content → Notices
+  'popup', // placed explicitly under Content → Popups, after Notices
   'faqItem', // scaffold: faq
   'faqCategory', // scaffold: faq
   'journalEntry', // scaffold: journal
@@ -79,6 +80,7 @@ const HIDDEN_FROM_DEFAULT = new Set<string>([
   'privatePage', // private pages (card 122), placed explicitly under "Pages"
   'sectionPreset', // saved sections, placed explicitly under "Pages"
   'redirect', // placed explicitly under "Pages" -> Redirects
+  'shortLink', // placed explicitly under "Pages" -> Short links
   'form', // the form builder, placed explicitly under Content -> Forms
   'newsletter', // card 127, placed explicitly under Content -> Newsletter
   TRASH_TYPE, // the Studio kit's Trash, placed explicitly at the bottom
@@ -241,6 +243,12 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
               S.documentTypeListItem('redirect')
                 .title('Redirects (old links)')
                 .icon(typeIcon('redirect')),
+
+              // Short links (2026-10-26): /vbs, /easter, for bulletins and QR
+              // codes. Made here or from Quick update; src/lib/short-links.ts.
+              S.documentTypeListItem('shortLink')
+                .title('Short links (like /vbs)')
+                .icon(typeIcon('shortLink')),
             ]),
         ),
 
@@ -288,6 +296,15 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
                 icon: typeIcon('announcement'),
                 explain:
                   'A short line across the top of every page, like a weather closing or a special service. Each one can take itself down on a date you pick.',
+              }),
+              // Popups (2026-10-26, schemaTypes/popup.ts): one at a time, with dates.
+              emptyAwareList(S, context, {
+                id: 'popup',
+                type: 'popup',
+                title: 'Popups',
+                icon: typeIcon('popup'), // 'notice', from brand.config.json studio.icons.types
+                explain:
+                  'A box with a short message and one button that appears over the page, like an invitation to Christmas Eve. Only one shows at a time, never straight away, and each visitor sees it once.',
               }),
 
               S.divider(),

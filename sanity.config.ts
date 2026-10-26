@@ -49,6 +49,7 @@ import brand from './brand/brand.config.json';
 import { CharacterCountInput } from './src/sanity/components/CharacterCountInput';
 import { documentBadges } from './src/sanity/components/documentBadges';
 import { shareDraftLinkAction } from './src/sanity/components/shareDraftLink';
+import { qrCodeAction } from './src/sanity/actions/qrCode';
 import {
   archivePageAction,
   duplicatePageAction,
@@ -364,6 +365,9 @@ export default defineConfig({
         archivePageAction,
         ...pageHelpers,
         shareDraftLinkAction,
+        // "QR code" (2026-10-26): every short link and every document with a page of its
+        // own; returns null for the rest. src/sanity/actions/qrCode.tsx.
+        qrCodeAction,
       ];
     },
   },

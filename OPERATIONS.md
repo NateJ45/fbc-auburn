@@ -743,46 +743,43 @@ Note: the MCP lighthouse_audit only returns Accessibility / BP / SEO / Agentic. 
 
 ## Share images (Open Graph)
 
-Every route shares a 1200x630 card in the church's brand, the "night" card (picked 2026-10-24 from
-five, `docs/design-directions/2026-10-24-og-cards/`): the navy stone-tile ground, the white mark and
-name top left, the page head's eyebrow as a small auburn kicker (a Studio page's opening banner
-eyebrow, a singleton's `heroEyebrow`, a post's date), the title in cream Young Serif, the building
-sketch faint on the right and a two-course brick sill along the foot. Home and the fallback
-`public/og-default.png` set the church's full name with the Site settings tagline under it. Drawn by
-`scripts/lib/og-card.mjs` (site-specific; the starter's PORTABLE `scripts/lib/render-og.mjs` is
-no longer called here). PNGs are committed; CI never draws them.
+Every page shares a 1200x630 card in the church's brand, the "night" card (picked 2026-10-24 from
+five, `docs/design-directions/2026-10-24-og-cards/`): the navy stone-tile ground, the mark and
+name top left, a small auburn kicker (the section or a date), the title in cream Young Serif, the
+building sketch faint on the right and a two-course brick sill along the foot. Home sets the
+church's full name with the Site settings tagline under it. Drawn by `scripts/lib/og-card.mjs`
+(site-specific; the starter's PORTABLE `scripts/lib/render-og.mjs` is not called here).
 
-**Regenerate** after a title, the tagline or a page changes in the Studio, or after adding a route:
+**The cards make themselves (2026-10-26).** `npm run build` draws them: nothing is committed and
+there is nothing to remember after a title changes or a page is added.
 
-```powershell
-npm run og:pages   # one card per route into public/og/
-npm run og         # public/og-default.png
-```
+1. `BaseLayout.astro` decides each page's share image (`src/lib/og-card-marker.ts`): a picture the
+   page passes (a post's cover, a sermon's picture), then the page's own Share image from the
+   Studio, then the generated card at `/og/<route>.jpg`, then Site settings' default share image
+   (only reachable on the password pages, which render on request), then `og-default.png`. For the
+   card it writes an `x-og-card` marker in the head with the title and kicker. Pages say their
+   kicker through the `ogCard` prop (`{ kicker }`, `{ title }`, `{ home: true }`).
+2. `scripts/build-og-cards.mjs` (after `astro build`) reads every marker in `dist/client`, draws
+   the card as a JPEG (about 100 KB) into `dist/client/og/`, adds `?v=<hash>` to the og:image URL
+   so Facebook and text apps fetch a changed card, and removes the marker.
+3. Each card is cached by a hash of its HTML in `node_modules/.cache/og-cards` (restored between
+   CI and deploy runs by `actions/cache`). Measured 2026-10-26 on 29 pages: 3.2 s cold, 0.1 s warm.
+4. It uses Playwright's Chromium when installed, else the machine's Chrome or Edge (a GitHub
+   runner's Chrome). With no browser it never fails the build: those pages share
+   `og-default.png` and the log says why.
 
-Both read Sanity anonymously when `PUBLIC_SANITY_PROJECT_ID` is set (it is in `.env`). A card is
-rewritten only when its bytes change, so a re-run with nothing changed leaves `git status` clean.
-The run lists any `public/og/*.png` it did not draw ("Not drawn this run"): delete those once the
-route is really gone. Then commit, and deploy as usual.
+`npm run og` still draws `public/og-default.png` (committed) from the Site settings tagline. A
+square icon uploaded in Site settings replaces the brand kit's mark on every card at the next
+build. Titles up to about 70 characters fit (108px down to 60px, three lines at most); em and en
+dashes become colons.
 
-**How a route finds its card.** `BaseLayout.astro` turns the pathname into a file name:
-`/` is `og/home.png`, `/plan-your-visit/` is `og/plan-your-visit.png`, `/journal/a-post/` is
-`og/journal-a-post.png`. No file means `og-default.png`. A real photo still wins when a page
-passes `ogImage` (a post's cover) or an editor sets a sharing image in the Studio.
-
-**A new route or collection gets a card** in `scripts/generate-og-pages.mjs`: a code-only page is a
-`STATIC_ROUTES` row, a page singleton a `SINGLETONS` row, a collection a `COLLECTIONS` row
-(`prefix`, a GROQ `query`, `pick` for the title, optional `kicker`). Sermons, say: prefix
-`sermons`, `kicker: (d) => longDate(d.date)`; a series row uses `kicker: () => 'Sermon series'`.
-To draw a card from any other script:
+To try a card by hand:
 
 ```js
 import { renderCard, closeCards } from './lib/og-card.mjs';
-await renderCard({ title, kicker: 'Sermon series', outPath }); // kicker is optional
+await renderCard({ title, kicker: 'Sermon series', outPath: 'card.jpg' }); // kicker is optional
 await closeCards(); // once, at the end, or the process never exits
 ```
-
-Titles up to about 70 characters fit (120px down to 64px, three lines at most); em and en dashes
-become colons. The card's stone path is the `og` preset in `scripts/lib/stone-mosaic.mjs`, seed 4, with stricter stone-shape limits than the site paths so no stone reads as a teardrop.
 
 ## Regenerate logos
 
@@ -850,6 +847,14 @@ D1 once its email is accepted. Until an email path exists, `GET /api/form/` answ
 email and phone from Church facts), so nobody types into a form that cannot send. The Contact
 page's own form and `/api/contact/` are unchanged.
 
+Question kinds (2026-10-26): the shared `formQuestion` (short text, email, phone, long text, choose
+one, yes/no) plus two of Auburn's own, as their own items in the list: `formDateQuestion` ("A
+date", the phone's date picker, "Only from today on" by default) and `formTickQuestion` ("Tick any
+that apply", 2 to 12 boxes). Both are read and checked on the server by `src/lib/church-form.ts`
+(`normalizeFormQuestions`, `validateFormSubmission`); the email lists ticked choices one per line
+and gives a date in words, and D1's `answers` JSON carries `kind` and `values` beside the words. No
+file uploads, on purpose. The shared type stays the starter's PORTABLE copy.
+
 **Switching forms on (Nathan, once; needs the church's domain on Cloudflare and Workers Paid for
 Email Sending).** Run these in PowerShell from the repo root:
 
@@ -862,13 +867,29 @@ Email Sending).** Run these in PowerShell from the repo root:
    sending domain), `npx wrangler secret put CONTACT_TO` (the contact form's and the fallback
    destination), and `npx wrangler secret put FORM_RECIPIENTS` with JSON such as
    `{"office":"office@church.example","pastor":"pastor@church.example"}`. Every address must be a
-   verified destination. A new name in Site settings > Forms needs its key added here; until then
-   its forms go to `office`, then to `CONTACT_TO`.
+   verified destination. A new name in Site settings > Forms can instead get its address from an
+   administrator in the Studio (below); with neither, its forms go to `office`, then to `CONTACT_TO`.
 5. In `wrangler.jsonc`, uncomment the `d1_databases` block (name `fbc-auburn-contact`, the id
    from step 1) and `send_email`, commit and deploy.
 6. Send one labelled test through a live form, then read it back:
    `npx wrangler d1 execute fbc-auburn-contact --remote --command "SELECT id, form_id, notified, notify_error, cleared FROM form_submissions ORDER BY id DESC LIMIT 1"`.
    `notified = 1` is the proof.
+
+**Where messages go, set in the Studio (2026-10-26).** Under Site settings > Forms > Who forms can
+go to, a signed-in ADMINISTRATOR sees "Where their messages go": one row per name plus the Contact
+page, with the address in use and a box to change it (`src/sanity/components/FormRecipientEmails.tsx`,
+`/api/studio/form-recipients/`, `src/lib/form-recipients.ts`). Addresses live in D1
+(`form_recipient_addresses`, `migrations/0005_form_recipients.sql`), never in the dataset. A new
+address is emailed a link (`/api/form-recipient/confirm/`, one button, signed with `MAIL_SECRET`)
+and is used only once confirmed; without the email backbone it is saved as unconfirmed and never
+used. `/api/form/` takes a confirmed D1 address first, then `FORM_RECIPIENTS`, then the office, then
+the "contact" address, then `CONTACT_TO`. To switch it on, Nathan runs once:
+`npx wrangler d1 migrations apply fbc-auburn-contact --remote` (adds the table; until then the panel
+says one more step is needed and the secret decides). On Cloudflare Email Sending, a destination
+must be verified in Cloudflare before mail reaches it, so verify the new address there too (Resend
+has no such step). `/api/contact/` (the starter's PORTABLE route) still reads `CONTACT_TO`; the
+Contact row's address is used by `/api/form/` as its last fallback until the starter gives
+`/api/contact/` the same lookup.
 
 Without Workers Paid, `npx wrangler secret put WEB3FORMS_KEY` is the fallback email path, but it
 emails the Web3Forms account's own address whatever the recipient, so prayer requests would go there

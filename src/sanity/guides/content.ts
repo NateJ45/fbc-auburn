@@ -42,6 +42,7 @@
 import { collectionGuides } from './collections.ts';
 import { peopleGuides } from './people.ts';
 import { EVERY_WEEK, WEEKLY_CATEGORY, weeklyGuides } from './weekly.ts';
+import { linkGuides } from './links.ts';
 
 import type { KitGuideBlock } from '../kit/guide/GuidePage';
 import { phoneGuides } from './phoneGuides.ts';
@@ -694,6 +695,53 @@ const allGuides: Guide[] = [
   },
 
   {
+    slug: 'logo-and-icon',
+    category: 'Pictures',
+    title: 'Change the logo or the icon',
+    icon: 'image',
+    lead: 'Only if the church’s logo changes. The brand kit’s files are already on the site.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'Open `Site settings`, then the `Name and contact` tab.',
+          'For the wide logo at the top of every page and in the phone menu, upload it to `Logo`. An SVG file is best, or a PNG at least 560 pixels wide.',
+          'For the little picture in the browser tab, on phone home screens, in the footer and on share pictures, upload a square picture to `Square icon`, at least 512 by 512 pixels.',
+          'Check the preview under each box, then publish. The website switches over in a few minutes.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'To go back, remove the picture.',
+        text: 'Empty the box and publish, and the website returns to the brand kit’s logo and icon. Browsers keep the old tab icon for a day or so, so give it time before deciding it did not work.',
+      },
+    ],
+  },
+  {
+    slug: 'share-pictures',
+    category: 'Pictures',
+    title: 'The picture when a page is shared',
+    icon: 'image',
+    lead: 'Every page makes its own, with the page title on the church’s card. Nothing to do.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: 'When someone sends a link to a page in a text or on Facebook, a picture shows with it. The website draws one for every page, sermon and post, with the title and the section on the church’s navy card. A new or renamed page gets its own the next time the site updates.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          'To use a photo instead, open the page’s `Google and sharing` tab and add a `Share image`. A wide photo, about 1200 by 630 pixels, works best.',
+          'A post with a cover photo, or a sermon with its own picture, shares that picture.',
+          'Facebook remembers a picture for a while. If an old one shows, paste the link into Facebook’s Sharing Debugger and press Scrape Again.',
+        ],
+      },
+    ],
+  },
+  {
     slug: 'menus-and-footer',
     category: 'Housekeeping',
     title: 'Change the menu or the footer',
@@ -798,7 +846,54 @@ const allGuides: Guide[] = [
       },
       {
         kind: 'p',
+        text: 'Only one day is different? Leave these as they are and use `A different Sunday` just below them. It goes back to normal by itself.',
+      },
+      {
+        kind: 'p',
         text: '`How to find us`, under the address, is one optional sentence for someone driving out: where to park, which door. It shows on the This Sunday card and in the footer.',
+      },
+    ],
+  },
+
+  // A different Sunday (2026-10-26, docs/agent/church-data.md).
+  {
+    slug: 'a-different-sunday',
+    category: 'Housekeeping',
+    title: 'A different Sunday: change the times for one day',
+    icon: 'clock',
+    lead: 'A new time, something cancelled, or an extra service. It goes back to normal by itself.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Site settings', 'Church facts', 'A different Sunday'],
+        link: { doc: 'siteSettings' },
+      },
+      {
+        kind: 'p',
+        text: 'Use this when one day is not like the others: worship at 10:30 for a special service, no Sunday School because of snow, or a Christmas Eve candlelight service on a Thursday. Your usual **Service times** stay as they are. You never have to change them back.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'From your phone: open `Quick update` and press `Change this Sunday’s times`. Or open `Site settings`, then the `Church facts` tab, and press `Add item` under `A different Sunday`.',
+          'Pick `Which day`. It starts on the coming Sunday.',
+          'Pick `What is different`: `A different time`, `Cancelled` or `An extra service`.',
+          'Pick `Which gathering` (or `Everything that day` to cancel the whole day). For an extra service, give it a name instead.',
+          'Type the time the way you would say it, like `10:30 am` or `6 pm`.',
+          'Add a short note if it helps, like "Weather: no Sunday School today".',
+          'Publish (Quick update does this for you).',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'In about two minutes the This Sunday card, the times at the top of the pages, the menu, the footer, This week, the "Add to my calendar" files and Google all show the change, with a small "This Sunday only" tag. The day after, everything shows the usual times again without you doing anything.',
+      },
+      {
+        kind: 'callout',
+        tone: 'tip',
+        title: 'Old changes can stay.',
+        text: 'A change whose day has passed is simply ignored. The Studio marks it so you can remove it when you tidy up, but nothing breaks if you leave it.',
       },
     ],
   },
@@ -1004,6 +1099,41 @@ const allGuides: Guide[] = [
         tone: 'primary',
         title: 'Give it a couple of minutes.',
         text: 'The site updates a few minutes after you publish, and again every morning at about 6 am. A notice past its last day is hidden that morning, and people’s browsers hide it at midnight anyway, so you can leave it in place for next winter.',
+      },
+    ],
+  },
+  {
+    slug: 'put-up-a-popup',
+    category: 'Pages and words',
+    title: 'Put up a popup',
+    icon: 'bolt',
+    lead: 'A box over the page with a short message and one button, for something big like Christmas Eve.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'steps',
+        items: [
+          'In `Content`, open `Popups` and press the pencil to start a new one.',
+          'Type a short `Heading` and a `Message` of a sentence or two.',
+          'Add a `Button` if there is a page with the details, like /plan-your-visit/. Add a `Picture` if you like.',
+          'Set `Show until` to the day after the event. Set `Show from` if it should wait.',
+          'Under `Which pages`, pick every page, the home page only, or the pages you choose.',
+          'Under `How often`, pick once per visitor (most popups) or once per visit, then publish.',
+        ],
+      },
+      {
+        kind: 'bullets',
+        items: [
+          'Only one popup shows at a time. If two are switched on for the same days, the Studio warns you, and the newer one wins.',
+          'It never jumps out straight away. It waits until someone has been on the page a few seconds and has started scrolling, so they have seen what they came for first.',
+          'People can close it with the X, the Escape key or a tap outside it, and it remembers. Changing the popup shows it again to everyone.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'primary',
+        title: 'Use it rarely.',
+        text: 'A popup interrupts. For everyday news, a Notice (the line across the top of every page) or a post is kinder. Save popups for the few big things each year.',
       },
     ],
   },
@@ -1465,6 +1595,8 @@ guides.push(
 // The sermon, people and downloads guides (FBC Auburn, 2026-10-18).
 guides.push(...collectionGuides);
 
+// Short links and QR codes (FBC Auburn, 2026-10-26, guides/links.ts).
+guides.push(...linkGuides);
 // Adding someone to help: the People tool (FBC Auburn, 2026-10-26).
 guides.push(...peopleGuides);
 
@@ -1560,13 +1692,18 @@ guides.push({
       kind: 'p',
       text: 'Describe the widget, then add this sentence: _"Give me a single self-contained HTML snippet with inline CSS and JS, no external build step."_ That gets you one block of code you can paste in one go, instead of several files.',
     },
+    { kind: 'h', text: 'A video, map, calendar or giving page' },
+    {
+      kind: 'p',
+      text: 'For a service the website knows (YouTube, Vimeo, Facebook video, Google Maps, Google Calendar, Google Forms, Spotify, Apple Podcasts, Church Trac, Planning Center, Tithe.ly, Givelify, Subsplash, SignUpGenius, Calendly), paste its link or its embed code into the box at the top of the block, `Paste a link or embed code here`. The block fills itself in: the right shape for a video, the right height for a map or a podcast, and whether a giving widget runs on the page. A line under the box says what it recognized.',
+    },
     { kind: 'h', text: 'Put it on the page' },
     {
       kind: 'steps',
       items: [
         'Open the page and click `+ Add item` where you want the widget.',
         'Pick `Custom code or embed`.',
-        'Give it a headline if you like, then paste the whole snippet into `Custom code`. The count under the box tells you it all went in.',
+        'Give it a headline if you like, then paste the link or the whole snippet into the box at the top. The block puts it in the right place below.',
         'Open `Presentation` and look at the page. The widget runs in the preview exactly as it will on the website.',
         'If it looks right, click `Publish`.',
       ],
@@ -1601,6 +1738,15 @@ guides.push({
       tone: 'caution',
       title: 'Leave it off unless a provider you trust needs it.',
       text: 'Some giving or booking services give you code that only works on the page itself. The switch lets it. With it on, the code can do anything the website can, including reading what a signed-in editor is doing, so never turn it on for code you are not sure about. The Checkup lists every page where it is on.',
+    },
+    {
+      kind: 'callout',
+      tone: 'primary',
+      title: 'Code from a service the website does not know stays in its box.',
+      text:
+        'Even with the switch on, code that runs scripts from an unknown service is kept in its own box, for safety. If it needs the page, ask ' +
+        SITE.contactName +
+        ' to approve that service. A plain link from any service still works: it is shown in a frame.',
     },
     { kind: 'seealso', items: ['Change the words on a page'] },
   ],
@@ -1812,6 +1958,7 @@ for (const g of guides) if (EVERY_WEEK.includes(g.slug)) g.category = WEEKLY_CAT
 export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   '*': ['edit-a-page', 'help-panel', 'before-you-publish', 'undo-earlier'],
   announcement: ['put-up-a-notice', 'tell-about-an-event', 'snow-sunday', 'schedule-publish'],
+  popup: ['put-up-a-popup', 'put-up-a-notice', 'schedule-publish'],
   journalEntry: ['news-post', 'post-a-photo', 'schedule-publish', 'writing-help', 'undo-earlier'],
   // FBC Auburn: the church's own guides first where they fit.
   page: [
@@ -1825,6 +1972,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
     'reuse-sections',
     'rename-a-page',
     'seo-fields',
+    'share-pictures',
     'make-a-page-private',
     'add-a-widget',
   ],
@@ -1833,6 +1981,7 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   homePage: ['home-page', 'add-sermon', 'images-and-alt', 'seo-fields'],
   siteSettings: [
     'church-facts',
+    'logo-and-icon',
     'contact-give-live',
     'menus-and-footer',
     'website-status',

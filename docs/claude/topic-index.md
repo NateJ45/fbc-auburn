@@ -29,9 +29,11 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | The content pages: what each is for, anchors, the doctrine and facts rules, the prayer path              | `docs/agent/content-pages.md`                                        |
 | Visitor site search (Pagefind, opt-in; reads uploaded files, typo help) + share buttons                  | `docs/agent/site-search.md`                                          |
 | Custom code: the trust model (pasted widgets, the box, the opt-outs)                                     | `docs/agent/custom-code.md`                                          |
+| Studio links: short links, QR codes, paste-and-go embeds (this site only)                                | `docs/agent/studio-links.md`                                         |
 | Deployment + env vars + rebuild model                                                                    | `docs/agent/deployment.md`                                           |
 | Studio kit (Home, Site Guide, Checkup, staff view, Trash)                                                | `docs/agent/studio-kit.md`                                           |
 | People: invite a Helper or an Administrator from the Studio, roles by plan, the members secret           | `docs/agent/studio-people.md`                                        |
+| Logo and icon uploads, build-time share cards, popups (site-only)                                        | `docs/agent/studio-brand.md`                                         |
 | Studio plan (who edits, weekly jobs, which surface)                                                      | `docs/agent/studio-plan.md`                                          |
 | Hidden pages, password pages (security note), Checkup link and heading checks                            | `docs/agent/private-pages.md`                                        |
 | Church facts, This Sunday, This week, YouTube replay, weather (drop-in components)                       | `docs/agent/church-data.md`                                          |

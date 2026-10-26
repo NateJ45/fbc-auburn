@@ -14,6 +14,12 @@
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
+type ArrayOf<T> = Array<
+  T & {
+    _key: string;
+  }
+>;
+
 // Source: schema.json
 export type SanityImageAssetReference = {
   _ref: string;
@@ -63,6 +69,93 @@ export type Logo = {
   crop?: SanityImageCrop;
   alt?: string;
   _type: 'image';
+};
+
+export type PageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'page';
+};
+
+export type HomePageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'homePage';
+};
+
+export type AboutPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'aboutPage';
+};
+
+export type ContactPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'contactPage';
+};
+
+export type SermonsPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sermonsPage';
+};
+
+export type SermonReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sermon';
+};
+
+export type SermonSeriesReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'sermonSeries';
+};
+
+export type JournalPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'journalPage';
+};
+
+export type JournalEntryReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'journalEntry';
+};
+
+export type ShortLink = {
+  _id: string;
+  _type: 'shortLink';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  address?: string;
+  linkKind?: 'page' | 'url';
+  page?:
+    | PageReference
+    | HomePageReference
+    | AboutPageReference
+    | ContactPageReference
+    | SermonsPageReference
+    | SermonReference
+    | SermonSeriesReference
+    | JournalPageReference
+    | JournalEntryReference;
+  url?: string;
+  lasting?: 'temporary' | 'permanent';
+  expires?: string;
+  note?: string;
 };
 
 export type Redirect = {
@@ -240,13 +333,6 @@ export type Slug = {
   source?: string;
 };
 
-export type SermonReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'sermon';
-};
-
 export type Newsletter = {
   _id: string;
   _type: 'newsletter';
@@ -363,6 +449,66 @@ export type FaqCategory = {
   displayOrder?: number;
 };
 
+export type PrivacyPageReference = {
+  _ref: string;
+  _type: 'reference';
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: 'privacyPage';
+};
+
+export type Popup = {
+  _id: string;
+  _type: 'popup';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  text?: string;
+  button?: {
+    label?: string;
+    link?: string;
+  };
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  startDate?: string;
+  endDate?: string;
+  where?: 'all' | 'home' | 'chosen';
+  pages?: ArrayOf<
+    | PageReference
+    | HomePageReference
+    | AboutPageReference
+    | ContactPageReference
+    | JournalPageReference
+    | SermonsPageReference
+    | PrivacyPageReference
+  >;
+  frequency?: 'visitor' | 'visit';
+  enabled?: boolean;
+  publishAt?: string;
+};
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop';
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot';
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
 export type Announcement = {
   _id: string;
   _type: 'announcement';
@@ -437,22 +583,6 @@ export type NotFoundPage = {
   secondaryCtaHref?: string;
   tertiaryCtaLabel?: string;
   tertiaryCtaHref?: string;
-};
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop';
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot';
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
 };
 
 export type BusinessInfo = {
@@ -545,6 +675,13 @@ export type SiteSettings = {
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
+    _type: 'image';
+  };
+  siteIcon?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
     _type: 'image';
   };
   availabilityStatus?: string;
@@ -641,6 +778,16 @@ export type SiteSettings = {
     _type: 'serviceTime';
     _key: string;
   }>;
+  timeChanges?: Array<{
+    date?: string;
+    change?: 'time' | 'cancelled' | 'extra';
+    service?: string;
+    time?: string;
+    label?: string;
+    note?: string;
+    _type: 'timeChange';
+    _key: string;
+  }>;
   phoneConfirmed?: boolean;
   phoneTakesTexts?: boolean;
   emailConfirmed?: boolean;
@@ -667,60 +814,11 @@ export type SiteSettings = {
   bodyEndCode?: string;
 };
 
-export type HomePageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'homePage';
-};
-
-export type AboutPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'aboutPage';
-};
-
 export type FaqPageReference = {
   _ref: string;
   _type: 'reference';
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: 'faqPage';
-};
-
-export type ContactPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'contactPage';
-};
-
-export type JournalPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'journalPage';
-};
-
-export type JournalEntryReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'journalEntry';
-};
-
-export type SermonsPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'sermonsPage';
-};
-
-export type PageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'page';
 };
 
 export type CtaBlock = {
@@ -741,13 +839,6 @@ export type CtaBlock = {
   emailAddress?: string;
   phoneNumber?: string;
   openInNewTab?: boolean;
-};
-
-export type PrivacyPageReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'privacyPage';
 };
 
 export type NavLink = {
@@ -1175,9 +1266,15 @@ export type Form = {
   askForContact?: boolean;
   allowAnonymous?: boolean;
   questions?: Array<
-    {
-      _key: string;
-    } & FormQuestion
+    | ({
+        _key: string;
+      } & FormQuestion)
+    | ({
+        _key: string;
+      } & FormDateQuestion)
+    | ({
+        _key: string;
+      } & FormTickQuestion)
   >;
   submitLabel?: string;
   successMessage?: string;
@@ -1938,6 +2035,20 @@ export type HeroSection = {
   size?: 'tall' | 'short';
 };
 
+export type FormTickQuestion = {
+  _type: 'formTickQuestion';
+  label?: string;
+  options?: Array<string>;
+  required?: boolean;
+};
+
+export type FormDateQuestion = {
+  _type: 'formDateQuestion';
+  label?: string;
+  notPast?: boolean;
+  required?: boolean;
+};
+
 export type FormQuestion = {
   _type: 'formQuestion';
   label?: string;
@@ -2308,13 +2419,6 @@ export type Page = {
   };
   hideFromSearch?: boolean;
   publishAt?: string;
-};
-
-export type SermonSeriesReference = {
-  _ref: string;
-  _type: 'reference';
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: 'sermonSeries';
 };
 
 export type Sermon = {
@@ -4032,10 +4136,19 @@ export type AllSanitySchemaTypes =
   | LastMessage
   | TimelineEntryImage
   | Logo
+  | PageReference
+  | HomePageReference
+  | AboutPageReference
+  | ContactPageReference
+  | SermonsPageReference
+  | SermonReference
+  | SermonSeriesReference
+  | JournalPageReference
+  | JournalEntryReference
+  | ShortLink
   | Redirect
   | PrivatePage
   | Slug
-  | SermonReference
   | Newsletter
   | SanityFileAssetReference
   | Download
@@ -4043,23 +4156,17 @@ export type AllSanitySchemaTypes =
   | FaqCategoryReference
   | FaqItem
   | FaqCategory
+  | PrivacyPageReference
+  | Popup
+  | SanityImageCrop
+  | SanityImageHotspot
   | Announcement
   | StudioGuide
   | NotFoundPage
-  | SanityImageCrop
-  | SanityImageHotspot
   | BusinessInfo
   | SiteSettings
-  | HomePageReference
-  | AboutPageReference
   | FaqPageReference
-  | ContactPageReference
-  | JournalPageReference
-  | JournalEntryReference
-  | SermonsPageReference
-  | PageReference
   | CtaBlock
-  | PrivacyPageReference
   | NavLink
   | DynamicListSection
   | TeamSection
@@ -4122,10 +4229,11 @@ export type AllSanitySchemaTypes =
   | ImageTextSection
   | RichTextSection
   | HeroSection
+  | FormTickQuestion
+  | FormDateQuestion
   | FormQuestion
   | PrivacyPage
   | Page
-  | SermonSeriesReference
   | Sermon
   | SermonSeries
   | Person

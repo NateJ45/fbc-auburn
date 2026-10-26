@@ -3,6 +3,7 @@
 
 import { aboutPage } from './aboutPage'; // scaffold: about
 import { announcement } from './announcement';
+import { popup } from './popup';
 import { businessInfo } from './businessInfo';
 import { contactPage } from './contactPage';
 import { ctaBlock } from './ctaBlock';
@@ -11,6 +12,7 @@ import { faqItem } from './faqItem'; // scaffold: faq
 import { faqPage } from './faqPage'; // scaffold: faq
 import { form } from './form';
 import { formQuestion } from './formQuestion';
+import { formDateQuestion, formTickQuestion } from './formQuestionMore';
 import { homePage } from './homePage';
 import { journalCategory } from './journalCategory'; // scaffold: journal
 import { journalEntry } from './journalEntry'; // scaffold: journal
@@ -24,6 +26,7 @@ import { richSectionSchemas } from './richSections';
 import { notFoundPage } from './notFoundPage';
 import { privacyPage } from './privacyPage';
 import { redirect } from './redirect';
+import { shortLink } from './shortLink';
 import { sectionPreset } from './sectionPreset';
 import { siteSettings } from './siteSettings';
 import { studioGuide } from './studioGuide';
@@ -39,6 +42,8 @@ export const schemaTypes = [
   navLink,
   // One editor-written form question (contactPage.formFields).
   formQuestion,
+  formDateQuestion,
+  formTickQuestion,
   // Page-builder section blocks (objects). Registered before the documents
   // whose pageBuilder arrays reference them.
   ...pageSectionSchemas,
@@ -61,6 +66,7 @@ export const schemaTypes = [
 
   // Reusable content collections
   announcement, // site-wide banner collection (enabled + date-windowed)
+  popup, // popups (2026-10-26): one at a time, date-windowed, src/lib/popup.ts
   faqCategory, // scaffold: faq
   faqItem, // scaffold: faq
   journalCategory, // scaffold: journal
@@ -85,4 +91,6 @@ export const schemaTypes = [
   // Old address -> new address forwards, filed by hand or automatically on a
   // web-address change (see components/slugRedirect.tsx).
   redirect,
+  // Short addresses like /vbs for bulletins and QR codes (2026-10-26).
+  shortLink,
 ];

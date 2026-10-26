@@ -13,12 +13,13 @@
 import {
   addDays,
   churchNow,
+  gatheringExceptions,
   plain,
   weekdayOf,
   type ChurchFacts,
   type ServiceTime,
 } from './church-facts.ts';
-import { buildIcs, type IcsWeekday } from './ics.ts';
+import { buildIcs, escapeText, foldLine, type IcsWeekday } from './ics.ts';
 
 /** "Kids and youth" -> "kids-and-youth". */
 export function slugify(title?: string | null): string {
@@ -129,7 +130,8 @@ const BYDAY: IcsWeekday[] = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
  * (src/lib/ics.ts, PORTS.md card 158).
  */
 export function gatheringIcs(
-  facts: Pick<ChurchFacts, 'serviceTimes' | 'address'> & { title?: string },
+  facts: Pick<ChurchFacts, 'serviceTimes' | 'address'> &
+    Partial<Pick<ChurchFacts, 'timeChanges'>> & { title?: string },
   key: string,
   now: Date,
   siteUrl: string,
@@ -140,7 +142,8 @@ export function gatheringIcs(
   const mm = String(s.minutes % 60).padStart(2, '0');
   const host = siteUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
   const name = facts.title ? plain(facts.title) : 'Church';
-  return buildIcs({
+  const start = nextDateFor(s.dayIndex, now);
+  const file = buildIcs({
     prodId: '-//fbc-auburn//gatherings//EN',
     now,
     events: [
@@ -148,7 +151,7 @@ export function gatheringIcs(
         uid: `weekly-${s.key}@${host}`,
         // Eastern time, so the event keeps its local time through the clock changes.
         start: {
-          date: nextDateFor(s.dayIndex, now),
+          date: start,
           time: `${hh}:${mm}`,
           tzid: 'America/New_York',
         },
@@ -160,4 +163,57 @@ export function gatheringIcs(
       },
     ],
   });
+  return withExceptions(file, `weekly-${s.key}@${host}`, s.minutes, start, facts, key, now, {
+    summary: `${plain(s.label)}, ${name}`,
+    location: facts.address?.confirmed ? plain(facts.address.oneLine) : '',
+    url: `${siteUrl}/events/`,
+  });
+}
+
+const icsAt = (date: string, minutes: number) =>
+  `TZID=America/New_York:${date.replace(/-/g, '')}T${String(Math.floor(minutes / 60)).padStart(2, '0')}${String(minutes % 60).padStart(2, '0')}00`;
+
+/**
+ * A different Sunday (2026-10-26): the starter's buildIcs writes plain weekly events, so the
+ * dates this gathering does not meet as usual are added here. A cancelled date becomes an EXDATE
+ * on the weekly event; a new time is the same event again with a RECURRENCE-ID, so calendar apps
+ * move that one date and no other. Past dates and dates before the file's start are left out.
+ */
+function withExceptions(
+  file: string,
+  uid: string,
+  usualMinutes: number,
+  start: string,
+  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'timeChanges'>>,
+  key: string,
+  now: Date,
+  words: { summary: string; location: string; url: string },
+): string {
+  const { skip, moved } = gatheringExceptions(facts, key, now);
+  const movedOn = moved.filter((m) => m.date >= start);
+  const cancelledOn = skip.filter((d) => d >= start && !moved.some((m) => m.date === d));
+  if (!movedOn.length && !cancelledOn.length) return file;
+  const lines = file.replace(/\r\n$/, '').split('\r\n');
+  // The weekly event's own RRULE (the VTIMEZONE block above it has RRULEs of its own).
+  const event = lines.indexOf('BEGIN:VEVENT');
+  const rrule = lines.findIndex((l, i) => i > event && l.startsWith('RRULE:'));
+  if (rrule >= 0) {
+    lines.splice(rrule + 1, 0, ...cancelledOn.map((d) => `EXDATE;${icsAt(d, usualMinutes)}`));
+  }
+  const stamp = lines.find((l) => l.startsWith('DTSTAMP:')) ?? '';
+  const overrides = movedOn.flatMap((m) => [
+    'BEGIN:VEVENT',
+    `UID:${uid}`,
+    stamp,
+    `RECURRENCE-ID;${icsAt(m.date, usualMinutes)}`,
+    `DTSTART;${icsAt(m.date, m.minutes)}`,
+    'DURATION:PT1H',
+    `SUMMARY:${escapeText(words.summary)}`,
+    ...(words.location ? [`LOCATION:${escapeText(words.location)}`] : []),
+    `URL:${words.url}`,
+    'END:VEVENT',
+  ]);
+  const end = lines.lastIndexOf('END:VCALENDAR');
+  lines.splice(end, 0, ...overrides.map(foldLine));
+  return lines.join('\r\n') + '\r\n';
 }

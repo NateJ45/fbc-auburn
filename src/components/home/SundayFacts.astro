@@ -10,7 +10,8 @@
 // its two spans sit side by side in the HTML, so site search read them as "11:00 am4241 Hamilton...".
 // The space between the spans keeps copy-paste and reader modes tidy too.
 import { getChurchFacts } from '@/lib/church-data';
-import { namedTimes } from '@/lib/church-facts';
+import { namedTimes, sundayLineServices } from '@/lib/church-facts';
+import { churchDataNow } from '@/lib/church-feeds';
 
 const facts = await getChurchFacts();
 const minutes = (facts.serviceTimes ?? []).filter((t) => t.dayIndex === 0).map((t) => t.minutes);
@@ -20,7 +21,8 @@ const address = facts.address ?? null;
 {minutes.length > 0 && (
   <p class="hb-facts hb-num" data-pagefind-ignore="all">
     <span class="hb-facts__times">
-      {namedTimes((facts.serviceTimes ?? []).filter((t) => t.dayIndex === 0))}
+      {/* A different Sunday (2026-10-26): the coming Sunday's times when it is changed. */}
+      {namedTimes(sundayLineServices(facts, churchDataNow()).services) || 'No services this Sunday'}
     </span>{' '}
     {address && (
       <span class="hb-facts__where">

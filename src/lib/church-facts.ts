@@ -94,6 +94,25 @@ export interface RawChurchFacts {
   foundedConfirmed?: boolean | null;
   youtubeChannelId?: string | null;
   churchTracIcalUrl?: string | null;
+  /** Church facts > A different Sunday: dated changes to the usual times (2026-10-26). */
+  timeChanges?: (RawTimeChange | null)[] | null;
+}
+
+/** One "A different Sunday" entry as Sanity holds it (churchFacts.ts `timeChanges`). */
+export interface RawTimeChange {
+  _key?: string | null;
+  /** YYYY-MM-DD on the church's calendar. */
+  date?: string | null;
+  /** 'time' (a different time), 'cancelled', or 'extra' (an extra service). */
+  change?: string | null;
+  /** Which gathering: a Service times row's key, its name ("Worship"), or 'all' / empty for every one that day. */
+  service?: string | null;
+  /** The new start time, "10:30", "10:30 am" or "6 pm" (for 'time' and 'extra'). */
+  time?: string | null;
+  /** What the extra service is called ("Christmas Eve candlelight"). */
+  label?: string | null;
+  /** An optional short note ("Weather: no Sunday School today"). */
+  note?: string | null;
 }
 
 // ── Resolved shapes ─────────────────────────────────────────────────────────
@@ -167,6 +186,27 @@ export interface ChurchFacts {
   calendarPageUrl: string | null;
   /** Office hours, one line each (Church facts > Office hours), or [] when not set. */
   officeHours: string[];
+  /**
+   * A different Sunday (2026-10-26): the dated changes to the usual times, by date, past ones
+   * included (the resolver has no clock; dayPlan() and upcomingChanges() pick the ones that apply).
+   */
+  timeChanges: TimeChange[];
+}
+
+export type TimeChangeKind = 'time' | 'cancelled' | 'extra';
+
+export interface TimeChange {
+  key: string;
+  /** YYYY-MM-DD on the church's calendar. */
+  date: string;
+  kind: TimeChangeKind;
+  /** The gathering it is about (a key or a name), or '' for every gathering that day. */
+  service: string;
+  /** The new start time, minutes after midnight ('time' and 'extra'), else null. */
+  minutes: number | null;
+  /** An extra service's name, else ''. */
+  label: string;
+  note: string;
 }
 
 /**
@@ -581,7 +621,264 @@ export function resolveChurchFacts(raw?: RawChurchFacts | null): ChurchFacts {
       .split(/\r?\n/)
       .map((l) => l.trim())
       .filter(Boolean),
+    timeChanges: resolveTimeChanges(s.timeChanges),
   };
+}
+
+// ── A different Sunday: dated changes to the usual times (2026-10-26) ───────
+//
+// Jacob adds an entry in Church facts (a date, what changes, an optional note) and every place
+// that shows that day's times shows the change; the day after, it is simply in the past and the
+// usual times come back. Nothing is retyped (rule 15). The site is static, so "on that day" means
+// "in the builds whose clock is on or before that day": the publish webhook rebuilds as soon as the
+// entry is published, and deploy.yml rebuilds every morning (10:00 UTC), so the change is gone
+// from the first build of the next day (docs/agent/church-data.md, "A different Sunday").
+
+const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/** A real YYYY-MM-DD, or ''. */
+function isoDate(value?: string | null): string {
+  const v = plain(value);
+  const m = ISO_DATE.exec(v);
+  if (!m) return '';
+  const d = new Date(`${v}T12:00:00Z`);
+  return d.toISOString().slice(0, 10) === v ? v : '';
+}
+
+/**
+ * A start time the way people type it, to minutes after midnight: "10:30", "10:30 am", "6 pm",
+ * "6:30pm", "18:00", "noon". A bare hour ("6") is too unsure to guess, so it is null; "6:00" with no
+ * am or pm is read on the 24-hour clock (6 in the morning), and the Studio warns about it.
+ */
+export function parseFriendlyTime(value?: string | null): number | null {
+  const t = plain(value).toLowerCase().replace(/\./g, '').replace(/\s+/g, ' ').trim();
+  if (!t) return null;
+  if (t === 'noon' || t === '12 noon') return 720;
+  const m = /^(\d{1,2})(?::([0-5]\d))?\s*(am|pm|a|p)?$/.exec(t);
+  if (!m) return null;
+  let h = Number(m[1]);
+  const min = m[2] ? Number(m[2]) : 0;
+  const mer = m[3];
+  if (mer) {
+    if (h < 1 || h > 12) return null;
+    if (mer.startsWith('p') && h !== 12) h += 12;
+    if (mer.startsWith('a') && h === 12) h = 0;
+  } else {
+    if (!m[2] || h > 23) return null;
+  }
+  return h * 60 + min;
+}
+
+const CHANGE_KINDS: readonly TimeChangeKind[] = ['time', 'cancelled', 'extra'];
+
+/** The entries as the site uses them: half-filled ones dropped, by date. */
+export function resolveTimeChanges(raw: RawChurchFacts['timeChanges']): TimeChange[] {
+  const out: TimeChange[] = [];
+  for (const [i, row] of (raw ?? []).entries()) {
+    const date = isoDate(row?.date);
+    const kind = plain(row?.change) as TimeChangeKind;
+    if (!date || !CHANGE_KINDS.includes(kind)) continue;
+    const minutes = parseFriendlyTime(row?.time);
+    const label = plain(row?.label).slice(0, 80);
+    const service = plain(row?.service);
+    if (kind === 'time' && (minutes === null || !service || service === 'all')) continue;
+    if (kind === 'extra' && (minutes === null || !label)) continue;
+    out.push({
+      key: plain(row?._key) || `change-${i}`,
+      date,
+      kind,
+      service: service === 'all' ? '' : service,
+      minutes: kind === 'cancelled' ? null : minutes,
+      label: kind === 'extra' ? label : '',
+      note: plain(row?.note).slice(0, 120),
+    });
+  }
+  return out.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/**
+ * The regular gatherings an entry is about: every one that day for '' (or 'all'), else the one
+ * whose key matches, else the one whose name does ("Worship", or the short name "Sunday School"
+ * for "Sunday School for all ages"). Only gatherings that meet on that weekday can match, so a
+ * Worship change dated on a Thursday changes nothing (the Studio warns about it).
+ */
+export function matchGatherings(service: string, onDay: readonly ServiceTime[]): ServiceTime[] {
+  const want = plain(service).toLowerCase();
+  if (!want || want === 'all') return [...onDay];
+  const byKey = onDay.filter((s) => s.key.toLowerCase() === want);
+  if (byKey.length) return byKey;
+  const byName = onDay.filter((s) => plain(s.label).toLowerCase() === want);
+  if (byName.length) return byName;
+  return onDay.filter((s) => shortLabel(s.label).toLowerCase() === want);
+}
+
+/** One gathering as it happens on a given date. */
+export interface PlannedService extends ServiceTime {
+  /** The usual start ("11:00 am") when this date's is different, else null. */
+  movedFrom: string | null;
+  /** True for an extra service on this date only. */
+  extra: boolean;
+}
+
+/** What happens on one date: the usual gatherings with that date's changes made. */
+export interface DayPlan {
+  date: string;
+  /** What meets, by time. */
+  services: PlannedService[];
+  /** The usual gatherings that do not meet that day. */
+  cancelled: ServiceTime[];
+  /** The entries' notes, in order. */
+  notes: string[];
+  /** True when any entry changed anything (or left a note). */
+  changed: boolean;
+}
+
+/** The entries dated on `date`. */
+const changesOn = (facts: Partial<Pick<ChurchFacts, 'timeChanges'>>, date: string): TimeChange[] =>
+  (facts.timeChanges ?? []).filter((c) => c.date === date);
+
+/** One date's gatherings, with that date's entries applied. A cancellation beats a new time. */
+export function dayPlan(
+  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'timeChanges'>>,
+  date: string,
+): DayPlan {
+  const wd = weekdayOf(date);
+  const onDay = facts.serviceTimes.filter((s) => s.dayIndex === wd);
+  const changes = changesOn(facts, date);
+  const cancelled = new Set<string>();
+  const moved = new Map<string, number>();
+  const extras: PlannedService[] = [];
+  for (const c of changes) {
+    if (c.kind === 'extra' && c.minutes !== null) {
+      extras.push({
+        key: `extra-${c.key}`,
+        label: c.label,
+        day: WEEKDAY_NAMES[wd],
+        dayIndex: wd,
+        minutes: c.minutes,
+        timeLabel: clockLabel(c.minutes),
+        note: '',
+        // Typed by the church itself for this one day, so it is the church's own word.
+        confirmed: true,
+        movedFrom: null,
+        extra: true,
+      });
+      continue;
+    }
+    for (const s of matchGatherings(c.service, onDay)) {
+      if (c.kind === 'cancelled') cancelled.add(s.key);
+      else if (c.kind === 'time' && c.minutes !== null) moved.set(s.key, c.minutes);
+    }
+  }
+  const services: PlannedService[] = onDay
+    .filter((s) => !cancelled.has(s.key))
+    .map((s) => {
+      const m = moved.get(s.key);
+      return m === undefined || m === s.minutes
+        ? { ...s, movedFrom: null, extra: false }
+        : {
+            ...s,
+            minutes: m,
+            timeLabel: clockLabel(m),
+            movedFrom: s.timeLabel,
+            confirmed: true,
+            extra: false,
+          };
+    });
+  services.push(...extras);
+  services.sort((a, b) => a.minutes - b.minutes);
+  const notes = changes.map((c) => c.note).filter(Boolean);
+  const changedAny =
+    cancelled.size > 0 ||
+    extras.length > 0 ||
+    services.some((s) => s.movedFrom !== null) ||
+    notes.length > 0;
+  return {
+    date,
+    services,
+    cancelled: onDay.filter((s) => cancelled.has(s.key)),
+    notes: [...new Set(notes)],
+    changed: changedAny,
+  };
+}
+
+/** "A", "A or B", "A, B or C". */
+function orList(items: string[]): string {
+  if (items.length <= 1) return items[0] ?? '';
+  return `${items.slice(0, -1).join(', ')} or ${items[items.length - 1]}`;
+}
+
+/**
+ * A changed day in one or two short sentences, for the line beside the times: "Worship at
+ * 10:30 am instead of 11:00 am. No Sunday School. Weather: no Sunday School today." '' when the day
+ * is as usual.
+ */
+export function changeSummary(plan: Pick<DayPlan, 'services' | 'cancelled' | 'notes'>): string {
+  const parts: string[] = [];
+  for (const s of plan.services) {
+    if (s.movedFrom) parts.push(`${s.label} at ${s.timeLabel} instead of ${s.movedFrom}.`);
+    else if (s.extra) parts.push(`${s.label} at ${s.timeLabel}.`);
+  }
+  if (plan.cancelled.length) {
+    parts.push(`No ${orList([...new Set(plan.cancelled.map((s) => shortLabel(s.label)))])}.`);
+  }
+  for (const n of plan.notes) parts.push(/[.!?]$/.test(n) ? n : `${n}.`);
+  return parts.join(' ');
+}
+
+/** The entries from today on (church clock), by date. Past ones are ignored everywhere. */
+export function upcomingChanges(
+  facts: Partial<Pick<ChurchFacts, 'timeChanges'>>,
+  now: Date,
+): TimeChange[] {
+  const today = churchNow(now).date;
+  return (facts.timeChanges ?? []).filter((c) => c.date >= today);
+}
+
+/** The church's UTC offset at an instant, in minutes (-240 in summer, -300 in winter). */
+function zoneOffset(at: Date): number {
+  const name =
+    new Intl.DateTimeFormat('en-US', { timeZone: CHURCH_TIME_ZONE, timeZoneName: 'longOffset' })
+      .formatToParts(at)
+      .find((p) => p.type === 'timeZoneName')?.value ?? 'GMT';
+  const m = /GMT([+-])(\d{1,2})(?::?(\d{2}))?/.exec(name);
+  if (!m) return 0;
+  return (m[1] === '-' ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3] ?? 0));
+}
+
+/** A wall time on the church's clock as ISO 8601 with its offset: "2026-11-01T10:30:00-05:00". */
+export function churchIso(date: string, minutes: number): string {
+  const [y, mo, d] = date.split('-').map(Number);
+  const wall = Date.UTC(y, mo - 1, d, Math.floor(minutes / 60), minutes % 60);
+  const off = zoneOffset(new Date(wall - zoneOffset(new Date(wall)) * 60_000));
+  const abs = Math.abs(off);
+  const hhmm = (m: number) =>
+    `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+  return `${date}T${hhmm(minutes)}:00${off < 0 ? '-' : '+'}${hhmm(abs)}`;
+}
+
+/**
+ * For the calendar files: the upcoming dates one regular gathering does not meet at its usual
+ * time (cancelled or moved), and the moved ones' new times.
+ */
+export function gatheringExceptions(
+  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'timeChanges'>>,
+  key: string,
+  now: Date,
+): { skip: string[]; moved: { date: string; minutes: number }[] } {
+  const skip: string[] = [];
+  const moved: { date: string; minutes: number }[] = [];
+  for (const date of [...new Set(upcomingChanges(facts, now).map((c) => c.date))]) {
+    const plan = dayPlan(facts, date);
+    const m = plan.services.find((s) => s.key === key && s.movedFrom);
+    if (m) {
+      skip.push(date);
+      moved.push({ date, minutes: m.minutes });
+    } else if (plan.cancelled.some((s) => s.key === key)) {
+      skip.push(date);
+    }
+  }
+  return { skip, moved };
 }
 
 // ── "This Sunday" ───────────────────────────────────────────────────────────
@@ -596,8 +893,20 @@ export interface ThisSunday {
   dateLabel: string;
   /** True when the date is today. */
   isToday: boolean;
-  /** The Sunday gatherings, by time. */
-  services: ServiceTime[];
+  /**
+   * What meets that Sunday, by time: the usual gatherings with any "A different Sunday" entry
+   * for that date made (a new time, one cancelled, an extra service). May be empty when
+   * everything is cancelled.
+   */
+  services: PlannedService[];
+  /** The usual Sunday gatherings, whatever that date's changes. */
+  regular: ServiceTime[];
+  /** The usual gatherings that do not meet that Sunday. */
+  cancelled: ServiceTime[];
+  /** True when that Sunday is not as usual (or has a note). */
+  changed: boolean;
+  /** The change in a sentence or two ("Worship at 10:30 am instead of 11:00 am."), or ''. */
+  change: string;
   /** True only when every Sunday time is confirmed. */
   confirmed: boolean;
 }
@@ -607,21 +916,45 @@ export interface ThisSunday {
  * today until SUNDAY_GRACE_MINUTES after the last service starts, then next
  * week. Null when no Sunday gathering is set.
  */
-export function thisSunday(facts: Pick<ChurchFacts, 'serviceTimes'>, now: Date): ThisSunday | null {
-  const services = facts.serviceTimes.filter((s) => s.dayIndex === 0);
-  if (services.length === 0) return null;
+export function thisSunday(
+  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'timeChanges'>>,
+  now: Date,
+): ThisSunday | null {
+  const regular = facts.serviceTimes.filter((s) => s.dayIndex === 0);
+  if (regular.length === 0) return null;
   const { date: today, minutes } = churchNow(now);
   const wd = weekdayOf(today);
-  const lastStart = Math.max(...services.map((s) => s.minutes));
   let date = addDays(today, (7 - wd) % 7);
-  if (wd === 0 && minutes > lastStart + SUNDAY_GRACE_MINUTES) date = addDays(today, 7);
+  if (wd === 0) {
+    // Today's own plan decides when "today" is over: a later start keeps it today for longer.
+    const starts = [...regular, ...dayPlan(facts, today).services].map((s) => s.minutes);
+    if (minutes > Math.max(...starts) + SUNDAY_GRACE_MINUTES) date = addDays(today, 7);
+  }
+  const plan = dayPlan(facts, date);
   return {
     date,
     dateLabel: `Sunday, ${monthDay(date)}`,
     isToday: date === today,
-    services,
-    confirmed: services.every((s) => s.confirmed),
+    services: plan.services,
+    regular,
+    cancelled: plan.cancelled,
+    changed: plan.changed,
+    change: plan.changed ? changeSummary(plan) : '',
+    confirmed: plan.services.every((s) => s.confirmed),
   };
+}
+
+/**
+ * The Sunday gatherings the chrome's short lines name (the times band, the Sunday bar, the menu,
+ * the footer): the coming Sunday's when it is changed, else the usual ones.
+ */
+export function sundayLineServices(
+  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'timeChanges'>>,
+  now: Date,
+): { services: ServiceTime[]; sunday: ThisSunday | null } {
+  const sunday = thisSunday(facts, now);
+  const regular = facts.serviceTimes.filter((s) => s.dayIndex === 0);
+  return { services: sunday?.changed ? sunday.services : regular, sunday };
 }
 
 /**
@@ -667,6 +1000,11 @@ export interface WeekRow {
   source: 'services' | 'calendar';
   /** A calendar event the church marked cancelled (shown struck through, not hidden). */
   cancelled: boolean;
+  /**
+   * A different Sunday (2026-10-26): what is different about this row ("Instead of 11:00 am",
+   * "This week only", "Cancelled this week"), with the day's note on its first row, or ''.
+   */
+  note: string;
 }
 
 /** How many days ahead "This week" looks (today plus six). */
@@ -680,7 +1018,7 @@ export const WEEK_DAYS = 7;
  * the same gathering entered in Church Trac too, and is left out.
  */
 export function thisWeek(
-  facts: Pick<ChurchFacts, 'serviceTimes'>,
+  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'timeChanges'>>,
   events: CalendarEvent[] | null | undefined,
   now: Date,
 ): WeekRow[] {
@@ -692,13 +1030,15 @@ export function thisWeek(
   for (let i = 0; i <= WEEK_DAYS; i++) {
     const date = addDays(today, i);
     const wd = weekdayOf(date);
-    const day = facts.serviceTimes.filter(
-      (s) => s.dayIndex === wd && !(i === 0 && s.minutes <= nowMinutes),
-    );
-    for (const s of facts.serviceTimes.filter((x) => x.dayIndex === wd)) {
+    // A different Sunday (2026-10-26): the day's gatherings with that date's entries made.
+    const plan = dayPlan(facts, date);
+    const upcoming = (s: { minutes: number }) => !(i === 0 && s.minutes <= nowMinutes);
+    const day = plan.services.filter(upcoming);
+    const off = plan.cancelled.filter(upcoming);
+    for (const s of [...facts.serviceTimes.filter((x) => x.dayIndex === wd), ...plan.services]) {
       serviceSlots.add(`${date}|${s.minutes}`);
     }
-    if (day.length === 0) continue;
+    if (day.length === 0 && off.length === 0) continue;
     // Day 7 only fills in for today's weekday when today's gatherings are over.
     if (
       i === WEEK_DAYS &&
@@ -706,9 +1046,12 @@ export function thisWeek(
     ) {
       continue;
     }
+    const before = items.length;
     // One row per start time (re-audit 2026-10-26): Sunday School at 9:45 and Worship at 11:00 are
     // two rows, and two gatherings at 6:00 pm share one row with both names.
     for (const slot of timeSlots(day)) {
+      const inSlot = day.filter((s) => s.minutes === slot.minutes);
+      const moved = inSlot.find((s) => s.movedFrom);
       items.push({
         key: `services-${date}-${slot.minutes}`,
         date,
@@ -720,8 +1063,36 @@ export function thisWeek(
         confirmed: slot.confirmed,
         source: 'services',
         cancelled: false,
+        note: moved
+          ? `Instead of ${moved.movedFrom}`
+          : inSlot.every((s) => s.extra)
+            ? 'This week only'
+            : '',
         start: slot.minutes,
       });
+    }
+    // A cancelled gathering stays on the list, struck through, so nobody thinks it was forgotten.
+    for (const s of off) {
+      items.push({
+        key: `cancelled-${date}-${s.key}`,
+        date,
+        when: i === 0 ? 'Today' : DAY_TITLES[wd],
+        dateLabel: monthDay(date),
+        what: s.label,
+        time: s.timeLabel,
+        where: '',
+        confirmed: true,
+        source: 'services',
+        cancelled: true,
+        note: 'Cancelled this week',
+        start: s.minutes,
+      });
+    }
+    // The day's own note goes on its first row.
+    const dayRows = items.slice(before).sort((a, b) => a.start - b.start);
+    if (plan.notes.length && dayRows[0]) {
+      const first = dayRows[0];
+      first.note = [first.note, ...plan.notes].filter(Boolean).join('. ');
     }
   }
 
@@ -741,6 +1112,7 @@ export function thisWeek(
       confirmed: true,
       source: 'calendar',
       cancelled: o.cancelled,
+      note: '',
       start: o.startMinutes ?? -1,
     });
   }
@@ -759,7 +1131,9 @@ export function thisWeek(
  */
 export function churchJsonLd(
   facts: Pick<ChurchFacts, 'address' | 'phone'> &
-    Partial<Pick<ChurchFacts, 'serviceTimes' | 'email'>>,
+    Partial<Pick<ChurchFacts, 'serviceTimes' | 'email' | 'timeChanges'>>,
+  /** The build moment; with it, upcoming "A different Sunday" entries are told too. */
+  now?: Date,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   const a = facts.address;
@@ -788,20 +1162,74 @@ export function churchJsonLd(
       `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
     // In person, at the church (the confirmed address when there is one), every week. The
     // attendance mode and status are what validators ask an Event for (audit DEV-M5, 2026-10-25).
-    out.event = services.map((s) => ({
-      '@type': 'Event',
-      name: plain(s.label),
-      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-      eventStatus: 'https://schema.org/EventScheduled',
-      ...(out.address ? { location: { '@type': 'Place', address: out.address } } : {}),
-      eventSchedule: {
-        '@type': 'Schedule',
-        byDay: `https://schema.org/${s.day[0].toUpperCase()}${s.day.slice(1)}`,
-        startTime: hhmm(s.minutes),
-        repeatFrequency: 'P1W',
-        scheduleTimezone: 'America/New_York',
-      },
-    }));
+    out.event = services.map((s) => {
+      // A different Sunday: the dates it does not meet at its usual time come off the schedule.
+      const skip = now
+        ? gatheringExceptions(
+            { serviceTimes: services, timeChanges: facts.timeChanges },
+            s.key,
+            now,
+          )
+        : null;
+      return {
+        '@type': 'Event',
+        name: plain(s.label),
+        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        eventStatus: 'https://schema.org/EventScheduled',
+        ...(out.address ? { location: { '@type': 'Place', address: out.address } } : {}),
+        eventSchedule: {
+          '@type': 'Schedule',
+          byDay: `https://schema.org/${s.day[0].toUpperCase()}${s.day.slice(1)}`,
+          startTime: hhmm(s.minutes),
+          repeatFrequency: 'P1W',
+          scheduleTimezone: 'America/New_York',
+          ...(skip?.skip.length ? { exceptDate: skip.skip } : {}),
+        },
+      };
+    });
+  }
+  // A different Sunday (2026-10-26): each upcoming changed date as its own dated Event, so search
+  // and answer engines hear "Worship is at 10:30 this Sunday", "cancelled" or the extra service.
+  // A change to a gathering is told only once that gathering's usual time is confirmed; an extra
+  // service is the church's own entry, so it is told as it is.
+  if (now && facts.serviceTimes) {
+    const all = facts as Pick<ChurchFacts, 'serviceTimes'> &
+      Partial<Pick<ChurchFacts, 'timeChanges'>>;
+    const place = out.address ? { location: { '@type': 'Place', address: out.address } } : {};
+    const oneOff: Record<string, unknown>[] = [];
+    for (const date of [...new Set(upcomingChanges(all, now).map((c) => c.date))]) {
+      const plan = dayPlan(all, date);
+      const usual = (key: string) => all.serviceTimes.find((s) => s.key === key);
+      for (const s of plan.services) {
+        if (s.extra || (s.movedFrom && usual(s.key)?.confirmed)) {
+          const base = usual(s.key);
+          oneOff.push({
+            '@type': 'Event',
+            name: plain(s.label),
+            startDate: churchIso(date, s.minutes),
+            eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+            eventStatus: s.extra
+              ? 'https://schema.org/EventScheduled'
+              : 'https://schema.org/EventRescheduled',
+            ...(base && s.movedFrom ? { previousStartDate: churchIso(date, base.minutes) } : {}),
+            ...place,
+          });
+        }
+      }
+      for (const s of plan.cancelled.filter((x) => x.confirmed)) {
+        oneOff.push({
+          '@type': 'Event',
+          name: plain(s.label),
+          startDate: churchIso(date, s.minutes),
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+          eventStatus: 'https://schema.org/EventCancelled',
+          ...place,
+        });
+      }
+    }
+    if (oneOff.length) {
+      out.event = [...((out.event as Record<string, unknown>[] | undefined) ?? []), ...oneOff];
+    }
   }
   return out;
 }
@@ -817,12 +1245,14 @@ export function churchJsonLd(
  * calendar.
  */
 export function sundayIcs(
-  facts: Pick<ChurchFacts, 'serviceTimes' | 'address'> & { title?: string },
+  facts: Pick<ChurchFacts, 'serviceTimes' | 'address'> &
+    Partial<Pick<ChurchFacts, 'timeChanges'>> & { title?: string },
   now: Date,
   siteUrl: string,
 ): string | null {
   const sunday = thisSunday(facts, now);
-  const services = (sunday?.services ?? []).filter((s) => s.confirmed);
+  // The weekly events are the USUAL gatherings; a different Sunday is written as an exception.
+  const services = (sunday?.regular ?? []).filter((s) => s.confirmed);
   if (!sunday || services.length === 0) return null;
   const esc = (v: string) => plain(v).replace(/([,;\\])/g, '\\$1');
   const ymd = sunday.date.replace(/-/g, '');
@@ -854,19 +1284,59 @@ export function sundayIcs(
     'END:STANDARD',
     'END:VTIMEZONE',
   ];
+  const host = siteUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+  const where = facts.address?.confirmed ? [`LOCATION:${esc(facts.address.oneLine)}`] : [];
+  const tz = (date: string, m: number) =>
+    `TZID=America/New_York:${date.replace(/-/g, '')}T${at(m)}`;
   for (const s of services) {
+    // A different Sunday (2026-10-26): a cancelled date is an EXDATE; a new time is the same
+    // event again with a RECURRENCE-ID, so a calendar app moves that one Sunday and no other.
+    const { skip, moved } = gatheringExceptions(facts, s.key, now);
+    const cancelledOn = skip.filter((d) => d >= sunday.date && !moved.some((m) => m.date === d));
     lines.push(
       'BEGIN:VEVENT',
-      `UID:sunday-${s.key}@${siteUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '')}`,
+      `UID:sunday-${s.key}@${host}`,
       `DTSTAMP:${stamp}`,
       `DTSTART;TZID=America/New_York:${ymd}T${at(s.minutes)}`,
       'DURATION:PT1H',
       'RRULE:FREQ=WEEKLY;BYDAY=SU',
+      ...cancelledOn.map((d) => `EXDATE;${tz(d, s.minutes)}`),
       `SUMMARY:${esc(s.label)}\\, ${name}`,
-      ...(facts.address?.confirmed ? [`LOCATION:${esc(facts.address.oneLine)}`] : []),
+      ...where,
       `URL:${siteUrl}`,
       'END:VEVENT',
     );
+    for (const m of moved.filter((x) => x.date >= sunday.date)) {
+      lines.push(
+        'BEGIN:VEVENT',
+        `UID:sunday-${s.key}@${host}`,
+        `DTSTAMP:${stamp}`,
+        `RECURRENCE-ID;${tz(m.date, s.minutes)}`,
+        `DTSTART;${tz(m.date, m.minutes)}`,
+        'DURATION:PT1H',
+        `SUMMARY:${esc(s.label)}\\, ${name}`,
+        ...where,
+        `URL:${siteUrl}`,
+        'END:VEVENT',
+      );
+    }
+  }
+  // An extra service on a coming Sunday is its own one-off event.
+  for (const date of [...new Set(upcomingChanges(facts, now).map((c) => c.date))]) {
+    if (weekdayOf(date) !== 0 || date < sunday.date) continue;
+    for (const x of dayPlan(facts, date).services.filter((p) => p.extra)) {
+      lines.push(
+        'BEGIN:VEVENT',
+        `UID:${x.key}-${date}@${host}`,
+        `DTSTAMP:${stamp}`,
+        `DTSTART;${tz(date, x.minutes)}`,
+        'DURATION:PT1H',
+        `SUMMARY:${esc(x.label)}\\, ${name}`,
+        ...where,
+        `URL:${siteUrl}`,
+        'END:VEVENT',
+      );
+    }
   }
   lines.push('END:VCALENDAR');
   return lines.join('\r\n') + '\r\n';

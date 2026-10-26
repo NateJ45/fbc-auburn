@@ -15,9 +15,14 @@
 // channel's live page, else the Facebook page), the service it is on, and the time.
 
 import { getChurchFacts } from '@/lib/church-data';
-import { watchLabel, watchLive } from '@/lib/live-service';
+import { watchLabel, watchLive, worshipStartThisSunday } from '@/lib/live-service';
+import { churchDataNow } from '@/lib/church-feeds';
 
-const live = watchLive(await getChurchFacts());
+const facts = await getChurchFacts();
+const usual = watchLive(facts);
+// A different Sunday (2026-10-26): the coming Sunday's worship time, or no banner when it is cancelled.
+const start = usual ? worshipStartThisSunday(facts, churchDataNow()) : null;
+const live = usual && start !== null ? { ...usual, start } : null;
 ---
 
 {live && (

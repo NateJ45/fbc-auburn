@@ -98,11 +98,17 @@ const NON_STEGA_FIELDS = new Set([
   // stone-icon picker on stepsRailSection's steps is named 'icon', listed below.
   'art',
   'businessModel',
+  // FBC Auburn, 2026-10-26: a short link's "Where does it go?" and "For now, or for good?".
+  'linkKind',
+  'lasting',
   'businessType',
   'category',
   'columns',
   // stepsRailSection steps: which Sunday gathering a step is (its time comes from Church facts).
   'gathering',
+  // 2026-10-26: a popup's "Which pages" and "How often" (src/lib/popup.ts compares both).
+  'where',
+  'frequency',
   'heightHint',
   'imageSide',
   'layout',
@@ -188,6 +194,10 @@ const NON_STEGA_FIELDS = new Set([
   // leaves booleans alone today, listed so the rule 8b audit finds it.
   'embedCode',
   'runsOnPage',
+  // A different Sunday, 2026-10-26 (churchFacts.ts `timeChanges`): `change` is the dropdown the
+  // times branch on and `date` is compared with the build's day. `service` and `time` are above.
+  'change',
+  'date',
 ]);
 
 export function getPreviewClient(draftMode: boolean): SanityClient {

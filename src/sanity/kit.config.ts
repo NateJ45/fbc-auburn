@@ -29,8 +29,10 @@ import { ComposeIcon } from '@sanity/icons/Compose';
 import { MicrophoneIcon } from '@sanity/icons/Microphone';
 import { BellIcon } from '@sanity/icons/Bell';
 import { CalendarIcon } from '@sanity/icons/Calendar';
+import { LinkIcon } from '@sanity/icons/Link';
 import { collectionRules } from './collectionCheckup';
 import { comingSunday, lastSunday } from '../lib/studio-kit';
+import { TIME_CHANGE_KINDS } from './schemaTypes/churchFacts';
 import {
   buildEventNotice,
   buildNewsletter,
@@ -135,6 +137,7 @@ export const kitConfig: KitConfig = {
   trashTypes: {
     // One name per thing, matching the desk (FBC Auburn, 2026-10-18).
     announcement: 'Notice',
+    popup: 'Popup',
     faqItem: 'Question',
     faqCategory: 'Question group',
     journalEntry: 'Post',
@@ -334,6 +337,75 @@ export const kitConfig: KitConfig = {
       doneMessage:
         'The notice will be on the website in a few minutes and comes down by itself after Sunday.',
     },
+    // A different Sunday (2026-10-26, docs/agent/church-data.md): one dated change to the times,
+    // added to Site settings > Church facts > A different Sunday. Every place that shows the
+    // times shows it that day, and the usual times come back by themselves the day after.
+    {
+      id: 'sunday-times',
+      title: "Change this Sunday's times",
+      detail: 'A different time, something cancelled, or an extra service. Back to normal after.',
+      icon: ClockIcon,
+      meaning: 'times',
+      job: {
+        kind: 'append',
+        doc: 'siteSettings',
+        array: 'timeChanges',
+        itemType: 'timeChange',
+        at: 'end',
+      },
+      fields: [
+        {
+          name: 'date',
+          title: 'Which day',
+          kind: 'date',
+          required: true,
+          initial: (now) => comingSunday(now),
+        },
+        {
+          name: 'change',
+          title: 'What is different',
+          kind: 'select',
+          required: true,
+          options: TIME_CHANGE_KINDS.map((k) => ({ title: k.title, value: k.value })),
+        },
+        {
+          name: 'service',
+          title: 'Which gathering',
+          kind: 'select',
+          description: 'Leave it for an extra service.',
+          options: [
+            { title: 'Worship', value: 'Worship' },
+            { title: 'Sunday School', value: 'Sunday School' },
+            { title: 'Everything that day (to cancel)', value: 'all' },
+          ],
+        },
+        {
+          name: 'time',
+          title: 'The time that day',
+          kind: 'string',
+          max: 20,
+          description: 'Like "10:30 am" or "6 pm". Leave it empty when something is cancelled.',
+        },
+        {
+          name: 'label',
+          title: 'Name of the extra service',
+          kind: 'string',
+          max: 80,
+          description: 'Only for an extra service, like "Christmas Eve candlelight".',
+        },
+        {
+          name: 'note',
+          title: 'A short note (optional)',
+          kind: 'string',
+          max: 120,
+          description: 'Like "Weather: no Sunday School today".',
+        },
+      ],
+      submitLabel: 'Put it on the website',
+      doneTitle: 'The change is saved',
+      doneMessage:
+        'It will be on the website in about two minutes, and the usual times come back by themselves the day after. To check it or take it off, open Site settings, Church facts, A different Sunday.',
+    },
     // 2026-10-19 (Studio complete, docs/agent/studio-plan.md): the rest of the weekly jobs
     // that fit a phone. The bulletin needs a file box, which forms do not have yet, so it is
     // on Home's big buttons and the Sunday checklist instead.
@@ -467,6 +539,17 @@ export const kitConfig: KitConfig = {
         'It will be at /bulletin/ in a few minutes. The address always opens the newest one.',
     },
     // Link tiles: they open their own screens and keep those screens' safeguards.
+    // "Make a short link" (2026-10-26) opens a new short link rather than a short form:
+    // the full form has the page picker, the clash warnings as he types, and the QR
+    // code button, none of which a Quick update form can offer.
+    {
+      id: 'short-link',
+      title: 'Make a short link',
+      detail: 'A short address like /vbs for a bulletin, a flyer or a QR code.',
+      icon: LinkIcon,
+      meaning: 'link',
+      job: { kind: 'link', target: { create: 'shortLink' } },
+    },
     {
       id: 'messages',
       title: 'Messages',
@@ -591,6 +674,7 @@ export const kitConfig: KitConfig = {
         { title: 'Downloads and bulletins', target: { pane: 'downloads;download' } },
         { title: 'News and notes', target: { pane: 'journal;journalEntry' } },
         { title: 'Notices', target: { pane: 'content;announcement' } },
+        { title: 'Popups', target: { pane: 'content;popup' } },
         { title: 'Questions and answers', target: { pane: 'content;faqItem' } },
       ],
     },

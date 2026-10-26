@@ -10,9 +10,13 @@
 // itself. On a Sunday it reads "Today" until 90 minutes after the last service
 // starts (church-facts.ts SUNDAY_GRACE_MINUTES).
 //
+// A different Sunday (2026-10-26): the times are that date's (Church facts > A different Sunday),
+// with the change in a line under them; the next build after the day puts the usual ones back.
+//
 // Renders nothing when no Sunday gathering is set.
 
 import NotConfirmed from './NotConfirmed.astro';
+import SundayChange from './SundayChange.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
@@ -44,6 +48,7 @@ const sunday = thisSunday(await getChurchFacts(), now);
     <NotConfirmed confirmed={sunday.confirmed} />
   </p>
 )}
+<SundayChange sunday={sunday} class={className} />
 
 <style>
   .this-sunday {
