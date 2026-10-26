@@ -10,7 +10,12 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 
-import { buildRedirectMap } from './src/lib/redirects.ts';
+import { readFile, writeFile } from 'node:fs/promises';
+import {
+  buildRedirectMap,
+  fileStyleRedirectLines,
+  prependRedirectLines,
+} from './src/lib/redirects.ts';
 import { dropRedirectsOverLivePages } from './src/lib/redirect-guard.ts';
 import { fixSanityDedupeAlias } from './src/lib/sanity-dedupe-alias.ts';
 import { studioConfigModule } from './src/lib/studio-route.ts';
@@ -109,6 +114,36 @@ if (guarded.dropped.length) {
   );
 }
 const cmsRedirects = guarded.redirects;
+
+// FILE-STYLE REDIRECT SOURCES (PORTS.md card 160). trailingSlash 'always' makes
+// Astro write "/index.htm" into _redirects as "/index.htm/", and the host only
+// adds a trailing slash to extensionless paths, so the old address 404s. After
+// the build (the adapter appends its rules to _redirects in the same hook) this
+// puts an exact, slashless line for every such source at the top of the file.
+// Covers launch redirects and editor redirects alike, since it reads the final
+// map. The arithmetic and its tests are in src/lib/redirects.ts.
+/** @returns {import('astro').AstroIntegration} */
+function fileStyleRedirects() {
+  /** @type {import('astro').AstroConfig | undefined} */
+  let resolved;
+  return {
+    name: 'file-style-redirects',
+    hooks: {
+      'astro:config:done': ({ config }) => {
+        resolved = config;
+      },
+      'astro:build:done': async ({ logger }) => {
+        if (!resolved) return;
+        const lines = fileStyleRedirectLines(resolved.redirects ?? {});
+        if (lines.length === 0) return;
+        const file = new URL('./_redirects', resolved.build.client);
+        const existing = await readFile(file, 'utf8').catch(() => '');
+        await writeFile(file, prependRedirectLines(existing, lines));
+        logger.info(`added ${lines.length} slashless rule(s) for file-style sources`);
+      },
+    },
+  };
+}
 
 // Pages the editor keeps out of search. "Keep this page out of Google"
 // (page.hideFromSearch) has to do two things: put a robots tag on the page
@@ -218,6 +253,7 @@ export default defineConfig({
       filter: (page) => isSitemapPage(page, hiddenPagePaths),
     }),
     react(),
+    fileStyleRedirects(),
   ],
   vite: {
     // Astro inlines a processed <script> smaller than this limit into the page, and every inline
