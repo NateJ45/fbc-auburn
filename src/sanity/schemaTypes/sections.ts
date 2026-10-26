@@ -32,6 +32,8 @@ import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { CodeTextInput } from '../components/CodeTextInput';
 import { codeWarningMessage } from '../../lib/custom-code';
+import { EmbedPasteInput } from '../components/EmbedPasteInput';
+import { describePlan, planEmbed, plansOwnSize } from '../../lib/embed-providers';
 import {
   FAST_START_MESSAGE,
   HERO_VIDEO_ACCEPT,
@@ -644,11 +646,17 @@ export const logoStripSection = defineType({
 // opt-out for trusted provider snippets, and the Checkup lists every page using
 // it. Field NAMES are unchanged (rule 1): embedUrl, embedCode, heightHint.
 // SELF_CONTAINED: manages its own surface. Trust model: docs/agent/custom-code.md.
+// Paste-and-go (2026-10-26): EmbedPasteInput puts one paste box above the fields
+// and fills them in; src/lib/embed-providers.ts recognizes the service, sizes it,
+// and keeps unknown script code off the page. Nothing new is stored (rule 15).
+const embedPlanFor = (parent: unknown) =>
+  planEmbed((parent ?? {}) as { embedUrl?: string; embedCode?: string; runsOnPage?: boolean });
 export const embedSection = defineType({
   name: 'embedSection',
   title: 'Custom code or embed',
   type: 'object',
   icon: CodeBlockIcon,
+  components: { input: EmbedPasteInput },
   description:
     'Show a form, map, calendar, giving page or small widget from another website, or paste code you were given (by a service such as Church Trac, or by an AI). Check it in Preview before you publish.',
   fields: [
@@ -670,7 +678,16 @@ export const embedSection = defineType({
       type: 'url',
       description:
         'For services that embed from a web address, such as Google Forms or a Church Trac page. Paste the full address. Use this OR the code box below, not both.',
-      validation: (R) => R.uri({ scheme: ['http', 'https'] }),
+      validation: (R) => [
+        R.uri({ scheme: ['http', 'https'] }),
+        // A link the block cannot show (a Maps share link, a Facebook page) says
+        // what to paste instead. The website would show nothing for it.
+        R.custom((value, context) => {
+          if (!value) return true;
+          const plan = embedPlanFor(context.parent);
+          return plan.kind === 'problem' ? describePlan(plan) : true;
+        }),
+      ],
     }),
     defineField({
       name: 'embedCode',
@@ -692,6 +709,15 @@ export const embedSection = defineType({
           const parent = context.parent as { runsOnPage?: boolean } | undefined;
           return codeWarningMessage(value, parent?.runsOnPage === true);
         }).warning(),
+        // The guard rail: script code from a service the website does not know
+        // stays in its own box even with the switch on. Say so, in plain words.
+        R.custom((value, context) => {
+          if (!value) return true;
+          const plan = embedPlanFor(context.parent);
+          return plan.kind === 'box' && plan.blocked
+            ? describePlan(plan, 'Nathan at the studio')
+            : true;
+        }).warning(),
       ],
     }),
     defineField({
@@ -708,6 +734,8 @@ export const embedSection = defineType({
       title: 'Height',
       type: 'string',
       initialValue: 'medium',
+      // A known service (a video, a map, a podcast) is sized for him.
+      hidden: ({ parent }) => plansOwnSize(embedPlanFor(parent)),
       description:
         'For a web address, how tall the box is. Custom code sizes itself; this is only the space it holds while it loads.',
       options: {

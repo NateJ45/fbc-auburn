@@ -24,6 +24,7 @@ import { richSectionSchemas } from './richSections';
 import { notFoundPage } from './notFoundPage';
 import { privacyPage } from './privacyPage';
 import { redirect } from './redirect';
+import { shortLink } from './shortLink';
 import { sectionPreset } from './sectionPreset';
 import { siteSettings } from './siteSettings';
 import { studioGuide } from './studioGuide';
@@ -85,4 +86,6 @@ export const schemaTypes = [
   // Old address -> new address forwards, filed by hand or automatically on a
   // web-address change (see components/slugRedirect.tsx).
   redirect,
+  // Short addresses like /vbs for bulletins and QR codes (2026-10-26).
+  shortLink,
 ];

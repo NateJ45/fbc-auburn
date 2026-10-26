@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-26: short links, QR codes and paste-and-go embeds._ Jacob can make `/vbs`-style short
+links (Pages > Short links, or Quick update's "Make a short link"), for now (302) or for good (301),
+with an optional last day; the build writes them at the top of `_redirects` and skips clashes,
+which the Studio flags first. Every short link and page has a **QR code** button (SVG and PNG;
+new dependency `qrcode-generator` 2.0.4, MIT, no dependencies, Studio only). The Custom code or
+embed block takes a pasted link or embed code from fifteen known services and sizes and sets
+itself; unknown script code never runs on the page; a known service's script origins join the
+policy only on builds that use it (`build-embed-csp.mjs`). Docs: `seo.md` (Short links, QR
+codes), `custom-code.md` (Paste-and-go).
+
 _2026-10-26: search waits for its index to be written whole (starter card 165)._ This PR's CI artifact carried `pagefind/pagefind.js` cut at 32,768 of 45,555 bytes, so every search said "Search is not available right now". `build-search-index.mjs` closed Pagefind before its binary had flushed; it now waits for `dist/client/pagefind/` to settle, then syntax-checks every script it wrote and fails the build on a cut one.
 
 _2026-10-26: American spelling everywhere (starter cards 163 and 164)._ Nathan's call: every family site is American English. Starter cards 163 and 164 copied byte-identical (164 moves the shared Studio and site text to American spelling, including "check" for a checkbox and "Website inquiry" as the contact email subject, and makes `build-csp.mjs` fail when the CSP line passes 2,000 characters). This site's own strings had the same pass: text only, no field name, option value, key, slug or CSS class renamed. The live Sanity content was checked the same day and fixed where needed.

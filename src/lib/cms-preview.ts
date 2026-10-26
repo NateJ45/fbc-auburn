@@ -98,6 +98,9 @@ const NON_STEGA_FIELDS = new Set([
   // stone-icon picker on stepsRailSection's steps is named 'icon', listed below.
   'art',
   'businessModel',
+  // FBC Auburn, 2026-10-26: a short link's "Where does it go?" and "For now, or for good?".
+  'linkKind',
+  'lasting',
   'businessType',
   'category',
   'columns',

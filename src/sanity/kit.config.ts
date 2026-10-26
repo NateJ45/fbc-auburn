@@ -29,6 +29,7 @@ import { ComposeIcon } from '@sanity/icons/Compose';
 import { MicrophoneIcon } from '@sanity/icons/Microphone';
 import { BellIcon } from '@sanity/icons/Bell';
 import { CalendarIcon } from '@sanity/icons/Calendar';
+import { LinkIcon } from '@sanity/icons/Link';
 import { collectionRules } from './collectionCheckup';
 import { comingSunday, lastSunday } from '../lib/studio-kit';
 import {
@@ -464,6 +465,17 @@ export const kitConfig: KitConfig = {
         'It will be at /bulletin/ in a few minutes. The address always opens the newest one.',
     },
     // Link tiles: they open their own screens and keep those screens' safeguards.
+    // "Make a short link" (2026-10-26) opens a new short link rather than a short form:
+    // the full form has the page picker, the clash warnings as he types, and the QR
+    // code button, none of which a Quick update form can offer.
+    {
+      id: 'short-link',
+      title: 'Make a short link',
+      detail: 'A short address like /vbs for a bulletin, a flyer or a QR code.',
+      icon: LinkIcon,
+      meaning: 'link',
+      job: { kind: 'link', target: { create: 'shortLink' } },
+    },
     {
       id: 'messages',
       title: 'Messages',

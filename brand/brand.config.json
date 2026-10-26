@@ -140,7 +140,8 @@
         "download": "download",
         "person": "person",
         "personGroup": "people",
-        "form": "form"
+        "form": "form",
+        "shortLink": "link"
       },
       "groups": {
         "church": "times",
