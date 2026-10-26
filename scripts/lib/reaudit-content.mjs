@@ -213,11 +213,12 @@ export const CRISIS_LABEL = 'If it cannot wait';
 export function pastoralCarePlan(page) {
   const blocks = page?.pageBuilder ?? [];
   const byKey = Object.fromEntries(blocks.map((b) => [b._key, b]));
-  for (const k of ['pc-hero', 'pc-contact', 'pc-crisis', 'pc-reach', 'pc-care']) {
+  // pc-crisis is optional: Nathan removed the crisis band on 2026-10-26, so a page without it is fine.
+  for (const k of ['pc-hero', 'pc-contact', 'pc-reach', 'pc-care']) {
     if (!byKey[k]) throw new Error(`Need the pastor? has no ${k}; read the page first.`);
   }
   byKey['pc-contact'] = { ...byKey['pc-contact'], callButtons: true };
-  byKey['pc-crisis'] = { ...byKey['pc-crisis'], label: CRISIS_LABEL };
+  if (byKey['pc-crisis']) byKey['pc-crisis'] = { ...byKey['pc-crisis'], label: CRISIS_LABEL };
   // The prayer form drops from the closing red band to a link card beside "write to us".
   byKey['pc-more'] = byKey['pc-more'] ?? {
     _key: 'pc-more',
@@ -249,7 +250,7 @@ export function pastoralCarePlan(page) {
       },
     ],
   };
-  const pageBuilder = CARE_ORDER.map((k) => byKey[k]);
+  const pageBuilder = CARE_ORDER.map((k) => byKey[k]).filter(Boolean);
   return diff(page, { pageBuilder });
 }
 

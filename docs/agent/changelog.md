@@ -2,6 +2,10 @@
 
 _2026-10-26: American spelling everywhere (starter cards 163 and 164)._ Nathan's call: every family site is American English. Starter cards 163 and 164 copied byte-identical (164 moves the shared Studio and site text to American spelling, including "check" for a checkbox and "Website inquiry" as the contact email subject, and makes `build-csp.mjs` fail when the CSP line passes 2,000 characters). This site's own strings had the same pass: text only, no field name, option value, key, slug or CSS class renamed. The live Sanity content was checked the same day and fixed where needed.
 
+_2026-10-26: no crisis band, and two leftovers._
+
+**Decision.** Nathan removed the 988/911 "If it cannot wait" band from the Prayer page and from Need the pastor? (content, `pr-crisis` and `pc-crisis` unset after a backup of each page). The Ministries phone thumbnails still cut the retired stepped corner (`FindYourPlace.astro`); they are now a plain frame with the inner corner like every card picture. Contact's For Jacob note no longer points at care drafts that moved to Need the pastor?. CI snapshot refreshed.
+
 _2026-10-26: the Studio's own newsletter is hidden._
 
 **Decision.** Nathan: hide it. Auburn's email list lives in Church Trac (2026-10-24), so the Studio's

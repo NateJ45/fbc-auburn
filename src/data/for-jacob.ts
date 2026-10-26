@@ -34,7 +34,7 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'The verse in the footer.',
       detail:
-        'Home ends with Matthew 11:28 across the top of the footer. Is that the verse you want, and which translation does the church read from?',
+        'Home now ends with Hebrews 13:8, "Jesus Christ the same yesterday, and to day, and for ever.", the verse on your Facebook page, in the King James wording it quotes. Is that the one you want to keep here, and is the King James the translation the church reads from?',
     },
     {
       title: 'Your TikTok in the footer.',
@@ -363,7 +363,7 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'When life happens.',
       detail:
-        'Hospital visits, funerals, weddings and a hand when someone is struggling: the drafts at the foot of this page are ours. Tell us how each works here, and how to reach you in an emergency.',
+        'Hospital visits, funerals, weddings and a hand when someone is struggling now live on the Need the pastor? page, which this page links to. Tell us how each works here, and how to reach you in an emergency, in the notes on that page.',
     },
     {
       title: 'Can people text the church phone?',
