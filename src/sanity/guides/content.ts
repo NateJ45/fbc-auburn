@@ -191,10 +191,10 @@ const allGuides: Guide[] = [
         text: 'The `Publish` button is at the bottom right of every page you edit. Press it when the words read right.',
       },
       { kind: 'shot', key: 'publish-button' },
-      { kind: 'h', text: 'Adding something to Contact, Questions, News and notes or Privacy' },
+      { kind: 'h', text: 'Changing Contact, Sermons, News and notes, Give or Privacy' },
       {
         kind: 'p',
-        text: 'Those pages keep their own layout, and each has an `Extra sections` tab. Anything you add there (a photo, a short note, a button) appears at the bottom of that page.',
+        text: 'Every main page is built from sections, like Home and About. Open the page, go to the `Page layout` tab, and drag a section to move it, remove one, or add a new one from the library. The contact form, the sermon list and the posts are sections too, so you can put a photo or a note above or below them.',
       },
     ],
   },

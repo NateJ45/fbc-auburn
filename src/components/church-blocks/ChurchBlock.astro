@@ -6,6 +6,7 @@
 // (no address, no events, a notice outside its dates) renders nothing at all.
 import '@/styles/church-blocks.css';
 import type { ChurchPageBlock } from '@/lib/churchBlocks.types';
+import type { CadenceSurface } from '@/lib/surfaces';
 import ServiceTimesBlock from './ServiceTimesBlock.astro';
 import MapBlock from './MapBlock.astro';
 import BeliefsBlock from './BeliefsBlock.astro';
@@ -33,14 +34,16 @@ import RsvpBlock from './RsvpBlock.astro';
 
 interface Props {
   block: ChurchPageBlock;
-  surface?: 'background' | 'muted';
+  /** Feature or Stone only reach the blocks that offer a look (columns, buttons, 2026-10-26). */
+  surface?: CadenceSurface;
   headingId: string;
   /** The page's one red button, when SectionRenderer hands it to this block (contact card calls). */
   primaryVariant?: 'primary' | 'navy';
 }
 
 const { block: b, surface = 'background', headingId, primaryVariant = 'navy' } = Astro.props;
-const common = { surface, headingId };
+const light: 'background' | 'muted' = surface === 'muted' ? 'muted' : 'background';
+const common = { surface: light, headingId };
 ---
 
 {b._type === 'serviceTimesSection' ? (
@@ -76,11 +79,11 @@ const common = { surface, headingId };
 ) : b._type === 'affiliationsSection' ? (
   <AffiliationsBlock block={b} {...common} />
 ) : b._type === 'buttonRowSection' ? (
-  <ButtonRowBlock block={b} {...common} />
+  <ButtonRowBlock block={b} surface={surface} headingId={headingId} />
 ) : b._type === 'contactCardSection' ? (
   <ContactCardBlock block={b} {...common} primaryVariant={primaryVariant} />
 ) : b._type === 'columnsSection' ? (
-  <ColumnsBlock block={b} {...common} />
+  <ColumnsBlock block={b} surface={surface} headingId={headingId} />
 ) : b._type === 'photoSection' ? (
   <PhotoBlock block={b} {...common} />
 ) : b._type === 'formSection' ? (

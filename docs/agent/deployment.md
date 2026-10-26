@@ -213,10 +213,12 @@ once hashes are present. Helpers and tests: `scripts/lib/csp.mjs`.
   `scripts/csp-origins.json` (this site's own file, not PORTABLE; a JSON array such as
   `["https://widget.example.com"]`). GA4's tag is handled inside the script. The script and
   `scripts/lib/csp.mjs` are PORTABLE copies from the starter (PORTS.md card 153).
-- **Known embed services add their own origins** (2026-10-26): `scripts/build-embed-csp.mjs` adds
-  a registry service's script hosts only to builds where a page uses its code
-  (docs/agent/custom-code.md, "Paste-and-go"). The build log says `[embed-csp] added N ...
-(line X of 2000 characters)`.
+- **Known embed services add their own origins** (2026-10-26, starter card 172): the same
+  `build-csp.mjs` reads the `data-embed-provider` ids the Custom code or embed block writes,
+  looks each up in `src/lib/embed-providers.ts`, and adds that service's script hosts and their
+  subdomains only to builds where a page uses its code (docs/agent/custom-code.md,
+  "Paste-and-go"). The build log's `[csp]` line ends `; embed services: Tithe.ly` when it does.
+  The registry is TypeScript, so `package.json` runs the script with `--experimental-strip-types`.
 - **Lighthouse still notes "Host allowlists can frequently be bypassed"** (unscored; Best
   Practices stays 100). That comes from the Cloudflare beacon's origin in the list. The cure,
   `'strict-dynamic'`, makes browsers ignore every origin in `script-src`, which would block any

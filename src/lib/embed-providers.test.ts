@@ -1,5 +1,5 @@
-// Safe to edit by hand
-// Tests for the paste-and-go embed registry (src/lib/embed-providers.ts).
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Tests for the paste-and-go embed registry (src/lib/embed-providers.ts, PORTS.md card 172).
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -22,7 +22,7 @@ const frame = (plan: EmbedPlan) => {
 };
 
 describe('the registry', () => {
-  it('has every provider the pastor was promised, with unique ids', () => {
+  it('has every provider the registry promises, with unique ids', () => {
     const names = EMBED_PROVIDERS.map((p) => p.name);
     for (const want of [
       'YouTube',
@@ -59,11 +59,11 @@ describe('the registry', () => {
     assert.equal(providerForUrl('https://notyoutube.com/watch?v=abcdefghijk'), undefined);
     assert.equal(providerForUrl('https://youtube.com.evil.example/x'), undefined);
     assert.equal(
-      providerForUrl('https://www.google.com/maps/place/Auburn'),
+      providerForUrl('https://www.google.com/maps/place/Main+Street'),
       providerById('google-maps'),
     );
     assert.equal(providerForUrl('https://www.google.com/search?q=x'), undefined);
-    assert.equal(providerForUrl('https://fbcauburn.churchtrac.com/give')?.id, 'churchtrac');
+    assert.equal(providerForUrl('https://example.churchtrac.com/give')?.id, 'churchtrac');
   });
 
   it('knows script hosts', () => {
@@ -98,7 +98,10 @@ describe('links become the right frame', () => {
       frame(planEmbed({ embedUrl: 'https://www.youtube.com/playlist?list=PL123abc' })).src,
       /videoseries\?list=PL123abc$/,
     );
-    assert.equal(planEmbed({ embedUrl: 'https://www.youtube.com/@fbcauburn' }).kind, 'problem');
+    assert.equal(
+      planEmbed({ embedUrl: 'https://www.youtube.com/@examplechannel' }).kind,
+      'problem',
+    );
   });
 
   it('Vimeo keeps the private hash of an unlisted video', () => {
@@ -112,12 +115,12 @@ describe('links become the right frame', () => {
     );
   });
 
-  it('Facebook videos use the video plugin; the church page itself is refused politely', () => {
+  it('Facebook videos use the video plugin; a page itself is refused politely', () => {
     const f = frame(
-      planEmbed({ embedUrl: 'https://www.facebook.com/fbcauburn/videos/1234567890/' }),
+      planEmbed({ embedUrl: 'https://www.facebook.com/examplepage/videos/1234567890/' }),
     );
     assert.match(f.src, /^https:\/\/www\.facebook\.com\/plugins\/video\.php\?href=https%3A%2F%2F/);
-    const p = planEmbed({ embedUrl: 'https://www.facebook.com/fbcauburn' });
+    const p = planEmbed({ embedUrl: 'https://www.facebook.com/examplepage' });
     assert.equal(p.kind, 'problem');
   });
 
@@ -128,10 +131,10 @@ describe('links become the right frame', () => {
     assert.equal(
       frame(
         planEmbed({
-          embedUrl: 'https://www.google.com/maps/place/First+Baptist+Church/@39.3,-84.5,17z',
+          embedUrl: 'https://www.google.com/maps/place/Riverside+Bakery/@39.3,-84.5,17z',
         }),
       ).src,
-      'https://www.google.com/maps?q=First%20Baptist%20Church&output=embed',
+      'https://www.google.com/maps?q=Riverside%20Bakery&output=embed',
     );
     const share = planEmbed({ embedUrl: 'https://maps.app.goo.gl/AbCdEf' });
     assert.equal(share.kind, 'problem');
@@ -139,10 +142,10 @@ describe('links become the right frame', () => {
   });
 
   it('Google Calendar decodes the share link to an embed', () => {
-    const cid = btoa('church@example.org');
+    const cid = btoa('events@example.org');
     assert.equal(
       frame(planEmbed({ embedUrl: `https://calendar.google.com/calendar/u/0?cid=${cid}` })).src,
-      'https://calendar.google.com/calendar/embed?src=church%40example.org',
+      'https://calendar.google.com/calendar/embed?src=events%40example.org',
     );
   });
 
@@ -175,15 +178,15 @@ describe('links become the right frame', () => {
     assert.equal(ap.height, 175);
   });
 
-  it('church services frame as they are, at a tall fixed height', () => {
+  it('giving, sign-up and booking services frame as they are, at a tall fixed height', () => {
     for (const link of [
-      'https://fbcauburn.churchtrac.com/give',
-      'https://fbcauburn.churchcenter.com/registrations',
+      'https://example.churchtrac.com/give',
+      'https://example.churchcenter.com/registrations',
       'https://tithe.ly/give?c=123',
       'https://www.givelify.com/donate/abc',
       'https://subsplash.com/u/-ABC/media',
       'https://www.signupgenius.com/go/10C0F4',
-      'https://calendly.com/pastor/visit',
+      'https://calendly.com/example/visit',
     ]) {
       const f = frame(planEmbed({ embedUrl: link }));
       assert.equal(f.src, new URL(link).href, link);
@@ -247,7 +250,8 @@ describe('pasted code', () => {
     const code = '<div id="x"></div><script src="https://cdn.unknown.example/w.js"></script>';
     const plan = planEmbed({ embedCode: code, runsOnPage: true });
     assert.deepEqual(plan, { kind: 'box', provider: undefined, blocked: true });
-    assert.match(describePlan(plan, 'Nathan'), /ask Nathan to approve it/);
+    assert.match(describePlan(plan), /ask your web designer to approve it/);
+    assert.match(describePlan(plan, { approver: 'Sam' }), /ask Sam to approve it/);
     assert.deepEqual(cspOriginsFor(plan), []);
     assert.equal(readPaste(code)?.runsOnPage, false);
   });
@@ -272,7 +276,7 @@ describe('pasted code', () => {
     );
   });
 
-  it('an origin the studio approved may run on the page', () => {
+  it('an origin the site approved may run on the page', () => {
     const code = '<script src="https://widget.example.com/w.js"></script>';
     assert.equal(
       planEmbed({ embedCode: code, runsOnPage: true }, ['https://widget.example.com']).kind,
@@ -292,8 +296,10 @@ describe('pasted code', () => {
     assert.equal(readPaste('   '), null);
   });
 
-  it('nothing pasted is nothing to show', () => {
+  it('nothing pasted is nothing to show, and the empty sentence names the site examples', () => {
     assert.equal(planEmbed({}).kind, 'none');
+    assert.match(describePlan({ kind: 'none' }), /YouTube, Google Maps, Spotify or Calendly\.$/);
+    assert.match(describePlan({ kind: 'none' }, { examples: 'A or B' }), /such as A or B\.$/);
     assert.equal(planEmbed({ embedUrl: 'not a link' }).kind, 'problem');
   });
 });

@@ -23,6 +23,8 @@ import { page } from './page';
 import { privatePage } from './privatePage';
 import { pageSectionSchemas, syncedSection } from './sections';
 import { richSectionSchemas } from './richSections';
+// The Contact form and Privacy policy text blocks, offered on their own page only (2026-10-26).
+import { pageOnlySectionSchemas } from './collectionSections';
 import { notFoundPage } from './notFoundPage';
 import { privacyPage } from './privacyPage';
 import { redirect } from './redirect';
@@ -49,6 +51,7 @@ export const schemaTypes = [
   ...pageSectionSchemas,
   syncedSection, // authoring kit, card 109: shows a saved section, edit once everywhere
   ...richSectionSchemas,
+  ...pageOnlySectionSchemas,
 
   // Singletons
   siteSettings,
