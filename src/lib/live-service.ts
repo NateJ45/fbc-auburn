@@ -23,7 +23,7 @@
 // Facebook offers no keyless way to ask, so on Facebook the clock always decides.
 
 import { CHURCH_TIME_ZONE } from './church-calendar.ts';
-import type { ChurchFacts } from './church-facts.ts';
+import { thisSunday, type ChurchFacts } from './church-facts.ts';
 
 /** "Live now" starts this many minutes before worship... */
 export const LIVE_LEAD_MINUTES = 5;
@@ -52,6 +52,23 @@ export interface WatchLive {
 export function worshipStart(facts: Pick<ChurchFacts, 'serviceTimes'>): number | null {
   const sunday = facts.serviceTimes.filter((s) => s.dayIndex === 0).map((s) => s.minutes);
   return sunday.length ? Math.max(...sunday) : null;
+}
+
+/**
+ * Worship's start on the coming Sunday (A different Sunday, 2026-10-26): the usual start, or the
+ * new time when that Sunday moves it, or null when worship is cancelled that Sunday. The site
+ * rebuilds every morning, so the Live now banner keys on the right time for the right Sunday.
+ */
+export function worshipStartThisSunday(
+  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'timeChanges'>>,
+  now: Date,
+): number | null {
+  const usual = worshipStart(facts);
+  const sunday = thisSunday(facts, now);
+  if (usual === null || !sunday?.changed) return usual;
+  const streamed = sunday.regular.find((s) => s.minutes === usual);
+  const thatDay = streamed ? sunday.services.find((s) => s.key === streamed.key) : null;
+  return thatDay ? thatDay.minutes : null;
 }
 
 /** The live settings for the pages, or null when there is nowhere to watch. */

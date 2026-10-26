@@ -33,6 +33,10 @@
 //                      else CONTACT_FROM, is the sending address.
 //   FORM_RECIPIENTS    secret, JSON of recipient key to address. A key with no
 //                      address goes to "office", then to CONTACT_TO.
+//                      Since 2026-10-26 an administrator can set each address in
+//                      the Studio (Site settings > Forms); those live in D1
+//                      (form_recipient_addresses, migrations/0005) and win over
+//                      the secret once confirmed (src/lib/form-recipients.ts).
 //   WEB3FORMS_KEY      fallback email transport (it emails the Web3Forms
 //                      account's own address, whatever the recipient).
 //   TURNSTILE_SECRET   spam check, with PUBLIC_TURNSTILE_SITE_KEY at build.
@@ -47,28 +51,22 @@ import {
   buildFormNotification,
   normalizeForm,
   parseRecipients,
-  recipientAddress,
   validateFormSubmission,
   type ChurchForm,
   type CleanFormSubmission,
   type RawFormSubmission,
 } from '@/lib/church-form';
 import { FIXTURE_FORMS } from '@/lib/church-form-fixtures';
+import { confirmedAddresses, recipientAddressFor } from '@/lib/form-recipients';
+import type { D1Database } from '@/lib/mail-db';
 import { sanityFetch } from '@/lib/sanity';
 import { site } from '@/data/site';
 import { workerMailer, type MailWorkerEnv } from '@/lib/mail-env';
 
 export const prerender = false;
 
-/** The slice of D1 this route uses (see the same note in /api/contact/). */
-interface D1Lite {
-  prepare(sql: string): {
-    bind(...values: unknown[]): { run(): Promise<{ meta?: { last_row_id?: number } }> };
-  };
-}
-
 interface FormEnv extends Omit<MailWorkerEnv, 'CONTACT_DB'> {
-  CONTACT_DB?: D1Lite;
+  CONTACT_DB?: D1Database;
   CONTACT_TO?: string;
   CONTACT_FROM?: string;
   FORM_RECIPIENTS?: string;
@@ -88,10 +86,12 @@ const json = (body: unknown, status = 200) =>
  * Resend, with a sending address) and somewhere to send (FORM_RECIPIENTS or CONTACT_TO), or Web3Forms. The database alone
  * is a safety net nobody reads, so it does not count: a prayer request must never sit unread.
  */
-const canDeliver = (e: FormEnv): boolean =>
+const canDeliver = (e: FormEnv, fromD1: Record<string, string>): boolean =>
   Boolean(
     (workerMailer(e).mailer &&
-      (Object.keys(parseRecipients(e.FORM_RECIPIENTS)).length || e.CONTACT_TO)) ||
+      (Object.keys(fromD1).length ||
+        Object.keys(parseRecipients(e.FORM_RECIPIENTS)).length ||
+        e.CONTACT_TO)) ||
     e.WEB3FORMS_KEY,
   );
 
@@ -141,9 +141,16 @@ async function notify(
   e: FormEnv,
   form: ChurchForm,
   s: CleanFormSubmission,
+  fromD1: Record<string, string>,
 ): Promise<string | null> {
   const note = buildFormNotification(form, s, site.name);
-  const to = recipientAddress(form.recipient, parseRecipients(e.FORM_RECIPIENTS), e.CONTACT_TO);
+  // D1 first (set by an administrator in the Studio, confirmed), then the secret (2026-10-26).
+  const to = recipientAddressFor(
+    form.recipient,
+    fromD1,
+    parseRecipients(e.FORM_RECIPIENTS),
+    e.CONTACT_TO,
+  );
   const { mailer, reason } = workerMailer(e);
   let failure: string | null = reason ?? 'no recipient address';
   if (mailer && to) {
@@ -184,7 +191,7 @@ async function notify(
 
 export const GET: APIRoute = async () => {
   const e = env as unknown as FormEnv;
-  return json({ ready: canDeliver(e) });
+  return json({ ready: canDeliver(e, await confirmedAddresses(e.CONTACT_DB)) });
 };
 
 export const POST: APIRoute = async ({ request }) => {
@@ -200,7 +207,8 @@ export const POST: APIRoute = async ({ request }) => {
   // Silent on purpose: a bot gets the same answer a person does.
   if (looksAutomated(raw, Date.now()).automated) return json({ ok: true });
 
-  if (!canDeliver(e)) {
+  const fromD1 = await confirmedAddresses(e.CONTACT_DB);
+  if (!canDeliver(e, fromD1)) {
     console.error(
       '[form] no email path (Email binding + CONTACT_FROM + a recipient, or Web3Forms)',
     );
@@ -246,7 +254,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // ---- Then notify ------------------------------------------------------------
-  const failure = await notify(e, form, value);
+  const failure = await notify(e, form, value, fromD1);
 
   if (rowId !== null && e.CONTACT_DB) {
     try {

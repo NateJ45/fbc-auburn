@@ -846,7 +846,54 @@ const allGuides: Guide[] = [
       },
       {
         kind: 'p',
+        text: 'Only one day is different? Leave these as they are and use `A different Sunday` just below them. It goes back to normal by itself.',
+      },
+      {
+        kind: 'p',
         text: '`How to find us`, under the address, is one optional sentence for someone driving out: where to park, which door. It shows on the This Sunday card and in the footer.',
+      },
+    ],
+  },
+
+  // A different Sunday (2026-10-26, docs/agent/church-data.md).
+  {
+    slug: 'a-different-sunday',
+    category: 'Housekeeping',
+    title: 'A different Sunday: change the times for one day',
+    icon: 'clock',
+    lead: 'A new time, something cancelled, or an extra service. It goes back to normal by itself.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'path',
+        items: ['Site settings', 'Church facts', 'A different Sunday'],
+        link: { doc: 'siteSettings' },
+      },
+      {
+        kind: 'p',
+        text: 'Use this when one day is not like the others: worship at 10:30 for a special service, no Sunday School because of snow, or a Christmas Eve candlelight service on a Thursday. Your usual **Service times** stay as they are. You never have to change them back.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'From your phone: open `Quick update` and press `Change this Sunday’s times`. Or open `Site settings`, then the `Church facts` tab, and press `Add item` under `A different Sunday`.',
+          'Pick `Which day`. It starts on the coming Sunday.',
+          'Pick `What is different`: `A different time`, `Cancelled` or `An extra service`.',
+          'Pick `Which gathering` (or `Everything that day` to cancel the whole day). For an extra service, give it a name instead.',
+          'Type the time the way you would say it, like `10:30 am` or `6 pm`.',
+          'Add a short note if it helps, like "Weather: no Sunday School today".',
+          'Publish (Quick update does this for you).',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'In about two minutes the This Sunday card, the times at the top of the pages, the menu, the footer, This week, the "Add to my calendar" files and Google all show the change, with a small "This Sunday only" tag. The day after, everything shows the usual times again without you doing anything.',
+      },
+      {
+        kind: 'callout',
+        tone: 'tip',
+        title: 'Old changes can stay.',
+        text: 'A change whose day has passed is simply ignored. The Studio marks it so you can remove it when you tidy up, but nothing breaks if you leave it.',
       },
     ],
   },

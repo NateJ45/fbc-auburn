@@ -39,6 +39,7 @@ import { socialIcon } from '@/lib/social-icons';
 import { telHref } from '@/lib/phone';
 import { SILL, SILL_PRINT, SILL_VIEWBOX } from '@/components/home/stones.generated';
 import type { NavItem } from '@/lib/siteSettings';
+import SundayChange from '@/components/church/SundayChange.astro';
 
 interface MenuSunday {
   times: string;
@@ -50,6 +51,8 @@ interface MenuSunday {
   date?: string;
   services?: { time: string; label: string }[];
   confirmed?: boolean;
+  /** A different Sunday (2026-10-26): the change in a sentence, or ''. */
+  change?: string;
 }
 
 interface Props {
@@ -192,8 +195,16 @@ const groupId = (label: string) => `menu-group-${label.replace(/\W+/g, '-').toLo
                     ))}
                   </dl>
                 ) : (
-                  <p class="auburn-menu__times">{sunday.times}</p>
+                  sunday.times && <p class="auburn-menu__times">{sunday.times}</p>
                 )}
+                <SundayChange
+                  sunday={{
+                    changed: Boolean(sunday.change),
+                    change: sunday.change ?? '',
+                    isToday: sunday.title === 'Today',
+                  }}
+                  size="compact"
+                />
                 {sunday.mapsUrl && (
                   <p class="auburn-menu__where auburn-menu__where--compact">
                     <a href={sunday.mapsUrl} rel="noopener" target="_blank">
@@ -321,8 +332,15 @@ const groupId = (label: string) => `menu-group-${label.replace(/\W+/g, '-').toLo
                 ))}
               </dl>
             ) : (
-              <p class="auburn-menu__times">{sunday.times}</p>
+              sunday.times && <p class="auburn-menu__times">{sunday.times}</p>
             )}
+            <SundayChange
+              sunday={{
+                changed: Boolean(sunday.change),
+                change: sunday.change ?? '',
+                isToday: sunday.title === 'Today',
+              }}
+            />
             {sunday.street && (
               <p class="auburn-menu__where">
                 {sunday.street}

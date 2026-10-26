@@ -15,6 +15,7 @@
 //
 // Renders nothing when no Sunday gathering is set.
 import SundayWeather from '@/components/church/SundayWeather.astro';
+import SundayChange from '@/components/church/SundayChange.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { clockLabel, sundayIcs, thisSunday } from '@/lib/church-facts';
 import { watchLive } from '@/lib/live-service';
@@ -46,7 +47,12 @@ const short = (label: string) => label.replace(/ am$/, '');
 // coming Sunday's scheduled stream by name (church-video.ts upcomingStream). Derived, never typed.
 const live = watchLive(facts);
 const stream = live?.check ? await loadUpcomingStream(facts) : null;
-const liveAt = live?.start != null ? short(clockLabel(live.start)) : '';
+// A different Sunday (2026-10-26): the streamed service's time that Sunday, when it moved; no
+// time at all when it is cancelled (the change line already says so).
+const streamed = sunday?.regular.find((s) => s.minutes === live?.start);
+const streamedThatDay = streamed ? sunday?.services.find((s) => s.key === streamed.key) : null;
+const liveStart = sunday?.changed && streamed ? (streamedThatDay?.minutes ?? null) : live?.start;
+const liveAt = liveStart != null ? short(clockLabel(liveStart)) : '';
 const streamHref = stream?.watchUrl ?? live?.href;
 ---
 
@@ -75,6 +81,8 @@ const streamHref = stream?.watchUrl ?? live?.href;
         </>
       ))}
     </dl>
+    {/* A different Sunday (2026-10-26): the times above are that date's; this says what changed. */}
+    <SundayChange sunday={sunday} class="hb-sunday__change" />
     {hasCalendar && (
       <a class="hb-sunday__cal" href="/sunday.ics" download>
         Add Sundays to my calendar

@@ -847,6 +847,14 @@ D1 once its email is accepted. Until an email path exists, `GET /api/form/` answ
 email and phone from Church facts), so nobody types into a form that cannot send. The Contact
 page's own form and `/api/contact/` are unchanged.
 
+Question kinds (2026-10-26): the shared `formQuestion` (short text, email, phone, long text, choose
+one, yes/no) plus two of Auburn's own, as their own items in the list: `formDateQuestion` ("A
+date", the phone's date picker, "Only from today on" by default) and `formTickQuestion` ("Tick any
+that apply", 2 to 12 boxes). Both are read and checked on the server by `src/lib/church-form.ts`
+(`normalizeFormQuestions`, `validateFormSubmission`); the email lists ticked choices one per line
+and gives a date in words, and D1's `answers` JSON carries `kind` and `values` beside the words. No
+file uploads, on purpose. The shared type stays the starter's PORTABLE copy.
+
 **Switching forms on (Nathan, once; needs the church's domain on Cloudflare and Workers Paid for
 Email Sending).** Run these in PowerShell from the repo root:
 
@@ -859,13 +867,29 @@ Email Sending).** Run these in PowerShell from the repo root:
    sending domain), `npx wrangler secret put CONTACT_TO` (the contact form's and the fallback
    destination), and `npx wrangler secret put FORM_RECIPIENTS` with JSON such as
    `{"office":"office@church.example","pastor":"pastor@church.example"}`. Every address must be a
-   verified destination. A new name in Site settings > Forms needs its key added here; until then
-   its forms go to `office`, then to `CONTACT_TO`.
+   verified destination. A new name in Site settings > Forms can instead get its address from an
+   administrator in the Studio (below); with neither, its forms go to `office`, then to `CONTACT_TO`.
 5. In `wrangler.jsonc`, uncomment the `d1_databases` block (name `fbc-auburn-contact`, the id
    from step 1) and `send_email`, commit and deploy.
 6. Send one labelled test through a live form, then read it back:
    `npx wrangler d1 execute fbc-auburn-contact --remote --command "SELECT id, form_id, notified, notify_error, cleared FROM form_submissions ORDER BY id DESC LIMIT 1"`.
    `notified = 1` is the proof.
+
+**Where messages go, set in the Studio (2026-10-26).** Under Site settings > Forms > Who forms can
+go to, a signed-in ADMINISTRATOR sees "Where their messages go": one row per name plus the Contact
+page, with the address in use and a box to change it (`src/sanity/components/FormRecipientEmails.tsx`,
+`/api/studio/form-recipients/`, `src/lib/form-recipients.ts`). Addresses live in D1
+(`form_recipient_addresses`, `migrations/0005_form_recipients.sql`), never in the dataset. A new
+address is emailed a link (`/api/form-recipient/confirm/`, one button, signed with `MAIL_SECRET`)
+and is used only once confirmed; without the email backbone it is saved as unconfirmed and never
+used. `/api/form/` takes a confirmed D1 address first, then `FORM_RECIPIENTS`, then the office, then
+the "contact" address, then `CONTACT_TO`. To switch it on, Nathan runs once:
+`npx wrangler d1 migrations apply fbc-auburn-contact --remote` (adds the table; until then the panel
+says one more step is needed and the secret decides). On Cloudflare Email Sending, a destination
+must be verified in Cloudflare before mail reaches it, so verify the new address there too (Resend
+has no such step). `/api/contact/` (the starter's PORTABLE route) still reads `CONTACT_TO`; the
+Contact row's address is used by `/api/form/` as its last fallback until the starter gives
+`/api/contact/` the same lookup.
 
 Without Workers Paid, `npx wrangler secret put WEB3FORMS_KEY` is the fallback email path, but it
 emails the Web3Forms account's own address whatever the recipient, so prayer requests would go there

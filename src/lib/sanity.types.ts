@@ -778,6 +778,16 @@ export type SiteSettings = {
     _type: 'serviceTime';
     _key: string;
   }>;
+  timeChanges?: Array<{
+    date?: string;
+    change?: 'time' | 'cancelled' | 'extra';
+    service?: string;
+    time?: string;
+    label?: string;
+    note?: string;
+    _type: 'timeChange';
+    _key: string;
+  }>;
   phoneConfirmed?: boolean;
   phoneTakesTexts?: boolean;
   emailConfirmed?: boolean;
@@ -1256,9 +1266,15 @@ export type Form = {
   askForContact?: boolean;
   allowAnonymous?: boolean;
   questions?: Array<
-    {
-      _key: string;
-    } & FormQuestion
+    | ({
+        _key: string;
+      } & FormQuestion)
+    | ({
+        _key: string;
+      } & FormDateQuestion)
+    | ({
+        _key: string;
+      } & FormTickQuestion)
   >;
   submitLabel?: string;
   successMessage?: string;
@@ -2017,6 +2033,20 @@ export type HeroSection = {
   primaryCta?: CtaBlock;
   secondaryCta?: CtaBlock;
   size?: 'tall' | 'short';
+};
+
+export type FormTickQuestion = {
+  _type: 'formTickQuestion';
+  label?: string;
+  options?: Array<string>;
+  required?: boolean;
+};
+
+export type FormDateQuestion = {
+  _type: 'formDateQuestion';
+  label?: string;
+  notPast?: boolean;
+  required?: boolean;
 };
 
 export type FormQuestion = {
@@ -4199,6 +4229,8 @@ export type AllSanitySchemaTypes =
   | ImageTextSection
   | RichTextSection
   | HeroSection
+  | FormTickQuestion
+  | FormDateQuestion
   | FormQuestion
   | PrivacyPage
   | Page

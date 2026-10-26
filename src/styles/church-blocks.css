@@ -1182,6 +1182,7 @@
 .cb-field input[type='text'],
 .cb-field input[type='email'],
 .cb-field input[type='tel'],
+.cb-field input[type='date'],
 .cb-field select,
 .cb-field textarea {
   width: 100%;
@@ -1216,6 +1217,34 @@
   height: 1.25rem;
   margin-top: 0.2rem;
   flex: none;
+}
+/* "Tick any that apply" (2026-10-26): a fieldset of boxes under its question, no frame of its own.
+   A date question uses the same box as text (input[type='date'] above): the phone's own picker. */
+fieldset.cb-field {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+fieldset.cb-field legend {
+  padding: 0;
+  margin-bottom: 0.35rem;
+}
+.cb-ticks__hint {
+  margin: -0.2rem 0 0.15rem;
+  color: var(--muted-foreground);
+  font-size: var(--fs-small);
+}
+.cb-ticks .cb-check {
+  min-height: 44px;
+  align-items: center;
+}
+.cb-ticks .cb-check input {
+  margin-top: 0;
+}
+.cb-field[data-invalid] .cb-check input {
+  outline: 2px solid #7e2e20;
+  outline-offset: 2px;
 }
 .cb-error {
   margin: 0;

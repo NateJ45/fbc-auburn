@@ -10,6 +10,24 @@ itself; unknown script code never runs on the page; a known service's script ori
 policy only on builds that use it (`build-embed-csp.mjs`). Docs: `studio-links.md`, `seo.md` (Short links, QR
 codes), `custom-code.md` (Paste-and-go).
 
+_2026-10-26: a different Sunday, form addresses in the Studio, and two new question kinds (Studio self-serve)._
+
+**Decision.** Nathan wants Pastor Jacob to do the everyday changes himself. Three of them land here.
+(1) **A different Sunday**: Church facts > A different Sunday holds dated changes (a different time,
+cancelled, an extra service, a note). The This Sunday cards, the times band, the Sunday bar, the
+menu card, the footer panel, This week, the Live now banner, the JSON-LD (`exceptDate` plus dated
+Events) and both `.ics` files show it for that date, and the next morning's rebuild puts the usual
+times back; Quick update gains "Change this Sunday's times". Build time, not a browser check, because
+the JSON-LD and calendar files cannot be fixed in a browser and the site already rebuilds on publish
+and every morning (`docs/agent/church-data.md`). (2) **Where form messages go**: an administrator sets
+each recipient's address (and the Contact page's) under Site settings > Forms; addresses live in D1
+(`migrations/0005_form_recipients.sql`, not yet applied), are confirmed by an emailed link before use,
+and `/api/form/` reads them before `FORM_RECIPIENTS` (OPERATIONS.md, "Forms"). `/api/contact/` is the
+starter's PORTABLE route and still reads `CONTACT_TO`. (3) **A date** and **Tick any that apply**
+join the form builder as Auburn's own question types (`formQuestionMore.ts`), checked on the server,
+laid out in the email and stored with `kind` and `values` in D1; the shared `formQuestion` is
+untouched.
+
 _2026-10-26: "Invite a helper" (the People tool)._ An administrator can now add someone from inside the Studio: `People` in the top bar takes a name, an email and Helper (Sanity Editor: edits and publishes, the simple staff view, no permanent delete) or Administrator, lists the members and the pending invitations, and resends or cancels one. It calls Sanity's Access API through `/api/studio/people/`, which only an administrator can use, with the new Worker secret `SANITY_MEMBERS_TOKEN` (an Access Manager robot token); Administrator invites go out as the caller, since Sanity lets only administrators invite administrators. On a plan with no Editor role (the free plan) Helper is greyed out and the tool shows the sanity.io/manage steps. New guide "Add someone to help with the website". The staff view already follows the role while `kitConfig.staff` is empty; making the id list add to the role rule is a starter change to `studio-kit.ts`. Detail: `docs/agent/studio-people.md`.
 
 _2026-10-26: searching your own misspelling finds nothing honestly (starter card 166)._ Nathan: fix it. Pressing "Search for "cnotact" instead" said "1 result" and showed the Give page, which has no such word: Pagefind 1.5 returns loose pages for some typos. That search now drops pages that matched no word (`matchedOnly()` in `src/lib/site-search-client.ts`), so it says "Nothing found"; every other search is unchanged. It also turned up intermittently as a failed `tests/search.spec.ts` misspelling test in CI.

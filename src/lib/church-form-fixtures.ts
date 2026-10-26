@@ -26,6 +26,14 @@ export const FIXTURE_FORMS: Record<string, Record<string, unknown>> = {
       { _key: 'q2', _type: 'formQuestion', label: 'Phone (optional)', kind: 'phone' },
       { _key: 'q3', _type: 'formQuestion', label: 'Anything else?', kind: 'textarea' },
       { _key: 'q4', _type: 'formQuestion', label: 'I am over 18', kind: 'checkbox' },
+      // The two Auburn kinds (2026-10-26, formQuestionMore.ts).
+      {
+        _key: 'q5',
+        _type: 'formTickQuestion',
+        label: 'Which Sundays could you help?',
+        options: ['First Sunday', 'Second Sunday', 'Third Sunday', 'Fourth Sunday'],
+      },
+      { _key: 'q6', _type: 'formDateQuestion', label: 'When could you start?', notPast: true },
     ],
     submitLabel: 'Sign me up',
   },

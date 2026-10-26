@@ -11,8 +11,9 @@
 // NO PERSONAL DATA IN SANITY. The public dataset holds the questions only.
 // Answers go to the Worker, which stores them in its own D1 database and emails
 // them; they never come back here. Who receives them is a recipient KEY from
-// Site settings > Forms; the matching email address lives in the Worker
-// secret FORM_RECIPIENTS, never in the dataset (OPERATIONS.md, "Forms").
+// Site settings > Forms; the matching email address lives in the Worker's D1
+// database, set there by an administrator (src/lib/form-recipients.ts, 2026-10-26), or in
+// the Worker secret FORM_RECIPIENTS, never in the dataset (OPERATIONS.md, "Forms").
 //
 // RULE 8b: `mode` and `recipient` drive logic, so both are in NON_STEGA_FIELDS.
 // =============================================================================
@@ -20,6 +21,7 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { ClipboardIcon } from '@sanity/icons/Clipboard';
 import { FormRecipientInput } from '../components/FormRecipientInput';
+import { FormRecipientsInput } from '../components/FormRecipientEmails';
 
 /** The recipients every site starts with. Their addresses are set in the Worker. */
 export const DEFAULT_FORM_RECIPIENTS = [
@@ -68,7 +70,7 @@ export const form = defineType({
       title: 'Who receives it',
       type: 'string',
       description:
-        'The people on this list are set in Site settings > Forms. Adding someone new needs Nathan to connect their email address; until then their forms go to the church office.',
+        'The people on this list are set in Site settings > Forms, where an administrator also sets the email address each one gets. Until someone has an address, their forms go to the church office.',
       components: { input: FormRecipientInput },
       initialValue: 'office',
       validation: (R) => R.required(),
@@ -93,8 +95,14 @@ export const form = defineType({
       name: 'questions',
       title: 'Questions',
       type: 'array',
-      description: 'Up to 12. They come after the name and email boxes.',
-      of: [defineArrayMember({ type: 'formQuestion' })],
+      description:
+        'Up to 12. They come after the name and email boxes. Press Add item for a question, a date, or a list to tick any that apply.',
+      // 2026-10-26: a date and "tick any that apply" join the shared question (formQuestionMore.ts).
+      of: [
+        defineArrayMember({ type: 'formQuestion' }),
+        defineArrayMember({ type: 'formDateQuestion' }),
+        defineArrayMember({ type: 'formTickQuestion' }),
+      ],
       validation: (R) => R.max(12),
     }),
     defineField({
@@ -134,8 +142,10 @@ export const formSettingsFields = [
     type: 'array',
     group: 'forms',
     description:
-      'The names a form can be sent to. Email addresses are not kept here, because this information is public: Nathan connects each name to its address on the website’s server. Rename freely; to add someone, ask Nathan.',
+      'The names a form can be sent to. Their email addresses are not kept in this list, because this information is public: an administrator sets each one under the list, and it is kept on the website’s server. Rename freely.',
     initialValue: DEFAULT_FORM_RECIPIENTS,
+    // 2026-10-26: the administrator-only "Where their messages go" panel under the list.
+    components: { input: FormRecipientsInput },
     of: [
       defineArrayMember({
         type: 'object',
@@ -154,7 +164,7 @@ export const formSettingsFields = [
             title: 'Short code',
             type: 'string',
             description:
-              'Lowercase letters only, like "office". Nathan uses it to connect the email address. Do not change it once forms use it.',
+              'Lowercase letters only, like "office". The website uses it to find the email address. Do not change it once forms use it.',
             validation: (R) =>
               R.required().regex(/^[a-z][a-z0-9-]{1,30}$/, { name: 'lowercase code like office' }),
           }),

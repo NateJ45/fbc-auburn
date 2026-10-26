@@ -128,6 +128,35 @@ test.describe('church section library', () => {
     await expect(form.locator('[data-cb-done]')).toBeVisible();
   });
 
+  test('a date and "tick any that apply" are labelled and post their answers (2026-10-26)', async ({
+    page,
+  }) => {
+    await openWall(page);
+    const seen: { body?: { answers?: unknown[] } } = {};
+    await page.route('**/api/form/', (r) => {
+      if (r.request().method() === 'POST') seen.body = r.request().postDataJSON();
+      return r.fulfill({ contentType: 'application/json', body: '{"ok":true}' });
+    });
+    const form = block(page, 'formSection');
+    // The tick list is a group named by its question, with a box per choice.
+    const ticks = form.getByRole('group', { name: /Which Sundays could you help\?/ });
+    await expect(ticks.getByRole('checkbox')).toHaveCount(4);
+    await ticks.getByLabel('Second Sunday').check();
+    await ticks.getByLabel('Fourth Sunday').check();
+    // The date box is a real date input, with today as its earliest day.
+    const date = form.getByLabel(/When could you start\?/);
+    await expect(date).toHaveAttribute('type', 'date');
+    await expect(date).toHaveAttribute('min', /^\d{4}-\d{2}-\d{2}$/);
+    await date.fill('2099-01-04');
+    await form.getByLabel('Your name').fill('Test visitor');
+    await form.getByLabel('Your email').fill('test@example.org');
+    await form.getByLabel('Which would you like to help with?').selectOption('Kitchen');
+    await form.getByRole('button', { name: 'Sign me up' }).click();
+    await expect(form.locator('[data-cb-done]')).toBeVisible();
+    expect(seen.body?.answers?.[4]).toEqual(['Second Sunday', 'Fourth Sunday']);
+    expect(seen.body?.answers?.[5]).toBe('2099-01-04');
+  });
+
   test('the form says "email us instead" while forms cannot be delivered', async ({ page }) => {
     await openWall(page, false);
     const form = block(page, 'formSection');
