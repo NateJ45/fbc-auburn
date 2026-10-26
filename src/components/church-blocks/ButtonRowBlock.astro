@@ -3,6 +3,7 @@
 // A row of two to six links: as outline buttons (the page's one red button stays the page's own
 // main action, so these are all the secondary family, rule 17), or as cards with a line of text.
 import ChurchBand from './ChurchBand.astro';
+import type { CadenceSurface } from '@/lib/surfaces';
 import CtaLink from '@/components/CtaLink.astro';
 import { ctaHref } from '@/lib/cta-href';
 import { plain } from '@/lib/church-facts';
@@ -10,7 +11,7 @@ import type { ProjectedButtonRowSection } from '@/lib/churchBlocks.types';
 
 interface Props {
   block: ProjectedButtonRowSection;
-  surface?: 'background' | 'muted';
+  surface?: CadenceSurface;
   headingId: string;
 }
 const { block, surface, headingId } = Astro.props;

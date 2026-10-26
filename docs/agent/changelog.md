@@ -15,6 +15,15 @@ live content (run before the deploy, which the old code ignored). The orphaned Q
 the Studio's page lists. Pages look the same; the differences are in the parity notes of the PR.
 Docs: `page-architecture.md`, `sanity.md`, `routes.md`.
 
+_2026-10-26: event and holiday page blocks._ Three new page-builder blocks so Jacob can build an event
+page himself: **Event details** (dates and times from a list, the place or the church's own address from
+Church facts, a photo, a sign-up button, an automatic "Add to my calendar" file and Directions; past dates
+drop off and the block comes down after the last one), **Schedule** (times and what happens, by day) and
+**Cards with photos** (two to six, columns from the count). The opening banner gains a Style, "Photo behind
+the words", which draws Home's photo hero on any page; Home's hero now shares that frame
+(`PhotoHero.astro`, styles moved to `photo-hero.css`, Home parity unchanged). `look` reaches six more
+blocks. Docs: `docs/agent/sanity.md` ("Event and holiday page blocks").
+
 _2026-10-26: the embed registry moves to the starter (card 172)._ `src/lib/embed-providers.ts`,
 its test and `EmbedPasteInput.tsx` are PORTABLE copies now, and the PORTABLE `build-csp.mjs`
 adds a known embed service's script origins itself, so `build-embed-csp.mjs` and

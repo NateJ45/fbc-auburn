@@ -16,7 +16,7 @@ sequence).
 
 ## Waiting on a human
 
-### 1zr. Every main page a page builder: Jacob's two asks and a signed-in look (opened 2026-10-26)
+### 1zq. Every main page a page builder: Jacob's two asks and a signed-in look (opened 2026-10-26)
 
 Contact, Privacy, News and notes and Sermons are page builders, and Give and This week's bulletin
 are Studio pages (`page-give`, `page-bulletin`; changelog 2026-10-26). Left:
@@ -28,6 +28,17 @@ are Studio pages (`page-give`, `page-bulletin`; changelog 2026-10-26). Left:
   filled the pre-launch ask shows in its place.
 - **Signed in:** open each converted page in the Studio as Jacob would and drag a section, to see the
   Page layout tab is the one that opens.
+
+### 1zr. Event and holiday page blocks: the signed-in click-through, and an event template (opened 2026-10-26)
+
+The blocks are in (changelog 2026-10-26, `docs/agent/sanity.md`), checked on the sections wall at 320,
+375 and 1280 and by `tests/builder-blocks.spec.ts`. Still to do:
+
+- **Signed in:** add an Event details, a Schedule and Cards with photos to a test page in the Studio,
+  pick times from the list, set the opening banner to "Photo behind the words", and read the preview.
+  Not done in the build session (localhost is not a CORS origin for the project).
+- **Optional:** a page template "Seasonal: Event page" (photo banner, Event details, Schedule, Cards
+  with photos, closing band) in `src/sanity/pageTemplates.ts`, so Jacob starts from the full shape.
 
 ### 1zs. Studio self-serve: switch-ons and ports (opened 2026-10-26)
 

@@ -71,6 +71,15 @@ export type Logo = {
   _type: 'image';
 };
 
+export type PhotoCardImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "photoCard.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type PageReference = {
   _ref: string;
   _type: 'reference';
@@ -333,6 +342,15 @@ export type PrivatePage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -1252,12 +1270,298 @@ export type SectionPreset = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & FaqSection)
     | ({
         _key: string;
       } & DynamicListSection)
   >;
   note?: string;
+};
+
+export type PhotoCardsSection = {
+  _type: 'photoCardsSection';
+  heading?: string;
+  intro?: string;
+  cards?: Array<{
+    image?: PhotoCardImage;
+    title?: string;
+    body?: string;
+    link?: CtaBlock;
+    _type: 'photoCard';
+    _key: string;
+  }>;
+  look?: 'standard' | 'stone';
+};
+
+export type ScheduleSection = {
+  _type: 'scheduleSection';
+  heading?: string;
+  intro?: string;
+  days?: Array<{
+    title?: string;
+    items?: Array<{
+      startTime?:
+        | '06:00'
+        | '06:15'
+        | '06:30'
+        | '06:45'
+        | '07:00'
+        | '07:15'
+        | '07:30'
+        | '07:45'
+        | '08:00'
+        | '08:15'
+        | '08:30'
+        | '08:45'
+        | '09:00'
+        | '09:15'
+        | '09:30'
+        | '09:45'
+        | '10:00'
+        | '10:15'
+        | '10:30'
+        | '10:45'
+        | '11:00'
+        | '11:15'
+        | '11:30'
+        | '11:45'
+        | '12:00'
+        | '12:15'
+        | '12:30'
+        | '12:45'
+        | '13:00'
+        | '13:15'
+        | '13:30'
+        | '13:45'
+        | '14:00'
+        | '14:15'
+        | '14:30'
+        | '14:45'
+        | '15:00'
+        | '15:15'
+        | '15:30'
+        | '15:45'
+        | '16:00'
+        | '16:15'
+        | '16:30'
+        | '16:45'
+        | '17:00'
+        | '17:15'
+        | '17:30'
+        | '17:45'
+        | '18:00'
+        | '18:15'
+        | '18:30'
+        | '18:45'
+        | '19:00'
+        | '19:15'
+        | '19:30'
+        | '19:45'
+        | '20:00'
+        | '20:15'
+        | '20:30'
+        | '20:45'
+        | '21:00'
+        | '21:15'
+        | '21:30'
+        | '21:45'
+        | '22:00'
+        | '22:15'
+        | '22:30'
+        | '22:45'
+        | '23:00'
+        | '23:15'
+        | '23:30'
+        | '23:45';
+      title?: string;
+      note?: string;
+      _type: 'scheduleItem';
+      _key: string;
+    }>;
+    _type: 'scheduleDay';
+    _key: string;
+  }>;
+  look?: 'standard' | 'feature' | 'stone';
+};
+
+export type EventDetailsSection = {
+  _type: 'eventDetailsSection';
+  eyebrow?: string;
+  title?: string;
+  occurrences?: Array<{
+    date?: string;
+    startTime?:
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    endTime?:
+      | '06:00'
+      | '06:15'
+      | '06:30'
+      | '06:45'
+      | '07:00'
+      | '07:15'
+      | '07:30'
+      | '07:45'
+      | '08:00'
+      | '08:15'
+      | '08:30'
+      | '08:45'
+      | '09:00'
+      | '09:15'
+      | '09:30'
+      | '09:45'
+      | '10:00'
+      | '10:15'
+      | '10:30'
+      | '10:45'
+      | '11:00'
+      | '11:15'
+      | '11:30'
+      | '11:45'
+      | '12:00'
+      | '12:15'
+      | '12:30'
+      | '12:45'
+      | '13:00'
+      | '13:15'
+      | '13:30'
+      | '13:45'
+      | '14:00'
+      | '14:15'
+      | '14:30'
+      | '14:45'
+      | '15:00'
+      | '15:15'
+      | '15:30'
+      | '15:45'
+      | '16:00'
+      | '16:15'
+      | '16:30'
+      | '16:45'
+      | '17:00'
+      | '17:15'
+      | '17:30'
+      | '17:45'
+      | '18:00'
+      | '18:15'
+      | '18:30'
+      | '18:45'
+      | '19:00'
+      | '19:15'
+      | '19:30'
+      | '19:45'
+      | '20:00'
+      | '20:15'
+      | '20:30'
+      | '20:45'
+      | '21:00'
+      | '21:15'
+      | '21:30'
+      | '21:45'
+      | '22:00'
+      | '22:15'
+      | '22:30'
+      | '22:45'
+      | '23:00'
+      | '23:15'
+      | '23:30'
+      | '23:45';
+    label?: string;
+    _type: 'eventDate';
+    _key: string;
+  }>;
+  place?: string;
+  note?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: 'image';
+  };
+  button?: CtaBlock;
+  showCalendar?: boolean;
+  look?: 'standard' | 'stone';
 };
 
 export type RsvpSection = {
@@ -1373,6 +1677,7 @@ export type ColumnsSection = {
     _type: 'textColumn';
     _key: string;
   }>;
+  look?: 'standard' | 'feature' | 'stone';
 };
 
 export type ContactCardSection = {
@@ -1393,6 +1698,7 @@ export type ButtonRowSection = {
     _type: 'quickLink';
     _key: string;
   }>;
+  look?: 'standard' | 'stone';
 };
 
 export type AffiliationsSection = {
@@ -1861,6 +2167,7 @@ export type IconCardsSection = {
     _type: 'iconCard';
     _key: string;
   }>;
+  look?: 'standard' | 'stone';
 };
 
 export type EmbedSection = {
@@ -2097,6 +2404,7 @@ export type HeroSection = {
     alt?: string;
     _type: 'image';
   };
+  heroStyle?: 'arch' | 'photo';
   backgroundVideo?: {
     asset?: SanityFileAssetReference;
     media?: unknown;
@@ -2288,6 +2596,15 @@ export type PrivacyPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2493,6 +2810,15 @@ export type PrivacyPage = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -2653,6 +2979,15 @@ export type Page = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -2998,6 +3333,15 @@ export type SermonsPage = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
     | ({
         _key: string;
@@ -3181,6 +3525,15 @@ export type SermonsPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3476,6 +3829,15 @@ export type JournalPage = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
     | ({
         _key: string;
@@ -3669,6 +4031,15 @@ export type JournalPage = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -3827,6 +4198,15 @@ export type ContactPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -4050,6 +4430,15 @@ export type ContactPage = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -4248,6 +4637,15 @@ export type FaqPage = {
       } & RsvpSection)
     | ({
         _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -4406,6 +4804,15 @@ export type AboutPage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -4673,6 +5080,15 @@ export type HomePage = {
     | ({
         _key: string;
       } & RsvpSection)
+    | ({
+        _key: string;
+      } & EventDetailsSection)
+    | ({
+        _key: string;
+      } & ScheduleSection)
+    | ({
+        _key: string;
+      } & PhotoCardsSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -4947,6 +5363,7 @@ export type AllSanitySchemaTypes =
   | LastMessage
   | TimelineEntryImage
   | Logo
+  | PhotoCardImage
   | PageReference
   | HomePageReference
   | AboutPageReference
@@ -4992,6 +5409,9 @@ export type AllSanitySchemaTypes =
   | SectionPresetReference
   | SyncedSection
   | SectionPreset
+  | PhotoCardsSection
+  | ScheduleSection
+  | EventDetailsSection
   | RsvpSection
   | ChurchTracPageSection
   | ChurchTracFormSection

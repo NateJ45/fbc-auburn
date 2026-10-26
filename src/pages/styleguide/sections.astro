@@ -824,6 +824,188 @@ const SECTIONS: Record<string, unknown>[] = [
   },
   // The email backbone (card 127): the made-up event in mail-fixtures.ts.
   { ...FIXTURE_RSVP_BLOCK, _type: 'rsvpSection' },
+  // ── The event and holiday page blocks (builderSections.ts, 2026-10-26) ──
+  // Made-up dates a month out (SOON), so the event never expires on the wall; no church facts are
+  // typed: the place is left empty, so the church's address comes from Church facts.
+  {
+    _type: 'eventDetailsSection',
+    _key: 'bb-event',
+    eyebrow: 'Christmas at Auburn',
+    title: 'Christmas Eve',
+    occurrences: [
+      {
+        _key: 'o1',
+        _type: 'eventDate',
+        date: SOON(30),
+        startTime: '16:00',
+        endTime: '17:00',
+        label: 'Family service',
+      },
+      {
+        _key: 'o2',
+        _type: 'eventDate',
+        date: SOON(30),
+        startTime: '19:00',
+        endTime: '20:00',
+        label: 'Candlelight service',
+      },
+    ],
+    note: 'An evening of carols, Scripture and candlelight. Children are welcome in every part of it.',
+    image: image('Candles held up during a carol'),
+    button: cta('Tell us you are coming'),
+    showCalendar: true,
+  },
+  {
+    _type: 'scheduleSection',
+    _key: 'bb-schedule',
+    heading: 'The weekend at a glance',
+    days: [
+      {
+        _key: 'd1',
+        _type: 'scheduleDay',
+        title: 'Christmas Eve',
+        items: [
+          {
+            _key: 'i1',
+            _type: 'scheduleItem',
+            startTime: '16:00',
+            title: 'Children’s pageant',
+            note: 'In the sanctuary',
+          },
+          {
+            _key: 'i2',
+            _type: 'scheduleItem',
+            startTime: '17:00',
+            title: 'Cookies and cocoa',
+            note: 'Fellowship hall',
+          },
+          { _key: 'i3', _type: 'scheduleItem', startTime: '19:00', title: 'Candlelight service' },
+        ],
+      },
+      {
+        _key: 'd2',
+        _type: 'scheduleDay',
+        title: 'Christmas Day',
+        items: [
+          {
+            _key: 'i4',
+            _type: 'scheduleItem',
+            startTime: '10:30',
+            title: 'Christmas morning worship',
+            note: 'One service only',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    _type: 'photoCardsSection',
+    _key: 'bb-photocards',
+    heading: 'Ways to join in',
+    cards: [
+      {
+        _key: 'p1',
+        _type: 'photoCard',
+        image: image('Children singing in a row'),
+        title: 'Sing with the children',
+        body: 'Rehearsals on the two Sundays before.',
+        link: cta('Sign up'),
+      },
+      {
+        _key: 'p2',
+        _type: 'photoCard',
+        image: image('A table of cookies'),
+        title: 'Bring cookies',
+        body: 'Drop them in the fellowship hall by 3:30.',
+      },
+      {
+        _key: 'p3',
+        _type: 'photoCard',
+        image: image('Greeters at the front door'),
+        title: 'Greet at the door',
+        body: 'Hand out candles and welcome guests.',
+        link: cta('Volunteer'),
+      },
+    ],
+  },
+];
+
+// Variants of the event-page blocks for tests/builder-blocks.spec.ts: the photo opening banner, an
+// event with no photo and a typed place, a one-day schedule on the Feature look and two cards on
+// Stone. NOT shot by the thumbnails script (it shoots [data-section-type] boxes only).
+const BUILDER_CHECKS: Record<string, unknown>[] = [
+  {
+    _type: 'heroSection',
+    _key: 'bb-hero-photo',
+    heroStyle: 'photo',
+    eyebrow: 'This December',
+    headline: 'Christmas at Auburn',
+    subhead: 'Carols, Scripture and candlelight for the whole family.',
+    backgroundImage: image('Candles in the dark'),
+    primaryCta: cta('Plan your evening'),
+    secondaryCta: cta('See the schedule'),
+  },
+  {
+    _type: 'eventDetailsSection',
+    _key: 'bb-event-plain',
+    title: 'Fall festival',
+    occurrences: [
+      { _key: 'o1', _type: 'eventDate', date: SOON(40), startTime: '14:00', endTime: '17:00' },
+    ],
+    place: 'Example Park shelter\n100 Example Street',
+    note: 'Games, hay rides and chili.',
+    button: cta('Sign up to help'),
+  },
+  {
+    _type: 'eventDetailsSection',
+    _key: 'bb-event-past',
+    title: 'Already happened',
+    occurrences: [{ _key: 'o1', _type: 'eventDate', date: SOON(-3) }],
+  },
+  {
+    _type: 'scheduleSection',
+    _key: 'bb-schedule-one',
+    heading: 'Vacation Bible School mornings',
+    look: 'feature',
+    days: [
+      {
+        _key: 'd1',
+        _type: 'scheduleDay',
+        items: [
+          { _key: 'i1', _type: 'scheduleItem', startTime: '09:00', title: 'Opening songs' },
+          {
+            _key: 'i2',
+            _type: 'scheduleItem',
+            startTime: '09:30',
+            title: 'Bible story',
+            note: 'By age group',
+          },
+          { _key: 'i3', _type: 'scheduleItem', title: 'Snack and games' },
+        ],
+      },
+    ],
+  },
+  {
+    _type: 'photoCardsSection',
+    _key: 'bb-photocards-two',
+    look: 'stone',
+    cards: [
+      {
+        _key: 'p1',
+        _type: 'photoCard',
+        image: image('A stack of hymnals'),
+        title: 'Two cards side by side',
+        body: 'Two cards make a pair.',
+      },
+      {
+        _key: 'p2',
+        _type: 'photoCard',
+        image: image('An open door'),
+        title: 'The second card',
+        link: cta('Read more'),
+      },
+    ],
+  },
 ];
 ---
 
@@ -837,6 +1019,9 @@ const SECTIONS: Record<string, unknown>[] = [
       <SectionRenderer sections={[section]} idPrefix={`fx-${String(section._key)}`} />
     </div>
   ))}
+  <div data-builder-checks>
+    <SectionRenderer sections={BUILDER_CHECKS} idPrefix="fx-builder" />
+  </div>
   <div data-custom-code-checks>
     <SectionRenderer sections={CODE_CHECKS} idPrefix="fx-code" trustedCode />
   </div>
