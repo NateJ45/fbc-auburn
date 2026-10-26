@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-26: searching your own misspelling finds nothing honestly (starter card 166)._ Nathan: fix it. Pressing "Search for "cnotact" instead" said "1 result" and showed the Give page, which has no such word: Pagefind 1.5 returns loose pages for some typos. That search now drops pages that matched no word (`matchedOnly()` in `src/lib/site-search-client.ts`), so it says "Nothing found"; every other search is unchanged. It also turned up intermittently as a failed `tests/search.spec.ts` misspelling test in CI.
+
 _2026-10-26: search waits for its index to be written whole (starter card 165)._ This PR's CI artifact carried `pagefind/pagefind.js` cut at 32,768 of 45,555 bytes, so every search said "Search is not available right now". `build-search-index.mjs` closed Pagefind before its binary had flushed; it now waits for `dist/client/pagefind/` to settle, then syntax-checks every script it wrote and fails the build on a cut one.
 
 _2026-10-26: American spelling everywhere (starter cards 163 and 164)._ Nathan's call: every family site is American English. Starter cards 163 and 164 copied byte-identical (164 moves the shared Studio and site text to American spelling, including "check" for a checkbox and "Website inquiry" as the contact email subject, and makes `build-csp.mjs` fail when the CSP line passes 2,000 characters). This site's own strings had the same pass: text only, no field name, option value, key, slug or CSS class renamed. The live Sanity content was checked the same day and fixed where needed.
