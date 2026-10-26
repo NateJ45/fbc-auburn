@@ -3,6 +3,12 @@
 This site's own additions to the Studio kit. They are kept here rather than in `studio-kit.md`,
 because that file is a PORTABLE copy from the starter.
 
+Since starter card 171 the short-link and QR logic is PORTABLE too: `src/lib/short-links.ts`,
+`src/lib/qr.ts` (and their tests), `src/sanity/actions/qrCode.tsx` and
+`src/sanity/components/ShortLinkAddressInput.tsx` are byte-identical copies of the starter's, so
+edit them there. The schema, the guides, the Quick update tile and the `astro.config.mjs` wiring
+(which passes `CHURCH_TIME_ZONE` to `todayIn`) stay this site's own.
+
 | Feature            | Files                                                                                                                                                   | How the pastor reaches it                                                                   |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Short links        | `src/sanity/schemaTypes/shortLink.ts`, `src/sanity/components/ShortLinkAddressInput.tsx`, `src/lib/short-links.ts`, `astro.config.mjs` (`shortLinks()`) | Quick update tile "Make a short link" (opens a new short link), or Pages > Short links      |

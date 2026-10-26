@@ -1,6 +1,7 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
 // =============================================================================
-// qr - crisp QR code files for bulletins and flyers (2026-10-26)
+// qr - crisp QR code files for flyers and print (PORTS.md card 171)
 // =============================================================================
 // The Studio's "QR code" button (src/sanity/actions/qrCode.tsx) asks
 // qrcode-generator (MIT, no dependencies, Studio bundle only) for the code's
@@ -71,7 +72,7 @@ export function qrPngScale(grid: QrGrid, minPx = 1200, margin = QUIET_ZONE): num
   return Math.max(1, Math.ceil(minPx / size));
 }
 
-/** A safe file name from what the code points at ("qr-vbs", "qr-plan-your-visit"). */
+/** A safe file name from what the code points at ("qr-spring", "qr-our-team"). */
 export function qrFileName(url: string): string {
   let tail = '';
   try {
