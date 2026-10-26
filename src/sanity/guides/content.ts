@@ -40,6 +40,7 @@
 // =============================================================================
 
 import { collectionGuides } from './collections.ts';
+import { peopleGuides } from './people.ts';
 import { EVERY_WEEK, WEEKLY_CATEGORY, weeklyGuides } from './weekly.ts';
 
 import type { KitGuideBlock } from '../kit/guide/GuidePage';
@@ -1510,6 +1511,9 @@ guides.push(
 
 // The sermon, people and downloads guides (FBC Auburn, 2026-10-18).
 guides.push(...collectionGuides);
+
+// Adding someone to help: the People tool (FBC Auburn, 2026-10-26).
+guides.push(...peopleGuides);
 
 // ── Workflow tools (PORTS.md card 117) ───────────────────────────────────────
 // Appended like the kit helpers above, so a site rewriting its guides keeps them.

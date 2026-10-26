@@ -94,11 +94,14 @@ export const kitConfig: KitConfig = {
     email: envVal('PUBLIC_STUDIO_HELP_EMAIL'),
   },
 
-  // Sanity user ids of the people who get the staff view. The pastor is a
-  // Sanity Administrator, so he is listed here rather than relying on his
-  // role. Add his id once he has accepted the invitation (sanity.io/manage,
-  // Members). Until the list has an entry, anyone who is not an administrator
-  // gets the staff view.
+  // Who gets the staff view (the simple Studio, no permanent delete) is decided
+  // by ROLE: anyone whose Sanity role is not Administrator. So a Helper invited
+  // from the People tool (Sanity's Editor role, src/lib/studio-people.ts) gets
+  // it with no code change. This list is only an OVERRIDE for administrators
+  // who should see the simple view too (the pastor), by Sanity user id.
+  // CAREFUL until the staff-by-role starter card lands in src/lib/studio-kit.ts:
+  // in today's copy a non-empty list REPLACES the role rule, so adding an id
+  // here would give every Helper the full Studio. Keep it empty until then.
   staff: [],
 
   staffTools: [
