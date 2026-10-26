@@ -1,8 +1,8 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 import { test, expect } from './fixtures';
 
 // =============================================================================
-// Paste-and-go embeds: the guard rail and the provider shape (2026-10-26)
+// Paste-and-go embeds: the guard rail and the provider shape (PORTS.md card 172)
 // =============================================================================
 // /styleguide/sections/ renders GUARD_CHECKS the way Sanity content is
 // rendered (no trustedCode): script code from a service the website does not
