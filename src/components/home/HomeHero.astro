@@ -221,7 +221,9 @@ const secondary = block.secondaryCta;
     if (!frame) return;
 
     const clip = document.createElement('video');
-    clip.className = 'hb-photo__img hb-photo__video';
+    // Not hb-photo__img: the flow layer's scroll drift moves that class, and a moving video gets its
+    // own GPU layer that Chrome can draw above the shade, so the navy wash vanished mid-scroll.
+    clip.className = 'hb-photo__video';
     clip.muted = true;
     clip.defaultMuted = true;
     clip.loop = true;
