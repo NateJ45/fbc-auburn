@@ -10,6 +10,13 @@ text block and band unless a block already holds a word. The formatted line hide
 so one box shows; it appears, replacing the plain one, once the in-canvas editor has bolded a word.
 No field was removed and no page renders differently (parity checked).
 
+_2026-10-26: an open Studio reloads itself after a deploy (PORTS card 179)._ Signed in to the live
+Studio, a tab opened before a deploy showed a raw red "Failed to fetch dynamically imported module" inside the
+image field's Unsplash picker: every merge and every publish redeploys, and Workers keep only the newest build's
+code files. The Studio page now catches that error, says "The Studio was updated", and reloads once after 2.5 s;
+a repeat within a minute offers a Reload button instead of looping. Sanity saves edits as they are typed, so
+nothing is lost. Detail: `docs/agent/studio-kit.md` ("After a deploy").
+
 _2026-10-26: an optional button left empty no longer blocks Publish._ Building a Christmas page in
 the live Studio, a fresh Event details block stopped Publish with "Button text: Required" and "Link type:
 Required" on its optional button: `ctaBlock`'s "Open in new tab" had `initialValue: false`, so every new
