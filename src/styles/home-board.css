@@ -1035,6 +1035,10 @@
     margin-bottom: 20px;
     padding-top: 16px;
   }
+  /* With the clip's Pause button showing, the note starts below it instead of under it. */
+  .hb-hero:has(.hb-video-toggle:not([hidden])) .hb-hero__shot {
+    padding-top: 76px;
+  }
   .hb-hero__shot + .hb-hero__inner .hb-hero__copy {
     padding-top: 0;
   }

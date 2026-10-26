@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-25: a stock clip plays in the Home hero before launch._
+
+**Decision.** Nathan asked for a placeholder church video until Jacob's clips are cut. The hero's
+shot request (`'/|hero'` in `src/data/shot-list.ts`) gains `video: hero-clip`, a 9 second Pexels
+clip of a congregation in wooden pews (RDNE Stock project, re-encoded silent at 720p with fast
+start, 470 KB, credited in `public/shot-examples/CREDITS.md`). `HomeHero.astro` plays it exactly
+like an uploaded Background video (after load, over the example photo as poster, never with reduced
+motion, Save-Data, slow connections or print, with the Pause button). It goes with the shot request
+at launch (`PRE_LAUNCH_NOTES`), and an uploaded video replaces it straight away.
+
 _2026-10-25: the hero video field checks for fast start._
 
 **Decision.** Nathan asked whether the hero video streams like hppres.org's. It does: Sanity's CDN

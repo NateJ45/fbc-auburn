@@ -36,7 +36,7 @@ export interface Shot {
    * subject. Never shipped at launch: it goes with the placeholder.
    */
   example?: { file: string; credit: string; note?: 'end' };
-  /** A short silent clip shown instead of the example photo (the Last Sunday video card). */
+  /** A short silent clip shown instead of the example photo (the Last Sunday card, the Home hero). */
   video?: { file: string; credit: string };
 }
 
@@ -71,6 +71,8 @@ const SHOTS: Record<string, Shot[]> = {
         'Ideally a video: send clips of the church doing what it does (worship, outreach, youth, VBS, a meal, a workday, anything), a few seconds each, phone held sideways and still, no zoom. Clips already on a phone or on Facebook are welcome; send the originals. Nathan cuts them into one silent video that plays behind the welcome words. Any clip with children needs their parents’ permission first. If video is not possible, a still of Sunday worship from behind the last pews works.',
       orientation: 'landscape',
       example: { file: 'hero', credit: 'Christian Harb on Unsplash' },
+      // 2026-10-25: a stock clip plays over the example photo until the church's own video is in.
+      video: { file: 'hero-clip', credit: 'RDNE Stock project on Pexels' },
     },
   ],
   '/|A place to belong': [

@@ -98,6 +98,10 @@ a short silent clip: Studio > Home > Page layout > Opening banner > **Background
 - `tests/hero-video.spec.ts` drives `/styleguide/home-hero/` (fixed data). Playback itself is not
   asserted, since Playwright's browsers differ on H.264.
 
+**Before launch (2026-10-25)** the hero's shot request carries a stock example clip
+(`public/shot-examples/hero-clip.mp4`, Pexels), which plays by the same rules when no video is uploaded
+and goes with the shot request at launch.
+
 **Streaming and fast start (2026-10-25).** The clip is not downloaded before it plays: the browser
 fetches it in pieces with HTTP range requests, which Sanity's CDN answers (`206 Partial Content`),
 and starts after the first few hundred KB. That only works when the .mp4 is saved for **fast
