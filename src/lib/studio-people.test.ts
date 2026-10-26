@@ -25,8 +25,11 @@ const FREE = ['roleViewer'];
 
 describe('role mapping', () => {
   it('a Helper is an Editor, an Administrator is an administrator', () => {
-    assert.equal(sanityRoleFor('helper', GROWTH), 'editor');
-    assert.equal(sanityRoleFor('administrator', GROWTH), 'administrator');
+    assert.equal(sanityRoleFor('helper', GROWTH, 'auto'), 'editor');
+    assert.equal(sanityRoleFor('administrator', GROWTH, 'auto'), 'administrator');
+    // Free for good (2026-10-26): a Growth trial still lists roleEditor, but no Helper is offered.
+    assert.equal(sanityRoleFor('helper', GROWTH, 'free'), null);
+    assert.equal(sanityRoleFor('administrator', GROWTH, 'free'), 'administrator');
   });
 
   it('the free plan has no Helper, but still has Administrator', () => {
@@ -216,6 +219,7 @@ function deps(over: Partial<PeopleDeps> = {}, f = fakeSanity()): PeopleDeps {
     membersToken: 'robot',
     projectId: PROJECT,
     helperName: 'Nathan',
+    plan: 'auto',
     fetchImpl: f.fetchImpl,
     ...over,
   };

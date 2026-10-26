@@ -75,6 +75,18 @@ export const SANITY_ROLE: Record<PlainRole, string> = {
 /** The Sanity feature flag that says the plan has the Editor role. */
 export const EDITOR_FEATURE = 'roleEditor';
 
+/**
+ * The church's chosen Sanity plan (Nathan, 2026-10-26: Free for good). 'free' treats the Editor role
+ * as unavailable even while a Growth trial still reports it, so nobody is invited as a Helper who
+ * would turn into a read-only Viewer when the trial ends. 'auto' trusts the live feature list.
+ */
+export const SANITY_PLAN: 'free' | 'auto' = 'free';
+
+/** Does this plan really have the Editor role (Helper)? */
+export function hasEditorRole(features: string[], plan: 'free' | 'auto' = SANITY_PLAN): boolean {
+  return plan !== 'free' && features.includes(EDITOR_FEATURE);
+}
+
 /** Where the person goes for anything the tool cannot do. */
 export function manageUrl(projectId: string): string {
   return `https://www.sanity.io/manage/project/${projectId}/members`;
@@ -99,9 +111,13 @@ export function plainRoleOf(roleNames: string[]): { key: string; title: string }
  * The Sanity role to invite with, or null when this plan has no such role.
  * `features` is the project's feature list (GET /projects/<id>/features).
  */
-export function sanityRoleFor(role: PlainRole, features: string[]): string | null {
+export function sanityRoleFor(
+  role: PlainRole,
+  features: string[],
+  plan: 'free' | 'auto' = SANITY_PLAN,
+): string | null {
   if (role === 'administrator') return SANITY_ROLE.administrator;
-  return features.includes(EDITOR_FEATURE) ? SANITY_ROLE.helper : null;
+  return hasEditorRole(features, plan) ? SANITY_ROLE.helper : null;
 }
 
 /** Is the caller an administrator of this project (by their real Sanity role)? */
@@ -113,8 +129,8 @@ export function isProjectAdmin(user: Pick<StudioUser, 'roles'> | null | undefine
 export function noHelperSteps(projectId: string, helperName: string): string[] {
   return [
     `The free Sanity plan only has two kinds of account: Administrator (can do everything) and Viewer (can look, cannot edit). There is no Helper in between.`,
-    `To give someone the simple view, ask ${helperName} about moving the website to Sanity's Growth plan, which has the Editor role a Helper uses.`,
-    `Or invite them as an Administrator here, then ask ${helperName} to add them to the simple-view list, so they see the plain Studio with no permanent delete.`,
+    `This website stays on the free plan, so invite a helper as an Administrator here. They can edit everything you can.`,
+    `If you would like them to see the simpler Studio with no permanent delete, ask ${helperName} to add them to the simple-view list.`,
     `You can also manage people yourself at ${manageUrl(projectId)} (Members, then Invite members).`,
   ];
 }
@@ -193,6 +209,8 @@ export interface PeopleDeps {
   projectId: string | undefined;
   /** Who the pastor asks ("Nathan"). */
   helperName: string;
+  /** The church's plan; defaults to SANITY_PLAN. Tests pass 'auto' to exercise a Growth plan. */
+  plan?: 'free' | 'auto';
   fetchImpl?: FetchLike;
 }
 
@@ -385,7 +403,8 @@ export async function handlePeople(request: Request, deps: PeopleDeps): Promise<
           502,
         );
       const users = ((await usersRes.json()) as { data: SanityUser[] }).data;
-      const helperAvailable = feats ? feats.includes(EDITOR_FEATURE) : true;
+      const plan = deps.plan ?? SANITY_PLAN;
+      const helperAvailable = feats ? hasEditorRole(feats, plan) : plan !== 'free';
       return json({
         ok: true,
         configured: true,
@@ -429,7 +448,12 @@ export async function handlePeople(request: Request, deps: PeopleDeps): Promise<
     if (req.action === 'invite') {
       const feats = await features();
       // Unknown plan (Sanity did not say): try the Editor role and let Sanity answer.
-      const sanityRole = sanityRoleFor(req.role, feats ?? [EDITOR_FEATURE]);
+      const plan = deps.plan ?? SANITY_PLAN;
+      const sanityRole = sanityRoleFor(
+        req.role,
+        feats ?? (plan === 'free' ? [] : [EDITOR_FEATURE]),
+        plan,
+      );
       if (!sanityRole)
         return json(
           {
