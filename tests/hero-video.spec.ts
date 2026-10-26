@@ -84,6 +84,28 @@ test.describe('by default', () => {
     await page.reload({ waitUntil: 'load' });
     await expect(page.locator('[data-hero-video-toggle]')).toHaveAttribute('aria-pressed', 'true');
   });
+
+  // Chrome pauses a muted video in a hidden tab and does not always resume it, so a Home opened in
+  // a background tab kept the still photo. Counting play() calls, not playback (codecs differ).
+  test('the clip starts again when a background tab comes to the front', async ({ page }) => {
+    await load(page);
+    await expect(page.locator('.hb-hero video')).toHaveCount(1);
+    const calls = await page.evaluate(async () => {
+      const v = document.querySelector('.hb-hero video') as HTMLVideoElement;
+      v.pause();
+      let n = 0;
+      const play = HTMLMediaElement.prototype.play;
+      HTMLMediaElement.prototype.play = function () {
+        n += 1;
+        return play.call(this);
+      };
+      document.dispatchEvent(new Event('visibilitychange'));
+      await new Promise((r) => setTimeout(r, 50));
+      HTMLMediaElement.prototype.play = play;
+      return n;
+    });
+    expect(calls).toBe(1);
+  });
 });
 
 // Before launch Home has no uploaded clip, so the hero's shot request plays its stock example
