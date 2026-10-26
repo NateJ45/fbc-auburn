@@ -43,6 +43,7 @@ import { churchToday } from '../lib/sermons';
 import { runPageCheck } from './actions/checkPage';
 import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
 import { slugify } from '../lib/slugify';
+import { OWN_NEWSLETTER, OWN_NEWSLETTER_JOBS } from './ownNewsletter';
 
 const PUBLISHED = '!(_id in path("drafts.**"))';
 
@@ -724,6 +725,8 @@ export const kitConfig: KitConfig = {
     // The email backbone (card 127): the Newsletter card and RSVP counts. Each
     // says "not set up yet" until the Worker has the settings (OPERATIONS.md, "Email").
     mail: true,
+    // Home's Newsletter card alone (starter card 163): off while the list lives in Church Trac.
+    newsletter: OWN_NEWSLETTER,
     // Card 110: the status line under the top bar, and the help panel.
     navbarStatus: true,
     helpPanel: true,
@@ -731,6 +734,12 @@ export const kitConfig: KitConfig = {
     publishPanel: true,
   },
 };
+
+// The website's own newsletter job and tile are left out while Auburn's list lives in Church Trac
+// (ownNewsletter.ts). Filtered here rather than in the list, so each job keeps its typing.
+kitConfig.quickUpdate = kitConfig.quickUpdate?.filter(
+  (job) => OWN_NEWSLETTER || !OWN_NEWSLETTER_JOBS.has(job.id),
+);
 
 /**
  * The site's own page-builder rules (the authoring kit, PORTS.md card 109).

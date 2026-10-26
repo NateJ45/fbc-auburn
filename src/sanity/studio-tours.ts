@@ -33,8 +33,9 @@
 // =============================================================================
 
 import type { TourDef, WelcomeConfig, WhatsNewEntry } from '../lib/studio-tour.ts';
+import { OWN_NEWSLETTER, OWN_NEWSLETTER_TOUR } from './ownNewsletter.ts';
 
-export const TOURS: TourDef[] = [
+const ALL_TOURS: TourDef[] = [
   // The pastor's first visit (the full Studio).
   {
     id: 'welcome',
@@ -61,7 +62,7 @@ export const TOURS: TourDef[] = [
         title: 'Quick update, for your phone',
         short: 'Quick update',
         meaning: 'quickUpdate',
-        body: "Sunday's sermon, a notice, an event, a news post, a photo or the newsletter, each in a few taps. It goes on the website straight away.",
+        body: "Sunday's sermon, a notice, an event, a news post or a photo, each in a few taps. It goes on the website straight away.",
       },
       {
         anchor: 'home-quick-actions',
@@ -179,10 +180,10 @@ export const TOURS: TourDef[] = [
         body: 'Pick the PDF and the Sunday it is for. It shows at /bulletin/ a few minutes later.',
       },
       {
-        anchor: 'quick:send-newsletter',
-        title: 'Messages, RSVPs and the newsletter',
+        anchor: 'quick:rsvps',
+        title: 'Messages and RSVPs',
         meaning: 'message',
-        body: 'These three tiles open their own screens. The newsletter always sends you a test before it goes to everyone.',
+        body: 'These two tiles open their own screens: what people sent through the website, and who is coming to an event.',
       },
     ],
   },
@@ -267,6 +268,7 @@ export const TOURS: TourDef[] = [
     ],
   },
 ];
+export const TOURS = ALL_TOURS.filter((tour) => OWN_NEWSLETTER || tour.id !== OWN_NEWSLETTER_TOUR);
 
 export const WELCOME: WelcomeConfig = {
   title: 'Welcome to your church website',
@@ -285,7 +287,6 @@ export const WHATS_NEW: WhatsNewEntry[] = [
     items: [
       'Tell people about an event: a notice with the day and time that comes down after it.',
       'Write a short news post from your phone.',
-      "Start this week's newsletter from your phone. It is saved, not sent, until you send it.",
       "Put up this week's bulletin: pick the PDF and the Sunday it is for.",
       'Messages and RSVPs are one tap away, and Site Guide opens with "Every week".',
     ],

@@ -37,6 +37,7 @@ import { TABLES } from './tables.config';
 import { kitConfig } from './kit.config';
 import { TRASH_TYPE } from '../lib/studio-trash';
 import { privateDocId } from '../lib/private-pages';
+import { OWN_NEWSLETTER } from './ownNewsletter';
 
 const SINGLETON_TYPES = [
   'siteSettings',
@@ -304,14 +305,19 @@ const fullDesk = (S: StructureBuilder, context: StructureResolverContext) =>
 
               // The newsletter (card 127): issues written here, sent with the buttons beside
               // Publish. The people who get it are kept in the site's database, never here.
-              emptyAwareList(S, context, {
-                id: 'newsletter',
-                type: 'newsletter',
-                title: 'Newsletter',
-                icon: typeIcon('newsletter'),
-                explain:
-                  'The email that goes to everyone who signed up on the website. Write an issue, publish it, send yourself a test, then send it.',
-              }),
+              // Left out while the list lives in Church Trac (ownNewsletter.ts).
+              ...(OWN_NEWSLETTER
+                ? [
+                    emptyAwareList(S, context, {
+                      id: 'newsletter',
+                      type: 'newsletter',
+                      title: 'Newsletter',
+                      icon: typeIcon('newsletter'),
+                      explain:
+                        'The email that goes to everyone who signed up on the website. Write an issue, publish it, send yourself a test, then send it.',
+                    }),
+                  ]
+                : []),
             ]),
         ),
 

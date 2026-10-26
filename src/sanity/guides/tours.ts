@@ -17,6 +17,8 @@
 // each, 1280 wide (desk) or 390 wide (phone). Each caption is what shows on
 // screen during that shot; check every caption frame after recording.
 
+import { OWN_NEWSLETTER, OWN_NEWSLETTER_GUIDE } from '../ownNewsletter.ts';
+
 export interface VideoShot {
   /** What happens on screen. */
   action: string;
@@ -34,7 +36,7 @@ export interface VideoScript {
   shots: VideoShot[];
 }
 
-export const AUBURN_VIDEOS: VideoScript[] = [
+const ALL_VIDEOS: VideoScript[] = [
   {
     guide: 'add-sermon',
     title: "Add Sunday's sermon from your phone",
@@ -170,3 +172,6 @@ export const AUBURN_VIDEOS: VideoScript[] = [
     ],
   },
 ];
+export const AUBURN_VIDEOS = ALL_VIDEOS.filter(
+  (v) => OWN_NEWSLETTER || v.guide !== OWN_NEWSLETTER_GUIDE,
+);

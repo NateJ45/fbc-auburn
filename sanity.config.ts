@@ -66,6 +66,7 @@ import { kitConfig } from './src/sanity/kit.config';
 import { ncsWorkflowTools } from './src/sanity/workflow';
 import { ncsMailTools } from './src/sanity/mail';
 import { brandIcons, typeIcon, withBrandPreviews } from './src/sanity/brandIcons';
+import { OWN_NEWSLETTER } from './src/sanity/ownNewsletter';
 
 // =============================================================================
 // Studio theme
@@ -300,7 +301,10 @@ export default defineConfig({
         // else they would get an ordinary (public) id.
         return options.filter(
           (option) =>
-            !SINGLETON_TYPES.has(option.templateId) && option.templateId !== 'privatePage',
+            !SINGLETON_TYPES.has(option.templateId) &&
+            option.templateId !== 'privatePage' &&
+            // No newsletter issues while the list lives in Church Trac (ownNewsletter.ts).
+            (OWN_NEWSLETTER || option.templateId !== 'newsletter'),
         );
       }
       return options;

@@ -1,5 +1,17 @@
 # Change history
 
+_2026-10-26: the Studio's own newsletter is hidden._
+
+**Decision.** Nathan: hide it. Auburn's email list lives in Church Trac (2026-10-24), so the Studio's
+screens for writing and sending the website's own issues (card 127) were for a list that is switched off.
+One constant, `OWN_NEWSLETTER = false` in `src/sanity/ownNewsletter.ts`, leaves out Home's Newsletter
+card (the kit's new `features.newsletter`, starter card 163; RSVP rows stay), the Quick update job "Start
+this week's newsletter" and the "Send the newsletter" tile (`kit.config.ts`), Content > Newsletter
+(`structure.ts`), the newsletter entry in the "+" menu (`sanity.config.ts`), the "Send the weekly
+newsletter" guide page and its video script, and the newsletter editor tour (`studio-tours.ts`). The
+weekly guide now says to send the newsletter from Church Trac. The `newsletter` schema type stays
+registered, so nothing is lost; the file says how to bring it back.
+
 _2026-10-26: the re-audit's fixes (six bugs, six of Nathan's changes)._
 
 **Decision.** The five-reviewer re-audit of 2026-10-26 confirmed six bugs on the live site, and Nathan

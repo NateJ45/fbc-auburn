@@ -270,9 +270,10 @@ archived and nixoncreativestudio has no Sanity, hence `n/a`.
 | 153 | Build-time script-src: hash every inline script into `_headers` (`build-csp.mjs`)   | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
 | 154 | Search reads uploaded PDF/Word/text files, corrects typos, tries synonyms           | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
 | 156 | Contact form no-JS post + error summary, FAQ landmark, dark-band rings              | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
-| 160 | Exact slashless `_redirects` rule for file-style sources (`/index.htm`)             | n/a     | no          | yes      | no               | no            | n/a            | n/a                | n/a                 | partial        |
-| 161 | `snapshot.mjs run` reads the project id from the snapshot when the job env has none | n/a     | no          | yes      | n/a              | n/a           | n/a            | n/a                | n/a                 | no             |
-| 162 | `studio.look.splash: motif`: the site's own art replaces the splash's stone path    | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
+| 160 | Exact slashless `_redirects` rule for file-style sources (`/index.htm`)             | n/a     | yes         | yes      | yes              | no            | n/a            | n/a                | n/a                 | yes            |
+| 161 | `snapshot.mjs run` reads the project id from the snapshot when the job env has none | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | n/a                 | yes            |
+| 162 | `studio.look.splash: motif`: the site's own art replaces the splash's stone path    | n/a     | yes         | yes      | yes              | yes           | n/a            | n/a                | no                  | yes            |
+| 163 | `features.newsletter: false` hides Home's Newsletter card, RSVPs kept               | n/a     | no          | yes      | no               | no            | n/a            | n/a                | no                  | no             |
 
 Rows 106 to 135 (2026-10-19) are recorded from the five-site rollout report. fbcm is not a column, so its rollout is on the card status lines only. A cell becomes `yes` only where the report names that card for that site. A broad round or a sync alone leaves the cell as it was, and the card says "synced, not individually verified". Rows 132 and 133 were missing from the matrix and are added here. PRs: fbcm #74 to #81, presacademy #107 to #116, reid-design-site #157 to #165, mas-monograms #117 to #126, stonesteps-50k #131 to #140 (#136 is its design-language PR).
 
@@ -10562,7 +10563,9 @@ hook; the result is the same whichever runs first. Dynamic sources (`/[slug].htm
 (stonesteps-50k#163) can keep them; the build step will not duplicate them. Check: build, then
 `grep -n '\.htm\|\.php' dist/client/_redirects`, and curl the slashless form on `wrangler dev` or live.
 
-**Applied:** starter (this card). stonesteps-50k = source, `partial`: exact hand-written rules in
+**Applied (2026-10-25):** the build step and tests in first-baptist-auburn#189, fbcm#115, presacademy#134,
+reid-design-site#181 and stonesteps-50k#164 (which keeps its hand-written rules; the step skips them, though
+its log line counts them as "added"). Earlier: starter (this card). stonesteps-50k = source, `partial`: exact hand-written rules in
 `public/_redirects` (#163), not the build step. No other family repo has a file-style redirect source today
 (checked each `origin/main`, 2026-10-25), so the others are `no` until a client files one.
 
@@ -10588,7 +10591,10 @@ The template path (no snapshot file, no project id) is unchanged.
 
 **Verified in the starter (2026-10-25):** `npm run test:scripts`. End to end on first-baptist-auburn: see its PR.
 
-**Applied:** starter (this card). first-baptist-auburn: origin, see its PR. fbcm and stonesteps-50k set the env
+**Applied (2026-10-25):** first-baptist-auburn#180 (the workflow env) and #192 (the copy), fbcm#115,
+presacademy#134, reid-design-site#181, stonesteps-50k#164, mas-monograms#148.
+
+Earlier: starter (this card). first-baptist-auburn: origin, see its PR. fbcm and stonesteps-50k set the env
 already, so for them the copy only keeps sync-check green.
 
 **Who should take it.** Every site with a `ci/sanity-snapshot.ndjson.gz` (card 138): today fbcm,
@@ -10619,6 +10625,32 @@ looping motion and a `prefers-reduced-motion: reduce` rule that shows it still. 
 (no look block) renders unchanged. End to end on first-baptist-auburn: see its PR.
 
 **Applied:** starter (this card). first-baptist-auburn: origin, sets `splash: "motif"` and lays its brick strip.
+Copies (2026-10-25, default `path`, splash unchanged): fbcm#116, presacademy#135, stonesteps-50k#165,
+reid-design-site#182, mas-monograms#148.
 Every other site keeps the default, so the copy only keeps sync-check green.
 
 **Who should take it.** Any site whose own motif is not stones and wants the splash to match it.
+
+## Card 163: Home's Newsletter card can be switched off on its own (2026-10-26)
+
+**Origin:** first-baptist-auburn. Its email list lives in Church Trac (the website's own list, card 127, is off),
+so the Studio's newsletter screens were for something the church does not use. `features.mail` also draws the
+RSVP rows, which Auburn keeps, so it could not simply be turned off.
+
+**Canonical:** PORTABLE `src/sanity/kit/types.ts` (`KitConfig.features.newsletter`), `src/sanity/kit/HomeTool.tsx`;
+docs in `docs/agent/studio-kit.md` ("Mail").
+
+**What it does.** `features.newsletter: false` leaves Home's Newsletter card out; RSVPs, Coming up and Messages are
+unchanged. Missing counts as on, so every site that has `mail` on looks the same as before.
+
+**Per site (not portable):** the rest of a site's newsletter surfaces are its own files: the Quick update job and
+the Home tile in `kit.config.ts`, the Content desk item in `structure.ts`, the Site Guide and tours. Hide those in
+the same change (first-baptist-auburn: one `OWN_NEWSLETTER` constant).
+
+**Verified in the starter (2026-10-26):** `npm run check`, `npm run test:unit`. End to end on first-baptist-auburn:
+see its PR.
+
+**Applied:** starter (this card). first-baptist-auburn: origin. Other sites keep the default; the copy only keeps
+sync-check green.
+
+**Who should take it.** Any site whose email list is kept outside the website.
