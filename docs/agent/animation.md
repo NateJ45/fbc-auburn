@@ -298,6 +298,17 @@ squashed, settles).
 drawings (the mark build, the baptism ring, the walk). The flow layer is the page's general
 movement and runs everywhere, at the calm level outside Home and the 404 (above).
 
+**Keyboard focus shows at once (re-audit 2026-10-26).** A link reached by Tab before its unit had
+risen sat at opacity 0 ("Back to the home page" on the 404 measured 0.00; Home's "Read more in What
+we believe" stayed hidden 2.5s). Now any unit that holds focus drops its starting frame: the end of
+`src/styles/flow.css` sets `animation: none` and `opacity: 1` on `:focus-within` for the flow units
+and their line, brick and marker pieces, the first screen's hold, the stone `.reveal`s, the older
+`[data-reveal]` sections and stagger-grid children, the Home hero's scroll fade and the laid mark.
+`flow.ts` also lands the unit on `focusin` (and marks a `.reveal` `.in`, a `[data-reveal]`
+`.is-visible`), so it does not replay once focus moves on. A new layer that hides something must
+add itself to that rule. `tests/reaudit.spec.ts` tabs through `/404.html` and `/` with motion on and
+fails on any focused element whose effective opacity (its own times its ancestors') is under 0.99.
+
 ## The stone path (FBC Auburn, 2026-10-17)
 
 Ported from the studio mockups' v3 motion pass (`motion.js`, `walk.js`). Files: `src/styles/motion.css`,

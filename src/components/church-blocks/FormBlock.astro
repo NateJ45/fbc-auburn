@@ -16,6 +16,7 @@ import ChurchBand from './ChurchBand.astro';
 import ChurchTracFrame from './ChurchTracFrame.astro';
 import { churchTracFormFor } from '@/lib/church-links';
 import { getChurchFacts } from '@/lib/church-data';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import { normalizeForm } from '@/lib/church-form';
 import type { ProjectedFormSection } from '@/lib/churchBlocks.types';
 
@@ -68,6 +69,25 @@ const who = form?.recipientName || 'the church office';
         >
           Your request goes to {who} by email. It is never shown on the website, and the website
           keeps no copy once it has been sent.
+        </p>
+      )}
+      {/* Rather talk? (re-audit 2026-10-26): the church phone from Church facts, to call or text. */}
+      {form.mode === 'prayer' && phone && (
+        <p class="cb-form-note cb-prayer-call" data-cb-prayer-call>
+          Would you rather talk?{' '}
+          <a class="cb-link hit-44 relative" href={phone.tel}>
+            Call {phone.display}
+          </a>
+          {phone.sms && (
+            <>
+              {' '}
+              or{' '}
+              <a class="cb-link hit-44 relative" href={phone.sms}>
+                send a text<span class="sr-only"> to {phone.display}</span>
+              </a>
+            </>
+          )}
+          . <NotConfirmed confirmed={phone.confirmed} />
         </p>
       )}
       <form

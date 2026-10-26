@@ -16,6 +16,17 @@ sequence).
 
 ## Waiting on a human
 
+### 1zv. The re-audit's content: apply two scripts, then refresh the snapshot (opened 2026-10-26)
+
+The re-audit PR's code renders right before and after its content. To finish it: under the write
+protocol, run `scripts/content/menu-reach-us.mjs` (the four menu and footer groups) and
+`scripts/content/reaudit-pages.mjs` (Contact's prayer topic, Home's prayer card, Plan your visit's
+shorter order, Need the pastor?'s Call and Text first, the crisis-line labels), each dry first, then
+`node scripts/snapshot.mjs export` in a PR of its own. Open after that: Plan your visit is about 8.1
+phone screens (6,582px at 375 with the pre-launch notes; target 6 to 7), the "Look for the sign"
+photo slot went with its section (its words moved into Find us; its shot request is no longer on
+the page), and Android has no Georgia or Times, so its title fallback is unadjusted.
+
 ### 1zw. Search reads uploaded files: check it on the first real bulletin (opened 2026-10-25)
 
 Search now reads inside the PDF, Word and text files the site links to (PORTS.md card 154,
@@ -42,10 +53,9 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
   names (New here, Get involved, This week) and what Next steps should hold.
 - **A water stone icon for baptism.** Next steps uses the dove until one is drawn.
 - **Not reached:** the desktop end matter is about 1,000px (target 900) and the phone footer is
-  more than one screen; GD-L5 (one reading measure) is done on Privacy only; the lockup's place
+  still more than one screen (1,158px on band pages and 1,401px on where-next pages at 375 after the
+  2026-10-26 pass, pre-launch notes on; target about 900); GD-L5 (one reading measure) is done on Privacy only; the lockup's place
   line is about 7px on phones (11px needs a lockup redesign).
-- **Plan your visit's times band at 1280:** the address column is squeezed to three lines; give
-  it more room.
 - **Not verified:** printing in Safari; the "Live now" swap during a real service; the bulletin's
   "Last week's" label with a real bulletin; the copy-email button on a real page; Events JSON-LD
   (no calendar feed yet); Google's Rich Results test after cutover.
@@ -77,8 +87,8 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
 
 ### 1zx. The menu groups: Jacob's say (opened 2026-10-24)
 
-The menu is three groups (changelog, 2026-10-24; since 2026-10-25 New here, Get involved and This
-week). Ask Jacob whether the groups and their names suit him, and what he means by Next steps (if it
+The menu is four groups once `scripts/content/menu-reach-us.mjs` is applied (re-audit 2026-10-26:
+New here, Get involved, This week, Reach us; it was three). Ask Jacob whether the groups and their names suit him, and what he means by Next steps (if it
 is baptism and membership, it could become a group on the Ministries hub). The FAQPage loose end
 closed on 2026-10-25: the first Questions block on a page emits it (#177).
 

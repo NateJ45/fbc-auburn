@@ -17,7 +17,7 @@ import ShotRequest from '@/components/ShotRequest.astro';
 import { exampleSrc, shotFor } from '@/data/shot-list';
 import { splitStega } from '@/lib/preview-stega';
 import { getChurchFacts } from '@/lib/church-data';
-import { andList, monthDay, thisWeek, timesPhrase } from '@/lib/church-facts';
+import { monthDay, thisWeek, weeklyRhythm } from '@/lib/church-facts';
 import { churchDataNow, loadChurchEvents } from '@/lib/church-feeds';
 import { ctaHref } from '@/lib/cta-href';
 import type {
@@ -38,21 +38,19 @@ interface Props {
 const { week, watch, headingId, now = churchDataNow() } = Astro.props;
 
 const facts = await getChurchFacts();
-// This week (Home audit research, 2026-10-17): the weekly schedule in one line per day (from
+// This week (Home audit research, 2026-10-17): the weekly schedule, one line per gathering time (from
 // Church facts, Sunday included so a quiet week still reads as a full week), then the dated
 // things from the church calendar, a cancelled one struck through rather than silently missing,
 // and one honest line when there is nothing extra.
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const weekday = facts.serviceTimes;
-const rhythm = [...new Set(weekday.map((s) => s.dayIndex))].map((d) => {
-  const day = weekday.filter((s) => s.dayIndex === d);
-  return {
-    day: DAYS[d],
-    time: timesPhrase(day.map((s) => s.minutes)),
-    what: andList(day.map((s) => s.label)),
-    confirmed: day.every((s) => s.confirmed),
-  };
-});
+// One line per day AND start time (re-audit 2026-10-26), each gathering with its own name:
+// "Every Wednesday · 6:00 pm · Bible study and prayer, Youth" (weeklyRhythm, src/lib/church-facts.ts,
+// the same grouping as thisWeek(), so Home and Events agree).
+const rhythm = weeklyRhythm(facts.serviceTimes).map((r) => ({
+  day: r.day,
+  time: r.timeLabel,
+  what: r.what,
+  confirmed: r.confirmed,
+}));
 const dated = week
   ? thisWeek(facts, await loadChurchEvents(facts), now).filter((r) => r.source === 'calendar')
   : [];

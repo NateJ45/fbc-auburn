@@ -7,9 +7,10 @@
 // aria-describedby, and focus goes to the first one (audit 2026-10-25, DEV-M4 / UX-M7). Every
 // required field carries the same "*" cue.
 //
-// Prefill (the shared link convention, audit 2026-10-25): /contact/?topic=visit|question|prayer|other
+// Prefill (the shared link convention, audit 2026-10-25): /contact/?topic=visit|question|other
 // picks the matching answer in the first editor-written list question, and &about=<short text>
 // starts the message with it ("About Music: "). ?visit=sunday-11 (Plan your visit) still works.
+// ?topic=prayer is not a topic here (re-audit 2026-10-26): contact.astro sends it to /prayer/.
 //
 // With JavaScript off the form posts to /api/contact/ (method="post"), never a GET, so nothing
 // typed ends up in the address bar or the logs; contact.astro shows a <noscript> notice.
@@ -52,7 +53,6 @@ const DRAFT_KEY = `${site.storageKeyPrefix}-contact-draft`;
 const TOPIC_MATCH: Record<string, RegExp> = {
   visit: /visit/i,
   question: /question/i,
-  prayer: /pray/i,
   other: /something else|other/i,
 };
 

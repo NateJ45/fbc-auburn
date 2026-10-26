@@ -8,7 +8,7 @@
 // the look follows from that here, not from a colour field (rule 9).
 import CtaLink from '@/components/CtaLink.astro';
 import { churchDataNow } from '@/lib/church-feeds';
-import { churchToday, inDateWindow, isoDay } from '@/lib/church-blocks';
+import { churchToday, inDateWindow, isoDay, noticeParts } from '@/lib/church-blocks';
 import { plain } from '@/lib/church-facts';
 import type { ProjectedNoticeSection } from '@/lib/churchBlocks.types';
 
@@ -22,18 +22,32 @@ const message = block.message?.trim();
 const showing = Boolean(message) && inDateWindow(block.startDate, block.endDate, churchToday(now));
 const urgent = plain(block.urgency) === 'urgent';
 const end = isoDay(block.endDate);
+// The small label (re-audit 2026-10-26): the editor's own word ("If it cannot wait" on the crisis
+// lines), else Notice or Urgent. The numbers in the message (988, 911, a phone) are tap-to-call.
+const tag = block.label?.trim() || (urgent ? 'Urgent' : 'Notice');
+const parts = noticeParts(message);
 ---
 
 {showing && (
   <aside
     class:list={['cb-notice', urgent && 'cb-notice--urgent']}
-    aria-label={urgent ? 'Urgent notice' : 'Notice'}
+    aria-label={block.label?.trim() || (urgent ? 'Urgent notice' : 'Notice')}
     data-church-block="noticeSection"
     data-cb-notice-end={end || undefined}
   >
     <div class="cb-notice__inner mx-auto max-w-content px-m">
-      <span class="cb-notice__tag">{urgent ? 'Urgent' : 'Notice'}</span>
-      <p class="cb-notice__message">{message}</p>
+      <span class="cb-notice__tag">{tag}</span>
+      <p class="cb-notice__message">
+        {parts.map((p) =>
+          p.tel ? (
+            <a class="cb-notice__tel" href={p.tel}>
+              {p.text}
+            </a>
+          ) : (
+            p.text
+          ),
+        )}
+      </p>
       {block.link?.label && <CtaLink cta={block.link} variant="secondary" />}
     </div>
   </aside>

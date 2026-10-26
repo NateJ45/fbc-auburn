@@ -4,21 +4,29 @@
 // a wide screen (block polish, 2026-10-18), every line from Site settings > Church facts (rule 15),
 // each with its "To confirm" tag until confirmed. Lines that are not set are left out; with none at
 // all the block draws nothing.
+//
+// "Lead with big Call and Text buttons" (callButtons, re-audit 2026-10-26, Need the pastor?): two big
+// buttons above the details, tel: and sms: links built from the Church facts phone, never typed. Text
+// shows only when the number takes texts; an unconfirmed number carries the To confirm tag. Call is
+// the page's red button when SectionRenderer hands this block the red (primaryVariant).
 import ChurchBand from './ChurchBand.astro';
 import ChurchAddress from '@/components/church/ChurchAddress.astro';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import type { ProjectedContactCardSection } from '@/lib/churchBlocks.types';
+import { Phone, MessageSquare } from 'lucide-react';
 
 interface Props {
   block: ProjectedContactCardSection;
   surface?: 'background' | 'muted';
   headingId: string;
+  primaryVariant?: 'primary' | 'navy';
 }
-const { block, surface, headingId } = Astro.props;
+const { block, surface, headingId, primaryVariant = 'navy' } = Astro.props;
 const { phone, email, address, officeHours } = await getChurchFacts();
 const any = Boolean(phone || email || address || officeHours.length);
 const count = [phone, email, address, officeHours.length > 0].filter(Boolean).length;
+const buttons = block.callButtons === true && phone ? phone : null;
 ---
 
 {any && (
@@ -31,6 +39,31 @@ const count = [phone, email, address, officeHours.length > 0].filter(Boolean).le
     label="Contact details"
   >
     <div>
+      {buttons && (
+        <div class="cb-call" data-call-buttons>
+          <a
+            class:list={[
+              'btn-auburn press-tactile cb-call__btn',
+              primaryVariant === 'primary' ? 'btn-auburn--primary' : 'btn-auburn--navy',
+            ]}
+            href={buttons.tel}
+          >
+            <Phone size={22} aria-hidden="true" />
+            <span>
+              Call <span class="cb-call__num">{buttons.display}</span>
+            </span>
+          </a>
+          {buttons.sms && (
+            <a class="btn-auburn btn-auburn--navy press-tactile cb-call__btn" href={buttons.sms}>
+              <MessageSquare size={22} aria-hidden="true" />
+              <span>
+                Text<span class="sr-only"> {buttons.display}</span>
+              </span>
+            </a>
+          )}
+          <NotConfirmed confirmed={buttons.confirmed} />
+        </div>
+      )}
       <dl class="cb-board cb-contact" data-n={count}>
         {phone && (
           <div class="cb-board__cell">

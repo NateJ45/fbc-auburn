@@ -471,6 +471,14 @@ export const noticeSection = defineType({
       },
       initialValue: 'info',
     }),
+    defineField({
+      name: 'label',
+      title: 'Small label (optional)',
+      type: 'string',
+      description:
+        'The small word in front of the message. Leave it empty for "Notice" (or "Urgent"). For a crisis line, something plain and kind, like "If it cannot wait". Phone numbers in the message (and 988 and 911) become tap-to-call links on their own.',
+      validation: (R) => R.max(30),
+    }),
     linkField('Link for more details (optional)'),
     defineField({
       name: 'startDate',
@@ -880,7 +888,18 @@ export const contactCardSection = defineType({
   type: 'object',
   icon: MobileDeviceIcon,
   description: `Phone, email, address and office hours in one card. ${FROM_FACTS}`,
-  fields: [headingField('Get in touch'), introField()],
+  fields: [
+    headingField('Get in touch'),
+    introField(),
+    defineField({
+      name: 'callButtons',
+      title: 'Lead with big Call and Text buttons',
+      type: 'boolean',
+      description:
+        'Two big buttons above the details, built from the church phone in Church facts (Text shows only when the number takes texts). For a page like Need the pastor?, where calling is the point.',
+      initialValue: false,
+    }),
+  ],
   preview: {
     select: { title: 'heading' },
     prepare: ({ title }) => ({

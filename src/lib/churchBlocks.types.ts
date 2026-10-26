@@ -66,6 +66,8 @@ export interface ProjectedNoticeSection {
   _key: string;
   message?: string;
   urgency?: 'info' | 'urgent' | string;
+  /** The small label before the message; empty means Notice or Urgent (re-audit 2026-10-26). */
+  label?: string;
   link?: ProjectedCtaBlock | null;
   startDate?: string;
   endDate?: string;
@@ -137,6 +139,8 @@ export interface ProjectedButtonRowSection extends Base {
 
 export interface ProjectedContactCardSection extends Base {
   _type: 'contactCardSection';
+  /** Big Call and Text buttons above the details (re-audit 2026-10-26). */
+  callButtons?: boolean | null;
 }
 
 export interface ProjectedColumnsSection extends Base {

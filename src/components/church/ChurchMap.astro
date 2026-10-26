@@ -88,6 +88,20 @@ const { address } = await getChurchFacts();
     height: 88px;
     filter: drop-shadow(0 10px 12px rgb(22 38 61 / 0.18));
   }
+  /* Phones (re-audit 2026-10-26, Plan your visit was ten screens): the drawn map becomes a slim
+     strip beside the address instead of a 180px block above it. */
+  @media (max-width: 39.99rem) {
+    .church-map {
+      grid-template-columns: 76px minmax(0, 1fr);
+    }
+    .church-map__art {
+      min-height: 0;
+    }
+    .church-map__art :global(.church-map__pin) {
+      width: 52px;
+      height: 52px;
+    }
+  }
   .church-map__body {
     display: grid;
     align-content: center;

@@ -10,7 +10,7 @@
 // on a page with no card, once the page heading has; it hides while the footer is on screen (the
 // footer carries the same facts). Below 768px only. Times come from Church facts, never typed.
 import { getChurchFacts } from '@/lib/church-data';
-import { clockLabel, timesPhrase } from '@/lib/church-facts';
+import { clockLabel, namedTimes } from '@/lib/church-facts';
 
 interface Props {
   /** The current path, with its trailing slash. */
@@ -25,13 +25,13 @@ const BARS: Record<string, { label: string; href: string }> = {
 const bar = BARS[path];
 
 const facts = bar ? await getChurchFacts() : null;
-const sundayMinutes = (facts?.serviceTimes ?? [])
-  .filter((s) => s.dayIndex === 0)
-  .map((s) => s.minutes);
-const times = sundayMinutes.length ? `Sundays ${timesPhrase(sundayMinutes)}` : '';
+const sundayServices = (facts?.serviceTimes ?? []).filter((s) => s.dayIndex === 0);
+const sundayMinutes = sundayServices.map((s) => s.minutes);
+// "Sunday School 9:45 · Worship 11:00" (re-audit 2026-10-26: each time named, from Church facts).
+const times = namedTimes(sundayServices);
 // The short form for the narrowest phones (under 360px): "9:45 & 11:00" under a small "Sundays",
 // so the bar stays one button tall instead of wrapping the long phrase to four lines.
-const timesShort = [...sundayMinutes]
+const timesShort = [...new Set(sundayMinutes)]
   .sort((a, b) => a - b)
   .map((m) => clockLabel(m).replace(/ [ap]m$/, ''))
   .join(' & ');

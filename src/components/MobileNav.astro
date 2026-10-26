@@ -431,12 +431,22 @@ const groupId = (label: string) => `menu-group-${label.replace(/\W+/g, '-').toLo
 
   const menu = () => document.querySelector<HTMLDialogElement>('dialog[data-menu]');
 
-  // The pill is a link to the footer's page list until now: make it the button it acts as.
+  // The pill is a link to the footer's page list until now: swap it for a real <button> with the
+  // same class, children and name (re-audit 2026-10-26), so Space opens the menu as Enter does,
+  // instead of scrolling the page (a link with role="button" never fires click on Space).
   function upgrade() {
-    const pill = document.querySelector<HTMLAnchorElement>('[data-menu-open]');
-    if (!pill || pill.dataset.menuReady !== undefined) return;
+    const link = document.querySelector<HTMLElement>('[data-menu-open]');
+    if (!link || link.dataset.menuReady !== undefined) return;
+    const pill = link instanceof HTMLButtonElement ? link : document.createElement('button');
+    if (pill !== link) {
+      pill.type = 'button';
+      for (const { name, value } of [...link.attributes]) {
+        if (name !== 'href') pill.setAttribute(name, value);
+      }
+      pill.append(...link.childNodes);
+      link.replaceWith(pill);
+    }
     pill.dataset.menuReady = '';
-    pill.setAttribute('role', 'button');
     pill.setAttribute('aria-haspopup', 'dialog');
     pill.setAttribute('aria-expanded', 'false');
     syncLive(window.__churchLive);
@@ -474,7 +484,8 @@ const groupId = (label: string) => `menu-group-${label.replace(/\W+/g, '-').toLo
   if (!w.__menuBound) {
     w.__menuBound = true;
 
-    // Capture phase: the pill is a same-page #link, which Astro's router would otherwise take first.
+    // Capture phase: before the upgrade the pill is a same-page #link, which Astro's router would
+    // otherwise take first.
     document.addEventListener(
       'click',
       (e) => {

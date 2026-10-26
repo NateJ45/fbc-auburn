@@ -716,6 +716,28 @@
   line-height: 1.45;
   color: var(--foreground);
 }
+/* Tap-to-call numbers in a notice (re-audit 2026-10-26): 988, 911 and phone numbers. A 44px tall
+   hit area without moving the line. */
+.cb-notice__tel {
+  position: relative;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.cb-notice__tel::after {
+  content: '';
+  position: absolute;
+  inset: 50% -6px auto;
+  height: 44px;
+  transform: translateY(-50%);
+}
+.cb-notice__tel:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 .cb-notice--urgent .cb-notice__message {
   color: #5e1d0d;
 }
@@ -1235,4 +1257,37 @@
   font-size: var(--fs-body);
   font-weight: 600;
   line-height: 1.5;
+}
+
+/* ---- Big Call and Text buttons (contact card, callButtons; re-audit 2026-10-26) ----
+   Above the details on Need the pastor?: calling is the point of the page. Side by side from 480px,
+   full width and 56px tall on a phone, so a shaking hand finds them. */
+.cb-call {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.cb-call__btn {
+  flex: 1 1 14rem;
+  min-height: 56px;
+  gap: 0.6rem;
+  font-size: var(--fs-title-sm);
+}
+.cb-call__num {
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .cb-call__btn {
+    flex: 0 1 auto;
+  }
+}
+
+/* The prayer form's "Would you rather talk?" line (re-audit 2026-10-26): plain, under the promise. */
+.cb-form-note.cb-prayer-call {
+  max-width: 40rem;
+  margin: -0.5rem 0 1.25rem;
+  padding: 0;
+  background: none;
 }

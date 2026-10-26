@@ -507,15 +507,6 @@ html.motion .baptism-motion #ripples {
 .walk {
   --walk-stone: 56px;
 }
-/* The gatherings before worship, under the intro (WalkSection.astro, derived from Church facts). */
-.walk-earlier {
-  max-width: 40rem;
-  margin: 1rem 0 0;
-  font-size: var(--fs-body);
-  line-height: 1.55;
-  font-weight: 600;
-  color: var(--foreground);
-}
 /* A comfortable measure on a wide screen: the steps take the content width the plan used to share,
    capped so a line of text stays readable. */
 .walk-steps {
@@ -594,11 +585,19 @@ html.motion .baptism-motion #ripples {
   .walk {
     --walk-stone: 48px;
   }
+  /* Tighter again (re-audit 2026-10-26, Plan your visit was ten phone screens): 24px of path
+     between stops and a 1.5 line, which still reads easily at 17px. */
   .walk-step:not(:last-child) {
-    padding-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
   }
   .walk-step__body {
     padding-top: 0.15rem;
+  }
+  .walk-steps h3 {
+    margin-bottom: 0.4rem;
+  }
+  .walk-steps p:not(.walk-steps__t) {
+    line-height: 1.5;
   }
 }
 

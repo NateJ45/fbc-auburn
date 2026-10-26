@@ -9,26 +9,24 @@
 // layer (src/scripts/flow.ts) fades the stops up as they scroll in, and nothing else moves.
 // 2026-10-24: the drawn stone-mosaic plan of the lot that used to pin beside the stops was removed
 // on every width (its labels were about 6px on a phone); the opener's sketch is the one picture.
-// The walk is worship; the line under the intro names the gatherings before it ("Sunday School for
-// all ages meets at 9:45 am, before worship at 11:00 am"), worked out from Church facts, never typed
-// (visitor audit, 2026-10-18).
+// The walk is worship. The line under the intro that named the gatherings before it went in the
+// re-audit (2026-10-26): the page head's times band now names each one ("Sunday School 9:45 ·
+// Worship 11:00") on the first screen, so it said the same thing twice.
 import SectionHeading from '@/components/SectionHeading.astro';
 import CtaLink from '@/components/CtaLink.astro';
 import { stoneSrcs, stoneIconSrc } from '@/components/motion/stones';
 import { walkStopIcon } from '@/lib/walk-stops';
 import { surfaceClass } from '@/lib/surfaces';
 import type { ProjectedWalkSection } from '@/lib/pageBuilder.types';
-import { getChurchFacts } from '@/lib/church-data';
-import { earlierSundayLine } from '@/lib/church-facts';
-import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import markEnd from '@/assets/brand/fbc-auburn-icon-full-color.svg';
 
 type Props = Omit<ProjectedWalkSection, '_type' | '_key'> & {
   surface?: 'background' | 'muted';
   headingId: string;
-  /** The one-red-button rule (audit 2026-10-25): the opener's ask is red unless an earlier block
-      has the red; the same ask at the walk's end is always navy. */
+  /** The one-red-button rule (audit 2026-10-25): the walk's ask is red unless an earlier block has
+      the red. One ask only since the re-audit (2026-10-26): the opener's copy of it went, so Plan
+      your visit says "Tell us you are coming" once in the walk (when set) and once in its close. */
   primaryVariant?: 'primary' | 'navy';
 };
 
@@ -48,7 +46,6 @@ const {
 const list = stops.filter((s) => s?.title);
 const stones = await stoneSrcs();
 const icons = await Promise.all(list.map((s, i) => stoneIconSrc(walkStopIcon(s, i))));
-const earlier = earlierSundayLine(await getChurchFacts());
 ---
 
 <section
@@ -69,12 +66,6 @@ const earlier = earlierSundayLine(await getChurchFacts());
         class="mx-auto steps-rail__intro"
       />
     )}
-    {earlier && (
-      <p class="walk-earlier">
-        {earlier.text}
-        <NotConfirmed confirmed={earlier.confirmed} />
-      </p>
-    )}
 
     {/* The opener (2026-10-23): the building as you see it from the lot, the front door pinned,
         so the walk below starts somewhere a first-time guest will recognise. */}
@@ -84,19 +75,9 @@ const earlier = earlierSundayLine(await getChurchFacts());
         label="A sketch of the church from the parking lot, with the front door at the top of the ramp marked as the place to start"
       />
       <figcaption>
-        [Placeholder: Park in the lot, follow the ramp to the white front porch, and someone will
-        meet you at the door.]
+        [Placeholder: Follow the ramp to the white front porch, and someone will meet you at the
+        door.]
       </figcaption>
-      {/* The ask up front, as the big SBC sites put it (2026-10-23): tell us you are coming and
-          someone looks out for you. Same link as the walk's end (Contact with the visit filled in). */}
-      {endLinkLabel && (
-        <div class="walk-opener__ask">
-          <CtaLink
-            cta={{ label: endLinkLabel, href: endLinkHref || '/contact/?visit=sunday-11' }}
-            variant={primaryVariant}
-          />
-        </div>
-      )}
     </figure>
 
     <ol class="walk-steps" role="list">
@@ -125,7 +106,7 @@ const earlier = earlierSundayLine(await getChurchFacts());
               <div class="mt-l">
                 <CtaLink
                   cta={{ label: endLinkLabel, href: endLinkHref || '/contact/?visit=sunday-11' }}
-                  variant="navy"
+                  variant={primaryVariant}
                 />
               </div>
             )}
