@@ -887,9 +887,9 @@ the "contact" address, then `CONTACT_TO`. To switch it on, Nathan runs once:
 `npx wrangler d1 migrations apply fbc-auburn-contact --remote` (adds the table; until then the panel
 says one more step is needed and the secret decides). On Cloudflare Email Sending, a destination
 must be verified in Cloudflare before mail reaches it, so verify the new address there too (Resend
-has no such step). `/api/contact/` (the starter's PORTABLE route) still reads `CONTACT_TO`; the
-Contact row's address is used by `/api/form/` as its last fallback until the starter gives
-`/api/contact/` the same lookup.
+has no such step). `/api/contact/` (the starter's PORTABLE route) takes the confirmed Contact row
+first, then `CONTACT_TO` (starter PORTS.md card 174, which made `src/lib/form-recipients.ts` and its
+test PORTABLE); `/api/form/` uses the same row as its last fallback.
 
 Without Workers Paid, `npx wrangler secret put WEB3FORMS_KEY` is the fallback email path, but it
 emails the Web3Forms account's own address whatever the recipient, so prayer requests would go there

@@ -1,12 +1,14 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
 // =============================================================================
-// form-recipients - where form messages go, set in the Studio (2026-10-26)
+// form-recipients - where form messages go, set in the Studio (PORTS.md card 174)
 // =============================================================================
-// Each form names a recipient KEY ("office", "pastor"; Site settings > Forms). Until now the
-// address behind each key lived only in the Worker secret FORM_RECIPIENTS, so changing it meant
-// asking Nathan. Now a signed-in Studio ADMINISTRATOR can set it from Site settings > Forms, and
-// it is kept in the Worker's own D1 database (CONTACT_DB, table form_recipient_addresses,
-// migrations/0005_form_recipients.sql), never in the public dataset.
+// A form sends to a recipient KEY. The Contact page's key is "contact"; a site with more forms
+// can name others ("office", "events"). Without this file the address behind a key lives only in
+// a Worker secret or var (CONTACT_TO, and on some sites FORM_RECIPIENTS), so changing it means
+// asking whoever looks after the website. With it, a signed-in Studio ADMINISTRATOR sets it from
+// Site settings > Forms, and it is kept in the Worker's own D1 database (CONTACT_DB, table
+// form_recipient_addresses, migrations/*_form_recipients.sql), never in the public dataset.
 //
 // A NEW ADDRESS IS CONFIRMED BEFORE IT IS USED. Saving one keeps it as "pending" and, when the
 // email backbone is set up (a sender plus MAIL_SECRET), emails it a link; the address starts
@@ -15,23 +17,23 @@
 // unconfirmed and the Studio says so plainly: nothing is sent to it.
 //
 // WHERE A MESSAGE GOES (recipientAddressFor): this key's confirmed D1 address, else the secret's
-// address for it, else the office's (D1, then secret), else the Contact address (D1 "contact",
-// then CONTACT_TO). D1 first, then the secret, so the old setup keeps working untouched.
-//
-// THE CONTACT FORM. The "contact" key is the Contact page's address. /api/form/ uses it as its
-// last fallback today; /api/contact/ is the starter's PORTABLE route and still reads CONTACT_TO
-// until the starter learns the same lookup (OPERATIONS.md, "Forms").
+// address for it, else the fallback key's (D1, then secret; "office" unless the caller names
+// another), else the Contact address (D1 "contact", then CONTACT_TO). The Contact form itself
+// uses contactRecipient(): the confirmed "contact" row, else CONTACT_TO. D1 first, then the
+// secret, so a site that never opens the panel (or never applies the migration) behaves
+// exactly as before.
 //
 // Pure apart from the injected database, mailer and clock, so form-recipients.test.ts runs the
-// real SQL on node:sqlite (mail-sqlite.ts) and drives every branch.
+// real SQL on node:sqlite (mail-sqlite.ts) and drives every branch. Per-site words (the Studio
+// panel, the routes' colours) live in the non-marked callers, so this file stays identical in
+// every repo.
 // =============================================================================
 
 import type { D1Database } from './mail-db.ts';
 import type { Mailer } from './mail-send.ts';
 import { looksLikeEmail } from './contact-submission.ts';
-import { DEFAULT_RECIPIENT, recipientAddress } from './church-form.ts';
 
-/** The D1 table; migrations/0005_form_recipients.sql is checked against it by the test. */
+/** The D1 table; migrations/*_form_recipients.sql is checked against it by the test. */
 export const FORM_RECIPIENTS_DDL = `
 CREATE TABLE IF NOT EXISTS form_recipient_addresses (
   recipient_key TEXT PRIMARY KEY,
@@ -50,6 +52,9 @@ CREATE TABLE IF NOT EXISTS form_recipient_addresses (
 
 /** The Contact page's own address. */
 export const CONTACT_KEY = 'contact';
+
+/** The key a form falls back to when its own has no address (callers may name another). */
+export const FALLBACK_KEY = 'office';
 
 /** A recipient key as Site settings > Forms writes it ("office"), or "contact". */
 export const RECIPIENT_KEY = /^[a-z][a-z0-9-]{1,30}$/;
@@ -131,17 +136,31 @@ export async function confirmedAddresses(
 
 /**
  * Where a form with this recipient key goes: D1 first, then the secret, key by key; then the
- * office; then the Contact address. Null when there is nowhere at all.
+ * fallback key ("office" by default); then the Contact address. Null when there is nowhere at all.
  */
 export function recipientAddressFor(
   key: string,
   fromD1: Record<string, string>,
   fromSecret: Record<string, string>,
   contactTo?: string | null,
+  fallbackKey: string = FALLBACK_KEY,
 ): string | null {
-  const merged = { ...fromSecret, ...fromD1 };
+  const merged: Record<string, string> = { ...fromSecret, ...fromD1 };
   delete merged[CONTACT_KEY];
-  return recipientAddress(key, merged, fromD1[CONTACT_KEY] ?? contactTo);
+  const contact = fromD1[CONTACT_KEY] ?? (contactTo?.trim() || null);
+  return merged[key] ?? merged[fallbackKey] ?? contact;
+}
+
+/**
+ * The Contact page form's address: the confirmed "contact" row, else CONTACT_TO. Null when
+ * neither is set. A missing database or table reads as "no row", so CONTACT_TO decides.
+ */
+export async function contactRecipient(
+  db: D1Database | null | undefined,
+  contactTo: string | null | undefined,
+): Promise<string | null> {
+  const fromD1 = await confirmedAddresses(db);
+  return fromD1[CONTACT_KEY] ?? (contactTo?.trim() || null);
 }
 
 // ── Signed confirmation links ────────────────────────────────────────────────
@@ -431,12 +450,56 @@ export interface ConfirmDeps {
   db: D1Database | null;
   secret: string | null;
   siteName: string;
+  /** The page's colours (light), from the site's brand; neutral when left out. */
+  theme?: Partial<ConfirmTheme>;
+  /** Dark colours for a site that ships a dark theme; left out, the page stays light. */
+  darkTheme?: Partial<ConfirmTheme>;
   now?: () => number;
 }
 
-function page(siteName: string, title: string, inner: string, status = 200): Response {
+export interface ConfirmTheme {
+  background: string;
+  text: string;
+  heading: string;
+  button: string;
+  buttonText: string;
+}
+
+const NEUTRAL: ConfirmTheme = {
+  background: '#fbfbfa',
+  text: '#2a2d31',
+  heading: '#2a2d31',
+  button: '#2a2d31',
+  buttonText: '#ffffff',
+};
+
+/** A colour as CSS, or the fallback when it is not a plain #hex value (no injection). */
+const hex = (v: string | undefined, fallback: string) =>
+  typeof v === 'string' && /^#[0-9a-f]{3,8}$/i.test(v.trim()) ? v.trim() : fallback;
+
+function themeCss(t: Partial<ConfirmTheme> | undefined, base: ConfirmTheme): string {
+  const c = {
+    background: hex(t?.background, base.background),
+    text: hex(t?.text, base.text),
+    heading: hex(t?.heading, base.heading),
+    button: hex(t?.button, base.button),
+    buttonText: hex(t?.buttonText, base.buttonText),
+  };
+  return `--bg:${c.background};--ink:${c.text};--head:${c.heading};--btn:${c.button};--btn-ink:${c.buttonText}`;
+}
+
+function page(
+  deps: Pick<ConfirmDeps, 'siteName' | 'theme' | 'darkTheme'>,
+  title: string,
+  inner: string,
+  status = 200,
+): Response {
   const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)} | ${esc(siteName)}</title><style>body{margin:0;background:#f6f3ee;color:#16263d;font:17px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:34rem;margin:12vh auto;padding:0 20px}h1{font-size:1.6rem;line-height:1.2;margin:0 0 .75rem;color:#1f3a5f}button{min-height:48px;padding:10px 22px;border:0;border-radius:8px;background:#9a3b2a;color:#fff;font:inherit;font-weight:600;cursor:pointer}button:focus-visible{outline:3px solid #1f3a5f;outline-offset:3px}p{margin:0 0 1rem}</style></head><body><main><h1>${esc(title)}</h1>${inner}</main></body></html>`;
+  const light = themeCss(deps.theme, NEUTRAL);
+  const dark = deps.darkTheme
+    ? `@media (prefers-color-scheme:dark){:root{color-scheme:dark;${themeCss(deps.darkTheme, NEUTRAL)}}}`
+    : '';
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)} | ${esc(deps.siteName)}</title><style>:root{color-scheme:light;${light}}${dark}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:34rem;margin:12vh auto;padding:0 20px}h1{font-size:1.6rem;line-height:1.2;margin:0 0 .75rem;color:var(--head)}button{min-height:48px;padding:10px 22px;border:0;border-radius:8px;background:var(--btn);color:var(--btn-ink);font:inherit;font-weight:600;cursor:pointer}button:focus-visible{outline:3px solid var(--head);outline-offset:3px}p{margin:0 0 1rem;overflow-wrap:anywhere}</style></head><body><main><h1>${esc(title)}</h1>${inner}</main></body></html>`;
   return new Response(html, {
     status,
     headers: {
@@ -457,41 +520,32 @@ export async function handleRecipientConfirm(
   const nowMs = (deps.now ?? Date.now)();
   const expired = () =>
     page(
-      deps.siteName,
+      deps,
       'This link has run out',
       '<p>It is more than a week old, or the address was changed again since. Ask whoever looks after the website to save the address once more, and a new link will come.</p>',
       410,
     );
   if (!deps.db || !deps.secret) {
-    return page(
-      deps.siteName,
-      'Not switched on',
-      '<p>This website cannot confirm addresses yet.</p>',
-      503,
-    );
+    return page(deps, 'Not switched on', '<p>This website cannot confirm addresses yet.</p>', 503);
   }
   let token: unknown = new URL(request.url).searchParams.get('t');
   if (request.method === 'POST') {
     const form = await request.formData().catch(() => null);
     token = form?.get('t');
   } else if (request.method !== 'GET') {
-    return page(deps.siteName, 'Not allowed', '<p>Open the link from the email.</p>', 405);
+    return page(deps, 'Not allowed', '<p>Open the link from the email.</p>', 405);
   }
   const t = await readRecipientToken(deps.secret, token, nowMs);
   if (!t) return expired();
   const row = await getRow(deps.db, t.k).catch(() => null);
   if (row?.email?.toLowerCase() === t.e && !row.pendingEmail) {
-    return page(
-      deps.siteName,
-      'Already confirmed',
-      `<p>Messages already come to ${escHtml(t.e)}.</p>`,
-    );
+    return page(deps, 'Already confirmed', `<p>Messages already come to ${escHtml(t.e)}.</p>`);
   }
   if (!row?.pendingEmail || row.pendingEmail.toLowerCase() !== t.e) return expired();
 
   if (request.method === 'GET') {
     return page(
-      deps.siteName,
+      deps,
       'Send website messages to you?',
       `<p>Messages people send through the ${escHtml(deps.siteName)} website forms will come to <strong>${escHtml(t.e)}</strong>.</p>` +
         `<form method="post"><input type="hidden" name="t" value="${escHtml(String(token))}"><button type="submit">Yes, send them to me</button></form>`,
@@ -507,7 +561,7 @@ export async function handleRecipientConfirm(
     .bind(at, at, t.k, t.e)
     .run();
   return page(
-    deps.siteName,
+    deps,
     'Thank you, that is confirmed',
     `<p>From now on, website messages for this form come to <strong>${escHtml(t.e)}</strong>. You can close this page.</p>`,
   );
@@ -521,6 +575,5 @@ export function fallbackKeys(
   const out: Record<string, boolean> = {};
   for (const k of Object.keys(secretMap)) out[k] = true;
   if (contactTo?.trim()) out[CONTACT_KEY] = true;
-  if (secretMap[DEFAULT_RECIPIENT]) out[DEFAULT_RECIPIENT] = true;
   return out;
 }

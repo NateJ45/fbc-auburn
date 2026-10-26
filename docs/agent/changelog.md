@@ -1,5 +1,11 @@
 # Change history
 
+_2026-10-26: the Contact form honours the Studio address (starter card 174)._ `src/lib/form-recipients.ts`
+and its test are now PORTABLE copies of the starter's, and the PORTABLE `/api/contact/` sends to the
+confirmed "contact" row first, then `CONTACT_TO`. `/api/form/` and the Studio panel work as before; the
+confirmation page keeps its colours, now passed in by `/api/form-recipient/confirm/`. Auburn keeps
+`migrations/0005_form_recipients.sql` (the starter's copy has its own number; both are `IF NOT EXISTS`).
+
 _2026-10-26: the self-serve PRs landed together, and CI stops hanging._
 
 **Decision.** #207 to #210 kept conflicting with each other in the changelog and waiting on CI, so they landed as one PR (#212) after the People tool (#206). The "Install Playwright system libraries" step in `ci.yml` hung for 30 minutes or more five times in two days; each try is now capped at 5 minutes, with three tries. Visual baselines regenerated for the new header, footer, Contact and share cards.

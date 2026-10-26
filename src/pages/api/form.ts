@@ -48,6 +48,7 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { looksAutomated } from '@/lib/contact-submission';
 import {
+  DEFAULT_RECIPIENT,
   buildFormNotification,
   normalizeForm,
   parseRecipients,
@@ -150,6 +151,7 @@ async function notify(
     fromD1,
     parseRecipients(e.FORM_RECIPIENTS),
     e.CONTACT_TO,
+    DEFAULT_RECIPIENT,
   );
   const { mailer, reason } = workerMailer(e);
   let failure: string | null = reason ?? 'no recipient address';
