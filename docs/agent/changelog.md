@@ -1,5 +1,25 @@
 # Change history
 
+_2026-10-25: the Studio catches up with the day's site changes._
+
+**Decision.** Nathan asked whether the Studio needed the day's content, page and design changes too.
+Its fields, page list and preview links had kept up; three other things had not.
+
+- **The Site Guide** (`src/sanity/guides/`): the menus guide describes the three groups (New here,
+  Get involved, Stay connected) and the Give button; the live stream link shows at the top of Sermons,
+  not on Watch; the newsletter guide says the list is kept in Church Trac (the website's own list is
+  off here); and new lines cover the Home banner's background video, the This week block's `Show`
+  choice and a sermon's length in minutes.
+- **The block picker's pictures** (`public/section-thumbnails/`, `npm run thumbnails`): reshot, so
+  they show the restraint pass, the quieter page heads, the gable photo shape and the Walk block's
+  sketch. The calendar block draws nothing without a feed, so it keeps its earlier picture.
+- **The loading splash** (`/studio`): it laid five pebbles joined by dashes after the site had moved
+  to brick. `brand.config.json` sets `studio.look.splash: "motif"` (starter card 162), so the splash
+  draws no stone path and `src/sanity/StudioSplashMotif.astro` sits in its place: the brick strip of
+  the Studio Home banner, laid brick by brick in the sill's order (`src/lib/brick-lay.ts`), held,
+  lifted and laid again while the editor loads. Reduced motion shows it laid. The offline page shows
+  the strip without the path.
+
 _2026-10-25: a stock clip plays in the Home hero before launch._
 
 **Decision.** Nathan asked for a placeholder church video until Jacob's clips are cut. The hero's
