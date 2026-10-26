@@ -77,13 +77,10 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
 - **At cutover:** run the HSTS subdomain check in `docs/agent/deployment.md` before putting
   `includeSubDomains` and `preload` back. A pasted form that posts off-site needs its origin on the
   `form-action` line.
-- **The spelling card is parked, unnumbered** (Nathan, 2026-10-25): starter branch `port/card-160`
-  with no PR and no PORTS.md card. Its number went to the redirects card, so it needs the next free
-  one (`node scripts/next-port-card.mjs`). It fails `build-csp.mjs` when the CSP line passes 2,000
-  characters, and moves user-facing words in five marked files to American spelling ("Website
-  inquiry" in contact emails, "color", "judgment" in the Studio). Site branches
-  `port/card-160-spelling` are pushed in fbcm, mas-monograms, presacademy, reid-design-site and
-  stonesteps-50k. Shipping it needs a choice about those sites' wording.
+- **Old content scripts still hold British copy** (found 2026-10-26, when the site went American English:
+  starter card 164): `scripts/content/*` and `scripts/seed-core.mjs` say "baptised", "neighbours",
+  "favourite", "enquire", "tick the box". The live dataset no longer does. Fix a script's strings before
+  running it again, or it puts the British wording back.
 - **Ports:** the fixes that are not church-specific go to the starter with port cards: the print
   reset and `print.spec`, the regex-backslash guard, the dark-surface ring, the ContactForm changes
   (POST fallback, one-pass errors, sessionStorage), the FaqAccordion landmark fix, the `<dialog>`

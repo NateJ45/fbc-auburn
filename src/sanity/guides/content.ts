@@ -791,7 +791,7 @@ const allGuides: Guide[] = [
         items: [
           'Open `Site settings`, then the `Church facts` tab.',
           'Change a time in `Service times`. Type it the 24-hour way: `09:45`, `11:00`, `18:00` for 6 pm.',
-          'Tick `Confirmed by the church` once it is right. Until then the website shows a small "To confirm" tag beside it and keeps it away from Google.',
+          'Check `Confirmed by the church` once it is right. Until then the website shows a small "To confirm" tag beside it and keeps it away from Google.',
           'Publish.',
         ],
       },
@@ -818,7 +818,7 @@ const allGuides: Guide[] = [
       {
         kind: 'bullets',
         items: [
-          '**Phone and email** are typed under `Identity & contact`. They show in the menu, the footer and on Contact. Tick `Confirmed by the church` for each under `Church facts` once it is right; until then they carry a "To confirm" tag and are kept away from Google.',
+          '**Phone and email** are typed under `Identity & contact`. They show in the menu, the footer and on Contact. Check `Confirmed by the church` for each under `Church facts` once it is right; until then they carry a "To confirm" tag and are kept away from Google.',
           '**Online giving link** (on the `Church Trac` tab): paste the giving page address and every Give link goes straight there. Leave it empty and Give opens the site’s own page about giving on Sunday or by mail.',
           '**Live stream link**: where people watch on Sunday. It shows at the top of Sermons and in the footer, and the home page’s "Live now" card goes there during worship. Empty uses the Facebook link.',
           '**Facebook, YouTube, WhatsApp and the rest**: under `Social and footer`, `Social links`, add a row and paste the link to the church’s page. The icon is picked from the link, so there is nothing to choose. The label is optional: it is what a screen reader says for the button. For WhatsApp, paste a group invite (https://chat.whatsapp.com/...) or a number link (https://wa.me/...); any other WhatsApp link is left off the site.',
@@ -932,7 +932,7 @@ const allGuides: Guide[] = [
           'Give it a `Form name`, like "VBS sign-up". This is the heading above the form.',
           'Pick `What kind of form is it?`. Choose prayer requests only for prayer requests.',
           'Under `Who receives it`, pick the person whose email the answers go to.',
-          'Add your `Questions`. For each one pick the kind of answer: a short line, a paragraph, a choice from a list, a tick box, an email or a phone number. Turn on `Must be answered?` only where you really need the answer.',
+          'Add your `Questions`. For each one pick the kind of answer: a short line, a paragraph, a choice from a list, a checkbox, an email or a phone number. Turn on `Must be answered?` only where you really need the answer.',
           'Publish the form.',
           'Open the page it belongs on, press `+ Add item`, choose `Form`, pick your form, and publish the page.',
         ],
@@ -964,7 +964,7 @@ const allGuides: Guide[] = [
           'A prayer request is **emailed to the person the form names**, and to nobody else.',
           'It is **never saved in the Studio** and never shown on the website.',
           'The website keeps a copy only until the email has gone. Once it is delivered, the words are wiped from the website’s own records.',
-          'If you tick `Let people send it without their name`, people can send a request with no name or email at all. You will not be able to reply to those.',
+          'If you check `Let people send it without their name`, people can send a request with no name or email at all. You will not be able to reply to those.',
         ],
       },
       {
@@ -1239,7 +1239,7 @@ guides.push(
       { kind: 'h', text: 'The Sunday checklist and "Is it live?"' },
       {
         kind: 'p',
-        text: 'The checklist is the week\'s jobs in order, with a button on each that goes straight to the place to do it. Done jobs are ticked for you, and the list starts fresh every Monday. "Is it live?" sits beside it and shows where your last change has got to: saved, building, then on the website.',
+        text: 'The checklist is the week\'s jobs in order, with a button on each that goes straight to the place to do it. Done jobs are checked for you, and the list starts fresh every Monday. "Is it live?" sits beside it and shows where your last change has got to: saved, building, then on the website.',
       },
       { kind: 'shot', key: 'home-live' },
       { kind: 'h', text: 'Further down' },
@@ -1436,12 +1436,12 @@ guides.push(
     category: 'Start here',
     title: 'The Sunday checklist',
     icon: 'check',
-    lead: 'The weekly jobs on Home, and how they get ticked.',
+    lead: 'The weekly jobs on Home, and how they get checked.',
     diy: 'self',
     body: [
       {
         kind: 'p',
-        text: 'Home has a card called **Sunday checklist** with the jobs that keep the website current each week. Most of them tick themselves when the website can see they are done:',
+        text: 'Home has a card called **Sunday checklist** with the jobs that keep the website current each week. Most of them check themselves when the website can see they are done:',
       },
       {
         kind: 'bullets',
@@ -1454,7 +1454,7 @@ guides.push(
       },
       {
         kind: 'p',
-        text: 'The website cannot see inside Church Trac, so **checking the events** has a box you tick yourself. Ticks start fresh every Monday.',
+        text: 'The website cannot see inside Church Trac, so **checking the events** has a box you check yourself. Checks start fresh every Monday.',
       },
       { kind: 'seealso', items: ['Quick update from your phone'] },
     ],

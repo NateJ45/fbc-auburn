@@ -92,11 +92,11 @@ test('the icon platform is read from the address for every common church account
 });
 
 test('a site we do not know gets the plain link and the label, or its domain', () => {
-  const [labelled] = resolveSocialLinks({
+  const [withLabel] = resolveSocialLinks({
     socialLinks: [{ url: 'https://www.auburnblog.org/news', label: 'Church blog' }],
   });
-  assert.equal(labelled.platform, 'Other');
-  assert.equal(socialLabel(labelled), 'Church blog');
+  assert.equal(withLabel.platform, 'Other');
+  assert.equal(socialLabel(withLabel), 'Church blog');
   const [bare] = resolveSocialLinks({ socialLinks: [{ url: 'https://www.auburnblog.org/news' }] });
   assert.equal(socialLabel(bare), 'auburnblog.org');
   assert.equal(platformFromUrl('https://notfacebook.com/x'), null);

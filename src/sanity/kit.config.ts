@@ -189,7 +189,7 @@ export const kitConfig: KitConfig = {
       id: 'church-trac',
       title: "Check this week's events in Church Trac",
       detail:
-        'The calendar on the website comes from Church Trac. Tick this once the dates and times there are right.',
+        'The calendar on the website comes from Church Trac. Check this once the dates and times there are right.',
       manual: true,
     },
     {

@@ -11,7 +11,7 @@
 //
 // Older rows carry a `platform` the editor picked from a dropdown (the field is now hidden). The
 // address wins when it is known; the stored platform stands in only for an address this file does
-// not recognise (a vanity domain that forwards to Facebook, say), so existing rows keep their icon.
+// not recognize (a vanity domain that forwards to Facebook, say), so existing rows keep their icon.
 //
 // WhatsApp is the one platform with a rule on the address: only an invite (chat.whatsapp.com/...)
 // or a number link (wa.me/...) is a link a visitor can use, so any other WhatsApp address is left

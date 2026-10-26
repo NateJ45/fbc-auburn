@@ -39,7 +39,7 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'Your TikTok in the footer.',
       detail:
-        '[Jacob: the footer links to the auburn.pastor TikTok, labelled "Pastor Jacob on TikTok" so visitors read it as yours, not the church speaking. Does the church want it in the footer on every page, or would you rather it came out (or a church YouTube channel took its place)?]',
+        '[Jacob: the footer links to the auburn.pastor TikTok, labeled "Pastor Jacob on TikTok" so visitors read it as yours, not the church speaking. Does the church want it in the footer on every page, or would you rather it came out (or a church YouTube channel took its place)?]',
     },
     {
       title: 'Confirm the Sunday and Wednesday times.',
@@ -296,7 +296,7 @@ const NOTES: Record<string, JacobNote[]> = {
     {
       title: 'The prayer chain, and a call back.',
       detail:
-        'The form now has two tick boxes: "You may share this with the prayer chain" (off unless someone ticks it) and "I would like Pastor Jacob to call me". Is there a prayer chain, and who is on it?',
+        'The form now has two checkboxes: "You may share this with the prayer chain" (off unless someone checks it) and "I would like Pastor Jacob to call me". Is there a prayer chain, and who is on it?',
     },
     {
       title: 'Is a request ever read aloud or printed?',
