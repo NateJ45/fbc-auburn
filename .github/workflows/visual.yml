@@ -82,9 +82,9 @@ jobs:
         # those sources first, then retry once for transient network failures.
         run: |
           sudo rm -f /etc/apt/sources.list.d/google-chrome* /etc/apt/sources.list.d/microsoft*
-          # When a try is cut off by its timeout, its apt-get child keeps running and holds the dpkg lock,
-          # so the next try died at once on "Could not get lock" (2026-10-26, a slow Azure mirror). Waiting
-          # for the lock lets the next try carry on from that download instead of failing.
+          # The runner's own apt-get can still hold the dpkg lock when this step starts (2026-10-26: four
+          # e2e shards in a day died in two seconds on "Could not get lock /var/lib/dpkg/lock-frontend").
+          # Make every apt call wait up to 5 minutes for the lock instead of failing at once.
           echo 'DPkg::Lock::Timeout "300";' | sudo tee /etc/apt/apt.conf.d/99-lock-timeout >/dev/null
           npx playwright install --with-deps chromium ||
             npx playwright install --with-deps chromium
