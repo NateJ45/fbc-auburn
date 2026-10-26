@@ -175,13 +175,14 @@ const showSunday = !SUNDAY_PAGES.has(here);
 // The footer's own words (Site settings > Social & footer), each with the built-in fallback.
 const footerAbout = siteSettings?.footerAbout || 'A Southern Baptist church in Ross Township, Ohio';
 // The verse across the top of the footer (2026-10-24), Site settings > Social and footer. The
-// default is Matthew 11:28 in the CSB until the church picks its own verse and translation.
+// default is Hebrews 13:8 in the KJV, the verse on the church's Facebook page in the wording it
+// quotes (2026-10-26; it was Matthew 11:28), until Pastor Jacob confirms or picks another.
 const verseText =
   siteSettings?.footerVerse?.text?.trim() ||
-  'Come to me, all of you who are weary and burdened, and I will give you rest.';
+  'Jesus Christ the same yesterday, and to day, and for ever.';
 const verseRef = siteSettings?.footerVerse?.text?.trim()
   ? siteSettings.footerVerse.reference?.trim() || ''
-  : 'Matthew 11:28';
+  : 'Hebrews 13:8 (KJV)';
 // The This Sunday panel and its calendar link, from the same facts as Home's card.
 const sunday = thisSunday(footerFacts, churchDataNow());
 const hasCalendar =
