@@ -1,6 +1,7 @@
-// Safe to edit by hand
-// The read-only Sanity client the post-build steps share (build-brand-icons.mjs,
-// build-og-cards.mjs): published content, the CDN unless a token is set, and the pinned CI
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care (PORTS.md card 168)
+// The read-only Sanity client the post-build steps share (build-brand-icons.mjs, and any later
+// step that reads content after astro build): published content, the CDN unless a token is set, and the pinned CI
 // snapshot when SANITY_SNAPSHOT_URL is set (PORTS.md card 138), exactly like the page build.
 // Returns null when no project id is configured (a fresh clone), so the steps skip quietly.
 
