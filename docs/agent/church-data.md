@@ -53,10 +53,30 @@ gathering is an `Event` with a weekly `eventSchedule` (2026-10-17).
 event per confirmed Sunday gathering, from this Sunday, at the address. The This Sunday card links
 it only once a Sunday time is confirmed.
 
+## Times, grouped and named (re-audit 2026-10-26)
+
+Two rules in `src/lib/church-facts.ts`, unit-tested in `church-facts.test.ts`:
+
+- **Group by day AND time.** `timeSlots()` puts a day's gatherings that start at the same minute in one
+  slot, each with its own name: Wednesday reads "6:00 pm · Bible study and prayer, Youth", never "6:00 and
+  6:00 pm". `weeklyRhythm()` (Home's "Every Wednesday · 6:00 pm · ..." lines) and `thisWeek()` (one row per
+  day and start time) both use it, so Home and Events agree. `timesPhrase()` says a shared time once.
+- **Name each time in the short line.** `namedTimes()` builds "Sunday School 9:45 · Worship 11:00" from each
+  service's own label (cut to its first words by `shortLabel()`: "Sunday School for all ages" becomes
+  "Sunday School"), so two times never read as two services. The am/pm goes when every time is in the same
+  half of the day. Any service without a label falls back to the old "Sundays 9:45 and 11:00 am". Used by
+  the desktop top strip and the phone menu (`Header.astro`), Home's phone fact line (`SundayFacts.astro`),
+  the Sunday bar (`SundayBar.astro`) and the times band's phone bar (`TimesBand.astro`). `dayWithTimes()`
+  (the Find your place cards and Home's bands) names them the same way when a card covers two or more
+  times ("Sundays: Sunday School 9:45 · Worship 11:00"). Never type the line into a field.
+
+The times band (`TimesBand.astro`) also carries the address on phones since 2026-10-26, with Directions
+(Google Maps) and Apple Maps under it, so Plan your visit gives the where on its first screen.
+
 ## Every week (the Events page, 2026-10-25)
 
-The This week block (`thisWeekSection`) has a `mode`: `thisWeek` (the default, Home: the next seven days, merged by
-day, with dates) or `everyWeek` (Events: `EveryWeekList.astro`, each service time once, Sunday first). Both read the
+The This week block (`thisWeekSection`) has a `mode`: `thisWeek` (the default, Home: the next seven days, one row per
+day and start time, with dates) or `everyWeek` (Events: `EveryWeekList.astro`, each service time once, Sunday first). Both read the
 same Service times, so Home and Events cannot disagree; add a gathering there (Youth on Wednesday was added by
 `scripts/content/audit-collections.mjs`) and it shows in both, in the Plan your visit times and in the Ministries
 card's "when" line. Each Every week row links to the Ministries card it is about (matched by name, `matchMinistry`
@@ -76,15 +96,15 @@ shows on the This Sunday card and in the footer under the address; empty hides i
 All of them fetch their own data (memoized, one Sanity read per build), take no required props,
 and draw only themselves: the section, heading and band around them belong to the page.
 
-| Component             | Where the mockups put it               | Draws                                                                                   |
-| --------------------- | -------------------------------------- | --------------------------------------------------------------------------------------- |
-| `ThisSunday.astro`    | Home hero, Watch band, Plan your visit | "This Sunday, October 25 · Sunday School for all ages 9:45 am · Worship 11:00 am"       |
-| `ThisWeekList.astro`  | Home "This week at Auburn"             | The next 7 days: service times merged per day, plus Church Trac events; "Full calendar" |
-| `LastSunday.astro`    | Watch band (Home, top of Sermons)      | Latest YouTube message: thumbnail, label, title; press to play. `slot="fallback"`       |
-| `SundayWeather.astro` | Plan your visit, under the address     | "Sunday: 62°, sunny." (browser fetch, Wednesday to Sunday noon, hidden on any failure)  |
-| `ServiceTimes.astro`  | Plan your visit "When" facts           | Each gathering: time (and day if not Sunday), label, note                               |
-| `ChurchAddress.astro` | Footer, Contact, Plan your visit       | `<address>` lines plus "Get directions" (Google Maps search from the same fields)       |
-| `NotConfirmed.astro`  | Beside any provisional fact            | The tag                                                                                 |
+| Component             | Where the mockups put it               | Draws                                                                                  |
+| --------------------- | -------------------------------------- | -------------------------------------------------------------------------------------- |
+| `ThisSunday.astro`    | Home hero, Watch band, Plan your visit | "This Sunday, October 25 · Sunday School for all ages 9:45 am · Worship 11:00 am"      |
+| `ThisWeekList.astro`  | Home "This week at Auburn"             | The next 7 days: one row per day and time, plus Church Trac events; "Full calendar"    |
+| `LastSunday.astro`    | Watch band (Home, top of Sermons)      | Latest YouTube message: thumbnail, label, title; press to play. `slot="fallback"`      |
+| `SundayWeather.astro` | Plan your visit, under the address     | "Sunday: 62°, sunny." (browser fetch, Wednesday to Sunday noon, hidden on any failure) |
+| `ServiceTimes.astro`  | Plan your visit "When" facts           | Each gathering: time (and day if not Sunday), label, note                              |
+| `ChurchAddress.astro` | Footer, Contact, Plan your visit       | `<address>` lines plus "Get directions" (Google Maps search from the same fields)      |
+| `NotConfirmed.astro`  | Beside any provisional fact            | The tag                                                                                |
 
 Example, a Watch band that falls back to Facebook until there is a YouTube channel:
 

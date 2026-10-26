@@ -30,6 +30,9 @@ import { exampleSrc, heroSrcset, shotFor } from '@/data/shot-list';
 import SundayCard from './SundayCard.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { ctaHref } from '@/lib/cta-href';
+import { getSiteSettings } from '@/lib/queries';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import { repeatsHeaderCta } from '@/lib/red-budget';
 import { townOf } from '@/lib/place-line';
 import { splitStega } from '@/lib/preview-stega';
 import { heroVideoSource } from '@/lib/hero-video';
@@ -72,6 +75,15 @@ const facts = await getChurchFacts();
 const town = facts.address ? townOf(facts.address.lines[1]) : '';
 const primary = block.primaryCta;
 const secondary = block.secondaryCta;
+const primaryHref = ctaHref(primary, '/plan-your-visit/');
+// The header's red button stays red (re-audit 2026-10-26): a hero button that goes to the same page
+// (Plan your first visit) repeats it, so it draws navy (src/lib/red-budget.ts).
+const primaryClass = repeatsHeaderCta(
+  primaryHref,
+  resolveSiteSettings(await getSiteSettings()).headerCta,
+)
+  ? 'btn-auburn--navy'
+  : 'btn-auburn--primary';
 ---
 
 <section
@@ -149,7 +161,7 @@ const secondary = block.secondaryCta;
       {(primary?.label || secondary?.label) && (
         <div class="hb-actions">
           {primary?.label && (
-            <a class="btn-auburn btn-auburn--primary" href={ctaHref(primary, '/plan-your-visit/')}>
+            <a class:list={['btn-auburn', primaryClass]} href={primaryHref}>
               {primary.label}
             </a>
           )}

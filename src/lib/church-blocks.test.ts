@@ -243,3 +243,31 @@ describe('rule 9: the church library carries no colour field', () => {
     }
   });
 });
+
+describe('noticeParts: the numbers in a notice are tappable (re-audit 2026-10-26)', () => {
+  it('links the crisis lines and a ten-digit number, and keeps the words', async () => {
+    const { noticeParts } = await import('./church-blocks.ts');
+    const parts = noticeParts(
+      'If you are in danger or thinking of harming yourself, call or text 988, or call 911.',
+    );
+    assert.deepEqual(
+      parts.filter((p) => p.tel).map((p) => [p.text, p.tel]),
+      [
+        ['988', 'tel:988'],
+        ['911', 'tel:911'],
+      ],
+    );
+    assert.equal(
+      parts.map((p) => p.text).join(''),
+      'If you are in danger or thinking of harming yourself, call or text 988, or call 911.',
+    );
+    assert.deepEqual(noticeParts('Call (513) 863-3500 today').filter((p) => p.tel)[0], {
+      text: '(513) 863-3500',
+      tel: 'tel:+15138633500',
+    });
+    assert.deepEqual(noticeParts('Snow: no services on 1/9/2027, 9118 Main.'), [
+      { text: 'Snow: no services on 1/9/2027, 9118 Main.' },
+    ]);
+    assert.deepEqual(noticeParts(''), []);
+  });
+});

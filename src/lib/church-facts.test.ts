@@ -12,8 +12,12 @@ import {
   parseClock,
   resolveChurchFacts,
   thisSunday,
+  namedTimes,
+  shortLabel,
   thisWeek,
+  timeSlots,
   timesPhrase,
+  weeklyRhythm,
 } from './church-facts.ts';
 import { parseIcs } from './church-calendar.ts';
 
@@ -52,6 +56,7 @@ test('clock words', () => {
   assert.equal(timesPhrase([660, 585]), '9:45 and 11:00 am');
   assert.equal(timesPhrase([660, 1080]), '11:00 am and 6:00 pm');
   assert.equal(timesPhrase([540, 585, 660]), '9:00, 9:45 and 11:00 am');
+  assert.equal(timesPhrase([1080, 1080]), '6:00 pm', 'a shared time is said once');
 });
 
 test('settings resolve, times sorted Sunday first, half-filled rows skipped', () => {
@@ -141,7 +146,7 @@ test('This Sunday: the coming Sunday, today until after the last service', () =>
   assert.equal(thisSunday({ serviceTimes: [] }, WEDNESDAY), null);
 });
 
-test('This week: services merged per day, calendar events added, duplicates and the past left out', () => {
+test('This week: services one row per day and time, calendar events added, duplicates and the past left out', () => {
   const f = resolveChurchFacts(SETTINGS);
   const events = parseIcs(
     readFileSync(new URL('../../tests/fixtures/church-calendar.ics', import.meta.url), 'utf8'),
@@ -160,7 +165,8 @@ test('This week: services merged per day, calendar events added, duplicates and 
       ['Today', 'October 21', 'Bible study', '6:00 pm', true],
       ['Thursday', 'October 22', 'Youth group', '6:30 pm', true],
       ['Saturday', 'October 24', 'Fall festival', 'All day', true],
-      ['Sunday', 'October 25', 'Sunday School and Worship', '9:45 and 11:00 am', false],
+      ['Sunday', 'October 25', 'Sunday School', '9:45 am', false],
+      ['Sunday', 'October 25', 'Worship', '11:00 am', true],
     ],
   );
   // The feed's own "Worship" at Sunday 11:00 is the same gathering: not a second row.
@@ -174,6 +180,7 @@ test('This week on a Wednesday evening: tonight has started, so next Wednesday s
   assert.deepEqual(
     rows.map((r) => [r.when, r.dateLabel]),
     [
+      ['Sunday', 'October 25'],
       ['Sunday', 'October 25'],
       ['Wednesday', 'October 28'],
     ],
@@ -348,10 +355,78 @@ test('dayWithTimes adds the times for that day from Church facts, other text sta
     { dayIndex: 3, minutes: 1080, label: 'Bible study and prayer' },
   ];
   assert.equal(dayWithTimes('Wednesdays', times), 'Wednesdays, 6:00 pm');
-  assert.equal(dayWithTimes('Sunday mornings', times), 'Sunday mornings, 9:45 and 11:00 am');
+  assert.equal(
+    dayWithTimes('Sunday mornings', times),
+    'Sunday mornings: Sunday School 9:45 · Worship 11:00',
+  );
   assert.equal(dayWithTimes('Saturdays', times), 'Saturdays');
   assert.equal(dayWithTimes('Once a month', times), 'Once a month');
   // A card named after one gathering gets that gathering's time only.
   assert.equal(dayWithTimes('Sundays', times, 'Sunday School'), 'Sundays, 9:45 am');
-  assert.equal(dayWithTimes('Sundays', times, 'Kids'), 'Sundays, 9:45 and 11:00 am');
+  assert.equal(
+    dayWithTimes('Sundays', times, 'Kids'),
+    'Sundays: Sunday School 9:45 · Worship 11:00',
+  );
+});
+
+test('Two gatherings at one time share a slot, each with its own name (re-audit 2026-10-26)', () => {
+  const times = [
+    { label: 'Sunday School for all ages', dayIndex: 0, minutes: 585, confirmed: false },
+    { label: 'Worship', dayIndex: 0, minutes: 660, confirmed: false },
+    { label: 'Bible study and prayer', dayIndex: 3, minutes: 1080, confirmed: true },
+    { label: 'Youth', dayIndex: 3, minutes: 1080, confirmed: false },
+  ];
+  const wed = timeSlots(times.filter((s) => s.dayIndex === 3));
+  assert.equal(wed.length, 1);
+  assert.equal(wed[0].timeLabel, '6:00 pm');
+  assert.equal(wed[0].what, 'Bible study and prayer, Youth');
+  assert.equal(wed[0].confirmed, false);
+  assert.deepEqual(
+    weeklyRhythm(times).map((r) => `Every ${r.day} · ${r.timeLabel} · ${r.what}`),
+    [
+      'Every Sunday · 9:45 am · Sunday School for all ages',
+      'Every Sunday · 11:00 am · Worship',
+      'Every Wednesday · 6:00 pm · Bible study and prayer, Youth',
+    ],
+  );
+  // The Home and Events pages share the rows from thisWeek too: never "6:00 and 6:00 pm".
+  const f = resolveChurchFacts({
+    serviceTimes: [
+      {
+        _key: 'b',
+        label: 'Bible study and prayer',
+        day: 'wednesday',
+        time: '18:00',
+        confirmed: true,
+      },
+      { _key: 'y', label: 'Youth', day: 'wednesday', time: '18:00', confirmed: true },
+    ],
+  });
+  const rows = thisWeek(f, null, new Date('2026-10-20T16:00:00Z'));
+  assert.deepEqual(
+    rows.map((r) => [r.what, r.time]),
+    [['Bible study and prayer, Youth', '6:00 pm']],
+  );
+});
+
+test('The short Sunday times name each gathering (re-audit 2026-10-26)', () => {
+  assert.equal(shortLabel('Sunday School for all ages'), 'Sunday School');
+  assert.equal(shortLabel('Worship (about an hour)'), 'Worship');
+  assert.equal(shortLabel('Bible study and prayer'), 'Bible study and prayer');
+  const sunday = [
+    { label: 'Worship', minutes: 660, confirmed: true },
+    { label: 'Sunday School for all ages', minutes: 585, confirmed: true },
+  ];
+  assert.equal(namedTimes(sunday), 'Sunday School 9:45 · Worship 11:00');
+  // Morning and evening: each keeps its am or pm.
+  assert.equal(
+    namedTimes([...sunday, { label: 'Evening service', minutes: 1080, confirmed: true }]),
+    'Sunday School 9:45 am · Worship 11:00 am · Evening service 6:00 pm',
+  );
+  // A time with no name falls back to the old phrase.
+  assert.equal(
+    namedTimes([sunday[0], { label: '', minutes: 585, confirmed: true }]),
+    'Sundays 9:45 and 11:00 am',
+  );
+  assert.equal(namedTimes([]), '');
 });

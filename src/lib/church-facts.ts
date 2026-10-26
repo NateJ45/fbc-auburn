@@ -240,7 +240,8 @@ export function clockLabel(minutes: number): string {
  */
 export function timesPhrase(minutes: number[]): string {
   if (minutes.length === 0) return '';
-  const sorted = [...minutes].sort((a, b) => a - b);
+  // A time two gatherings share is said once: [1080, 1080] -> "6:00 pm", never "6:00 and 6:00 pm".
+  const sorted = [...new Set(minutes)].sort((a, b) => a - b);
   const labels = sorted.map(clockLabel);
   const sameHalf = sorted.every((m) => m < 720) || sorted.every((m) => m >= 720);
   const parts = sameHalf
@@ -249,6 +250,104 @@ export function timesPhrase(minutes: number[]): string {
   return parts.length === 1
     ? parts[0]
     : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+}
+
+/** The gatherings of one day that start at the same minute, with each one's own name. */
+export interface TimeSlot {
+  minutes: number;
+  /** "6:00 pm" */
+  timeLabel: string;
+  /** Each gathering's own label, in the order Church facts lists them. */
+  labels: string[];
+  /** "Bible study and prayer, Youth": the names side by side, never merged into one. */
+  what: string;
+  confirmed: boolean;
+}
+
+/**
+ * One day's gatherings grouped by start time (re-audit 2026-10-26): two gatherings at 6:00 pm make
+ * ONE slot, "6:00 pm · Bible study and prayer, Youth", never "6:00 and 6:00 pm". Earliest first.
+ */
+export function timeSlots(
+  services: readonly (Pick<ServiceTime, 'minutes' | 'label'> & { confirmed?: boolean })[],
+): TimeSlot[] {
+  const by = new Map<number, TimeSlot>();
+  for (const s of services) {
+    const slot = by.get(s.minutes) ?? {
+      minutes: s.minutes,
+      timeLabel: clockLabel(s.minutes),
+      labels: [],
+      what: '',
+      confirmed: true,
+    };
+    const label = plain(s.label);
+    if (label && !slot.labels.includes(label)) slot.labels.push(label);
+    slot.confirmed = slot.confirmed && s.confirmed !== false;
+    by.set(s.minutes, slot);
+  }
+  return [...by.values()]
+    .sort((a, b) => a.minutes - b.minutes)
+    .map((slot) => ({ ...slot, what: slot.labels.join(', ') }));
+}
+
+/** One line of the weekly rhythm: a day and a start time, with what happens then. */
+export interface RhythmRow extends TimeSlot {
+  dayIndex: number;
+  /** "Wednesday" */
+  day: string;
+}
+
+/**
+ * The week's regular gatherings as one row per day AND time, Sunday first (Home's "This week"
+ * lines; the Events "Every week" list shows the same gatherings one by one).
+ */
+export function weeklyRhythm(
+  serviceTimes: readonly Pick<ServiceTime, 'dayIndex' | 'minutes' | 'label' | 'confirmed'>[],
+): RhythmRow[] {
+  const days = [...new Set(serviceTimes.map((s) => s.dayIndex))].sort((a, b) => a - b);
+  return days.flatMap((d) =>
+    timeSlots(serviceTimes.filter((s) => s.dayIndex === d)).map((slot) => ({
+      ...slot,
+      dayIndex: d,
+      day: DAY_TITLES[d],
+    })),
+  );
+}
+
+/**
+ * A gathering's name cut to its first words for a short line: "Sunday School for all ages" ->
+ * "Sunday School". Stops at " for ", " with ", " (", " - " or a comma; a label with none of those
+ * comes back whole.
+ */
+export function shortLabel(label?: string | null): string {
+  const text = plain(label);
+  const cut = text.split(/\s+(?:for|with)\s+|\s*\(|\s+[-–]\s+|,/i)[0]?.trim();
+  return cut || text;
+}
+
+/**
+ * The short Sunday times line the chrome shows (re-audit 2026-10-26): each time with its own
+ * gathering's name, "Sunday School 9:45 · Worship 11:00", so two times never read as two services.
+ * Built from Church facts' labels, never typed. When every time is in the morning (or every one in
+ * the evening) the am/pm is left off, as the day already says it; mixed, each keeps its own. Any
+ * gathering without a label falls back to the old phrase, "Sundays 9:45 and 11:00 am".
+ */
+export function namedTimes(
+  services: readonly (Pick<ServiceTime, 'minutes' | 'label'> & { confirmed?: boolean })[],
+  fallbackDay = 'Sundays',
+): string {
+  if (services.length === 0) return '';
+  if (services.some((s) => !plain(s.label))) {
+    return `${fallbackDay} ${timesPhrase(services.map((s) => s.minutes))}`;
+  }
+  const slots = timeSlots(services);
+  const sameHalf = slots.every((s) => s.minutes < 720) || slots.every((s) => s.minutes >= 720);
+  return slots
+    .map((slot) => {
+      const time = sameHalf ? slot.timeLabel.slice(0, -3) : slot.timeLabel;
+      return `${andList(slot.labels.map(shortLabel))} ${time}`;
+    })
+    .join(' · ');
 }
 
 /**
@@ -277,8 +376,13 @@ export function dayWithTimes(
         return label !== '' && (label.includes(want) || want.includes(label));
       })
     : [];
-  const minutes = (named.length ? named : onDay).map((s) => s.minutes);
-  return minutes.length ? `${day}, ${timesPhrase(minutes)}` : day;
+  const set = named.length ? named : onDay;
+  if (set.length === 0) return day;
+  // Two or more start times are named (re-audit 2026-10-26), so they never read as two services:
+  // "Sundays: Sunday School 9:45 · Worship 11:00". One time stays "Wednesdays, 6:00 pm".
+  const slots = new Set(set.map((s) => s.minutes));
+  if (slots.size > 1 && set.every((s) => plain(s.label))) return `${day}: ${namedTimes(set)}`;
+  return `${day}, ${timesPhrase(set.map((s) => s.minutes))}`;
 }
 
 /** "A", "A and B", "A, B and C". */
@@ -569,7 +673,7 @@ export interface WeekRow {
 export const WEEK_DAYS = 7;
 
 /**
- * The next seven days: the regular gatherings (one row per day, merged), and
+ * The next seven days: the regular gatherings (one row per day and start time), and
  * any calendar events in the same days, by date then time. Today's rows drop
  * off once they have started; a Sunday dropped that way comes back as next
  * Sunday. A calendar event at the same day and time as a regular gathering is
@@ -602,19 +706,23 @@ export function thisWeek(
     ) {
       continue;
     }
-    items.push({
-      key: `services-${date}`,
-      date,
-      when: i === 0 ? 'Today' : DAY_TITLES[wd],
-      dateLabel: monthDay(date),
-      what: andList(day.map((s) => s.label)),
-      time: timesPhrase(day.map((s) => s.minutes)),
-      where: '',
-      confirmed: day.every((s) => s.confirmed),
-      source: 'services',
-      cancelled: false,
-      start: day[0].minutes,
-    });
+    // One row per start time (re-audit 2026-10-26): Sunday School at 9:45 and Worship at 11:00 are
+    // two rows, and two gatherings at 6:00 pm share one row with both names.
+    for (const slot of timeSlots(day)) {
+      items.push({
+        key: `services-${date}-${slot.minutes}`,
+        date,
+        when: i === 0 ? 'Today' : DAY_TITLES[wd],
+        dateLabel: monthDay(date),
+        what: slot.what,
+        time: slot.timeLabel,
+        where: '',
+        confirmed: slot.confirmed,
+        source: 'services',
+        cancelled: false,
+        start: slot.minutes,
+      });
+    }
   }
 
   for (const o of occurrences(events ?? [], today, addDays(today, WEEK_DAYS - 1), {

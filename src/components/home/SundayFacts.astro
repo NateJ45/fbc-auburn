@@ -1,6 +1,6 @@
 ---
 // Safe to edit by hand
-// Board E's phone fact line: "Sundays 9:45 and 11:00 am", then the address and Directions, under
+// Board E's phone fact line: "Sunday School 9:45 · Worship 11:00" (each time named, re-audit 2026-10-26), then the address and Directions, under
 // the red welcome line. Shown below 960px only (home-board.css), so time and place are on the
 // first phone screen even with the browser's own bars taking height; at desktop the header's
 // Sunday note carries the same facts. Derived from Site settings > Church facts (rule 15), the
@@ -10,7 +10,7 @@
 // its two spans sit side by side in the HTML, so site search read them as "11:00 am4241 Hamilton...".
 // The space between the spans keeps copy-paste and reader modes tidy too.
 import { getChurchFacts } from '@/lib/church-data';
-import { timesPhrase } from '@/lib/church-facts';
+import { namedTimes } from '@/lib/church-facts';
 
 const facts = await getChurchFacts();
 const minutes = (facts.serviceTimes ?? []).filter((t) => t.dayIndex === 0).map((t) => t.minutes);
@@ -19,7 +19,9 @@ const address = facts.address ?? null;
 
 {minutes.length > 0 && (
   <p class="hb-facts hb-num" data-pagefind-ignore="all">
-    <span class="hb-facts__times">Sundays {timesPhrase(minutes)}</span>{' '}
+    <span class="hb-facts__times">
+      {namedTimes((facts.serviceTimes ?? []).filter((t) => t.dayIndex === 0))}
+    </span>{' '}
     {address && (
       <span class="hb-facts__where">
         {address.street} ·{' '}

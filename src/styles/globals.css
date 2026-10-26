@@ -47,7 +47,9 @@
   --color-white-pure: #ffffff;
 
   /* Fonts */
-  --font-display: 'Young Serif', Georgia, 'Times New Roman', serif;
+  --font-display:
+    'Young Serif', 'Young Serif Fallback', 'Young Serif Fallback Times', Georgia, 'Times New Roman',
+    serif;
   --font-body: 'Familjen Grotesk Variable', system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Consolas, monospace;
   --font-script: 'Snell Roundhand', 'Apple Chancery', cursive;

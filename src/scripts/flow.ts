@@ -218,6 +218,23 @@ export function initFlow() {
   );
   disposers.push(() => io.disconnect());
 
+  // Keyboard focus lands its unit at once (re-audit 2026-10-26): a link reached by Tab must never sit
+  // at opacity 0 waiting for the observer (flow.css shows it under :focus-within; this makes it stay).
+  // The stone reveals and [data-reveal] sections around it are marked as arrived too.
+  const onFocusIn = (e: FocusEvent) => {
+    for (let p = e.target as Element | null; p && p !== document.body; p = p.parentElement) {
+      if (!(p instanceof HTMLElement)) continue;
+      if (p.dataset.flowOn && p.classList.contains('flow')) {
+        io.unobserve(p);
+        land(p);
+      }
+      if (p.classList.contains('reveal')) p.classList.add('in');
+      if (p.hasAttribute('data-reveal')) p.classList.add('is-visible');
+    }
+  };
+  document.addEventListener('focusin', onFocusIn);
+  disposers.push(() => document.removeEventListener('focusin', onFocusIn));
+
   ready.then(() => {
     if (teardown !== stop) return; // a newer page took over while the fonts loaded
     const fontsIn = !document.fonts || document.fonts.status === 'loaded';

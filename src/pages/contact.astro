@@ -25,8 +25,7 @@ import PostInquiryRoadmap from '@/components/PostInquiryRoadmap.astro';
 const [page, siteSettings] = await Promise.all([getContactPage(), getSiteSettings()]);
 
 const title = page?.seoTitle ?? `Contact ${site.name}`;
-const description =
-  page?.seoDescription ?? 'Ask a question, tell us you are visiting, or send a prayer request.';
+const description = page?.seoDescription ?? 'Ask a question or tell us you are visiting.';
 
 const heroEyebrow = page?.heroEyebrow ?? 'Get in touch';
 const heroHeadline = page?.heroHeadline ?? 'Contact us';
@@ -42,13 +41,21 @@ const DEFAULT_VISIT_QUESTIONS = [
   {
     label: 'What is this about?',
     kind: 'select',
-    options: ['I am planning to visit', 'A question', 'A prayer request', 'Something else'],
+    // No prayer option (re-audit 2026-10-26): a prayer request goes to /prayer/, which keeps its own
+    // privacy promise; this form's messages are stored (Privacy page).
+    options: ['I am planning to visit', 'A question', 'Something else'],
     required: true,
   },
   { label: 'Your message', kind: 'textarea', required: true },
 ];
 const written = normalizeCustomFields(page?.formFields);
-const questions = written.length > 0 ? written : normalizeCustomFields(DEFAULT_VISIT_QUESTIONS);
+// A prayer topic written in the Studio is left out too (re-audit 2026-10-26): prayer requests go
+// to /prayer/, never through this stored form.
+const questions = (
+  written.length > 0 ? written : normalizeCustomFields(DEFAULT_VISIT_QUESTIONS)
+).map((q) =>
+  Array.isArray(q.options) ? { ...q, options: q.options.filter((o) => !/pray/i.test(o)) } : q,
+);
 const questionProps = { customFields: questions };
 
 const schedulingLink = page?.schedulingLink;
@@ -80,6 +87,11 @@ const schemas = [
 ---
 
 <BaseLayout {title} {description} {schemas} {siteSettings} seoImage={page?.seoImage}>
+  {/* The old prayer side door (re-audit 2026-10-26): /contact/?topic=prayer goes to the prayer page,
+      whose form keeps the prayer privacy promise. Runs on a full load and on a router swap. */}
+  <script is:inline>
+    if (/[?&]topic=pray/i.test(location.search)) location.replace('/prayer/');
+  </script>
   {/* Hero — same image-or-text shape every other page uses. */}
   <Hero
     eyebrow={heroEyebrow}

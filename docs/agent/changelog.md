@@ -1,5 +1,58 @@
 # Change history
 
+_2026-10-26: the re-audit's fixes (six bugs, six of Nathan's changes)._
+
+**Decision.** The five-reviewer re-audit of 2026-10-26 confirmed six bugs on the live site, and Nathan
+made six calls. The code is in one PR; the content half is two dry-run scripts the lead applies, and
+the code renders right before and after they run.
+
+- **This week's Wednesday line.** Home read "6:00 and 6:00 pm · Bible study and prayer and Youth". Times
+  are now grouped by day AND start time (`timeSlots`, `weeklyRhythm` in `src/lib/church-facts.ts`;
+  `thisWeek` gives one row per day and time), so it reads "Every Wednesday · 6:00 pm · Bible study and
+  prayer, Youth", and `timesPhrase` says a shared time once. Unit-tested.
+- **The short times line names each time**: "Sunday School 9:45 · Worship 11:00" (`namedTimes`,
+  `shortLabel`), from each service's label in Church facts, in the top strip, the phone menu, Home's
+  fact line, the Sunday bar, the times band and the Find your place cards. Falls back to the old
+  phrase when a service has no label. Unit-tested.
+- **Prayer has one door.** Contact drops its prayer topic (in code and, by script, in the Studio's
+  question), `/contact/?topic=prayer` goes to `/prayer/`, and Home's Ask card loses "something we can
+  pray about" while a Prayer requests card links to `/prayer/` (content). The prayer form gains a
+  "Would you rather talk? Call ... or send a text" line from Church facts.
+- **Focus is never invisible.** Any flow, reveal or brick unit holding focus shows at once (end of
+  `src/styles/flow.css`) and `flow.ts` lands it on `focusin` (`docs/agent/animation.md`).
+- **The phone Menu pill is a real `<button>`** once the script runs, so Space opens it (it scrolled the
+  page 710px). The no-JS link to the footer's page list stays.
+- **Lining figures**: one `html { font-variant-numeric: lining-nums tabular-nums }` rule, so Young
+  Serif's "11:00" no longer reads "II:00".
+- **Title layout shift on phones**: metric-matched local fallbacks for Young Serif (Georgia and Times
+  with size-adjust and ascent and descent overrides) second in the display stack; the preload stays.
+  Load CLS at 375, font held 1.5s, throttled, median of three: Ministries 0.054 to 0.002, Plan your
+  visit 0.053 to 0, What we believe 0.050 to 0.001, Need the pastor? 0.081 to 0.019, News and notes
+  0.051 to 0.001 (`docs/agent/design-tokens.md`).
+- **The header's red is the only red that repeats.** A body button that goes where the header's Plan
+  your visit goes draws navy (`src/lib/red-budget.ts`, `SectionRenderer` and `HomeHero.astro`), Home's
+  hero included; the red passes to the page's own step or to none.
+- **Four menu groups**, Reach us beside the others (Contact, Need the pastor?, Prayer requests), in
+  the menu and the footer (`scripts/content/menu-reach-us.mjs`, dry run only). The desktop row fits
+  at 1024 and 1280 (64px and 48px between the lockup and New here) and the footer lays them out in a
+  2 by 2 grid on a phone and one column each on a wide screen.
+- **Plan your visit, shorter** (`scripts/content/reaudit-pages.mjs`): Good to know folds into the walk's
+  intro, the sign into Find us, Find us moves up beside the walk, the walk loses its own copy of
+  "Tell us you are coming" (the closing band is the invitation; the opener's copy is gone from the
+  code), and the access asks become one list ask with every question kept. The times band carries the
+  address with Directions and Apple Maps on a phone, the map card is a slim strip there, and the walk
+  is tighter. 8,316px to 6,582px at 375 after the content runs (7,950px with the code alone);
+  "Tell us you are coming" four times to two (the closing band's button and its line).
+- **The phone footer**: groups in a 2 by 2 grid with 36px rows, the name and Give on one row, a
+  shorter sill, the Directions link beside the address, no where-next rows on the Bulletin, a sermon
+  page or the 404. At 375 with the pre-launch notes: 1,310px to 1,158px on band pages, 1,553px to
+  1,401px on where-next pages, the Bulletin and the 404 1,553px to 1,158px. Not yet one screen.
+- **Need the pastor? leads with action**: the contact card's new `callButtons` box draws big Call and
+  Text buttons (tel: and sms: from the Church facts phone, the To confirm tag while unconfirmed),
+  and Call takes the page's red. Notices make 988, 911 and phone numbers tap-to-call, and take an
+  optional `label` ("If it cannot wait" on the two crisis lines, by script). The prayer form becomes a
+  link card at the end instead of the red closing band (content).
+
 _2026-10-25: the Studio catches up with the day's site changes._
 
 **Decision.** Nathan asked whether the Studio needed the day's content, page and design changes too.

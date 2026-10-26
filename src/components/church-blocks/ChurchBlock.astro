@@ -35,9 +35,11 @@ interface Props {
   block: ChurchPageBlock;
   surface?: 'background' | 'muted';
   headingId: string;
+  /** The page's one red button, when SectionRenderer hands it to this block (contact card calls). */
+  primaryVariant?: 'primary' | 'navy';
 }
 
-const { block: b, surface = 'background', headingId } = Astro.props;
+const { block: b, surface = 'background', headingId, primaryVariant = 'navy' } = Astro.props;
 const common = { surface, headingId };
 ---
 
@@ -76,7 +78,7 @@ const common = { surface, headingId };
 ) : b._type === 'buttonRowSection' ? (
   <ButtonRowBlock block={b} {...common} />
 ) : b._type === 'contactCardSection' ? (
-  <ContactCardBlock block={b} {...common} />
+  <ContactCardBlock block={b} {...common} primaryVariant={primaryVariant} />
 ) : b._type === 'columnsSection' ? (
   <ColumnsBlock block={b} {...common} />
 ) : b._type === 'photoSection' ? (

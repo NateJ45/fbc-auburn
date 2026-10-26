@@ -308,3 +308,30 @@ export function streamEmbedUrl(value?: string | null): string {
   }
   return '';
 }
+
+/** A piece of a notice: plain words, or a number to tap ("988" -> tel:988). */
+export interface NoticePart {
+  text: string;
+  tel?: string;
+}
+
+/**
+ * A notice's message with its phone numbers made tappable (re-audit 2026-10-26): the crisis lines
+ * 988 and 911 and any ten-digit number ("(513) 863-3500", "513-863-3500"). Everything else stays
+ * words. Pure, so the Need the pastor? and Prayer crisis lines are unit-tested.
+ */
+export function noticeParts(message?: string | null): NoticePart[] {
+  const text = message ?? '';
+  const re = /(\(?\b\d{3}\)?[\s.-]?\d{3}[\s.-]\d{4}\b|\b(?:988|911)\b)/g;
+  const out: NoticePart[] = [];
+  let at = 0;
+  for (const m of text.matchAll(re)) {
+    const i = m.index ?? 0;
+    if (i > at) out.push({ text: text.slice(at, i) });
+    const digits = m[0].replace(/\D/g, '');
+    out.push({ text: m[0], tel: `tel:${digits.length === 10 ? `+1${digits}` : digits}` });
+    at = i + m[0].length;
+  }
+  if (at < text.length) out.push({ text: text.slice(at) });
+  return out;
+}

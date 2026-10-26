@@ -264,7 +264,7 @@ const MAX_LENGTH: Record<string, Record<string, number>> = {
   tabPanel: { label: 30 },
   timelineEntry: { year: 12, title: 100 },
   countdownSection: { eventName: 80 },
-  noticeSection: { message: 200 },
+  noticeSection: { message: 200, label: 30 },
   belief: { title: 80 },
   accordionItem: { question: 160 },
   railStep: { title: 80 },

@@ -36,6 +36,38 @@
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Metric-matched stand-ins for Young Serif while it loads (re-audit 2026-10-26). Without them a phone
+   drew a page title in plain Georgia, one line, then rewrapped it to two when Young Serif arrived
+   (layout shift about 0.05 on five inner pages). Each face is a local serif scaled to Young Serif's
+   average letter width and given its ascent and descent, so the fallback title breaks where the
+   real one will. Numbers from the fonts' own tables (capsize's method: advance widths weighted by
+   English letter frequency; hhea ascent 1046, descent 366 on a 1000 unit em). Second in the
+   display stack (globals.css --font-display, brand.config.json). The preload stays. */
+@font-face {
+  font-family: 'Young Serif Fallback';
+  src: local('Georgia');
+  size-adjust: 114.71%;
+  ascent-override: 91.19%;
+  descent-override: 31.91%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Young Serif Fallback Times';
+  src: local('Times New Roman'), local('Times');
+  size-adjust: 125.58%;
+  ascent-override: 83.3%;
+  descent-override: 29.15%;
+  line-gap-override: 0%;
+}
+
+/* Lining figures for every numeral (re-audit 2026-10-26). Young Serif's default figures are
+   old-style, so "11:00" read like "II:00" in the times band, on Events and in phone numbers. One
+   rule on the root, inherited by every display-face time, date and phone number (and harmless in
+   the body face, whose figures are already lining); tabular so times line up in their columns. */
+html {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
 :root {
   /* Brand colours the semantic tokens do not carry. Red is for the cross and the one main
      button per page; gold and sky are accents only, never text on white. */
@@ -165,7 +197,7 @@ h6 {
 
 /* ---- Brick headings (StoneHeading.astro) ---- */
 .stone-heading {
-  font-family: 'Young Serif', serif;
+  font-family: var(--font-display);
   font-weight: 400;
   line-height: 1.02;
   letter-spacing: -0.01em;
@@ -885,10 +917,13 @@ html .site-search-dialog {
 .menu-pill:hover {
   background: var(--muted);
 }
-/* The pill is a link (to the footer's page list) until the script makes it a button. */
+/* The pill is a link (to the footer's page list) until the script swaps in a <button> with the same
+   class (MobileNav.astro, re-audit 2026-10-26), so both shapes draw alike. */
 .menu-pill {
   text-decoration: none;
   cursor: pointer;
+  font-family: inherit;
+  line-height: inherit;
 }
 /* From 1024px the header's dropdowns are the menu, so the pill goes when they already hold every
    item (data-nav-complete; design audit M8, 2026-10-25), and search takes the header button's
@@ -1926,6 +1961,43 @@ html.motion .sill.is-laid .sill-brick {
     gap: 1rem;
   }
 }
+/* Four menu groups (re-audit 2026-10-26: New here, Get involved, This week, Reach us) beside Give,
+   Plan your visit and search. The lockup never shrinks (it was squeezed to 166px at 1024 and 224px
+   at 1280 once the fourth group came in); the room comes from the gaps, the type and the buttons'
+   side padding instead, and the Give button drops its icon below 1280; from 1280 the lockup is 50px
+   tall. Measured on the built pages: 64px between the lockup and New here at 1024, 48px at 1280. */
+.site-header__logo-link {
+  flex: none;
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .site-header .site-header__nav {
+    gap: 0.85rem;
+  }
+  .site-header .site-nav {
+    gap: 0.7rem;
+  }
+  .site-header .site-nav a,
+  .site-header .site-nav summary {
+    font-size: 1rem;
+  }
+  .site-header .btn-auburn {
+    padding-inline: 0.85rem;
+  }
+  .site-header .site-header__give svg {
+    display: none;
+  }
+  .site-header__logo {
+    height: 40px;
+  }
+}
+@media (min-width: 1280px) {
+  .site-header .site-nav {
+    gap: 1.5rem;
+  }
+  .site-header__logo {
+    height: 50px;
+  }
+}
 
 /* ---- One gutter (2026-10-17): below 960px the header row, the footer and the board pages all sit
    20px in, so the logo, every heading and the footer columns share one left edge. ---- */
@@ -2312,4 +2384,108 @@ html main [data-slot='accordion-trigger'] [data-slot='accordion-trigger-icon'] {
 /* The closing band's H2 is navy on every page, a journal post's too (GD-H6). */
 .final-cta--light .final-cta__h2 {
   color: var(--heading-solid);
+}
+
+/* ---- The footer, four groups and one phone screen (re-audit 2026-10-26) ----------------------
+   The menu became four groups (New here, Get involved, This week, Reach us) and the footer columns
+   follow it. Measured at 375 before this pass: 1,047 to 1,553px, about two screens.
+   Phones: the groups in a tight 2 by 2 grid (36px rows), Contact across the full width under them,
+   the church's name and Give on one row, a shorter sill and a slimmer bottom bar.
+   Wide, with the This Sunday panel: the groups in as many columns as fit beside it (four at 1280).
+   Wide, without it: one column per group plus Contact (five), so the width is used. */
+@media (max-width: 767px) {
+  .site-footer .sill {
+    height: 44px;
+  }
+  .site-footer__sill {
+    margin-top: -22px;
+  }
+  .sf-top {
+    gap: 20px;
+    padding-top: 22px;
+    padding-bottom: 18px;
+  }
+  .sf-invite__brand {
+    gap: 12px;
+  }
+  .sf-invite__mark {
+    width: 36px;
+  }
+  .sf-invite__name {
+    font-size: var(--fs-lead);
+    line-height: 1.15;
+  }
+  .sf-invite__give {
+    padding-inline: 0.85rem;
+  }
+  .sf-invite .site-footer__links {
+    display: grid;
+    columns: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+    padding-top: 16px;
+  }
+  .sf-invite .site-footer__links > * {
+    margin-bottom: 0;
+  }
+  .site-footer__links > nav {
+    gap: 2px;
+  }
+  .site-footer__links > nav ul a {
+    min-height: 36px !important;
+  }
+  .site-footer__links > .sf-touch {
+    grid-column: 1 / -1;
+  }
+  /* The panel's Directions sits beside the two address lines, not on a line of its own. */
+  .sf-sunday__where {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 16px;
+  }
+  /* Contact: the number, Watch live and the social buttons share rows. */
+  .sf-touch {
+    flex-flow: row wrap !important;
+    align-items: center;
+    column-gap: 20px;
+  }
+  .sf-touch > p:first-child {
+    flex: 1 0 100%;
+  }
+  .sf-touch__social {
+    margin-top: 0 !important;
+  }
+  .sf-bottom__inner {
+    gap: 0 16px;
+    padding-block: 8px;
+  }
+  .sf-bottom__inner p {
+    padding-top: 6px;
+    line-height: 1.4;
+  }
+}
+@media (min-width: 961px) {
+  .sf-invite .site-footer__links {
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 20px;
+  }
+  .sf-top:not(:has(> .sf-sunday)) .site-footer__links,
+  body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap))
+    .sf-top
+    .site-footer__links {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+}
+/* Between 961 and 1279 the four groups share the left column with the panel: 16px links. */
+@media (min-width: 961px) and (max-width: 1279px) {
+  .site-footer__links > nav ul a {
+    font-size: 1rem;
+  }
+  .sf-top {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  }
 }

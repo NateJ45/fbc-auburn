@@ -1228,6 +1228,7 @@ export type ContactCardSection = {
   _type: 'contactCardSection';
   heading?: string;
   intro?: string;
+  callButtons?: boolean;
 };
 
 export type ButtonRowSection = {
@@ -1319,6 +1320,7 @@ export type NoticeSection = {
   _type: 'noticeSection';
   message?: string;
   urgency?: 'info' | 'urgent';
+  label?: string;
   link?: CtaBlock;
   startDate?: string;
   endDate?: string;

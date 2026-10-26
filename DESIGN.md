@@ -64,8 +64,10 @@ session). Decision: `docs/design-directions/2026-10-17-fbc-auburn/README.md`.
 Update 2026-10-25, the restraint pass (site audit, graphic design and UX reviews). The motif, the red and
 Young Serif were each used at every opportunity, so none of them was special. Now:
 
-- **One red button per page**: the page's single primary next step (SectionRenderer gives the red to the first
-  block that asks for it). Every other button is solid navy or the navy outline. Card meta lines, menu arrows,
+- **One red button per page body**: the page's single primary next step (SectionRenderer gives the red to the first
+  block that asks for it). The header's Plan your visit stays red on every page; since 2026-10-26 a body button
+  that goes where the header's does (Home's hero "Plan your first visit" included) repeats it and draws navy, so a
+  page may have no red body button at all, or give it to its own step ("Tell us you are coming", "Call"). Every other button is solid navy or the navy outline. Card meta lines, menu arrows,
   the walk's numbered bricks and every connector are navy; auburn is the mark and that one button.
 - **Less brick**: one sill per page (the footer's); the cream brick wall, the sky and navy tiles behind text and
   the This Sunday card's tile are gone (the card is plain navy with one 12px brick course on top); at most two
@@ -194,7 +196,7 @@ brick-cross print on the Stone tint, never a grey box.
 
 - Do keep one stone moment per page: the full-colour mark large once (About), the gable photo on its brick
   slab elsewhere.
-- Do keep one red button per page and at most two brick surfaces in any one view.
+- Do keep one red button per page body (plus the header's) and at most two brick surfaces in any one view.
 - Do make every layout work with no photographs, and better with one.
 - Do mark unconfirmed facts (service times, the verse) until the church confirms them.
 - Don't put mosaic colour on H2s, borders, dividers or backgrounds.

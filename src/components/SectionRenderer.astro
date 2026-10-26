@@ -54,6 +54,10 @@ import { plain } from '@/lib/church-facts';
 import ChurchBlock from '@/components/church-blocks/ChurchBlock.astro';
 import { isChurchBlock } from '@/lib/churchBlocks.types';
 import { anchorFor } from '@/lib/section-anchors';
+import { getSiteSettings } from '@/lib/queries';
+import { resolveSiteSettings } from '@/lib/siteSettings';
+import { ctaHref, type CtaTarget } from '@/lib/cta-href';
+import { repeatsHeaderCta } from '@/lib/red-budget';
 
 interface Props {
   sections?: unknown[];
@@ -110,7 +114,8 @@ const rows = classifySections<PageBuilderBlock>(
 // The map card goes under the rich-text band that gives the church's street address (Plan your
 // visit's "Getting here"), so it follows those words if an editor moves or retitles the band
 // (visitor audit, 2026-10-18). Matched on the street from Church facts, stega stripped.
-const mapStreet = plain((await getChurchFacts()).address?.street).toLowerCase();
+const rendererFacts = await getChurchFacts();
+const mapStreet = plain(rendererFacts.address?.street).toLowerCase();
 const givesAddress = (block: unknown): boolean => {
   const body = (block as { body?: unknown }).body;
   if (!mapStreet || !Array.isArray(body)) return false;
@@ -136,18 +141,29 @@ const firstFaq = rows.findIndex(({ block }) => block._type === 'faqSection');
 // head, so a hero, a spacer or a notice band is skipped. -1 when leadImage is off.
 const LEAD_SKIP = new Set(['heroSection', 'spacerSection', 'noticeSection']);
 const leadRow = leadImage ? rows.findIndex(({ block }) => !LEAD_SKIP.has(block._type)) : -1;
-// One red button per page (audit 2026-10-25, GD-H2; DESIGN.md): the filled auburn button is the
-// page's single primary next step. The first block that draws a primary button keeps the red; every
-// later one draws it in solid navy. A closing band always draws a button (it has a fallback).
+// One red button per page body (audit 2026-10-25, GD-H2; DESIGN.md): the filled auburn button is
+// the page's single primary next step. The first block that draws a primary button keeps the red;
+// every later one draws it in solid navy. A closing band always draws a button (it has a fallback).
+// Since the re-audit (2026-10-26, Nathan's call) the header's button keeps its red on every page, so
+// a body button that goes where the header's does (Plan your visit) repeats it and draws navy too;
+// the red passes to the next block whose button is the page's own step, or to none at all.
+const headerCta = resolveSiteSettings(await getSiteSettings()).headerCta;
 const drawsRed = (block: unknown): boolean => {
   const b = block as {
     _type?: string;
-    primaryCta?: { label?: string } | null;
+    primaryCta?: (CtaTarget & { label?: string }) | null;
+    cta?: CtaTarget | null;
     endLinkLabel?: string;
+    endLinkHref?: string;
   };
-  if (b._type === 'ctaBandSection') return true;
-  if (b._type === 'heroSection' || b._type === 'stepsRailSection') return !!b.primaryCta?.label;
-  if (b._type === 'walkSection') return !!b.endLinkLabel;
+  const own = (href: string) => !repeatsHeaderCta(href, headerCta);
+  if (b._type === 'ctaBandSection') return own(ctaHref(b.cta, '/plan-your-visit/'));
+  if (b._type === 'heroSection' || b._type === 'stepsRailSection')
+    return !!b.primaryCta?.label && own(ctaHref(b.primaryCta));
+  if (b._type === 'walkSection') return !!b.endLinkLabel && own(b.endLinkHref ?? '');
+  // Big Call and Text buttons (re-audit 2026-10-26): on Need the pastor? calling is the next step.
+  if (b._type === 'contactCardSection')
+    return (block as { callButtons?: boolean }).callButtons === true && !!rendererFacts.phone;
   return false;
 };
 const redRow = rows.findIndex(({ block }) => drawsRed(block));
@@ -482,7 +498,12 @@ const editKeyOf = (block: unknown) => {
           headingId={headingId}
         />
       ) : isChurchBlock(s) ? (
-        <ChurchBlock block={s} surface={lightSurface(surface)} headingId={headingId} />
+        <ChurchBlock
+          block={s}
+          surface={lightSurface(surface)}
+          headingId={headingId}
+          primaryVariant={primaryVariant(rowIndex)}
+        />
       ) : (
         // Unknown block type: render nothing, log in dev.
         import.meta.env.DEV &&

@@ -39,35 +39,41 @@ const ROWS = [
 const slugs = new Set(await getAllPageSlugs());
 const here = path.endsWith('/') ? path : `${path}/`;
 const rows = ROWS.filter((r) => r.href !== here && (!r.studio || slugs.has(r.studio))).slice(0, 3);
+// No rows on short pages and the 404 (re-audit 2026-10-26, the phone footer was two screens): the
+// Bulletin, a sermon's own page and the 404 already point onward, and the rows outweighed them.
+const SHORT = /^\/(404(\.html)?\/|bulletin\/|sermons\/(?!podcast)[^/]+\/)$/;
+const skip = SHORT.test(here);
 ---
 
-<nav class="where-next" aria-label="Where next">
-  <ul role="list" class="where-next__list mx-auto max-w-content">
-    {rows.map((r) => (
-      <li>
-        <a href={r.href} class="where-next__row">
-          <span class="where-next__label">{r.label}</span>
-          <span class="where-next__note">{r.note}</span>
-          <svg
-            class="where-next__arrow"
-            viewBox="0 0 120 16"
-            width="120"
-            height="16"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path
-              d="M0 8 H118 M110 1 L118 8 L110 15"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-            />
-          </svg>
-        </a>
-      </li>
-    ))}
-  </ul>
-</nav>
+{!skip && (
+  <nav class="where-next" aria-label="Where next">
+    <ul role="list" class="where-next__list mx-auto max-w-content">
+      {rows.map((r) => (
+        <li>
+          <a href={r.href} class="where-next__row">
+            <span class="where-next__label">{r.label}</span>
+            <span class="where-next__note">{r.note}</span>
+            <svg
+              class="where-next__arrow"
+              viewBox="0 0 120 16"
+              width="120"
+              height="16"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M0 8 H118 M110 1 L118 8 L110 15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
 
 <style>
   /* The page's own closing band already ends it: one closing device per page. */

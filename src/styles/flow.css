@@ -450,3 +450,31 @@ html.motion .flow-magnetic:not(.btn-auburn) {
     will-change: translate;
   }
 }
+
+/* ---- Keyboard focus shows at once (re-audit 2026-10-26) --------------------------------------
+   A link reached by Tab before its unit has risen (below the observer's edge, or mid-hold) sat at
+   opacity 0: "Back to the home page" on the 404 measured 0.00. Any unit that holds focus drops its
+   starting frame and shows as it rests, whatever layer drew it: the flow units and their line,
+   brick and marker pieces, the first screen's hold, the stone reveals and the older [data-reveal]
+   sections. flow.ts also lands the unit on focusin, so it does not replay once focus moves on. */
+html.motion :is(.flow, .reveal, [data-reveal], [data-stagger-grid] > *):focus-within,
+html.motion :is(.hb-hero__copy, .board-head__copy) > :focus-within,
+html.motion :is(.hb-hero__card, .board-head__photo):focus-within,
+html.motion .flow:focus-within :is(.flow-line__in, .bl-c, .lay-brick) {
+  animation: none !important;
+  opacity: 1 !important;
+  translate: none !important;
+  transition: none !important;
+}
+html.motion .flow:focus-within .bl-ghost {
+  animation: none !important;
+}
+/* The Home hero's words lift and fade as it scrolls off; a hero button holding focus stays solid. */
+html.motion .hb-hero .hb-hero__copy:focus-within {
+  animation: none !important;
+  translate: none !important;
+  opacity: 1 !important;
+}
+html.motion .mark-lay:focus-within .mark-lay__whole {
+  opacity: 1 !important;
+}
