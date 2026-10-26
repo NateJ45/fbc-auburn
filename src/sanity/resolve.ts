@@ -37,6 +37,7 @@ export const SINGLETON_PREVIEW_PATHS: Record<string, string> = {
   contactPage: '/preview/contact',
   journalPage: '/preview/journal', // scaffold: journal
   privacyPage: '/preview/privacy',
+  sermonsPage: '/preview/sermons', // a page builder since 2026-10-26
   notFoundPage: '/preview/404',
 };
 

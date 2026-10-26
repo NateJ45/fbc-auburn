@@ -1,0 +1,75 @@
+---
+// Safe to edit by hand
+// The photo hero's frame (2026-10-26, pulled out of HomeHero.astro): a full-width photograph with
+// white words over it, under a navy shade darkest where the words sit. Home's opening uses it
+// (HomeHero.astro fills the slots: the photo or its stand-in, the video's Pause button, the
+// "Photo needed" note, the welcome and the This Sunday card), and so does any page whose opening
+// banner is set to "Photo behind the words" (Hero.astro's PageHeroPhoto branch). Styles:
+// src/styles/photo-hero.css (moved verbatim from home-board.css, so Home draws as it did; the
+// parity gate holds Home's markup byte for byte).
+//
+// Slots, in the order they are drawn:
+//   media     the <img> or <picture> inside the photo frame, under the shade
+//   controls  anything laid over the photo (Home's Pause video button)
+//   shot      the "Photo needed" note above the words, before launch
+//   default   the words (.hb-hero__copy)
+//   card      a card beside the words on a wide screen (Home's This Sunday card); none on a page
+import '@/styles/photo-hero.css';
+
+interface Props {
+  /** The id of the h1 inside the default slot. */
+  headingId: string;
+  /** "yes" when a photo, example or clip fills the frame; "no" draws the flat navy ground. */
+  photo: boolean;
+  /** Hide the frame from assistive tech (Home: when only a stand-in example fills it). */
+  frameHidden?: boolean;
+  /** The "Stand-in photograph" label in the corner. */
+  standIn?: boolean;
+  /** Extra data-* attributes on the section (Home's video sources), in order. */
+  data?: Record<string, string | undefined>;
+  /** A modifier on the section: "hb-hero--page" for an inner page. */
+  class?: string;
+}
+
+const {
+  headingId,
+  photo,
+  frameHidden = false,
+  standIn = false,
+  data = {},
+  class: extra,
+} = Astro.props;
+const hasCard = Astro.slots.has('card');
+---
+
+<section
+  class:list={['hb-hero', extra]}
+  aria-labelledby={headingId}
+  data-photo={photo ? 'yes' : 'no'}
+  {...data}
+>
+  <div class="hb-photo" aria-hidden={frameHidden ? 'true' : undefined}>
+    <slot name="media" />
+    <div class="hb-photo__shade"></div>
+  </div>
+  <slot name="controls" />
+  {standIn && (
+    <p class="hb-standin">
+      <span>Stand-in photograph</span>
+    </p>
+  )}
+
+  <slot name="shot" />
+
+  <div class="hb-wrap hb-hero__inner">
+    <div class="hb-hero__copy">
+      <slot />
+    </div>
+    {hasCard && (
+      <div class="hb-hero__card">
+        <slot name="card" />
+      </div>
+    )}
+  </div>
+  {/* No brick sill here (audit 2026-10-25, GD-H3): one sill per page, the footer's. */}
+</section>

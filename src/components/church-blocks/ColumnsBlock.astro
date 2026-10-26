@@ -2,13 +2,14 @@
 // Safe to edit by hand
 // Text in two or three columns, each with an optional heading. Stacks on a phone.
 import ChurchBand from './ChurchBand.astro';
+import type { CadenceSurface } from '@/lib/surfaces';
 import PortableText from '@/components/PortableText';
 import type { ProjectedColumnsSection } from '@/lib/churchBlocks.types';
 import type { PortableTextBlock } from '@portabletext/types';
 
 interface Props {
   block: ProjectedColumnsSection;
-  surface?: 'background' | 'muted';
+  surface?: CadenceSurface;
   headingId: string;
 }
 const { block, surface, headingId } = Astro.props;

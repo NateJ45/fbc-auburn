@@ -9,13 +9,13 @@
 // the object sits in the narrow track beside them, so a wide screen is not half empty. Below
 // `lg`, or with no heading or intro, it stacks as before.
 import SectionHeading from '@/components/SectionHeading.astro';
-import { surfaceClass } from '@/lib/surfaces';
+import { surfaceClass, type CadenceSurface } from '@/lib/surfaces';
 
 interface Props {
   heading?: string | null;
   intro?: string | null;
   headingId: string;
-  surface?: 'background' | 'muted';
+  surface?: CadenceSurface;
   /** The region's name when there is no heading. */
   label?: string;
   type: string;

@@ -23,7 +23,8 @@ import {
   bookOf,
   sermonSunday,
 } from '../../lib/sermons';
-import { additionalSectionsField } from './sections';
+import { additionalSectionsField, sectionArrayOptions } from './sections';
+import { ABOUT_SECTION_TYPES } from './richSections';
 import { pageBuilderAuthoring } from '../pageBuilderAuthoring';
 import { imageWithAlt } from './_imageWithAlt';
 import { PUBLISH_AT_GROUP, publishAtField } from './_publishAt';
@@ -272,14 +273,32 @@ export const sermonsPage = defineType({
   icon: PlayIcon,
   options: { canvasApp: { exclude: true } },
   groups: [
-    { name: 'hero', title: 'Top of the page', default: true },
+    { name: 'pageBuilder', title: 'Page layout', default: true },
+    { name: 'hero', title: 'Top of the page' },
     { name: 'podcast', title: 'Podcast' },
     { name: 'seo', title: 'Google and sharing' },
     { name: 'extra', title: 'Extra sections' },
   ],
   fields: [
+    // Every main page a page builder (2026-10-26): the sections of this page, in order. The old
+    // banner and extra-section fields below are hidden fossils (rule 1); scripts/content/builder-pages.mjs
+    // moved their content in here.
+    defineField({
+      name: 'pageBuilder',
+      title: 'Page layout',
+      type: 'array',
+      group: 'pageBuilder',
+      description:
+        "Sections on this page. Drag to reorder, remove a section to hide it, or add a new block from the library. Edit each section's content by clicking into it.",
+      of: ABOUT_SECTION_TYPES,
+      options: sectionArrayOptions,
+      ...pageBuilderAuthoring,
+    }),
     defineField({
       name: 'heroEyebrow',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Small line above the heading',
       type: 'string',
       group: 'hero',
@@ -287,6 +306,9 @@ export const sermonsPage = defineType({
     }),
     defineField({
       name: 'heroHeadline',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Heading',
       type: 'string',
       group: 'hero',
@@ -294,6 +316,9 @@ export const sermonsPage = defineType({
     }),
     defineField({
       name: 'heroSubhead',
+      // Fossil (2026-10-26): moved into the Page layout; kept, never deleted (rule 1).
+      hidden: true,
+      readOnly: true,
       title: 'Line under the heading',
       type: 'text',
       rows: 2,
@@ -378,7 +403,13 @@ export const sermonsPage = defineType({
       group: 'seo',
       altRequired: false,
     }),
-    defineField({ ...additionalSectionsField, ...pageBuilderAuthoring }),
+    // Fossil (2026-10-26): the extra sections moved into the Page layout; kept, never deleted.
+    defineField({
+      ...additionalSectionsField,
+      ...pageBuilderAuthoring,
+      hidden: true,
+      readOnly: true,
+    }),
   ],
   preview: { prepare: () => ({ title: 'Sermons page' }) },
 });

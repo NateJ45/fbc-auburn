@@ -16,10 +16,10 @@ The starter ships these routes (always on, not toggleable):
 | `/process`        | `src/pages/process.astro`        | Process — section-driven                                                                |
 | `/[slug]`         | `src/pages/[slug].astro`         | Custom pages created in the Studio; reserved slugs are filtered inside `getStaticPaths` |
 | `/faq`            | `src/pages/faq.astro`            | FAQ page + faqItem collection grouped by category                                       |
-| `/contact`        | `src/pages/contact.astro`        | Contact page + Web3Forms form + Calendly embed                                          |
-| `/journal`        | `src/pages/journal/index.astro`  | Post grid with category chips                                                           |
+| `/contact`        | `src/pages/contact.astro`        | Contact: section-driven since 2026-10-26 (the Contact form block)                       |
+| `/journal`        | `src/pages/journal/index.astro`  | News and notes: section-driven since 2026-10-26 (the posts block)                       |
 | `/journal/[slug]` | `src/pages/journal/[slug].astro` | Post detail: reading progress + header + cover + body + related                         |
-| `/privacy`        | `src/pages/privacy.astro`        | Privacy policy from singleton                                                           |
+| `/privacy`        | `src/pages/privacy.astro`        | Privacy: section-driven since 2026-10-26 (the policy text block)                        |
 | `/404`            | `src/pages/404.astro`            | Custom 404                                                                              |
 
 Additional routes come from opt-in modules staged under `modules/` (off by default). Each module is documented under `docs/modules/`. There are 13 opt-in modules: `portfolio`, `shop`, `virtual-services`, `gift-certificates`, `press`, `resources`, `lead-magnets`, `newsletter`, `style-quiz`, `budget-calculator`, `events`, `donations`, `team`. Key routes they add: `/virtual-services` (was `/e-design`), `/events`, `/donate`, `/team`. (The `process` route is always-on core, not a module.)
@@ -31,6 +31,19 @@ Additional routes come from opt-in modules staged under `modules/` (off by defau
 ### How section-driven pages work
 
 The four core pages (home, about, services, process) and every custom `page` document render from a `pageBuilder` array: an ordered list of typed blocks the editor builds in Sanity Studio. No code change is needed to reorder sections, add a new one, or remove one. The code handles layout; the editor handles content.
+
+**FBC Auburn: every main page is a page builder (2026-10-26).** So the pastor can rearrange, remove and add sections on every main page in the Studio. Home (`homePage`, drawn by `HomeBoard`), About, Contact, Privacy, News and notes (`journalPage`) and Sermons (`sermonsPage`) render their `pageBuilder` through `SectionRenderer`; Plan your visit, Give (`page-give`) and This week's bulletin (`page-bulletin`) are ordinary Studio `page` documents that `[slug].astro` always builds (`ALWAYS` inside `getStaticPaths`, rule 10; fallbacks in `BUILT_IN_PAGES`), so `src/pages/give.astro` and `bulletin.astro` are gone and their slugs are no longer reserved. The parts those pages drew in code became blocks (`collectionSections.ts`, components in `src/components/sections/`):
+
+| `_type`                | Component            | Offered           | What it draws                                                                                       |
+| ---------------------- | -------------------- | ----------------- | --------------------------------------------------------------------------------------------------- |
+| `contactFormSection`   | `ContactFormSection` | Contact page only | The form (or the Church Trac form, `church-trac.md`) with the phones and the sticky sidebar         |
+| `privacyPolicySection` | `PrivacyPolicy`      | Privacy page only | The policy text and date typed in the block; empty shows the built-in, analytics-aware policy       |
+| `journalPostsSection`  | `JournalPosts`       | Every builder     | Category chips, every post (first featured gets the big card), the newsletter sign-up when it is on |
+| `sermonArchiveSection` | `SermonArchive`      | Every builder     | Every sermon with the series, preacher and book filters and Show more (nothing until a sermon)      |
+| `podcastSection`       | `PodcastSection`     | Every builder     | The podcast buttons and feed address (`id="sermons-podcast"`; nothing until a sermon)               |
+| `bulletinSection`      | `BulletinSection`    | Every builder     | The newest bulletin (else last week's, with when the next goes up) and the earlier ones             |
+
+All six are self-contained in the cadence (each draws the white band its page drew). The Contact form's questions and "What happens next" stay on the Contact page's "The form" tab; the block's GROQ arm (`collection-arms.ts`) reads them in, so the preview shows their drafts. The collection blocks read their rows from the route loaders (`getAllSermons`, `getAllJournalEntries`, `getBulletins`), so `COLLECTIONS_FIXTURE` still works. `sermonSeriesSection` gained `hideWhenEmpty` (the Sermons page hides its series band until there is a series). The old banner, closing-band and Extra sections fields on those four documents are hidden fossils (rule 1); `scripts/content/builder-pages.mjs` moved their content into the new arrays. `faqPage` is orphaned (it forwards to `/plan-your-visit/#questions`) and appears nowhere in the Studio.
 
 **Default fallback.** `src/data/defaultSections.ts` holds code-defined default section arrays for each core page. When `PUBLIC_SANITY_PROJECT_ID` is absent (fresh clone) or a page's `pageBuilder` array is empty, the route renders from these defaults. The site always renders non-blank content.
 
@@ -100,7 +113,7 @@ The cadence logic is in `src/lib/sectionCadence.ts` (unit-tested). Blocks have n
 
 ### `additionalSectionsField`
 
-`additionalSectionsField` (defined in `sections.ts`) is a secondary `pageBuilder`-style array that appends to the bottom of a page's rendered output. Any page schema can include it as an append zone for supplementary content (a CTA band, a testimonial quote) without requiring a fully structured bottom section in the main builder. Empty means no change.
+`additionalSectionsField` (defined in `sections.ts`; at FBC Auburn a hidden fossil on Contact, Privacy, News and notes and Sermons since 2026-10-26, its sections moved into each page's Page layout) is a secondary `pageBuilder`-style array that appends to the bottom of a page's rendered output. Any page schema can include it as an append zone for supplementary content (a CTA band, a testimonial quote) without requiring a fully structured bottom section in the main builder. Empty means no change.
 
 ---
 

@@ -1,7 +1,9 @@
 // Safe to edit by hand
 // The FBC Auburn share card (Open Graph image): one 1200x630 card per page (a JPEG drawn at build
-// time), in the church's own brand. Site-specific on purpose: scripts/lib/render-og.mjs is the starter's PORTABLE generic
-// card (a wordmark in a hairline frame) and stays untouched; this file replaces it for Auburn.
+// time), in the church's own brand. Site-specific on purpose: scripts/lib/render-og.mjs is the
+// starter's PORTABLE generic card and is not called here. The starter's PORTABLE
+// scripts/build-og-cards.mjs (PORTS.md card 169) imports cardHtml, renderHtml and closeCards from
+// this file, so keep those three exports and their shapes.
 //
 // USE IT FROM ANY GENERATOR (pages, journal posts, sermons, series):
 //

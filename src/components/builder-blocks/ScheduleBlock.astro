@@ -1,0 +1,80 @@
+---
+// Safe to edit by hand
+// Schedule (scheduleSection, 2026-10-26): times and what happens at each, grouped by day if the
+// pastor likes ("Christmas Eve: 4:00 children's pageant, 5:30 candlelight service"). Drawn in the
+// events list's grammar (church-blocks.css .cb-event): hairline rows, the time in Young Serif
+// numerals in a column of its own, what happens in Familjen 19px weight 600 navy (Young Serif only
+// from 24px up), the note under it in muted text. A day's name is a Young Serif H3 over its rows.
+// Two or three days sit side by side from 64rem; more than three, or a phone, stack.
+// Not the history timeline (timelineSection): no rail, no years.
+import ChurchBand from '@/components/church-blocks/ChurchBand.astro';
+import { timeOf } from '@/lib/builder-blocks';
+import type { CadenceSurface } from '@/lib/surfaces';
+import type { ProjectedScheduleSection } from '@/lib/builderBlocks.types';
+
+interface Props {
+  block: ProjectedScheduleSection;
+  surface?: CadenceSurface;
+  headingId: string;
+}
+const { block, surface = 'background', headingId } = Astro.props;
+
+const days = (block.days ?? [])
+  .map((d) => ({
+    key: d._key,
+    title: d.title?.trim() ?? '',
+    items: (d.items ?? []).filter((i) => i?.title?.trim()),
+  }))
+  .filter((d) => d.items.length > 0);
+// A day's name is an h3 under the block's heading, an h2 when the block has none.
+const DayTitle = block.heading ? 'h3' : 'h2';
+// Headings step down one level at a time: block heading, then a day's name, then what happens.
+const depth = (block.heading ? 1 : 0) + (days.some((d) => d.title) ? 1 : 0);
+const ItemTitle = depth === 2 ? 'h4' : depth === 1 ? 'h3' : 'h2';
+const across = days.length >= 2 && days.length <= 3 ? days.length : 1;
+// One time column for the whole section (2026-10-26): every day's rows reserve room for the
+// longest time in ANY day, so "4 pm" under one day and "10:30 am" under another start their
+// titles on the same left edge. Counted in characters and drawn in `ch` of the time's own face
+// (builder-blocks.css .sched__time), with half a character spare for the wide "m".
+const timeChars = Math.max(
+  4,
+  ...days.flatMap((d) => d.items.map((i) => timeOf(i.startTime).length)),
+);
+---
+
+{days.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Schedule"
+  >
+    <div
+      class:list={['sched', `sched--${across}`]}
+      style={`--sched-time-chars: ${timeChars}`}
+      data-builder-block="scheduleSection"
+    >
+      {days.map((d) => (
+        <div class="sched__day">
+          {d.title && <DayTitle class="sched__name">{d.title}</DayTitle>}
+          <ol class="sched__rows" role="list">
+            {d.items.map((i) => {
+              const time = timeOf(i.startTime);
+              return (
+                <li class="sched__row">
+                  <span class="sched__time">{time}</span>
+                  <div class="sched__what">
+                    <ItemTitle class="sched__title">{i.title}</ItemTitle>
+                    {i.note && <p class="sched__note">{i.note}</p>}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      ))}
+    </div>
+  </ChurchBand>
+)}

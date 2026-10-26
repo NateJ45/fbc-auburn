@@ -2,6 +2,61 @@
 
 _2026-10-26: Playwright installs time out instead of hanging (starter card 70)._ Three docs-only PRs across the family sat 40 to 60 minutes in "Install Playwright system libraries" on 2026-10-26: the runner's Azure Ubuntu mirror fed a normal 30-second `install-deps` at 29 kB/s, and the workflows had no timeout, so a stuck apt could hold a required check for GitHub's 6-hour default. Each install attempt now runs under `timeout` (180s for `install-deps`, 360s for a full browser download), so a crawling first try is killed and the retry resumes the partial download; the step has `timeout-minutes` (8 and 15) and the Playwright job 30. This replaces the three 5-minute tries the self-serve PR put on `install-deps` the same morning, so the step matches the rest of the family.
 
+_2026-10-26: an open Studio reloads itself after a deploy (PORTS card 179)._ Signed in to the live
+Studio, a tab opened before a deploy showed a raw red "Failed to fetch dynamically imported module" inside the
+image field's Unsplash picker: every merge and every publish redeploys, and Workers keep only the newest build's
+code files. The Studio page now catches that error, says "The Studio was updated", and reloads once after 2.5 s;
+a repeat within a minute offers a Reload button instead of looping. Sanity saves edits as they are typed, so
+nothing is lost. Detail: `docs/agent/studio-kit.md` ("After a deploy").
+
+_2026-10-26: an optional button left empty no longer blocks Publish._ Building a Christmas page in
+the live Studio, a fresh Event details block stopped Publish with "Button text: Required" and "Link type:
+Required" on its optional button: `ctaBlock`'s "Open in new tab" had `initialValue: false`, so every new
+block carried a half-made button whose required fields then fired. `ctaBlock` now has no initial value
+and asks for the words and link type only once any part of the button is filled in; `CtaLink` draws
+nothing for an empty button object (it used to fall back to "Get in touch"), and an empty Invitation
+band button no longer takes the page's red. No published page had an empty button.
+
+_2026-10-26: holiday and event templates use the event blocks._ A new "Seasonal: Event page" template
+(replacing "Event (any)") opens on a photo and runs Event details, a Schedule, Cards with photos, the map
+and an invitation band. The VBS, Easter, Christmas, Homecoming, Revival week, Trunk-or-treat and
+Thanksgiving templates are rebuilt on the same blocks. The "Easter services" and "Christmas services"
+saved sections now open with Event details and a Schedule (the unedited drafts were replaced, backed up
+first), and "Advent Sundays" and "Christmas Eve candlelight" are new saved sections. The Schedule block
+now keeps one time column for the whole section, so "4 pm" under one day and "10:30 am" under another
+start their titles on the same edge. Docs: `docs/agent/sanity.md` (the authoring kit).
+
+_2026-10-26: no "empty section" warning on blocks that fill themselves._ Checked signed in, the
+Contact page's form and the News and notes post list each carried "This section is empty... Fill it in or
+remove it", because their content comes from another tab or a collection. Eleven such blocks (sermons,
+series, archive, podcast, downloads, bulletin, posts, contact form, privacy policy, Watch, This week) are
+now in `SELF_FILLING_SECTIONS` (`src/sanity/pageBuilderConfig.ts`), and `authoring.test.ts` checks a
+fresh one of each raises no warning.
+
+_2026-10-26: every main page is a page builder._
+
+**Decision.** Pastor Jacob should be able to rearrange, remove and add sections on every main page,
+as on Squarespace. Contact, Privacy, News and notes and Sermons kept a fixed top and an "Extra
+sections" zone; Give and Bulletin were code with no Studio document. Now Contact, Privacy, News and
+notes and Sermons render a Page layout through `SectionRenderer` (defaults in `defaultSections.ts`),
+and Give and This week's bulletin are Studio `page` documents that `[slug].astro` always builds
+(`BUILT_IN_PAGES`), so `give.astro` and `bulletin.astro` are gone. Six new blocks hold what those
+pages drew in code: Contact form and Privacy policy text (offered on their own page only), News and
+notes posts, Every sermon, Podcast and This week's bulletin; the series grid can hide itself until
+there is a series. The old fields are hidden fossils; `scripts/content/builder-pages.mjs` moved the
+live content (run before the deploy, which the old code ignored). The orphaned Questions page left
+the Studio's page lists. Pages look the same; the differences are in the parity notes of the PR.
+Docs: `page-architecture.md`, `sanity.md`, `routes.md`.
+
+_2026-10-26: event and holiday page blocks._ Three new page-builder blocks so Jacob can build an event
+page himself: **Event details** (dates and times from a list, the place or the church's own address from
+Church facts, a photo, a sign-up button, an automatic "Add to my calendar" file and Directions; past dates
+drop off and the block comes down after the last one), **Schedule** (times and what happens, by day) and
+**Cards with photos** (two to six, columns from the count). The opening banner gains a Style, "Photo behind
+the words", which draws Home's photo hero on any page; Home's hero now shares that frame
+(`PhotoHero.astro`, styles moved to `photo-hero.css`, Home parity unchanged). `look` reaches six more
+blocks. Docs: `docs/agent/sanity.md` ("Event and holiday page blocks").
+
 _2026-10-26: the embed registry moves to the starter (card 172)._ `src/lib/embed-providers.ts`,
 its test and `EmbedPasteInput.tsx` are PORTABLE copies now, and the PORTABLE `build-csp.mjs`
 adds a known embed service's script origins itself, so `build-embed-csp.mjs` and

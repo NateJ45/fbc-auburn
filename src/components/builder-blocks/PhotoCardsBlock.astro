@@ -1,0 +1,96 @@
+---
+// Safe to edit by hand
+// Cards with photos (photoCardsSection, 2026-10-26): two to six cards, each a photo, a title and a
+// few words, with an optional link. The Find your place card's grammar (docs/agent/shapes.md): the
+// picture in a plain .shape-step frame (the 14px inner corner; the stepped brick corner was
+// retired from card photos on 2026-10-25), 4:3, growing a little inside its frame on hover or
+// focus (.shape-zoom); the title in Young Serif; the words; and, with a link, the button words as
+// the site's one inline action link, with the title's link covering the whole card.
+// Columns come from the count (photoCardColumns in src/lib/builder-blocks.ts): two or four make
+// pairs, three, five or six rows of three; one a row on a phone, two from 40rem.
+import ChurchBand from '@/components/church-blocks/ChurchBand.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import { ctaHref } from '@/lib/cta-href';
+import { photoCardColumns } from '@/lib/builder-blocks';
+import type { CadenceSurface } from '@/lib/surfaces';
+import type { ProjectedPhotoCardsSection } from '@/lib/builderBlocks.types';
+
+interface Props {
+  block: ProjectedPhotoCardsSection;
+  surface?: CadenceSurface;
+  headingId: string;
+  isFirst?: boolean;
+}
+const { block, surface = 'background', headingId, isFirst = false } = Astro.props;
+
+const cards = (block.cards ?? []).filter((c) => c?.title?.trim());
+const cols = photoCardColumns(cards.length);
+const CardTitle = block.heading ? 'h3' : 'h2';
+const sizes =
+  cols === 2
+    ? '(min-width: 40rem) 45vw, 100vw'
+    : '(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw';
+---
+
+{cards.length > 0 && (
+  <ChurchBand
+    type={block._type}
+    heading={block.heading}
+    intro={block.intro}
+    headingId={headingId}
+    surface={surface}
+    label="Cards"
+  >
+    <ul
+      class:list={['pcards', `pcards--${cols}`]}
+      role="list"
+      data-builder-block="photoCardsSection"
+    >
+      {cards.map((c, i) => {
+        const link = c.link?.label ? c.link : null;
+        const newTab = link?.openInNewTab || link?.linkType === 'external';
+        return (
+          <li class:list={['pcard', link && 'shape-card pcard--link']}>
+            <div class="pcard__pic shape-step">
+              <div class="shape-zoom">
+                {c.image?.asset ? (
+                  <SanityImage
+                    source={c.image}
+                    width={720}
+                    height={540}
+                    sizes={sizes}
+                    quality={70}
+                    loading={isFirst && i === 0 ? 'eager' : 'lazy'}
+                    fetchpriority={isFirst && i === 0 ? 'high' : undefined}
+                  />
+                ) : (
+                  <div class="pcard__blank" aria-hidden="true" />
+                )}
+              </div>
+            </div>
+            <CardTitle class="pcard__title">
+              {link ? (
+                <a
+                  href={ctaHref(link)}
+                  class="pcard__link"
+                  target={newTab ? '_blank' : undefined}
+                  rel={newTab ? 'noopener noreferrer' : undefined}
+                >
+                  {c.title}
+                </a>
+              ) : (
+                c.title
+              )}
+            </CardTitle>
+            {c.body && <p class="pcard__body">{c.body}</p>}
+            {link && (
+              <p class="pcard__more" aria-hidden="true">
+                {link.label} <span class="pcard__arrow">→</span>
+              </p>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  </ChurchBand>
+)}

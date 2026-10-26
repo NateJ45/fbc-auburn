@@ -38,7 +38,15 @@ import {
   type RichTwin,
 } from './section-fields.ts';
 
-const BLOCK_LIBRARIES = ['sections', 'richSections'] as const;
+// FBC Auburn (2026-10-26): the church, Auburn and event-page libraries carry looks too, so the
+// colour-field and look gates read them as well.
+const BLOCK_LIBRARIES = [
+  'sections',
+  'richSections',
+  'auburnSections',
+  'churchSections',
+  'builderSections',
+] as const;
 
 function readLibrary(name: string): string {
   return readFileSync(new URL(`../sanity/schemaTypes/${name}.ts`, import.meta.url), 'utf8');
