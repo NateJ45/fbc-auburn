@@ -208,7 +208,8 @@
         "src": "/fonts/auburn-stone.woff2",
         "colors": ["#FFFFFF", "#7F98B8", "#D98A74"]
       },
-      "motion": "lay"
+      "motion": "lay",
+      "splash": "motif"
     }
   }
 }

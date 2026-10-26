@@ -706,7 +706,7 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: 'Open the `Menus` tab. `Top menu links` is the full menu, the one that opens from the `Menu` button; the bar across the top of the website shows the **first five** of them, so put the most important first. A `Dropdown` groups several pages under one heading. `Header button` is the `Plan your visit` button. `Footer link columns` are the rows of links in the footer. Pick pages from the list rather than typing addresses, so a renamed page never breaks a link. Drag rows to reorder them, and use the `...` menu on a row to remove one.',
+        text: 'Open the `Menus` tab. `Top menu links` is the full menu, the one that opens from the `Menu` button. It is in three `Dropdown` groups: **New here**, **Get involved** and **Stay connected**. On a phone each group shows its name as a small red label with its pages beneath; on a computer the bar across the top shows each group as a drop-down. Put a new page inside the group it belongs to rather than adding it on its own. `Header button` is the red `Plan your visit` button. The `Give` button beside it is always there; it goes to the online giving link once that is set on the `Church Trac` tab. `Footer link columns` are the rows of links in the footer. Pick pages from the list rather than typing addresses, so a renamed page never breaks a link. Drag rows to reorder them, and use the `...` menu on a row to remove one.',
       },
       {
         kind: 'p',
@@ -747,6 +747,7 @@ export const guides: Guide[] = [
         kind: 'bullets',
         items: [
           'The **Opening banner** is the welcome at the top, with the This Sunday card. Keep it first.',
+          'The banner’s `Background video` plays a short silent clip behind the welcome: 15 to 30 seconds, landscape, an .mp4 under 6 MB, saved with "Fast start" or "Web optimized" turned on (the box warns you if it was not). Keep the `Background photo` too: it shows first, and it is all some visitors see. To change the clip, upload the new one in the same box and publish.',
           'The first **Stepping-stone steps** section is drawn as "Your first Sunday", the numbered walk. Steps marked as a Sunday gathering show their time by themselves.',
           'The first **Image + text** section is "Who we are": the photos and your signed welcome.',
           '**This week** and **Watch** sit side by side when they are next to each other.',
@@ -818,7 +819,7 @@ export const guides: Guide[] = [
         items: [
           '**Phone and email** are typed under `Identity & contact`. They show in the menu, the footer and on Contact. Tick `Confirmed by the church` for each under `Church facts` once it is right; until then they carry a "To confirm" tag and are kept away from Google.',
           '**Online giving link** (on the `Church Trac` tab): paste the giving page address and every Give link goes straight there. Leave it empty and Give opens the site’s own page about giving on Sunday or by mail.',
-          '**Live stream link**: where people watch on Sunday. It shows on Watch and in the footer, and the home page’s "Live now" card goes there during worship. Empty uses the Facebook link.',
+          '**Live stream link**: where people watch on Sunday. It shows at the top of Sermons and in the footer, and the home page’s "Live now" card goes there during worship. Empty uses the Facebook link.',
           '**Facebook**: add it under `Social & footer`, `Social links`, platform Facebook.',
         ],
       },
@@ -880,6 +881,7 @@ export const guides: Guide[] = [
         kind: 'bullets',
         items: [
           '**Service times**: every regular gathering with its day and time, from Church facts.',
+          '**This week**: from Church facts. Its `Show` choice lists either the next seven days with dates (as on Home) or every regular gathering once, each linked to its Ministries card (as on Events).',
           '**Map and directions**: the address on a drawn map with Google and Apple Maps buttons, from Church facts. Add a line about parking if it helps.',
           '**Contact details**: phone, email, address and office hours, from Church facts.',
           '**What we believe**: a heading and a few sentences per belief, with Bible references that link to the verses.',
@@ -1166,7 +1168,11 @@ export const guides: Guide[] = [
       },
       {
         kind: 'p',
-        text: 'People join from the newsletter sign-up box on the website and confirm by pressing a link in an email. **Home** shows how many people get it. Everyone can leave with the link at the bottom of every issue; you never need to remove anyone by hand.',
+        text: 'The church’s email list is kept in Church Trac. The website’s "Get the church newsletter" link and every Newsletter section open the Church Trac form named in `Newsletter sign-up form` on the `Church Trac` tab of Site settings, and that form adds the person to the list there. Send the newsletter from Church Trac to reach them.',
+      },
+      {
+        kind: 'p',
+        text: 'The steps above are for the website’s own email list, which is switched off on this website. If it is ever switched on, people join from its sign-up box (only while the Church Trac box is empty) and confirm by pressing a link in an email; **Home** shows how many people get it, and everyone can leave with the link at the bottom of every issue.',
       },
       {
         kind: 'p',

@@ -34,6 +34,7 @@ export const collectionGuides: Guide[] = [
           'If it is part of a series, pick it in `Sermon series`.',
           'Under `Video, audio and notes`, paste the **video link**. On YouTube, click `Share` and then `Copy`. On Facebook, open the video, click the three dots and `Copy link`.',
           'If you have a recording, upload the MP3 in `Audio recording`, and the outline in `Notes or outline`. Both are optional.',
+          'Type about how long it ran in `Length in minutes`, like 32. It shows in the list of sermons. Optional too.',
           'Back on `The sermon` tab, click `Generate` next to `Web address ending`.',
           'Click `Publish`. The sermon is on the website a few minutes later.',
         ],

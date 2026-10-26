@@ -1,21 +1,94 @@
 ---
 // Safe to edit by hand
-// The optional site motif under the name on the /studio loading splash
-// (src/pages/studio/index.astro, PORTS.md card 120). NOT PORTABLE: a site draws
-// its own art here (plain SVG or HTML, decorative, no script).
+// The site's own art on the /studio loading splash (src/pages/studio/index.astro, PORTS.md card
+// 120). NOT PORTABLE: a site draws its own art here (plain SVG or HTML, decorative, no script).
 //
-// First Baptist Auburn: the phone-width brick path, the same file the Home
-// banner draws along its foot (public/studio-banner/, card 118; npm run
-// gen:stones writes it), two courses of auburn brick stepping up to the right.
-// Its colours read on both the paper and the dark ground. The ends fade, since the
-// art bleeds off its own edges on the Home banner.
+// First Baptist Auburn: the phone-width brick path, the same file the Home banner draws along its
+// foot (public/studio-banner/, card 118; npm run gen:stones writes it), two courses of auburn
+// brick stepping up to the right. Its colours read on both the paper and the dark ground. The
+// ends fade, since the art bleeds off its own edges on the Home banner.
+//
+// It is the splash's progress art (2026-10-25, starter card 162): brand.config.json sets
+// `studio.look.splash: "motif"`, so the splash draws no stone path and this sits in its place,
+// above "Opening the editor". The bricks lay themselves the way the site's sill and mark do
+// (bottom course left to right, then back along the top; src/lib/brick-lay.ts), stay a moment,
+// lift in the same order and are laid again, for as long as the Studio is loading. The SVG is
+// inlined so each brick can take its turn; plain CSS, no script (React replaces the splash as it
+// mounts). Reduced motion shows the wall laid and still.
+import pathSvg from '../../public/studio-banner/stone-path-phone.svg?raw';
+import { layOrder } from '../lib/brick-lay';
+
+// Each brick is two paths, its face and its printed rim, which share a turn (layOrder groups
+// paths that start close together). The ids are prefixed so they cannot meet another SVG's.
+const BRICK = /<path d="([^"]+)" fill="(#[0-9A-Fa-f]{6})"\/>/g;
+const body = pathSvg.slice(pathSvg.indexOf('<g mask='));
+const bricks = [...body.matchAll(BRICK)].map((m) => ({ d: m[1], fill: m[2] }));
+const turns = layOrder(bricks);
+const defs = pathSvg
+  .slice(pathSvg.indexOf('<defs>'), pathSvg.indexOf('</defs>') + '</defs>'.length)
+  .replaceAll('id="print-p"', 'id="sm-print-p"')
+  .replaceAll('url(#print-p)', 'url(#sm-print-p)')
+  .replaceAll('id="print"', 'id="sm-print"');
+const viewBox = /viewBox="([^"]+)"/.exec(pathSvg)?.[1] ?? '0 0 390 56';
 ---
 
-<img
-  src="/studio-banner/stone-path-phone.svg"
-  alt=""
+<svg
+  class="sm-wall"
+  viewBox={viewBox}
   width="390"
-  height="96"
-  decoding="async"
+  height="56"
+  aria-hidden="true"
+  focusable="false"
   style="mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent)"
-/>
+>
+  <Fragment set:html={defs} />
+  <g mask="url(#sm-print)">
+    {bricks.map((b, i) => (
+      <path class="sm-brick" d={b.d} fill={b.fill} style={`--lay: ${turns[i]}`} />
+    ))}
+  </g>
+</svg>
+
+<style is:global>
+  /* One cycle: each brick drops into place on its turn (140ms apart, like the site's sill), the
+     wall stands, then the bricks lift in the same order. 4.2s, so the full wall shows for about a
+     second before the first brick lifts. */
+  .sm-wall .sm-brick {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: sm-brick-lay 4.2s cubic-bezier(0.2, 0.7, 0.2, 1) infinite both;
+    animation-delay: calc(var(--lay, 0) * 0.14s);
+  }
+  @keyframes sm-brick-lay {
+    0% {
+      opacity: 0;
+      transform: translateY(-70%);
+    }
+    6% {
+      opacity: 1;
+    }
+    9% {
+      transform: translateY(5%) scaleY(0.92);
+    }
+    12% {
+      opacity: 1;
+      transform: none;
+    }
+    76% {
+      opacity: 1;
+      transform: none;
+    }
+    88%,
+    100% {
+      opacity: 0;
+      transform: translateY(-12%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sm-wall .sm-brick {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
