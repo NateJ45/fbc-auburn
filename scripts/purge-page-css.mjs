@@ -1,13 +1,12 @@
-// Foundation, edit with care
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // =============================================================================
-// purge-page-css.mjs - drop the CSS a built page can never use (audit DEV-M1, 2026-10-25)
+// purge-page-css.mjs - drop the CSS a built page can never use (PORTS.md card 159)
 // =============================================================================
-// Runs straight after `astro build` (package.json "build"). Every page carries its stylesheets
-// INLINE (astro.config.mjs build.inlineStylesheets 'always', which beat linked sheets on a first
-// visit), and Astro gives every page the CSS of every component its module graph can reach:
-// SectionRenderer imports every section, so every page carried every block's styles, about half
-// of it never matched (the audit measured 46 to 49% unused). This removes, page by page, each
-// style rule whose selector names a class that page cannot show.
+// Runs straight after `astro build` (package.json "build"). Stylesheets that Astro inlines into a
+// page (build.inlineStylesheets: 'always' on a site that chose it, or 'auto' for the small ones) carry
+// the CSS of every component the page's module graph can reach: SectionRenderer imports every
+// section, so every page carries every block's styles, and about half of it never matches. This
+// removes, page by page, each style rule whose selector names a class that page cannot show.
 //
 // "Cannot show" is decided conservatively. A class counts as present when its name appears
 // ANYWHERE in the page's HTML (outside its <style> blocks: attributes, island props, inline
@@ -20,8 +19,8 @@
 // Safe with the page router: <ClientRouter /> swaps each page's own <style> blocks in on arrival
 // and nothing on this site persists across pages (no transition:persist). If a script ever BUILDS
 // a class name from pieces (`'cb-' + kind`), its full name will not appear anywhere, and its rule
-// would be dropped: list a prefix in KEEP below. Measured 2026-10-25 on Plan your visit: inline CSS
-// 250 KB to about 128 KB (brotli 38 to 22 KB).
+// would be dropped: list a prefix in KEEP below. The measured
+// before and after is in PORTS.md card 159.
 //
 // Skips the Studio (dist/client/studio). Writes nothing when nothing changes. Exit 1 on a parse
 // it cannot follow, so a strange stylesheet fails the build rather than shipping broken.
