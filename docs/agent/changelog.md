@@ -1,5 +1,11 @@
 # Change history
 
+_2026-10-26: the Studio drops the old stone lettering and pebbles._ The Studio still wore two pieces of the
+early logo work: banner and tool titles in the Auburn Stone brick letters, and hand-laid pebbles behind the
+numbered steps. `brand.config.json` `studio.look` now has `stone: round` and no `lettering`, and the Home banner in
+`kit.config.ts` has no `lettering`, so titles set in plain Young Serif and the numbers sit on plain round tokens.
+The unused `public/fonts/auburn-stone.woff2` and its licence are deleted.
+
 _2026-10-26: the People tool moves to the starter (card 176), with a Simple view switch._ The People tool's files are
 now the starter's PORTABLE copies (`studio-people.ts` and test, `/api/studio/people/`, `src/sanity/people/`). The
 church's words and plan moved to `kitConfig.people` (`plan: 'free'`, the Helper description, the lead line), and
@@ -7,6 +13,7 @@ church's words and plan moved to `kitConfig.people` (`plan: 'free'`, the Helper 
 the website" (card 175), so a helper invited as an Administrator on the free plan gets the simple Studio with no
 deploy; the free-plan steps and the guide now say so instead of "ask Nathan". With Helper greyed out the form starts on
 Administrator. Detail: `docs/agent/studio-people.md`.
+
 _2026-10-26: one accent box and one "Line under the heading" per block._ Building a page in the
 live Studio, the opening banner, text block and Invitation band each offered two accent boxes
 ("Handwritten accent word" and "Accent word in the heading"), and the Invitation band, FAQ, Team and
@@ -23,6 +30,7 @@ view" on the kit's new `studioStaff` document (id `kit.studioStaff`). Before, a 
 rule. Synced from the starter (`studio-kit.ts`, `kit/shared.tsx`, `kit/index.tsx`, new `kit/staffType.ts` and the
 rest); `structure.ts` hides the type; typegen. Add `"studioStaff"` to the publish webhook's filter next to
 `"studioWeek"`. Detail: `docs/agent/studio-kit.md`, "The staff view".
+
 _2026-10-26: Playwright installs time out instead of hanging (starter card 70)._ Three docs-only PRs across the family sat 40 to 60 minutes in "Install Playwright system libraries" on 2026-10-26: the runner's Azure Ubuntu mirror fed a normal 30-second `install-deps` at 29 kB/s, and the workflows had no timeout, so a stuck apt could hold a required check for GitHub's 6-hour default. Each install attempt now runs under `timeout` (180s for `install-deps`, 360s for a full browser download), so a crawling first try is killed and the retry resumes the partial download; the step has `timeout-minutes` (8 and 15) and the Playwright job 30. This replaces the three 5-minute tries the self-serve PR put on `install-deps` the same morning, so the step matches the rest of the family.
 
 _2026-10-26: an open Studio reloads itself after a deploy (PORTS card 179)._ Signed in to the live
