@@ -10,6 +10,12 @@ text block and band unless a block already holds a word. The formatted line hide
 so one box shows; it appears, replacing the plain one, once the in-canvas editor has bolded a word.
 No field was removed and no page renders differently (parity checked).
 
+_2026-10-26: the staff view by role, with a list that adds to it (starter card 175)._ The kit's staff view now goes
+to everyone who is not a Sanity administrator, PLUS the ids in `kitConfig.staff`, PLUS any account marked "Simple
+view" on the kit's new `studioStaff` document (id `kit.studioStaff`). Before, a non-empty list replaced the role
+rule. Synced from the starter (`studio-kit.ts`, `kit/shared.tsx`, `kit/index.tsx`, new `kit/staffType.ts` and the
+rest); `structure.ts` hides the type; typegen. Add `"studioStaff"` to the publish webhook's filter next to
+`"studioWeek"`. Detail: `docs/agent/studio-kit.md`, "The staff view".
 _2026-10-26: Playwright installs time out instead of hanging (starter card 70)._ Three docs-only PRs across the family sat 40 to 60 minutes in "Install Playwright system libraries" on 2026-10-26: the runner's Azure Ubuntu mirror fed a normal 30-second `install-deps` at 29 kB/s, and the workflows had no timeout, so a stuck apt could hold a required check for GitHub's 6-hour default. Each install attempt now runs under `timeout` (180s for `install-deps`, 360s for a full browser download), so a crawling first try is killed and the retry resumes the partial download; the step has `timeout-minutes` (8 and 15) and the Playwright job 30. This replaces the three 5-minute tries the self-serve PR put on `install-deps` the same morning, so the step matches the rest of the family.
 
 _2026-10-26: an open Studio reloads itself after a deploy (PORTS card 179)._ Signed in to the live
