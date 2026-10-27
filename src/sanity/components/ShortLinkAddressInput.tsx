@@ -1,7 +1,8 @@
-// Safe to edit by hand
-// The "Short address" box on a short link (2026-10-26): the normal text box,
-// with the whole address people will type shown live underneath it, so the
-// pastor sees "fbc-auburn...workers.dev/vbs" as he types "vbs".
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
+// The "Short address" box on a short link (PORTS.md card 171): the normal text
+// box, with the whole address people will type shown live underneath it, so the
+// editor sees "example.com/spring" while typing "spring".
 import { Stack, Text } from '@sanity/ui';
 import type { StringInputProps } from 'sanity';
 import { normalizeShortAddress, shortAddressProblem } from '../../lib/short-links';

@@ -42,7 +42,8 @@ All publicly-visible content lives in Sanity, not in code or markdown files. San
 **Core page singletons (section-driven):**
 
 - `homePage`, `aboutPage`, `servicesPage`, `processPage` — each has a `pageBuilder` array field using its page-specific section type list, plus SEO fields. Renders from `src/data/defaultSections.ts` when `pageBuilder` is empty.
-- `faqPage`, `contactPage`, `journalPage` + `journalEntry` + `journalCategory`, `privacyPage`, `notFoundPage` — these pages keep their own structured fields (they are not fully section-driven).
+- FBC Auburn (2026-10-26, every main page a page builder): `contactPage`, `privacyPage`, `journalPage` and `sermonsPage` are section-driven too (`CONTACT_SECTION_TYPES`, `PRIVACY_SECTION_TYPES`, `ABOUT_SECTION_TYPES`), each with a `DEFAULT_*_SECTIONS` fallback. Their old banner, closing-band and Extra sections fields are hidden fossils (rule 1); the Contact form settings (`formFields` and "What happens next") and the podcast fields stay live. Give and This week's bulletin are `page` documents (`page-give`, `page-bulletin`). The blocks and the migration (`scripts/content/builder-pages.mjs`): `docs/agent/page-architecture.md`.
+- `faqPage` (orphaned: `/faq/` forwards to `/plan-your-visit/#questions`; registered, never deleted, shown nowhere in the Studio), `notFoundPage` — these keep their own structured fields.
 - `studioGuide` — the starter's old in-Studio handbook singleton. Registered but not in the desk (a document still exists); the handbook is the Site Guide, from `src/sanity/guides/content.ts`. `studioNotes` was removed on 2026-10-18 and its one document retired with `scripts/content/retire-studio-notes.mjs`.
 
 **Reusable collections:**
@@ -237,6 +238,22 @@ What a WordPress block-editor handover gives a client, built on the page builder
    template, which stays registered so intents that name it keep working. Every example line starts `Example:`.
    `src/lib/authoring.test.ts` fails if a template uses a block a custom page does not accept, leaves an array member
    without a `_key`, repeats keys between two pages, or forgets the marker.
+
+   **Seasonal templates on the event blocks (2026-10-26).** "Seasonal: Event page" (id `page-event`, was "Event
+   (any)") is the generic one: a photo opening (`hero({ photo: true })`, heroStyle "Photo behind the words"; the
+   arch shows until a photo is added), Event details, a Schedule, Cards with photos, the map and an invitation
+   band. VBS, Easter, Christmas, Homecoming, Revival week, Trunk-or-treat and Thanksgiving use the same blocks
+   where they fit (countdowns, forms, the live stream and verses kept). Builders: `eventDetails`/`eventDate`,
+   `schedule`/`scheduleDay`/`slot`, `photoCards`/`photoCard`. A template never fills in a date (the Studio asks
+   for it, and an undated line shows nothing), an Event details line carries no time (picked with the date), and
+   a schedule time sits on a row whose title starts `Example:`; photos are left for the editor. The authoring test
+   also checks these blocks' lengths and counts and that every time is on the Studio's quarter-hour list.
+   Patterns: "Easter services" and "Christmas services" now open with Event details and a Schedule; "Advent
+   Sundays" and "Christmas Eve candlelight" are new (14 in all). The seeder never overwrites, so a pattern
+   rewritten in code goes to the dataset through `scripts/content/refresh-section-patterns.mjs` (dry by default;
+   it replaces a draft only when it is unpublished and still matches a snapshot of the old pattern, and backs it
+   up first).
+
 2. **The picture picker.** `SECTION_INSERT_MENU` in `schemaTypes/sections.ts` carries
    `views: [grid, list]`; the grid's `previewImageUrl` is `/section-thumbnails/<type>.jpg`, served by the site (the
    Studio's own origin). The pictures are shot by `npm run thumbnails` (`scripts/shoot-section-thumbnails.mjs`, build
@@ -268,3 +285,45 @@ What a WordPress block-editor handover gives a client, built on the page builder
 
 The Site Guide has a guide for each: "Start a page from a template", "Reuse a section on other pages", "Keep a section
 the same on every page" (`src/sanity/guides/content.ts`).
+
+## Event and holiday page blocks (2026-10-26)
+
+So Pastor Jacob can build a Christmas Eve, Easter or VBS page himself, Squarespace-style. Schema:
+`src/sanity/schemaTypes/builderSections.ts` (spread into `pageSectionSchemas`; menu groups in
+`BUILDER_INSERT_GROUPS`, merged by name with the church library's). Drawn by `src/components/builder-blocks/`
+(`BuilderBlock.astro` dispatches, one branch in `SectionRenderer`), styles `src/styles/builder-blocks.css`,
+logic and tests `src/lib/builder-blocks.ts` / `.test.ts`, projected types `src/lib/builderBlocks.types.ts`,
+wall checks `tests/builder-blocks.spec.ts`.
+
+- **Event details (date, time, place)**, `eventDetailsSection`, under "Dates and notices". Small line, name, one to
+  twelve dates (date, start and end picked from a quarter-hour list, an optional label like "Candlelight service"),
+  where (empty means the church's address from Church facts, with the To confirm tag while unconfirmed), a few words,
+  an optional photo (the gable over the brick slab, like ImageText), a main button, and "Add to my calendar" (on by
+  default). The details sit on the This Sunday card's navy (`.cb-deep`): a day numeral over its month per date (a
+  second time on the same day sits under the first), the place, the button, then "Add to my calendar" and
+  "Directions". Past dates drop off at the morning rebuild and the block disappears once all have passed (the
+  notice's expiry). The calendar file is built at build time with `buildIcs` (`src/lib/ics.ts`), every date to
+  come in the church's zone (an hour long without an end time, all day without a start), and handed over as a
+  `data:text/calendar` link with a `download` name, so no `.ics` route is published (a password page's event
+  would otherwise leak into a public file). An unconfirmed church address stays out of the file. Emits schema.org
+  Events through `calendarEventsJsonLd`. Its button is the page's red one when nothing earlier has it (`drawsRed`),
+  else a white outline on the navy.
+- **Schedule (times and what happens)**, `scheduleSection`, under "Dates and notices". Optional heading and intro,
+  one to six days (an optional name), each with up to twenty rows: a time from the same list (optional), what
+  happens, a short note. Times in Young Serif in ONE column for the whole section, as wide as the longest time in any day (`--sched-time-chars` in `ch`, then subgrid), so every title starts on one edge; two or three days side by
+  side from 64rem. Not the timeline.
+- **Cards with photos**, `photoCardsSection`, under Basics. Two to six cards, each a required photo (with its
+  description, card 111), a title, a few words and an optional link (the whole card becomes the link, the button
+  words show as the inline action link). Plain `.shape-step` frames at 4:3 with `.shape-zoom` (the stepped corner
+  is retired from card photos, `docs/agent/shapes.md`). Columns from the count: two or four make pairs, three,
+  five and six rows of three; one a row on a phone, two from 40rem.
+- **The opening banner's Style** (`heroSection.heroStyle`, hidden on Home): "Arch (standard)" or "Photo behind the
+  words", which draws Home's photo hero on any page when it has a background photo (`PageHeroPhoto.astro` in the
+  shared frame `PhotoHero.astro`, a little shorter: `.hb-hero--page`). HomeHero uses the same frame; the hero's
+  rules moved verbatim from `home-board.css` to `src/styles/photo-hero.css`, and `npm run parity compare home`
+  passed byte for byte. The photo style ignores the Sunday times band and the accent word.
+- **Looks** (rule 9): `look` now also on Text in columns and Schedule (Standard, Feature, Stone) and on Cards with
+  stone icons, Row of buttons, Cards with photos and Event details (Standard, Stone: their navy buttons and cards
+  would vanish on Feature). `section-fields.test.ts` now reads `auburnSections.ts`, `churchSections.ts` and
+  `builderSections.ts` too. `SectionRenderer` hands a look-enabled block its real surface (`blockSurface`).
+- Rule 8b: `heroStyle`, `startTime` and `endTime` are in `NON_STEGA_FIELDS`.

@@ -192,7 +192,7 @@
         "height": 36
       },
       "markColors": ["#2C4F7C", "#1F3A5F", "#9A3B2A", "#2C4F7C"],
-      "stone": "pebble",
+      "stone": "round",
       "connector": {
         "kind": "dashes",
         "color": "#B5503A"
@@ -206,11 +206,6 @@
       "motifNarrow": "/studio-banner/stone-path-phone.svg",
       "texture": "/textures/tile-deep.svg",
       "edgeColors": ["#7F98B8", "#2C4F7C", "#B5503A", "#9A3B2A"],
-      "lettering": {
-        "family": "Auburn Stone",
-        "src": "/fonts/auburn-stone.woff2",
-        "colors": ["#FFFFFF", "#7F98B8", "#D98A74"]
-      },
       "motion": "lay",
       "splash": "motif"
     }

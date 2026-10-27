@@ -5,6 +5,100 @@ and its test are now PORTABLE copies of the starter's, and the PORTABLE `/api/co
 confirmed "contact" row first, then `CONTACT_TO`. `/api/form/` and the Studio panel work as before; the
 confirmation page keeps its colours, now passed in by `/api/form-recipient/confirm/`. Auburn keeps
 `migrations/0005_form_recipients.sql` (the starter's copy has its own number; both are `IF NOT EXISTS`).
+_2026-10-26: the Studio drops the old stone lettering and pebbles._ The Studio still wore two pieces of the
+early logo work: banner and tool titles in the Auburn Stone brick letters, and hand-laid pebbles behind the
+numbered steps. `brand.config.json` `studio.look` now has `stone: round` and no `lettering`, and the Home banner in
+`kit.config.ts` has no `lettering`, so titles set in plain Young Serif and the numbers sit on plain round tokens.
+The unused `public/fonts/auburn-stone.woff2` and its licence are deleted.
+
+_2026-10-26: the People tool moves to the starter (card 176), with a Simple view switch._ The People tool's files are
+now the starter's PORTABLE copies (`studio-people.ts` and test, `/api/studio/people/`, `src/sanity/people/`). The
+church's words and plan moved to `kitConfig.people` (`plan: 'free'`, the Helper description, the lead line), and
+`ncsPeopleTool(kitConfig)` takes the config. New: a **Simple view** switch beside each administrator under "Who can edit
+the website" (card 175), so a helper invited as an Administrator on the free plan gets the simple Studio with no
+deploy; the free-plan steps and the guide now say so instead of "ask Nathan". With Helper greyed out the form starts on
+Administrator. Detail: `docs/agent/studio-people.md`.
+
+_2026-10-26: one accent box and one "Line under the heading" per block._ Building a page in the
+live Studio, the opening banner, text block and Invitation band each offered two accent boxes
+("Handwritten accent word" and "Accent word in the heading"), and the Invitation band, FAQ, Team and
+Listing blocks showed two boxes both titled "Line under the heading" (plain and formatted). No live or
+snapshot document used the handwritten accent or the formatted line. The handwritten accent is now
+hidden (`scriptAccentField()`): always on the opening banner, which never draws it here, and on the
+text block and band unless a block already holds a word. The formatted line hides while it is empty,
+so one box shows; it appears, replacing the plain one, once the in-canvas editor has bolded a word.
+No field was removed and no page renders differently (parity checked).
+
+_2026-10-26: the staff view by role, with a list that adds to it (starter card 175)._ The kit's staff view now goes
+to everyone who is not a Sanity administrator, PLUS the ids in `kitConfig.staff`, PLUS any account marked "Simple
+view" on the kit's new `studioStaff` document (id `kit.studioStaff`). Before, a non-empty list replaced the role
+rule. Synced from the starter (`studio-kit.ts`, `kit/shared.tsx`, `kit/index.tsx`, new `kit/staffType.ts` and the
+rest); `structure.ts` hides the type; typegen. Add `"studioStaff"` to the publish webhook's filter next to
+`"studioWeek"`. Detail: `docs/agent/studio-kit.md`, "The staff view".
+
+_2026-10-26: Playwright installs time out instead of hanging (starter card 70)._ Three docs-only PRs across the family sat 40 to 60 minutes in "Install Playwright system libraries" on 2026-10-26: the runner's Azure Ubuntu mirror fed a normal 30-second `install-deps` at 29 kB/s, and the workflows had no timeout, so a stuck apt could hold a required check for GitHub's 6-hour default. Each install attempt now runs under `timeout` (180s for `install-deps`, 360s for a full browser download), so a crawling first try is killed and the retry resumes the partial download; the step has `timeout-minutes` (8 and 15) and the Playwright job 30. This replaces the three 5-minute tries the self-serve PR put on `install-deps` the same morning, so the step matches the rest of the family.
+
+_2026-10-26: an open Studio reloads itself after a deploy (PORTS card 179)._ Signed in to the live
+Studio, a tab opened before a deploy showed a raw red "Failed to fetch dynamically imported module" inside the
+image field's Unsplash picker: every merge and every publish redeploys, and Workers keep only the newest build's
+code files. The Studio page now catches that error, says "The Studio was updated", and reloads once after 2.5 s;
+a repeat within a minute offers a Reload button instead of looping. Sanity saves edits as they are typed, so
+nothing is lost. Detail: `docs/agent/studio-kit.md` ("After a deploy").
+
+_2026-10-26: an optional button left empty no longer blocks Publish._ Building a Christmas page in
+the live Studio, a fresh Event details block stopped Publish with "Button text: Required" and "Link type:
+Required" on its optional button: `ctaBlock`'s "Open in new tab" had `initialValue: false`, so every new
+block carried a half-made button whose required fields then fired. `ctaBlock` now has no initial value
+and asks for the words and link type only once any part of the button is filled in; `CtaLink` draws
+nothing for an empty button object (it used to fall back to "Get in touch"), and an empty Invitation
+band button no longer takes the page's red. No published page had an empty button.
+
+_2026-10-26: holiday and event templates use the event blocks._ A new "Seasonal: Event page" template
+(replacing "Event (any)") opens on a photo and runs Event details, a Schedule, Cards with photos, the map
+and an invitation band. The VBS, Easter, Christmas, Homecoming, Revival week, Trunk-or-treat and
+Thanksgiving templates are rebuilt on the same blocks. The "Easter services" and "Christmas services"
+saved sections now open with Event details and a Schedule (the unedited drafts were replaced, backed up
+first), and "Advent Sundays" and "Christmas Eve candlelight" are new saved sections. The Schedule block
+now keeps one time column for the whole section, so "4 pm" under one day and "10:30 am" under another
+start their titles on the same edge. Docs: `docs/agent/sanity.md` (the authoring kit).
+
+_2026-10-26: no "empty section" warning on blocks that fill themselves._ Checked signed in, the
+Contact page's form and the News and notes post list each carried "This section is empty... Fill it in or
+remove it", because their content comes from another tab or a collection. Eleven such blocks (sermons,
+series, archive, podcast, downloads, bulletin, posts, contact form, privacy policy, Watch, This week) are
+now in `SELF_FILLING_SECTIONS` (`src/sanity/pageBuilderConfig.ts`), and `authoring.test.ts` checks a
+fresh one of each raises no warning.
+
+_2026-10-26: every main page is a page builder._
+
+**Decision.** Pastor Jacob should be able to rearrange, remove and add sections on every main page,
+as on Squarespace. Contact, Privacy, News and notes and Sermons kept a fixed top and an "Extra
+sections" zone; Give and Bulletin were code with no Studio document. Now Contact, Privacy, News and
+notes and Sermons render a Page layout through `SectionRenderer` (defaults in `defaultSections.ts`),
+and Give and This week's bulletin are Studio `page` documents that `[slug].astro` always builds
+(`BUILT_IN_PAGES`), so `give.astro` and `bulletin.astro` are gone. Six new blocks hold what those
+pages drew in code: Contact form and Privacy policy text (offered on their own page only), News and
+notes posts, Every sermon, Podcast and This week's bulletin; the series grid can hide itself until
+there is a series. The old fields are hidden fossils; `scripts/content/builder-pages.mjs` moved the
+live content (run before the deploy, which the old code ignored). The orphaned Questions page left
+the Studio's page lists. Pages look the same; the differences are in the parity notes of the PR.
+Docs: `page-architecture.md`, `sanity.md`, `routes.md`.
+
+_2026-10-26: event and holiday page blocks._ Three new page-builder blocks so Jacob can build an event
+page himself: **Event details** (dates and times from a list, the place or the church's own address from
+Church facts, a photo, a sign-up button, an automatic "Add to my calendar" file and Directions; past dates
+drop off and the block comes down after the last one), **Schedule** (times and what happens, by day) and
+**Cards with photos** (two to six, columns from the count). The opening banner gains a Style, "Photo behind
+the words", which draws Home's photo hero on any page; Home's hero now shares that frame
+(`PhotoHero.astro`, styles moved to `photo-hero.css`, Home parity unchanged). `look` reaches six more
+blocks. Docs: `docs/agent/sanity.md` ("Event and holiday page blocks").
+
+_2026-10-26: the embed registry moves to the starter (card 172)._ `src/lib/embed-providers.ts`,
+its test and `EmbedPasteInput.tsx` are PORTABLE copies now, and the PORTABLE `build-csp.mjs`
+adds a known embed service's script origins itself, so `build-embed-csp.mjs` and
+`scripts/lib/embed-csp.mjs` are gone (one CSP writer). The Studio wording stays this site's
+(`EMBED_WORDS` in `sections.ts`), and a one-off approved origin now goes in
+`site.embeds.approvedScriptOrigins`. Nothing visible changes.
 
 _2026-10-26: the self-serve PRs landed together, and CI stops hanging._
 

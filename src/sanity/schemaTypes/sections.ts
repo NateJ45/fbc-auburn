@@ -32,8 +32,15 @@ import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
 import { CodeBlockIcon } from '@sanity/icons/CodeBlock';
 import { CodeTextInput } from '../components/CodeTextInput';
 import { codeWarningMessage } from '../../lib/custom-code';
-import { EmbedPasteInput } from '../components/EmbedPasteInput';
-import { describePlan, planEmbed, plansOwnSize } from '../../lib/embed-providers';
+import { makeEmbedPasteInput } from '../components/EmbedPasteInput';
+import {
+  describePlan,
+  planEmbed,
+  plansOwnSize,
+  type EmbedInput,
+  type EmbedWords,
+} from '../../lib/embed-providers';
+import { site } from '../../data/site';
 import {
   FAST_START_MESSAGE,
   HERO_VIDEO_ACCEPT,
@@ -45,6 +52,7 @@ import {
   columnsField,
   headingAccentField,
   hideWhenRich,
+  scriptAccentField,
   lookField,
   richTwin,
 } from './_appearanceFields';
@@ -61,6 +69,8 @@ import {
 import { collectionSectionSchemas } from './collectionSections';
 import { auburnSectionSchemas } from './auburnMotionSections';
 import { CHURCH_INSERT_GROUPS, churchSectionSchemas } from './churchSections';
+// FBC Auburn: the event and holiday page blocks (builderSections.ts, 2026-10-26)
+import { BUILDER_INSERT_GROUPS, builderSectionSchemas } from './builderSections';
 import { imageMember, imageWithAlt } from './_imageWithAlt';
 
 // The hero video checks, shared by the main clip and the phone copy (2026-10-25/26): an error for a
@@ -150,13 +160,8 @@ export const heroSection = defineType({
       type: 'string',
       validation: (R) => R.required(),
     }),
-    defineField({
-      name: 'scriptAccent',
-      title: 'Handwritten accent word (optional)',
-      type: 'string',
-      description:
-        'One word from the headline to render in the script font. Must match exactly. Leave blank to skip.',
-    }),
+    // FBC Auburn (2026-10-26): hidden; ArchHero and PageHeroPhoto never draw it.
+    scriptAccentField('headline', false),
     // FBC Auburn (2026-10-24): two-tone page titles, words of the heading in auburn.
     headingAccentField(),
     // FBC Auburn (2026-10-24): the Sunday times band under an inner page head (TimesBand.astro).
@@ -179,6 +184,24 @@ export const heroSection = defineType({
     }),
     defineField({ name: 'subhead', title: 'Line under the heading', type: 'text', rows: 2 }),
     imageWithAlt({ name: 'backgroundImage', title: 'Background photo (optional)' }),
+    // FBC Auburn (2026-10-26): an inner page's opener can take Home's photo treatment (the photo
+    // behind white words, PhotoHero.astro). Home always draws it, so the choice is hidden there.
+    defineField({
+      name: 'heroStyle',
+      title: 'Style',
+      type: 'string',
+      description:
+        'Arch is the standard page opening: the title beside the photo. Photo behind the words puts the background photo across the whole opening with the title over it in white, good for an event or holiday page. It needs a background photo; without one the page shows the arch.',
+      initialValue: 'arch',
+      options: {
+        list: [
+          { title: 'Arch (standard)', value: 'arch' },
+          { title: 'Photo behind the words', value: 'photo' },
+        ],
+        layout: 'radio',
+      },
+      hidden: ({ document }: { document?: { _type?: string } }) => document?._type === 'homePage',
+    }),
     // FBC Auburn Home (2026-10-25, PENDING 1zt): a short silent clip behind the welcome words
     // (HomeHero.astro). The background photo above is its poster and what shows when the clip does
     // not play (reduced motion, Save-Data, a slow connection, print). Rules: src/lib/hero-video.ts.
@@ -242,12 +265,8 @@ export const richTextSection = defineType({
       type: 'string',
     }),
     defineField({ name: 'heading', title: 'Heading (optional)', type: 'string' }),
-    defineField({
-      name: 'scriptAccent',
-      title: 'Handwritten accent word (optional)',
-      type: 'string',
-      description: 'One word from the heading to render in the script font. Must match exactly.',
-    }),
+    // FBC Auburn (2026-10-26): shows only on a block that already holds a word.
+    scriptAccentField('heading', true),
     headingAccentField(),
     proseBody('body', 'Text'),
     defineField({
@@ -514,12 +533,8 @@ export const ctaBandSection = defineType({
       type: 'string',
       validation: (R) => R.required(),
     }),
-    defineField({
-      name: 'scriptAccent',
-      title: 'Handwritten accent word (optional)',
-      type: 'string',
-      description: 'One word from the headline to render in the script font. Must match exactly.',
-    }),
+    // FBC Auburn (2026-10-26): shows only on a block that already holds a word.
+    scriptAccentField('headline', true),
     headingAccentField(),
     defineField({
       name: 'subhead',
@@ -646,17 +661,27 @@ export const logoStripSection = defineType({
 // opt-out for trusted provider snippets, and the Checkup lists every page using
 // it. Field NAMES are unchanged (rule 1): embedUrl, embedCode, heightHint.
 // SELF_CONTAINED: manages its own surface. Trust model: docs/agent/custom-code.md.
-// Paste-and-go (2026-10-26): EmbedPasteInput puts one paste box above the fields
-// and fills them in; src/lib/embed-providers.ts recognizes the service, sizes it,
-// and keeps unknown script code off the page. Nothing new is stored (rule 15).
+// Paste-and-go (2026-10-26, starter card 172): EmbedPasteInput puts one paste box
+// above the fields and fills them in; src/lib/embed-providers.ts recognizes the
+// service, sizes it, and keeps unknown script code off the page. Nothing new is
+// stored (rule 15). EMBED_WORDS is this site's wording for the Studio sentence.
+const EMBED_WORDS: EmbedWords = {
+  approver: 'Nathan at the studio',
+  examples: 'YouTube, Google Maps, Spotify, Church Trac or Tithe.ly',
+};
 const embedPlanFor = (parent: unknown) =>
-  planEmbed((parent ?? {}) as { embedUrl?: string; embedCode?: string; runsOnPage?: boolean });
+  planEmbed((parent ?? {}) as EmbedInput, site.embeds.approvedScriptOrigins);
 export const embedSection = defineType({
   name: 'embedSection',
   title: 'Custom code or embed',
   type: 'object',
   icon: CodeBlockIcon,
-  components: { input: EmbedPasteInput },
+  components: {
+    input: makeEmbedPasteInput({
+      words: EMBED_WORDS,
+      approvedOrigins: site.embeds.approvedScriptOrigins,
+    }),
+  },
   description:
     'Show a form, map, calendar, giving page or small widget from another website, or paste code you were given (by a service such as Church Trac, or by an AI). Check it in Preview before you publish.',
   fields: [
@@ -685,7 +710,7 @@ export const embedSection = defineType({
         R.custom((value, context) => {
           if (!value) return true;
           const plan = embedPlanFor(context.parent);
-          return plan.kind === 'problem' ? describePlan(plan) : true;
+          return plan.kind === 'problem' ? describePlan(plan, EMBED_WORDS) : true;
         }),
       ],
     }),
@@ -714,9 +739,7 @@ export const embedSection = defineType({
         R.custom((value, context) => {
           if (!value) return true;
           const plan = embedPlanFor(context.parent);
-          return plan.kind === 'box' && plan.blocked
-            ? describePlan(plan, 'Nathan at the studio')
-            : true;
+          return plan.kind === 'box' && plan.blocked ? describePlan(plan, EMBED_WORDS) : true;
         }).warning(),
       ],
     }),
@@ -833,6 +856,8 @@ export const pageSectionSchemas = [
   ...collectionSectionSchemas,
   // FBC Auburn: the general church section library (churchSections.ts, 2026-10-18)
   ...churchSectionSchemas,
+  // FBC Auburn: event details, a schedule and cards with photos (builderSections.ts, 2026-10-26)
+  ...builderSectionSchemas,
 ];
 
 // The general blocks on their own. A saved section accepts these (plus the rich
@@ -884,7 +909,7 @@ function withChurchGroups<G extends { name: string; title: string; of: string[] 
   groups: G[],
 ): G[] {
   const out = groups.map((g) => ({ ...g, of: [...g.of] }));
-  for (const extra of CHURCH_INSERT_GROUPS) {
+  for (const extra of [...CHURCH_INSERT_GROUPS, ...BUILDER_INSERT_GROUPS]) {
     const found = out.find((g) => g.name === extra.name);
     if (found) found.of.push(...extra.of);
     else out.push({ ...extra } as G);
@@ -935,6 +960,8 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'watchSection',
         'latestSermonSection',
         'sermonSeriesSection',
+        'sermonArchiveSection', // 2026-10-26
+        'podcastSection', // 2026-10-26
         'gallerySection',
         'videoSection',
         'embedSection',
@@ -950,6 +977,11 @@ export const SECTION_INSERT_MENU: ArrayOptions['insertMenu'] = {
         'faqSection', // scaffold: faq
         'peopleSection',
         'downloadsSection',
+        // Every main page a page builder (2026-10-26); the last two only on their own page.
+        'bulletinSection',
+        'journalPostsSection',
+        'contactFormSection',
+        'privacyPolicySection',
         'thisWeekSection',
         'dynamicListSection',
         'ctaBandSection',

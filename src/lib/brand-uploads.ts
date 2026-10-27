@@ -1,5 +1,6 @@
-// Safe to edit by hand
-// The guard rails on the logo and icon a person can upload in Site settings (2026-10-26). Pure,
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care (PORTS.md card 168)
+// The guard rails on the logo and icon a person can upload in Site settings. Pure,
 // so the Studio validation (src/sanity/schemaTypes/siteSettings.ts) and the unit tests
 // (brand-uploads.test.ts) share one set of rules.
 //
@@ -55,7 +56,7 @@ export function checkLogo(value: ImageValue): UploadCheck {
   if (d.width / d.height < 1.5) {
     return {
       warning:
-        'This looks more square than a logo usually is. The header has room for a wide logo (the cross with the name beside it). A square picture belongs in "Square icon" below.',
+        'This looks more square than a logo usually is. The header has room for a wide logo (a mark with the name beside it). A square picture belongs in "Square icon" below.',
     };
   }
   return {};

@@ -31,13 +31,14 @@ the usage note for the drop-in components; see them all at once on `/styleguide/
   Facebook page), all unconfirmed. There is no fallback phone.
 - The round social buttons (header strip, phone menu, footer, and Contact's "Follow along" since
   2026-10-26) all come from one list, `resolveSocialLinks()` in `src/lib/social-links.ts` (icons in
-  `social-icons.ts`): Site settings > Social links in order, with the Facebook fact added when the
+  `social-icons.ts`; both PORTABLE since starter card 167, so edit them in the starter; the Facebook fact goes
+  in as the generic `pinnedFacebook` argument): Site settings > Social links in order, with the Facebook fact added when the
   list has no Facebook entry (2026-10-24). At most `MAX_SOCIAL_LINKS` (10) rows.
 - **Social links are editor-managed (2026-10-26).** The editor pastes a link and, optionally, a
   label; `platformFromUrl()` reads the platform from the address's host (Facebook, Instagram,
   YouTube, TikTok, WhatsApp, X/Twitter, Threads, Spotify, Apple Podcasts, Vimeo, LinkedIn,
-  Pinterest, Nextdoor, Flickr, Linktree; a new one is a row in `PLATFORMS` plus an icon). An unknown
-  site gets the plain link icon and the label, or its domain. The old `platform` dropdown is
+  Pinterest, Nextdoor, Flickr, Linktree, Houzz; a new one is a row in `PLATFORMS` plus an icon, in the
+  starter). An unknown site gets the plain link icon and the label, or its domain. The old `platform` dropdown is
   hidden, not removed (rule 1): it only stands in for an address the site does not know, so
   existing rows keep their icon. It stays in `NON_STEGA_FIELDS`.
 - **WhatsApp** shows only for an https group invite (`chat.whatsapp.com/<code>`) or number link
@@ -123,9 +124,9 @@ and nothing is retyped (rule 15).
   change is told as a dated Event (`EventRescheduled` with `previousStartDate`, `EventCancelled`, or
   `EventScheduled` for an extra service; a change to an unconfirmed gathering is kept back).
   `/sunday.ics` and `/calendar/<key>.ics` write an `EXDATE` for a cancelled date and the same `UID`
-  again with a `RECURRENCE-ID` for a new time (gatherings.ts adds these around the starter's
-  `buildIcs`, which has no exception fields); `/sunday.ics` also carries a coming Sunday's extra
-  service.
+  again with a `RECURRENCE-ID` for a new time (gatherings.ts passes them to the starter's
+  `buildIcs` as its `exdate` and `recurrenceId` fields, starter card 177; `/sunday.ics` is still
+  written by hand in church-facts.ts); `/sunday.ics` also carries a coming Sunday's extra service.
 - **Why build time, not a browser check.** Every place above is already derived at build time from
   the build's clock, and the site already rebuilds on the publish webhook (the change appears about
   two minutes after Jacob publishes) and every morning at 10:00 UTC (`deploy.yml`), so the first
@@ -233,7 +234,7 @@ a Live stream link or a YouTube channel id).
   line in its place (`PRE_LAUNCH_NOTES`). YouTube plays in place; Facebook opens Facebook.
 - `/bulletin/` shows `bulletinToShow` (`src/lib/sermons.ts`): the newest current Bulletin, else the newest one even
   if it has come down, labelled "Last week's bulletin" when it is more than six days old, with a line saying when
-  the next goes up (`POSTED_WHEN` at the top of `bulletin.astro`; empty shows the ask before launch, nothing after).
+  the next goes up (the block's "When a new bulletin goes up" field since 2026-10-26, when /bulletin/ became a Studio page; empty shows the ask before launch, nothing after).
 
 ## How it stays current
 

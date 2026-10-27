@@ -109,6 +109,18 @@ export const COLLECTION_SECTION_ARMS = `
         *[_type == "person" && defined(group._ref) && group._ref in ^.groups[]._ref][0...200]${PERSON_FIELDS}
       )
     },
+    _type == "contactFormSection" => {
+      ...,
+      "settings": *[_type == "contactPage"][0]{
+        formIntroNote,
+        formProjectTypeOptions, formLocationOptions, formBudgetOptions,
+        formTimelineOptions, formSourceOptions,
+        formFields[]{ label, kind, options, required },
+        whatToExpectEyebrow, whatToExpectHeadline, whatToExpectContent,
+        postInquiryRoadmap[]{ title, body, timeEstimate },
+        schedulingLink, schedulingLinkLabel, availabilityNote
+      }
+    },
     _type == "downloadsSection" => {
       ...,
       "items": *[_type == "download" && defined(file.asset) && (!defined(^.category) || ^.category == "all" || category == ^.category)] | order(date desc)[0...60]${DOWNLOAD_FIELDS},

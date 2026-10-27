@@ -184,12 +184,13 @@ log in Sanity, then GitHub → Actions for a failed Deploy run. Run the Deploy w
 The webhook lives at manage.sanity.io → API → Webhooks. The GROQ filter is a deny-list:
 
 ```
-!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek", "previewShare", "privatePage", "linkReport"])
+!(_id in path("drafts.**")) && !(_type in ["media.tag", "sanity.imageAsset", "sanity.fileAsset", "sanity.assetSourceData", "studioWeek", "studioStaff", "previewShare", "privatePage", "linkReport"])
 ```
 
 This filter skips rebuilds triggered by draft saves and internal Sanity asset-management events (tagging an uploaded photo, rotating an image, etc.), which don't affect live HTML. New content types are covered automatically because the filter excludes only the named system types and lets everything else through. The old hand-maintained allow-list approach (explicitly listing every `_type` that should trigger a rebuild) silently dropped new types until a developer remembered to add them. The deny-list is safer: add a new schema type and it triggers rebuilds out of the box.
 
 `studioWeek` (added 2026-10-18, card 111) is the Studio Home checklist's weekly tick document: ticking a box writes it, and without it in the filter every tick would rebuild the website.
+`studioStaff` (added 2026-10-26, starter card 175) is the kit's "Simple view" marks document, written by the People tool; skipped for the same reason.
 
 `previewShare` (added 2026-10-18, card 117) is the record behind each private preview link: making or stopping a link writes it, and without it in the filter every link would rebuild the website.
 
@@ -370,7 +371,8 @@ Worker has its key the tool shows the sanity.io/manage steps instead. Once per s
    address as a Helper, check the email arrives, and `Cancel` it.
 
 Helper is Sanity's Editor role, which only exists on the Growth plan (and the Growth trial a new project starts on).
-On the free plan the tool greys Helper out and says why. Detail: `docs/agent/studio-people.md`.
+On the free plan (`kitConfig.people.plan = 'free'`, this site) the tool greys Helper out and says why; invite helpers as
+Administrators and turn on their `Simple view` (starter cards 175 and 176). Detail: `docs/agent/studio-people.md`.
 
 ### Studio deploy
 
@@ -767,6 +769,11 @@ there is nothing to remember after a title changes or a page is added.
 4. It uses Playwright's Chromium when installed, else the machine's Chrome or Edge (a GitHub
    runner's Chrome). With no browser it never fails the build: those pages share
    `og-default.png` and the log says why.
+
+The machinery is the starter's (PORTS.md card 169): `scripts/build-og-cards.mjs`,
+`scripts/lib/og-build.mjs`, `src/lib/og-card-marker.ts` and their tests are PORTABLE, so change
+them in the starter. The design is Auburn's own: `scripts/lib/og-card.mjs` keeps the three exports
+the build calls (`cardHtml`, `renderHtml`, `closeCards`).
 
 `npm run og` still draws `public/og-default.png` (committed) from the Site settings tagline. A
 square icon uploaded in Site settings replaces the brand kit's mark on every card at the next

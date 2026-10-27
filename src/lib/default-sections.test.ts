@@ -20,7 +20,15 @@ import { readFileSync } from 'node:fs';
 
 // Every file that defines page-builder blocks: the site's own blocks (FBC Auburn keeps them in
 // auburnSections.ts and auburnMotionSections.ts) are checked the same way as the starter's.
-const schema = ['sections.ts', 'richSections.ts', 'auburnSections.ts', 'auburnMotionSections.ts']
+const schema = [
+  'sections.ts',
+  'richSections.ts',
+  'auburnSections.ts',
+  'auburnMotionSections.ts',
+  // The collection-fed and page blocks (2026-10-26: every main page a page builder), and the church library.
+  'collectionSections.ts',
+  'churchSections.ts',
+]
   .map((f) => readFileSync(new URL('../sanity/schemaTypes/' + f, import.meta.url), 'utf8'))
   .join('\n');
 const defaults = readFileSync(new URL('../data/defaultSections.ts', import.meta.url), 'utf8');
@@ -32,9 +40,14 @@ function schemaFields(type: string): Set<string> {
   const next = schema.indexOf('defineType(', start);
   const body = schema.slice(start, next < 0 ? undefined : next);
   // linkHrefField('name', ...) is auburnMotionSections.ts's address-field helper.
-  return new Set(
-    [...body.matchAll(/(?:name: |proseBody\(|linkHrefField\(\s*)'(\w+)'/g)].map((m) => m[1]),
-  );
+  // headingField(...) and introField are collectionSections.ts's shared heading and intro fields;
+  return new Set([
+    ...[...body.matchAll(/(?:name: |proseBody\(|linkHrefField\(\s*)'(\w+)'/g)].map((m) => m[1]),
+    ...(body.includes('headingField(') ? ['heading'] : []),
+    // stoneIconField(...) (auburnSections.ts) declares the `icon` field.
+    ...(body.includes('stoneIconField(') ? ['icon'] : []),
+    ...(/\bintroField\b/.test(body) ? ['intro'] : []),
+  ]);
 }
 
 /** [type, key, line number] for every top-level field of every default block. */

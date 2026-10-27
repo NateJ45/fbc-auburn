@@ -80,11 +80,11 @@ A section whose block key is in `src/lib/section-anchors.ts` gets that name as i
   Lord's Supper at home, a funeral, a wedding, a hand when you need it), and a band to the Prayer
   page. Contact's "When life happens" now holds two cards that lead here and to Prayer, and
   Ministries' "When life happens" card links here.
-- **Contact**: on phones a "Call or text" line leads the form (`src/pages/contact.astro`, from
+- **Contact**: on phones a "Call or text" line leads the form (`src/components/sections/ContactFormSection.astro`, from
   Church facts); the intro note asks Jacob how fast a text is answered.
-- **Give** (`src/pages/give.astro`, code): How gifts are cared for, Jacob's asks on counting,
-  statements, the budget vote and the Cooperative Program. It shows only while
-  `PRE_LAUNCH_NOTES` is true; write his answers into the page before launch or it disappears.
+- **Give** (a Studio page since 2026-10-26, `page-give`): How gifts are cared for, Jacob's asks on
+  counting, statements, the budget vote and the Cooperative Program, as a text section. Answer them
+  in the section before launch, or remove it.
 
 Each page's asks are also in its "For Jacob" pill (`src/data/for-jacob.ts`); photo slots are in
 `src/data/shot-list.ts`, keyed by the heading, so a renamed heading needs its key renamed too.

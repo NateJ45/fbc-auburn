@@ -16,6 +16,39 @@ sequence).
 
 ## Waiting on a human
 
+### 1zq. Every main page a page builder: Jacob's two asks and a signed-in look (opened 2026-10-26)
+
+Contact, Privacy, News and notes and Sermons are page builders, and Give and This week's bulletin
+are Studio pages (`page-give`, `page-bulletin`; changelog 2026-10-26). Left:
+
+- **Give, "How gifts are cared for":** the section holds Jacob's four asks as text now (it was code
+  that hid itself at launch). Before launch, answer them in the section or remove it in the Studio.
+  The payee ask moved into the Ways to give block (still behind `PRE_LAUNCH_NOTES`).
+- **Bulletin, "When a new bulletin goes up":** a field on the This week's bulletin block; until it is
+  filled the pre-launch ask shows in its place.
+- **Signed in:** Contact was opened signed in on the live Studio (2026-10-26) and opens on the Page
+  layout tab; drag a section on each of the others once.
+
+### 1zr. The Christmas page test: Jacob's facts, and three Studio rough edges (opened 2026-10-26)
+
+/christmas/ was built in the live Studio as Jacob would (signed in, from "Seasonal: Christmas", photos
+from the Studio's Unsplash picker), published from the Studio and checked live at 320, 375 and 1280.
+Two bugs it found are fixed (no false "empty section" warning on self-filling blocks; an optional
+button left empty no longer blocks Publish). The "Seasonal: Event page" template is in. Left:
+
+- **Jacob:** the Christmas Eve time (6 to 7 pm is a stand-in), and the Christmas Sunday plans. Both
+  carry a `[Jacob: ...]` note on the page. The page is in no menu; add it from Menu placement when ready.
+- **Stale Studio after a deploy:** a Studio tab opened before a deploy shows a raw "Failed to fetch
+  dynamically imported module" error inside a field (the Unsplash picker) until it is reloaded, because
+  the old code files are gone. The desk recovers on its own; fields do not. Wants a reload prompt.
+- ~~**Two accent fields and two "Line under the heading" fields**~~ Done 2026-10-26: the handwritten
+  accent is hidden on the opening banner, text block and Invitation band, and the formatted line hides
+  while empty on the band, FAQ, Team and Listing blocks (changelog 2026-10-26). Starter note: the
+  script accent and the always-visible rich twin are generic, so the same doubling exists in the
+  starter and its other forks; a starter card could offer the same helpers.
+- **Signed in, the other new blocks:** Event details, Schedule and Cards with photos were driven
+  signed in; the converted pages (1zq) were opened, not all dragged.
+
 ### 1zs. Studio self-serve: switch-ons and ports (opened 2026-10-26)
 
 The self-serve additions are merged and live (#205, #206, #212; changelog 2026-10-26). To finish:
@@ -25,8 +58,8 @@ The self-serve additions are merged and live (#205, #206, #212; changelog 2026-1
   invite signed in. Until then the tool shows Jacob the manual steps at sanity.io/manage.
 - **Sanity plan: Free** (decided 2026-10-26). Free has Administrator and Viewer only, so the People
   tool invites helpers as Administrators (Helper stays greyed out with its explanation) and they get
-  the full Studio, because the staff view applies to non-admins. Optional: let the People tool mark a
-  helper so the simple view applies to that admin too (needs a starter card for `studio-kit.ts`).
+  the full Studio unless the People tool's Simple view switch is on for them (starter cards 175 and
+  176). Add `studioStaff` to the live publish webhook's filter so a Simple view change rebuilds.
 - **Form addresses:** migration `0005_form_recipients.sql` applies with the other four when the form
   database is created (`wrangler.jsonc` still has the placeholder binding; see 1v). A new address must
   also be verified in Cloudflare Email Sending.
@@ -34,12 +67,10 @@ The self-serve additions are merged and live (#205, #206, #212; changelog 2026-1
 - **QR codes:** remake any printed before the domain cutover; they point at the workers.dev address.
 - **Not seen signed in:** the People, Short links, QR, form-address and A different Sunday panels in
   `/studio` (unit-tested and audited only). Try each once signed in.
-- **Ports to the starter** (each with a card): staff view by role (patch kept in the session
-  scratchpad; `studio-kit.ts` is PORTABLE), the People tool, build-time share cards and the brand icon
-  set, popups, short links and the QR action, the embed registry (could fold into `build-csp.mjs`),
-  form recipients in D1 and `/api/contact/`'s D1 lookup, the date and multi question kinds, `buildIcs`
-  exception fields, URL-based social icons, and the reword of `_seoFields.ts` "Leave blank to use the
-  site default" (share cards are generated now).
+- **Starter card 174 (form recipients in D1, `/api/contact/`'s D1 lookup) is held:** presacademy
+  carries the same PORTABLE `contact.ts` and sync-checks the live starter, so merging the card turns its next
+  PR red unless presacademy takes the two files in the same pass (branch `sync/starter-card-174` is ready).
+  The other self-serve ports landed 2026-10-26 as starter cards 167 to 172 and 175 to 177.
 
 ### 1zu. Millville and WhatsApp: apply one script, and the church's WhatsApp link (opened 2026-10-26)
 
@@ -377,9 +408,10 @@ DONE 2026-10-21: the letterforms went brick (the queued item below, as built). `
 rebuilt by `npm run gen:letters`) draws the Home masthead, the footer signature, the page H1s
 (`StoneHeading.astro`) and the share cards as A, and the 404 headline and the sermon and series art
 with no picture as B; the person initials (`.c-photo--blank`) are plain Young Serif. The Auburn Stone
-preload and `@font-face` are gone. What still uses the Auburn Stone font: only the Studio banner
-lettering (`src/sanity/kit.config.ts`, `studio-banner.test.ts`, `public/fonts/auburn-stone.woff2`), until the
-Studio kit gets the generator. One social tile in brick-wall letters is not drawn yet.
+preload and `@font-face` are gone. DONE 2026-10-26: the Studio dropped it too (old logo work, not the
+latest brand): the banner and tool titles set in plain Young Serif (no `lettering` in `kit.config.ts` or
+`brand.config.json` `studio.look`), the numbered steps are plain round tokens (`look.stone: round`, no
+pebbles), and `public/fonts/auburn-stone.woff2` is deleted. One social tile in brick-wall letters is not drawn yet.
 
 Original brief (kept for the record): the letterforms go brick (decision and sheet 13 in
 `docs/design-directions/2026-10-21-brick-path/README.md`, "The letterforms"). Treatment A

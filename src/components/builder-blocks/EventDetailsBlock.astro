@@ -1,0 +1,212 @@
+---
+// Safe to edit by hand
+// Event details (eventDetailsSection, 2026-10-26): the when and where of one event, so the pastor
+// can build a Christmas Eve or VBS page himself. Words on the left (the small line, the name in
+// Young Serif, a few sentences); the details on the This Sunday card's navy ground with its brick
+// course (.cb-deep): each date still to come as a big day numeral over its month, the weekday,
+// the time and a label, then the place, then the main button, "Add to my calendar" and
+// "Directions". With a photo, the photo takes the narrow track on the gable over the brick slab
+// (docs/agent/shapes.md) and the card sits under the words; without one the card takes the
+// narrow track beside them. On a phone everything stacks: photo, words, card.
+//
+// Worked out at build time (rule 15, src/lib/builder-blocks.ts): past dates drop off and the block
+// disappears once they all have, like a dated notice; the place is the church's address from
+// Church facts when left empty (never typed in code), with the "To confirm" tag while it is not
+// confirmed (and then it stays out of the calendar file); the calendar file is built for every
+// date to come and handed over as the link itself, so no file is published for a private page.
+// The main button is the page's red one when SectionRenderer hands it the red (drawsRed),
+// otherwise a white outline on the navy card.
+import SanityImage from '@/components/SanityImage.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import NotConfirmed from '@/components/church/NotConfirmed.astro';
+import { getChurchFacts } from '@/lib/church-data';
+import { churchDataNow } from '@/lib/church-feeds';
+import { churchToday } from '@/lib/church-blocks';
+import { dayOfMonth, monthShort } from '@/lib/church-calendar';
+import { churchJsonLd, plain } from '@/lib/church-facts';
+import { calendarEventsJsonLd } from '@/lib/structured-data';
+import {
+  eventIcs,
+  eventPlace,
+  icsFileName,
+  icsHref,
+  upcomingOccurrences,
+} from '@/lib/builder-blocks';
+import { ctaHref } from '@/lib/cta-href';
+import { surfaceClass, type CadenceSurface } from '@/lib/surfaces';
+import { site } from '@/data/site';
+import type { ProjectedEventDetailsSection } from '@/lib/builderBlocks.types';
+
+interface Props {
+  block: ProjectedEventDetailsSection;
+  surface?: CadenceSurface;
+  headingId: string;
+  primaryVariant?: 'primary' | 'navy';
+  isFirst?: boolean;
+  now?: Date;
+}
+const {
+  block,
+  surface = 'background',
+  headingId,
+  primaryVariant = 'navy',
+  isFirst = false,
+  now = churchDataNow(),
+} = Astro.props;
+
+const rows = upcomingOccurrences(block.occurrences, churchToday(now));
+const facts = await getChurchFacts();
+const place = eventPlace(block.place, facts.address);
+const title = block.title?.trim() || 'Church event';
+const photo = block.image?.asset ? block.image : null;
+const host = new URL(site.url).host;
+const pageUrl = new URL(Astro.url.pathname, site.url).href;
+const ics =
+  block.showCalendar === false
+    ? ''
+    : eventIcs({
+        title,
+        occurrences: rows,
+        place,
+        note: block.note,
+        url: pageUrl,
+        uidBase: plain(block._key) || title,
+        host,
+        now,
+      });
+const button = block.button?.label ? block.button : null;
+const buttonNewTab = button?.openInNewTab || button?.linkType === 'external';
+
+// schema.org Events for search, one per date, at the church's address when no place is typed.
+const ld = calendarEventsJsonLd(
+  rows.map((r) => ({
+    key: r.key,
+    title: r.label ? `${title}: ${r.label}` : title,
+    location: place && !place.atChurch ? place.oneLine : '',
+    description: plain(block.note),
+    date: r.date,
+    startMinutes: r.start,
+    durationMinutes: r.duration,
+    allDayDays: 1,
+    through: null,
+    times: 1,
+  })),
+  {
+    organizerId: `${site.url}/#business`,
+    churchName: site.name,
+    address: churchJsonLd(facts).address,
+  },
+);
+---
+
+{rows.length > 0 && (
+  <section
+    class:list={[surfaceClass(surface), 'ev', photo && 'shape-slab-host']}
+    data-builder-block="eventDetailsSection"
+    aria-labelledby={headingId}
+  >
+    <div
+      class:list={[
+        'split mx-auto max-w-content px-m py-section-lg',
+        photo ? 'ev--photo' : 'ev--plain',
+      ]}
+      data-reveal
+    >
+      {photo && (
+        <div class="ev__media">
+          <div class="shape-slab">
+            <SanityImage
+              source={photo}
+              width={800}
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              quality={75}
+              loading={isFirst ? 'eager' : 'lazy'}
+              fetchpriority={isFirst ? 'high' : undefined}
+              class="auburn-arch shape-gable h-auto w-full object-cover"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Grid areas place the three (builder-blocks.css): with a photo the card sits under the
+          words beside the photo; without one it takes the narrow track. */}
+      <div class="ev__words">
+        <SectionHeading eyebrow={block.eyebrow} headline={title} headingId={headingId} />
+        {block.note && <p class="ev__note">{block.note}</p>}
+      </div>
+
+      <div class="ev__card cb-deep" data-dark-surface>
+        <ul class="ev__dates" role="list">
+          {/* A second time on the same day (two services on Christmas Eve) sits under the first
+              without repeating the date; the weekday stays for screen readers. */}
+          {rows.map((r, i) => {
+            const same = i > 0 && rows[i - 1].date === r.date;
+            return (
+              <li class:list={['ev__date', same && 'ev__date--same']}>
+                <span class="ev__num" aria-hidden="true">
+                  {!same && <span class="ev__day">{dayOfMonth(r.date)}</span>}
+                  {!same && <span class="ev__month">{monthShort(r.date)}</span>}
+                </span>
+                <span class="ev__when">
+                  <span class:list={['ev__weekday', same && 'sr-only']}>{r.day}</span>
+                  <span class="ev__time">
+                    {r.time}
+                    {r.label && <span class="ev__label">{r.label}</span>}
+                  </span>
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+
+        {place && (
+          <div class="ev__place">
+            <p class="ev__place-title">Where</p>
+            <p class="ev__place-lines">
+              {place.lines.map((line) => (
+                <span class="ev__line">{line}</span>
+              ))}
+            </p>
+            {place.atChurch && <NotConfirmed confirmed={place.confirmed} />}
+          </div>
+        )}
+
+        <div class="ev__actions">
+          {button && (
+            <a
+              href={ctaHref(button)}
+              class:list={[
+                'btn-auburn press-tactile',
+                primaryVariant === 'primary' ? 'btn-auburn--primary' : 'ev__ghost',
+              ]}
+              target={buttonNewTab ? '_blank' : undefined}
+              rel={buttonNewTab ? 'noopener noreferrer' : undefined}
+            >
+              {button.label}
+            </a>
+          )}
+          {(ics || place) && (
+            <p class="ev__links">
+              {ics && (
+                <a class="ev__link hit-44" href={icsHref(ics)} download={icsFileName(title)}>
+                  Add to my calendar
+                </a>
+              )}
+              {place && (
+                <a
+                  class="ev__link hit-44"
+                  href={place.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Directions
+                </a>
+              )}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+    {ld && <script is:inline type="application/ld+json" set:html={ld} />}
+  </section>
+)}

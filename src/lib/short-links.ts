@@ -1,33 +1,36 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
 // =============================================================================
-// short-links - the pure rules behind the Studio's Short links (2026-10-26)
+// short-links - the pure rules behind the Studio's Short links (PORTS.md card 171)
 // =============================================================================
-// The pastor makes a short address such as /vbs or /easter for a bulletin, a
-// flyer or a slide, and points it at a page on the website or at another
+// An editor makes a short address such as /spring or /signup for a flyer, a
+// card or a slide, and points it at a page on the website or at another
 // website. Three places use this file and must agree:
 //
 //   1. the `shortLink` schema (src/sanity/schemaTypes/shortLink.ts), which
-//      checks the address as he types it and warns about clashes;
+//      checks the address as it is typed and warns about clashes;
 //   2. astro.config.mjs, which reads the published short links at BUILD time
 //      and writes them into dist/client/_redirects (the short-links integration);
-//   3. the QR code button, which encodes the short address.
+//   3. the QR code action (src/sanity/actions/qrCode.tsx), which encodes the
+//      short address.
 //
 // HOW THEY ARE SERVED. Cloudflare Workers static assets read `_redirects`
 // before serving any file, first match wins. Each short link is written TWICE,
-// "/vbs" and "/vbs/", at the TOP of the file: the site uses trailingSlash
-// 'always', so a typed "/vbs" would otherwise take an extra hop (Astro's own
-// redirect lines carry the slash only; see PORTS.md card 160), and a QR code or a
-// bulletin uses the slashless form. The status is 302 for a temporary link (an
-// event, a season: browsers do not remember it, so he can repoint it next year)
-// or 301 for a permanent one.
+// "/spring" and "/spring/", at the TOP of the file: the site uses trailingSlash
+// 'always', so a typed "/spring" would otherwise take an extra hop (Astro's own
+// redirect lines carry the slash only; see PORTS.md card 160), and a QR code or
+// a printed card uses the slashless form. The status is 302 for a temporary
+// link (an event, a season: browsers do not remember it, so it can be repointed
+// next year) or 301 for a permanent one.
 //
 // Cloudflare's limits: 2,000 static redirect lines and 1,000 characters a line.
 // Short links are capped at MAX_SHORT_LINKS (each is two lines), and the build
 // skips an over-long target; both are logged rather than failing the build.
 //
-// EXPIRY is a date, read in the church's time zone: the link works through that
-// day. Content is statically built, so it stops at the next build after the day,
-// which the daily morning rebuild (deploy.yml) makes "the next morning".
+// EXPIRY is a date, read in the site's time zone (`site.timeZone` in
+// src/data/site.ts, passed to todayIn by the build): the link works through
+// that day. Content is statically built, so it stops at the first build after
+// the day; a site that wants "the next morning" schedules a daily deploy.
 //
 // Pure string work, unit-tested in short-links.test.ts.
 // =============================================================================
@@ -38,15 +41,15 @@ export const MAX_SHORT_LINKS = 200;
 export const REDIRECT_LINE_LIMIT = 1000;
 /** Cloudflare's limit on static redirect rules in one _redirects file. */
 export const STATIC_REDIRECT_LIMIT = 2000;
-/** The church's own time zone, for "today" when checking an expiry date. */
-export const CHURCH_TIME_ZONE = 'America/New_York';
+/** The zone todayIn uses when the caller names none. Sites pass site.timeZone. */
+export const DEFAULT_TIME_ZONE = 'UTC';
 
 /** Lowercase letters, numbers and single dashes, 2 to 40 characters. */
 const ADDRESS = /^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9])){1,39}$/;
 
 /**
- * Tidy what he typed into a bare short address: "/VBS/", "vbs",
- * "https://fbcauburn.org/vbs" all become "vbs". Spaces and underscores become
+ * Tidy what an editor typed into a bare short address: "/Spring/", "spring",
+ * "https://example.com/spring" all become "spring". Spaces and underscores become
  * dashes. Returns '' for nothing usable.
  */
 export function normalizeShortAddress(raw: unknown): string {
@@ -59,17 +62,17 @@ export function normalizeShortAddress(raw: unknown): string {
   return s;
 }
 
-/** What is wrong with an address's shape, in his words, or null. */
+/** What is wrong with an address's shape, in the editor's words, or null. */
 export function shortAddressProblem(raw: unknown): string | null {
   const address = normalizeShortAddress(raw);
-  if (!address) return 'Type the short address, like "vbs" or "easter".';
+  if (!address) return 'Type the short address, like "spring" or "signup".';
   if (address.includes('/')) {
     return 'Keep it to one word or a few words joined by dashes, with no slashes, like "fall-festival".';
   }
   if (address.length < 2) return 'Make it at least two letters long.';
   if (address.length > 40) return 'Keep it under 40 characters, so it is easy to type.';
   if (!ADDRESS.test(address)) {
-    return 'Use only letters, numbers and dashes, like "vbs-2027". No spaces or other symbols.';
+    return 'Use only letters, numbers and dashes, like "spring-2027". No spaces or other symbols.';
   }
   return null;
 }
@@ -136,8 +139,8 @@ export function shortLinkClash(raw: unknown, ctx: ClashContext): Clash | null {
   return null;
 }
 
-/** 'YYYY-MM-DD' for `now` in the church's time zone. */
-export function todayIn(now: Date, timeZone = CHURCH_TIME_ZONE): string {
+/** 'YYYY-MM-DD' for `now` in the given IANA time zone (the site's own). */
+export function todayIn(now: Date, timeZone = DEFAULT_TIME_ZONE): string {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone,
     year: 'numeric',
@@ -160,7 +163,7 @@ export interface ShortLinkDoc {
   address?: string | null;
   /** 'page' or 'url'. */
   linkKind?: string | null;
-  /** The page's address on this site, already worked out ("/sermons/"). */
+  /** The page's address on this site, already worked out ("/journal/"). */
   pagePath?: string | null;
   url?: string | null;
   /** 'temporary' (302, the default) or 'permanent' (301). */
@@ -249,7 +252,7 @@ export function planShortLinks(
   return { rules, skipped };
 }
 
-/** The _redirects lines for the rules: "/vbs" and "/vbs/" for each. */
+/** The _redirects lines for the rules: "/spring" and "/spring/" for each. */
 export function renderShortLinkLines(rules: readonly ShortLinkRule[]): string[] {
   return rules.flatMap((r) => [
     `/${r.address} ${r.destination} ${r.status}`,
@@ -267,7 +270,7 @@ export function countRedirectRules(text: string): number {
 
 /**
  * The full short address for a QR code or a bulletin: the site's own domain and
- * no trailing slash ("https://fbcauburn.org/vbs"), the shortest form to type
+ * no trailing slash ("https://example.com/spring"), the shortest form to type
  * and the least dense code to print. The build serves it in one hop.
  */
 export function shortLinkUrl(siteUrl: string, address: unknown): string | null {

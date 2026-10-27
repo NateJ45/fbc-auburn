@@ -256,7 +256,7 @@ export default defineConfig({
     ncsStudioKit(kitConfig),
     // People: invite a Helper or an Administrator (src/sanity/people/, 2026-10-26).
     // AFTER the kit: it adds the tool for administrators only, in either view.
-    ncsPeopleTool(),
+    ncsPeopleTool(kitConfig),
     // Icons by meaning on every tool, and on plugin-registered types (card 119,
     // src/sanity/brandIcons.tsx). After the kit so its tools get icons too; it
     // only swaps icons, so the kit still decides what shows and in what order.

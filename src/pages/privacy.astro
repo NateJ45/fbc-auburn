@@ -1,29 +1,17 @@
 ---
 // Safe to edit by hand
-// Privacy policy page. Fetches the privacyPage singleton from Sanity for the
-// body and lastUpdated date. When the doc doesn't exist yet (or Sanity isn't
-// reachable), a plain-voice fallback policy is rendered so the page is always
-// live and accurate.
-//
-// Reuses PortableText for the body when Sanity content is present; falls back
-// to static HTML copy for the period before the editor publishes the doc.
+// Privacy policy page: section-driven via pageBuilder (2026-10-26, every main page a page builder).
+// Edit sections and order in Sanity Studio under the Privacy page document, Page layout. The policy
+// is the "Privacy policy text" block (src/components/sections/PrivacyPolicy.astro), which shows
+// the church's built-in policy when no words are typed in it. When pageBuilder is empty (no
+// Sanity project or unmigrated), DEFAULT_PRIVACY_SECTIONS renders so the page is never blank.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SectionRenderer from '@/components/SectionRenderer.astro';
-import Hero from '@/components/Hero.astro';
-import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import { getPrivacyPage, getSiteSettings } from '@/lib/queries';
-
-// What this build ACTUALLY ships, read from the same module that decides whether
-// each tag renders. The fallback copy below branches on these rather than
-// asserting a fixed answer: this page used to state flatly that traffic was
-// counted "without setting cookies", which stopped being true the day GA4
-// became available and would have been a false statement to visitors rather
-// than a missing one. See src/lib/analytics-config.ts.
-import { hasCfAnalytics, hasGa } from '@/lib/analytics-config';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { site } from '@/data/site';
-import { formatDate } from '@/lib/format-date';
+import { DEFAULT_PRIVACY_SECTIONS } from '@/data/defaultSections';
 
 const [page, siteSettings] = await Promise.all([getPrivacyPage(), getSiteSettings()]);
 
@@ -32,12 +20,11 @@ const description =
   page?.seoDescription ??
   'What the ' + site.name + ' website collects, why, and what it never does with it.';
 
-const heroEyebrow = page?.heroEyebrow ?? 'Your privacy';
-const heroHeadline = page?.heroHeadline ?? 'Privacy policy';
-const heroSubhead = page?.heroSubhead ?? '';
-
-// Format the lastUpdated date from Sanity or fall back to a static string.
-const lastUpdated = formatDate(page?.lastUpdated);
+const sections = page?.pageBuilder?.length ? page.pageBuilder : DEFAULT_PRIVACY_SECTIONS;
+// The share card's small line: the opening banner's eyebrow.
+const kicker =
+  (sections as { _type?: string; eyebrow?: string }[]).find((s) => s?._type === 'heroSection')
+    ?.eyebrow || 'Your privacy';
 
 const schemas = [
   breadcrumbSchema([
@@ -45,9 +32,6 @@ const schemas = [
     { name: 'Privacy Policy', url: `${site.url}/privacy/` },
   ]),
 ];
-
-// Whether to use Sanity body content
-const hasSanityBody = Boolean(page?.body);
 ---
 
 <BaseLayout
@@ -56,113 +40,7 @@ const hasSanityBody = Boolean(page?.body);
   {schemas}
   {siteSettings}
   seoImage={page?.seoImage}
-  ogCard={{ kicker: heroEyebrow }}
+  ogCard={{ kicker }}
 >
-  {/* Hero — text variant, short height. */}
-  <Hero
-    eyebrow={heroEyebrow}
-    headline={heroHeadline}
-    subhead={heroSubhead}
-    headingId="privacy-hero-heading"
-    size="short"
-  />
-
-  {/* The label has to differ from the hero's heading ("Privacy Policy"), which
-      labels the hero's own region landmark. Two region landmarks with the same
-      accessible name fail axe's landmark-unique rule and, more to the point,
-      give a screen-reader user two identically named stops in the landmark
-      list with no way to tell them apart. */}
-  <section class="long-form bg-background" aria-label="Policy text">
-    {/* The text column sits on the page's left edge like every other band (rule 17). */}
-    <div class="mx-auto max-w-content px-m py-section-lg">
-      <div class="max-w-3xl">
-        {lastUpdated && (
-          <p class="mb-l text-xs tracking-eyebrow text-foreground/80 uppercase">
-            Last updated: {lastUpdated}
-          </p>
-        )}
-
-        {hasSanityBody ? (
-          <PortableTextStatic value={page!.body} className="prose-friendly" />
-        ) : (
-          /* The church's policy, kept in step with scripts/content/visitor-audit.mjs, which wrote the
-           same words into the Studio (visitor audit, 2026-10-18). Measurement still branches on what
-           this build really ships (analytics-config), so the page never claims what is not true. */
-          <div class="space-y-l leading-relaxed text-foreground">
-            <p class="text-foreground/80">
-              This page explains what the {site.name} website collects and why. The short version:
-              very little, and none of it is sold, shared for advertising or used to follow you
-              around the web.
-            </p>
-
-            <div>
-              <h2 class="mb-s font-display text-h3 text-foreground">Counting visits</h2>
-              {!hasGa && !hasCfAnalytics && (
-                <p class="text-foreground/80">
-                  This site runs no analytics at all. Visits are not counted, and nothing is stored
-                  on your device for measurement.
-                </p>
-              )}
-              {hasCfAnalytics && (
-                <p class="text-foreground/80">
-                  We count page visits with Cloudflare Web Analytics. It sets no cookies, does not
-                  identify you and does not track you from one site to another.
-                </p>
-              )}
-              {hasGa && (
-                <p class="mt-s text-foreground/80">
-                  Page visits are {hasCfAnalytics ? 'also ' : ''}measured with Google Analytics,
-                  which sets cookies (named <code>_ga</code> and <code>_ga_</code> followed by a
-                  stream id) so returning visits are recognized. It is not used for advertising. You
-                  can block these cookies in your browser and the site works the same.
-                </p>
-              )}
-            </div>
-
-            <div>
-              <h2 class="mb-s font-display text-h3 text-foreground">When you write to us</h2>
-              <p class="text-foreground/80">
-                The contact form asks for your name, your email address and your message. Your
-                message is kept in the website's own database, hosted by Cloudflare, and a copy is
-                emailed to the church so someone can reply. We use it only to answer you, and we
-                never sell it or pass it on. If you would like a message you sent deleted,{' '}
-                <a href="/contact/" class="text-link underline underline-offset-2">
-                  ask us
-                </a>{' '}
-                and we will remove it.
-              </p>
-            </div>
-
-            <div>
-              <h2 class="mb-s font-display text-h3 text-foreground">
-                Calendar, videos and Facebook
-              </h2>
-              <p class="text-foreground/80">
-                The events calendar comes from Church Trac, the system the church uses to keep its
-                calendar. Sermon videos come from YouTube. The page shows the video's picture from
-                YouTube's image server, and the player itself only loads when you press play, in
-                YouTube's privacy-enhanced mode. Links to the church's Facebook page take you to
-                Facebook. Once you play a video or visit Facebook, that company's own privacy policy
-                applies.
-              </p>
-            </div>
-
-            <div>
-              <h2 class="mb-s font-display text-h3 text-foreground">Questions</h2>
-              <p class="text-foreground/80">
-                If anything here is unclear, or you want to know what we hold about you,{' '}
-                <a href="/contact/" class="text-link underline underline-offset-2">
-                  send us a message
-                </a>
-                .
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  </section>
-  {/* Extra sections (2026-10-18): anything the editor adds from the section library, Studio:
-      this page > Extra sections. Empty renders nothing. */}
-  <SectionRenderer sections={page?.additionalSections ?? []} idPrefix="privacy-extra" />
+  <SectionRenderer {sections} idPrefix="privacy" leadImage />
 </BaseLayout>

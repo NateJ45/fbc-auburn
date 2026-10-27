@@ -95,14 +95,12 @@ export const kitConfig: KitConfig = {
     email: envVal('PUBLIC_STUDIO_HELP_EMAIL'),
   },
 
-  // Who gets the staff view (the simple Studio, no permanent delete) is decided
-  // by ROLE: anyone whose Sanity role is not Administrator. So a Helper invited
-  // from the People tool (Sanity's Editor role, src/lib/studio-people.ts) gets
-  // it with no code change. This list is only an OVERRIDE for administrators
-  // who should see the simple view too (the pastor), by Sanity user id.
-  // CAREFUL until the staff-by-role starter card lands in src/lib/studio-kit.ts:
-  // in today's copy a non-empty list REPLACES the role rule, so adding an id
-  // here would give every Helper the full Studio. Keep it empty until then.
+  // Who gets the staff view (the simple Studio, no permanent delete), PORTS.md
+  // card 175: by ROLE, anyone whose Sanity role is not Administrator (a Helper
+  // invited from the People tool, Sanity's Editor role); PLUS the ids listed
+  // here (administrators who should see the simple view too, the pastor), by
+  // Sanity user id; PLUS any account marked "Simple view" in the Studio (the
+  // People tool; no deploy needed). The list ADDS to the role rule.
   staff: [],
 
   staffTools: [
@@ -638,9 +636,10 @@ export const kitConfig: KitConfig = {
   // Home's "Your pages" card (card 115): every page the pastor can change, in
   // the menu's own words, one click each. The five built pages are custom pages
   // (type 'page', ids from the seed); "Other pages you built" lists any new
-  // custom page by name without touching this file. Give has no document of its
-  // own (src/pages/give.astro builds it from Church facts), so it opens the
-  // online giving link. Desk ids are load-bearing (structure.ts).
+  // custom page by name without touching this file. Give and This week's bulletin
+  // are Studio pages since 2026-10-26 (scripts/content/builder-pages.mjs), and the
+  // old Questions page is not listed (it forwards to Plan your visit). Desk ids are
+  // load-bearing (structure.ts).
   pages: [
     {
       title: 'Main pages',
@@ -652,13 +651,11 @@ export const kitConfig: KitConfig = {
         { title: 'Ministries', target: { doc: 'page-ministries', type: 'page' } },
         { title: 'Leadership', target: { doc: 'page-leadership', type: 'page' } },
         { title: 'Watch', target: { doc: 'page-watch', type: 'page' } },
-        {
-          title: 'Give',
-          detail: 'The online giving link',
-          target: { doc: 'siteSettings', field: 'givingUrl' },
-        },
+        { title: 'Sermons', target: { doc: 'sermonsPage' } },
+        { title: "This week's bulletin", target: { doc: 'page-bulletin', type: 'page' } },
+        { title: 'News and notes', target: { doc: 'journalPage' } }, // scaffold: journal
+        { title: 'Give', target: { doc: 'page-give', type: 'page' } },
         { title: 'Contact', target: { doc: 'contactPage' } },
-        { title: 'Questions', target: { doc: 'faqPage' } },
         { title: 'Privacy policy', target: { doc: 'privacyPage' } },
       ],
     },
@@ -696,19 +693,13 @@ export const kitConfig: KitConfig = {
   // Home's banner (card 118, 2026-10-18): the navy welcome at the top of Home, dressed in the
   // church's own brand. The full-colour mark on a light disc (it carries the story colours the
   // white mark loses), the stone path from the water to the red cross along the foot
-  // (npm run gen:stones writes it), the editor's name in gold, and "Auburn" in Auburn Stone with
-  // on-navy letter colours (white, water, gold).
+  // (npm run gen:stones writes it) and the editor's name in gold. The Auburn Stone brick lettering
+  // was dropped on 2026-10-26 (old logo work); titles set in the plain display face.
   homeBanner: {
     mark: '/studio-banner/mark.svg',
     motif: '/studio-banner/stone-path.svg',
     motifNarrow: '/studio-banner/stone-path-phone.svg',
     accent: '#B5503A',
-    lettering: {
-      text: 'Auburn',
-      family: 'Auburn Stone',
-      src: '/fonts/auburn-stone.woff2',
-      colors: ['#FFFFFF', '#7F98B8', '#D98A74'],
-    },
   },
 
   // Home's big buttons (card 110): the pastor's most common jobs, as intent
@@ -819,6 +810,24 @@ export const kitConfig: KitConfig = {
     helpPanel: true,
     // Card 123: "Before you publish", the Checkup for the open document.
     publishPanel: true,
+    // Card 176: the People tool, for administrators (docs/agent/studio-people.md).
+    people: true,
+  },
+
+  // The People tool (starter card 176). Free for good (Nathan, 2026-10-26):
+  // Helper stays greyed out even while a Growth trial lists the Editor role, so
+  // nobody is invited into a role that turns read-only when the trial ends.
+  // Helpers are invited as Administrators and given the Simple view (card 175).
+  // Set 'auto' only if the church moves to a paid plan.
+  people: {
+    plan: 'free',
+    roles: {
+      helper: {
+        description:
+          'Can edit pages, sermons and notices and publish them. Sees the simple view of the Studio and cannot delete anything for good.',
+      },
+    },
+    lead: 'Invite a deacon, a secretary or a volunteer. Sanity, the company that runs this editor, emails them a link to join.',
   },
 };
 
