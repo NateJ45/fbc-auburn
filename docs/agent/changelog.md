@@ -1,5 +1,12 @@
 # Change history
 
+_2026-10-26: the People tool moves to the starter (card 176), with a Simple view switch._ The People tool's files are
+now the starter's PORTABLE copies (`studio-people.ts` and test, `/api/studio/people/`, `src/sanity/people/`). The
+church's words and plan moved to `kitConfig.people` (`plan: 'free'`, the Helper description, the lead line), and
+`ncsPeopleTool(kitConfig)` takes the config. New: a **Simple view** switch beside each administrator under "Who can edit
+the website" (card 175), so a helper invited as an Administrator on the free plan gets the simple Studio with no
+deploy; the free-plan steps and the guide now say so instead of "ask Nathan". With Helper greyed out the form starts on
+Administrator. Detail: `docs/agent/studio-people.md`.
 _2026-10-26: one accent box and one "Line under the heading" per block._ Building a page in the
 live Studio, the opening banner, text block and Invitation band each offered two accent boxes
 ("Handwritten accent word" and "Accent word in the heading"), and the Invitation band, FAQ, Team and

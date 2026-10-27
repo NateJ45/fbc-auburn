@@ -2,7 +2,8 @@
 // =============================================================================
 // Site Guide: adding someone to help (FBC Auburn, 2026-10-26)
 // =============================================================================
-// The People tool (src/sanity/people/, rules in src/lib/studio-people.ts).
+// The People tool (src/sanity/people/, rules in src/lib/studio-people.ts;
+// starter card 176, Simple view card 175).
 // Appended to the guides in content.ts. Same conventions: `backticks` for a
 // thing you click, **bold** for a concept, no em-dashes, US spelling.
 // =============================================================================
@@ -55,7 +56,7 @@ export const peopleGuides: Guide[] = [
         kind: 'callout',
         tone: 'caution',
         title: 'If Helper is greyed out',
-        text: 'The free Sanity plan only has Administrator and Viewer (look, no editing), so there is no Helper. The tool shows the steps: ask Nathan about the plan, or invite them as an Administrator and ask Nathan to give them the simple view.',
+        text: 'The free Sanity plan only has Administrator and Viewer (look, no editing), so there is no Helper. Invite them as an `Administrator`, and once they have accepted, turn on `Simple view` next to their name under `Who can edit the website`. They then see the simpler Studio from their next visit.',
       },
       { kind: 'h', text: 'Changing or removing someone' },
       {
