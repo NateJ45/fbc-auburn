@@ -5,6 +5,7 @@
 //
 //   src/components/home/stones.generated.ts   the wide and phone stone paths, the section marker
 //   src/assets/textures/tile-deep.svg             the This Sunday card's stone ground
+//   src/assets/textures/tile-wall.svg             the red brick slab behind a picture (shapes.css)
 //   src/assets/textures/tile-{green,navy,sky}.svg the section library's panels and sermon art
 //                                             (church-blocks.css, collections.css)
 //   public/studio-banner/stone-path*.svg      the stone path along the Studio Home banner's foot
@@ -44,6 +45,14 @@ export const TILES = {
     grout: '#1B3354',
     fills: ['#1F3A5F', '#213D64', '#1D3659', '#23405F'],
     seed: 7,
+  },
+  // The slab behind a standalone picture (shapes.css .shape-slab, 2026-10-27): red brick like the
+  // building, a step darker and browner than the auburn button so it reads as a wall, not an action.
+  wall: {
+    size: 420,
+    grout: '#3A1A13',
+    fills: ['#6A2B20', '#722F23', '#66291E', '#6F2E24'],
+    seed: 29,
   },
   // The sermon and series art with no picture (SermonArt.astro, block polish 2026-10-18): three
   // grounds for the book name, picked per series. Grout close to the stones, as above.

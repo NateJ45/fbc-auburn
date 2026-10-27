@@ -103,7 +103,10 @@ printed into `src/assets/brand/`). The old seven colours are gone from the CSS, 
 
 - Roles: **navy** is the everyday colour (links, buttons, H2s). **Auburn** is the cross and at
   most one call to action per page. **Light auburn** and **light navy** are accents only (stepping
-  stones, the mosaic, lettering on a navy band), never text on the ground. **Navy mid** is the
+  stones, the mosaic, lettering on a navy band), never text on the ground. **Brick is red** wherever
+  it is drawn as brick (2026-10-27): the slab behind a picture is a wall a step darker and browner
+  than the button (`tile-wall.svg`, faces `#66291E` to `#722F23`), so it reads as the building and
+  never as a second red action; it was navy until then, which left the site reading all blue. **Navy mid** is the
   second structural colour. **Ink** is body text.
 - Measured contrast on the ground `#FBF8F3`: ink 14.4, navy 10.8, navy mid 7.9, auburn dark 8.6,
   auburn 6.5, muted text `#4A5A73` 6.6, light auburn 4.7 (large text and icons only), light navy
