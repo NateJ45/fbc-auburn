@@ -4,10 +4,12 @@
 // build never runs the generators.
 //
 //   src/components/home/stones.generated.ts   the wide and phone stone paths, the section marker
-//   src/assets/textures/tile-deep.svg             the This Sunday card's stone ground
-//   src/assets/textures/tile-wall.svg             the red brick slab behind a picture (shapes.css)
-//   src/assets/textures/tile-{green,navy,sky}.svg the section library's panels and sermon art
-//                                             (church-blocks.css, collections.css)
+//   src/assets/textures/tile-wall.svg             the red brick wall: the slab behind a picture
+//                                             (shapes.css) and the Bible verse panel; also copied
+//                                             to public/textures/ for the Studio's featured panels
+//   src/assets/textures/tile-navy.svg             the share cards' ground (scripts/lib/og-card.mjs)
+//   src/assets/textures/tile-{deep,green,sky,warm}.svg  unused since 2026-10-27 (brick is red; the
+//                                             site's blue panels went flat), kept for the generator
 //   public/studio-banner/stone-path*.svg      the stone path along the Studio Home banner's foot
 //                                             (kit.config.ts homeBanner.motif, card 118)
 //   public/studio-banner/marker.svg           the three gold steps, as the Studio's section marker
@@ -150,6 +152,8 @@ outputs.set('public/studio-banner/marker.svg', svgOf({ width: 78, height: 36 }, 
 for (const [name, opts] of Object.entries(TILES)) {
   outputs.set(`src/assets/textures/tile-${name}.svg`, brickTile(opts));
 }
+// The Studio's featured panels (brand.config.json studio.look.texture) read the wall from public/.
+outputs.set('public/textures/tile-wall.svg', brickTile(TILES.wall));
 
 let stale = 0;
 for (const [rel, body] of outputs) {

@@ -1,5 +1,13 @@
 # Change history
 
+_2026-10-27: no blue brick left._ The Bible verse panel (`.cb-verse`) is the red wall (`tile-wall.svg`,
+pale quote mark `#F1D3C6`). Sermon art with no picture (`.c-art--blank`, three navy tones) and the
+play card (`.cb-play`) are flat navy, and the Stone look (`.surface-stone`) and sign-up panel
+(`.cb-sky`) are the flat `#E9EEF5` tint; their contrast is still measured on `--stone`. The Studio's
+`studio.look.texture` pointed at a file that did not exist; `npm run gen:stones` now writes
+`public/textures/tile-wall.svg` and the config points there. Still navy brick: the share cards
+(`scripts/lib/og-card.mjs`, `tile-navy.svg`).
+
 _2026-10-27: the numbered bricks are red too._ Home's "Your first Sunday" bricks (`.hb-walk__stone`
 in `src/styles/home-board.css`) and the Studio's numbered steps (`brand.config.json`
 `studio.look.markColors`) move from navy to the slab's two red tones, `#6A2B20` and `#7A3326`
