@@ -25,6 +25,8 @@ card size its three 10 to 15px notches read as jagged cropping, worst on pale ph
 making it bold enough to read as brick (two 30px steps, as on the logo) took a bite out of every face in a 300px card.
 So a picture that stands alone (ImageText, the page head's photo) is cut to the gable over the navy brick slab, and a
 picture in a card is a plain frame. The page head's photo (`.board-head__photo`) takes the gable too.
+So do the event page blocks (2026-10-26, `docs/agent/sanity.md`): an Event details photo stands alone, so it
+takes the gable over the slab; Cards with photos are cards, so their photos are plain `.shape-step` frames.
 
 **The church mark is one moment (UX-M5).** ImageText's "Picture" field has a fifth option, "No picture (the words
 alone)" (`art: 'none'`), which draws the words on the reading measure with no picture column. The big mark panel is

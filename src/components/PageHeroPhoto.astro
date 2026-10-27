@@ -1,0 +1,86 @@
+---
+// Safe to edit by hand
+// An inner page's opening in Home's photo style (2026-10-26): the opening banner's "Style" set to
+// "Photo behind the words" (heroSection.heroStyle). The background photo fills the band, the small
+// line sits over the title in small capitals, the title is the page's h1 in white Young Serif, the
+// line under it and up to two buttons follow (the main one red when it is the page's red, else
+// solid navy; the second the white outline). Drawn in PhotoHero.astro's frame with Home's styles,
+// a little shorter (.hb-hero--page), with no This Sunday card. Hero.astro picks it only when there
+// is a photo; without one the page keeps the arch.
+import PhotoHero from '@/components/PhotoHero.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import { ctaHref, type CtaTarget } from '@/lib/cta-href';
+import type { SanityImageObject } from '@/lib/pageBuilder.types';
+
+interface Props {
+  eyebrow?: string;
+  headline: string;
+  subhead?: string;
+  image: SanityImageObject;
+  primaryCta?: (CtaTarget & { label?: string }) | null;
+  secondaryCta?: (CtaTarget & { label?: string }) | null;
+  headingId: string;
+  primaryVariant?: 'primary' | 'navy';
+}
+
+const {
+  eyebrow,
+  headline,
+  subhead,
+  image,
+  primaryCta,
+  secondaryCta,
+  headingId,
+  primaryVariant = 'primary',
+} = Astro.props;
+
+const standIn =
+  (image?.asset as { source?: { name?: string } } | null | undefined)?.source?.name === 'unsplash';
+const newTab = (c?: (CtaTarget & { openInNewTab?: boolean }) | null) =>
+  !!c && (c.openInNewTab || c.linkType === 'external');
+---
+
+<PhotoHero headingId={headingId} photo class="hb-hero--page" standIn={standIn}>
+  <SanityImage
+    slot="media"
+    source={image}
+    width={2000}
+    sizes="100vw"
+    quality={65}
+    loading="eager"
+    fetchpriority="high"
+    class="hb-photo__img"
+  />
+  {eyebrow && <p class="hb-name">{eyebrow}</p>}
+  <h1 class="hb-h1" id={headingId}>
+    {headline}
+  </h1>
+  {subhead && <p class="hb-intro">{subhead}</p>}
+  {(primaryCta?.label || secondaryCta?.label) && (
+    <div class="hb-actions">
+      {primaryCta?.label && (
+        <a
+          class:list={[
+            'btn-auburn',
+            primaryVariant === 'primary' ? 'btn-auburn--primary' : 'btn-auburn--navy',
+          ]}
+          href={ctaHref(primaryCta)}
+          target={newTab(primaryCta) ? '_blank' : undefined}
+          rel={newTab(primaryCta) ? 'noopener noreferrer' : undefined}
+        >
+          {primaryCta.label}
+        </a>
+      )}{' '}
+      {secondaryCta?.label && (
+        <a
+          class="hb-ghost"
+          href={ctaHref(secondaryCta)}
+          target={newTab(secondaryCta) ? '_blank' : undefined}
+          rel={newTab(secondaryCta) ? 'noopener noreferrer' : undefined}
+        >
+          {secondaryCta.label}
+        </a>
+      )}
+    </div>
+  )}
+</PhotoHero>

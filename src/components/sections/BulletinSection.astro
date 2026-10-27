@@ -1,0 +1,88 @@
+---
+// Safe to edit by hand
+// Page-builder block (FBC Auburn, 2026-10-26): "This week's bulletin". Moved here from
+// bulletin.astro when /bulletin/ became a Studio page. One address that never changes, for the
+// menu, the Facebook page or a QR code on the printed bulletin: it always shows the newest current
+// Bulletin from the Downloads list (newestBulletin in src/lib/sermons.ts), with the few before it
+// underneath. Nothing to switch over each week: upload the new one and publish.
+// When this week's is not up yet (audit 2026-10-25), the newest one stays, labelled "Last week's"
+// (bulletinToShow), with a line saying when the next goes up, so the page never looks abandoned.
+import DownloadRow from '@/components/collections/DownloadRow.astro';
+import { getBulletins } from '@/lib/collection-queries';
+import { churchDataNow } from '@/lib/church-feeds';
+import { bulletinToShow, currentDownloads, fileLabel, longDate } from '@/lib/sermons';
+import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+
+interface Props {
+  /** When the next one goes up, in the church's words ("by Saturday evening"). */
+  postedWhen?: string | null;
+  earlierHeading?: string | null;
+  headingId: string;
+}
+const { postedWhen, earlierHeading, headingId } = Astro.props;
+const bulletins = await getBulletins();
+const now = churchDataNow();
+const { bulletin, thisWeek } = bulletinToShow(bulletins, now);
+// Empty: no line. Before launch, the ask for it shows in its place.
+const when = (postedWhen ?? '').trim().replace(/\.$/, '');
+const nextLine = when
+  ? `A new bulletin goes up each week, ${when}.`
+  : PRE_LAUNCH_NOTES
+    ? '[Jacob: which day is the new bulletin posted here, and who posts it? We will say it on this page, like "A new one goes up by Saturday evening", so people know when to look.]'
+    : '';
+const earlier = currentDownloads(
+  bulletins.filter((b) => b._id !== bulletin?._id),
+  now,
+  'bulletin',
+  5,
+);
+---
+
+<section class="bg-background" aria-label="The bulletin">
+  <div class="mx-auto max-w-content px-m py-section-lg">
+    {bulletin ? (
+      <div class="c-feature">
+        <p class="c-feature__label">
+          {thisWeek ? '' : "Last week's bulletin · "}
+          {longDate(bulletin.date)}
+        </p>
+        <p class="c-feature__title">{bulletin.title}</p>
+        {bulletin.note && <p class="c-meta">{bulletin.note}</p>}
+        <a
+          class="btn-auburn btn-auburn--secondary press-tactile"
+          href={bulletin.file?.url}
+          target="_blank"
+          rel="noopener"
+          data-search-title={bulletin.title}
+          data-search-type="bulletin"
+          data-search-date={longDate(bulletin.date) || undefined}
+          data-search-note={bulletin.note || undefined}
+        >
+          Open the bulletin
+          {fileLabel(bulletin.file) && ` (${fileLabel(bulletin.file)})`}
+        </a>
+      </div>
+    ) : (
+      <p class="c-empty">
+        The first bulletin is not up yet. Check back on Sunday morning, or{' '}
+        <a class="c-link" href="/contact/?topic=question&about=The%20bulletin">
+          ask the church office
+        </a>
+        .
+      </p>
+    )}
+    {(!bulletin || !thisWeek) && nextLine && <p class="c-meta mt-m">{nextLine}</p>}
+    {earlier.length > 0 && (
+      <>
+        <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight mt-section-md mb-m">
+          {earlierHeading || 'Earlier bulletins'}
+        </h2>
+        <ul class="c-files" role="list">
+          {earlier.map((d) => (
+            <DownloadRow item={d} />
+          ))}
+        </ul>
+      </>
+    )}
+  </div>
+</section>

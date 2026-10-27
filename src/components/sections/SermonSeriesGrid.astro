@@ -16,6 +16,8 @@ interface Props {
   heading?: string;
   intro?: string;
   limit?: number;
+  /** Draw nothing (and skip series with no sermons yet) until there is one to show (2026-10-26). */
+  hideWhenEmpty?: boolean;
   series?: SeriesDoc[];
   surface?: 'background' | 'muted';
   headingId: string;
@@ -24,51 +26,53 @@ const {
   heading = 'Sermon series',
   intro,
   limit = 6,
+  hideWhenEmpty = false,
   series = [],
   surface = 'background',
   headingId,
 } = Astro.props;
-const list = sortSeries((series ?? []).filter((s) => s?.title && s?.slug)).slice(
-  0,
-  Math.max(1, Math.min(24, limit ?? 6)),
-);
+const list = sortSeries(
+  (series ?? []).filter((s) => s?.title && s?.slug && (!hideWhenEmpty || (s.count ?? 0) > 0)),
+).slice(0, Math.max(1, Math.min(24, limit ?? 6)));
 ---
 
-<section class={surfaceClass(surface)} aria-labelledby={headingId}>
-  <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
-    <div class="c-head">
-      <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
-        {heading}
-      </h2>
-      {intro && <p class="c-intro">{intro}</p>}
-    </div>
-    {list.length > 0 ? (
-      <>
-        <ul class="c-grid" role="list">
-          {list.map((s) => (
-            <SeriesCard series={s} />
-          ))}
-        </ul>
-        <p class="c-more">
-          <a class="c-link" href="/sermons/">
-            Every sermon
-          </a>
-        </p>
-      </>
-    ) : (
-      <p class="c-empty">
-        Sermon series will show here once the first one is added.
-        {hasWatch && (
-          <>
-            {' '}
-            In the meantime,{' '}
-            <a class="c-link" href="/watch/">
-              watch Sunday's service
+{!(hideWhenEmpty && list.length === 0) && (
+  <section class={surfaceClass(surface)} aria-labelledby={headingId}>
+    <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
+      <div class="c-head">
+        <h2 id={headingId} class="font-display text-h2 auburn-h2 leading-tight">
+          {heading}
+        </h2>
+        {intro && <p class="c-intro">{intro}</p>}
+      </div>
+      {list.length > 0 ? (
+        <>
+          <ul class="c-grid" role="list">
+            {list.map((s) => (
+              <SeriesCard series={s} />
+            ))}
+          </ul>
+          <p class="c-more">
+            <a class="c-link" href="/sermons/">
+              Every sermon
             </a>
-            .
-          </>
-        )}
-      </p>
-    )}
-  </div>
-</section>
+          </p>
+        </>
+      ) : (
+        <p class="c-empty">
+          Sermon series will show here once the first one is added.
+          {hasWatch && (
+            <>
+              {' '}
+              In the meantime,{' '}
+              <a class="c-link" href="/watch/">
+                watch Sunday's service
+              </a>
+              .
+            </>
+          )}
+        </p>
+      )}
+    </div>
+  </section>
+)}
