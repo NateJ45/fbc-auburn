@@ -67,10 +67,6 @@ The self-serve additions are merged and live (#205, #206, #212; changelog 2026-1
 - **QR codes:** remake any printed before the domain cutover; they point at the workers.dev address.
 - **Not seen signed in:** the People, Short links, QR, form-address and A different Sunday panels in
   `/studio` (unit-tested and audited only). Try each once signed in.
-- **Starter card 174 (form recipients in D1, `/api/contact/`'s D1 lookup) is held:** presacademy
-  carries the same PORTABLE `contact.ts` and sync-checks the live starter, so merging the card turns its next
-  PR red unless presacademy takes the two files in the same pass (branch `sync/starter-card-174` is ready).
-  The other self-serve ports landed 2026-10-26 as starter cards 167 to 172 and 175 to 177.
 
 ### 1zu. Millville and WhatsApp: apply one script, and the church's WhatsApp link (opened 2026-10-26)
 
