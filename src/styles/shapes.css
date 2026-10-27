@@ -7,7 +7,7 @@
      .shape-gable  a picture cut to the roofline of the building (the front gable in the sketch on
                    About). The pitch is a percentage of the box, so a narrow box reads steeple-steep
                    and a wide one reads like the porch roof: one shape, many proportions.
-     .shape-slab   a panel of printed navy brick behind a picture, flush to the page edge on one
+     .shape-slab   a panel of printed red brick behind a picture, flush to the page edge on one
                    side and a third of the page wide. The picture overlaps it, so it sits set into a
                    wall. Add .shape-slab--left to put the wall on the left.
      .shape-zoom   the picture inside the shape grows a little on hover or focus of the nearest link
@@ -120,7 +120,8 @@
   object-fit: contain;
 }
 
-/* The slab: a navy brick wall behind a picture. The holder is position:relative and holds the
+/* The slab: a red brick wall behind a picture (navy until 2026-10-27; red like the building, a step
+   darker than the auburn button so the button stays the page's one red action). The holder is position:relative and holds the
    picture; the wall is its ::before, run out past the page edge. The section around it must clip
    (.shape-slab-host, overflow-x: clip) so the wall stops at the edge of the window. */
 .shape-slab-host {
@@ -139,7 +140,7 @@
   /* From a third of the way into the picture out past the right edge of the window. */
   left: 34%;
   right: -100vw;
-  background: var(--auburn-deep) url('../assets/textures/tile-deep.svg') 0 0 / 420px 420px;
+  background: #6a2b20 url('../assets/textures/tile-wall.svg') 0 0 / 420px 420px;
 }
 .shape-slab--left::before {
   left: -100vw;

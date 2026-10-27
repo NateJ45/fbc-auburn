@@ -1,5 +1,10 @@
 # Change history
 
+_2026-10-27: the brick slab is red._ The wall behind ImageText and Event details photos (`.shape-slab`
+in `src/styles/shapes.css`) was navy brick, so every colour on those pages but the one button was blue.
+It now uses `tile-wall.svg`, a new `wall` tile in `scripts/gen-stones.mjs`: red brick a step darker and
+browner than the auburn button, so the button stays the page's one red action. Other tiles unchanged.
+
 _2026-10-26: the Studio's numbered steps are Home's printed bricks (starter card 180)._ The plain round
 markers became the same navy bricks as Home's "Your first Sunday": two navy tones, a darker rim heavier along the
 bottom, and the linocut flecks. `brand.config.json` `studio.look` sets `stone: brick`, navy `markColors`, the light
