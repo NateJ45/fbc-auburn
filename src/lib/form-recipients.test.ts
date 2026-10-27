@@ -1,14 +1,17 @@
-// Where form messages go, set in the Studio (src/lib/form-recipients.ts, 2026-10-26): the
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Where form messages go, set in the Studio (src/lib/form-recipients.ts, PORTS.md card 174): the
 // administrator gate, the confirm-before-use rule, the unconfirmed state without email, the
-// confirmation page, and the D1-then-secret order. The real SQL runs on node:sqlite.
+// confirmation page, the D1-then-secret order and the Contact form's lookup. The real SQL runs
+// on node:sqlite.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { sqliteD1 } from './mail-sqlite.ts';
 import type { Mailer, MailMessage } from './mail-send.ts';
 import {
   FORM_RECIPIENTS_DDL,
   confirmedAddresses,
+  contactRecipient,
   fallbackKeys,
   handleRecipientConfirm,
   handleRecipientStudio,
@@ -46,8 +49,8 @@ function setup(over: Partial<RecipientDeps> = {}) {
     db,
     mailer,
     secret: SECRET,
-    origin: 'https://church.example',
-    siteName: 'FBC Auburn',
+    origin: 'https://site.example',
+    siteName: 'Example Site',
     fallbacks: {},
     now: () => NOW,
     ...over,
@@ -56,7 +59,7 @@ function setup(over: Partial<RecipientDeps> = {}) {
 }
 
 const req = (method: string, body?: unknown) =>
-  new Request('https://church.example/api/studio/form-recipients/', {
+  new Request('https://site.example/api/studio/form-recipients/', {
     method,
     headers: body ? { 'content-type': 'application/json' } : {},
     body: body ? JSON.stringify(body) : undefined,
@@ -67,12 +70,16 @@ const call = async (deps: RecipientDeps, method: string, body?: unknown) => {
   return { status: res.status, body: (await res.json()) as Record<string, unknown> };
 };
 
-test('the migration matches FORM_RECIPIENTS_DDL', () => {
-  const sql = readFileSync(
-    new URL('../../migrations/0005_form_recipients.sql', import.meta.url),
-    'utf8',
-  );
-  assert.ok(sql.includes(FORM_RECIPIENTS_DDL), 'copy FORM_RECIPIENTS_DDL into the migration');
+test('migrations/*_form_recipients.sql carries FORM_RECIPIENTS_DDL', async () => {
+  const dir = new URL('../../migrations/', import.meta.url);
+  const file = readdirSync(dir).find((f) => /_form_recipients\.sql$/.test(f));
+  assert.ok(file, 'a migrations/*_form_recipients.sql file exists');
+  const sql = readFileSync(new URL(file, dir), 'utf8');
+  assert.ok(sql.includes(FORM_RECIPIENTS_DDL), `copy FORM_RECIPIENTS_DDL into ${file}`);
+  // Safe to apply twice: a database that already has the table is left alone.
+  const db = sqliteD1(sql);
+  db.raw.exec(sql);
+  assert.deepEqual(await confirmedAddresses(db), {});
 });
 
 test('the gate: same origin, signed in, then an administrator, before the database', async () => {
@@ -97,26 +104,26 @@ test('a new address waits for its link; only the confirmation page puts it to us
   const { db, mailer, deps } = setup();
   const saved = await call(deps, 'POST', {
     action: 'set',
-    key: 'pastor',
-    name: 'Pastor',
-    email: 'Pastor@Example.org',
+    key: 'events',
+    name: 'Events',
+    email: 'Events@Example.org',
   });
   assert.equal(saved.body.status, 'sent');
   assert.equal(mailer.sent.length, 1);
-  assert.equal(mailer.sent[0].to, 'pastor@example.org');
+  assert.equal(mailer.sent[0].to, 'events@example.org');
   assert.match(mailer.sent[0].subject, /Please confirm/);
   // Not in use yet.
   assert.deepEqual(await confirmedAddresses(db), {});
 
-  const link = /https:\/\/church\.example\/api\/form-recipient\/confirm\/\?t=(\S+)/.exec(
+  const link = /https:\/\/site\.example\/api\/form-recipient\/confirm\/\?t=(\S+)/.exec(
     mailer.sent[0].text,
   );
   assert.ok(link);
   const token = decodeURIComponent(link[1]);
-  const confirmDeps = { db, secret: SECRET, siteName: 'FBC Auburn', now: () => NOW + 60_000 };
+  const confirmDeps = { db, secret: SECRET, siteName: 'Example Site', now: () => NOW + 60_000 };
   // Opening the link (or a mail scanner opening it) changes nothing.
   const get = await handleRecipientConfirm(
-    new Request(`https://church.example/api/form-recipient/confirm/?t=${link[1]}`),
+    new Request(`https://site.example/api/form-recipient/confirm/?t=${link[1]}`),
     confirmDeps,
   );
   assert.equal(get.status, 200);
@@ -126,14 +133,14 @@ test('a new address waits for its link; only the confirmation page puts it to us
   const form = new FormData();
   form.set('t', token);
   const post = await handleRecipientConfirm(
-    new Request('https://church.example/api/form-recipient/confirm/', {
+    new Request('https://site.example/api/form-recipient/confirm/', {
       method: 'POST',
       body: form,
     }),
     confirmDeps,
   );
   assert.equal(post.status, 200);
-  assert.deepEqual(await confirmedAddresses(db), { pastor: 'pastor@example.org' });
+  assert.deepEqual(await confirmedAddresses(db), { events: 'events@example.org' });
 });
 
 test('without the email backbone the address is saved as unconfirmed and never used', async () => {
@@ -192,21 +199,21 @@ test('confirmation links: signed, expiring, and only for the address that is wai
   // A valid link for an address that is no longer the waiting one has run out.
   const { db } = setup();
   const res = await handleRecipientConfirm(
-    new Request(`https://church.example/api/form-recipient/confirm/?t=${encodeURIComponent(t)}`),
-    { db, secret: SECRET, siteName: 'FBC Auburn', now: () => NOW },
+    new Request(`https://site.example/api/form-recipient/confirm/?t=${encodeURIComponent(t)}`),
+    { db, secret: SECRET, siteName: 'Example Site', now: () => NOW },
   );
   assert.equal(res.status, 410);
 });
 
 test('where a message goes: D1 first, then the secret, then the office, then Contact', () => {
-  const secret = { office: 'office-secret@example.org', pastor: 'pastor-secret@example.org' };
+  const secret = { office: 'office-secret@example.org', events: 'events-secret@example.org' };
   assert.equal(
-    recipientAddressFor('pastor', {}, secret, 'c@example.org'),
-    'pastor-secret@example.org',
+    recipientAddressFor('events', {}, secret, 'c@example.org'),
+    'events-secret@example.org',
   );
   assert.equal(
-    recipientAddressFor('pastor', { pastor: 'pastor-d1@example.org' }, secret, null),
-    'pastor-d1@example.org',
+    recipientAddressFor('events', { events: 'events-d1@example.org' }, secret, null),
+    'events-d1@example.org',
   );
   assert.equal(
     recipientAddressFor('youth', { office: 'office-d1@example.org' }, secret, null),
@@ -220,7 +227,7 @@ test('where a message goes: D1 first, then the secret, then the office, then Con
   assert.equal(recipientAddressFor('youth', {}, {}, null), null);
   assert.deepEqual(fallbackKeys(secret, 'c@example.org'), {
     office: true,
-    pastor: true,
+    events: true,
     contact: true,
   });
 });
@@ -229,4 +236,50 @@ test('no table yet: the lookup quietly finds nothing, so the secret decides', as
   const bare = sqliteD1('CREATE TABLE other (id INTEGER)');
   assert.deepEqual(await confirmedAddresses(bare), {});
   assert.deepEqual(await confirmedAddresses(null), {});
+});
+
+test('a caller can name its own fallback key', () => {
+  const secret = { team: 'team@example.org' };
+  assert.equal(recipientAddressFor('youth', {}, secret, null, 'team'), 'team@example.org');
+  assert.equal(recipientAddressFor('youth', {}, secret, null), null);
+});
+
+test('the Contact form: its confirmed row first, else CONTACT_TO, and never a pending one', async () => {
+  assert.equal(await contactRecipient(null, ' c@example.org '), 'c@example.org');
+  assert.equal(await contactRecipient(undefined, undefined), null);
+  const bare = sqliteD1('CREATE TABLE other (id INTEGER)');
+  assert.equal(await contactRecipient(bare, 'c@example.org'), 'c@example.org');
+  const { db } = setup();
+  db.raw.exec(
+    "INSERT INTO form_recipient_addresses (recipient_key, pending_email, updated_at) VALUES ('contact', 'new@example.org', 'x')",
+  );
+  assert.equal(await contactRecipient(db, 'c@example.org'), 'c@example.org');
+  db.raw.exec(
+    "UPDATE form_recipient_addresses SET email = 'studio@example.org' WHERE recipient_key = 'contact'",
+  );
+  assert.equal(await contactRecipient(db, 'c@example.org'), 'studio@example.org');
+  assert.equal(await contactRecipient(db, null), 'studio@example.org');
+});
+
+test('the confirmation page takes the site colours, refuses anything but #hex, and can go dark', async () => {
+  const deps = {
+    db: null,
+    secret: null,
+    siteName: 'Example Site',
+    theme: { button: '#123456', heading: 'red;}body{display:none' },
+    darkTheme: { background: '#000000' },
+  };
+  const html = await (
+    await handleRecipientConfirm(new Request('https://site.example/x'), deps)
+  ).text();
+  assert.match(html, /--btn:#123456/);
+  assert.doesNotMatch(html, /display:none/);
+  assert.match(html, /prefers-color-scheme:dark/);
+  const plain = await (
+    await handleRecipientConfirm(new Request('https://site.example/x'), {
+      ...deps,
+      darkTheme: undefined,
+    })
+  ).text();
+  assert.doesNotMatch(plain, /prefers-color-scheme/);
 });

@@ -1,5 +1,10 @@
 # Change history
 
+_2026-10-26: the Contact form honours the Studio address (starter card 174)._ `src/lib/form-recipients.ts`
+and its test are now PORTABLE copies of the starter's, and the PORTABLE `/api/contact/` sends to the
+confirmed "contact" row first, then `CONTACT_TO`. `/api/form/` and the Studio panel work as before; the
+confirmation page keeps its colours, now passed in by `/api/form-recipient/confirm/`. Auburn keeps
+`migrations/0005_form_recipients.sql` (the starter's copy has its own number; both are `IF NOT EXISTS`).
 _2026-10-26: the Studio drops the old stone lettering and pebbles._ The Studio still wore two pieces of the
 early logo work: banner and tool titles in the Auburn Stone brick letters, and hand-laid pebbles behind the
 numbered steps. `brand.config.json` `studio.look` now has `stone: round` and no `lettering`, and the Home banner in
