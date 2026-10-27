@@ -52,6 +52,7 @@ import {
   columnsField,
   headingAccentField,
   hideWhenRich,
+  scriptAccentField,
   lookField,
   richTwin,
 } from './_appearanceFields';
@@ -159,13 +160,8 @@ export const heroSection = defineType({
       type: 'string',
       validation: (R) => R.required(),
     }),
-    defineField({
-      name: 'scriptAccent',
-      title: 'Handwritten accent word (optional)',
-      type: 'string',
-      description:
-        'One word from the headline to render in the script font. Must match exactly. Leave blank to skip.',
-    }),
+    // FBC Auburn (2026-10-26): hidden; ArchHero and PageHeroPhoto never draw it.
+    scriptAccentField('headline', false),
     // FBC Auburn (2026-10-24): two-tone page titles, words of the heading in auburn.
     headingAccentField(),
     // FBC Auburn (2026-10-24): the Sunday times band under an inner page head (TimesBand.astro).
@@ -269,12 +265,8 @@ export const richTextSection = defineType({
       type: 'string',
     }),
     defineField({ name: 'heading', title: 'Heading (optional)', type: 'string' }),
-    defineField({
-      name: 'scriptAccent',
-      title: 'Handwritten accent word (optional)',
-      type: 'string',
-      description: 'One word from the heading to render in the script font. Must match exactly.',
-    }),
+    // FBC Auburn (2026-10-26): shows only on a block that already holds a word.
+    scriptAccentField('heading', true),
     headingAccentField(),
     proseBody('body', 'Text'),
     defineField({
@@ -541,12 +533,8 @@ export const ctaBandSection = defineType({
       type: 'string',
       validation: (R) => R.required(),
     }),
-    defineField({
-      name: 'scriptAccent',
-      title: 'Handwritten accent word (optional)',
-      type: 'string',
-      description: 'One word from the headline to render in the script font. Must match exactly.',
-    }),
+    // FBC Auburn (2026-10-26): shows only on a block that already holds a word.
+    scriptAccentField('headline', true),
     headingAccentField(),
     defineField({
       name: 'subhead',

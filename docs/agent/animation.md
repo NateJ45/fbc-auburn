@@ -147,6 +147,8 @@ On FBC Auburn the cross-fade below is replaced by the flow layer's lift-and-rise
 
 The `@utility font-script` declaration and `--font-script` CSS custom property exist in `globals.css`, but no script font file is loaded by default. This is intentional: a calligraphic accent is project-specific and adds a font request for every visitor, so it should only be enabled when the design calls for it.
 
+**FBC Auburn (2026-10-26):** the script accent is unused here and its Studio box ("Handwritten accent word") is hidden on the opening banner, the text block and the Invitation band, so editors see one accent box, "Accent word in the heading". The field is kept for its data (rule 1): on the text block and the band, which still draw it, it reappears on any block that holds a word, with a note to move the word. Helper: `scriptAccentField()` in `src/sanity/schemaTypes/_appearanceFields.ts`.
+
 ### How to enable the script accent
 
 1. **Choose a script typeface** and install its `@fontsource` package, for example:
