@@ -205,7 +205,7 @@
       },
       "motif": "/studio-banner/stone-path.svg",
       "motifNarrow": "/studio-banner/stone-path-phone.svg",
-      "texture": "/textures/tile-deep.svg",
+      "texture": "/textures/tile-wall.svg",
       "edgeColors": ["#7F98B8", "#2C4F7C", "#B5503A", "#9A3B2A"],
       "motion": "lay",
       "splash": "motif"

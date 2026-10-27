@@ -156,11 +156,10 @@ export const SECTION_SURFACES: SurfacePair[] = [
       link: '--feature-link',
     },
   },
-  // The Stone look (2026-10-18): the pale stepping-stone tiles
-  // (src/assets/textures/tile-sky.svg) the church's sky panels use, with dark text.
-  // The band paints #E9EEF5 under the tiles, but the pair is MEASURED on
-  // --stone, the darkest colour in the tile (#D3DCE8, the gaps between stones),
-  // so the gate checks the worst spot any word can land on.
+  // The Stone look (2026-10-18): the pale tint the church's sky panels use, with dark
+  // text; flat #E9EEF5 since 2026-10-27 (it was pale blue brick, tile-sky.svg). The pair
+  // is still MEASURED on --stone, the darkest colour that brick had (#D3DCE8), so the
+  // gate stays strict.
   {
     value: 'stone',
     title: 'Stone',

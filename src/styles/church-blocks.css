@@ -647,13 +647,14 @@
   white-space: nowrap;
 }
 
-/* ---- Bible verse: the green stone panel with a gold opening quote ---- */
+/* ---- Bible verse: a red brick wall (the slab's tile-wall.svg; blue brick until 2026-10-27) with a
+   pale opening quote ---- */
 .cb-verse {
   margin: 0;
   padding: clamp(1.75rem, 6vw, 4rem) clamp(1.5rem, 6vw, 4.5rem) clamp(2rem, 6vw, 3.75rem);
   border-radius: var(--radius-card);
-  background-color: var(--auburn-green);
-  background-image: url('../assets/textures/tile-green.svg');
+  background-color: #6a2b20;
+  background-image: url('../assets/textures/tile-wall.svg');
   background-size: 420px 420px;
   box-shadow: var(--shadow-raised);
   color: #ffffff;
@@ -664,7 +665,7 @@
   font-family: var(--font-display);
   font-size: 5.5rem;
   line-height: 0.85;
-  color: var(--auburn-gold);
+  color: #f1d3c6;
 }
 .cb-verse__text {
   max-width: 34ch;
@@ -682,7 +683,7 @@
   font-style: normal;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #e9eef5;
+  color: #f6e6df;
 }
 .cb-verse .cb-link {
   color: #ffffff;
@@ -863,7 +864,9 @@
   height: 100%;
   padding: clamp(1rem, 3vw, 1.5rem);
   border: 0;
-  background: #16304d url('../assets/textures/tile-navy.svg') 0 0 / 420px 420px;
+  /* Flat navy (navy brick until 2026-10-27; brick is red, and a grid of red tiles would drown the
+     one red button). */
+  background: #16304d;
   color: #ffffff;
   font: inherit;
   text-align: left;
@@ -983,9 +986,8 @@
   --border: #d3dce8;
   padding: var(--pad-panel);
   border-radius: var(--radius-card);
+  /* The flat tint (pale blue brick until 2026-10-27: brick is red wherever it is drawn as brick). */
   background-color: #e9eef5;
-  background-image: url('../assets/textures/tile-sky.svg');
-  background-size: 420px 420px;
   color: var(--foreground);
 }
 .cb-sky.cb-actions {

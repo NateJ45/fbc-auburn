@@ -109,7 +109,12 @@ printed into `src/assets/brand/`). The old seven colours are gone from the CSS, 
   than the button (`tile-wall.svg`, faces `#66291E` to `#722F23`), so it reads as the building and
   never as a second red action; it was navy until then, which left the site reading all blue. The
   walk's numbered bricks and the Studio's numbered steps (`studio.look.markColors`) take the same
-  two tones, `#6A2B20` and `#7A3326`. **Navy mid** is the
+  two tones, `#6A2B20` and `#7A3326`. The Bible verse panel is the same red wall, and so are the
+  Studio's featured panels (`studio.look.texture`). Everything else that was brick went flat:
+  sermon art with no picture and the play card are plain navy (a grid of red tiles would drown
+  the one red button), and the Stone look and sign-up panel are the plain `#E9EEF5` tint. So red
+  brick appears in four places only: the slab, the verse, the numbered bricks and the sill.
+  **Navy mid** is the
   second structural colour. **Ink** is body text.
 - Measured contrast on the ground `#FBF8F3`: ink 14.4, navy 10.8, navy mid 7.9, auburn dark 8.6,
   auburn 6.5, muted text `#4A5A73` 6.6, light auburn 4.7 (large text and icons only), light navy
