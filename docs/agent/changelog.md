@@ -1,10 +1,17 @@
 # Change history
 
+_2026-10-26: the Studio's numbered steps are Home's printed bricks (starter card 180)._ The plain round
+markers became the same navy bricks as Home's "Your first Sunday": two navy tones, a darker rim heavier along the
+bottom, and the linocut flecks. `brand.config.json` `studio.look` sets `stone: brick`, navy `markColors`, the light
+navy step dashes (`#7F98B8`, Home's `--step-dash-color`) and `stoneFlecks: /studio-banner/print-flecks.svg`, which
+`npm run gen:stones` now writes beside `src/assets/textures/print-flecks.svg` so the two stay identical.
+
 _2026-10-26: the Contact form honours the Studio address (starter card 174)._ `src/lib/form-recipients.ts`
 and its test are now PORTABLE copies of the starter's, and the PORTABLE `/api/contact/` sends to the
 confirmed "contact" row first, then `CONTACT_TO`. `/api/form/` and the Studio panel work as before; the
 confirmation page keeps its colours, now passed in by `/api/form-recipient/confirm/`. Auburn keeps
 `migrations/0005_form_recipients.sql` (the starter's copy has its own number; both are `IF NOT EXISTS`).
+
 _2026-10-26: the Studio drops the old stone lettering and pebbles._ The Studio still wore two pieces of the
 early logo work: banner and tool titles in the Auburn Stone brick letters, and hand-laid pebbles behind the
 numbered steps. `brand.config.json` `studio.look` now has `stone: round` and no `lettering`, and the Home banner in
