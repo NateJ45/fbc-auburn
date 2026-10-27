@@ -133,10 +133,10 @@ outputs.set('public/studio-banner/marker.svg', svgOf({ width: 78, height: 36 }, 
 {
   const rnd = lcg(59);
   const d = fleckPath(4, 4, 56, 36, 30, 11, rnd);
-  outputs.set(
-    'src/assets/textures/print-flecks.svg',
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 44" width="64" height="44"><path d="${d}" fill="#FBF8F3" fill-opacity="0.9"/></svg>\n`,
-  );
+  const flecks = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 44" width="64" height="44"><path d="${d}" fill="#FBF8F3" fill-opacity="0.9"/></svg>\n`;
+  outputs.set('src/assets/textures/print-flecks.svg', flecks);
+  // The Studio's numbered steps wear the same print (studio.look.stoneFlecks, PORTS.md card 180).
+  outputs.set('public/studio-banner/print-flecks.svg', flecks);
 }
 for (const [name, opts] of Object.entries(TILES)) {
   outputs.set(`src/assets/textures/tile-${name}.svg`, brickTile(opts));
