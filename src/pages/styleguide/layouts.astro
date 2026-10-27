@@ -22,6 +22,7 @@ import ServiceCard from '@/components/ServiceCard.astro';
 import JournalCard from '@/components/JournalCard.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import ImageText from '@/components/sections/ImageText.astro';
+import BoardPageHead from '@/components/home/BoardPageHead.astro';
 import ServiceAreaSection from '@/components/sections/ServiceAreaSection.astro';
 import { site } from '@/data/site';
 
@@ -143,6 +144,19 @@ const entry = {
       description="It starts at the same seam."
       travelFees={[{ distanceLabel: 'Up to 10 miles', fee: 'Included' }]}
       headingId="fx-split-card"
+    />
+  </div>
+
+  {/* The board hero (PORTS.md card 188 added 'board' to the hero slot, so the layouts visual spec
+      shoots hero-board). Auburn's board head is its own BoardPageHead. Kept LAST: a fixture placed
+      earlier moves the existing baselines by a pixel. */}
+  <div data-fx="hero-board">
+    <BoardPageHead
+      eyebrow={hero.eyebrow}
+      headline={hero.headline}
+      subhead={hero.subhead}
+      image={image}
+      headingId="fx-h-board"
     />
   </div>
 </BaseLayout>
