@@ -42,6 +42,7 @@ import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings'
 import { telHref } from '@/lib/phone';
 import { urlFor } from '@/lib/sanity';
 import SiteSearch from './search/SiteSearch.astro';
+import { publicPath } from '@/lib/page-path';
 
 // SVG logos are passed through Astro's image pipeline for cache-busted URLs.
 // SVGs are resolution-independent so no 1x/2x variants are needed — one URL
@@ -158,7 +159,8 @@ const NAV_ITEMS = mergePageSwitches(chrome.headerNav, [], await getNavPages()).n
 const DESKTOP_ITEMS = 5;
 const navComplete = NAV_ITEMS.length <= DESKTOP_ITEMS;
 
-const pathname = Astro.url.pathname;
+// The live path, so the draft preview of Home draws Home's header too (src/lib/page-path.ts).
+const pathname = publicPath(Astro.url.pathname);
 const isHome = pathname === '/';
 // Home's Sunday note (board E), derived from Church facts; never typed. The menu carries the same
 // facts on every page (Home audit research, 2026-10-17: people open the menu to find times).
