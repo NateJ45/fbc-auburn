@@ -41,9 +41,11 @@ button left empty no longer blocks Publish). The "Seasonal: Event page" template
 - **Stale Studio after a deploy:** a Studio tab opened before a deploy shows a raw "Failed to fetch
   dynamically imported module" error inside a field (the Unsplash picker) until it is reloaded, because
   the old code files are gone. The desk recovers on its own; fields do not. Wants a reload prompt.
-- **Two accent fields and two "Line under the heading" fields** on the opening banner and the
-  Invitation band (handwritten accent and colour accent; plain and formatted line). One of each would
-  read clearer to a pastor.
+- ~~**Two accent fields and two "Line under the heading" fields**~~ Done 2026-10-26: the handwritten
+  accent is hidden on the opening banner, text block and Invitation band, and the formatted line hides
+  while empty on the band, FAQ, Team and Listing blocks (changelog 2026-10-26). Starter note: the
+  script accent and the always-visible rich twin are generic, so the same doubling exists in the
+  starter and its other forks; a starter card could offer the same helpers.
 - **Signed in, the other new blocks:** Event details, Schedule and Cards with photos were driven
   signed in; the converted pages (1zq) were opened, not all dragged.
 
