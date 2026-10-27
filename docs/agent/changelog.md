@@ -5,6 +5,7 @@ early logo work: banner and tool titles in the Auburn Stone brick letters, and h
 numbered steps. `brand.config.json` `studio.look` now has `stone: round` and no `lettering`, and the Home banner in
 `kit.config.ts` has no `lettering`, so titles set in plain Young Serif and the numbers sit on plain round tokens.
 The unused `public/fonts/auburn-stone.woff2` and its licence are deleted.
+
 _2026-10-26: one accent box and one "Line under the heading" per block._ Building a page in the
 live Studio, the opening banner, text block and Invitation band each offered two accent boxes
 ("Handwritten accent word" and "Accent word in the heading"), and the Invitation band, FAQ, Team and
