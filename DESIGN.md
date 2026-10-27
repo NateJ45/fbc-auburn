@@ -68,7 +68,8 @@ Young Serif were each used at every opportunity, so none of them was special. No
   block that asks for it). The header's Plan your visit stays red on every page; since 2026-10-26 a body button
   that goes where the header's does (Home's hero "Plan your first visit" included) repeats it and draws navy, so a
   page may have no red body button at all, or give it to its own step ("Tell us you are coming", "Call"). Every other button is solid navy or the navy outline. Card meta lines, menu arrows,
-  the walk's numbered bricks and every connector are navy; auburn is the mark and that one button.
+  every connector is navy; auburn is the mark and that one button. The walk's numbered bricks went
+  red brick on 2026-10-27 (see Colors).
 - **Less brick**: one sill per page (the footer's); the cream brick wall, the sky and navy tiles behind text and
   the This Sunday card's tile are gone (the card is plain navy with one 12px brick course on top); at most two
   brick surfaces in view. **Three surfaces**: the ground, white, and one tint `#E9EEF5`.
@@ -106,7 +107,9 @@ printed into `src/assets/brand/`). The old seven colours are gone from the CSS, 
   stones, the mosaic, lettering on a navy band), never text on the ground. **Brick is red** wherever
   it is drawn as brick (2026-10-27): the slab behind a picture is a wall a step darker and browner
   than the button (`tile-wall.svg`, faces `#66291E` to `#722F23`), so it reads as the building and
-  never as a second red action; it was navy until then, which left the site reading all blue. **Navy mid** is the
+  never as a second red action; it was navy until then, which left the site reading all blue. The
+  walk's numbered bricks and the Studio's numbered steps (`studio.look.markColors`) take the same
+  two tones, `#6A2B20` and `#7A3326`. **Navy mid** is the
   second structural colour. **Ink** is body text.
 - Measured contrast on the ground `#FBF8F3`: ink 14.4, navy 10.8, navy mid 7.9, auburn dark 8.6,
   auburn 6.5, muted text `#4A5A73` 6.6, light auburn 4.7 (large text and icons only), light navy

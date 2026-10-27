@@ -1223,16 +1223,20 @@ html:has(.auburn-menu[open]) {
   outline: 3px solid var(--ring);
   outline-offset: -3px;
 }
-/* The page you are on: a red stone after its name. */
+/* The page you are on: a small red brick after its name (a pebble until 2026-10-27), printed like
+   every brick: a darker rim, heavier along the bottom. */
 .auburn-menu__row[aria-current='page'] .auburn-menu__label::after {
   content: '';
   display: inline-block;
-  width: 0.4em;
-  height: 0.32em;
+  width: 0.62em;
+  height: 0.3em;
   margin-left: 0.4em;
-  vertical-align: 0.12em;
-  border-radius: 46% 54% 42% 58% / 56% 44% 56% 44%;
+  vertical-align: 0.14em;
+  border-radius: 1px;
   background: var(--auburn-red);
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.2),
+    inset 0 -2px 0 rgb(0 0 0 / 0.16);
 }
 
 /* A menu group (2026-10-24): its name as a small red label, like the card's "This Sunday",
