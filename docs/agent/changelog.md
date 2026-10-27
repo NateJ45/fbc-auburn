@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-26: one accent box and one "Line under the heading" per block._ Building a page in the
+live Studio, the opening banner, text block and Invitation band each offered two accent boxes
+("Handwritten accent word" and "Accent word in the heading"), and the Invitation band, FAQ, Team and
+Listing blocks showed two boxes both titled "Line under the heading" (plain and formatted). No live or
+snapshot document used the handwritten accent or the formatted line. The handwritten accent is now
+hidden (`scriptAccentField()`): always on the opening banner, which never draws it here, and on the
+text block and band unless a block already holds a word. The formatted line hides while it is empty,
+so one box shows; it appears, replacing the plain one, once the in-canvas editor has bolded a word.
+No field was removed and no page renders differently (parity checked).
+
 _2026-10-26: the staff view by role, with a list that adds to it (starter card 175)._ The kit's staff view now goes
 to everyone who is not a Sanity administrator, PLUS the ids in `kitConfig.staff`, PLUS any account marked "Simple
 view" on the kit's new `studioStaff` document (id `kit.studioStaff`). Before, a non-empty list replaced the role

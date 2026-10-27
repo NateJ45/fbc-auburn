@@ -44,7 +44,8 @@ import { SectionLookInput } from '../components/SectionLookInput';
 //     the string exactly as before (scripts/page-parity.mjs holds that line),
 //   - the plain field HIDES only once the twin holds text, so an editor never
 //     sees two boxes both claiming to be the subhead,
-//   - the twin is always visible, so it is discoverable without a hunt.
+//   - the twin hides while it is empty (FBC Auburn, 2026-10-26), so an empty
+//     block shows one box; the in-canvas editor is where emphasis starts.
 // Headlines are deliberately NOT on the list. One emphasis device per heading
 // is the house rule, and the two devices for a heading are the script accent
 // and the accent word below.
@@ -68,13 +69,48 @@ const inlineRichBody = {
   ],
 };
 
-/** The rich twin of a plain string field. Title matches the field it twins. */
+/**
+ * The rich twin of a plain string field. Title matches the field it twins.
+ *
+ * FBC Auburn (2026-10-26, PENDING 1zr): the twin now HIDES while it is empty,
+ * so the Studio shows exactly one "Line under the heading" box at a time. Built
+ * as the pastor would, both boxes showed side by side with the same title and
+ * nothing to say which one counted. The plain field is the one an editor types
+ * into; the twin appears only once it holds text (the in-canvas editor fills it
+ * the first time someone bolds or italicises a word), and at that point
+ * hideWhenRich() hides the plain field, so the two never show together.
+ */
 export function richTwin(name: string, title: string) {
   return defineField({
     name,
     title,
     ...inlineRichBody,
-    description: 'You can bold or italicize here.',
+    description:
+      'This version of the line has bold or italic in it, so it shows on the page instead of the plain line. Empty this box to go back to the plain line.',
+    hidden: ({ value }: { value?: unknown }) => !hasInlineRich(value),
+  });
+}
+
+/**
+ * The older script accent ("Handwritten accent word"), kept for its data only.
+ *
+ * FBC Auburn (2026-10-26, PENDING 1zr): three blocks offered two accent boxes,
+ * this one and "Accent word in the heading", and a pastor cannot tell them
+ * apart. No live or snapshot document uses this one, so it is hidden: `renders`
+ * says whether the block's component still draws it (the CTA band and the text
+ * block do, through FinalCta and SectionHeading; Auburn's opening banner never
+ * does, because ArchHero and PageHeroPhoto take no script accent). Where it
+ * renders it stays visible on any block that already holds a word, with a note
+ * to move it, so no page loses an accent it has. Never delete the field
+ * (rule 1).
+ */
+export function scriptAccentField(heading: 'heading' | 'headline', renders: boolean) {
+  return defineField({
+    name: 'scriptAccent',
+    title: 'Handwritten accent word (older, please move)',
+    type: 'string',
+    description: `An older way to style one word of the ${heading}. Please type the word into "Accent word in the heading" instead and clear this box.`,
+    hidden: renders ? ({ value }: { value?: unknown }) => !value : true,
   });
 }
 
@@ -97,7 +133,7 @@ export function headingAccentField() {
     title: 'Accent word in the heading',
     type: 'string',
     description:
-      'Optional. Type a word or short phrase from the heading above and it is set in the brand accent color. Leave it blank for a plain heading, and leave it blank if you are already using the script accent.',
+      'Optional. Type a word or short phrase from the heading above and it is set in the brand accent color. Leave it blank for a plain heading.',
   });
 }
 
