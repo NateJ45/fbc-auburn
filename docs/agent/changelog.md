@@ -1,5 +1,25 @@
 # Change history
 
+_2026-10-27: Auburn takes the starter's copies of the pieces it gave the family (PORTS.md cards 186 to
+198), nothing visible changed._ `npm run sync-check` is all SAME (405 marked files). Adopted:
+`sync-check.mjs` (186); `cta-budget.ts` replaces `red-budget.ts`, `cta-href.ts` with
+`church-cta-href.ts` adding the sermon route, `page-path.ts`, `page-switches.ts`, `published-links.ts`
+(187); `shapes.css` with Auburn's gable, brick slab, tile and zoom as tokens in
+`src/styles/shapes-auburn.css`, `site-layout.ts` with the `board` hero and `motion` slot (Auburn stays
+`reveal`: its own flow layer does not read it), the generated `font-fallbacks.css` (`npm run
+font-fallback`, now with Linux metric twins) (188); `hero-video.ts` (189); `wayfinding.ts` (191);
+`flow-split.ts` (192); `studio-messages.ts`, `MessagesTool.tsx`, `studio-icons.ts` (194); the client
+notes lib (195); `place-line.ts` (196); `svg-path-compact.mjs` and the budget spec
+`tests/page-weight.spec.ts` with `tests/page-weight.config.json` (Auburn's own checks moved to
+`tests/page-checks.spec.ts`) (197); `regex-backslash.mjs` (198); `section-anchors.ts` (Auburn's
+key-pinned anchors moved to `church-anchors.ts`). Kept as forks, each with a header saying why:
+`flow.ts`, `flow.css`, `PhotoHero.astro`, `photo-hero.css`, `ShotRequest.astro`, `ClientNotes.astro`,
+`svg-path-compact.test.mjs`; Auburn's church form (`church-form.ts`), church facts and church video
+stay its own. Proved: parity on all 32 pages (only the notes pill's new marker attribute and
+build-random ids differ) and byte-identical full-page screenshots of nine pages at 375 and 1280.
+
+_2026-10-27: the client notes layer moved onto the starter's shape (PORTS.md card 195), nothing visible changed._ `ForJacob.astro` is `ClientNotes.astro`, `for-jacob.ts` is `client-notes.ts` (`PRE_LAUNCH_NOTES` is `CLIENT_NOTES_ON`, and `CLIENT_NOTES_ACTIVE` is that switch plus a pre-launch `site.url`), `Jacob` is in `MARKERS`, and the stand-in file rule is the exported `STAND_IN_FILE`. The pure rules are the starter's `src/lib/client-notes.ts` (adopted byte for byte, with its test). The component and `ShotRequest.astro` stay Auburn forks (own ink, wording and class names). Switching the site to its real domain now fails `client-notes.test.ts` until `CLIENT_NOTES_ON` is false, which stops the deploy.
+
 _2026-10-27: no blue brick left._ The Bible verse panel (`.cb-verse`) is the red wall (`tile-wall.svg`,
 pale quote mark `#F1D3C6`). Sermon art with no picture (`.c-art--blank`, three navy tones) and the
 play card (`.cb-play`) are flat navy, and the Stone look (`.surface-stone`) and sign-up panel

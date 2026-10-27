@@ -11,7 +11,7 @@ import DownloadRow from '@/components/collections/DownloadRow.astro';
 import { getBulletins } from '@/lib/collection-queries';
 import { churchDataNow } from '@/lib/church-feeds';
 import { bulletinToShow, currentDownloads, fileLabel, longDate } from '@/lib/sermons';
-import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+import { CLIENT_NOTES_ACTIVE } from '@/data/client-notes';
 
 interface Props {
   /** When the next one goes up, in the church's words ("by Saturday evening"). */
@@ -27,7 +27,7 @@ const { bulletin, thisWeek } = bulletinToShow(bulletins, now);
 const when = (postedWhen ?? '').trim().replace(/\.$/, '');
 const nextLine = when
   ? `A new bulletin goes up each week, ${when}.`
-  : PRE_LAUNCH_NOTES
+  : CLIENT_NOTES_ACTIVE
     ? '[Jacob: which day is the new bulletin posted here, and who posts it? We will say it on this page, like "A new one goes up by Saturday evening", so people know when to look.]'
     : '';
 const earlier = currentDownloads(

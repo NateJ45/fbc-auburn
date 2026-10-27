@@ -1,19 +1,26 @@
 ---
 // Safe to edit by hand
-// The pre-launch notes for the pastor (2026-10-23). While PRE_LAUNCH_NOTES is on
-// (src/data/for-jacob.ts), every page shows a small "For Jacob" pill in the corner that opens a list
-// of what we need from him for that page, and every placeholder written in square brackets in the
-// page's words ("[Jacob: ...]" or "[Placeholder: ...]") is highlighted yellow, so nothing
-// unfinished can be mistaken for the real thing. Turn PRE_LAUNCH_NOTES off at launch and both go.
+// Fork of the starter's ClientNotes.astro (PORTS.md card 195): kept because Auburn's pill has its own
+// look and wording (navy ink, "we need" copy, the .fj class names the flow layer, print and footer
+// styles already target) and the starter's version would change what is drawn. The rules it shares
+// with the starter (the switch, the pre-launch guard, the marker pattern) live in
+// src/lib/client-notes.ts, which is the starter's own copy.
+//
+// The pre-launch notes for the pastor (2026-10-23). While CLIENT_NOTES_ACTIVE is on
+// (src/data/client-notes.ts), every page shows a small "For Jacob" pill in the corner that opens a
+// list of what we need from him for that page, and every placeholder written in square brackets in
+// the page's words ("[Jacob: ...]" or "[Placeholder: ...]") is highlighted yellow, so nothing
+// unfinished can be mistaken for the real thing. Turn CLIENT_NOTES_ON off at launch and both go.
 //
 // A <details> element, so it opens without JavaScript; the highlighter is a few lines that wrap the
 // bracketed text in <mark>. Neither is indexed by site search.
-import { PRE_LAUNCH_NOTES, notesFor } from '@/data/for-jacob';
+import { CLIENT_NOTES_ACTIVE, CLIENT_NAME, MARKERS, notesFor } from '@/data/client-notes';
 import { shotsForPage } from '@/data/shot-list';
+import { markerPattern } from '@/lib/client-notes';
 
 // The page's own notes, then one per photo on its shot list (src/data/shot-list.ts), in the order
 // the "Photo needed" boxes appear on the page.
-const notes = PRE_LAUNCH_NOTES
+const notes = CLIENT_NOTES_ACTIVE
   ? [
       ...notesFor(Astro.url.pathname),
       ...shotsForPage(Astro.url.pathname).map((s) => ({
@@ -22,12 +29,13 @@ const notes = PRE_LAUNCH_NOTES
       })),
     ]
   : [];
+const pattern = markerPattern(MARKERS);
 ---
 
-{PRE_LAUNCH_NOTES && (
-  <details class="fj" data-pagefind-ignore="all">
+{CLIENT_NOTES_ACTIVE && (
+  <details class="fj" data-pagefind-ignore="all" data-markers={pattern}>
     <summary class="fj__pill">
-      For Jacob
+      {`For ${CLIENT_NAME}`}
       {notes.length > 0 && `: ${notes.length} thing${notes.length === 1 ? '' : 's'} we need`}
     </summary>
     <div class="fj__panel">
@@ -52,11 +60,15 @@ const notes = PRE_LAUNCH_NOTES
   </details>
 )}
 
-{PRE_LAUNCH_NOTES && <script>
+{CLIENT_NOTES_ACTIVE && <script>
   // Highlight placeholder wording: any "[Jacob: ...]", "[Placeholder: ...]" or "[Photo: ...]"
   // in the page's text, wherever it came from (Studio content or a component), as a <mark>.
-  const RE = /\[(?:Jacob|Placeholder|Photo)\b[^\]\n]*\]/g;
+  // The pattern arrives on the pill's data-markers (MARKERS in src/data/client-notes.ts).
+  const source = document.querySelector<HTMLElement>('.fj')?.dataset.markers;
+  const RE = source ? new RegExp(source, 'g') : null;
+  const OPEN = source ? new RegExp(source.replace(/\\b.*$/, '\\b')) : null;
   const mark = () => {
+    if (!RE || !OPEN) return;
     const root = document.querySelector('main') ?? document.body;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     const hits: Text[] = [];
@@ -86,7 +98,6 @@ const notes = PRE_LAUNCH_NOTES
     }
     // A placeholder that runs across a link or a line break is split over several text nodes, so
     // the pass above cannot see both brackets: highlight the whole paragraph, item or heading.
-    const OPEN = /\[(?:Jacob|Placeholder|Photo)\b/;
     root.querySelectorAll<HTMLElement>('p, li, dd, h1, h2, h3, h4, blockquote').forEach((el) => {
       if (el.closest('.fj, astro-island[ssr]') || el.classList.contains('fj-block')) return;
       if (!OPEN.test(el.textContent ?? '')) return;

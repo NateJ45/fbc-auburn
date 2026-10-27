@@ -1,0 +1,27 @@
+{
+  "_comment": [
+    "EXPECTED TO DIFFER PER SITE. The budgets tests/page-weight.spec.ts checks (decoded kilobytes).",
+    "Start from what the site weighs today plus about 25%, then tighten: a budget set far above",
+    "reality never fails. Keys left out fall back to the spec's own numbers.",
+    "A route that must be heavy gets its own entry under pages, with the reason in _why.",
+    "jsonLd lists the schema.org types a route must carry, e.g. { \"/\": [\"Organization\"] }.",
+    "Auburn (2026-10-27): measured on the snapshot build plus about 25 percent. HTML and inline CSS are large on purpose: each page carries its own purged CSS inline (scripts/purge-page-css.mjs), 97 to 122 KB."
+  ],
+  "defaults": {
+    "maxHtmlKb": 330,
+    "maxInlineCssKb": 155,
+    "maxScriptKb": 80,
+    "maxImagesKb": 600,
+    "maxImageKb": 360,
+    "maxLcpImageKb": 100,
+    "maxFontPreloads": 3,
+    "maxFontKb": 40
+  },
+  "pages": {
+    "/contact/": {
+      "_why": "The form island loads React and the form libraries (283 KB decoded when measured, 2026-10-27).",
+      "maxScriptKb": 360
+    }
+  },
+  "jsonLd": {}
+}

@@ -42,14 +42,14 @@ import { resolveSiteSettings, type RawChromeSettings } from '@/lib/siteSettings'
 import markAsset from '@/assets/brand/fbc-auburn-icon-white.svg';
 import { urlFor } from '@/lib/sanity';
 import { getChurchFacts } from '@/lib/church-data';
-import type { CtaTarget } from '@/lib/cta-href';
+import type { CtaTarget } from '@/lib/church-cta-href';
 import { sundayIcs, thisSunday } from '@/lib/church-facts';
 import { churchDataNow } from '@/lib/church-feeds';
 import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import Sill from '@/components/Sill.astro';
 import WhereNext from '@/components/WhereNext.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
-import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+import { CLIENT_NOTES_ACTIVE } from '@/data/client-notes';
 import SundayBar from '@/components/church/SundayBar.astro';
 import SundayChange from '@/components/church/SundayChange.astro';
 import { publicPath } from '@/lib/page-path';
@@ -146,13 +146,13 @@ const footerAddress = footerFacts.address;
 // until filled in (visitor audit, 2026-10-18).
 const { phone, email, facebookUrl, liveUrl, memberLoginUrl, newsletterFormUrl } = footerFacts;
 // Member sign-in (Church Trac > Member sign-in link, 2026-10-24). Before launch an empty link shows
-// a "[Jacob: ...]" ask in its place, which ForJacob.astro highlights; after launch it is simply left out.
-const memberLoginAsk = !memberLoginUrl && PRE_LAUNCH_NOTES;
+// a "[Jacob: ...]" ask in its place, which ClientNotes.astro highlights; after launch it is simply left out.
+const memberLoginAsk = !memberLoginUrl && CLIENT_NOTES_ACTIVE;
 // The newsletter (2026-10-24): the church's email list is in Church Trac, so the footer links to
 // its sign-up form (Church Trac > Newsletter sign-up form). Before launch an empty box shows an ask,
 // unless the site's own list has been switched on instead (Site settings > Newsletter).
 const ownNewsletter = siteSettings?.newsletter?.enabled === true && !newsletterFormUrl;
-const newsletterAsk = !newsletterFormUrl && !ownNewsletter && PRE_LAUNCH_NOTES;
+const newsletterAsk = !newsletterFormUrl && !ownNewsletter && CLIENT_NOTES_ACTIVE;
 // The Facebook page gets a words link unless the social buttons below already show it.
 const facebookText =
   facebookUrl && !socialLinksToRender.some((l) => l.platform === 'Facebook') ? facebookUrl : null;

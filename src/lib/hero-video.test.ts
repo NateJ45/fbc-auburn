@@ -1,4 +1,5 @@
-// Unit tests for the Home hero's video rules (src/lib/hero-video.ts).
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Unit tests for the photo hero's video rules (src/lib/hero-video.ts, PORTS.md card 189).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -124,21 +125,13 @@ test('mp4FastStart: cannot tell for a non-mp4 or when neither box is in reach', 
   assert.equal(mp4FastStart(new Uint8Array(0)), null);
 });
 
-test('mp4FastStart: the stock sample clips are saved for fast start', async () => {
+test('mp4FastStart: the test clip (tests/visual/fixtures/hero-clip.mp4) is saved for fast start', async () => {
   const { readFile } = await import('node:fs/promises');
-  for (const name of ['sermon.mp4', 'hero-pews-640.mp4']) {
-    const file = await readFile(new URL(`../../public/shot-examples/${name}`, import.meta.url));
-    assert.equal(
-      mp4FastStart(new Uint8Array(file).subarray(0, FAST_START_PROBE_BYTES)),
-      true,
-      name,
-    );
-  }
-  // The phone example stays a phone-sized download (2026-10-26).
-  const phone = await readFile(
-    new URL('../../public/shot-examples/hero-pews-640.mp4', import.meta.url),
+  const file = await readFile(
+    new URL('../../tests/visual/fixtures/hero-clip.mp4', import.meta.url),
   );
-  assert.ok(phone.byteLength < HERO_PHONE_VIDEO_BUDGET / 2, `${phone.byteLength} bytes`);
+  assert.equal(mp4FastStart(new Uint8Array(file).subarray(0, FAST_START_PROBE_BYTES)), true);
+  assert.ok(file.byteLength < HERO_PHONE_VIDEO_BUDGET / 10, `${file.byteLength} bytes`);
 });
 
 test('checkFastStart asks for the first 64 KB and never warns on a failed request', async () => {

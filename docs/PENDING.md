@@ -23,7 +23,7 @@ are Studio pages (`page-give`, `page-bulletin`; changelog 2026-10-26). Left:
 
 - **Give, "How gifts are cared for":** the section holds Jacob's four asks as text now (it was code
   that hid itself at launch). Before launch, answer them in the section or remove it in the Studio.
-  The payee ask moved into the Ways to give block (still behind `PRE_LAUNCH_NOTES`).
+  The payee ask moved into the Ways to give block (still behind `CLIENT_NOTES_ON`).
 - **Bulletin, "When a new bulletin goes up":** a field on the This week's bulletin block; until it is
   filled the pre-launch ask shows in its place.
 - **Signed in:** Contact was opened signed in on the live Studio (2026-10-26) and opens on the Page
@@ -320,7 +320,7 @@ The shots wanted:
 - Leadership: Jacob, head and shoulders (the Home photo works).
 - News and notes: a post's stand-in cover asks for "a photo that goes with this post" (optional).
 
-At launch, `PRE_LAUNCH_NOTES` false turns every box off: a slot whose stand-in was never replaced shows the
+At launch, `CLIENT_NOTES_ON` false turns every box off: a slot whose stand-in was never replaced shows the
 stand-in again, so delete or replace those first (the Facebook ones are `fbca-fb-*` uploads). Not covered:
 the round signer portrait in Who we are (hidden while empty; same photo as Meet Pastor Jacob).
 
@@ -328,8 +328,8 @@ the round signer portrait in Who we are (hidden while empty; same photo as Meet 
 
 **Blocker: Jacob's answers.** Every page carries marked placeholder copy ("[Placeholder: ...]" drafts and
 "[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
-(`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Since 2026-10-24 every photo slot shows a
-"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
+(`src/data/client-notes.ts`, `src/components/ClientNotes.astro`). Since 2026-10-24 every photo slot shows a
+"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `CLIENT_NOTES_ON` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 
@@ -833,6 +833,21 @@ check. Once the first sermon and news post are published and deployed:
   and run `npx playwright test tests/search.spec.ts`: the share half finds the sermon and news pages by itself.
 
 ## Known gaps, deliberately open
+
+### Forks of the starter's copies of Auburn's own pieces (opened 2026-10-27)
+
+Cards 186 to 198 took Auburn's work into the starter; Auburn then adopted the starter's copies where
+nothing on screen changed. These stayed Auburn's own, each with a "Fork of the starter's ..." header
+naming why: `src/scripts/flow.ts` and `src/styles/flow.css` (card 192: the starter holds the first
+screen still and has no brick unit), `PhotoHero.astro` and `photo-hero.css` (card 189: different
+frame and shade), `ShotRequest.astro` and `ClientNotes.astro` (card 195: Auburn's ink, wording and
+classes), `scripts/lib/svg-path-compact.test.mjs` (card 197: the starter's every-SVG check tells -0
+from 0 on Auburn's logos). Not adopted at all: the form builder's `site-form.ts` (card 194; Auburn's
+`church-form.ts` keeps the "Prayer request" naming), business facts and the latest-video block
+(cards 196 and 197; Auburn keeps church facts and `church-video.ts`), `photo-hero.ts`, `HeroVideo.astro`,
+`FlowMotion.astro`, and the where-next rows and action bar as Site settings (card 191; Auburn keeps its
+tables; moving them needs a dataset write). Revisit when the starter's copies grow the hooks Auburn
+needs (a first-screen option and a lay unit in `flow.ts`), and when a starter fix lands in one of them.
 
 ### Card 137 on Auburn: map the tours and record the clips (opened 2026-10-19)
 

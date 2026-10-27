@@ -294,7 +294,7 @@ export const DEFAULT_SERMONS_SECTIONS: PageBuilderBlock[] = [
   },
   {
     _type: 'watchSection',
-    // This key gives the heading the id #sermons-watch-heading (src/lib/section-anchors.ts).
+    // This key gives the heading the id #sermons-watch-heading (src/lib/church-anchors.ts).
     _key: 'sermons-watch',
     eyebrow: 'Sundays, wherever you are',
     heading: 'Watch live, or catch up',

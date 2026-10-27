@@ -3,7 +3,7 @@
 //
 // THE CONVENTION: wording that is ours, not Jacob's, sits in square brackets starting
 // "[Placeholder: ...]" (a draft he can react to) or "[Jacob: ...]" (something only he can write).
-// The site highlights both while PRE_LAUNCH_NOTES is on (src/data/for-jacob.ts). Doctrine is
+// The site highlights both while CLIENT_NOTES_ON is on (src/data/client-notes.ts). Doctrine is
 // Jacob's: What we believe carries asks only. Facts we do not know are asks, never guesses.
 //
 // Dry by default. Production needs --apply AND NCS_PRODUCTION_WRITE=yes (.claude/rules/data-scripts.md):

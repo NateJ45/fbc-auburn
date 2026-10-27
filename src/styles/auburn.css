@@ -7,6 +7,7 @@
 
 /* The sermon archive, people list and downloads shelf (2026-10-18). */
 @import './collections.css';
+@import './font-fallbacks.css';
 
 /* The two text fonts' Latin faces, from src/assets/fonts. Vite hashes their names, so they are cached
    for a year (DEV-M7, 2026-10-25), and BaseLayout preloads the same hashed URLs through a ?url
@@ -36,29 +37,9 @@
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Metric-matched stand-ins for Young Serif while it loads (re-audit 2026-10-26). Without them a phone
-   drew a page title in plain Georgia, one line, then rewrapped it to two when Young Serif arrived
-   (layout shift about 0.05 on five inner pages). Each face is a local serif scaled to Young Serif's
-   average letter width and given its ascent and descent, so the fallback title breaks where the
-   real one will. Numbers from the fonts' own tables (capsize's method: advance widths weighted by
-   English letter frequency; hhea ascent 1046, descent 366 on a 1000 unit em). Second in the
-   display stack (globals.css --font-display, brand.config.json). The preload stays. */
-@font-face {
-  font-family: 'Young Serif Fallback';
-  src: local('Georgia');
-  size-adjust: 114.71%;
-  ascent-override: 91.19%;
-  descent-override: 31.91%;
-  line-gap-override: 0%;
-}
-@font-face {
-  font-family: 'Young Serif Fallback Times';
-  src: local('Times New Roman'), local('Times');
-  size-adjust: 125.58%;
-  ascent-override: 83.3%;
-  descent-override: 29.15%;
-  line-gap-override: 0%;
-}
+/* The metric-matched stand-ins for Young Serif while it loads (re-audit 2026-10-26) are generated
+   since 2026-10-27: src/styles/font-fallbacks.css, written by npm run font-fallback (PORTS.md card
+   188), imported at the top of this file. */
 
 /* Lining figures for every numeral (re-audit 2026-10-26). Young Serif's default figures are
    old-style, so "11:00" read like "II:00" in the times band, on Events and in phone numbers. One
