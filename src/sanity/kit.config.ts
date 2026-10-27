@@ -810,6 +810,24 @@ export const kitConfig: KitConfig = {
     helpPanel: true,
     // Card 123: "Before you publish", the Checkup for the open document.
     publishPanel: true,
+    // Card 176: the People tool, for administrators (docs/agent/studio-people.md).
+    people: true,
+  },
+
+  // The People tool (starter card 176). Free for good (Nathan, 2026-10-26):
+  // Helper stays greyed out even while a Growth trial lists the Editor role, so
+  // nobody is invited into a role that turns read-only when the trial ends.
+  // Helpers are invited as Administrators and given the Simple view (card 175).
+  // Set 'auto' only if the church moves to a paid plan.
+  people: {
+    plan: 'free',
+    roles: {
+      helper: {
+        description:
+          'Can edit pages, sermons and notices and publish them. Sees the simple view of the Studio and cannot delete anything for good.',
+      },
+    },
+    lead: 'Invite a deacon, a secretary or a volunteer. Sanity, the company that runs this editor, emails them a link to join.',
   },
 };
 

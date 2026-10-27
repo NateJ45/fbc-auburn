@@ -58,8 +58,8 @@ The self-serve additions are merged and live (#205, #206, #212; changelog 2026-1
   invite signed in. Until then the tool shows Jacob the manual steps at sanity.io/manage.
 - **Sanity plan: Free** (decided 2026-10-26). Free has Administrator and Viewer only, so the People
   tool invites helpers as Administrators (Helper stays greyed out with its explanation) and they get
-  the full Studio, because the staff view applies to non-admins. Optional: let the People tool mark a
-  helper so the simple view applies to that admin too (needs a starter card for `studio-kit.ts`).
+  the full Studio unless the People tool's Simple view switch is on for them (starter cards 175 and
+  176). Add `studioStaff` to the live publish webhook's filter so a Simple view change rebuilds.
 - **Form addresses:** migration `0005_form_recipients.sql` applies with the other four when the form
   database is created (`wrangler.jsonc` still has the placeholder binding; see 1v). A new address must
   also be verified in Cloudflare Email Sending.
@@ -67,12 +67,10 @@ The self-serve additions are merged and live (#205, #206, #212; changelog 2026-1
 - **QR codes:** remake any printed before the domain cutover; they point at the workers.dev address.
 - **Not seen signed in:** the People, Short links, QR, form-address and A different Sunday panels in
   `/studio` (unit-tested and audited only). Try each once signed in.
-- **Ports to the starter** (each with a card): staff view by role (patch kept in the session
-  scratchpad; `studio-kit.ts` is PORTABLE), the People tool, build-time share cards and the brand icon
-  set, popups, short links and the QR action, the embed registry (could fold into `build-csp.mjs`),
-  form recipients in D1 and `/api/contact/`'s D1 lookup, the date and multi question kinds, `buildIcs`
-  exception fields, URL-based social icons, and the reword of `_seoFields.ts` "Leave blank to use the
-  site default" (share cards are generated now).
+- **Starter card 174 (form recipients in D1, `/api/contact/`'s D1 lookup) is held:** presacademy
+  carries the same PORTABLE `contact.ts` and sync-checks the live starter, so merging the card turns its next
+  PR red unless presacademy takes the two files in the same pass (branch `sync/starter-card-174` is ready).
+  The other self-serve ports landed 2026-10-26 as starter cards 167 to 172 and 175 to 177.
 
 ### 1zu. Millville and WhatsApp: apply one script, and the church's WhatsApp link (opened 2026-10-26)
 

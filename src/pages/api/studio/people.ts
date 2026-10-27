@@ -1,6 +1,7 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Foundation, edit with care
 // =============================================================================
-// /api/studio/people/ - "Invite a helper" in the Studio's People tool (2026-10-26)
+// /api/studio/people/ - the Studio's People tool (PORTS.md card 176)
 // =============================================================================
 // GET lists the project's members and pending invitations; POST invites a
 // Helper or an Administrator, or resends or cancels an invitation. Protected
@@ -14,7 +15,8 @@
 //   SANITY_MEMBERS_TOKEN  (`npx wrangler secret put SANITY_MEMBERS_TOKEN`)
 // Without it the route answers { configured: false } and the tool shows the
 // sanity.io/manage steps instead. Administrator invites use the caller's own
-// session (Sanity lets only administrators invite administrators).
+// session (Sanity lets only administrators invite administrators). The token is
+// never sent to the browser and never logged.
 //
 // Every rule is in src/lib/studio-people.ts, where the unit tests reach it.
 // =============================================================================
@@ -24,9 +26,6 @@ import { handlePeople } from '@/lib/studio-people';
 import { bearerToken, isSameOrigin, verifyStudioUser } from '@/lib/studio-auth';
 
 export const prerender = false;
-
-/** Who the pastor asks; matches kitConfig.helper.name (not imported: it pulls in the Studio). */
-const HELPER_NAME = 'Nathan';
 
 const handler: APIRoute = async ({ request }) =>
   handlePeople(request, {
@@ -38,7 +37,6 @@ const handler: APIRoute = async ({ request }) =>
     },
     membersToken: (env as unknown as { SANITY_MEMBERS_TOKEN?: string }).SANITY_MEMBERS_TOKEN,
     projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
-    helperName: HELPER_NAME,
   });
 
 export const GET = handler;
