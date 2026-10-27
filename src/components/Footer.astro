@@ -52,6 +52,7 @@ import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
 import SundayBar from '@/components/church/SundayBar.astro';
 import SundayChange from '@/components/church/SundayChange.astro';
+import { publicPath } from '@/lib/page-path';
 
 interface NewsletterConfig {
   enabled?: boolean;
@@ -171,8 +172,9 @@ const hasTouch = !!(
 // rest), the verse runs on Home only, and the This Sunday panel shows only where nothing above it
 // already gives the Sunday times. The where-next rows give way to a page's own closing band (CSS:
 // .where-next in WhereNext.astro hides when <main> holds a [data-final-cta]).
-const path = Astro.url.pathname;
-const here = path.endsWith('/') ? path : `${path}/`;
+// The live path, so the draft preview draws the same footer as the page it previews.
+const path = publicPath(Astro.url.pathname);
+const here = path;
 const isHome = here === '/';
 // Pages whose own content leads with the Sunday times and address. Other pages that show a
 // This Sunday card or the times band ([data-this-sunday], [data-service-times], .times-band-wrap)
@@ -215,7 +217,7 @@ const hasCalendar =
   <Sill class="site-footer__sill" />
 
   {/* Where next (2026-10-24): three big rows so no page is a dead end (WhereNext.astro). */}
-  <WhereNext path={Astro.url.pathname} />
+  <WhereNext path={path} />
 
   {/* Home only (design audit H1 and L6, 2026-10-25): one signature moment, the same at both widths,
       instead of an 88px line ending every desktop page and nothing on a phone. */}

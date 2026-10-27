@@ -21,6 +21,8 @@
 // renamed heading simply loses its request.
 
 import { PRE_LAUNCH_NOTES } from './for-jacob.ts';
+import { publicPath } from '../lib/page-path.ts';
+import { splitStega } from '../lib/preview-stega.ts';
 
 export interface Shot {
   /** The shot, in a few words: what Jacob points the camera at. */
@@ -281,8 +283,12 @@ export function isStandInPhoto(img: unknown): boolean {
 
 // American spelling (audit 2026-10-25): a heading still spelled "neighbours" in the Studio finds the
 // same shot as the renamed one.
+// The path is the LIVE one and the heading is cleaned of stega, so the draft preview
+// (`/preview/...`, every heading carrying click-to-edit markers) finds the same shots.
 const keyOf = (path: string, heading: string) =>
-  `${path.endsWith('/') ? path : `${path}/`}|${heading.trim().replace(/neighbour/gi, 'neighbor')}`;
+  `${publicPath(path)}|${splitStega(heading)
+    .cleaned.trim()
+    .replace(/neighbour/gi, 'neighbor')}`;
 
 /** Every shot asked for on one page, in slot order. */
 export function shotsForPage(path: string): Shot[] {

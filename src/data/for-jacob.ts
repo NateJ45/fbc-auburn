@@ -7,6 +7,8 @@
 // act on: a title, then a sentence on what we want and why. Photos are not listed here: the shot
 // list (src/data/shot-list.ts) adds one note per "Photo needed" box on the page.
 
+import { publicPath } from '../lib/page-path.ts';
+
 export const PRE_LAUNCH_NOTES = true;
 
 export interface JacobNote {
@@ -455,8 +457,7 @@ const NOTES: Record<string, JacobNote[]> = {
 
 /** The notes for a page path (with or without a trailing slash). */
 export function notesFor(pathname: string): JacobNote[] {
-  const p = pathname.endsWith('/') ? pathname : `${pathname}/`;
-  return NOTES[p] ?? [];
+  return NOTES[publicPath(pathname)] ?? [];
 }
 
 /** Every page with notes, for the one-page list we send Jacob. */

@@ -24,6 +24,22 @@ test('a listed slot asks for its shot while empty or a stand-in, and yields to a
   assert.ok(shotFor('/leadership', 'Jacob Wysong', 0, undefined), 'path without a trailing slash');
 });
 
+test('the draft preview finds the same shots as the live page (2026-10-26)', () => {
+  // A heading in the preview carries a stega run of zero-width characters.
+  const zw = (...codes: number[]) => String.fromCharCode(...codes);
+  const stega =
+    'A place to belong' +
+    zw(0x200b, 0x200b, 0x200b, 0x200b) +
+    zw(0x200c, 0x200d, 0xfeff, 0x200b).repeat(6);
+  assert.deepEqual(
+    shotFor('/preview/', stega, 0, facebook),
+    shotFor('/', 'A place to belong', 0, facebook),
+  );
+  assert.ok(shotFor('/preview/leadership/', 'Jacob Wysong', 0, undefined));
+  assert.deepEqual(shotsForPage('/preview/'), shotsForPage('/'));
+  assert.ok(shotsForPage('/preview/').length > 0);
+});
+
 test('an unlisted slot, heading or index asks for nothing', () => {
   assert.equal(shotFor('/', 'Some new block', 0, facebook), null);
   assert.equal(shotFor('/', undefined, 0, facebook), null);
