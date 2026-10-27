@@ -59,7 +59,7 @@ const shot =
   video || phoneVideo ? null : shotFor(Astro.url.pathname, 'hero', 0, block.backgroundImage);
 // Before launch the shot's example clip (a stock Pexels video, shot-list.ts) plays the same way as a
 // real upload, over the example photo, so Home shows what the hero video will look like. It goes
-// with the shot request at launch (PRE_LAUNCH_NOTES), like the example photo.
+// with the shot request at launch (CLIENT_NOTES_ACTIVE), like the example photo.
 const clip =
   video ?? (shot?.video ? { url: exampleSrc(shot.video.file, 'mp4'), type: 'video/mp4' } : null);
 const phoneClip =

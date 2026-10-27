@@ -23,7 +23,7 @@ import { isSiteCodeRoute } from '@/lib/custom-code';
 import { resolveShareImage, type CardRequest } from '@/lib/og-card-marker';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-import ForJacob from '@/components/ForJacob.astro';
+import ClientNotes from '@/components/ClientNotes.astro';
 import SitePopup from '@/components/SitePopup.astro';
 import LiveBanner from '@/components/church/LiveBanner.astro';
 import Analytics from '@/components/Analytics.astro';
@@ -389,8 +389,8 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
     <Footer siteSettings={siteSettings} />
 
     {/* Pre-launch notes for the pastor: the "For Jacob" pill and the yellow placeholder marks.
-        Off at launch (PRE_LAUNCH_NOTES in src/data/for-jacob.ts). */}
-    <ForJacob />
+        Off at launch (CLIENT_NOTES_ACTIVE in src/data/client-notes.ts). */}
+    <ClientNotes />
 
     {/* The popup, when one is live for this page (SitePopup.astro has the rules). */}
     {showPopup && popup && <SitePopup popup={popup} />}

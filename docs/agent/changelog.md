@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-27: the client notes layer moved onto the starter's shape (PORTS.md card 195), nothing visible changed._ `ForJacob.astro` is `ClientNotes.astro`, `for-jacob.ts` is `client-notes.ts` (`PRE_LAUNCH_NOTES` is `CLIENT_NOTES_ON`, and `CLIENT_NOTES_ACTIVE` is that switch plus a pre-launch `site.url`), `Jacob` is in `MARKERS`, and the stand-in file rule is the exported `STAND_IN_FILE`. The pure rules are the starter's `src/lib/client-notes.ts` (adopted byte for byte, with its test). The component and `ShotRequest.astro` stay Auburn forks (own ink, wording and class names). Switching the site to its real domain now fails `client-notes.test.ts` until `CLIENT_NOTES_ON` is false, which stops the deploy.
+
 _2026-10-27: no blue brick left._ The Bible verse panel (`.cb-verse`) is the red wall (`tile-wall.svg`,
 pale quote mark `#F1D3C6`). Sermon art with no picture (`.c-art--blank`, three navy tones) and the
 play card (`.cb-play`) are flat navy, and the Stone look (`.surface-stone`) and sign-up panel

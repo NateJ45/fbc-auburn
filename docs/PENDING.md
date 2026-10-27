@@ -23,7 +23,7 @@ are Studio pages (`page-give`, `page-bulletin`; changelog 2026-10-26). Left:
 
 - **Give, "How gifts are cared for":** the section holds Jacob's four asks as text now (it was code
   that hid itself at launch). Before launch, answer them in the section or remove it in the Studio.
-  The payee ask moved into the Ways to give block (still behind `PRE_LAUNCH_NOTES`).
+  The payee ask moved into the Ways to give block (still behind `CLIENT_NOTES_ON`).
 - **Bulletin, "When a new bulletin goes up":** a field on the This week's bulletin block; until it is
   filled the pre-launch ask shows in its place.
 - **Signed in:** Contact was opened signed in on the live Studio (2026-10-26) and opens on the Page
@@ -320,7 +320,7 @@ The shots wanted:
 - Leadership: Jacob, head and shoulders (the Home photo works).
 - News and notes: a post's stand-in cover asks for "a photo that goes with this post" (optional).
 
-At launch, `PRE_LAUNCH_NOTES` false turns every box off: a slot whose stand-in was never replaced shows the
+At launch, `CLIENT_NOTES_ON` false turns every box off: a slot whose stand-in was never replaced shows the
 stand-in again, so delete or replace those first (the Facebook ones are `fbca-fb-*` uploads). Not covered:
 the round signer portrait in Who we are (hidden while empty; same photo as Meet Pastor Jacob).
 
@@ -328,8 +328,8 @@ the round signer portrait in Who we are (hidden while empty; same photo as Meet 
 
 **Blocker: Jacob's answers.** Every page carries marked placeholder copy ("[Placeholder: ...]" drafts and
 "[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
-(`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Since 2026-10-24 every photo slot shows a
-"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
+(`src/data/client-notes.ts`, `src/components/ClientNotes.astro`). Since 2026-10-24 every photo slot shows a
+"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `CLIENT_NOTES_ON` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 

@@ -231,7 +231,7 @@ a Live stream link or a YouTube channel id).
   church sketch faint in cream and the series, else the book, else its own title. `shapes.css` used to paint the
   Watch band's art beige over that ground; the tint now skips `.c-art--blank`.
 - Each sermon page lists Passage, Preacher, Series and Length; before launch a missing one shows a `[Jacob: ...]`
-  line in its place (`PRE_LAUNCH_NOTES`). YouTube plays in place; Facebook opens Facebook.
+  line in its place (`CLIENT_NOTES_ON`). YouTube plays in place; Facebook opens Facebook.
 - `/bulletin/` shows `bulletinToShow` (`src/lib/sermons.ts`): the newest current Bulletin, else the newest one even
   if it has come down, labelled "Last week's bulletin" when it is more than six days old, with a line saying when
   the next goes up (the block's "When a new bulletin goes up" field since 2026-10-26, when /bulletin/ became a Studio page; empty shows the ask before launch, nothing after).

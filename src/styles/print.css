@@ -104,7 +104,7 @@
   .watch-band__ghost {
     display: none !important;
   }
-  /* The placeholder highlight stays visible on paper until launch (ForJacob.astro). */
+  /* The placeholder highlight stays visible on paper until launch (ClientNotes.astro). */
   main .fj-mark,
   main .fj-block {
     background-color: #ffe46b !important;
