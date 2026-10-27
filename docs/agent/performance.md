@@ -36,6 +36,8 @@ A mobile run on Home scored 91 / 100 / 100 / 100. What it flagged and what chang
 
 ### FBC Auburn, the 2026-10-25 page-weight pass (site audit, DEV-M1, M2, M7, M8, L1, L10)
 
+Its checks live in `tests/page-checks.spec.ts` since 2026-10-27; `tests/page-weight.spec.ts` is now the starter's PORTABLE budget spec (PORTS.md card 197), reading `tests/page-weight.config.json` (Auburn's own numbers).
+
 Measured on `scripts/serve-dist.mjs` (brotli, the deploy's `/_astro/` caching), before and after,
 medians of three. "Lighthouse" is 12.x mobile (simulated slow 4G). "Throttled" is Playwright at
 375px, DPR 2, 1.6 Mbps / 150 ms RTT, CPU 4x, cache off; "next page" is a click through the page

@@ -34,7 +34,7 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
 
 ## Named anchors
 
-A section whose block key is in `src/lib/section-anchors.ts` gets that name as its heading id
+A section whose block key is in `src/lib/church-anchors.ts` gets that name as its heading id
 (SectionRenderer), with `scroll-margin-top` so the sticky header does not cover it
 (`src/styles/board.css`). Other sections keep their numbered ids.
 

@@ -1,7 +1,9 @@
 # The shape system and Find your place
 
 Added 2026-10-24. Two picture shapes and one brick slab make the church's own phone photos read as one
-designed family, and a Ministries hub built on them. Styles: `src/styles/shapes.css`. The hub block:
+designed family, and a Ministries hub built on them. Styles: `src/styles/shapes.css` (the class rules, the starter's PORTABLE copy since 2026-10-27,
+PORTS.md card 188) and `src/styles/shapes-auburn.css` (Auburn's values for its tokens: the gable cut, the red
+brick slab, the pale tile, the 1.08 zoom; and the rules that name the Watch band). Change a shape there. The hub block:
 `src/components/sections/FindYourPlace.astro`.
 
 ## The shapes

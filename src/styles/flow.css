@@ -1,4 +1,7 @@
 /* Safe to edit by hand.
+   Fork of the starter's src/styles/flow.css (PORTS.md card 192, which came from this file): kept
+   because the starter's copy keys every rule on html[data-motion] and drops Auburn's brick, verse,
+   sketch and hero-drift rules, so adopting it would change how Auburn moves.
    FBC Auburn: the flow layer (2026-10-24). The script that picks the units and runs the
    observer is src/scripts/flow.ts; docs/agent/animation.md ("The flow layer") has the map.
 

@@ -17,7 +17,7 @@
 // blocks (the times band, Contact details, the map).
 //
 // Section anchors (#the-gospel, #baptism, #kids, ...) come from the block keys this script uses;
-// the map is src/lib/section-anchors.ts. Keep the keys.
+// the map is src/lib/church-anchors.ts. Keep the keys.
 //
 // Dry by default. Production needs --apply AND NCS_PRODUCTION_WRITE=yes (.claude/rules/data-scripts.md):
 //   node scripts/content/audit-pages.mjs <backup-folder>

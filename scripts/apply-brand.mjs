@@ -456,12 +456,18 @@ function rewriteGlobalsCss(config) {
 }
 
 // ---- Rewrite: src/data/layout.ts ----------------------------------------
-// The `layout` block (header / hero / density / cards) is the structure axis.
+// The `layout` block (header / hero / density / cards / motion) is the structure axis.
 // Missing block or missing slots mean the defaults, which is the original
 // layout, so an older config reskins exactly as before. The file is generated
 // whole (no patterns to drift); values were already enum-checked by the schema.
 
-const LAYOUT_DEFAULTS = { header: 'inline', hero: 'bleed', density: 'standard', cards: 'standard' };
+const LAYOUT_DEFAULTS = {
+  header: 'inline',
+  hero: 'bleed',
+  density: 'standard',
+  cards: 'standard',
+  motion: 'reveal',
+};
 
 function rewriteLayoutTs(config) {
   const l = Object.assign({}, LAYOUT_DEFAULTS, config.layout || {});

@@ -1,4 +1,9 @@
 // Safe to edit by hand
+// Fork of the starter's src/scripts/flow.ts (PORTS.md card 192, which came from this file): kept
+// because adopting it would change Auburn's motion. The starter's copy is gated on layout.motion,
+// always holds the first screen still, and has no brick-laying unit; Auburn's animates the desktop
+// first screen on Home and the 404, lays the brick titles, sill and markers, slides the footer verse
+// and the This Sunday card, and makes the red buttons magnetic.
 // FBC Auburn: the flow layer (2026-10-24). Every section comes in as it reaches the reader:
 // headings rise line by line out of a mask, the words and pictures under them fade up in turn,
 // photographs settle from a slight zoom, the home hero drifts as it leaves, the footer verse

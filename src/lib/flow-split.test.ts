@@ -1,5 +1,5 @@
-// Safe to edit by hand
-// Pins the flow layer's word splitter (src/lib/flow-split.ts; audit 2026-10-25, DEV-H2).
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Pins the flow layer's word splitter (src/lib/flow-split.ts; PORTS.md card 192).
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { splitWords } from './flow-split.ts';

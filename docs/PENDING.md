@@ -834,6 +834,21 @@ check. Once the first sermon and news post are published and deployed:
 
 ## Known gaps, deliberately open
 
+### Forks of the starter's copies of Auburn's own pieces (opened 2026-10-27)
+
+Cards 186 to 198 took Auburn's work into the starter; Auburn then adopted the starter's copies where
+nothing on screen changed. These stayed Auburn's own, each with a "Fork of the starter's ..." header
+naming why: `src/scripts/flow.ts` and `src/styles/flow.css` (card 192: the starter holds the first
+screen still and has no brick unit), `PhotoHero.astro` and `photo-hero.css` (card 189: different
+frame and shade), `ShotRequest.astro` and `ClientNotes.astro` (card 195: Auburn's ink, wording and
+classes), `scripts/lib/svg-path-compact.test.mjs` (card 197: the starter's every-SVG check tells -0
+from 0 on Auburn's logos). Not adopted at all: the form builder's `site-form.ts` (card 194; Auburn's
+`church-form.ts` keeps the "Prayer request" naming), business facts and the latest-video block
+(cards 196 and 197; Auburn keeps church facts and `church-video.ts`), `photo-hero.ts`, `HeroVideo.astro`,
+`FlowMotion.astro`, and the where-next rows and action bar as Site settings (card 191; Auburn keeps its
+tables; moving them needs a dataset write). Revisit when the starter's copies grow the hooks Auburn
+needs (a first-screen option and a lay unit in `flow.ts`), and when a starter fix lands in one of them.
+
 ### Card 137 on Auburn: map the tours and record the clips (opened 2026-10-19)
 
 The tour engine, the clip player, the job kinds and the capture scripts are in (PORTS.md card 137). `src/sanity/studio-tours.ts` now holds Auburn's own tours (mapped 2026-10-19). Still to do at launch: try each tour signed in (the anchors on documents and the newsletter's send step were not checked against the live Studio), then record the clips (`tools/tutorial-videos/`), fill `src/sanity/guides/videos.ts`, and capture the shots (`tools/guide-shots/shots.json`). Detail: `docs/agent/studio-kit.md` "Spotlight tours".

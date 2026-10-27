@@ -64,11 +64,11 @@ import { isChurchBlock } from '@/lib/churchBlocks.types';
 import BuilderBlock from '@/components/builder-blocks/BuilderBlock.astro';
 import { isBuilderBlock } from '@/lib/builderBlocks.types';
 import { LOOKS_BY_TYPE } from '@/lib/section-looks';
-import { anchorFor } from '@/lib/section-anchors';
+import { anchorFor } from '@/lib/church-anchors';
 import { getSiteSettings } from '@/lib/queries';
 import { resolveSiteSettings } from '@/lib/siteSettings';
-import { ctaHref, type CtaTarget } from '@/lib/cta-href';
-import { repeatsHeaderCta } from '@/lib/red-budget';
+import { ctaHref, type CtaTarget } from '@/lib/church-cta-href';
+import { repeatsHeaderCta } from '@/lib/cta-budget';
 import type { CadenceSurface } from '@/lib/surfaces';
 
 interface Props {
@@ -123,7 +123,7 @@ const lightSurface = (s: string | null): 'background' | 'muted' =>
 const blockSurface = (type: string, s: CadenceSurface | null): CadenceSurface =>
   LOOKS_BY_TYPE[type] ? (s ?? 'background') : lightSurface(s);
 
-// A section with a named anchor (src/lib/section-anchors.ts, site audit 2026-10-25) takes the name
+// A section with a named anchor (src/lib/church-anchors.ts, site audit 2026-10-25) takes the name
 // as its heading id, so /what-we-believe/#the-gospel lands on it; the rest keep the numbered id.
 const rows = classifySections<PageBuilderBlock>(
   expandSyncedSections(sections as PageBuilderBlock[]),

@@ -1,13 +1,13 @@
-// Safe to edit by hand
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
 // =============================================================================
-// page-path — the public address of the page being rendered (2026-10-26)
+// page-path: the public address of the page being rendered (PORTS.md card 187)
 // =============================================================================
 // The draft preview renders the same components as the live site, but at
-// `/preview/...`: Home is `/preview/`, Ministries is `/preview/ministries/`.
-// Anything that looks a page up BY ITS ADDRESS (the shot list, the For Jacob
-// notes, the header's and footer's "is this Home?") found nothing there, so the
-// preview quietly drew a different page: no "Photo needed" requests, no example
-// hero video, no Home-only footer verse. Every such lookup goes through
+// `/preview/...`: Home is `/preview/`, About is `/preview/about/`. Anything that
+// looks a page up BY ITS ADDRESS (a per-page note, a "this is Home" check, a
+// "leave the page you are on out of the list" row) finds nothing there, so the
+// preview quietly draws a different page. Every such lookup goes through
 // `publicPath()`, which is the identity on live pages.
 // =============================================================================
 

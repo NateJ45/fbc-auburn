@@ -56,7 +56,8 @@
     "gen:stones": "node scripts/gen-stones.mjs",
     "gen:letters": "node scripts/gen-brick-font.mjs",
     "gen:mark": "node scripts/gen-mark-bricks.mjs",
-    "search:index": "node scripts/build-search-index.mjs"
+    "search:index": "node scripts/build-search-index.mjs",
+    "font-fallback": "node scripts/font-fallback.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.4.0",

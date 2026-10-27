@@ -1,4 +1,7 @@
 /* Safe to edit by hand.
+   Fork of the starter's src/styles/photo-hero.css (PORTS.md card 189, which came from this file):
+   kept because the starter's copy draws a different frame (its own shade tokens, phone band and
+   .ph- markup); Auburn's Home hero and banners would change. src/lib/hero-video.ts is the shared copy.
    The photo hero (PhotoHero.astro): a full-width photograph with white words over it. Home opens
    on it (HomeHero.astro, 2026-10-23), and since 2026-10-26 any page whose opening banner is set to
    "Photo behind the words" does too (Hero.astro). Moved here verbatim from home-board.css, in the

@@ -1,4 +1,9 @@
 // The path compactor must keep every point exactly where it was (svg-path-compact.mjs).
+// Fork of the starter's scripts/lib/svg-path-compact.test.mjs (PORTS.md card 197): kept because the
+// starter's every-SVG check compares with strict deepEqual, which tells -0 from 0, and Auburn's logo
+// files (src/assets/logo-*.svg, brand/logo/*) have five quadratic segments whose absolute y is -0
+// before compacting and 0 after: the same point. The compactor itself (svg-path-compact.mjs) is the
+// shared copy.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

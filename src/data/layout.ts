@@ -8,4 +8,5 @@ export const layout = resolveLayout({
   hero: 'split',
   density: 'airy',
   cards: 'soft',
+  motion: 'reveal',
 });
