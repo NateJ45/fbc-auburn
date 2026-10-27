@@ -1,5 +1,13 @@
 # Change history
 
+_2026-10-27: the numbered bricks are red too._ Home's "Your first Sunday" bricks (`.hb-walk__stone`
+in `src/styles/home-board.css`) and the Studio's numbered steps (`brand.config.json`
+`studio.look.markColors`) move from navy to the slab's two red tones, `#6A2B20` and `#7A3326`
+(white numerals 10.6 and 9.0 to 1). The connectors stay light navy. The last pebbles went the same day:
+the phone menu's "you are here" marker (`auburn.css`), the timeline stops (`.cb-moment__stone`, now
+printed bricks in the two red tones), the gold tab over beliefs, columns and link cards (a small
+printed brick) and the Affiliations initial (a 4px tile) in `church-blocks.css`.
+
 _2026-10-27: the brick slab is red._ The wall behind ImageText and Event details photos (`.shape-slab`
 in `src/styles/shapes.css`) was navy brick, so every colour on those pages but the one button was blue.
 It now uses `tile-wall.svg`, a new `wall` tile in `scripts/gen-stones.mjs`: red brick a step darker and

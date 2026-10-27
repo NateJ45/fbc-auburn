@@ -191,7 +191,7 @@
         "width": 78,
         "height": 36
       },
-      "markColors": ["#1F3A5F", "#2C4F7C", "#1F3A5F", "#2C4F7C"],
+      "markColors": ["#6A2B20", "#7A3326", "#6A2B20", "#7A3326"],
       "stone": "brick",
       "stoneFlecks": "/studio-banner/print-flecks.svg",
       "connector": {

@@ -374,7 +374,7 @@
   position: relative;
 }
 /* Numbered bricks (2026-10-21, the brick brand): the mark's course with a numeral on it,
-   alternating auburn and navy. Printed like every brick since 2026-10-23: a darker rim all round,
+   in two tones of red brick. Printed like every brick since 2026-10-23: a darker rim all round,
    heavier along the bottom, and the linocut flecks (src/assets/textures/print-flecks.svg, from
    npm run gen:stones) over the colour. */
 .hb-walk__stone {
@@ -396,14 +396,16 @@
   line-height: 1;
   color: #ffffff;
 }
-/* Navy bricks, two tones (audit 2026-10-25, GD-H2: auburn is kept for the mark and the one button). */
+/* Red bricks, two tones from the slab's wall (2026-10-27: brick is red wherever it is drawn as
+   brick; navy from the 2026-10-25 audit until then). A step darker than the auburn button, so the
+   button stays the one red action. White numerals: 10.6 and 9.0 to 1. */
 .hb-walk__stone--0,
 .hb-walk__stone--2 {
-  background-color: #1f3a5f;
+  background-color: #6a2b20;
 }
 .hb-walk__stone--1,
 .hb-walk__stone--3 {
-  background-color: #2c4f7c;
+  background-color: #7a3326;
 }
 /* The site's one step connector (GD-M4): a 2px dashed line, 10px dashes, in light navy. */
 .hb-walk__step:not(:last-child)::after {
