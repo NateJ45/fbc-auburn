@@ -239,3 +239,19 @@ export function withoutNotes(c: Content): Content {
     when: c.when?.map((w) => strip(w) ?? '').filter(Boolean),
   };
 }
+
+/**
+ * The standing invitation, the regular Sunday gatherings ("Worship, 11:00 am"), for the foot of a
+ * graphic about something else (an event, a sermon, a notice), so every piece says when to come.
+ * Kinds already about Sunday carry their own times and get none.
+ */
+export function standingFor(
+  facts: Pick<ChurchFacts, 'serviceTimes'>,
+  kind: Content['kind'],
+): string[] | undefined {
+  if (kind === 'sunday' || kind === 'time-change' || kind === 'welcome') return undefined;
+  const sunday = facts.serviceTimes
+    .filter((s) => s.dayIndex === 0)
+    .sort((a, b) => a.minutes - b.minutes);
+  return sunday.length ? gatheringLines(sunday) : undefined;
+}

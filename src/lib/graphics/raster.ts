@@ -96,8 +96,9 @@ export function fileName(formatId: string, title: string, ext = 'png'): string {
   const slug = title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, 40);
+    .slice(0, 40)
+    // Trimmed after the cut, so a name never ends "-on-the-".
+    .replace(/^-+|-+$/g, '');
   return `${formatId}${slug ? `-${slug}` : ''}.${ext}`;
 }
 

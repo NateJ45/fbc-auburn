@@ -6,6 +6,9 @@
 
 import type { Church, Content, Kind } from './types.ts';
 
+/** The regular Sunday gatherings, as the foot of the other kinds prints them. */
+const STANDING = ['Sunday School, 9:45 am', 'Worship, 11:00 am'];
+
 export const SAMPLE_CHURCH: Church = {
   line1: 'First Baptist',
   line2: 'Church of Auburn',
@@ -26,6 +29,7 @@ export const SAMPLES: Record<Kind, Content> = {
   },
   event: {
     kind: 'event',
+    standing: STANDING,
     kicker: 'Christmas Eve',
     title: 'Candlelight service',
     body: 'Carols, the Christmas story and candles. Children welcome. About an hour.',
@@ -36,6 +40,7 @@ export const SAMPLES: Record<Kind, Content> = {
   },
   sermon: {
     kind: 'sermon',
+    standing: STANDING,
     kicker: 'Sermon series',
     title: 'The Sermon on the Mount',
     reference: 'Matthew 5 to 7',
@@ -45,12 +50,14 @@ export const SAMPLES: Record<Kind, Content> = {
   },
   verse: {
     kind: 'verse',
+    standing: STANDING,
     title: 'Come to me, all of you who are weary and burdened, and I will give you rest.',
     reference: 'Matthew 11:28',
     translation: 'CSB',
   },
   announcement: {
     kind: 'announcement',
+    standing: STANDING,
     kicker: 'Church family',
     title: 'Trunk or Treat',
     body: 'Bring a decorated car and a bag of candy. Hot dogs and cider in the fellowship hall.',

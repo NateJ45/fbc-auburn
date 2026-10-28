@@ -13,8 +13,7 @@ mkdirSync(out, { recursive: true });
 const bi = process.argv.indexOf('--base');
 const base = bi > 0 ? process.argv[bi + 1] : 'http://localhost:4321';
 const dirs = (
-  (process.argv[3] && !process.argv[3].startsWith('--') ? process.argv[3] : '') ||
-  'night,porch,press'
+  (process.argv[3] && !process.argv[3].startsWith('--') ? process.argv[3] : '') || 'porch,press'
 ).split(',');
 const kinds = ['sunday', 'event', 'sermon', 'verse', 'announcement', 'time-change', 'welcome'];
 const b = await chromium.launch();
@@ -31,7 +30,16 @@ for (const d of dirs)
         null,
         { timeout: 120000 },
       );
-      await p.waitForTimeout(800);
+      // Every preview decoded (the big print sizes take longest).
+      await p.waitForFunction(
+        () =>
+          [...document.querySelectorAll('.gw-item img')].every(
+            (i) => i.complete && i.naturalWidth > 0,
+          ),
+        null,
+        { timeout: 120000 },
+      );
+      await p.waitForTimeout(500);
       const el = await p.$('.gw-dir');
       await el.screenshot({ path: `${out}/${d}-${k}${ph === '1' ? '-photo' : ''}.png` });
     }

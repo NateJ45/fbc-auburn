@@ -42,6 +42,11 @@ export interface Content {
   body?: string;
   /** When, already worded from Church facts: one gathering per line ("Worship, 10:30 am"). */
   when?: string[];
+  /**
+   * The standing invitation, worded like `when` ("Worship, 11:00 am"): the regular Sunday
+   * gatherings, printed small in the foot of kinds that are not about Sunday themselves.
+   */
+  standing?: string[];
   /** The date line for an event or a time change ("Sunday, December 21"). */
   date?: string;
   /** A Bible reference (the verse's, or the sermon's passage). */

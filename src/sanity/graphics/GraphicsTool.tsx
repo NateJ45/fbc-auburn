@@ -33,7 +33,7 @@ import {
   type Format,
   type FormatGroup,
 } from '../../lib/graphics/formats';
-import { DEFAULT_DIRECTION } from '../../lib/graphics/directions';
+import { DEFAULT_DIRECTION, DIRECTIONS, LOOK_NAMES } from '../../lib/graphics/directions';
 import { ASSETS } from '../../lib/graphics/assets';
 import {
   canvasMeasure,
@@ -57,6 +57,7 @@ import {
   welcomeContent,
   hasNotes,
   withoutNotes,
+  standingFor,
 } from '../../lib/graphics/content';
 import type { Content, Ctx, Kind, Photo } from '../../lib/graphics/types';
 import { KitAction, KitLoading, KitNotice, KitScope, TileCard, ToolHead } from '../kit/ui';
@@ -72,7 +73,7 @@ const KINDS: { kind: Kind; title: string; lead: string; meaning: BrandIconKey }[
     kind: 'sunday',
     title: 'Join us this Sunday',
     lead: 'This Sunday’s times, from Church facts.',
-    meaning: 'service',
+    meaning: 'place',
   },
   {
     kind: 'event',
@@ -172,6 +173,9 @@ export function GraphicsTool() {
   const [photoId, setPhotoId] = useState<string | null>(null);
   const [photo, setPhoto] = useState<Photo | undefined>(undefined);
   const [busy, setBusy] = useState('');
+  const [photoCount, setPhotoCount] = useState(12);
+  const [lookId, setLookId] = useState(DEFAULT_DIRECTION.id);
+  const look = DIRECTIONS.find((d) => d.id === lookId) ?? DEFAULT_DIRECTION;
   const measureRef = useRef<Ctx['measure'] | null>(null);
 
   // Fonts (for measuring) and the church's facts, once.
@@ -382,12 +386,16 @@ export function GraphicsTool() {
 
   const drawn = useMemo(() => {
     if (!ctx || !content) return [];
-    const c = { ...withoutNotes(content), photo };
+    const c = {
+      ...withoutNotes(content),
+      photo,
+      standing: facts ? standingFor(facts, content.kind) : undefined,
+    };
     return sizes
       .map((id) => FORMAT_BY_ID[id])
       .filter(Boolean)
-      .map((f) => ({ format: f, ...DEFAULT_DIRECTION.render(c, f, ctx) }));
-  }, [ctx, content, photo, sizes]);
+      .map((f) => ({ format: f, ...look.render(c, f, ctx) }));
+  }, [ctx, content, photo, sizes, look, facts]);
 
   // Object URLs for the previews, revoked when they change.
   const urls = useMemo(() => drawn.map((d) => svgUrl(d.svg)), [drawn]);
@@ -397,7 +405,7 @@ export function GraphicsTool() {
     setBusy(`Saving the ${f.label.toLowerCase()}`);
     try {
       const blob = await svgToPng(svg, f);
-      download(blob, fileName(f.id, content?.title ?? ''));
+      download(blob, fileName(f.id, content ? withoutNotes(content).title : ''));
     } catch (e) {
       setError(String((e as Error)?.message ?? e));
     } finally {
@@ -412,14 +420,41 @@ export function GraphicsTool() {
     }
   }
 
+  // What is actually drawn: the words without any pre-launch note.
+  const drawnTitle = content ? withoutNotes(content).title.trim() : '';
+  const canSave = !busy && !!drawnTitle;
+  // The sizes the words are too long for, said once beside the headline.
+  const tooLong = drawn.filter((d) => d.warnings.length).map((d) => d.format.label);
+
+  // Phone and tablet: share straight to Photos or Facebook when the browser can share files.
+  const canShare =
+    typeof navigator !== 'undefined' &&
+    typeof navigator.canShare === 'function' &&
+    navigator.canShare({ files: [new File([''], 'x.png', { type: 'image/png' })] });
+  async function share(svg: string, f: Format) {
+    setBusy(`Getting the ${f.label.toLowerCase()} ready`);
+    try {
+      const blob = await svgToPng(svg, f);
+      const file = new File([blob], fileName(f.id, drawnTitle), { type: 'image/png' });
+      await navigator.share({ files: [file], title: drawnTitle });
+    } catch (e) {
+      // Closing the share sheet is not an error.
+      if ((e as Error)?.name !== 'AbortError') setError(String((e as Error)?.message ?? e));
+    } finally {
+      setBusy('');
+    }
+  }
+
   // Times that come from Church facts but are not ticked Confirmed (the site shows "To confirm").
   const unconfirmed =
     !!facts &&
     (kind === 'sunday' || kind === 'welcome' || kind === 'time-change') &&
     facts.serviceTimes.some((t) => !t.confirmed);
 
-  const set = (k: keyof Content) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setContent((c) => (c ? { ...c, [k]: e.currentTarget.value } : c));
+  const set = (k: keyof Content) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const v = e.currentTarget.value;
+    setContent((c) => (c ? { ...c, [k]: v } : c));
+  };
 
   // ── Screens ────────────────────────────────────────────────────────────────
 
@@ -561,6 +596,11 @@ export function GraphicsTool() {
                   value={content.title}
                   limit={titleLimit}
                 >
+                  {tooLong.length > 0 && (
+                    <Text size={1} style={{ color: '#7E2E20' }}>
+                      Too long for {tooLong.join(', ')}. Fewer words read bigger.
+                    </Text>
+                  )}
                   {isVerse ? (
                     <TextArea
                       id="gfx-title"
@@ -596,6 +636,34 @@ export function GraphicsTool() {
                         id="gfx-tr"
                         value={content.translation ?? ''}
                         onChange={set('translation')}
+                      />
+                    </Field>
+                  </Grid>
+                )}
+                {kind === 'sermon' && (
+                  <Grid gridTemplateColumns={[1, 2]} gap={3}>
+                    <Field
+                      label="Passage (optional)"
+                      hint="Like Matthew 5:1-12."
+                      value={content.reference ?? ''}
+                      limit={32}
+                    >
+                      <TextInput
+                        id="gfx-passage"
+                        value={content.reference ?? ''}
+                        onChange={set('reference')}
+                      />
+                    </Field>
+                    <Field
+                      label="Preacher (optional)"
+                      hint="Like Pastor Jacob Wysong."
+                      value={content.speaker ?? ''}
+                      limit={36}
+                    >
+                      <TextInput
+                        id="gfx-speaker"
+                        value={content.speaker ?? ''}
+                        onChange={set('speaker')}
                       />
                     </Field>
                   </Grid>
@@ -657,7 +725,7 @@ export function GraphicsTool() {
                 )}
                 {content.link && (
                   <Text size={1} muted>
-                    Points people to <strong>{content.link}</strong>
+                    Points people to <strong className="gfx-link">{content.link}</strong>
                     {content.qr ? '. Print sizes carry a code to scan.' : '.'}
                   </Text>
                 )}
@@ -665,131 +733,180 @@ export function GraphicsTool() {
             )}
           </Stack>
 
-          {/* ── The previews ── */}
-          <Stack gap={4} className="gfx-previews">
-            {drawn.length > 1 && (
-              <Flex gap={2}>
-                <KitAction
-                  strong
-                  onClick={() => void saveAll()}
-                  disabled={!!busy || !content?.title.trim()}
-                >
-                  Download all {drawn.length}
-                </KitAction>
-              </Flex>
-            )}
-            {drawn.length === 0 && (
-              <Text size={1} muted>
-                Tick a size to see it here.
-              </Text>
-            )}
-            <div className="gfx-grid">
-              {drawn.map((d, i) => (
-                <figure key={d.format.id} className="gfx-card">
-                  <img src={urls[i]} alt={`${d.format.label} preview`} />
-                  <figcaption>
-                    <span className="gfx-card__name">{d.format.label}</span>
-                    {d.warnings.map((w) => (
-                      <span key={w} className="gfx-card__warn">
-                        {w}
-                      </span>
-                    ))}
-                    <Flex gap={2} wrap="wrap">
-                      <KitAction
-                        onClick={() => void save(d.svg, d.format)}
-                        disabled={!!busy || !content?.title.trim()}
+          {content && (
+            <Stack gap={5} className="gfx-options">
+              {/* Photo */}
+              <Stack gap={3}>
+                <Text size={1} weight="semibold">
+                  Photo (optional)
+                </Text>
+                <Text size={1} muted>
+                  A real photo of your church and people beats any stock picture.
+                </Text>
+                {photo && (
+                  <Flex gap={3} align="center">
+                    <img className="gfx-picked" src={photo.src} alt="The photo in use" />
+                    <KitAction quiet onClick={() => void pickPhoto(null)}>
+                      Remove the photo
+                    </KitAction>
+                  </Flex>
+                )}
+                <Flex gap={2} wrap="wrap">
+                  <KitAction onClick={() => void loadAssets()}>
+                    Choose from the Studio’s photos
+                  </KitAction>
+                  <label className="ui-action gfx-upload">
+                    Upload a photo
+                    <input type="file" accept="image/*" onChange={(e) => void upload(e)} />
+                  </label>
+                </Flex>
+                {assets && (
+                  <div className="gfx-photos" role="list">
+                    {assets.slice(0, photoCount).map((a) => (
+                      <button
+                        key={a._id}
+                        type="button"
+                        role="listitem"
+                        className="gfx-photo"
+                        aria-pressed={photoId === a._id}
+                        onClick={() => void pickPhoto(a._id)}
                       >
-                        Download
-                      </KitAction>
-                      {d.format.print && (
-                        <KitAction
-                          quiet
-                          onClick={() =>
-                            void printGraphic(d.svg, d.format, content?.title ?? '').catch((e) =>
-                              setError(String(e?.message ?? e)),
-                            )
-                          }
-                        >
-                          Print or save as PDF
-                        </KitAction>
-                      )}
-                    </Flex>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </Stack>
+                        <img
+                          src={`${a.url}?w=200&h=200&fit=crop&auto=format`}
+                          alt=""
+                          loading="lazy"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {assets && assets.length > photoCount && (
+                  <KitAction quiet onClick={() => setPhotoCount((n) => n + 12)}>
+                    Show more photos
+                  </KitAction>
+                )}
+              </Stack>
 
-          <Stack gap={5} className="gfx-options">
-            {/* Photo */}
-            <Stack gap={3}>
-              <Text size={1} weight="semibold">
-                Photo (optional)
-              </Text>
-              <Text size={1} muted>
-                A real photo of your church and people beats any stock picture.
-              </Text>
-              <Flex gap={2} wrap="wrap">
-                <KitAction onClick={() => void pickPhoto(null)} strong={!photoId}>
-                  No photo
-                </KitAction>
-                <KitAction onClick={() => void loadAssets()}>
-                  Choose from the Studio’s photos
-                </KitAction>
-                <label className="ui-action gfx-upload">
-                  Upload a photo
-                  <input type="file" accept="image/*" onChange={(e) => void upload(e)} />
-                </label>
-              </Flex>
-              {assets && (
-                <div className="gfx-photos" role="list">
-                  {assets.map((a) => (
-                    <button
-                      key={a._id}
-                      type="button"
-                      role="listitem"
-                      className="gfx-photo"
-                      aria-pressed={photoId === a._id}
-                      onClick={() => void pickPhoto(a._id)}
-                    >
-                      <img
-                        src={`${a.url}?w=200&h=200&fit=crop&auto=format`}
-                        alt=""
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
-                </div>
+              {/* Sizes */}
+              <Stack gap={4}>
+                {groups.map((g) => (
+                  <fieldset key={g} className="gfx-sizes">
+                    <legend>{GROUP_LABELS[g]}</legend>
+                    {FORMATS.filter((f) => f.group === g).map((f) => (
+                      <label key={f.id} className="gfx-size">
+                        <input
+                          type="checkbox"
+                          checked={sizes.includes(f.id)}
+                          onChange={(e) => {
+                            const on = e.currentTarget.checked;
+                            setSizes((s) => (on ? [...s, f.id] : s.filter((x) => x !== f.id)));
+                          }}
+                        />
+                        <span>
+                          <span className="gfx-size__name">{f.label}</span>
+                          <span className="gfx-size__hint">{f.hint}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </fieldset>
+                ))}
+              </Stack>
+            </Stack>
+          )}
+
+          {/* ── The previews ── */}
+          {content && (
+            <Stack gap={4} className="gfx-previews" id="gfx-previews">
+              <div className="gfx-looks" role="group" aria-label="Look">
+                {DIRECTIONS.map((d) => (
+                  <button
+                    key={d.id}
+                    type="button"
+                    className="gfx-look"
+                    aria-pressed={d.id === look.id}
+                    onClick={() => setLookId(d.id)}
+                  >
+                    <span className="gfx-look__name">{LOOK_NAMES[d.id]?.name ?? d.name}</span>
+                    <span className="gfx-look__lead">{LOOK_NAMES[d.id]?.lead ?? d.summary}</span>
+                  </button>
+                ))}
+              </div>
+              {content && !drawnTitle && (
+                <KitNotice tone="tip" title="Type a headline first">
+                  {isVerse ? 'Type the verse' : 'Type a headline'} and the graphics appear here.
+                </KitNotice>
               )}
+              {drawnTitle && drawn.length > 1 && (
+                <Flex gap={2} className="gfx-saveall">
+                  <KitAction strong onClick={() => void saveAll()} disabled={!canSave}>
+                    Download all {drawn.length}
+                  </KitAction>
+                </Flex>
+              )}
+              {drawnTitle && drawn.length === 0 && (
+                <Text size={1} muted>
+                  Tick a size below to see it here.
+                </Text>
+              )}
+              <div className="gfx-grid">
+                {(drawnTitle ? drawn : []).map((d, i) => (
+                  <figure key={d.format.id} className="gfx-card">
+                    <img src={urls[i]} alt={`${d.format.label} preview`} />
+                    <figcaption>
+                      <span className="gfx-card__name">{d.format.label}</span>
+                      {d.warnings.length > 0 && (
+                        <span className="gfx-card__warn">
+                          Too long for this size. Try fewer words.
+                        </span>
+                      )}
+                      <Flex gap={2} wrap="wrap">
+                        <KitAction onClick={() => void save(d.svg, d.format)} disabled={!canSave}>
+                          Download
+                        </KitAction>
+                        {canShare && (
+                          <KitAction
+                            quiet
+                            onClick={() => void share(d.svg, d.format)}
+                            disabled={!canSave}
+                          >
+                            Share
+                          </KitAction>
+                        )}
+                        {d.format.print && (
+                          <KitAction
+                            quiet
+                            onClick={() =>
+                              void printGraphic(d.svg, d.format, content?.title ?? '').catch((e) =>
+                                setError(String(e?.message ?? e)),
+                              )
+                            }
+                          >
+                            Print or save as PDF
+                          </KitAction>
+                        )}
+                      </Flex>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
             </Stack>
-
-            {/* Sizes */}
-            <Stack gap={4}>
-              {groups.map((g) => (
-                <fieldset key={g} className="gfx-sizes">
-                  <legend>{GROUP_LABELS[g]}</legend>
-                  {FORMATS.filter((f) => f.group === g).map((f) => (
-                    <label key={f.id} className="gfx-size">
-                      <input
-                        type="checkbox"
-                        checked={sizes.includes(f.id)}
-                        onChange={(e) =>
-                          setSizes((s) =>
-                            e.currentTarget.checked ? [...s, f.id] : s.filter((x) => x !== f.id),
-                          )
-                        }
-                      />
-                      <span>
-                        <span className="gfx-size__name">{f.label}</span>
-                        <span className="gfx-size__hint">{f.hint}</span>
-                      </span>
-                    </label>
-                  ))}
-                </fieldset>
-              ))}
-            </Stack>
-          </Stack>
+          )}
         </div>
+        {drawnTitle && drawn.length > 0 && (
+          <div className="gfx-phonebar">
+            <button
+              type="button"
+              className="ui-action ui-action--strong"
+              onClick={() =>
+                document
+                  .getElementById('gfx-previews')
+                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }
+            >
+              See the {drawn.length === 1 ? 'graphic' : `${drawn.length} graphics`}
+            </button>
+          </div>
+        )}
       </Box>
       <style>{CSS}</style>
     </KitScope>
@@ -835,15 +952,19 @@ function Field({
 }
 
 const CSS = `
-.gfx-layout{display:grid;gap:32px;margin-top:24px;grid-template-columns:minmax(0,1fr);grid-template-areas:"words" "previews" "options"}
+.gfx-layout{display:grid;gap:32px;margin-top:24px;grid-template-columns:minmax(0,1fr);grid-template-areas:"words" "options" "previews"}
+.gfx-phonebar{position:sticky;bottom:0;display:flex;justify-content:center;padding:12px 0 16px;margin-top:16px;background:var(--card-bg-color,#FBF8F3);border-top:1px solid var(--card-border-color,#E6DED2)}
+@media (min-width:960px){.gfx-phonebar{display:none}}
 .gfx-words{grid-area:words}.gfx-previews{grid-area:previews}.gfx-options{grid-area:options}
 @media (min-width:960px){.gfx-layout{grid-template-columns:minmax(300px,380px) minmax(0,1fr);grid-template-areas:"words previews" "options previews";grid-template-rows:auto 1fr;align-items:start}
 }
 .gfx-select{width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--card-border-color,#E6DED2);border-radius:6px;background:var(--card-bg-color,#fff);color:inherit}
 .gfx-upload{position:relative;cursor:pointer}
 .gfx-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
-.gfx-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;max-height:260px;overflow:auto}
-.gfx-photo{padding:0;border:2px solid transparent;border-radius:6px;overflow:hidden;cursor:pointer;background:none;aspect-ratio:1}
+.gfx-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
+.gfx-picked{width:72px;height:72px;object-fit:cover;border-radius:6px;display:block}
+.gfx-link{overflow-wrap:anywhere}
+.gfx-photo{width:100%;display:block;padding:0;border:2px solid transparent;border-radius:6px;overflow:hidden;cursor:pointer;background:none;aspect-ratio:1}
 .gfx-photo img{display:block;width:100%;height:100%;object-fit:cover}
 .gfx-photo[aria-pressed="true"]{border-color:#9A3B2A}
 .gfx-photo:focus-visible{outline:3px solid #1F3A5F;outline-offset:2px}
@@ -855,6 +976,12 @@ const CSS = `
 .gfx-size__name{display:block;font-size:15px;font-weight:600}
 .gfx-size__hint{display:block;font-size:13px;opacity:.75;line-height:1.35}
 .gfx-grid{display:grid;gap:24px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));align-items:start}
+.gfx-looks{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.gfx-look{display:grid;gap:2px;text-align:left;font:inherit;color:inherit;padding:12px 14px;border-radius:8px;border:1px solid var(--card-border-color,#E6DED2);background:var(--card-bg-color,#fff);cursor:pointer;min-height:44px}
+.gfx-look[aria-pressed="true"]{border-color:#1F3A5F;box-shadow:inset 0 0 0 1px #1F3A5F}
+.gfx-look:focus-visible{outline:3px solid #1F3A5F;outline-offset:2px}
+.gfx-look__name{font-weight:600;font-size:15px}
+.gfx-look__lead{font-size:13px;opacity:.75;line-height:1.35}
 .gfx-card{margin:0;display:grid;gap:10px}
 .gfx-card img{display:block;width:100%;height:auto;max-height:520px;object-fit:contain;object-position:left top;box-shadow:0 0 0 1px rgb(22 38 61 / .12)}
 .gfx-card figcaption{display:grid;gap:8px}

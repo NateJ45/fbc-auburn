@@ -17,7 +17,7 @@ import type { Format } from './formats.ts';
 import type { FontSpec } from './text.ts';
 import type { Assets, Photo } from './types.ts';
 
-/** The palette (DESIGN.md), plus the night card's ground and kicker (scripts/lib/og-card.mjs). */
+/** The palette (DESIGN.md), plus the share card's night ground and kicker (scripts/lib/og-card.mjs). */
 export const C = {
   auburn: '#9A3B2A',
   auburnDark: '#7E2E20',
