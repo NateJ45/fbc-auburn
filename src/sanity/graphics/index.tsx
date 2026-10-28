@@ -41,7 +41,8 @@ export const makeGraphicAction: DocumentActionComponent = (props) => {
       } catch {
         // Private mode: the tool opens on its first screen instead.
       }
-      router.navigateUrl({ path: `${basePath}/${GRAPHICS_TOOL}` });
+      // basePath is "/" in the hash-routed deploy, so join without doubling the slash.
+      router.navigateUrl({ path: `${basePath.replace(/\/+$/, '')}/${GRAPHICS_TOOL}` });
     },
   };
 };
