@@ -18,12 +18,16 @@ sequence).
 
 ### 1zp. Make a graphic: try it signed in, and the real photos (opened 2026-10-27)
 
-The graphics maker (`docs/agent/graphics.md`) was driven through the kit harness (a mock sign-in that
-reads the live dataset), not yet in the live Studio signed in. Left:
+The graphics maker (`docs/agent/graphics.md`) is live (fbc-auburn#251). Checked signed in on the live
+Studio 2026-10-28: the tool opens from the top bar, This Sunday fills from Church facts with the "not
+confirmed" notice, Light and Bold both draw, a Studio photo drops in, Share shows, and a sermon's
+`Make a graphic` action opens the tool on that sermon (its placeholder title gives "Type a headline
+first"); no console errors. Downloads and every kind were checked headless in the kit harness. Left:
 
-- **Signed in, live:** make one of each kind, download on a phone (iPhone Safari saves through the
-  share sheet), print a Letter flyer to PDF, upload a photo, and open the tool from a sermon's
-  `Make a graphic` action.
+- **Signed in, on a phone:** download and Share from an iPhone (Safari saves through the share
+  sheet), print a Letter flyer to PDF, and upload a photo (the upload writes to the dataset, so it
+  was not tried for him).
+- **Nathan:** confirm the two looks (Light, Bold) or drop one (`docs/design-directions/2026-10-27-graphics/`).
 - **Photos:** every kind works without one; the real photos from the photo Sunday (1x shot list) will
   make them better. Pick two or three as defaults for each kind once they exist.
 - **Print shop check:** the 6 x 11 postcard size and bleed for Every Door Direct Mail, and the yard
