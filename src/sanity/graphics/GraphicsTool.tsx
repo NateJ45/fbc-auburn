@@ -217,8 +217,7 @@ export function GraphicsTool() {
         if (k) openKind(k, id);
       })
       .catch(() => undefined);
-    // openKind is stable enough for a one-shot read on load.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // A one-shot read once the fonts and facts are in: openKind is deliberately not a dependency.
   }, [ready]);
 
   const siteUrl = site.url;
@@ -713,8 +712,8 @@ export function GraphicsTool() {
                 )}
                 {hasNotes(content) && (
                   <KitNotice tone="careful" title="A note is still in these words">
-                    Something here still reads like “[Jacob: …]”. It is left off the graphic. Change it
-                    on the page it came from, or type your own words above.
+                    Something here still reads like “[Jacob: …]”. It is left off the graphic. Change
+                    it on the page it came from, or type your own words above.
                   </KitNotice>
                 )}
                 {unconfirmed && (
