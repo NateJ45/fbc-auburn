@@ -38,9 +38,10 @@ button left empty no longer blocks Publish). The "Seasonal: Event page" template
 
 - **Jacob:** the Christmas Eve time (6 to 7 pm is a stand-in), and the Christmas Sunday plans. Both
   carry a `[Jacob: ...]` note on the page. The page is in no menu; add it from Menu placement when ready.
-- **Stale Studio after a deploy:** a Studio tab opened before a deploy shows a raw "Failed to fetch
-  dynamically imported module" error inside a field (the Unsplash picker) until it is reloaded, because
-  the old code files are gone. The desk recovers on its own; fields do not. Wants a reload prompt.
+- ~~**Stale Studio after a deploy**~~ Done 2026-10-26 (starter card 179, found closed 2026-10-27):
+  `src/lib/studio-stale-chunk.ts`, wired in `src/pages/studio/index.astro`, shows "The Studio was
+  updated. Reloading to carry on." and reloads once, then offers a Reload button
+  (`docs/agent/studio-kit.md`, "After a deploy"). Byte-identical to the starter.
 - ~~**Two accent fields and two "Line under the heading" fields**~~ Done 2026-10-26: the handwritten
   accent is hidden on the opening banner, text block and Invitation band, and the formatted line hides
   while empty on the band, FAQ, Team and Listing blocks (changelog 2026-10-26). Starter note: the
@@ -133,17 +134,17 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
   starter card 164): `scripts/content/*` and `scripts/seed-core.mjs` say "baptised", "neighbours",
   "favourite", "enquire", "tick the box". The live dataset no longer does. Fix a script's strings before
   running it again, or it puts the British wording back.
-- **Ports:** the fixes that are not church-specific go to the starter with port cards: the print
-  reset and `print.spec`, the regex-backslash guard, the dark-surface ring, the ContactForm changes
-  (POST fallback, one-pass errors, sessionStorage), the FaqAccordion landmark fix, the `<dialog>`
-  phone menu, the dropdown hover/click fix, transform-only header compaction, the one-red-button
-  budget in `SectionRenderer`, `section-anchors`, the 404 search block, per-gathering `.ics`,
-  `purge-page-css`, fonts and textures under `src/assets`, the `_headers` cache and
-  `form-action`/`Permissions-Policy` lines, `assetsInlineLimit: 0` for the CSP length, the noindex
-  canonical rule and JPEG share images. Also in the starter: the PORTABLE docs
-  (`docs/agent/components.md`, `.claude/rules/foundation-files.md`, `OPERATIONS.md`) still name
-  `MobileNav.tsx`, and a few PORTABLE files keep British spellings ("colour" in `UndoRedo.tsx`,
-  "judgement" in `page-checks.ts`, "Website enquiry" in `contact-submission.ts`).
+- ~~**Ports**~~ Done (checked 2026-10-27): the audit's generic fixes are starter cards 155 (print
+  reset, `print.spec`, regex-backslash guard), 156 (ContactForm POST fallback, one-pass errors and
+  sessionStorage, the FaqAccordion landmark, the dark-surface ring), 157 (the `<dialog>` phone menu,
+  one dropdown model, transform-only header compaction), 158 (button budget, section anchors, the 404
+  search block, calendar files) and 159 (`purge-page-css`, the `_headers` cache, `form-action` and
+  `Permissions-Policy` lines, `assetsInlineLimit: 0`, no canonical on noindex, JPEG share images).
+  Card 164 took the British spellings out of the PORTABLE files, and the starter's docs no longer
+  name `MobileNav.tsx` (only its changelog, as history). Recorded forks, not ports: Auburn's own
+  `section-anchors.ts` and its navy button budget in `SectionRenderer` (card 158); fonts and
+  textures under `src/assets` (the starter keeps none in `public/`, card 159). `sync-check`
+  against starter `main` at card 201: every marked file the same.
 
 ### 1zx. The menu groups: Jacob's say (opened 2026-10-24)
 
