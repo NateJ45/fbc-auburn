@@ -16,11 +16,18 @@
 // ground line, fills the spare room. The brick marker is the one auburn thing.
 //
 // Floors (review panel, 2026-10-27): a title never drops under 8% of the short side
-// (11% of the height on the slide, 20% on the yard sign); body, times and foot never
-// under 26px at 1080 on a screen or about 11pt on paper. A long notice gives up photo
-// height first, then lines of title, and only then warns.
+// (11% of the height on the slide, 20% on the yard sign). Research pass (2026-10-28):
+// body, times, the address and the web address never under 42px on a 1080 feed post
+// (4% of the width), 60px on the slide, about 11pt on paper. A long notice says less
+// first (the sentence, then the kicker), never shrinks under a floor, and only then warns.
+// A story keeps words out of the top 270px and bottom 380px; the door hanger keeps its
+// top 2.5 in plain; QR codes carry at least 0.8 in of squares, with their label and web
+// address beside them.
 // =============================================================================
 
+import qrcode from 'qrcode-generator';
+import { QUIET_ZONE } from '../../qr.ts';
+import { qrLabelFor } from '../content.ts';
 import { safeBox, unit, type Format } from '../formats.ts';
 import { C, doc, image, lines, marker, markerWidth, qr, rect, tilePattern } from '../svg.ts';
 import { cleanText, fitText, type FitResult, type FontSpec, type Measure } from '../text.ts';
@@ -58,7 +65,7 @@ interface Mins {
 
 /**
  * A photo cropped around its hotspot into a box, clipped to a polygon (box-relative
- * points). With no hotspot the crop leans above the middle (40%), where heads usually are.
+ * points). With no hotspot the crop leans above the middle (35%), where heads usually are.
  * `topCut` is how much of the box's top the shape cuts away (the gable's roof), so the
  * focus is centred in what is left.
  */
@@ -67,7 +74,7 @@ function shapedPhoto(p: Photo, id: string, b: Box, pts: [number, number][], topC
   const dw = p.w * s;
   const dh = p.h * s;
   const fx = p.focus?.x ?? 0.5;
-  const fy = p.focus?.y ?? 0.4;
+  const fy = p.focus?.y ?? 0.35;
   const cy = topCut + (b.h - topCut) / 2;
   const ox = Math.min(0, Math.max(b.w - dw, b.w / 2 - fx * dw));
   const oy = Math.min(0, Math.max(b.h - dh, cy - fy * dh));
@@ -128,9 +135,76 @@ function fitLine(
  * line breaker keeps the pair) and goes back to a space when drawn.
  */
 const GLUE = '⁠';
+const AMPM = '(?:am|pm|a\\.m\\.|p\\.m\\.)';
+/**
+ * Keep-together rules (research pass, 2026-10-28): a time stays whole ("11:00 am"), and a
+ * time keeps the word before it ("Worship, 11:00 am" never breaks after the comma).
+ */
 const glue = (s: string) =>
-  s.replace(/(\d)\s+(am|pm|a\.m\.|p\.m\.)(?=\W|$)/gi, (_, d: string, ap: string) => d + GLUE + ap);
+  s
+    .replace(
+      new RegExp(`(\\d)\\s+(${AMPM})(?=\\W|$)`, 'gi'),
+      (_, d: string, ap: string) => d + GLUE + ap,
+    )
+    .replace(
+      new RegExp(`([^\\s,]+,?)\\s+(\\d{1,2}(?::\\d\\d)?${GLUE}${AMPM})`, 'gi'),
+      (_, w: string, t: string) => w + GLUE + t,
+    );
+/**
+ * A title never leaves a short word at a line end ("The / Sermon on / the Mount"): small
+ * words are joined to the word after them, so they start the next line instead.
+ */
+const glueTitle = (s: string) =>
+  glue(s).replace(
+    /\b(a|an|the|of|on|in|at|to|and|for|by|or|our|with|is|my|your)\s+(?=\S)/gi,
+    (_, w: string) => w + GLUE,
+  );
+/** An address breaks only at its commas: "4241 Hamilton-Scipio Road," / "Hamilton, OH 45013". */
+const glueAddress = (s: string) =>
+  s
+    .split(/,\s*/)
+    .map((seg) => seg.trim().replace(/\s+/g, GLUE))
+    .join(', ');
 const unglue = (ls: string[]) => ls.map((l) => l.split(GLUE).join(' '));
+/** The street and town only ("4241 Hamilton-Scipio Road, Hamilton"), for a social foot. */
+const shortAddress = (a: string) => a.split(',').slice(0, 2).join(',').trim();
+
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+/**
+ * "Wednesday, December 24" and "6:00 pm" to "Dec 24, 6 pm": the yard sign's when, in as
+ * few words as a driver can take in.
+ */
+function shortWhen(date: string, times: string[]): string {
+  const parts: string[] = [];
+  const md = date.match(
+    /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})\b/i,
+  );
+  if (md) {
+    const mon = MONTHS[MONTHS.indexOf(md[1].toLowerCase())];
+    parts.push(`${mon[0].toUpperCase()}${mon.slice(1)} ${md[2]}`);
+  } else if (date) parts.push(date.replace(/,?\s*\d{1,2}(:\d\d)?\s*(am|pm).*$/i, ''));
+  const tm = [date, ...times].join(' ').match(/\b(\d{1,2})(?::(\d\d))?\s*(am|pm)\b/i);
+  if (tm)
+    parts.push(`${tm[1]}${tm[2] && tm[2] !== '00' ? ':' + tm[2] : ''} ${tm[3].toLowerCase()}`);
+  return parts.filter(Boolean).join(', ');
+}
+
+/**
+ * A web address too long for its line breaks once, after the host ("firstauburn.org/"
+ * over "plan-your-visit"), never mid-word.
+ */
+function webLines(
+  web: string,
+  font: Omit<FontSpec, 'size'>,
+  size: number,
+  maxW: number,
+  measure: Measure,
+): string[] {
+  if (measure(web, { ...font, size }) <= maxW) return [web];
+  const i = web.indexOf('/');
+  if (i < 0 || i === web.length - 1) return [web];
+  return [web.slice(0, i + 1), web.slice(i + 1)];
+}
 
 /** "Sunday School, 9:45 am" to ["9:45 am", "Sunday School"]: the time leads its row. */
 function splitWhen(s: string): { a: string; b: string } {
@@ -148,7 +222,9 @@ function standingLine(c: Content): string {
   if (c.kind === 'sunday' || c.kind === 'time-change' || c.kind === 'welcome') return '';
   const rows = (c.standing ?? []).map(splitWhen).filter((r) => r.a);
   if (!rows.length) return '';
-  return `Sundays: ${rows.map((r) => (r.b ? `${r.b} ${r.a}` : r.a)).join(', ')}`;
+  // Each "label time" unit is glued whole, so a line only breaks between gatherings.
+  const unit = (r: { a: string; b: string }) => (r.b ? `${r.b} ${r.a}` : r.a).replace(/\s+/g, GLUE);
+  return `Sundays: ${rows.map(unit).join(', ')}`;
 }
 
 interface Ctx2 {
@@ -214,7 +290,7 @@ function textPiece(
   return {
     h: r.height,
     gap,
-    draw: (y) => lines(r.lines, { ...font, size: r.size, x, y, leading, fill }),
+    draw: (y) => lines(unglue(r.lines), { ...font, size: r.size, x, y, leading, fill }),
   };
 }
 
@@ -252,14 +328,28 @@ function detailsPiece(
     colA = Math.max(...rows.map((r) => k.measure(r.a, { ...strong, size: sz })));
     return Math.max(
       ...rows.map((r) => {
-        const aw = mode === 'table' ? colA : k.measure(r.a, { ...strong, size: sz });
+        const aw = mode === 'table' ? colA : r.a ? k.measure(r.a, { ...strong, size: sz }) : 0;
         const bw = r.b ? k.measure(r.b, { ...soft, size: sz }) : 0;
         if (mode === 'leaders') return aw + bw + sz * 3;
-        return lx + aw + (r.b ? sp + bw : 0);
+        return lx + aw + (r.b ? (r.a ? sp : 0) + bw : 0);
       }),
     );
   };
   while (s * 0.97 >= floor && widthAt(s) > w) s *= 0.97;
+  // An inline row that does not fit at the floor goes onto two lines (the date over the
+  // time, the passage over the preacher) rather than shrinking past it (research pass).
+  if (mode === 'inline' && widthAt(s) > w && rows.some((r) => r.a && r.b)) {
+    rows = rows.flatMap((r) =>
+      r.a && r.b
+        ? [
+            { a: r.a, b: '' },
+            { a: '', b: r.b },
+          ]
+        : [r],
+    );
+    s = size;
+    while (s * 0.97 >= floor && widthAt(s) > w) s *= 0.97;
+  }
   if (widthAt(s) > w) k.warn(`The times or date are too long for ${k.label}. Try fewer words.`);
   const sp = s * 0.75;
   const rowH = mode === 'inline' ? s * 1.4 : mode === 'leaders' ? s * 1.65 : s * 1.75;
@@ -297,8 +387,9 @@ function detailsPiece(
         if (lead && i === 0) out += marker(x, ty + s * 0.84 - mh * 0.95, mh);
         out += lines([r.a], { ...strong, size: s, x: x + lx, y: ty, leading: 1, fill: C.navy });
         if (r.b) {
-          const bx =
-            x + lx + (mode === 'table' ? colA : k.measure(r.a, { ...strong, size: s })) + sp;
+          const bx = !r.a
+            ? x + lx
+            : x + lx + (mode === 'table' ? colA : k.measure(r.a, { ...strong, size: s })) + sp;
           out += lines([r.b], { ...soft, size: s, x: bx, y: ty, leading: 1, fill: C.ink });
         }
       });
@@ -341,7 +432,7 @@ function words(c: Content, f: Format, x: number, w: number, k: Ctx2, o: WordOpts
     if (!bodyText) return null;
     const font: FontSpec = { family: 'sans', size: bodyMax, weight: 400 };
     const r = fitText(
-      bodyText,
+      glue(bodyText),
       {
         family: 'sans',
         weight: 400,
@@ -484,11 +575,18 @@ function stack(
   // A break that leaves a short word alone on a line ("The / Sermon on / the Mount") reads
   // as a mistake, so walk down the sizes until the lines hold together.
   const lonely = (ls: string[]) =>
-    ls.length > 1 && ls.some((l) => !l.includes(' ') && l.replace(/\W/g, '').length < 4);
+    (ls.length > 1 && ls.some((l) => !l.includes(' ') && l.replace(/\W/g, '').length < 4)) ||
+    // nor one word stranded between two longer lines ("We would / love / to meet you")
+    (ls.length > 2 && ls.slice(1, -1).some((l) => !l.includes(' ')));
+  // Small words ride with the next word and a time keeps its label (glueTitle); when the
+  // glued title cannot fit at any size, it falls back to breaking at every space.
+  const glued = glueTitle(t.text);
   const fitAt = (maxH: number): FitResult => {
-    for (let sz = t.max; sz >= t.min; sz *= 0.98) {
-      const r = fitText(t.text, opts(maxH, sz, sz), k.measure);
-      if (!r.overflow && !lonely(r.lines)) return r;
+    for (const text of glued === t.text ? [t.text] : [glued, t.text]) {
+      for (let sz = t.max; sz >= t.min; sz *= 0.98) {
+        const r = fitText(text, opts(maxH, sz, sz), k.measure);
+        if (!r.overflow && !lonely(unglue(r.lines))) return r;
+      }
     }
     return fitText(t.text, opts(maxH, t.max, t.min), k.measure);
   };
@@ -543,8 +641,47 @@ function masthead(
   u: number,
   m: Mins,
   rule = true,
+  /** Social and slides: the name on one line beside the mark, set at `oneLine` px, when it fits. */
+  oneLine = 0,
 ): { svg: string; h: number } {
   const { church } = ctx;
+  const name = `${church.line1} ${church.line2}`;
+  if (oneLine) {
+    // One line beside the mark when it fits; else "First Baptist" over "Church of Auburn",
+    // both in the serif at the same size (never small capitals under the floor).
+    let ms = Math.max(size, oneLine * 1.7);
+    let tx = b.x + ms + ms * 0.28;
+    const fit = fitLine(
+      name,
+      { family: 'serif' },
+      b.x + b.w - tx,
+      oneLine * 1.15,
+      oneLine,
+      ctx.measure,
+    );
+    let ls = [name];
+    let ns = fit.size;
+    if (fit.over) {
+      ms = Math.max(size, oneLine * 2.2);
+      tx = b.x + ms + ms * 0.28;
+      ls = [church.line1, church.line2];
+      ns = oneLine;
+    }
+    let svg = image(ctx.assets.markColor, b.x, b.y, ms, ms);
+    svg += lines(ls, {
+      family: 'serif',
+      size: ns,
+      leading: 1.08,
+      x: tx,
+      y: b.y + (ms - ns * 1.08 * ls.length) / 2,
+      fill: C.navy,
+    });
+    if (!rule) return { svg, h: ms };
+    const ruleY = b.y + ms + 24 * u;
+    const rh = Math.max(2, 3 * u);
+    svg += rect(b.x, ruleY, b.w, rh, C.navy);
+    return { svg, h: ruleY + rh - b.y };
+  }
   const n2 = Math.max(size * 0.24, m.small);
   // The second line must sit inside the mark's height: grow the mark if the floor asks.
   size = Math.max(size, n2 / 0.3);
@@ -578,9 +715,11 @@ function masthead(
 }
 
 /**
- * The foot on a screen: a hairline, the web address in bold, and under it the standing
- * Sunday line (or the place). The slide leaves the street address off: a projector
- * needs the title and the times.
+ * The foot on a screen: a hairline, the web address in bold, and under it whatever
+ * `rest` holds (research pass, 2026-10-28: on a phone only the web address and, for an
+ * event, the street reads; the standing Sunday line moved to the caption). Nothing here
+ * shrinks under the body's floor: a long web address breaks after the host, and a line
+ * breaks at its commas.
  */
 function footScreen(
   c: Content,
@@ -588,47 +727,107 @@ function footScreen(
   b: Box,
   u: number,
   m: Mins,
-  o: { address?: boolean; qrSize?: number } = {},
+  o: { rest?: string[]; qrSize?: number; name?: number } = {},
 ): { svg: string; h: number } {
   const { church, measure } = ctx;
-  const web = cleanText(c.link) || church.web;
-  const rest = [standingLine(c), o.address && church.address ? church.address : ''].filter(Boolean);
-  if (!rest.length) rest.push(church.place);
   const qs = o.qrSize ?? 0;
-  const textW = b.w - (qs ? qs + 40 * u : 0);
+  const textW = b.w - (qs ? qs + Math.max(40 * u, 48) : 0);
   const ws = Math.max(30 * u, m.body * 1.08);
-  const wf = fitLine(web, { family: 'sans', weight: 700 }, textW, ws, ws * 0.8, measure);
-  const fits = rest.map((t) =>
-    fitLine(t, { family: 'sans', weight: 400 }, textW, m.body, m.body * 0.85, measure),
+  const bold = { family: 'sans' as const, weight: 700 };
+  let web = cleanText(c.link) || church.web;
+  let wf = fitLine(web, bold, textW, ws, m.body, measure);
+  let webLs = [web];
+  if (wf.over) {
+    webLs = webLines(web, bold, m.body, textW, measure);
+    if (webLs.some((l) => measure(l, { ...bold, size: m.body }) > textW)) {
+      web = church.web;
+      webLs = [web];
+    }
+    wf = fitLine(
+      webLs.reduce((a, l) => (l.length > a.length ? l : a), ''),
+      bold,
+      textW,
+      ws,
+      m.body,
+      measure,
+    );
+  }
+  const fits = (o.rest ?? []).filter(Boolean).map((t) =>
+    fitText(
+      t,
+      {
+        family: 'sans',
+        weight: 400,
+        maxW: textW,
+        maxH: m.body * 1.25 * 3,
+        maxLines: 3,
+        max: m.body,
+        min: m.body,
+        leading: 1.25,
+      },
+      measure,
+    ),
   );
-  const textH = wf.size * 1.25 + fits.reduce((s, ft) => s + 8 * u + ft.size * 1.25, 0);
-  const ty = b.y + b.h - textH;
-  let svg = rect(b.x, ty - 30 * u, textW, Math.max(1.5, 2 * u), C.border);
-  svg += lines([web], {
-    family: 'sans',
-    weight: 700,
+  // Beside a code, what the code is for sits over the web address.
+  const label = qs ? qrLabelFor(c) : '';
+  const lf = fitText(
+    label,
+    {
+      family: 'sans',
+      weight: 400,
+      maxW: textW,
+      maxH: m.body * 1.25 * 3,
+      maxLines: 3,
+      max: m.body,
+      min: m.body,
+      leading: 1.25,
+    },
+    measure,
+  );
+  const labelH = label ? lf.height : 0;
+  const textH =
+    labelH + wf.size * 1.25 * webLs.length + fits.reduce((s, ft) => s + 8 * u + ft.height, 0);
+  const ty = b.y + b.h - textH + labelH;
+  // A photo-led post names the church here, over the web address (the photo took the masthead's place).
+  const nameH = o.name
+    ? masthead(ctx, { ...b, y: 0, w: textW }, 0, u, m, false, o.name).h + 16 * u
+    : 0;
+  let svg = rect(b.x, ty - labelH - nameH - 30 * u, b.w, Math.max(1.5, 2 * u), C.border);
+  if (o.name) svg += masthead(ctx, { ...b, y: ty - nameH, w: textW }, 0, u, m, false, o.name).svg;
+  if (label)
+    svg += lines(lf.lines, {
+      family: 'sans',
+      weight: 400,
+      size: m.body,
+      leading: 1.25,
+      x: b.x,
+      y: ty - labelH,
+      fill: C.inkMuted,
+    });
+  svg += lines(webLs, {
+    ...bold,
     size: wf.size,
     leading: 1.25,
     x: b.x,
     y: ty,
     fill: C.navy,
   });
-  let y = ty + wf.size * 1.25;
-  rest.forEach((t, i) => {
+  let y = ty + wf.size * 1.25 * webLs.length;
+  fits.forEach((ft) => {
     y += 8 * u;
-    svg += lines([t], {
+    svg += lines(unglue(ft.lines), {
       family: 'sans',
       weight: 400,
-      size: fits[i].size,
+      size: ft.size,
       leading: 1.25,
       x: b.x,
       y,
       fill: C.inkMuted,
     });
-    y += fits[i].size * 1.25;
+    y += ft.height;
   });
   if (qs) svg += qr(c.qr!, b.x + b.w - qs, b.y + b.h - qs, qs, C.ink, C.ground);
-  return { svg, h: Math.max(textH + 30 * u, qs) };
+  return { svg, h: Math.max(textH + nameH + 30 * u, qs + 30 * u) };
 }
 
 /**
@@ -637,16 +836,16 @@ function footScreen(
  * shows as much navy above them as below. Narrow pieces put the web address under the name.
  */
 function band(
-  c: Content,
   ctx: Ctx,
   f: Format,
   b: Box,
   markSize: number,
   m: Mins,
   webMin: number,
+  /** The web address the band prints, or null for the name alone (the yard sign sets it in the words). */
+  web: string | null,
 ): { svg: string; top: number } {
   const { church, measure } = ctx;
-  const web = cleanText(c.link) || church.web;
   const ms = markSize;
   const n1 = ms * 0.46;
   const n2 = Math.max(ms * 0.2, m.small);
@@ -658,8 +857,10 @@ function band(
   const wfont = { family: 'sans' as const, weight: 700 };
   const wsize = Math.max(ms * 0.32, webMin);
   const room = b.x + b.w - (tx + nameW + ms * 0.6);
-  const oneRow = measure(web, { ...wfont, size: wsize }) <= room;
-  const contentH = oneRow ? ms : ms + ms * 0.32 + wsize * 1.1;
+  const oneRow = !web || measure(web, { ...wfont, size: wsize }) <= room;
+  // Under the name, a web address too long for the width breaks after the host.
+  const webLs = web && !oneRow ? webLines(web, wfont, wsize, b.w, measure) : [];
+  const contentH = oneRow ? ms : ms + ms * 0.32 + wsize * 1.1 * webLs.length;
   const top = b.y + b.h - contentH;
   const below = f.h - f.bleed - (b.y + b.h);
   const pad = Math.min(below, ms * 0.7);
@@ -685,7 +886,7 @@ function band(
     y: top + ms - n2 * 1.02,
     fill: C.white,
   });
-  if (oneRow) {
+  if (web && oneRow) {
     svg += lines([web], {
       ...wfont,
       size: wsize,
@@ -695,14 +896,13 @@ function band(
       fill: C.white,
       anchor: 'end',
     });
-  } else {
-    const fit = fitLine(web, wfont, b.w, wsize, wsize * 0.75, measure);
-    svg += lines([web], {
+  } else if (web) {
+    svg += lines(webLs, {
       ...wfont,
-      size: fit.size,
-      leading: 1,
+      size: wsize,
+      leading: 1.1,
       x: b.x,
-      y: b.y + b.h - fit.size * 1.05,
+      y: b.y + b.h - wsize * 1.1 * webLs.length,
       fill: C.white,
     });
   }
@@ -710,8 +910,9 @@ function band(
 }
 
 /**
- * The paper foot above the band: the standing Sunday line in bold, the street address
- * under it, the QR code to the right. Bottom edge at `bottom`. Returns the height used.
+ * The paper foot above the band, beside the QR code: the code's own web address in bold
+ * (so a reader without a phone camera can type it), the standing Sunday line, and the
+ * street address. Bottom edge at `bottom`. Returns the height used.
  */
 function footPaper(
   c: Content,
@@ -721,20 +922,31 @@ function footPaper(
   bottom: number,
   u: number,
   m: Mins,
-  o: { address: boolean; qrSize: number; standing: boolean },
+  o: { address: string | null; qrSize: number; standing: boolean },
 ): { svg: string; h: number } {
   const { church, measure } = ctx;
   const items: { text: string; weight: number; fill: string }[] = [];
+  const showQr = o.qrSize > 0;
+  const textW = w - (showQr ? o.qrSize + Math.max(40 * u, 48) : 0);
+  const bold = { family: 'sans' as const, weight: 700 };
+  if (showQr) {
+    // What the code is for, then its address (so a reader without a camera can type it).
+    items.push({ text: qrLabelFor(c), weight: 400, fill: C.inkMuted });
+    const web = cleanText(c.link) || church.web;
+    const ls = webLines(web, bold, m.body, textW, measure);
+    const ok = ls.every((l) => measure(l, { ...bold, size: m.body }) <= textW);
+    // Joined with glue so fitText keeps each part on its own line.
+    (ok ? ls : [church.web]).forEach((l) =>
+      items.push({ text: l.replace(/\s+/g, GLUE), weight: 700, fill: C.navy }),
+    );
+  }
   const st = o.standing ? standingLine(c) : '';
   if (st) items.push({ text: st, weight: 700, fill: C.navy });
-  if (o.address && church.address)
-    items.push({ text: church.address, weight: 400, fill: C.inkMuted });
-  const showQr = o.qrSize > 0;
+  if (o.address) items.push({ text: glueAddress(o.address), weight: 400, fill: C.inkMuted });
   if (!items.length && !showQr) return { svg: '', h: 0 };
   // The text column ends well clear of the code (at least 40px), and a line that does
   // not fit at the floor breaks onto a second line rather than running under the code
   // (round two, 2026-10-27: "Worship 11:" was cut off on the door hanger).
-  const textW = w - (showQr ? o.qrSize + Math.max(40 * u, 48) : 0);
   const size = m.body;
   let svg = '';
   const fits = items.map((it) =>
@@ -754,7 +966,9 @@ function footPaper(
     ),
   );
   const textH = fits.reduce((s, ft) => s + ft.height, 0);
-  let y = bottom - textH;
+  // Beside a taller code the words sit level with its middle.
+  let y = showQr && o.qrSize > textH ? bottom - o.qrSize / 2 - textH / 2 : bottom - textH;
+  const ruleY = Math.min(y, bottom - o.qrSize) - 24 * u;
   items.forEach((it, i) => {
     svg += lines(unglue(fits[i].lines), {
       family: 'sans',
@@ -767,9 +981,9 @@ function footPaper(
     });
     y += fits[i].height;
   });
-  if (items.length) svg += rect(x, bottom - textH - 24 * u, textW, Math.max(1.5, 2 * u), C.border);
+  if (items.length) svg += rect(x, ruleY, w, Math.max(1.5, 2 * u), C.border);
   if (showQr) svg += qr(c.qr!, x + w - o.qrSize, bottom - o.qrSize, o.qrSize, C.ink, C.ground);
-  return { svg, h: Math.max(items.length ? textH + 24 * u : 0, o.qrSize) };
+  return { svg, h: bottom - ruleY };
 }
 
 /** The building sketch in navy pen, standing on a ground line at the foot of a box. */
@@ -792,42 +1006,61 @@ function sketch(
   };
 }
 
-/** A fill-in form for the connect card: label in small capitals over a writing line. */
-function form(b: Box, u: number, size: number, rowsWanted: string[]): string {
-  const ls = size;
-  const n = rowsWanted.length;
-  const rowH = b.h / n;
+/**
+ * A fill-in form for the connect card (research pass, 2026-10-28): each label in small
+ * capitals sits ABOVE its writing space, and the space under it is at least 0.4 in
+ * (`write` px) before the line, so a hand has room. Spare height becomes more lines
+ * under the last label (the prayer request). Returns the drawing and whether it fitted.
+ */
+function form(
+  b: Box,
+  u: number,
+  size: number,
+  write: number,
+  labels: string[],
+  measure: Measure,
+): { svg: string; over: boolean } {
+  const font = { family: 'sans' as const, weight: 700, tracking: 0.12, caps: true };
+  const rule = Math.max(1.5, 2 * u);
+  const labelH = size * 1.1;
+  const after = size * 0.7;
+  const rowH = labelH + write + rule + after;
+  let over = labels.length * rowH - after > b.h + 1;
   let svg = '';
-  rowsWanted.forEach((label, i) => {
-    const lineY = b.y + rowH * (i + 1) - 4 * u;
-    svg += lines([label], {
-      family: 'sans',
-      weight: 700,
-      tracking: 0.12,
-      caps: true,
-      size: ls,
-      leading: 1,
-      x: b.x,
-      y: lineY - rowH + ls * 0.9 + 6 * u,
-      fill: C.inkMuted,
-    });
-    svg += rect(b.x, lineY, b.w, Math.max(1.5, 2 * u), C.navyLight);
+  let y = b.y;
+  labels.forEach((label) => {
+    if (measure(label.toUpperCase(), { ...font, size }) > b.w) over = true;
+    svg += lines([label], { ...font, size, leading: 1, x: b.x, y, fill: C.inkMuted });
+    y += labelH + write;
+    svg += rect(b.x, y, b.w, rule, C.navyLight);
+    y += rule + after;
   });
-  return svg;
+  // More lines for the last answer while they fit, each a full writing space apart.
+  y -= after;
+  while (y + write + rule <= b.y + b.h) {
+    y += write;
+    svg += rect(b.x, y, b.w, rule, C.navyLight);
+    y += rule;
+  }
+  return { svg, over };
 }
 
-/** The door hanger's hole, as a guide: a 1.25 in circle 1 in below the top trim, slit to the edge. */
-function hangerHole(f: Format): string {
-  const dpi = f.print!.dpi;
-  const cx = f.w / 2;
-  const cy = f.bleed + 1 * dpi;
-  const r = 0.625 * dpi;
-  const sw = Math.max(2, 0.012 * dpi);
-  const dash = `stroke-dasharray="${f1(0.06 * dpi)} ${f1(0.04 * dpi)}"`;
-  return (
-    `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(r)}" fill="none" stroke="${C.navyLight}" stroke-width="${f1(sw)}" ${dash}/>` +
-    `<line x1="${f1(cx)}" y1="${f1(cy - r)}" x2="${f1(cx)}" y2="0" stroke="${C.navyLight}" stroke-width="${f1(sw)}" ${dash}/>`
-  );
+/**
+ * The drawn size of a QR code (quiet zone included) whose squares cover `moduleIn`
+ * inches: a phone needs about 0.8 in (2 cm) of code to scan from the hand (research
+ * pass, 2026-10-28). Longer addresses make more, smaller squares, so the size is worked
+ * out from the address itself.
+ */
+function qrOuter(url: string, moduleIn: number, dpi: number): number {
+  const make = qrcode as unknown as (
+    t: number,
+    l: string,
+  ) => { addData(s: string): void; make(): void; getModuleCount(): number };
+  const code = make(0, 'M');
+  code.addData(url);
+  code.make();
+  const n = code.getModuleCount();
+  return Math.ceil((moduleIn * dpi * (n + 2 * QUIET_ZONE)) / n);
 }
 
 // ── The layouts ────────────────────────────────────────────────────────────────
@@ -867,9 +1100,13 @@ function fitWords(
   // the pieces that can spare them (a pew card, a banner, the yard sign), then the times.
   const tries: Partial<WordOpts>[] = [];
   if (o.body !== false && cleanText(c.body)) tries.push({ body: false });
-  if (o.dropDetails) tries.push({ body: false, details: false });
+  // Then the kicker (research pass: say less rather than shrink), then the times.
+  if (o.kicker !== false && cleanText(c.kicker)) tries.push({ body: false, kicker: false });
+  if (o.dropDetails) tries.push({ body: false, kicker: false, details: false });
+  let least = first;
   for (const t of tries) {
     const r = fitSteps(c, f, ctx, u, m, box, { ...o, ...t });
+    least = r;
     if (r.warnings.length) continue;
     r.warnings.push(
       t.details === false
@@ -878,7 +1115,8 @@ function fitWords(
     );
     return r;
   }
-  return first;
+  // Nothing fits: draw the shortest version tried, so the least spills over (with its warning).
+  return least;
 }
 
 function fitSteps(
@@ -919,26 +1157,82 @@ function fitSteps(
   return last;
 }
 
-function render(c: Content, f: Format, ctx: Ctx): Rendered {
+function render(c: Content, f: Format, ctx0: Ctx): Rendered {
+  // Glued words (a time and its label, a title's small words) are drawn with a space, so
+  // they are measured with one: the word joiner itself measures as nothing.
+  const ctx: Ctx = {
+    ...ctx0,
+    measure: (t, font) => ctx0.measure(t.split(GLUE).join(' '), font),
+  };
   const u = unit(f);
   const safe = safeBox(f);
   const dpi = f.print?.dpi ?? 0;
   const short = Math.min(f.w, f.h) - 2 * f.bleed;
   const sx = short / 1080;
+  const social = f.group === 'social';
   const yard = f.id === 'yard-sign';
   const slide = f.id === 'slide';
   const thumb = f.id === 'youtube-thumb';
   const hanger = f.id === 'door-hanger';
-  // The floors (header). On paper about 11 pt for reading type, 9 pt for small capitals.
+  const story = f.id === 'story';
+  const card = f.id === 'connect-card';
+  // A business card (the invite card, drawn here for kinds other than an invite): the name,
+  // the title and the when, and the web address. No band, no picture, no code.
+  const mini = f.id === 'invite-card';
+  const bannerShape = f.shape === 'banner';
+  // The floors (header; research pass, 2026-10-28). A feed post shows at about a third of
+  // its size on a phone, so its reading floor is 4% of the width (42px at 1080, about 15
+  // CSS px there); the slide's is 30 pt (60px at 1080p); paper keeps about 11 pt.
   const m: Mins = {
-    title: yard ? 0.2 * (f.h - 2 * f.bleed) : slide ? 0.11 * f.h : (f.print ? 0.06 : 0.08) * short,
+    title: yard
+      ? 0.2 * (f.h - 2 * f.bleed)
+      : slide
+        ? 0.11 * f.h
+        : mini
+          ? 0.085 * short
+          : (f.print ? 0.06 : 0.08) * short,
     verse: (yard ? 0.1 : 0.055) * short,
-    body: f.print ? 0.153 * dpi : 26 * sx,
-    small: f.print ? 0.125 * dpi : 22 * sx,
+    body: f.print
+      ? 0.153 * dpi
+      : slide
+        ? 60
+        : thumb
+          ? 0.04 * f.w
+          : bannerShape
+            ? 40
+            : f.id === 'event-cover'
+              ? 48
+              : 42 * sx,
+    small: f.print
+      ? 0.125 * dpi
+      : slide
+        ? 60
+        : thumb
+          ? 0.04 * f.w
+          : bannerShape
+            ? 34
+            : f.id === 'event-cover'
+              ? 42
+              : 38 * sx,
   };
+  // The church's name beside the mark on screens, at the body's size or a little over.
+  const nameSize = slide ? 60 : m.body * 1.08;
   // A little more margin than the safe line: a notice breathes.
-  const pad = f.print ? 0.12 * dpi : f.shape === 'banner' ? 0 : 18 * u;
+  const pad = f.print ? 0.12 * dpi : bannerShape ? 0 : 18 * u;
   const b: Box = { x: safe.x + pad, y: safe.y + pad, w: safe.w - 2 * pad, h: safe.h - 2 * pad };
+  // The story: the app's name bar covers about the top 270px and the reply box the
+  // bottom 380px, so no word goes there (research pass; Meta's 14% and 20%).
+  if (story) {
+    const top = Math.max(b.y, 270);
+    const bot = Math.min(b.y + b.h, f.h - 380);
+    b.y = top;
+    b.h = bot - top;
+  }
+  // The Facebook page cover: a phone shows about the middle 1110px of the 1640.
+  if (f.id === 'page-cover') {
+    b.x = Math.max(b.x, 270);
+    b.w = f.w - 2 * b.x;
+  }
   // The yard sign keeps a wide margin (1.2 in from the canvas edge, 180px at 150 dpi) on
   // every side, the band included, so nothing sits at the trim (round two, 2026-10-27).
   if (yard) {
@@ -947,23 +1241,40 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   }
   let defs = '';
   let body = rect(0, 0, f.w, f.h, C.ground);
-  // The door hanger's hole: the words start below it (it ends 1 5/8 in from the trim).
+  // The door hanger: a printer's hole die runs from 1.25 to 1.75 in, centred about 1.25 in
+  // down, so the top 2.5 in stays plain paper. No guide is printed (a die that does not
+  // match it leaves a ring or a crescent). The title starts just under that.
   if (hanger) {
-    const top = f.bleed + 1.95 * dpi;
+    const top = f.bleed + 2.55 * dpi;
     b.h -= top - b.y;
     b.y = top;
-    body += hangerHole(f);
   }
   const tall = f.shape === 'tall' || f.shape === 'portrait' || f.shape === 'square';
-  const card = f.id === 'connect-card';
   // The story names the church in the navy band at its foot, like paper: the band runs
   // on below the safe line, so the piece fills its height top to bottom (round two).
-  const story = f.id === 'story';
-  const useBand = (!!f.print && !card) || story;
+  const useBand = (!!f.print && !card && !mini) || story;
+  // QR codes: at least 0.8 in of squares on the card and the insert, 1 in on the larger
+  // pieces, plus the quiet zone (research pass; 2 cm is the handheld minimum).
   const qrSize =
-    f.print && c.qr && !yard
-      ? Math.min((f.id === 'flyer' ? 1.15 : card ? 0.75 : 0.85) * dpi, b.w * 0.24)
+    f.print && c.qr && !yard && !mini
+      ? Math.min(
+          qrOuter(c.qr, card || f.id === 'half-sheet' ? 0.8 : 1.0, dpi),
+          b.w * (hanger ? 0.42 : 0.32),
+        )
       : 0;
+  // The street address: on paper always (the two things a guest needs are the place and
+  // the time); on a feed post only for an event or a notice, as the street and town (a
+  // Facebook event shows its own place, so its cover leaves it off).
+  const eventish = c.kind === 'event' || c.kind === 'announcement';
+  const address: string | null = !ctx.church.address
+    ? null
+    : f.print && !mini
+      ? ctx.church.address
+      : mini
+        ? shortAddress(ctx.church.address)
+        : eventish && f.id !== 'event-cover'
+          ? shortAddress(ctx.church.address)
+          : null;
   const done = (warnings: string[]): Rendered => ({
     svg: doc(f, ctx.assets, defs, body),
     warnings,
@@ -973,58 +1284,182 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   const bandAndFoot = (
     fx: number,
     fw: number,
-    o: { address: boolean; qr: number },
+    o: { qr: number },
   ): { bottom: number; above: number } => {
-    const ms = f.print ? (yard ? 0.11 * (f.h - 2 * f.bleed) : 0.6 * dpi) : 100 * u;
-    const webMin = yard ? 0.045 * (f.h - 2 * f.bleed) : m.body * 1.05;
-    const bd = band(c, ctx, f, b, ms, m, webMin);
-    const gap = (f.print ? 0.18 * dpi : 48 * u) * (yard ? 0.8 : 1);
+    const ms = f.print ? 0.6 * dpi : 110 * u;
+    const webMin = m.body * 1.05;
+    // With a code, the code's own address sits beside it, so the band carries the home page.
+    const web = o.qr ? ctx.church.web : cleanText(c.link) || ctx.church.web;
+    const bd = band(ctx, f, b, ms, m, webMin, web);
+    const gap = f.print ? 0.18 * dpi : 48 * u;
     const fp = footPaper(c, ctx, fx, fw, bd.top - gap, u, m, {
-      address: o.address,
+      address,
       qrSize: o.qr,
-      standing: !yard,
+      standing: !!f.print,
     });
     body += fp.svg + bd.svg;
     return { bottom: bd.top - gap - (fp.h ? fp.h + gap : 0), above: bd.top - gap };
   };
 
-  // ── The yard sign: the name, a huge title, the times if they fit, one web address. ──
+  // ── The yard sign: the name, a huge title, the when, one web address. ──────────
+  // Read from a car: about seven words plus the web address (research pass). An event,
+  // a notice and a time change always keep their date and time ("Dec 24, 6 pm"); the
+  // title gives up size first.
   if (yard) {
-    const bottom = bandAndFoot(b.x, b.w, { address: false, qr: 0 }).bottom;
-    const box: Box = { x: b.x, y: b.y, w: b.w, h: bottom - b.y - 0.1 * dpi };
-    const base = { align: 'middle' as const, body: false, kicker: false, scale: 1.6 };
-    let ws = fitWords(c, f, ctx, u, m, box, {
-      ...base,
-      dsize: (0.055 * (f.h - 2 * f.bleed)) / 1.6,
-    });
-    if (ws.warnings.length) ws = fitWords(c, f, ctx, u, m, box, { ...base, details: false });
-    body += ws.svg;
-    return done(ws.warnings);
+    const H = f.h - 2 * f.bleed;
+    const warnings: string[] = [];
+    const k: Ctx2 = {
+      u,
+      m,
+      measure: ctx.measure,
+      warn: (t) => void (warnings.includes(t) || warnings.push(t)),
+      label: f.label,
+    };
+    const bd = band(ctx, f, b, 0.15 * H, m, 0, null);
+    body += bd.svg;
+    const box: Box = { x: b.x, y: b.y, w: b.w, h: bd.top - 0.1 * dpi - b.y };
+    const times = (c.when ?? []).map(cleanText).filter(Boolean);
+    const dated = c.kind === 'event' || c.kind === 'announcement' || c.kind === 'time-change';
+    let when = '';
+    if (dated) when = shortWhen(cleanText(c.date), times);
+    else if (c.kind === 'sunday' || c.kind === 'welcome') {
+      const rows = times.map(splitWhen);
+      const main = rows.find((r) => /worship/i.test(r.b)) ?? rows[rows.length - 1];
+      const t = main ? shortWhen('', [main.a]) : '';
+      if (t) when = `Sundays, ${t}`;
+    } else if (c.kind === 'verse') when = cleanText(c.reference);
+    const bold = { family: 'sans' as const, weight: 700 };
+    const linePiece = (text: string, max: number, min: number, gap: number): Piece | null => {
+      if (!text) return null;
+      const ft = fitLine(text, bold, box.w, max, min, ctx.measure);
+      if (ft.over) k.warn(`The date line is too long for ${f.label}.`);
+      return {
+        h: ft.size * 1.2,
+        gap,
+        draw: (y) =>
+          lines([text], { ...bold, size: ft.size, x: box.x, y, leading: 1.2, fill: C.navy }),
+      };
+    };
+    let web = cleanText(c.link) || ctx.church.web;
+    if (ctx.measure(web, { ...bold, size: 0.075 * H }) > box.w) web = ctx.church.web;
+    const verse = c.kind === 'verse';
+    const title = verse ? `“${cleanText(c.title)}”` : cleanText(c.title);
+    const after = [
+      linePiece(when, 0.1 * H, 0.07 * H, 0.05 * H),
+      linePiece(web, 0.075 * H, 0.06 * H, 0),
+    ].filter((p): p is Piece => !!p);
+    const st = stack(
+      {
+        before: [],
+        title: {
+          text: title,
+          max: (verse ? 0.1 : 0.2) * H,
+          min: (verse ? 0.06 : 0.1) * H,
+          maxLines: verse ? 6 : 3,
+          leading: verse ? 1.18 : 1.04,
+        },
+        after,
+      },
+      box,
+      k,
+      'middle',
+      0.045 * H,
+    );
+    body += st.svg;
+    const count = (s: string) => s.split(/\s+/).filter((w) => /\w/.test(w)).length;
+    if (!verse && count(title) + count(when) > 8)
+      k.warn(
+        `A yard sign is read from a moving car, and about seven words is the most that reads. Try a shorter title.`,
+      );
+    return done(warnings);
   }
 
   if (tall) {
     let top = b.y;
     let bottom = b.y + b.h;
+    const leaders = !!f.print;
+    // A photo on a feed post leads (research pass): it takes nearly half the height from
+    // the top margin, and the church's name moves to the foot.
+    const photoLed = !!c.photo && social;
     if (useBand) {
-      bottom = bandAndFoot(b.x, b.w, { address: true, qr: qrSize }).bottom - 40 * u;
+      bottom = bandAndFoot(b.x, b.w, { qr: qrSize }).bottom - 40 * u;
     } else {
-      const mast = masthead(ctx, b, 72 * u, u, m);
-      body += mast.svg;
-      top += mast.h + 56 * u;
-      const ft = footScreen(c, ctx, b, u, m);
+      if (!photoLed) {
+        const mast = masthead(ctx, b, 72 * u, u, m, true, nameSize);
+        body += mast.svg;
+        top += mast.h + 56 * u;
+      }
+      const ft = footScreen(c, ctx, b, u, m, {
+        rest: address ? [glueAddress(address)] : [],
+        name: photoLed ? nameSize : 0,
+      });
       body += ft.svg;
-      bottom -= ft.h + 56 * u;
+      bottom -= ft.h + 48 * u;
     }
     const region = bottom - top;
-    const leaders = !!f.print;
+    if (c.photo && photoLed) {
+      // The gable runs across the whole width from the top edge (no words go up there,
+      // so the story's name bar may cover its peak), over a ledge of the brick wall. It
+      // keeps 45% of the height on the tall sizes; the words say less before it shrinks,
+      // and it gives up height only when even the title and the times will not fit.
+      const drop = 26 * u;
+      const gap = 44 * u;
+      const shares = f.shape === 'square' ? [0.37, 0.33, 0.29] : [0.45, 0.41, 0.37, 0.33];
+      let ph = 0;
+      let ws: Fitted | null = null;
+      for (const share of shares) {
+        ph = share * f.h;
+        const wTop = Math.max(ph + drop + gap, top);
+        ws = fitWords(
+          c,
+          f,
+          ctx,
+          u,
+          m,
+          { x: b.x, y: wTop, w: b.w, h: bottom - wTop },
+          { align: 'middle', leaders, dropDetails: c.kind === 'sermon' || c.kind === 'verse' },
+        );
+        if (!ws.warnings.some((w) => /too much|too long/.test(w))) break;
+      }
+      // Still too much at the smallest photo: say less (the times go to the caption).
+      if (ws!.warnings.some((w) => /too much|too long/.test(w))) {
+        const wTop = Math.max(ph + drop + gap, top);
+        ws = fitWords(
+          c,
+          f,
+          ctx,
+          u,
+          m,
+          { x: b.x, y: wTop, w: b.w, h: bottom - wTop },
+          { align: 'middle', leaders, dropDetails: true },
+        );
+      }
+      defs += tilePattern('slab', ctx.assets.tileWall, 300 * u);
+      body += rect(
+        b.x + b.w * 0.34,
+        ph * 0.5,
+        f.w - (b.x + b.w * 0.34),
+        ph * 0.5 + drop,
+        'url(#slab)',
+      );
+      const pw = f.w;
+      body += shapedPhoto(
+        c.photo,
+        'ph',
+        { x: 0, y: 0, w: pw, h: ph },
+        gable(pw, ph),
+        pitchOf(pw, ph),
+      );
+      body += ws!.svg;
+      return done(ws!.warnings);
+    }
     if (c.photo) {
-      // The gable over the brick wall. The words are set first, under a photo of the
-      // smallest height that lets them keep their floors; the photo then grows into
+      // Paper: the gable over the brick wall. The words are set first, under a photo of
+      // the smallest height that lets them keep their floors; the photo then grows into
       // whatever room the words leave.
       const drop = 26 * u;
       const gap = 56 * u;
-      const maxPh =
-        region * (f.shape === 'square' ? 0.42 : story ? 0.36 : f.shape === 'tall' ? 0.5 : 0.48);
+      const maxPh = region * (f.shape === 'tall' ? 0.5 : 0.48);
       let minPh = 0;
       let w0 = { h: 0, warnings: [] as string[], size: 0, goal: 0 };
       for (const share of [0.38, 0.32, 0.26, 0.2, 0.15, 0.11]) {
@@ -1187,10 +1622,16 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
     // The title: as large as the strip's height and the left column allow.
     const verse = c.kind === 'verse';
     const tw = s.w - colW - 0.06 * s.w;
+    // A banner stays up for weeks: an event or a time change always says when (research pass).
+    const dated = c.kind === 'event' || c.kind === 'announcement' || c.kind === 'time-change';
+    const when = dated ? shortWhen(cleanText(c.date), (c.when ?? []).map(cleanText)) : '';
+    const whenP = when
+      ? detailsPiece([{ a: when, b: '' }], 'inline', s.x, tw, Math.max(0.16 * s.h, m.body), 0, k)
+      : null;
     const st = stack(
       {
         before: [],
-        after: [],
+        after: whenP ? [whenP] : [],
         title: {
           text: verse ? `“${cleanText(c.title)}”` : cleanText(c.title),
           max: s.h / 1.04,
@@ -1202,27 +1643,28 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
       { x: s.x, y: s.y, w: tw, h: s.h },
       k,
       'middle',
-      0,
+      whenP ? 0.06 * s.h : 0,
     );
     body += st.svg;
     return done(warnings);
   }
 
-  // Banners (a page cover, the channel art): the strip every screen shows holds the
-  // name at the top, the words, and the web address at the foot; the picture (or the
-  // sketch) sits to the right of them.
+  // Banners (the Facebook page cover): the strip every screen shows holds the name at the
+  // top, the words, and the web address at the foot; the picture (or the sketch) sits to
+  // the right of them.
   if (f.shape === 'banner') {
     m.title = 0.15 * b.h;
     m.verse = 0.1 * b.h;
     const split = 0.6;
     const colW = b.w * split - 24 * u;
-    const mast = masthead(ctx, { ...b, w: colW }, b.h * 0.15, u, { ...m, small: 0 }, false);
+    const mast = masthead(ctx, { ...b, w: colW }, b.h * 0.15, u, m, false, nameSize);
     body += mast.svg;
-    const web = cleanText(c.link) || ctx.church.web;
-    const wsz = b.h * 0.07;
+    const bold = { family: 'sans' as const, weight: 700 };
+    let web = cleanText(c.link) || ctx.church.web;
+    const wsz = Math.max(b.h * 0.07, m.body * 1.05);
+    if (ctx.measure(web, { ...bold, size: wsz }) > colW) web = ctx.church.web;
     body += lines([web], {
-      family: 'sans',
-      weight: 700,
+      ...bold,
       size: wsz,
       leading: 1,
       x: b.x,
@@ -1259,65 +1701,64 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   // Wide pieces: the words on the left, the picture on the right. On a screen the masthead
   // runs across the top and the foot under the words, and the picture runs off the top,
   // right and bottom edges; on paper the band closes the piece and the picture keeps the margin.
-  const formCard = c.kind === 'welcome' && f.id === 'connect-card';
+  const formCard = c.kind === 'welcome' && card;
   const bleedOut = !!c.photo && !f.print && !formCard;
   const split = formCard ? 0.5 : 0.56;
-  const colW = b.w * split - 20 * u;
+  const colW = mini ? b.w : b.w * split - 20 * u;
   const rightX = b.x + b.w * (split + 0.04);
   const rightW = b.x + b.w - rightX;
   const screenSketch = !c.photo && !f.print && !formCard;
   let top = b.y;
   let bottom = b.y + b.h;
-  /** Where the right column (photo, form, sketch) ends. */
+  /** Where the right column (photo, form, sketch) starts and ends. */
+  let rightTop = top;
   let rightBottom = bottom;
   if (useBand) {
-    const bf = bandAndFoot(b.x, colW, { address: true, qr: qrSize });
+    const bf = bandAndFoot(b.x, colW, { qr: qrSize });
     bottom = bf.bottom - 40 * u;
     rightBottom = bf.above;
   } else {
-    const leftW = bleedOut ? rightX - 64 * u - b.x : colW;
-    const mast = masthead(ctx, { ...b, w: leftW }, (thumb ? 60 : card ? 54 : 64) * u, u, m);
-    body += mast.svg;
-    top += mast.h + (card ? 36 : 48) * u;
-    if (slide) {
-      // A projector needs the title and the times: the web address rides on the masthead row.
-      const web = cleanText(c.link) || ctx.church.web;
-      const wf = fitLine(
-        web,
-        { family: 'sans', weight: 700 },
-        leftW * 0.5,
-        m.body * 1.1,
-        m.body * 0.85,
-        ctx.measure,
-      );
-      body += lines([web], {
-        family: 'sans',
-        weight: 700,
-        size: wf.size,
-        leading: 1,
-        x: b.x + leftW,
-        y: b.y + 64 * u - wf.size * 1.02,
-        fill: C.navy,
-        anchor: 'end',
-      });
+    const leftW = bleedOut ? rightX - 64 * u - b.x : formCard ? colW : b.w;
+    if (thumb) {
+      // A thumbnail is seen at 320px wide beside the channel's own name: the mark alone,
+      // then the series and the title, as big as they go (research pass).
+      const ms = 0.15 * f.h;
+      body += image(ctx.assets.markColor, b.x, b.y, ms, ms);
+      top += ms + 32 * u;
     } else {
-      const ft = footScreen(c, ctx, { ...b, w: card ? b.w : leftW }, u, m, {
-        address: card,
+      const mast =
+        card && !mini
+          ? masthead(ctx, { ...b, w: leftW }, 54 * u, u, m)
+          : masthead(ctx, { ...b, w: leftW }, 64 * u, u, m, true, nameSize);
+      body += mast.svg;
+      top += mast.h + (card ? 36 : 48) * u;
+    }
+    // The slide carries only the name, the title and the times (a projector, a lit room).
+    if (!slide && !thumb) {
+      const ft = footScreen(c, ctx, { ...b, w: card && !formCard ? b.w : colW }, u, m, {
+        rest: address && !formCard ? [glueAddress(address)] : [],
         qrSize: card ? qrSize : 0,
       });
       body += ft.svg;
       bottom -= ft.h + (card ? 36 : 44) * u;
     }
-    rightBottom = bottom;
+    rightTop = formCard ? b.y : top;
+    rightBottom = formCard ? b.y + b.h : bottom;
   }
+  const warnings: string[] = [];
   if (formCard) {
-    body += form({ x: rightX, y: top, w: rightW, h: rightBottom - top }, u, m.small, [
-      'Name',
-      'Phone',
-      'Email',
-      'How can we pray for you?',
-      '',
-    ]);
+    const fm = form(
+      { x: rightX, y: rightTop, w: rightW, h: rightBottom - rightTop },
+      u,
+      m.small,
+      0.4 * dpi,
+      ['Name', 'Phone', 'Email', 'How can we pray for you?'],
+      ctx.measure,
+    );
+    body += fm.svg;
+    if (fm.over) warnings.push(`The writing side does not fit on ${f.label}.`);
+  } else if (mini) {
+    // No picture on a business card: the words take the width.
   } else if (c.photo) {
     const py = bleedOut ? 0 : top;
     const pw = bleedOut ? f.w - rightX : rightW;
@@ -1343,14 +1784,15 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
     {
       align: f.print ? 'top' : 'middle',
       body: !thumb && !slide,
+      details: !thumb,
       scale: thumb ? 1.3 : 1,
       leaders: !!f.print,
-      dsize: slide ? 0.05 * f.h : undefined,
+      dsize: slide ? 0.06 * f.h : undefined,
       dropDetails: card,
     },
   );
   body += ws.svg;
-  return done(ws.warnings);
+  return done([...warnings, ...ws.warnings]);
 }
 
 export const porch: Direction = {

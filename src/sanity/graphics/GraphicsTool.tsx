@@ -30,23 +30,38 @@ import {
   FORMATS,
   FORMAT_BY_ID,
   GROUP_LABELS,
+  SERIES_ART,
+  SERIES_ART_LABEL,
+  offeredFor,
   type Format,
   type FormatGroup,
 } from '../../lib/graphics/formats';
-import { DEFAULT_DIRECTION, DIRECTIONS, LOOK_NAMES } from '../../lib/graphics/directions';
+import { DEFAULT_DIRECTION, DIRECTIONS, GROUNDS, LOOK_NAMES } from '../../lib/graphics/directions';
 import { ASSETS } from '../../lib/graphics/assets';
 import {
   canvasMeasure,
   download,
   fileName,
   loadFonts,
+  printForShop,
   printGraphic,
+  recordStoryVideo,
   svgToPng,
   svgUrl,
 } from '../../lib/graphics/raster';
 import {
+  CAROUSEL_FORMAT,
+  CAROUSEL_ID,
+  carouselFor,
+  renderCarousel,
+} from '../../lib/graphics/carousel';
+import { VIDEO, videoFileName } from '../../lib/graphics/video';
+import {
+  altTextFor,
   announcementContent,
+  captionFor,
   churchLines,
+  inviteContent,
   eventContent,
   longDate,
   sermonContent,
@@ -111,6 +126,12 @@ const KINDS: { kind: Kind; title: string; lead: string; meaning: BrandIconKey }[
     lead: 'Connect cards, postcards and door hangers for the neighborhood.',
     meaning: 'people',
   },
+  {
+    kind: 'invite',
+    title: 'Invite a friend',
+    lead: 'A card a member hands to a friend, and a post to share. A personal invitation works best.',
+    meaning: 'person',
+  },
 ];
 
 /** The sizes ticked when a kind opens. */
@@ -121,7 +142,8 @@ const DEFAULT_SIZES: Record<Kind, string[]> = {
   verse: ['post-square', 'story', 'slide'],
   announcement: ['post-portrait', 'story', 'slide'],
   'time-change': ['post-portrait', 'story', 'slide'],
-  welcome: ['connect-card', 'postcard', 'door-hanger'],
+  welcome: ['connect-card', 'postcard', 'postcard-back', 'door-hanger'],
+  invite: ['invite-card', 'post-square'],
 };
 
 /** Word limits, shown as a count under each box (the templates also shrink to fit). */
@@ -244,6 +266,10 @@ export function GraphicsTool() {
       case 'welcome':
         return [
           { id: 'welcome', label: 'Our weekly times', content: welcomeContent(facts, siteUrl) },
+        ];
+      case 'invite':
+        return [
+          { id: 'invite', label: 'This Sunday', content: inviteContent(facts, now, siteUrl) },
         ];
       case 'verse':
         return [{ id: 'verse', label: 'Your verse', content: verseContent('', '', 'CSB') }];
@@ -383,18 +409,39 @@ export function GraphicsTool() {
     }
   }
 
+  // The words as drawn: no pre-launch note, the photo, the standing Sunday times.
+  const drawnContent: Content | null = useMemo(
+    () =>
+      content
+        ? {
+            ...withoutNotes(content),
+            photo,
+            standing: facts ? standingFor(facts, content.kind) : undefined,
+          }
+        : null,
+    [content, photo, facts],
+  );
   const drawn = useMemo(() => {
-    if (!ctx || !content) return [];
-    const c = {
-      ...withoutNotes(content),
-      photo,
-      standing: facts ? standingFor(facts, content.kind) : undefined,
-    };
-    return sizes
-      .map((id) => FORMAT_BY_ID[id])
-      .filter(Boolean)
-      .map((f) => ({ format: f, ...look.render(c, f, ctx) }));
-  }, [ctx, content, photo, sizes, look, facts]);
+    if (!ctx || !drawnContent) return [];
+    return (
+      sizes
+        .map((id) => FORMAT_BY_ID[id])
+        // A size only some kinds take (the invite card, the mailing side) is never drawn for others.
+        .filter((f) => f && offeredFor(f, drawnContent.kind))
+        .map((f) => ({ format: f, ...look.render(drawnContent, f, ctx) }))
+    );
+  }, [ctx, drawnContent, sizes, look]);
+
+  // The caption and alt text, from the same words (src/lib/graphics/content.ts).
+  const caption = drawnContent && ctx ? captionFor(drawnContent, ctx.church) : '';
+  const altText = drawnContent && ctx ? altTextFor(drawnContent, ctx.church) : '';
+  const [copied, setCopied] = useState('');
+  async function copy(which: string, text: string) {
+    const ok = await copyText(text);
+    setCopied(ok ? which : '');
+    if (!ok) setError('The words could not be copied. Select them and copy them yourself.');
+    else setTimeout(() => setCopied((c) => (c === which ? '' : c)), 2500);
+  }
 
   // Object URLs for the previews, revoked when they change.
   const urls = useMemo(() => drawn.map((d) => svgUrl(d.svg)), [drawn]);
@@ -416,6 +463,69 @@ export function GraphicsTool() {
     for (const d of drawn) {
       // One at a time, so a phone is never holding several full-size pictures at once.
       await save(d.svg, d.format);
+    }
+  }
+
+  // ── The carousel (src/lib/graphics/carousel.ts): 3 to 5 tall posts, in the look ──
+  const carousel = useMemo(() => {
+    if (!ctx || !drawnContent || !sizes.includes(CAROUSEL_ID) || !carouselFor(drawnContent.kind))
+      return [];
+    return renderCarousel(look.render, drawnContent, ctx, GROUNDS[look.id] ?? 'light');
+  }, [ctx, drawnContent, sizes, look]);
+  const frameUrls = useMemo(() => carousel.map((f) => svgUrl(f.svg)), [carousel]);
+  useEffect(() => () => frameUrls.forEach((u) => URL.revokeObjectURL(u)), [frameUrls]);
+
+  async function saveFrame(i: number) {
+    const fr = carousel[i];
+    if (!fr) return;
+    setBusy(`Saving picture ${fr.label}`);
+    try {
+      download(await svgToPng(fr.svg, CAROUSEL_FORMAT), fr.name);
+    } catch (e) {
+      setError(String((e as Error)?.message ?? e));
+    } finally {
+      setBusy('');
+    }
+  }
+
+  async function saveFrames() {
+    // In order, one at a time, so the files arrive (and sort) 01, 02, 03.
+    for (let i = 0; i < carousel.length; i++) await saveFrame(i);
+  }
+
+  // ── The short video of the Story graphic (src/lib/graphics/video.ts) ──
+  const [video, setVideo] = useState<{
+    svg: string;
+    progress: number;
+    url?: string;
+    name?: string;
+    mp4?: boolean;
+  } | null>(null);
+  const storySvg = drawn.find((d) => d.format.id === 'story')?.svg ?? '';
+  // A new Story graphic (other words, look or photo) makes the old video out of date.
+  useEffect(() => {
+    setVideo((v) => {
+      if (v && v.svg !== storySvg) {
+        if (v.url) URL.revokeObjectURL(v.url);
+        return null;
+      }
+      return v;
+    });
+  }, [storySvg]);
+
+  async function makeVideo(svg: string) {
+    setVideo({ svg, progress: 0 });
+    try {
+      const { blob, type } = await recordStoryVideo(svg, (p) =>
+        setVideo((v) => (v && v.svg === svg ? { ...v, progress: p } : v)),
+      );
+      const name = videoFileName(drawnTitle, type.ext);
+      const url = URL.createObjectURL(blob);
+      setVideo({ svg, progress: 1, url, name, mp4: type.mp4 });
+      download(blob, name);
+    } catch (e) {
+      setVideo(null);
+      setError(String((e as Error)?.message ?? e));
     }
   }
 
@@ -447,7 +557,7 @@ export function GraphicsTool() {
   // Times that come from Church facts but are not ticked Confirmed (the site shows "To confirm").
   const unconfirmed =
     !!facts &&
-    (kind === 'sunday' || kind === 'welcome' || kind === 'time-change') &&
+    (kind === 'sunday' || kind === 'welcome' || kind === 'time-change' || kind === 'invite') &&
     facts.serviceTimes.some((t) => !t.confirmed);
 
   const set = (k: keyof Content) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -511,6 +621,25 @@ export function GraphicsTool() {
 
   const meta = KINDS.find((k) => k.kind === kind)!;
   const groups: FormatGroup[] = ['social', 'screen', 'print'];
+  // The size lists: each group's sizes for this kind (the carousel first under Facebook and
+  // Instagram where it fits), and the sermon series art set on its own. Empty lists are left out.
+  const sizeGroups: { key: string; label: string; formats: Format[] }[] = [
+    ...groups.map((g) => ({
+      key: g,
+      label: GROUP_LABELS[g],
+      formats: [
+        ...(g === 'social' && carouselFor(kind) ? [CAROUSEL_FORMAT] : []),
+        ...FORMATS.filter(
+          (f) => f.group === g && offeredFor(f, kind) && !SERIES_ART.includes(f.id),
+        ),
+      ],
+    })),
+    {
+      key: 'series',
+      label: SERIES_ART_LABEL,
+      formats: SERIES_ART.map((id) => FORMAT_BY_ID[id]).filter((f) => offeredFor(f, kind)),
+    },
+  ].filter((g) => g.formats.length > 0);
   const isVerse = kind === 'verse';
   const titleLimit = isVerse ? LIMITS.verse : LIMITS.title;
 
@@ -671,6 +800,7 @@ export function GraphicsTool() {
                   kind === 'event' ||
                   kind === 'sunday' ||
                   kind === 'welcome' ||
+                  kind === 'invite' ||
                   kind === 'time-change') && (
                   <Field
                     label="A line or two more (optional)"
@@ -683,6 +813,20 @@ export function GraphicsTool() {
                       rows={3}
                       value={content.body ?? ''}
                       onChange={set('body')}
+                    />
+                  </Field>
+                )}
+                {kind === 'invite' && (
+                  <Field
+                    label="Invited by (optional)"
+                    hint="Your name, so your friend knows who to look for. Left empty, the card has a line to write it on."
+                    value={content.invitedBy ?? ''}
+                    limit={28}
+                  >
+                    <TextInput
+                      id="gfx-invited"
+                      value={content.invitedBy ?? ''}
+                      onChange={set('invitedBy')}
                     />
                   </Field>
                 )}
@@ -726,6 +870,7 @@ export function GraphicsTool() {
                   <Text size={1} muted>
                     Points people to <strong className="gfx-link">{content.link}</strong>
                     {content.qr ? '. Print sizes carry a code to scan.' : '.'}
+                    {content.qrLabel ? ` The code says “${content.qrLabel}”.` : ''}
                   </Text>
                 )}
               </Stack>
@@ -788,10 +933,10 @@ export function GraphicsTool() {
 
               {/* Sizes */}
               <Stack gap={4}>
-                {groups.map((g) => (
-                  <fieldset key={g} className="gfx-sizes">
-                    <legend>{GROUP_LABELS[g]}</legend>
-                    {FORMATS.filter((f) => f.group === g).map((f) => (
+                {sizeGroups.map((g) => (
+                  <fieldset key={g.key} className="gfx-sizes">
+                    <legend>{g.label}</legend>
+                    {g.formats.map((f) => (
                       <label key={f.id} className="gfx-size">
                         <input
                           type="checkbox"
@@ -842,7 +987,31 @@ export function GraphicsTool() {
                   </KitAction>
                 </Flex>
               )}
-              {drawnTitle && drawn.length === 0 && (
+              {drawnTitle && drawn.some((d) => d.format.print) && (
+                <Stack gap={2} className="gfx-printnote">
+                  <Text size={1}>
+                    <strong>Print at home</strong> trims each piece to the paper size, for your own
+                    printer.
+                  </Text>
+                  <Text size={1}>
+                    <strong>Save a PDF for the print shop</strong> keeps 1/8 inch extra on every
+                    side for the shop to trim, with sharp text. Choose Save as PDF in the window.
+                  </Text>
+                </Stack>
+              )}
+              {drawnTitle && sizes.includes('postcard-back') && (
+                <KitNotice tone="careful" title="Before you mail the postcards">
+                  Check with the post office or your printer first: confirm the 6 x 11 size and the
+                  Every Door Direct Mail postage box on the mailing side before anything is printed.
+                </KitNotice>
+              )}
+              {drawnTitle && sizes.includes('podcast-cover') && kind === 'sermon' && (
+                <KitNotice tone="tip" title="Using the podcast cover">
+                  Download it, then open Sermons page &gt; Podcast and upload it as the Podcast
+                  picture. Apple Podcasts and Spotify show it beside every episode.
+                </KitNotice>
+              )}
+              {drawnTitle && drawn.length === 0 && carousel.length === 0 && (
                 <Text size={1} muted>
                   Tick a size below to see it here.
                 </Text>
@@ -875,19 +1044,126 @@ export function GraphicsTool() {
                           <KitAction
                             quiet
                             onClick={() =>
-                              void printGraphic(d.svg, d.format, content?.title ?? '').catch((e) =>
+                              void printGraphic(d.svg, d.format, drawnTitle).catch((e) =>
                                 setError(String(e?.message ?? e)),
                               )
                             }
                           >
-                            Print or save as PDF
+                            Print at home
+                          </KitAction>
+                        )}
+                        {d.format.print && (
+                          <KitAction
+                            quiet
+                            onClick={() =>
+                              void printForShop(d.svg, d.format, drawnTitle).catch((e) =>
+                                setError(String(e?.message ?? e)),
+                              )
+                            }
+                          >
+                            Save a PDF for the print shop
                           </KitAction>
                         )}
                       </Flex>
+                      {d.format.id === 'story' && (
+                        <VideoMaker
+                          video={video?.svg === d.svg ? video : null}
+                          busy={!!video && !video.url}
+                          disabled={!canSave}
+                          onMake={() => void makeVideo(d.svg)}
+                          poster={urls[i]}
+                        />
+                      )}
                     </figcaption>
                   </figure>
                 ))}
               </div>
+              {drawnTitle && carousel.length > 0 && (
+                <section className="gfx-carousel" aria-labelledby="gfx-carousel-title">
+                  <Stack gap={2}>
+                    <Text as="h3" id="gfx-carousel-title" size={2} weight="semibold">
+                      Carousel, {carousel.length} pictures
+                    </Text>
+                    <Text size={1} muted>
+                      Post them together, in this order: on Facebook or Instagram, start a post and
+                      choose all {carousel.length}. The files are numbered so they stay in order.
+                    </Text>
+                  </Stack>
+                  <ol className="gfx-frames">
+                    {carousel.map((fr, i) => (
+                      <li key={fr.name} className="gfx-frame">
+                        <img src={frameUrls[i]} alt={`Carousel picture ${fr.label}`} />
+                        <Flex gap={2} align="center" justify="space-between">
+                          <span className="gfx-frame__n">{fr.label}</span>
+                          <KitAction quiet onClick={() => void saveFrame(i)} disabled={!canSave}>
+                            Download
+                          </KitAction>
+                        </Flex>
+                        {fr.warnings.length > 0 && (
+                          <span className="gfx-card__warn">Too long here. Try fewer words.</span>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                  <Flex gap={2}>
+                    <KitAction strong onClick={() => void saveFrames()} disabled={!canSave}>
+                      Download all {carousel.length} in order
+                    </KitAction>
+                  </Flex>
+                </section>
+              )}
+              {drawnTitle && (
+                <Stack gap={4} className="gfx-caption">
+                  <Stack gap={2}>
+                    <Text as="label" htmlFor="gfx-caption" size={1} weight="semibold">
+                      Caption for your post
+                    </Text>
+                    <Text size={1} muted>
+                      Written from the same words. Paste it as the text of your Facebook or
+                      Instagram post.
+                    </Text>
+                    <textarea
+                      id="gfx-caption"
+                      className="gfx-copybox"
+                      readOnly
+                      rows={8}
+                      value={caption}
+                    />
+                    <Flex gap={2} align="center">
+                      <KitAction onClick={() => void copy('caption', caption)}>
+                        Copy the caption
+                      </KitAction>
+                      <span className="gfx-copied" aria-live="polite">
+                        {copied === 'caption' ? 'Copied' : ''}
+                      </span>
+                    </Flex>
+                  </Stack>
+                  <Stack gap={2}>
+                    <Text as="label" htmlFor="gfx-alt" size={1} weight="semibold">
+                      Alt text
+                    </Text>
+                    <Text size={1} muted>
+                      For people who use a screen reader. On Facebook, choose Edit on the photo,
+                      then Alternative text, and paste it there.
+                    </Text>
+                    <textarea
+                      id="gfx-alt"
+                      className="gfx-copybox"
+                      readOnly
+                      rows={3}
+                      value={altText}
+                    />
+                    <Flex gap={2} align="center">
+                      <KitAction onClick={() => void copy('alt', altText)}>
+                        Copy the alt text
+                      </KitAction>
+                      <span className="gfx-copied" aria-live="polite">
+                        {copied === 'alt' ? 'Copied' : ''}
+                      </span>
+                    </Flex>
+                  </Stack>
+                </Stack>
+              )}
             </Stack>
           )}
         </div>
@@ -909,6 +1185,93 @@ export function GraphicsTool() {
       </Box>
       <style>{CSS}</style>
     </KitScope>
+  );
+}
+
+/** Copy words to the clipboard, with the old select-and-copy for browsers that refuse. */
+async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  }
+}
+
+/**
+ * "Make a short video" under the Story preview: records a calm 7 second video of the graphic
+ * (raster.ts recordStoryVideo), shows how far along it is, then plays it here and downloads it.
+ */
+function VideoMaker({
+  video,
+  busy,
+  disabled,
+  onMake,
+  poster,
+}: {
+  poster?: string;
+  video: { progress: number; url?: string; name?: string; mp4?: boolean } | null;
+  busy: boolean;
+  disabled: boolean;
+  onMake: () => void;
+}) {
+  const recording = !!video && !video.url;
+  const secs = Math.min(VIDEO.seconds, Math.floor((video?.progress ?? 0) * VIDEO.seconds));
+  return (
+    <div className="gfx-video">
+      <Text size={1} muted>
+        A {VIDEO.seconds} second video of this story for Reels and Stories: it settles in gently,
+        then holds. Making it takes about {VIDEO.seconds} seconds.
+      </Text>
+      <Flex gap={2} wrap="wrap" align="center">
+        <KitAction onClick={onMake} disabled={disabled || busy}>
+          {video?.url ? 'Make it again' : 'Make a short video'}
+        </KitAction>
+        {video?.url && video.name && (
+          <a className="ui-action ui-action--quiet" href={video.url} download={video.name}>
+            Download the video
+          </a>
+        )}
+      </Flex>
+      {recording && (
+        <div className="gfx-video__progress" aria-live="polite">
+          <progress max={1} value={video.progress} aria-label="Making the video" />
+          <span>
+            Making the video: {secs} of {VIDEO.seconds} seconds
+          </span>
+        </div>
+      )}
+      {video?.url && (
+        <>
+          <video
+            className="gfx-video__player"
+            src={video.url}
+            poster={poster}
+            controls
+            autoPlay
+            muted
+            playsInline
+            loop
+            aria-label="The short video"
+          />
+          <Text size={1} muted>
+            Saved as {video.name}.
+            {video.mp4
+              ? ' Post it as a Reel or a Story; add music in the app if you like.'
+              : ' This browser makes WebM videos. Instagram takes them, but Facebook may want MP4: make it in Chrome or Safari for an MP4.'}
+          </Text>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -986,4 +1349,16 @@ const CSS = `
 .gfx-card figcaption{display:grid;gap:8px}
 .gfx-card__name{font-weight:600;font-size:15px}
 .gfx-card__warn{font-size:13px;color:#7E2E20}
+.gfx-copybox{width:100%;box-sizing:border-box;font:inherit;font-size:15px;line-height:1.45;padding:10px 12px;border:1px solid var(--card-border-color,#E6DED2);border-radius:6px;background:var(--card-bg-color,#fff);color:inherit;resize:vertical}
+.gfx-copied{font-size:13px;color:#1F3A5F;font-weight:600}
+.gfx-video{display:grid;gap:8px;padding-top:10px;border-top:1px solid var(--card-border-color,#E6DED2)}
+.gfx-video__progress{display:grid;gap:4px;font-size:13px}
+.gfx-video__progress progress{width:100%;height:8px;accent-color:#1F3A5F}
+.gfx-video__player{display:block;width:100%;max-width:280px;aspect-ratio:9/16;background:#FBF8F3;box-shadow:0 0 0 1px rgb(22 38 61 / .12)}
+.gfx-carousel{display:grid;gap:14px;padding-top:16px;border-top:1px solid var(--card-border-color,#E6DED2)}
+.gfx-frames{list-style:none;margin:0;padding:0 0 8px;display:grid;grid-auto-flow:column;grid-auto-columns:min(72%,240px);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain}
+.gfx-frame{scroll-snap-align:start;display:grid;gap:6px;min-width:0}
+.gfx-frame img{display:block;width:100%;height:auto;aspect-ratio:4/5;box-shadow:0 0 0 1px rgb(22 38 61 / .12)}
+.gfx-frame__n{font-weight:600;font-size:14px;color:#9A3B2A;font-variant-numeric:tabular-nums}
+.gfx-caption{max-width:720px;padding-top:8px;border-top:1px solid var(--card-border-color,#E6DED2)}
 `;

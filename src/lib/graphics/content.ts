@@ -23,7 +23,8 @@ import {
   type TimeChange,
 } from '../church-facts.ts';
 import { withTrailingSlash } from '../href.ts';
-import type { Church, Content } from './types.ts';
+import { cleanText } from './text.ts';
+import type { Church, Content, Kind } from './types.ts';
 
 /** "Wednesday, December 24" for a YYYY-MM-DD. */
 export const longDate = (iso: string) => `${dayTitle(iso)}, ${monthDay(iso)}`;
@@ -101,8 +102,17 @@ export function timeChangeContent(
   };
 }
 
-/** New here: the times of every week, for the connect card, postcard and door hanger. */
-export function welcomeContent(facts: ChurchFacts, siteUrl: string): Content {
+/**
+ * New here: the times of every week, for the connect card, postcard and door hanger. The QR goes
+ * to the Church Trac connect card when Church facts has one (so the card can be filled in
+ * online), otherwise to Plan your visit; `qrLabel` says which.
+ */
+export function welcomeContent(
+  facts: Pick<ChurchFacts, 'serviceTimes'> & Partial<Pick<ChurchFacts, 'connectCardUrl'>>,
+  siteUrl: string,
+): Content {
+  const visit = linkFor(siteUrl, '/plan-your-visit/');
+  const connect = facts.connectCardUrl || null;
   const weekly = [...facts.serviceTimes].sort(
     (a, b) => a.dayIndex - b.dayIndex || a.minutes - b.minutes,
   );
@@ -116,6 +126,29 @@ export function welcomeContent(facts: ChurchFacts, siteUrl: string): Content {
         ? `${shortLabel(s.label)}, ${s.timeLabel}`
         : `${dayTitle(dayIso(s.dayIndex))} ${shortLabel(s.label)}, ${s.timeLabel}`,
     ),
+    link: visit.link,
+    qr: connect ?? visit.qr,
+    qrLabel: connect ? 'Scan to fill this in online' : 'Scan to plan your visit',
+  };
+}
+
+/**
+ * Invite a friend: this Sunday's times (time changes applied), for the card a member hands on and
+ * the square post they share. Personal invitation is the strongest reason a guest comes (Lifeway:
+ * 51% against 23% for a postcard). The "Invited by" name is the member's own, typed in the tool.
+ */
+export function inviteContent(facts: ChurchFacts, today: string, siteUrl: string): Content {
+  const date = nextSunday(today);
+  const plan = dayPlan(facts, date);
+  return {
+    kind: 'invite',
+    kicker: date === today ? 'Today' : 'This Sunday',
+    title: 'You’re invited',
+    body: '',
+    when: gatheringLines(plan.services),
+    date: longDate(date),
+    invitedBy: '',
+    qrLabel: 'Scan to plan your visit',
     ...linkFor(siteUrl, '/plan-your-visit/'),
   };
 }
@@ -227,7 +260,7 @@ const NOTE_RE = /\s*\[(?:Jacob|Placeholder|Client|Photo):[^\]]*\]\s*/g;
 
 /** True when any of the words still holds a pre-launch note. */
 export function hasNotes(c: Content): boolean {
-  return [c.kicker, c.title, c.body, c.date, ...(c.when ?? [])].some(
+  return [c.kicker, c.title, c.body, c.date, c.invitedBy, ...(c.when ?? [])].some(
     (v) => typeof v === 'string' && /\[(?:Jacob|Placeholder|Client|Photo):/.test(v),
   );
 }
@@ -242,6 +275,7 @@ export function withoutNotes(c: Content): Content {
     title: strip(c.title) ?? '',
     body: strip(c.body),
     date: strip(c.date),
+    invitedBy: strip(c.invitedBy),
     when: c.when?.map((w) => strip(w) ?? '').filter(Boolean),
   };
 }
@@ -255,9 +289,187 @@ export function standingFor(
   facts: Pick<ChurchFacts, 'serviceTimes'>,
   kind: Content['kind'],
 ): string[] | undefined {
-  if (kind === 'sunday' || kind === 'time-change' || kind === 'welcome') return undefined;
+  if (kind === 'sunday' || kind === 'time-change' || kind === 'welcome' || kind === 'invite')
+    return undefined;
   const sunday = facts.serviceTimes
     .filter((s) => s.dayIndex === 0)
     .sort((a, b) => a.minutes - b.minutes);
   return sunday.length ? gatheringLines(sunday) : undefined;
+}
+
+/** The words beside a QR code: the content's own, else what the code's target suggests. */
+export function qrLabelFor(c: Pick<Content, 'qr' | 'qrLabel'>): string {
+  const own = cleanText(c.qrLabel);
+  if (own) return own;
+  return /\/plan-your-visit\/?$/.test(c.qr ?? '') || !c.qr
+    ? 'Scan to plan your visit'
+    : 'Scan for the details';
+}
+
+// ── The caption and the alt text (2026-10-28) ──────────────────────────────────
+// Written from the same words the graphic draws, so the post and the picture agree. Plain and
+// warm, American English, no hashtags, no emoji, no dashes, no pre-launch notes. The two facts a
+// guest looks for first are the street address and the times (Thom Rainer), so every caption
+// carries both.
+
+/** One piece of words, tidy: dashes turned to a colon, no emoji, single spaces. */
+const tidy = (v?: string | null) =>
+  cleanText(v ?? '')
+    .replace(/\p{Extended_Pictographic}|\u{FE0F}|\u{200D}/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/** Ends a sentence with a full stop unless it already has its own. */
+const sentence = (s: string) => (!s ? '' : /[.!?”"]$/.test(s) ? s : `${s}.`);
+
+/** "a", "a and b", "a, b, and c". */
+function listJoin(a: string[]): string {
+  if (a.length < 2) return a[0] ?? '';
+  if (a.length === 2) return `${a[0]} and ${a[1]}`;
+  return `${a.slice(0, -1).join(', ')}, and ${a[a.length - 1]}`;
+}
+
+/** "Sunday School, 9:45 am" becomes "Sunday School at 9:45 am"; a bare time stays as it is. */
+const spoken = (line: string) =>
+  tidy(line).replace(/^(.+?),\s*(\d{1,2}(?::\d{2})?\s*[ap]m)$/i, '$1 at $2');
+
+/** True for a date line ("Thursday, December 24"), so a kicker that is a date reads as one. */
+const isDate = (s: string) => /^(Sun|Mon|Tues|Wednes|Thurs|Fri|Satur)day,\s/.test(s);
+
+/** The address a caption links to: the QR target when it is on the same site, else the link. */
+function captionUrl(c: Content, church: Church): string {
+  const link = tidy(c.link) || church.web;
+  const host = link.split('/')[0];
+  const qrHost = (c.qr ?? '')
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .split('/')[0];
+  if (c.qr && qrHost === host) return c.qr;
+  return `https://${link}${link.includes('/') ? '/' : ''}`;
+}
+
+/** Where: the church's name and street address (the town until the address is typed). */
+const whereLine = (church: Church) =>
+  `${church.line1} ${church.line2}, ${church.address ? tidy(church.address) : church.place}`;
+
+/** The headline as a sentence, with the kicker joined on when it adds something. */
+function headline(c: Content): string {
+  const title = tidy(c.title);
+  if (c.kind === 'verse') {
+    const ref = tidy(c.reference);
+    const tr = tidy(c.translation);
+    const cite = ref ? ` ${ref}${tr ? ` (${tr})` : ''}` : '';
+    return title ? `“${title.replace(/^[“"]|[”"]$/g, '')}”${cite}` : '';
+  }
+  const kicker = tidy(c.kicker);
+  if (!kicker || isDate(kicker) || c.kind === 'invite' || /^today$/i.test(kicker))
+    return sentence(title);
+  if (/[?!]$/.test(kicker)) return sentence(`${kicker} ${title}`);
+  return sentence(`${kicker}: ${title}`);
+}
+
+const LINK_LABEL: Record<Kind, string> = {
+  sunday: 'Plan your visit',
+  event: 'Details',
+  sermon: 'Listen',
+  verse: 'Visit us',
+  announcement: 'More',
+  'time-change': 'More',
+  welcome: 'Plan your visit',
+  invite: 'Plan your visit',
+};
+
+const INVITATION: Record<Kind, string> = {
+  sunday: 'We would love to see you there.',
+  event: 'Everyone is welcome. Bring a friend.',
+  sermon: 'We would love to have you with us on Sunday.',
+  verse: 'We would love to have you with us on Sunday.',
+  announcement: 'Everyone is welcome.',
+  'time-change': 'Please pass this on to anyone who might be coming.',
+  welcome: 'Come as you are. There is a seat for you.',
+  invite: 'I would love for you to come with me. Send me a message and we can sit together.',
+};
+
+/** The "When" line, or null: the date and the times, else the regular Sunday times. */
+function whenLine(c: Content): string | null {
+  const times = (c.when ?? []).map(spoken).filter(Boolean);
+  const kicker = tidy(c.kicker);
+  const date = tidy(c.date) || (isDate(kicker) ? kicker : '');
+  if (c.kind === 'welcome' && times.length) return `Every week: ${listJoin(times)}`;
+  if (date && times.length) return `When: ${date}, ${listJoin(times)}`;
+  if (date) return `When: ${date}`;
+  if (times.length) return `When: ${listJoin(times)}`;
+  const standing = (c.standing ?? []).map(spoken).filter(Boolean);
+  return standing.length ? `Sundays: ${listJoin(standing)}` : null;
+}
+
+/**
+ * A ready-to-post Facebook or Instagram caption: what, when, where, the link, and an invitation.
+ * `kind` defaults to the content's own.
+ */
+export function captionFor(content: Content, church: Church, kind: Kind = content.kind): string {
+  const c = withoutNotes({ ...content, kind });
+  const top = [headline(c)];
+  if (kind === 'sermon') {
+    const who = tidy(c.speaker);
+    const ref = tidy(c.reference);
+    if (who && ref) top.push(`${who} preaching from ${ref}.`);
+    else if (who) top.push(`${who} preaching.`);
+    else if (ref) top.push(`From ${ref}.`);
+  }
+  if (kind === 'invite') {
+    const when = /^today$/i.test(tidy(c.kicker)) ? 'today' : 'this Sunday';
+    top[0] = sentence(
+      `${tidy(c.title).replace(/[.!]$/, '')} to ${church.line1} ${church.line2} ${when}`,
+    );
+  }
+  if (tidy(c.body)) top.push(sentence(tidy(c.body)));
+  if (kind === 'invite' && tidy(c.invitedBy)) top.push(`Invited by ${tidy(c.invitedBy)}.`);
+  const facts = [
+    whenLine(c),
+    `Where: ${whereLine(church)}`,
+    `${LINK_LABEL[kind]}: ${captionUrl(c, church)}`,
+  ].filter(Boolean);
+  return [top.filter(Boolean).join(' '), facts.join('\n'), INVITATION[kind]]
+    .filter(Boolean)
+    .join('\n\n')
+    .replace(/\s*[—–]\s*/g, ': ');
+}
+
+/**
+ * The alt text: one or two sentences that read out the graphic's words, for the "Alternative
+ * text" box on Facebook and Instagram (a screen reader cannot read the words in a picture).
+ */
+export function altTextFor(content: Content, church: Church, kind: Kind = content.kind): string {
+  const c = withoutNotes({ ...content, kind });
+  const name = `${church.line1} ${church.line2}`;
+  const over = c.photo ? ', set over a photo,' : '';
+  const kicker = tidy(c.kicker);
+  let first: string;
+  if (kind === 'verse') {
+    const ref = [tidy(c.reference), tidy(c.translation)].filter(Boolean).join(', ');
+    first = `A graphic from ${name}${over} with the verse “${tidy(c.title)}”${ref ? ` (${ref})` : ''}.`;
+  } else {
+    const title = tidy(c.title);
+    const words = !kicker
+      ? title
+      : /[?!]$/.test(kicker)
+        ? `${kicker} ${title}`
+        : `${kicker}: ${title}`;
+    first = `A graphic from ${name}${over} that reads “${sentence(words)}”`;
+  }
+  const times = (c.when ?? []).map(spoken).filter(Boolean);
+  const date = tidy(c.date);
+  const rest = [
+    date && date !== kicker ? date : '',
+    listJoin(times),
+    kind === 'sermon' ? [tidy(c.reference), tidy(c.speaker)].filter(Boolean).join(', ') : '',
+    kind === 'invite' && tidy(c.invitedBy) ? `Invited by ${tidy(c.invitedBy)}` : '',
+    !times.length && c.standing?.length ? `Sundays: ${listJoin(c.standing.map(spoken))}` : '',
+    tidy(c.link),
+  ].filter(Boolean);
+  return (rest.length ? `${first} Below it: ${rest.join('; ')}.` : first).replace(
+    /\s*[—–]\s*/g,
+    ': ',
+  );
 }
