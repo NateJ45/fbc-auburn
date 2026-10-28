@@ -1,5 +1,22 @@
 # Change history
 
+_2026-10-28: Make a graphic, new capabilities (from the graphics research report)._ A caption and
+alt text written from the same words (`captionFor`, `altTextFor` in `src/lib/graphics/content.ts`),
+each with a Copy button in the tool; a second print path, "Save a PDF for the print shop", at the
+full size with 1/8" bleed and the SVG inlined so text stays vector (`src/lib/graphics/print.ts`,
+`printForShop`), beside "Print at home"; the postcard's mailing side (`postcard-back`, USPS EDDM
+Retail indicia, return address, "Postal Customer", `src/lib/graphics/mailing.ts`); a new kind,
+Invite a friend, on a business card (`invite-card`) and a square post (`src/lib/graphics/invite.ts`);
+both drawn by shared templates through a wrapper in `directions/index.ts`, and limited to the kinds
+they suit with `onlyFor`. The New here QR points at the Church Trac connect card when Church facts
+has one (`qrLabel`). The door hanger's hint says never to put one in a mailbox. Also a carousel (3 to 5 tall
+posts from the same words, each drawn by the look and numbered, saved as `carousel-01-...png` in
+order; `src/lib/graphics/carousel.ts`) for event, sermon, New here and Sunday; sermon series art (a
+1920 x 1080 title slide, a 1080 square and a 3000 x 3000 podcast cover, `SERIES_ART` in `formats.ts`,
+words from `series-art.ts`); and "Make a short video" under the Story preview, a calm 7 second
+1080 x 1920 MP4 (WebM where MP4 is not recorded) made in the browser with canvas and MediaRecorder
+(`video.ts`, `recordStoryVideo` in `raster.ts`). Tests, the Site Guide entry and
+`docs/agent/graphics.md` updated.
 _2026-10-27: Make a graphic._ A Studio tool (`src/sanity/graphics/`, engine `src/lib/graphics/`,
 `docs/agent/graphics.md`) that draws the church's posts, stories, Facebook and YouTube covers, the
 Sunday slide and print (flyer, bulletin insert, connect card, postcard, door hanger, yard sign) in

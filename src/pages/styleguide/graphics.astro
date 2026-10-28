@@ -79,7 +79,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 </style>
 
 <script>
-  import { FORMATS, FORMAT_BY_ID } from '@/lib/graphics/formats';
+  import { FORMATS, FORMAT_BY_ID, offeredFor } from '@/lib/graphics/formats';
   import { DIRECTIONS } from '@/lib/graphics/directions';
   import { SAMPLES, SAMPLE_CHURCH } from '@/lib/graphics/samples';
   import { ASSETS } from '@/lib/graphics/assets';
@@ -129,6 +129,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       directions: DIRECTIONS.map((d) => d.id),
       kinds: Object.keys(SAMPLES),
       formats: FORMATS.map((f) => f.id),
+      offered: Object.fromEntries(
+        (Object.keys(SAMPLES) as Kind[]).map((k) => [
+          k,
+          FORMATS.filter((f) => offeredFor(f, k)).map((f) => f.id),
+        ]),
+      ),
     };
     const root = document.getElementById('gw-root')!;
     root.textContent = '';
@@ -147,7 +153,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
         ks.innerHTML = `<h3>${k}</h3>`;
         const grid = document.createElement('div');
         grid.className = 'gw-grid';
-        for (const f of formats) {
+        // Only the sizes the Studio offers for this kind (formats.ts onlyFor).
+        for (const f of formats.filter((x) => offeredFor(x, k))) {
           const { svg, warnings } = d.render(content(k), f, ctx);
           const fig = document.createElement('figure');
           fig.className = 'gw-item';

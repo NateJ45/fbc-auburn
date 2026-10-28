@@ -20,7 +20,8 @@ export type Kind =
   | 'verse' // A Bible verse
   | 'announcement' // A short notice: a headline and a line or two
   | 'time-change' // A different Sunday: from Church facts > A different Sunday
-  | 'welcome'; // New here: the connect card, postcard and door hanger
+  | 'welcome' // New here: the connect card, postcard and door hanger
+  | 'invite'; // Invite a friend: a card a member hands on, and a square post to share
 
 export interface Photo {
   /** A data: URI (the Studio fetches the picture first, so the canvas is never tainted). */
@@ -59,6 +60,13 @@ export interface Content {
   link?: string;
   /** The full address the QR code holds; print sizes draw a code when it is set. */
   qr?: string;
+  /**
+   * The words beside the QR code ("Scan to plan your visit"), set where the code's target is
+   * not obvious: the welcome kind points at the Church Trac connect card when there is one.
+   */
+  qrLabel?: string;
+  /** Invite a friend: the member's name for the "Invited by" line (optional, typed by them). */
+  invitedBy?: string;
   photo?: Photo;
 }
 

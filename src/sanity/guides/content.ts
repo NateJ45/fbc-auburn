@@ -867,16 +867,17 @@ const allGuides: Guide[] = [
       { kind: 'path', items: ['Make a graphic'], link: { tool: 'graphics' } },
       {
         kind: 'p',
-        text: 'Make a graphic draws Facebook and Instagram posts and stories, the Facebook event picture, YouTube thumbnails, the Sunday screen, and things to print: flyers, bulletin inserts, connect cards, neighborhood postcards, door hangers and a yard sign. The colors, letters and layout are the church’s own and are done for you. You only check the words and, if you like, pick a photo.',
+        text: 'Make a graphic draws Facebook and Instagram posts, carousels and stories (and a short video of a story), the Facebook event picture, YouTube thumbnails, the Sunday screen, sermon series art and a podcast cover, and things to print: flyers, bulletin inserts, connect cards, neighborhood postcards and their mailing side, door hangers, a yard sign, and an invite card members can hand to a friend. The colors, letters and layout are the church’s own and are done for you. You only check the words and, if you like, pick a photo.',
       },
       {
         kind: 'steps',
         items: [
-          'Open `Make a graphic` in the top bar and pick what it is for: this Sunday, an event, a sermon, a Bible verse, an announcement, a different Sunday, or New here.',
+          'Open `Make a graphic` in the top bar and pick what it is for: this Sunday, an event, a sermon, a Bible verse, an announcement, a different Sunday, New here, or Invite a friend.',
           'Check the words. Times and dates come from `Church facts` and your pages, so they always match the website. To change one, change it there.',
           'Tick the sizes you want. A preview of each shows straight away.',
           'Pick a photo if you like. A real photo of your church and people beats any stock picture.',
-          'Press `Download` under each one, or `Download all`. For print sizes, `Print or save as PDF` opens the print window at the right paper size.',
+          'Press `Download` under each one, or `Download all`. For print sizes, `Print at home` opens the print window trimmed to the paper size, and `Save a PDF for the print shop` keeps 1/8 inch extra on every side for the shop to trim, with sharp text. Choose Save as PDF in that window.',
+          'Under the graphics, copy the **Caption for your post** and paste it as the words of your Facebook or Instagram post. Copy the **Alt text** too: on Facebook, choose Edit on the photo, then Alternative text, and paste it there, so people who use a screen reader know what it says.',
         ],
       },
       {
@@ -886,6 +887,26 @@ const allGuides: Guide[] = [
       {
         kind: 'p',
         text: 'If a headline is too long for a size, the preview says so. Fewer words read bigger and better.',
+      },
+      {
+        kind: 'p',
+        text: '**Invite a friend** makes a business card and a square post with this Sunday’s times, the address and a code to scan. A personal invitation is the best reason a guest comes, so share it with your members. They can type their own name for the “Invited by” line, or leave it empty and write it on the card.',
+      },
+      {
+        kind: 'p',
+        text: 'The **Postcard, mailing side** is the address side for Every Door Direct Mail, with the postage box and “Postal Customer”. Before printing, check the 6 x 11 size and the postage box with the post office or your printer. And never put a door hanger in a mailbox: it is against federal law.',
+      },
+      {
+        kind: 'p',
+        text: 'For an event, a sermon, New here or this Sunday, tick **Carousel** to get three to five tall posts that tell it in order: the title, when, where, and an invitation. Press `Download all in order`, then on Facebook or Instagram start one post and choose all of them. The files are numbered, so they stay in order.',
+      },
+      {
+        kind: 'p',
+        text: 'For a sermon or series, **Sermon series art** gives a title slide for the screen, a square for the feed and a podcast cover. Upload the podcast cover in `Sermons page`, on the `Podcast` tab, as the `Podcast picture`.',
+      },
+      {
+        kind: 'p',
+        text: 'Under the **Story** preview, `Make a short video` makes a calm seven-second video of it for Reels and Stories. Keep the window open while it records; it then plays it for you and downloads it. Chrome and Safari make an MP4, which Facebook and Instagram both take.',
       },
     ],
   },

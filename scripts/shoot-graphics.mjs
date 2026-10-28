@@ -33,7 +33,7 @@ await page.waitForFunction(() => document.documentElement.dataset.graphicsReady 
 });
 const all = await page.evaluate(() => {
   const g = window.__graphics;
-  return { d: g.directions, kind: g.kinds, format: g.formats };
+  return { d: g.directions, kind: g.kinds, format: g.formats, offered: g.offered };
 });
 const pick = (k) => (arg(k) ? arg(k).split(',') : all[k]);
 
@@ -41,6 +41,8 @@ let n = 0;
 for (const d of pick('d')) {
   for (const kind of pick('kind')) {
     for (const format of pick('format')) {
+      // Skip sizes the Studio does not offer for this kind (formats.ts onlyFor).
+      if (all.offered && !all.offered[kind]?.includes(format)) continue;
       const dataUrl = await page.evaluate(
         async ({ d, kind, format, max }) => {
           const url = await window.__graphics.png(d, kind, format);

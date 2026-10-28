@@ -31,7 +31,19 @@ first"); no console errors. Downloads and every kind were checked headless in th
 - **Photos:** every kind works without one; the real photos from the photo Sunday (1x shot list) will
   make them better. Pick two or three as defaults for each kind once they exist.
 - **Print shop check:** the 6 x 11 postcard size and bleed for Every Door Direct Mail, and the yard
-  sign's 150 dpi, with whichever printer the church uses.
+  sign's 150 dpi, with whichever printer the church uses. Since 2026-10-28 there is a postcard
+  mailing side (`postcard-back`, EDDM Retail indicia and "Postal Customer") and a "Save a PDF for
+  the print shop" path (full size with bleed, vector text): have the post office approve the
+  mailing side's indicia and layout, and the printer accept the PDF, before the first mailing.
+- **Not built yet (2026-10-28):** crop marks on the print-shop PDF, CMYK or PDF/X output. The
+  carousel, sermon series art and the short Story video were added the same day and checked in the
+  kit harness (an MP4 of 7.01s at 1080 x 1920 that plays); try them signed in on a phone (does iOS
+  Safari record an MP4 that Instagram takes, and does the carousel post in order from Photos?).
+  Bold's foot warns that the web address is too long on tall posts and carousel frames while the
+  address is the long workers.dev one; it goes at cutover. The Light look draws no words
+  beside its QR yet, so it does not print `qrLabel`; Bold reads it through `qrLabelFor()`.
+- **Invite a friend and the caption box:** try them signed in on a phone (Copy uses the clipboard,
+  which iOS allows only from a tap).
 - **At cutover:** QR codes and printed web addresses follow `site.url`; anything printed before the
   domain moves points at the workers.dev address. Print nothing for the public until then.
 

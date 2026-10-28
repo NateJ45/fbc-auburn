@@ -81,5 +81,17 @@ export const SAMPLES: Record<Kind, Content> = {
     when: ['Sunday School, 9:45 am', 'Worship, 11:00 am', 'Wednesday Bible study, 6:00 pm'],
     link: 'firstauburn.org/plan-your-visit',
     qr: 'https://firstauburn.org/plan-your-visit/',
+    qrLabel: 'Scan to plan your visit',
+  },
+  invite: {
+    kind: 'invite',
+    kicker: 'This Sunday',
+    title: 'You’re invited',
+    when: ['Sunday School, 9:45 am', 'Worship, 11:00 am'],
+    date: 'Sunday, November 1',
+    invitedBy: 'Mary Collins',
+    link: 'firstauburn.org/plan-your-visit',
+    qr: 'https://firstauburn.org/plan-your-visit/',
+    qrLabel: 'Scan to plan your visit',
   },
 };

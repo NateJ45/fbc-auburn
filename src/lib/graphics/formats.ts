@@ -20,6 +20,8 @@
 // hold in memory).
 // =============================================================================
 
+import type { Kind } from './types.ts';
+
 export type FormatGroup = 'social' | 'screen' | 'print';
 export type Shape = 'tall' | 'portrait' | 'square' | 'landscape' | 'banner';
 
@@ -45,7 +47,12 @@ export interface Format {
   safe: Insets;
   /** Print sizes: the trimmed size in inches and the resolution. */
   print?: { inW: number; inH: number; dpi: number };
+  /** The kinds the Studio offers this size for (unset: every kind). */
+  onlyFor?: Kind[];
 }
+
+/** True when the Studio offers this size for this kind. */
+export const offeredFor = (f: Format, kind: Kind) => !f.onlyFor || f.onlyFor.includes(kind);
 
 const all = (n: number): Insets => ({ top: n, right: n, bottom: n, left: n });
 
@@ -169,6 +176,47 @@ export const FORMATS: Format[] = [
     bleed: 0,
     safe: all(108),
   },
+  // ── Sermon series art (2026-10-28) ────────────────────────────────────────
+  // The set a series needs, drawn from the series' own words (series-art.ts trims them to the
+  // title, the series name, the book or passage and the church's name). They keep the group
+  // whose type rules they follow (a slide is read from the back pew); the tool lists them
+  // together under "Sermon series art" (SERIES_ART).
+  {
+    id: 'series-slide',
+    group: 'screen',
+    label: 'Series title slide',
+    hint: 'The title slide for the sanctuary screen while the series runs (16:9).',
+    w: 1920,
+    h: 1080,
+    shape: 'landscape',
+    bleed: 0,
+    safe: all(108),
+    onlyFor: ['sermon'],
+  },
+  {
+    id: 'series-square',
+    group: 'social',
+    label: 'Series square',
+    hint: 'For the feed and the Instagram grid, the same art every week of the series.',
+    w: 1080,
+    h: 1080,
+    shape: 'square',
+    bleed: 0,
+    safe: all(68),
+    onlyFor: ['sermon'],
+  },
+  {
+    id: 'podcast-cover',
+    group: 'social',
+    label: 'Podcast cover',
+    hint: '3000 x 3000, the size Apple Podcasts asks for. Upload it in Sermons page > Podcast > Podcast picture.',
+    w: 3000,
+    h: 3000,
+    shape: 'square',
+    bleed: 0,
+    safe: all(190),
+    onlyFor: ['sermon'],
+  },
   // ── Print ─────────────────────────────────────────────────────────────────
   printFormat(
     'flyer',
@@ -202,10 +250,36 @@ export const FORMATS: Format[] = [
     6,
     'landscape',
   ),
+  {
+    ...printFormat(
+      'postcard-back',
+      'Postcard, mailing side',
+      'The address side of the 6 x 11 postcard, for Every Door Direct Mail. Confirm the size and the postage box with the post office or your printer before printing.',
+      11,
+      6,
+      'landscape',
+    ),
+    // A neighborhood mailing is for Sunday, an event with a date, or New here.
+    onlyFor: ['sunday', 'event', 'welcome'],
+  },
+  // A business card keeps words 1/8" inside the trim (the printers' own rule for this size),
+  // not the 1/4" the larger pieces keep: on a 2" card the extra 1/8" is a fifth of the room.
+  {
+    ...printFormat(
+      'invite-card',
+      'Invite card',
+      'Business card, 3.5 x 2 in. For members to hand to a friend.',
+      3.5,
+      2,
+      'landscape',
+    ),
+    safe: all(Math.round(0.25 * 300)),
+    onlyFor: ['invite'],
+  },
   printFormat(
     'door-hanger',
     'Door hanger',
-    '4.25 x 11 in. Leave room for the hole at the top.',
+    '4.25 x 11 in. Leave room for the hole at the top. Never put a door hanger in a mailbox: it is against federal law (18 U.S.C. 1725).',
     4.25,
     11,
     'tall',
@@ -224,6 +298,10 @@ export const FORMATS: Format[] = [
 export const FORMAT_BY_ID: Record<string, Format> = Object.fromEntries(
   FORMATS.map((f) => [f.id, f]),
 );
+
+/** The sermon series art set, listed together in the tool (only for a sermon or series). */
+export const SERIES_ART: string[] = ['series-slide', 'series-square', 'podcast-cover'];
+export const SERIES_ART_LABEL = 'Sermon series art';
 
 export const GROUP_LABELS: Record<FormatGroup, string> = {
   social: 'Facebook and Instagram',
