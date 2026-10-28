@@ -25,7 +25,7 @@ import HomeBand from './HomeBand.astro';
 import HomeBelong from './HomeBelong.astro';
 import HomeWeekWatch from './HomeWeekWatch.astro';
 import SectionRenderer from '@/components/SectionRenderer.astro';
-import { sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
+import { SECTION_DRAG_FLOW, sectionEditAttr, type EditDoc } from '@/lib/preview-edit-attr';
 import type {
   PageBuilderBlock,
   ProjectedHeroSection,
@@ -112,7 +112,7 @@ for (let i = 0; i < blocks.length; i++) {
 
 const Wrap = editDoc ? 'div' : Fragment;
 const wrapAttrs = (key: string) =>
-  editDoc ? { 'data-sanity': sectionEditAttr(editDoc, key) } : {};
+  editDoc ? { 'data-sanity': sectionEditAttr(editDoc, key), ...SECTION_DRAG_FLOW } : {};
 const hid = (key: string) => `home-${key}`;
 ---
 
