@@ -34,7 +34,7 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
 
 ## Named anchors
 
-A section whose block key is in `src/lib/section-anchors.ts` gets that name as its heading id
+A section whose block key is in `src/lib/church-anchors.ts` gets that name as its heading id
 (SectionRenderer), with `scroll-margin-top` so the sticky header does not cover it
 (`src/styles/board.css`). Other sections keep their numbered ids.
 
@@ -86,5 +86,5 @@ A section whose block key is in `src/lib/section-anchors.ts` gets that name as i
   counting, statements, the budget vote and the Cooperative Program, as a text section. Answer them
   in the section before launch, or remove it.
 
-Each page's asks are also in its "For Jacob" pill (`src/data/for-jacob.ts`); photo slots are in
+Each page's asks are also in its "For Jacob" pill (`src/data/client-notes.ts`); photo slots are in
 `src/data/shot-list.ts`, keyed by the heading, so a renamed heading needs its key renamed too.

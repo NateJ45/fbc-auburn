@@ -184,6 +184,8 @@ The shared logic lives in `src/lib/heading-accent.ts` (`splitHeadingAccent(headi
 
 ## The flow layer (FBC Auburn, 2026-10-24)
 
+**Auburn's copy is a fork (2026-10-27).** The starter generalised this layer as PORTS.md card 192 (`layout.motion`, `addFlowExtension`). Auburn keeps its own `flow.ts` and `flow.css`, because the starter's copy holds the firstscreen still on every width and has no brick-laying unit, so it would change how Home and the 404 open. The wordsplitter `src/lib/flow-split.ts` is the shared copy. `brand.config.json` `layout.motion` stays `reveal`; Auburn'sscript does not read it.
+
 Nathan asked for the whole site to feel alive as you scroll, the way a reference church site
 (Highland Park Presbyterian, Dallas) does. Its motion was audited on 2026-10-24: GSAP with
 ScrollTrigger, SplitText and Barba, driven by Alpine components. What it does, and what we kept:

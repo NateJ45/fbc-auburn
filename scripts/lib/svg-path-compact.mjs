@@ -1,19 +1,26 @@
-// Safe to edit by hand
-// Rewrites SVG path data in its shortest plain form (audit DEV-L10, 2026-10-25): relative commands,
-// one decimal, no spaces a parser does not need. "M 239.8 602.7 C 234.1 604.9, 232.3 622, ..."
-// becomes "m239.8 602.7c-5.7 2.2-7.5 19.3...". The stone icons' masters are drawn to a tenth of a
-// unit already, and the arithmetic is done in whole tenths, so every point stays exactly where it
-// was (the test checks every master). The 47 icons went from 1.45 MB to 0.90 MB (brotli 464 to 313
-// KB). Rendered side by side they look the same; a pixel compare finds a handful of edge pixels
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Rewrites SVG path data in its shortest plain form (PORTS.md card 197; first built for FBC Auburn's
+// 47 icons, which went from 1.45 MB to 0.90 MB, brotli 464 to 313 KB). Relative commands, one
+// decimal, no spaces a parser does not need: "M 239.8 602.7 C 234.1 604.9, 232.3 622, ..." becomes
+// "m239.8 602.7c-5.7 2.2-7.5 19.3...". Use it in a build script that writes icons, logos or a
+// generated motif, never on artwork you still edit by hand.
+//
+// PRECISION, THE ONE THING TO KNOW. Every coordinate is rounded to a TENTH of a unit and the
+// arithmetic is done in whole tenths, so the points do not drift as offsets add up. Artwork drawn
+// to a tenth already (an icon on a 24 or 100 unit grid, a master exported from a vector tool at
+// one decimal) loses nothing: the test checks that every point stays where it was. Artwork drawn
+// finer than that moves by up to 0.05 unit, so scale a very large drawing's viewBox first.
+// Rendered side by side the two look the same; a pixel compare finds a handful of edge pixels
 // anti-aliased differently, from the renderer summing relative offsets in floating point.
 //
 // Handles M, L, H, V, C, S, Q, T and Z, absolute or relative, with implicit repeats. Arcs (A) are
-// returned unchanged: none of the icons use them, and their flags do not survive this treatment.
+// returned unchanged: their flags do not survive this treatment.
 
 const ARGS = { m: 2, l: 2, h: 1, v: 1, c: 6, s: 4, q: 4, t: 2, z: 0 };
 
 /** "0.5" -> ".5", "-0.5" -> "-.5", "3.0" -> "3". */
 function num(tenths) {
+  tenths += 0; // -0 becomes 0
   const neg = tenths < 0;
   const a = Math.abs(tenths);
   const whole = Math.floor(a / 10);
@@ -36,10 +43,18 @@ function join(nums) {
   return out;
 }
 
+/** The compact form, or the original when that is not shorter (a path already written tightly
+ *  can come out a character or two longer; never make a file bigger). */
 export function compactPath(d) {
+  const c = compactPathRaw(d);
+  return c.length < d.length ? c : d;
+}
+
+function compactPathRaw(d) {
   if (/[aA]/.test(d)) return d;
   const tokens = d.match(/[a-zA-Z]|-?(?:\d+\.?\d*|\.\d+)(?:e-?\d+)?/g) ?? [];
-  const t10 = (s) => Math.round(Number(s) * 10);
+  // "+ 0" turns a rounded -0 (from "-0.04" or "-0") into 0, so no "-0" ever reaches the output.
+  const t10 = (s) => Math.round(Number(s) * 10) + 0;
   let i = 0;
   let cmd = '';
   let x = 0;
@@ -48,15 +63,20 @@ export function compactPath(d) {
   let sy = 0; // subpath start
   let out = '';
   let lastLetter = '';
+  let lastNum = ''; // last number written, to know if a repeat needs a separator
   const emit = (letter, nums) => {
-    const body = join(nums.map(num));
+    const strs = nums.map(num);
+    const body = join(strs);
     // A repeated command letter can be left out, except after z.
     if (letter === lastLetter && letter !== 'z' && letter !== 'm') {
-      out += (body.startsWith('-') ? '' : ' ') + body;
+      const first = strs[0];
+      const glued = first.startsWith('-') || (first.startsWith('.') && lastNum.includes('.'));
+      out += (glued ? '' : ' ') + body;
     } else {
       out += letter + body;
     }
     lastLetter = letter === 'm' ? 'l' : letter;
+    lastNum = strs[strs.length - 1] ?? '';
   };
   while (i < tokens.length) {
     if (/[a-zA-Z]/.test(tokens[i])) cmd = tokens[i++];

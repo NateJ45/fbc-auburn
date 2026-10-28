@@ -222,13 +222,13 @@ export function announcementContent(siteUrl: string): Content {
   };
 }
 
-/** The pre-launch notes in page copy ("[Jacob: ...]", "[Placeholder: ...]", ForJacob.astro). */
-const NOTE_RE = /\s*\[(?:Jacob|Placeholder):[^\]]*\]\s*/g;
+/** The pre-launch notes in page copy ("[Jacob: ...]", "[Placeholder: ...]"): MARKERS in src/data/client-notes.ts. */
+const NOTE_RE = /\s*\[(?:Jacob|Placeholder|Client|Photo):[^\]]*\]\s*/g;
 
 /** True when any of the words still holds a pre-launch note. */
 export function hasNotes(c: Content): boolean {
   return [c.kicker, c.title, c.body, c.date, ...(c.when ?? [])].some(
-    (v) => typeof v === 'string' && /\[(?:Jacob|Placeholder):/.test(v),
+    (v) => typeof v === 'string' && /\[(?:Jacob|Placeholder|Client|Photo):/.test(v),
   );
 }
 

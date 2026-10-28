@@ -8,11 +8,12 @@
 // Under the words, the live stream and the church's Facebook page (visitor audit, 2026-10-18), both
 // from Site settings through Church facts and each hidden until it is filled in.
 import '@/styles/shapes.css';
+import '@/styles/shapes-auburn.css';
 import CtaLink from '@/components/CtaLink.astro';
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import { surfaceClass } from '@/lib/surfaces';
-import { ctaHref } from '@/lib/cta-href';
+import { ctaHref } from '@/lib/church-cta-href';
 import type { ProjectedCtaBlock, SanityImageObject } from '@/lib/pageBuilder.types';
 import { getChurchFacts } from '@/lib/church-data';
 import { churchDataNow } from '@/lib/church-feeds';

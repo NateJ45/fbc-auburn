@@ -69,7 +69,7 @@ export const plans = {
     }),
     {
       _type: 'watchSection',
-      // Its heading keeps the id #sermons-watch-heading (src/lib/section-anchors.ts).
+      // Its heading keeps the id #sermons-watch-heading (src/lib/church-anchors.ts).
       _key: 'sermons-watch',
       eyebrow: 'Sundays, wherever you are',
       heading: 'Watch live, or catch up',

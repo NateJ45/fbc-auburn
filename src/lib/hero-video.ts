@@ -1,24 +1,29 @@
-// Safe to edit by hand
-// The Home hero's video (2026-10-25, PENDING 1zt). Home's hero can play a short silent clip of
-// church life behind the welcome words; the background photo stays underneath as its poster and
-// is all that shows when the clip should not play. This file holds the two decisions, so they are
-// unit tested (hero-video.test.ts) and shared by the Studio field (sections.ts) and the hero's
-// script (HomeHero.astro):
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
+// =============================================================================
+// hero-video: the photo hero's silent background clip (PORTS.md card 189, from FBC Auburn)
+// =============================================================================
+// An opening banner set to "Photo behind the words" can play a short silent clip over its
+// background photo; the photo stays underneath as the clip's poster and is all that shows when the
+// clip should not play. This file holds the decisions, so they are unit tested
+// (hero-video.test.ts) and shared by the Studio field (sections.ts) and the hero's script
+// (HeroVideo.astro):
 //   - which uploads count as a hero video (mp4 or webm only), and the size budgets;
-//   - which copy a visitor gets: the "Phone video" (2026-10-26, about 640px wide and a few hundred
-//     KB) below 768px when one is uploaded, else the main clip. Sanity serves files as uploaded and
-//     does not transcode them, so the small copy is a second upload, chosen by the hero's script
-//     before any request is made;
+//   - which copy a visitor gets: the "Phone video" (about 640px wide and a few hundred KB) below
+//     768px when one is uploaded, else the main clip. Sanity serves files as uploaded and does not
+//     transcode them, so the small copy is a second upload, chosen by the hero's script before any
+//     request is made;
 //   - whether this visitor gets the clip at all: never with reduced motion, Save-Data or a slow
 //     connection (2G, 3G, or a measured downlink under 1 Mbps), and never in print, which shows
-//     the photo.
+//     the photo;
+//   - whether an .mp4 is saved for fast start (the Studio warns when it is not).
 
 /** The file types the field takes; the Studio's file picker is limited to these too. */
 export const HERO_VIDEO_TYPES = ['video/mp4', 'video/webm'] as const;
 export const HERO_VIDEO_ACCEPT = HERO_VIDEO_TYPES.join(',');
 
 /**
- * The size budget the Studio warns above (bytes). Lowered from 6 MB on 2026-10-26: a 20 second
+ * The size budget the Studio warns above (bytes): a 20 second
  * 720p clip with no sound exported for the web is 1 to 3 MB.
  */
 export const HERO_VIDEO_BUDGET = 3 * 1024 * 1024;
@@ -45,8 +50,8 @@ export function heroVideoSource(
 
 /**
  * The Studio's note on an upload: an error for a type the hero cannot play, a warning over the
- * size budget (the main clip's, or the phone copy's), else nothing. Plain words, because Pastor
- * Jacob reads them.
+ * size budget (the main clip's, or the phone copy's), else nothing. Plain words, because the
+ * site's editor reads them.
  */
 export function heroVideoProblem(
   asset: HeroVideoAsset | null | undefined,
@@ -67,7 +72,7 @@ export function heroVideoProblem(
       message:
         kind === 'phone'
           ? `This phone video is ${size}. Keep it under 1 MB (640 pixels wide, no sound, 15 to 20 seconds) so it plays quickly on a phone signal.`
-          : `This video is ${size}. Keep it under 3 MB (shorter, or exported at 720p with no sound) so Home loads quickly.`,
+          : `This video is ${size}. Keep it under 3 MB (shorter, or exported at 720p with no sound) so the page loads quickly.`,
     };
   }
   return null;
@@ -92,7 +97,7 @@ export function heroVideoPick(
 export const FAST_START_PROBE_BYTES = 64 * 1024;
 
 /**
- * Whether an .mp4 is saved for fast start (2026-10-25): its index (`moov`) comes before the video
+ * Whether an .mp4 is saved for fast start: its index (`moov`) comes before the video
  * data (`mdat`), so a browser can start playing after the first few hundred KB and stream the rest
  * through range requests. With the index at the end it must fetch nearly the whole file before the
  * first frame. Reads the top-level boxes in the first bytes of the file: true when `moov` comes

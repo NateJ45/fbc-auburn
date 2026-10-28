@@ -23,6 +23,7 @@
 //
 // A content block: the surface comes from the cadence (rule 9). Docs: docs/agent/shapes.md.
 import '@/styles/shapes.css';
+import '@/styles/shapes-auburn.css';
 import SanityImage from '@/components/SanityImage.astro';
 import StoneIcon from '@/components/StoneIcon.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
@@ -30,7 +31,7 @@ import { MARKER } from '@/components/home/stones.generated';
 import { getChurchFacts } from '@/lib/church-data';
 import { dayWithTimes, plain } from '@/lib/church-facts';
 import { fypIds, keptGroups } from '@/lib/gatherings';
-import { ctaHref } from '@/lib/cta-href';
+import { ctaHref } from '@/lib/church-cta-href';
 import { shotFor } from '@/data/shot-list';
 import { surfaceClass } from '@/lib/surfaces';
 import type { ProjectedFypCard, ProjectedFypGroup } from '@/lib/pageBuilder.types';

@@ -29,7 +29,7 @@ import { urlFor } from '@/lib/sanity';
 import { site } from '@/data/site';
 import ShareButtons from '@/components/ShareButtons.astro';
 import SearchMeta from '@/components/search/SearchMeta.astro';
-import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+import { CLIENT_NOTES_ACTIVE } from '@/data/client-notes';
 
 export async function getStaticPaths() {
   const sermons = await getAllSermons();
@@ -49,7 +49,7 @@ if (!s) throw new Error(`[sermons] "${slug}" was listed but is missing`);
 const who = preacherName(s);
 // Before launch, a sermon missing its passage, preacher or series says so in its facts (audit
 // 2026-10-25: every sermon should carry all three), so the gap is seen and filled in the Studio.
-const ask = PRE_LAUNCH_NOTES;
+const ask = CLIENT_NOTES_ACTIVE;
 const passageUrl = bibleGatewayUrl(s.passage, page?.bibleVersion);
 const service = serviceTitle(s.service);
 const sorted = sortSermons(all.filter((x) => x.slug && x.title && x._id !== s._id));

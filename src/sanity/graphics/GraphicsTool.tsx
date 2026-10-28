@@ -713,7 +713,7 @@ export function GraphicsTool() {
                 )}
                 {hasNotes(content) && (
                   <KitNotice tone="careful" title="A note is still in these words">
-                    Something here still reads “[Jacob: …]”. It is left off the graphic. Change it
+                    Something here still reads like “[Jacob: …]”. It is left off the graphic. Change it
                     on the page it came from, or type your own words above.
                   </KitNotice>
                 )}

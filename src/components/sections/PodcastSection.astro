@@ -7,7 +7,7 @@
 // pre-launch note asks for one (audit 2026-10-25: the feed existed and nobody could find it).
 import { getAllSermons, getSermonsPage } from '@/lib/collection-queries';
 import { site } from '@/data/site';
-import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+import { CLIENT_NOTES_ACTIVE } from '@/data/client-notes';
 
 interface Props {
   heading?: string;
@@ -31,7 +31,7 @@ const hasAudio = list.some((s) => s.audio?.url);
           {intro ||
             'Sermons with a recording are also a podcast, so they come to your phone each week.'}
         </p>
-        {!hasAudio && PRE_LAUNCH_NOTES && (
+        {!hasAudio && CLIENT_NOTES_ACTIVE && (
           <p class="c-meta mt-s">
             [Jacob: the podcast fills itself from any sermon with an MP3 recording attached. Is
             there an audio recording of Sunday's message we could upload each week? Many people

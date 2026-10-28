@@ -1,7 +1,7 @@
 # Example photos for the shot list
 
 Pre-launch only. Each file shows the kind of photo asked for in one slot of `src/data/shot-list.ts`,
-under a yellow "Example" note. They go away with the placeholders when `PRE_LAUNCH_NOTES` is set to
+under a yellow "Example" note. They go away with the placeholders when `CLIENT_NOTES_ON` is set to
 false, and this folder can be deleted at launch.
 
 Photos are from Unsplash (Unsplash License) and the two clips are from Pexels (Pexels License); both allow

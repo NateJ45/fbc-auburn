@@ -15,7 +15,7 @@
 //
 // The TikTok account in the footer is Pastor Jacob's own (the pastor's note 15): its button is
 // labelled "Pastor Jacob on TikTok" so it reads as his, not the church speaking. Whether it stays
-// in the footer is the church's call (asked in src/data/for-jacob.ts).
+// in the footer is the church's call (asked in src/data/client-notes.ts).
 //
 // Dry by default. Production needs --apply AND NCS_PRODUCTION_WRITE=yes (.claude/rules/data-scripts.md):
 //   node scripts/content/audit-chrome.mjs <backup-folder>

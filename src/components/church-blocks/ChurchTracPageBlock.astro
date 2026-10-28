@@ -12,7 +12,7 @@ import ChurchBand from './ChurchBand.astro';
 import ChurchTracBlocks from './ChurchTracBlocks.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { churchTracPageUrl, loadChurchTracPage } from '@/lib/church-trac-pages';
-import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+import { CLIENT_NOTES_ACTIVE } from '@/data/client-notes';
 import type { ProjectedChurchTracPageSection } from '@/lib/churchBlocks.types';
 
 interface Props {
@@ -25,7 +25,7 @@ const { churchTracUrl } = await getChurchFacts();
 const page = await loadChurchTracPage(block.page, churchTracUrl);
 const url = churchTracPageUrl(block.page, churchTracUrl);
 const heading = block.heading || page?.title || 'From Church Trac';
-const show = Boolean(page || url || PRE_LAUNCH_NOTES);
+const show = Boolean(page || url || CLIENT_NOTES_ACTIVE);
 ---
 
 {show && (

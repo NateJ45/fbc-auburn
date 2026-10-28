@@ -119,7 +119,8 @@
     "header": "inline",
     "hero": "split",
     "density": "airy",
-    "cards": "soft"
+    "cards": "soft",
+    "motion": "reveal"
   },
   "workerName": "fbc-auburn",
   "logoPaths": {

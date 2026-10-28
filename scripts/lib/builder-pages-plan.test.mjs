@@ -53,7 +53,7 @@ test('the old content lands where each page drew it', () => {
   assert.equal(journal.at(-1).headline, 'Come Sunday.');
   const privacy = plans.privacyPage(LIVE.privacyPage);
   assert.equal(privacy[1].lastUpdated, '2026-10-18');
-  // The Watch band keeps its anchor (src/lib/section-anchors.ts).
+  // The Watch band keeps its anchor (src/lib/church-anchors.ts).
   assert.ok(plans.sermonsPage(LIVE.sermonsPage).some((s) => s._key === 'sermons-watch'));
   assert.deepEqual(
     newPages.map((p) => p.slug.current),

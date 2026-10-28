@@ -11,7 +11,7 @@ import NotConfirmed from '@/components/church/NotConfirmed.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { streamedService } from '@/lib/church-blocks';
 import { site } from '@/data/site';
-import { PRE_LAUNCH_NOTES } from '@/data/for-jacob';
+import { CLIENT_NOTES_ACTIVE } from '@/data/client-notes';
 import type { ProjectedGivingSection } from '@/lib/churchBlocks.types';
 
 interface Props {
@@ -57,9 +57,9 @@ const Title = block.heading ? 'h3' : 'h2';
         <Title class="cb-title">By mail</Title>
         <p>
           Make a check out to {site.name}{' '}
-          {/* Pre-launch: the payee is our guess until Jacob confirms it (src/data/for-jacob.ts). It came
+          {/* Pre-launch: the payee is our guess until Jacob confirms it (src/data/client-notes.ts). It came
               with the Give page when that page became a Studio page (2026-10-26). */}
-          {PRE_LAUNCH_NOTES && '[Jacob: is this the name checks should be made out to?] '}
+          {CLIENT_NOTES_ACTIVE && '[Jacob: is this the name checks should be made out to?] '}
           and mail it to:
         </p>
         <address class="cb-address">

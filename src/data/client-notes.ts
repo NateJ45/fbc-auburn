@@ -1,28 +1,43 @@
 // Safe to edit by hand
-// What we need from Pastor Jacob, page by page, for the pre-launch preview (2026-10-23). Shown by
-// src/components/ForJacob.astro as the "For Jacob" pill while PRE_LAUNCH_NOTES is true. Turn it
-// off at launch (and the yellow highlighting of "[Jacob: ...]" placeholders goes with it).
+// The client review layer's settings and notes (PORTS.md card 195; First Baptist Auburn is where it
+// started, 2026-10-23, as the "For Jacob" pill). What we need from Pastor Jacob, page by page, for
+// the pre-launch preview. Shown by src/components/ClientNotes.astro as the "For Jacob" pill while
+// CLIENT_NOTES_ACTIVE is true. Turn CLIENT_NOTES_ON off at launch (and the yellow highlighting of
+// "[Jacob: ...]" placeholders goes with it). It also goes quiet by itself once src/data/site.ts
+// holds the real domain, and src/lib/client-notes.test.ts fails until the switch is turned off.
 //
 // Keys are page paths with a trailing slash ("/" for Home). Keep each note to one thing he can
 // act on: a title, then a sentence on what we want and why. Photos are not listed here: the shot
 // list (src/data/shot-list.ts) adds one note per "Photo needed" box on the page.
 
+import { clientNotesActive } from '../lib/client-notes.ts';
 import { publicPath } from '../lib/page-path.ts';
+import { site } from './site.ts';
 
-export const PRE_LAUNCH_NOTES = true;
+/** THE SWITCH. On while the church is reviewing the pre-launch site (workers.dev). */
+export const CLIENT_NOTES_ON = true;
 
-export interface JacobNote {
+/** What the pill calls the person it is for: "For Jacob". */
+export const CLIENT_NAME = 'Jacob';
+
+/** The words that mark wording to fill in: "[Jacob: ...]", "[Placeholder: ...]", "[Photo: ...]". */
+export const MARKERS: readonly string[] = ['Client', 'Placeholder', 'Photo', 'Jacob'];
+
+/** Whether the layer draws right now: the switch is on and the site is on a pre-launch address. */
+export const CLIENT_NOTES_ACTIVE = clientNotesActive(CLIENT_NOTES_ON, site.url);
+
+export interface ClientNote {
   title: string;
   detail?: string;
 }
 
-const CHURCH_TRAC: JacobNote = {
+const CHURCH_TRAC: ClientNote = {
   title: 'Your Church Trac address and forms.',
   detail:
     'Send us your Church Trac address and the links to your connection card, a general contact form if you have one, and your prayer request form. Each goes in one box and the website swaps its own form for yours, so every message lands in Church Trac. In Church Trac, each form’s "Embed Domain" setting needs this website’s address.',
 };
 
-const NOTES: Record<string, JacobNote[]> = {
+const NOTES: Record<string, ClientNote[]> = {
   '/': [
     {
       title: 'Meet Pastor Jacob: a few lines.',
@@ -456,11 +471,11 @@ const NOTES: Record<string, JacobNote[]> = {
 };
 
 /** The notes for a page path (with or without a trailing slash). */
-export function notesFor(pathname: string): JacobNote[] {
+export function notesFor(pathname: string): ClientNote[] {
   return NOTES[publicPath(pathname)] ?? [];
 }
 
 /** Every page with notes, for the one-page list we send Jacob. */
-export function allNotes(): [string, JacobNote[]][] {
+export function allNotes(): [string, ClientNote[]][] {
   return Object.entries(NOTES);
 }

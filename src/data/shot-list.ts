@@ -1,9 +1,11 @@
 // Safe to edit by hand
+// The site's shot list, in the shape of the starter's (PORTS.md card 195): it keeps Auburn's own
+// shots, examples, hero and video helpers, and a stand-in rule widened to the church's Facebook photos.
 // The shot list for Pastor Jacob (2026-10-24): the photo we want in each picture slot on the site.
-// While PRE_LAUNCH_NOTES is true, a slot that is empty or still holds a stand-in (a photo from the
+// While CLIENT_NOTES_ACTIVE is true, a slot that is empty or still holds a stand-in (a photo from the
 // church's Facebook page or an Unsplash picture) shows a "Photo needed" placeholder that names the
 // shot (src/components/ShotRequest.astro) instead of the stand-in. Upload the church's own photo in
-// the Studio and it shows straight away; at launch PRE_LAUNCH_NOTES goes false and every
+// the Studio and it shows straight away; at launch CLIENT_NOTES_ACTIVE goes false and every
 // placeholder goes with it (a slot with no photo then falls back to what it showed before).
 //
 // Each shot also carries an example (2026-10-24): a free Unsplash photo (and, for Last Sunday, a
@@ -12,7 +14,7 @@
 // while still saying which photo is Jacob's to take. Sources and photographers:
 // public/shot-examples/CREDITS.md.
 //
-// The same list feeds the "For Jacob" pill (src/data/for-jacob.ts), one note per shot, so the
+// The same list feeds the "For Jacob" pill (src/data/client-notes.ts), one note per shot, so the
 // pill and the placeholders never disagree.
 //
 // Keys: the page path with a trailing slash, then the block's heading exactly as it reads in the
@@ -20,9 +22,12 @@
 // big photo first, then the two small ones. Home's hero is keyed "hero", not by a heading. A
 // renamed heading simply loses its request.
 
-import { PRE_LAUNCH_NOTES } from './for-jacob.ts';
+import { CLIENT_NOTES_ACTIVE } from './client-notes.ts';
 import { publicPath } from '../lib/page-path.ts';
 import { splitStega } from '../lib/preview-stega.ts';
+
+/** Uploaded files named like this are stand-ins: the church's Facebook photos and `stand-in-*` uploads. */
+export const STAND_IN_FILE = /^(fbca-fb-|stand-in-)/i;
 
 export interface Shot {
   /** The shot, in a few words: what Jacob points the camera at. */
@@ -278,7 +283,7 @@ export function isStandInPhoto(img: unknown): boolean {
   const asset = (img as { asset?: AssetLike | null } | null | undefined)?.asset;
   if (!asset) return false;
   if (asset.source?.name === 'unsplash') return true;
-  return /^(fbca-fb-|stand-in-)/i.test(asset.originalFilename ?? '');
+  return STAND_IN_FILE.test(asset.originalFilename ?? '');
 }
 
 // American spelling (audit 2026-10-25): a heading still spelled "neighbours" in the Studio finds the
@@ -304,7 +309,7 @@ export function shotsForPage(path: string): Shot[] {
  * plain heading (pass it through splitStega first on preview routes).
  */
 export function shotFor(path: string, heading: string | undefined, index: number, img: unknown) {
-  if (!PRE_LAUNCH_NOTES || !heading) return null;
+  if (!CLIENT_NOTES_ACTIVE || !heading) return null;
   const shot = SHOTS[keyOf(path, heading)]?.[index];
   if (!shot) return null;
   const hasPhoto = Boolean((img as { asset?: unknown } | null | undefined)?.asset);
@@ -313,7 +318,7 @@ export function shotFor(path: string, heading: string | undefined, index: number
 
 /** A post's cover slot: the request while the cover is empty or a stand-in, before launch. */
 export function journalCoverShot(img: unknown): Shot | null {
-  if (!PRE_LAUNCH_NOTES) return null;
+  if (!CLIENT_NOTES_ACTIVE) return null;
   const hasPhoto = Boolean((img as { asset?: unknown } | null | undefined)?.asset);
   return hasPhoto && isStandInPhoto(img) ? JOURNAL_COVER : null;
 }

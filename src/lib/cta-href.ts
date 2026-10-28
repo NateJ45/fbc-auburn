@@ -1,8 +1,24 @@
-// Safe to edit by hand
-// Resolves a Sanity ctaBlock to a path. Moved out of CtaLink.astro (2026-10-17) so anything that
-// links like a button (the Watch band's video card) resolves the same way. CtaLink still owns the
-// button markup.
-import { withTrailingSlash } from '@/lib/href';
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+// Foundation, edit with care
+// =============================================================================
+// cta-href: one Sanity ctaBlock becomes one path (PORTS.md card 187)
+// =============================================================================
+// CtaLink.astro used to hold this resolver inside its frontmatter, so anything
+// that needed to know where a button GOES (the page's accent-button budget, a
+// link card that should behave like a button, a "does this repeat the header
+// button?" check) had to copy it. It now lives here, pure and unit-tested;
+// CtaLink still owns the button markup.
+//
+// Page types map to routes through SINGLETON_LIVE_PATHS (src/lib/nav-href.ts),
+// the same table the menus use, so a page type has ONE route in the whole
+// site. Only the two slug-based types are handled here.
+//
+// Imports are relative with `.ts`, so node --test can run the unit test. No scaffold markers: a
+// PORTABLE file carries none, so the journal branch stays even when the journal module is removed
+// (its document type goes with it and the branch is never taken).
+// =============================================================================
+import { withTrailingSlash } from './href.ts';
+import { SINGLETON_LIVE_PATHS } from './nav-href.ts';
 
 export interface CtaTarget {
   linkType?: 'internal' | 'external' | 'email' | 'phone';
@@ -10,44 +26,26 @@ export interface CtaTarget {
   externalUrl?: string;
   emailAddress?: string;
   phoneNumber?: string;
+  /** A plain path. Only the built-in default sections name their path this way. */
   href?: string;
 }
 
-// Map Sanity document _type to its route. Mirrors the routes in src/pages/.
-// Singletons go to a fixed path; journalEntry uses {slug} for the dynamic
-// /journal/[slug] route.
-const TYPE_TO_PATH: Record<string, string> = {
-  homePage: '/',
-  aboutPage: '/about/',
-  faqPage: '/plan-your-visit/#questions',
-  contactPage: '/contact/',
-  journalPage: '/journal/', // scaffold: journal
-  sermonsPage: '/sermons/',
-};
-
 function resolveHref(c: CtaTarget | null | undefined, fallbackHref: string): string {
-  // No linkType: a built-in default button, which names its path directly. Before this line
-  // read only fallbackHref, every default button went to /contact/ whatever it said.
+  // No linkType: a built-in default button, which names its path directly.
   if (!c?.linkType) return c?.href ?? fallbackHref;
   switch (c.linkType) {
     case 'internal': {
       const t = c.internalLink?._type;
       if (!t) return fallbackHref;
       // Slug-based types need the slug appended. Singletons use a fixed path.
-      // scaffold: journal
       if (t === 'journalEntry' && c.internalLink?.slug) {
         return `/journal/${c.internalLink.slug}`;
-      }
-      // scaffold:end
-      // One sermon (2026-10-18): /sermons/<slug>/.
-      if (t === 'sermon' && c.internalLink?.slug) {
-        return `/sermons/${c.internalLink.slug}/`;
       }
       // Custom pages (type 'page') route via /[slug].astro.
       if (t === 'page' && c.internalLink?.slug) {
         return `/${c.internalLink.slug}`;
       }
-      return TYPE_TO_PATH[t] ?? fallbackHref;
+      return SINGLETON_LIVE_PATHS[t] ?? fallbackHref;
     }
     case 'external':
       return c.externalUrl ?? fallbackHref;

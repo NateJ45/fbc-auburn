@@ -38,7 +38,7 @@ are Studio pages (`page-give`, `page-bulletin`; changelog 2026-10-26). Left:
 
 - **Give, "How gifts are cared for":** the section holds Jacob's four asks as text now (it was code
   that hid itself at launch). Before launch, answer them in the section or remove it in the Studio.
-  The payee ask moved into the Ways to give block (still behind `PRE_LAUNCH_NOTES`).
+  The payee ask moved into the Ways to give block (still behind `CLIENT_NOTES_ON`).
 - **Bulletin, "When a new bulletin goes up":** a field on the This week's bulletin block; until it is
   filled the pre-launch ask shows in its place.
 - **Signed in:** Contact was opened signed in on the live Studio (2026-10-26) and opens on the Page
@@ -53,9 +53,10 @@ button left empty no longer blocks Publish). The "Seasonal: Event page" template
 
 - **Jacob:** the Christmas Eve time (6 to 7 pm is a stand-in), and the Christmas Sunday plans. Both
   carry a `[Jacob: ...]` note on the page. The page is in no menu; add it from Menu placement when ready.
-- **Stale Studio after a deploy:** a Studio tab opened before a deploy shows a raw "Failed to fetch
-  dynamically imported module" error inside a field (the Unsplash picker) until it is reloaded, because
-  the old code files are gone. The desk recovers on its own; fields do not. Wants a reload prompt.
+- ~~**Stale Studio after a deploy**~~ Done 2026-10-26 (starter card 179, found closed 2026-10-27):
+  `src/lib/studio-stale-chunk.ts`, wired in `src/pages/studio/index.astro`, shows "The Studio was
+  updated. Reloading to carry on." and reloads once, then offers a Reload button
+  (`docs/agent/studio-kit.md`, "After a deploy"). Byte-identical to the starter.
 - ~~**Two accent fields and two "Line under the heading" fields**~~ Done 2026-10-26: the handwritten
   accent is hidden on the opening banner, text block and Invitation band, and the formatted line hides
   while empty on the band, FAQ, Team and Listing blocks (changelog 2026-10-26). Starter note: the
@@ -148,17 +149,17 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
   starter card 164): `scripts/content/*` and `scripts/seed-core.mjs` say "baptised", "neighbours",
   "favourite", "enquire", "tick the box". The live dataset no longer does. Fix a script's strings before
   running it again, or it puts the British wording back.
-- **Ports:** the fixes that are not church-specific go to the starter with port cards: the print
-  reset and `print.spec`, the regex-backslash guard, the dark-surface ring, the ContactForm changes
-  (POST fallback, one-pass errors, sessionStorage), the FaqAccordion landmark fix, the `<dialog>`
-  phone menu, the dropdown hover/click fix, transform-only header compaction, the one-red-button
-  budget in `SectionRenderer`, `section-anchors`, the 404 search block, per-gathering `.ics`,
-  `purge-page-css`, fonts and textures under `src/assets`, the `_headers` cache and
-  `form-action`/`Permissions-Policy` lines, `assetsInlineLimit: 0` for the CSP length, the noindex
-  canonical rule and JPEG share images. Also in the starter: the PORTABLE docs
-  (`docs/agent/components.md`, `.claude/rules/foundation-files.md`, `OPERATIONS.md`) still name
-  `MobileNav.tsx`, and a few PORTABLE files keep British spellings ("colour" in `UndoRedo.tsx`,
-  "judgement" in `page-checks.ts`, "Website enquiry" in `contact-submission.ts`).
+- ~~**Ports**~~ Done (checked 2026-10-27): the audit's generic fixes are starter cards 155 (print
+  reset, `print.spec`, regex-backslash guard), 156 (ContactForm POST fallback, one-pass errors and
+  sessionStorage, the FaqAccordion landmark, the dark-surface ring), 157 (the `<dialog>` phone menu,
+  one dropdown model, transform-only header compaction), 158 (button budget, section anchors, the 404
+  search block, calendar files) and 159 (`purge-page-css`, the `_headers` cache, `form-action` and
+  `Permissions-Policy` lines, `assetsInlineLimit: 0`, no canonical on noindex, JPEG share images).
+  Card 164 took the British spellings out of the PORTABLE files, and the starter's docs no longer
+  name `MobileNav.tsx` (only its changelog, as history). Recorded forks, not ports: Auburn's own
+  `section-anchors.ts` and its navy button budget in `SectionRenderer` (card 158); fonts and
+  textures under `src/assets` (the starter keeps none in `public/`, card 159). `sync-check`
+  against starter `main` at card 201: every marked file the same.
 
 ### 1zx. The menu groups: Jacob's say (opened 2026-10-24)
 
@@ -335,7 +336,7 @@ The shots wanted:
 - Leadership: Jacob, head and shoulders (the Home photo works).
 - News and notes: a post's stand-in cover asks for "a photo that goes with this post" (optional).
 
-At launch, `PRE_LAUNCH_NOTES` false turns every box off: a slot whose stand-in was never replaced shows the
+At launch, `CLIENT_NOTES_ON` false turns every box off: a slot whose stand-in was never replaced shows the
 stand-in again, so delete or replace those first (the Facebook ones are `fbca-fb-*` uploads). Not covered:
 the round signer portrait in Who we are (hidden while empty; same photo as Meet Pastor Jacob).
 
@@ -343,8 +344,8 @@ the round signer portrait in Who we are (hidden while empty; same photo as Meet 
 
 **Blocker: Jacob's answers.** Every page carries marked placeholder copy ("[Placeholder: ...]" drafts and
 "[Jacob: ...]" asks, highlighted yellow) and a "For Jacob" notes pill listing what we need
-(`src/data/for-jacob.ts`, `src/components/ForJacob.astro`). Since 2026-10-24 every photo slot shows a
-"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `PRE_LAUNCH_NOTES` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
+(`src/data/client-notes.ts`, `src/components/ClientNotes.astro`). Since 2026-10-24 every photo slot shows a
+"Photo needed" shot request instead of its stand-in (1x, the shot list, above). At launch: replace every bracket, set `CLIENT_NOTES_ON` to false, delete `public/shot-examples/` (nothing reads it then), and grep the
 dataset for "[Placeholder" and "[Jacob" (none may remain). The contact form cannot deliver until
 Web3Forms or D1 and email are set up (`docs/agent/` and OPERATIONS "Email").
 
@@ -848,6 +849,21 @@ check. Once the first sermon and news post are published and deployed:
   and run `npx playwright test tests/search.spec.ts`: the share half finds the sermon and news pages by itself.
 
 ## Known gaps, deliberately open
+
+### Forks of the starter's copies of Auburn's own pieces (opened 2026-10-27)
+
+Cards 186 to 198 took Auburn's work into the starter; Auburn then adopted the starter's copies where
+nothing on screen changed. These stayed Auburn's own, each with a "Fork of the starter's ..." header
+naming why: `src/scripts/flow.ts` and `src/styles/flow.css` (card 192: the starter holds the first
+screen still and has no brick unit), `PhotoHero.astro` and `photo-hero.css` (card 189: different
+frame and shade), `ShotRequest.astro` and `ClientNotes.astro` (card 195: Auburn's ink, wording and
+classes), `scripts/lib/svg-path-compact.test.mjs` (card 197: the starter's every-SVG check tells -0
+from 0 on Auburn's logos). Not adopted at all: the form builder's `site-form.ts` (card 194; Auburn's
+`church-form.ts` keeps the "Prayer request" naming), business facts and the latest-video block
+(cards 196 and 197; Auburn keeps church facts and `church-video.ts`), `photo-hero.ts`, `HeroVideo.astro`,
+`FlowMotion.astro`, and the where-next rows and action bar as Site settings (card 191; Auburn keeps its
+tables; moving them needs a dataset write). Revisit when the starter's copies grow the hooks Auburn
+needs (a first-screen option and a lay unit in `flow.ts`), and when a starter fix lands in one of them.
 
 ### Card 137 on Auburn: map the tours and record the clips (opened 2026-10-19)
 

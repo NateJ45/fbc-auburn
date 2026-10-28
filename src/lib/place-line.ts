@@ -1,17 +1,28 @@
+// PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
 // Safe to edit by hand
-// The one place line (design audit L1 and UX audit L3, 2026-10-25). The logo said "AUBURN, OHIO",
-// the Home hero "HAMILTON, OH 45013" and the footer "Ross Township": three answers to "where is
-// it?". Now the hero's name line ("First Baptist Church of Auburn") is followed by the town from the
-// address with no ZIP, and the header lockup's small line reads "Auburn · <town>". Both come from
-// Church facts (the address's second line), so nothing is typed twice.
+// The one place line (PORTS.md card 196, from first-baptist-auburn's design audit):
+// "where is it?" answered the same way everywhere, from the stored address, with
+// no ZIP: "Hamilton, OH". A hero, a header lockup or a footer reads it from here
+// instead of typing the town again, so a move is one edit in Business info.
 
-/** "Hamilton, OH 45013" -> "Hamilton, OH". */
-export function townOf(cityLine: string | undefined | null): string {
-  return (cityLine ?? '').replace(/\s+\d{5}(?:-\d{4})?\s*$/, '').trim();
+/** Placeholder values the starter ships with; they never reach a visitor. */
+const PLACEHOLDERS = new Set(['your city', 'xx', 'your state']);
+
+const clean = (v: string | null | undefined): string => {
+  const t = (v ?? '').replace(/[​-‏﻿\u{E0000}-\u{E007F}]/gu, '').trim();
+  return PLACEHOLDERS.has(t.toLowerCase()) ? '' : t;
+};
+
+/** "Hamilton, OH 45013" -> "Hamilton, OH" (a ZIP or ZIP+4 at the end is dropped). */
+export function townOf(cityLine: string | null | undefined): string {
+  return clean(cityLine)
+    .replace(/\s+\d{5}(?:-\d{4})?\s*$/, '')
+    .trim();
 }
 
-/** The lockup's place line: "Auburn · Hamilton, OH" (just "Auburn" with no address yet). */
-export function placeLine(cityLine: string | undefined | null): string {
-  const town = townOf(cityLine);
-  return town ? `Auburn · ${town}` : 'Auburn';
+/** The place line from the address parts: "Hamilton, OH", "Hamilton", or ''. */
+export function placeLine(parts: { city?: string | null; state?: string | null }): string {
+  const city = townOf(parts.city);
+  const state = clean(parts.state);
+  return [city, state].filter(Boolean).join(', ');
 }

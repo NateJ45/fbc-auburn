@@ -1,68 +1,71 @@
-/* Safe to edit by hand
-   Auburn's shape system (2026-10-24, from the hppres.org audit). Two shapes and one slab, so the
-   church's own phone photos read as one designed family across the site:
+/* PORTABLE: canonical copy - ncs-astro-sanity-starter is the library of record for this file
+   The shape contract (PORTS.md card 188, from FBC Auburn's shape system, 2026-10-24).
 
-     .shape-step   a picture inside a card: a plain frame with the card's inner corner (the stepped
-                   corner it once cut was retired 2026-10-25). Cards, events, portraits.
-     .shape-gable  a picture cut to the roofline of the building (the front gable in the sketch on
-                   About). The pitch is a percentage of the box, so a narrow box reads steeple-steep
-                   and a wide one reads like the porch roof: one shape, many proportions.
-     .shape-slab   a panel of printed red brick behind a picture, flush to the page edge on one
-                   side and a third of the page wide. The picture overlaps it, so it sits set into a
-                   wall. Add .shape-slab--left to put the wall on the left.
-     .shape-zoom   the picture inside the shape grows a little on hover or focus of the nearest link
-                   card (.shape-card), 500ms, no lift and no shadow.
+   A handful of picture shapes make a client's own phone photos read as one designed family.
+   The CLASS NAMES are the contract and are the same on every site; the GEOMETRY and the paint
+   are tokens, set per brand in the brand layer (globals.css on the starter, a site's own brand
+   stylesheet). The defaults below are neutral: a plain frame on the scale's corners and a
+   muted panel, so a site that uses the classes without setting a token gets a clean look,
+   and a site that never uses them gets nothing at all (class rules only).
 
-   The shapes are clip-paths, so an image, a video, a ShotRequest example or a plain tinted panel
-   (.shape-tile, a stone icon on the pale navy panel for a card with no photo) all take them the same way.
-   Docs: docs/agent/shapes.md. */
+     .shape-step   a picture inside a card: a plain frame with the inner corner. (Named for the
+                   stepped brick corner it once cut on Auburn; the name stayed.)
+     .shape-gable  a picture that stands alone (a text-and-picture band, a page head's photo):
+                   the brand's signature cut. Neutral default: the card corner, no cut. Auburn
+                   sets the building's gable: --shape-feature-clip: var(--shape-gable-polygon).
+     .shape-slab   a panel behind a picture, from a third of the way in out past the page edge,
+                   so the picture sits set into it. .shape-slab--left runs it to the left. The
+                   section around it needs .shape-slab-host (it clips the overflow).
+     .shape-card + .shape-zoom
+                   the picture inside the frame grows a little on hover or keyboard focus of the
+                   card; the zoom is on an inner wrapper, so the frame never moves.
+     .shape-tile   a card with no photo: its icon or mark centred on the tinted panel, in the
+                   same frame, so a grid never breaks.
 
-:root {
-  /* How far down the box the eaves sit. */
+   The cuts are clip-paths, so an image, a video or a plain panel take them the same way. A
+   clipped border shows as a hairline along the cut, so the frames have border: 0.
+   Docs: docs/agent/shapes.md (the tokens, and how a reskin sets its own shapes). */
+
+/* Zero specificity, so a brand's own :root wins whatever the order. */
+:where(:root) {
+  /* The standalone picture's cut and corner. */
+  --shape-feature-clip: none;
+  --shape-feature-radius: var(--radius-card);
+  /* A ready-made cut a brand can point --shape-feature-clip at: a roofline whose eaves sit
+     --gable-pitch down the box, so a narrow box reads steep and a wide one reads like a porch. */
   --gable-pitch: 24%;
+  --shape-gable-polygon: polygon(
+    0 var(--gable-pitch),
+    50% 0,
+    100% var(--gable-pitch),
+    100% 100%,
+    0 100%
+  );
+  /* The slab behind a standalone picture, and where it starts across the picture. */
+  --shape-slab: var(--muted);
+  --shape-slab-inset: 34%;
+  /* The panel behind a card with no photo, and the zoom on hover. */
+  --shape-tile: var(--muted);
+  --shape-zoom: 1.06;
 }
 
-/* The stepped corner is retired (audit 2026-10-25, GD-M5). At card size its three 10 to 15px notches
-   read as jagged cropping, worst on pale photos, and making them bold enough to read as brick (two
-   30px steps) took a bite out of every face and sign in a 300px card. The gable is now the site's
-   one photo shape, kept for the pictures that stand alone (ImageText, the page head); a picture in
-   a card is a plain frame with the card's inner corner. The class name stays, so every card
-   (Find your place, people, posts, the Watch band's media) changes in one place. */
-.shape-step,
-.watch-band .c-art,
-.watch-band .watch-card,
-.watch-band .last-sunday__frame {
+/* ---- Frames ---------------------------------------------------------------------------- */
+.shape-step {
   border-radius: var(--radius-inner);
 }
-/* A big standalone picture (a post's cover) takes the card corner. */
+/* A big picture that is still a frame, not a cut (a post's cover): the card corner. */
 .shape-step--lg {
   border-radius: var(--radius-card);
 }
-
 .shape-gable {
-  clip-path: polygon(0 var(--gable-pitch), 50% 0, 100% var(--gable-pitch), 100% 100%, 0 100%);
-}
-
-/* Every shape is a frame: the picture inside fills it. No border: a clipped border shows as a
-   hairline along the cut (the Photo needed frame has one). */
-.shape-gable {
-  border-radius: 0;
+  border-radius: var(--shape-feature-radius);
+  clip-path: var(--shape-feature-clip);
 }
 .shape-step,
-.shape-gable,
-.watch-band .c-art,
-.watch-band .watch-card,
-.watch-band .last-sunday__frame {
+.shape-gable {
   overflow: hidden;
   border: 0;
-}
-/* The tint behind a picture while it loads. Not on the no-picture sermon art, which is its own
-   stone ground (it was painted over here, leaving a blank beige box: audit 2026-10-25). */
-.shape-step,
-.shape-gable,
-.watch-band .c-art:not(.c-art--blank),
-.watch-band .watch-card,
-.watch-band .last-sunday__frame {
+  /* The tint behind a picture while it loads. */
   background: var(--muted);
 }
 .shape-step > img,
@@ -77,16 +80,7 @@
   object-fit: cover;
 }
 
-/* A Photo needed example inside a shape (ShotRequest's frame has its own 20px corners, which would
-   round the bottom of the cut): square it. Doubled class to beat the component's scoped rule. */
-.shape-gable.shot.shot {
-  border-radius: 0;
-}
-.shape-step .shot.shot {
-  border-radius: inherit;
-}
-
-/* The zoom lives on an inner wrapper, so the clip-path never moves. */
+/* ---- Zoom on hover or focus of the card --------------------------------------------------- */
 .shape-zoom {
   width: 100%;
   height: 100%;
@@ -103,16 +97,15 @@
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .shape-card:hover .shape-zoom,
   .shape-card:focus-within .shape-zoom {
-    transform: scale(1.08);
+    transform: scale(var(--shape-zoom));
   }
 }
 
-/* A card with no photo: its stone icon at 96px on the one tinted panel, flat (audit 2026-10-25,
-   GD-H3: the warm brick wall behind it is retired). */
+/* ---- A card with no photo ------------------------------------------------------------------ */
 .shape-tile {
   display: grid;
   place-items: center;
-  background: #e9eef5;
+  background: var(--shape-tile);
 }
 .shape-tile > :is(img, svg) {
   width: min(42%, 96px);
@@ -120,10 +113,9 @@
   object-fit: contain;
 }
 
-/* The slab: a red brick wall behind a picture (navy until 2026-10-27; red like the building, a step
-   darker than the auburn button so the button stays the page's one red action). The holder is position:relative and holds the
-   picture; the wall is its ::before, run out past the page edge. The section around it must clip
-   (.shape-slab-host, overflow-x: clip) so the wall stops at the edge of the window. */
+/* ---- The slab ------------------------------------------------------------------------------- */
+/* The holder is positioned and holds the picture; the slab is its ::before, run out past the
+   page edge, so the section around it clips sideways overflow. */
 .shape-slab-host {
   overflow-x: clip;
 }
@@ -137,16 +129,15 @@
   z-index: -1;
   top: 12%;
   bottom: -9%;
-  /* From a third of the way into the picture out past the right edge of the window. */
-  left: 34%;
+  left: var(--shape-slab-inset);
   right: -100vw;
-  background: #6a2b20 url('../assets/textures/tile-wall.svg') 0 0 / 420px 420px;
+  background: var(--shape-slab);
 }
 .shape-slab--left::before {
   left: -100vw;
-  right: 34%;
+  right: var(--shape-slab-inset);
 }
-/* On a phone the wall is a short band behind the lower part of the picture, edge to edge. */
+/* On a phone the slab is a short band behind the lower part of the picture, edge to edge. */
 @media (max-width: 47.99rem) {
   .shape-slab {
     margin-bottom: 1.75rem;
