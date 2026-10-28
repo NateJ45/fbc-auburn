@@ -9,10 +9,10 @@
 // docs/agent/graphics.md.
 // =============================================================================
 
-import { FAMILY } from './svg';
-import type { Format } from './formats';
-import type { FontSpec, Measure } from './text';
-import type { Assets } from './types';
+import { FAMILY } from './svg.ts';
+import type { Format } from './formats.ts';
+import type { FontSpec, Measure } from './text.ts';
+import type { Assets } from './types.ts';
 
 let fontsReady: Promise<void> | null = null;
 

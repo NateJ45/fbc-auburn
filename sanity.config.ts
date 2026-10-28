@@ -50,6 +50,7 @@ import { CharacterCountInput } from './src/sanity/components/CharacterCountInput
 import { documentBadges } from './src/sanity/components/documentBadges';
 import { shareDraftLinkAction } from './src/sanity/components/shareDraftLink';
 import { qrCodeAction } from './src/sanity/actions/qrCode';
+import { auburnGraphics, makeGraphicAction } from './src/sanity/graphics';
 import {
   archivePageAction,
   duplicatePageAction,
@@ -253,6 +254,9 @@ export default defineConfig({
     // Newsletter send buttons and the RSVPs tool (the email backbone, card 127).
     // Before the kit, so the kit's tool order and staff view place "rsvps".
     ncsMailTools(),
+    // "Make a graphic" (2026-10-27, src/sanity/graphics/, docs/agent/graphics.md): posts,
+    // slides and print in the church's look. Before the kit, so it places "graphics".
+    auburnGraphics(),
     ncsStudioKit(kitConfig),
     // People: invite a Helper or an Administrator (src/sanity/people/, 2026-10-26).
     // AFTER the kit: it adds the tool for administrators only, in either view.
@@ -368,6 +372,8 @@ export default defineConfig({
         // "QR code" (2026-10-26): every short link and every document with a page of its
         // own; returns null for the rest. src/sanity/actions/qrCode.tsx.
         qrCodeAction,
+        // "Make a graphic" (2026-10-27): sermons, series and pages; null for the rest.
+        makeGraphicAction,
       ];
     },
   },

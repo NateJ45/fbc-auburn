@@ -11,6 +11,6 @@ import markColor from '../../assets/brand/fbc-auburn-icon-full-color.svg?inline'
 import tileNavy from '../../assets/textures/tile-navy.svg?inline';
 import tileWall from '../../assets/textures/tile-wall.svg?inline';
 import sketch from '../../assets/brand/building-sketch-lines.webp?inline';
-import type { Assets } from './types';
+import type { Assets } from './types.ts';
 
 export const ASSETS: Assets = { serif, sans, markWhite, markColor, tileNavy, tileWall, sketch };

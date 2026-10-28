@@ -4,7 +4,7 @@
 // the address are the unconfirmed fallback facts (src/lib/church-facts.ts FALLBACK_FACTS); nothing
 // here reaches a visitor-facing page. docs/agent/graphics.md.
 
-import type { Church, Content, Kind } from './types';
+import type { Church, Content, Kind } from './types.ts';
 
 export const SAMPLE_CHURCH: Church = {
   line1: 'First Baptist',

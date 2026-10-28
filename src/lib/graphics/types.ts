@@ -9,8 +9,8 @@
 // the node tests all call the same function.
 // =============================================================================
 
-import type { Format } from './formats';
-import type { Measure } from './text';
+import type { Format } from './formats.ts';
+import type { Measure } from './text.ts';
 
 /** What the graphic is for: the first choice in the Studio tool. */
 export type Kind =

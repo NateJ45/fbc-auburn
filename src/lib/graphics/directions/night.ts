@@ -10,11 +10,11 @@
 // set in hard edges (no fades).
 // =============================================================================
 
-import { safeBox, unit, type Format } from '../formats';
-import { column, type Block } from '../layout';
-import { C, doc, image, lines, photo, qr, rect, sill, tilePattern } from '../svg';
-import { cleanText } from '../text';
-import type { Content, Ctx, Direction, Rendered } from '../types';
+import { safeBox, unit, type Format } from '../formats.ts';
+import { column, type Block } from '../layout.ts';
+import { C, doc, image, lines, photo, qr, rect, sill, tilePattern } from '../svg.ts';
+import { cleanText } from '../text.ts';
+import type { Content, Ctx, Direction, Rendered } from '../types.ts';
 
 /** The stack of words for each kind, in reading order. */
 function blocks(c: Content, u: number, shape: Format['shape']): Block[] {

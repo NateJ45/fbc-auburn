@@ -12,10 +12,10 @@
 import qrcode from 'qrcode-generator';
 import { BRICK_PATH_PRESETS, brickMarker, brickPath } from '../../../scripts/lib/brick-courses.mjs';
 import { printMask } from '../../../scripts/lib/brick-print.mjs';
-import { qrPath, QUIET_ZONE } from '../qr';
-import type { Format } from './formats';
-import type { FontSpec } from './text';
-import type { Assets, Photo } from './types';
+import { qrPath, QUIET_ZONE } from '../qr.ts';
+import type { Format } from './formats.ts';
+import type { FontSpec } from './text.ts';
+import type { Assets, Photo } from './types.ts';
 
 /** The palette (DESIGN.md), plus the night card's ground and kicker (scripts/lib/og-card.mjs). */
 export const C = {

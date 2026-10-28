@@ -10,8 +10,8 @@
 // plain warnings for the Studio ("The title is too long for Story.").
 // =============================================================================
 
-import { lines } from './svg';
-import { fitText, type FitOptions, type FitResult, type Measure } from './text';
+import { lines } from './svg.ts';
+import { fitText, type FitOptions, type FitResult, type Measure } from './text.ts';
 
 export interface Block {
   /** For warnings: "title", "body". */
