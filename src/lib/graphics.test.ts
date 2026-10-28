@@ -230,6 +230,28 @@ describe('graphics: every direction draws every kind at every size', () => {
     }
   });
 
+  it('fits the invite card with a long pre-launch web address (falls back to the domain)', () => {
+    // Found live 2026-10-28: the workers.dev page address did not fit the 3.5in card and the
+    // Studio blamed the headline. The page address gives way to the bare domain; the QR keeps the page.
+    const long = {
+      ...ctx,
+      church: { ...SAMPLE_CHURCH, web: 'fbc-auburn.nathanjnixon86.workers.dev' },
+    };
+    const c = {
+      ...SAMPLES.invite,
+      link: 'fbc-auburn.nathanjnixon86.workers.dev/plan-your-visit',
+      qr: 'https://fbc-auburn.nathanjnixon86.workers.dev/plan-your-visit/',
+    };
+    for (const d of DIRECTIONS) {
+      const { svg, warnings } = d.render(c, FORMAT_BY_ID['invite-card'], long);
+      assert.deepEqual(warnings, [], `${d.id}/invite-card`);
+      assert.ok(
+        svg.includes('fbc-auburn.nathanjnixon86.workers.dev'),
+        `${d.id} prints a web address`,
+      );
+    }
+  });
+
   it('prints "Invited by" with the name, and the mailing side says Postal Customer', () => {
     for (const d of DIRECTIONS) {
       assert.match(d.render(SAMPLES.invite, FORMAT_BY_ID['invite-card'], ctx).svg, /Mary Collins/);
