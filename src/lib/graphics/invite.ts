@@ -159,8 +159,13 @@ function wordBlocks(
     min: number;
   },
   bold: boolean,
-  o: { address: boolean; web: boolean; invitedLine: boolean },
+  o: { address: boolean; web: boolean; invitedLine: boolean; maxW?: number },
 ): Block[] {
+  // A page address too wide for the column at the smallest size falls back to the bare domain
+  // (the QR code still goes to the page), as the Bold look does on its narrow sizes.
+  const page = cleanText(c.link);
+  const webFont = { family: 'sans' as const, size: s.min, weight: 700 };
+  const webText = page && (!o.maxW || ctx.measure(page, webFont) <= o.maxW) ? page : ctx.church.web;
   const fg = bold ? C.ground : C.ink;
   const head = bold ? C.ground : C.navy;
   const accent = bold ? C.ground : C.auburn;
@@ -230,7 +235,7 @@ function wordBlocks(
   if (o.web)
     blocks.push({
       name: 'web address',
-      text: cleanText(c.link) || ctx.church.web,
+      text: webText,
       fit: small({ weight: 700, max: s.web, maxLines: 2, balance: false }),
       fill: head,
       gap: s.gap * 0.7,
@@ -392,7 +397,7 @@ function card(c: Content, f: Format, ctx: Ctx, bold: boolean): Rendered {
       min: 6.5 * pt,
     },
     bold,
-    { address: true, web: true, invitedLine: true },
+    { address: true, web: true, invitedLine: true, maxW: wordsW },
   );
   let words: ReturnType<typeof placeWords> | null = null;
   const result = settle((drop) => {
