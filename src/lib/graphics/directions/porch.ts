@@ -32,6 +32,9 @@ import { safeBox, unit, type Format } from '../formats.ts';
 import { C, doc, image, lines, marker, markerWidth, qr, rect, tilePattern } from '../svg.ts';
 import { cleanText, fitText, type FitResult, type FontSpec, type Measure } from '../text.ts';
 import type { Content, Ctx, Direction, Photo, Rendered } from '../types.ts';
+// The overlap guard shared with the invite (final review, 2026-10-28): drops the
+// lowest-priority piece until nothing overlaps and every word stays in its column.
+import { ESSENTIAL, drawn, settle, type Placed } from '../invite.ts';
 
 const f1 = (n: number) => String(Math.round(n * 10) / 10);
 
@@ -49,6 +52,8 @@ interface Box {
 interface Piece {
   h: number;
   gap: number;
+  /** The type size of a secondary line (body, times), px: the title is never set smaller. */
+  size?: number;
   draw: (y: number) => string;
 }
 
@@ -224,7 +229,8 @@ function standingLine(c: Content): string {
   if (!rows.length) return '';
   // Each "label time" unit is glued whole, so a line only breaks between gatherings.
   const unit = (r: { a: string; b: string }) => (r.b ? `${r.b} ${r.a}` : r.a).replace(/\s+/g, GLUE);
-  return `Sundays: ${rows.map(unit).join(', ')}`;
+  // The label is glued to the first gathering, so "Sundays:" never sits alone on a line.
+  return `Sundays:${GLUE}${rows.map(unit).join(', ')}`;
 }
 
 interface Ctx2 {
@@ -290,6 +296,7 @@ function textPiece(
   return {
     h: r.height,
     gap,
+    size: r.size,
     draw: (y) => lines(unglue(r.lines), { ...font, size: r.size, x, y, leading, fill }),
   };
 }
@@ -358,6 +365,7 @@ function detailsPiece(
   return {
     h,
     gap,
+    size: s,
     draw: (y) => {
       let out = '';
       rows.forEach((r, i) => {
@@ -594,6 +602,13 @@ function stack(
   let r = fitAt(Math.max(0, room - spare));
   if (spare && (r.overflow || r.size < t.max * 0.85)) r = fitAt(room);
   if (r.overflow) k.warn(`The title is too long for ${k.label}. Try fewer words.`);
+  // Hierarchy (final review, 2026-10-28): the title is never smaller than the times or the
+  // body. When it would be, the stack says so, and fitWords drops the secondary lines (the
+  // body, the kicker, then the times) before the title shrinks any further.
+  const second = Math.max(0, ...[...ws.before, ...ws.after].map((p) => p.size ?? 0));
+  const inverted = !r.overflow && r.size < second;
+  if (inverted)
+    k.warn(`The title would print smaller than the lines under it on ${k.label}. Try fewer words.`);
   const title = textPiece(
     r,
     { ...font, size: r.size },
@@ -624,7 +639,7 @@ function stack(
     svg,
     h: used,
     top,
-    over: r.overflow || used > box.h + 1,
+    over: r.overflow || inverted || used > box.h + 1,
     size: r.size,
     // A confident title: most of its maximum, or half again its floor.
     goal: Math.min(t.max * 0.8, t.min * 1.5),
@@ -925,7 +940,7 @@ function footPaper(
   o: { address: string | null; qrSize: number; standing: boolean },
 ): { svg: string; h: number } {
   const { church, measure } = ctx;
-  const items: { text: string; weight: number; fill: string }[] = [];
+  const items: { text: string; weight: number; fill: string; standing?: boolean }[] = [];
   const showQr = o.qrSize > 0;
   const textW = w - (showQr ? o.qrSize + Math.max(40 * u, 48) : 0);
   const bold = { family: 'sans' as const, weight: 700 };
@@ -941,7 +956,7 @@ function footPaper(
     );
   }
   const st = o.standing ? standingLine(c) : '';
-  if (st) items.push({ text: st, weight: 700, fill: C.navy });
+  if (st) items.push({ text: st, weight: 700, fill: C.navy, standing: true });
   if (o.address) items.push({ text: glueAddress(o.address), weight: 400, fill: C.inkMuted });
   if (!items.length && !showQr) return { svg: '', h: 0 };
   // The text column ends well clear of the code (at least 40px), and a line that does
@@ -949,22 +964,29 @@ function footPaper(
   // (round two, 2026-10-27: "Worship 11:" was cut off on the door hanger).
   const size = m.body;
   let svg = '';
-  const fits = items.map((it) =>
+  const fitItem = (text: string, weight: number, min: number) =>
     fitText(
-      glue(it.text),
+      glue(text),
       {
         family: 'sans',
-        weight: it.weight,
+        weight,
         maxW: textW,
         maxH: size * 1.35 * 3,
         maxLines: 3,
         max: size,
-        min: size,
+        min,
         leading: 1.35,
       },
       measure,
-    ),
-  );
+    );
+  // The standing line keeps "Sundays:" with its first gathering (final review, 2026-10-28):
+  // when that pair is wider than the column, the line steps down to the small size, and
+  // only past that does the label go back to breaking on its own.
+  const fits = items.map((it) => {
+    if (!it.standing) return fitItem(it.text, it.weight, size);
+    const r = fitItem(it.text, it.weight, Math.min(size, m.small));
+    return r.overflow ? fitItem(it.text.replace(GLUE, ' '), it.weight, size) : r;
+  });
   const textH = fits.reduce((s, ft) => s + ft.height, 0);
   // Beside a taller code the words sit level with its middle.
   let y = showQr && o.qrSize > textH ? bottom - o.qrSize / 2 - textH / 2 : bottom - textH;
@@ -1102,7 +1124,10 @@ function fitWords(
   if (o.body !== false && cleanText(c.body)) tries.push({ body: false });
   // Then the kicker (research pass: say less rather than shrink), then the times.
   if (o.kicker !== false && cleanText(c.kicker)) tries.push({ body: false, kicker: false });
-  if (o.dropDetails) tries.push({ body: false, kicker: false, details: false });
+  // The times go too when the piece can spare them, or when keeping them would leave the
+  // title smaller than they are (hierarchy, final review 2026-10-28).
+  if (o.dropDetails || first.warnings.some((w) => /smaller than the lines/.test(w)))
+    tries.push({ body: false, kicker: false, details: false });
   let least = first;
   for (const t of tries) {
     const r = fitSteps(c, f, ctx, u, m, box, { ...o, ...t });
@@ -1315,9 +1340,31 @@ function render(c: Content, f: Format, ctx0: Ctx): Rendered {
       warn: (t) => void (warnings.includes(t) || warnings.push(t)),
       label: f.label,
     };
-    const bd = band(ctx, f, b, 0.15 * H, m, 0, null);
-    body += bd.svg;
-    const box: Box = { x: b.x, y: b.y, w: b.w, h: bd.top - 0.1 * dpi - b.y };
+    // The band (final review, 2026-10-28): the white mark and the web address only, the
+    // address at least 1.5 in tall in its capitals (Familjen Grotesk's caps are 0.656
+    // of the size, so 1.5 in of cap height is a size of 2.3 in) so a driver can read it.
+    // The name is left to the mark; a longer address falls back to the church's own.
+    const bold = { family: 'sans' as const, weight: 700 };
+    const wMin = (1.5 / 0.65) * dpi;
+    const yms = wMin * 1.05;
+    const wx = b.x + yms * 1.25;
+    let bandWeb = cleanText(c.link) || ctx.church.web;
+    if (ctx.measure(bandWeb, { ...bold, size: wMin }) > b.x + b.w - wx) bandWeb = ctx.church.web;
+    const wf = fitLine(bandWeb, bold, b.x + b.w - wx, wMin * 1.08, wMin, ctx.measure);
+    if (wf.over) k.warn(`The web address is too long for ${f.label}.`);
+    const bContentTop = b.y + b.h - yms;
+    const bandTop = bContentTop - Math.min(f.h - f.bleed - (b.y + b.h), yms * 0.45);
+    body += rect(0, bandTop, f.w, f.h - bandTop, C.navy);
+    body += image(ctx.assets.markWhite, b.x, bContentTop, yms, yms);
+    body += lines([bandWeb], {
+      ...bold,
+      size: wf.size,
+      leading: 1,
+      x: wx,
+      y: bContentTop + (yms - wf.size) / 2,
+      fill: C.white,
+    });
+    const box: Box = { x: b.x, y: b.y, w: b.w, h: bandTop - 0.1 * dpi - b.y };
     const times = (c.when ?? []).map(cleanText).filter(Boolean);
     const dated = c.kind === 'event' || c.kind === 'announcement' || c.kind === 'time-change';
     let when = '';
@@ -1328,7 +1375,6 @@ function render(c: Content, f: Format, ctx0: Ctx): Rendered {
       const t = main ? shortWhen('', [main.a]) : '';
       if (t) when = `Sundays, ${t}`;
     } else if (c.kind === 'verse') when = cleanText(c.reference);
-    const bold = { family: 'sans' as const, weight: 700 };
     const linePiece = (text: string, max: number, min: number, gap: number): Piece | null => {
       if (!text) return null;
       const ft = fitLine(text, bold, box.w, max, min, ctx.measure);
@@ -1336,17 +1382,17 @@ function render(c: Content, f: Format, ctx0: Ctx): Rendered {
       return {
         h: ft.size * 1.2,
         gap,
+        size: ft.size,
         draw: (y) =>
           lines([text], { ...bold, size: ft.size, x: box.x, y, leading: 1.2, fill: C.navy }),
       };
     };
-    let web = cleanText(c.link) || ctx.church.web;
-    if (ctx.measure(web, { ...bold, size: 0.075 * H }) > box.w) web = ctx.church.web;
     const verse = c.kind === 'verse';
     const title = verse ? `“${cleanText(c.title)}”` : cleanText(c.title);
+    // The web address is in the band, so the words are the title and the when. The when
+    // stays a step under the title's floor, so the title is always the biggest line.
     const after = [
-      linePiece(when, 0.1 * H, 0.07 * H, 0.05 * H),
-      linePiece(web, 0.075 * H, 0.06 * H, 0),
+      verse ? linePiece(when, 0.055 * H, 0.045 * H, 0) : linePiece(when, 0.09 * H, 0.07 * H, 0),
     ].filter((p): p is Piece => !!p);
     const st = stack(
       {
@@ -1658,29 +1704,81 @@ function render(c: Content, f: Format, ctx0: Ctx): Rendered {
     const split = 0.6;
     const colW = b.w * split - 24 * u;
     const mast = masthead(ctx, { ...b, w: colW }, b.h * 0.15, u, m, false, nameSize);
-    body += mast.svg;
     const bold = { family: 'sans' as const, weight: 700 };
     let web = cleanText(c.link) || ctx.church.web;
     const wsz = Math.max(b.h * 0.07, m.body * 1.05);
     if (ctx.measure(web, { ...bold, size: wsz }) > colW) web = ctx.church.web;
-    body += lines([web], {
-      ...bold,
-      size: wsz,
-      leading: 1,
-      x: b.x,
-      y: b.y + b.h - wsz,
-      fill: C.navy,
+    const webY = b.y + b.h - wsz;
+    // A cover stays up for weeks: an event, a notice and a time change print their short
+    // date ("Dec 24, 6 pm") over the web address (final review, 2026-10-28).
+    const dated = c.kind === 'event' || c.kind === 'announcement' || c.kind === 'time-change';
+    const when = dated ? shortWhen(cleanText(c.date), (c.when ?? []).map(cleanText)) : '';
+    const df = when ? fitLine(when, bold, colW, wsz * 1.15, m.small, ctx.measure) : null;
+    const dateY = df ? webY - b.h * 0.035 - df.size * 1.15 : webY;
+    const col: Box = { x: b.x, y: b.y, w: colW, h: b.h };
+    // The guard: the words never run into the masthead, the date or the web address; the
+    // name gives way first, then the date (the title's room grows each time).
+    let ws: Fitted | null = null;
+    const res = settle((drop) => {
+      const withMast = !drop.has('masthead');
+      const withDate = !!df && !drop.has('date');
+      const wTop = withMast ? b.y + mast.h + b.h * 0.07 : b.y;
+      const wBottom = (withDate ? dateY : webY) - b.h * 0.07;
+      ws = fitWords(
+        c,
+        f,
+        ctx,
+        u,
+        m,
+        { x: b.x, y: wTop, w: colW, h: wBottom - wTop },
+        { align: 'middle', body: false, scale: 1.8, dropDetails: true },
+      );
+      const out: Placed[] = [
+        {
+          key: 'words',
+          pri: ESSENTIAL,
+          box: { x: b.x, y: ws.top, w: colW, h: ws.h },
+          svg: ws.svg,
+          within: col,
+        },
+        {
+          key: 'web',
+          pri: 70,
+          box: { x: b.x, y: webY, w: ctx.measure(web, { ...bold, size: wsz }), h: wsz },
+          svg: lines([web], { ...bold, size: wsz, leading: 1, x: b.x, y: webY, fill: C.navy }),
+          within: col,
+        },
+      ];
+      if (withMast)
+        out.push({
+          key: 'masthead',
+          pri: 50,
+          box: { x: b.x, y: b.y, w: colW, h: mast.h },
+          svg: mast.svg,
+          within: col,
+        });
+      if (withDate && df)
+        out.push({
+          key: 'date',
+          pri: 60,
+          box: { x: b.x, y: dateY, w: df.w, h: df.size * 1.15 },
+          svg: lines([when], {
+            ...bold,
+            size: df.size,
+            leading: 1.15,
+            x: b.x,
+            y: dateY,
+            fill: C.navy,
+          }),
+          within: col,
+        });
+      return out;
     });
-    const wTop = b.y + mast.h + b.h * 0.07;
-    const ws = fitWords(
-      c,
-      f,
-      ctx,
-      u,
-      m,
-      { x: b.x, y: wTop, w: colW, h: b.y + b.h - wsz - b.h * 0.07 - wTop },
-      { align: 'middle', body: false, scale: 1.8, dropDetails: true },
-    );
+    const fitted = ws as unknown as Fitted;
+    if (res.dropped.includes('date'))
+      fitted.warnings.push(
+        `The date did not fit on ${f.label}, so it is left off. Try fewer words.`,
+      );
     if (c.photo) {
       const px = b.x + b.w * split + 24 * u;
       const pw = f.w - px;
@@ -1694,14 +1792,77 @@ function render(c: Content, f: Format, ctx0: Ctx): Rendered {
       defs += sk.defs;
       body += sk.body;
     }
-    body += ws.svg;
-    return done(ws.warnings);
+    body += drawn(res.placed);
+    return done(fitted.warnings);
   }
 
   // Wide pieces: the words on the left, the picture on the right. On a screen the masthead
   // runs across the top and the foot under the words, and the picture runs off the top,
   // right and bottom edges; on paper the band closes the piece and the picture keeps the margin.
+  // The business card size for kinds other than an invite (final review, 2026-10-28: the
+  // times printed over the web address and the title shrank to a warning). The name, the
+  // words and the foot go through the overlap guard: the street address gives way first,
+  // then the times (fitWords, dropDetails, with the sentence and the kicker before them),
+  // then the name, then the foot, all before the title shrinks.
+  if (mini) {
+    const col: Box = { ...b };
+    let mw: Fitted | null = null;
+    const res = settle((drop) => {
+      const out: Placed[] = [];
+      let wTop = b.y;
+      let wBottom = b.y + b.h;
+      if (!drop.has('masthead')) {
+        const mast = masthead(ctx, b, 64 * u, u, m, true, nameSize);
+        out.push({
+          key: 'masthead',
+          pri: 50,
+          box: { x: b.x, y: b.y, w: b.w, h: mast.h },
+          svg: mast.svg,
+          within: col,
+        });
+        wTop += mast.h + 40 * u;
+      }
+      if (!drop.has('foot')) {
+        // While the foot still carries the street address, dropping it means dropping the
+        // address alone (key "address"); after that the foot itself can go.
+        const withAddress = !!address && !drop.has('address');
+        const ft = footScreen(c, ctx, b, u, m, {
+          rest: withAddress ? [glueAddress(address!)] : [],
+        });
+        out.push({
+          key: withAddress ? 'address' : 'foot',
+          pri: withAddress ? 40 : 70,
+          box: { x: b.x, y: b.y + b.h - ft.h, w: b.w, h: ft.h },
+          svg: ft.svg,
+          within: col,
+        });
+        wBottom -= ft.h + 36 * u;
+      }
+      mw = fitWords(
+        c,
+        f,
+        ctx,
+        u,
+        m,
+        { x: b.x, y: wTop, w: b.w, h: wBottom - wTop },
+        // The times may go only once the street address has (it gives way first).
+        { align: 'middle', dropDetails: !address || drop.has('address') },
+      );
+      out.push({
+        key: 'words',
+        pri: ESSENTIAL,
+        box: { x: b.x, y: mw.top, w: b.w, h: mw.h },
+        svg: mw.svg,
+        within: col,
+      });
+      return out;
+    });
+    body += drawn(res.placed);
+    return done((mw as unknown as Fitted).warnings);
+  }
   const formCard = c.kind === 'welcome' && card;
+  /** The thumbnail's mark, px square. */
+  const thumbMark = 0.15 * f.h;
   const bleedOut = !!c.photo && !f.print && !formCard;
   const split = formCard ? 0.5 : 0.56;
   const colW = mini ? b.w : b.w * split - 20 * u;
@@ -1721,10 +1882,9 @@ function render(c: Content, f: Format, ctx0: Ctx): Rendered {
     const leftW = bleedOut ? rightX - 64 * u - b.x : formCard ? colW : b.w;
     if (thumb) {
       // A thumbnail is seen at 320px wide beside the channel's own name: the mark alone,
-      // then the series and the title, as big as they go (research pass).
-      const ms = 0.15 * f.h;
-      body += image(ctx.assets.markColor, b.x, b.y, ms, ms);
-      top += ms + 32 * u;
+      // then the series and the title, as big as they go (research pass). The mark is
+      // drawn at the end, under the overlap guard.
+      top += thumbMark + 32 * u;
     } else {
       const mast =
         card && !mini
@@ -1773,6 +1933,45 @@ function render(c: Content, f: Format, ctx0: Ctx): Rendered {
     const sk = sketch(ctx, { x: rightX, y: sb - sh, w: rightW, h: sh }, u, 'end');
     defs += sk.defs;
     body += sk.body;
+  }
+  if (thumb) {
+    // The overlap guard (final review, 2026-10-28): the words never run into the mark or
+    // out of their column; when they would, the mark gives way and the words take its room.
+    const col: Box = { x: b.x, y: b.y, w: colW, h: b.h };
+    let tw: Fitted | null = null;
+    const res = settle((drop) => {
+      const withMark = !drop.has('mark');
+      const wTop = withMark ? top : b.y;
+      tw = fitWords(
+        c,
+        f,
+        ctx,
+        u,
+        m,
+        { x: b.x, y: wTop, w: colW, h: bottom - wTop },
+        { align: 'middle', body: false, details: false, scale: 1.3 },
+      );
+      const out: Placed[] = [
+        {
+          key: 'words',
+          pri: ESSENTIAL,
+          box: { x: b.x, y: tw.top, w: colW, h: tw.h },
+          svg: tw.svg,
+          within: col,
+        },
+      ];
+      if (withMark)
+        out.push({
+          key: 'mark',
+          pri: 50,
+          box: { x: b.x, y: b.y, w: thumbMark, h: thumbMark },
+          svg: image(ctx.assets.markColor, b.x, b.y, thumbMark, thumbMark),
+          within: col,
+        });
+      return out;
+    });
+    body += drawn(res.placed);
+    return done([...warnings, ...(tw as unknown as Fitted).warnings]);
   }
   const ws = fitWords(
     c,

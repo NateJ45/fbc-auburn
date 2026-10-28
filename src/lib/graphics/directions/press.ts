@@ -221,7 +221,18 @@ function fitTitle(text: string, o: Parameters<typeof fitText>[1], m: Measure): F
     max *= 0.96;
     r = fitText(t, { ...o, max }, m);
   }
-  const out = r.overflow || lonely(r) ? first : r;
+  let out = r.overflow || lonely(r) ? first : r;
+  // Still a word alone in the middle ("We would / love / to meet you"): set it in one
+  // line fewer, a little smaller if need be ("We would love / to meet you").
+  if (lonely(out) && !out.overflow) {
+    for (let n = out.lines.length - 1; n >= 2; n--) {
+      const r2 = fitText(t, { ...o, maxLines: n, min: o.min * 0.75 }, m);
+      if (!r2.overflow && !lonely(r2)) {
+        out = r2;
+        break;
+      }
+    }
+  }
   return { ...out, lines: unglue(out.lines) };
 }
 
@@ -235,10 +246,26 @@ function splitWhen(s: string): [string, string] {
 const standingOf = (c: Content): string[] =>
   ((c as Content & { standing?: string[] }).standing ?? []).map(cleanText).filter(Boolean);
 
+/**
+ * The main Sunday gathering in the fewest words: "Sundays, 11 am". From this Sunday's
+ * times (`when`), else the regular ones (`standing`): the worship service when one is
+ * named, else the last gathering of the morning. Never typed here.
+ */
+function sundayLine(c: Content): string {
+  for (const list of [(c.when ?? []).map(cleanText).filter(Boolean), standingOf(c)]) {
+    const rows = list.map(splitWhen).filter(([, t]) => /\d\s*(am|pm)\b/i.test(t));
+    const pick = rows.find(([l]) => /worship|service/i.test(l)) ?? rows[rows.length - 1];
+    if (pick) return `Sundays, ${shortTime(pick[1])}`;
+  }
+  return '';
+}
+
 // ── Words ───────────────────────────────────────────────────────────────────
 
 interface Piece {
   h: number;
+  /** The largest type in the piece, px: the title must stay larger (hierarchy). */
+  size: number;
   draw: (x: number, y: number) => string;
   warnings: string[];
 }
@@ -258,7 +285,7 @@ function infoPiece(
   o: { inline?: boolean; wide?: boolean } = {},
 ): Piece | null {
   const warnings: string[] = [];
-  const parts: { h: number; draw: (x: number, y: number) => string }[] = [];
+  const parts: { h: number; size: number; draw: (x: number, y: number) => string }[] = [];
   const textPart = (
     text: string,
     o: Omit<Parameters<typeof fitText>[1], 'maxW' | 'maxH'>,
@@ -271,6 +298,7 @@ function infoPiece(
     if (r.overflow) warnings.push(`The ${name} is too long for ${label}. Try fewer words.`);
     parts.push({
       h: r.height,
+      size: r.size,
       draw: (x, y) =>
         lines(unglue(r.lines), {
           family: o.family,
@@ -356,6 +384,7 @@ function infoPiece(
         const lh = s * 1.55;
         parts.push({
           h: rows.length * lh,
+          size: s,
           draw: (x, y) =>
             rows
               .map(([l, t], i) => {
@@ -419,6 +448,7 @@ function infoPiece(
   const h = rule + after + parts.reduce((s, p) => s + p.h, 0) + gap * (parts.length - 1);
   return {
     h,
+    size: Math.max(...parts.map((p) => p.size)),
     warnings,
     draw: (x, y) => {
       let out = rect(x, y, Math.min(w, 220 * u), rule, C.ground);
@@ -443,7 +473,7 @@ function stack(
   fl: number,
   m: Measure,
   o: { label: string; titleMax: number; body: boolean; titleMin?: number; kicker?: boolean },
-): { svg: string; h: number; warnings: string[] } {
+): { svg: string; h: number; warnings: string[]; titleSize: number; bodySize: number } {
   const warnings: string[] = [];
   const warn = (r: FitResult, name: string) => {
     if (r.overflow) warnings.push(`The ${name} is too long for ${o.label}. Try fewer words.`);
@@ -599,7 +629,7 @@ function stack(
   }
   if (y > box.y + box.h + 1 && !warnings.length)
     warnings.push(`There is too much to say on ${o.label}. Try fewer words.`);
-  return { svg, h: y - box.y, warnings };
+  return { svg, h: y - box.y, warnings, titleSize: t.size, bodySize: bodyFit?.size ?? 0 };
 }
 
 // ── The imprint band ────────────────────────────────────────────────────────
@@ -629,7 +659,7 @@ function imprint(
   const { church, measure: m, assets } = ctx;
   const warnings: string[] = [];
   const feed = f.group === 'social' && !slim;
-  const web = cleanText(c.link) || church.web;
+  let web = cleanText(c.link) || church.web;
   const wf: FontSpec = { family: 'sans', size: Math.max(24 * u, fl), weight: 700 };
   const afSize = Math.max(19 * u, fl);
   const street = church.address ? church.address.split(',')[0].trim() : '';
@@ -707,6 +737,9 @@ function imprint(
   const M = n2s * 3.7;
   const lockW = M + 0.9 * n2s + Math.max(m(church.line1, n1), m(church.line2, n2));
   const avail = w - (q ? q + qGap : 0);
+  // On a screen a page link too long to sit beside the name gives way to the church's own
+  // address, rather than stacking the band twice as tall (final review, 2026-10-28).
+  if (!f.print && lockW + 56 * u + m(web, wf) > avail) web = church.web;
   const webW = Math.max(m(web, wf), addr ? m(addr, { family: 'sans', size: afSize }) : 0);
   const side = lockW + 56 * u + webW <= avail;
 
@@ -879,14 +912,46 @@ function connectCard(c: Content, f: Format, ctx: Ctx): Rendered {
   const web = cleanText(c.link) || ctx.church.web;
   const q = c.qr ? qrSide(c.qr, 0.8, dpi) : 0;
   const footH = q || 70 * u;
-  const st = stack(c, { x, y: safe.y, w: colW, h: safe.h - footH - 32 * u }, u, fl, m, {
-    label,
-    titleMax: 76 * u,
-    body: true,
-    titleMin: 34 * u,
-  });
+  // The mark and the church's name head the block: the card is picked up off a pew.
+  const ns = fl;
+  const nm1: FontSpec = { family: 'serif', size: ns * 1.3 };
+  const nm2: FontSpec = { family: 'sans', size: ns, weight: 600 };
+  const nameH = nm1.size * 1.12 + ns * 1.25;
+  const NM = nameH;
+  if (NM * 1.3 + Math.max(m(ctx.church.line1, nm1), m(ctx.church.line2, nm2)) > colW)
+    warnings.push(`The church's name is too long for ${label}.`);
+  let words =
+    image(ctx.assets.markWhite, x, safe.y, NM, NM) +
+    lines([ctx.church.line1], {
+      ...nm1,
+      x: x + NM * 1.3,
+      y: safe.y,
+      leading: 1.12,
+      fill: C.ground,
+    }) +
+    lines([ctx.church.line2], {
+      ...nm2,
+      x: x + NM * 1.3,
+      y: safe.y + nm1.size * 1.12,
+      leading: 1.25,
+      fill: C.tint,
+    });
+  const lockH = NM + 0.14 * dpi;
+  const st = stack(
+    c,
+    { x, y: safe.y + lockH, w: colW, h: safe.h - lockH - footH - 32 * u },
+    u,
+    fl,
+    m,
+    {
+      label,
+      titleMax: 76 * u,
+      body: true,
+      titleMin: 34 * u,
+    },
+  );
   warnings.push(...st.warnings);
-  let words = st.svg;
+  words += st.svg;
   const fy = safe.y + safe.h - footH;
   if (q) {
     words += qr(c.qr!, x, fy, q, C.ink, C.ground);
@@ -1023,27 +1088,37 @@ function yardSign(c: Content, f: Format, ctx: Ctx): Rendered {
   const cx = Math.max(safe.x, L + pad);
   const cr = Math.min(safe.x + safe.w, R - pad);
 
-  // The band: the mark and the name at the left, the web address at the right.
-  const M = 0.13 * f.h;
-  const n1: FontSpec = { family: 'serif', size: M * 0.4 };
-  const n2: FontSpec = { family: 'sans', size: M * 0.27, weight: 600 };
-  const web = cleanText(c.link) || ctx.church.web;
-  const lockW = M + 0.3 * M + Math.max(m(ctx.church.line1, n1), m(ctx.church.line2, n2));
+  // The band: the mark at the left and the web address at the right, the address 1.5 in
+  // tall in its capitals or more (Familjen Grotesk's capitals are about 0.7 of its size),
+  // read from across the road. A page link too long for that gives way to the church's
+  // own address; the name goes on beside the mark only when there is room for it.
+  const capK = 0.7;
+  const webSize = (1.5 * dpi) / capK;
+  const M = webSize * 1.1;
+  const wfont: FontSpec = { family: 'sans', size: webSize, weight: 700 };
+  const room = cr - cx - 1.35 * M;
+  let web = cleanText(c.link) || ctx.church.web;
+  if (m(web, wfont) > room) web = ctx.church.web;
   const wf = fitText(
     web,
     {
       family: 'sans',
       weight: 700,
       maxLines: 1,
-      max: M * 0.42,
-      min: M * 0.24,
+      max: webSize,
+      min: webSize * 0.8,
       leading: 1.2,
-      maxW: cr - cx - lockW - 0.4 * dpi,
+      maxW: room,
       maxH: M,
     },
     m,
   );
-  if (wf.overflow) warnings.push(`The web address is too long for ${f.label}.`);
+  if (wf.overflow || wf.size < webSize)
+    warnings.push(`The web address is too long for ${f.label}.`);
+  const n1: FontSpec = { family: 'serif', size: M * 0.4 };
+  const n2: FontSpec = { family: 'sans', size: M * 0.27, weight: 600 };
+  const nameW = Math.max(m(ctx.church.line1, n1), m(ctx.church.line2, n2));
+  const showName = 1.3 * M + nameW + 0.4 * dpi + wf.width <= cr - cx;
   const contentBottom = Math.min(B - pad * 0.6, safe.y + safe.h);
   const bandTop = contentBottom - M - pad * 0.6;
   const sw = 0.09 * f.h;
@@ -1059,22 +1134,24 @@ function yardSign(c: Content, f: Format, ctx: Ctx): Rendered {
   body += `<path d="${poly(steppedPts({ x: L, y: bandTop, w: R - L, h: B - bandTop }, sw, sh))}" fill="${C.navy}"/>`;
   const ly = contentBottom - M;
   body += image(ctx.assets.markWhite, cx, ly, M, M);
-  const nameH = n1.size * 1.12 + n2.size * 1.3;
-  const ny = ly + (M - nameH) / 2;
-  body += lines([ctx.church.line1], {
-    ...n1,
-    x: cx + 1.3 * M,
-    y: ny,
-    leading: 1.12,
-    fill: C.ground,
-  });
-  body += lines([ctx.church.line2], {
-    ...n2,
-    x: cx + 1.3 * M,
-    y: ny + n1.size * 1.12,
-    leading: 1.3,
-    fill: C.tint,
-  });
+  if (showName) {
+    const nameH = n1.size * 1.12 + n2.size * 1.3;
+    const ny = ly + (M - nameH) / 2;
+    body += lines([ctx.church.line1], {
+      ...n1,
+      x: cx + 1.3 * M,
+      y: ny,
+      leading: 1.12,
+      fill: C.ground,
+    });
+    body += lines([ctx.church.line2], {
+      ...n2,
+      x: cx + 1.3 * M,
+      y: ny + n1.size * 1.12,
+      leading: 1.3,
+      fill: C.tint,
+    });
+  }
   body += lines(wf.lines, {
     family: 'sans',
     size: wf.size,
@@ -1088,7 +1165,8 @@ function yardSign(c: Content, f: Format, ctx: Ctx): Rendered {
 
   // When: mandatory for the kinds that happen once.
   const dated = c.kind === 'event' || c.kind === 'announcement' || c.kind === 'time-change';
-  const when = dated ? shortWhen(c) : '';
+  // A Sunday sign says when Sunday is ("Sundays, 11 am"), from Church facts.
+  const when = dated ? shortWhen(c) : c.kind === 'sunday' ? sundayLine(c) : '';
   if (dated && !when)
     warnings.push(`Add the date for ${f.label}: a sign with no date reads as every week.`);
   const ytext = c.kind === 'verse' ? `“${cleanText(c.title)}”` : shortTime(cleanText(c.title));
@@ -1458,11 +1536,294 @@ function smallCard(c: Content, f: Format, ctx: Ctx): Rendered {
   return { svg: doc(f, ctx.assets, '', body), warnings };
 }
 
+// ── The overlap guard ───────────────────────────────────────────────────────
+
+/** A set block of words and the box it covers, for the overlap guard. */
+interface Placed {
+  name: string;
+  /** Higher stays longer; the title is 100 and is never dropped. */
+  rank: number;
+  box: Box;
+  svg: string;
+}
+
+const hits = (a: Box, b: Box) =>
+  a.x < b.x + b.w - 0.5 && b.x < a.x + a.w - 0.5 && a.y < b.y + b.h - 0.5 && b.y < a.y + a.h - 0.5;
+
+/**
+ * The guard every layout ends with: no words on other words or on the band. While any
+ * block touches the band or another block, the lowest-ranked block among those
+ * touching is left off. The title is never dropped; if it still touches, the Studio
+ * is told there is too much to say.
+ */
+function settle(blocks: Placed[], keepOut: Box[], label: string, warnings: string[]): string {
+  let live = blocks.filter((b) => b.svg && b.box.h > 0);
+  for (;;) {
+    const bad = live.filter(
+      (b) => keepOut.some((k) => hits(b.box, k)) || live.some((o) => o !== b && hits(b.box, o.box)),
+    );
+    if (!bad.length) break;
+    const low = bad.reduce((a, b) => (b.rank < a.rank ? b : a));
+    if (low.rank >= 100) {
+      warnings.push(`There is too much to say on ${label}. Try fewer words.`);
+      break;
+    }
+    live = live.filter((b) => b !== low);
+    warnings.push(`The ${low.name} is left off ${label}: there is no room for it.`);
+  }
+  return live.map((b) => b.svg).join('');
+}
+
+/** The band's outline as boxes: the bar itself and the three steps at its right end. */
+const bandBoxes = (L: number, R: number, top: number, B: number, sw: number, sh: number): Box[] => [
+  { x: L, y: top, w: R - L, h: B - top },
+  { x: R - 3 * sw, y: top - sh, w: 3 * sw, h: sh },
+  { x: R - 2 * sw, y: top - 2 * sh, w: 2 * sw, h: sh },
+  { x: R - sw, y: top - 3 * sh, w: sw, h: sh },
+];
+
+// ── The wide sizes ──────────────────────────────────────────────────────────
+
+/**
+ * The Facebook page cover, the Facebook event cover and the YouTube thumbnail (final
+ * review, 2026-10-28). These are seen small and briefly, so they say four things only:
+ * the kicker (or, for a dated kind, the short date: "Dec 24, 6 pm"), the title as large
+ * as the room allows, the mark and the church's name, and the web address. No times and
+ * no body. The thumbnail is read at 168px wide in a list, so it keeps only the top line,
+ * the title and a small mark (YouTube names the channel beside it). The picture (the
+ * photo, or the building sketch) takes the right of the field.
+ */
+function wide(c: Content, f: Format, ctx: Ctx): Rendered {
+  const m = ctx.measure;
+  const s = safeBox(f);
+  const fl = floorPx(f);
+  const label = f.label;
+  const warnings: string[] = [];
+  const thumb = f.id === 'youtube-thumb';
+  const verse = c.kind === 'verse';
+  const photo = verse ? undefined : c.photo;
+  let defs = photo ? WARM : '';
+  const u = unit(f);
+  const mg = Math.round(34 * u);
+  const L = mg;
+  const T = mg;
+  const R = f.w - mg;
+  const B = f.h - mg;
+  const pad = Math.max(36, 0.05 * f.h);
+  const cx = Math.max(s.x, L + pad);
+  const cr = Math.min(s.x + s.w, R - pad);
+  const sw = 0.03 * (R - L);
+  const sh = 0.34 * sw;
+
+  // The band: the mark, the name, and the web address at the right. A long page link
+  // that does not fit beside the name gives way to the church's own address.
+  let bandTop = B;
+  let band = '';
+  const keepOut: Box[] = [];
+  if (!thumb) {
+    const n2s = fl;
+    const n1: FontSpec = { family: 'serif', size: n2s * 1.35 };
+    const n2: FontSpec = { family: 'sans', size: n2s, weight: 600 };
+    const nameH = n1.size * 1.12 + n2s * 1.3;
+    const M = nameH * 1.05;
+    const nameW = Math.max(m(ctx.church.line1, n1), m(ctx.church.line2, n2));
+    const lockW = M + 0.35 * M + nameW;
+    const wf: FontSpec = { family: 'sans', size: fl, weight: 700 };
+    const room = cr - cx - lockW - 0.6 * M;
+    let web = cleanText(c.link) || ctx.church.web;
+    if (m(web, wf) > room) web = ctx.church.web;
+    const showName = m(web, wf) <= room;
+    if (!showName && m(web, wf) > cr - cx - 1.4 * M)
+      warnings.push(`The web address is too long for ${label}.`);
+    const bpad = 0.32 * M;
+    const rowBottom = Math.min(B - bpad, s.y + s.h);
+    const rowTop = rowBottom - M;
+    bandTop = rowTop - bpad;
+    band += `<path d="${poly(steppedPts({ x: L, y: bandTop, w: R - L, h: B - bandTop }, sw, sh))}" fill="${C.navy}"/>`;
+    band += image(ctx.assets.markWhite, cx, rowTop, M, M);
+    if (showName) {
+      const nx = cx + 1.35 * M;
+      const ny = rowTop + (M - nameH) / 2;
+      band += lines([ctx.church.line1], { ...n1, x: nx, y: ny, leading: 1.12, fill: C.ground });
+      band += lines([ctx.church.line2], {
+        ...n2,
+        x: nx,
+        y: ny + n1.size * 1.12,
+        leading: 1.3,
+        fill: C.tint,
+      });
+    }
+    band += lines([web], {
+      ...wf,
+      x: cr,
+      y: rowTop + (M - wf.size * 1.25) / 2,
+      leading: 1.25,
+      fill: C.ground,
+      anchor: 'end',
+    });
+    keepOut.push(...bandBoxes(L, R, bandTop, B, sw, sh));
+  }
+
+  // The picture at the right of the field; a verse keeps the whole field for its words.
+  const px = Math.round(L + (R - L) * (thumb ? 0.66 : 0.62));
+  const pic: Box | null = verse ? null : { x: px, y: T, w: R - px, h: bandTop - T };
+  let pics = '';
+  if (pic && photo) pics = photoIn(photo, 'ph', pic);
+  else if (pic) {
+    const sy = Math.max(T + pad, s.y);
+    const sk = carvedSketch(
+      ctx,
+      {
+        x: pic.x + pad * 0.5,
+        y: sy,
+        w: Math.min(R, s.x + s.w + pad) - pic.x - pad,
+        h: (thumb ? B - pad : bandTop - 3 * sh - pad * 0.4) - sy,
+      },
+      u * 1.3,
+    );
+    defs += sk.defs;
+    pics = sk.body;
+  }
+
+  // The words' column.
+  const top = Math.max(s.y, T + pad * 0.8);
+  let bottom = thumb ? Math.min(s.y + s.h, B - pad * 0.6) : bandTop - pad * 0.7;
+  const colR = pic ? px - pad : cr;
+  const colW = colR - cx;
+  const placed: Placed[] = [];
+
+  // The thumbnail's small mark, at the foot of the column (YouTube's clock is at the right).
+  if (thumb) {
+    const M = 0.15 * f.h;
+    placed.push({
+      name: 'mark',
+      rank: 90,
+      box: { x: cx, y: bottom - M, w: M, h: M },
+      svg: image(ctx.assets.markWhite, cx, bottom - M, M, M),
+    });
+    bottom -= M + 0.05 * f.h;
+  }
+
+  // The top line: the short date for a kind that happens once, else the kicker.
+  const dated = c.kind === 'event' || c.kind === 'announcement' || c.kind === 'time-change';
+  const date = dated ? shortWhen(c) : '';
+  const kicker = date || (verse ? '' : cleanText(c.kicker));
+  const kf = date
+    ? { family: 'sans' as const, weight: 700, tracking: 0, caps: false }
+    : { family: 'sans' as const, weight: 700, tracking: 0.18, caps: true };
+  const ksize = Math.max(fl, (thumb ? 0.075 : 0.06) * f.h);
+  const kr = kicker
+    ? fitText(
+        date ? whole(kicker) : kicker,
+        { ...kf, maxLines: 1, max: ksize, min: fl, leading: 1.2, maxW: colW, maxH: ksize * 1.3 },
+        m,
+      )
+    : null;
+  if (kr?.overflow) warnings.push(`The ${date ? 'date' : 'kicker'} is too long for ${label}.`);
+  const kGap = kr ? 0.035 * f.h : 0;
+
+  // A verse names its reference under the words.
+  const ref = verse
+    ? [cleanText(c.reference), cleanText(c.translation)].filter(Boolean).join('  ·  ')
+    : '';
+  const rr = ref
+    ? fitText(
+        ref,
+        {
+          family: 'sans',
+          weight: 700,
+          tracking: 0.14,
+          caps: true,
+          maxLines: 1,
+          max: ksize,
+          min: fl,
+          leading: 1.25,
+          maxW: colW,
+          maxH: ksize * 1.4,
+        },
+        m,
+      )
+    : null;
+  const rGap = rr ? 0.035 * f.h : 0;
+
+  // The title: as large as the column allows, never smaller than the line above it.
+  const text = verse ? `“${cleanText(c.title)}”` : cleanText(c.title);
+  const room = bottom - top - (kr ? kr.height + kGap : 0) - (rr ? rr.height + rGap : 0);
+  const tMin = Math.max(fl * 1.2, (kr?.size ?? 0) * 1.25, (rr?.size ?? 0) * 1.25);
+  const topts = {
+    family: 'serif' as const,
+    tracking: -0.014,
+    maxLines: verse ? 4 : 3,
+    max: (thumb ? 0.34 : 0.24) * f.h,
+    min: Math.max(1, Math.min(tMin, room)),
+    leading: verse ? 1.12 : 1.02,
+    maxW: colW,
+    maxH: Math.max(0, room),
+  };
+  const t = fitTitle(text, topts, m);
+  if (t.overflow) warnings.push(`The title is too long for ${label}. Try fewer words.`);
+
+  // Placed together in the middle of the column.
+  const total = (kr ? kr.height + kGap : 0) + t.height + (rr ? rr.height + rGap : 0);
+  let y = top + Math.max(0, (bottom - top - total) / 2);
+  if (kr) {
+    placed.push({
+      name: date ? 'date' : 'kicker',
+      rank: 60,
+      box: { x: cx, y, w: kr.width, h: kr.height },
+      svg: lines(unglue(kr.lines), {
+        ...kf,
+        size: kr.size,
+        x: cx,
+        y,
+        leading: 1.2,
+        fill: C.ground,
+      }),
+    });
+    y += kr.height + kGap;
+  }
+  let tsvg = lines(t.lines, {
+    family: 'serif',
+    size: t.size,
+    tracking: -0.014,
+    x: cx + (verse ? m('“', { family: 'serif', size: t.size }) : 0),
+    y,
+    leading: topts.leading,
+    fill: C.ground,
+  });
+  if (verse) tsvg = tsvg.replace(/<tspan x="[^"]+"/, `<tspan x="${f1(cx)}"`);
+  placed.push({ name: 'title', rank: 100, box: { x: cx, y, w: t.width, h: t.height }, svg: tsvg });
+  y += t.height + rGap;
+  if (rr)
+    placed.push({
+      name: 'reference',
+      rank: 70,
+      box: { x: cx, y, w: rr.width, h: rr.height },
+      svg: lines(rr.lines, {
+        family: 'sans',
+        size: rr.size,
+        weight: 700,
+        tracking: 0.14,
+        caps: true,
+        x: cx,
+        y,
+        leading: 1.25,
+        fill: C.ground,
+      }),
+    });
+
+  const words = settle(placed, keepOut, label, warnings);
+  const body =
+    rect(0, 0, f.w, f.h, C.ground) + rect(L, T, R - L, B - T, C.auburn) + pics + band + words;
+  return { svg: doc(f, ctx.assets, defs, body), warnings };
+}
+
 function draw(c: Content, f: Format, ctx: Ctx): Rendered {
   if (c.kind === 'welcome' && f.id === 'connect-card') return connectCard(c, f, ctx);
   if (f.print && f.print.inW * f.print.inH < 10) return smallCard(c, f, ctx);
   if (f.id === 'youtube-banner') return channelArt(c, f, ctx);
   if (f.id === 'yard-sign') return yardSign(c, f, ctx);
+  if (['page-cover', 'youtube-thumb', 'event-cover'].includes(f.id)) return wide(c, f, ctx);
   const banner = f.shape === 'banner';
   // A banner's safe strip is short, so its type scale is set a step larger.
   const u = unit(f) * (banner ? 1.45 : 1);
@@ -1537,7 +1898,6 @@ function draw(c: Content, f: Format, ctx: Ctx): Rendered {
   // The words' box, and the picture beside or above it.
   let words: Box;
   let pic: Box | null = null;
-  let wordsTop = 0;
   if (vertical) {
     words = { x: cx, y: T, w: cr - cx, h: bandTop - 3 * sh - 40 * u - T };
   } else {
@@ -1555,99 +1915,137 @@ function draw(c: Content, f: Format, ctx: Ctx): Rendered {
     if (split) pic = { x: px, y: T, w: R - px, h: bandTop - T };
   }
 
-  // The information under its rule at the foot of the words.
-  const info = infoPiece(c, Math.min(words.w, 900 * u), u, fl, m, label, {
+  // The information under its rule at the foot of the words, in its full form and as
+  // one plain line, for the hierarchy below.
+  const infoFull = infoPiece(c, Math.min(words.w, 900 * u), u, fl, m, label, {
     inline: banner || slim,
     wide: !vertical,
   });
-  if (info) warnings.push(...info.warnings);
+  const infoLine = infoPiece(c, Math.min(words.w, 900 * u), u, fl, m, label, {
+    inline: true,
+    wide: !vertical,
+  });
   const infoGap = 40 * u;
-  const infoH = info ? info.h + infoGap : 0;
+  const W = words;
 
-  if (hanger) {
-    // Words first, from just under the clear top; the picture takes the room under them.
-    const top = Math.max(safe.y, hangerTop);
-    const bottom = words.y + words.h;
-    const keepPic = verse ? 0 : 0.9 * dpi;
-    const st = stack(
-      c,
-      { ...words, y: top, h: Math.max(0, bottom - infoH - top - keepPic) },
-      u,
-      fl,
-      m,
-      { label, titleMax, body: withBody },
-    );
-    warnings.push(...st.warnings);
-    over += st.svg;
-    if (info) over += info.draw(words.x, top + st.h + infoGap);
-    wordsTop = top + st.h + infoH;
-    if (!verse) pic = { x: L, y: wordsTop + pad, w: R - L, h: bandTop - wordsTop - pad };
-  } else if (vertical) {
-    // The picture takes what the words leave, between a floor and a ceiling: the words
-    // are set first (the title as large as its own limit), then sit on the information.
-    const minPic = verse
-      ? 0
-      : H *
-        (photoLeads
-          ? f.shape === 'square'
-            ? 0.4
-            : 0.45
-          : photo
-            ? 0.26
-            : f.shape === 'square'
-              ? 0.13
-              : 0.17);
-    const maxPic = verse
-      ? 0
-      : H * (photoLeads ? 0.58 : photo ? 0.5 : f.id === 'story' ? 0.36 : 0.3);
-    const firstTop = Math.max(safe.y, T + minPic + pad);
-    const bottom = words.y + words.h;
-    const st = stack(
-      c,
-      { ...words, y: firstTop, h: Math.max(0, bottom - infoH - firstTop) },
-      u,
-      fl,
-      m,
-      {
+  /** Sets the words with or without the body and the information; returns the blocks. */
+  const lay = (withB: boolean, info: Piece | null, picK = 1) => {
+    const infoH = info ? info.h + infoGap : 0;
+    const out: Placed[] = [];
+    let wTop = 0;
+    let p: Box | null = pic;
+    let st: ReturnType<typeof stack>;
+    let stTop: number;
+    if (hanger) {
+      // Words first, from just under the clear top; the picture takes the room under them.
+      const top = Math.max(safe.y, hangerTop);
+      const bottom = W.y + W.h;
+      const keepPic = verse ? 0 : 0.9 * dpi;
+      st = stack(c, { ...W, y: top, h: Math.max(0, bottom - infoH - top - keepPic) }, u, fl, m, {
         label,
         titleMax,
-        body: withBody,
-      },
-    );
-    warnings.push(...st.warnings);
-    // A verse is centred in its field; everything else sits on the information.
-    const total = st.h + infoH;
-    let stackTop = verse
-      ? firstTop + Math.max(0, (bottom - firstTop - total) / 2)
-      : Math.max(firstTop, bottom - total);
-    if (!verse) {
-      const picBottom = Math.max(T + minPic, Math.min(T + maxPic, stackTop - pad));
-      pic = { x: L, y: T, w: R - L, h: picBottom - T };
-      // When the picture has reached its ceiling, the words sit in the middle of the
-      // field left under it rather than leaving a gap of bare ink above them.
-      const gapTop = picBottom + pad;
-      if (stackTop > gapTop) stackTop = gapTop + (stackTop - gapTop) / 2;
+        body: withB,
+      });
+      stTop = top;
+      wTop = top + st.h + infoH;
+      p = verse ? null : { x: L, y: wTop + pad, w: R - L, h: bandTop - wTop - pad };
+    } else if (vertical) {
+      // The picture takes what the words leave, between a floor and a ceiling: the words
+      // are set first (the title as large as its own limit), then sit on the information.
+      const minPic = verse
+        ? 0
+        : picK *
+          H *
+          (photoLeads
+            ? f.shape === 'square'
+              ? 0.4
+              : 0.45
+            : photo
+              ? 0.26
+              : f.shape === 'square'
+                ? 0.13
+                : 0.17);
+      const maxPic = verse
+        ? 0
+        : H * (photoLeads ? 0.58 : photo ? 0.5 : f.id === 'story' ? 0.36 : 0.3);
+      const firstTop = Math.max(safe.y, T + minPic + pad);
+      const bottom = W.y + W.h;
+      st = stack(c, { ...W, y: firstTop, h: Math.max(0, bottom - infoH - firstTop) }, u, fl, m, {
+        label,
+        titleMax,
+        body: withB,
+      });
+      // A verse is centred in its field; everything else sits on the information.
+      const total = st.h + infoH;
+      stTop = verse
+        ? firstTop + Math.max(0, (bottom - firstTop - total) / 2)
+        : Math.max(firstTop, bottom - total);
+      if (!verse) {
+        const picBottom = Math.max(T + minPic, Math.min(T + maxPic, stTop - pad));
+        p = { x: L, y: T, w: R - L, h: picBottom - T };
+        // When the picture has reached its ceiling, the words sit in the middle of the
+        // field left under it rather than leaving a gap of bare ink above them.
+        const gapTop = picBottom + pad;
+        if (stTop > gapTop) stTop = gapTop + (stTop - gapTop) / 2;
+      }
+      st = {
+        ...st,
+        svg: `<g transform="translate(0 ${f1(stTop - firstTop)})">${st.svg}</g>`,
+      };
+      wTop = stTop;
+    } else {
+      const bottom = W.y + W.h;
+      st = stack(c, { ...W, h: Math.max(0, bottom - infoH - W.y) }, u, fl, m, {
+        label,
+        titleMax,
+        body: withB,
+        // On a cover's short strip a time change's date says which Sunday; the kicker goes.
+        kicker: !(banner && c.kind === 'time-change'),
+      });
+      const total = st.h + infoH;
+      // The words sit together on the information; a verse and a banner are centred.
+      const spare = Math.max(0, bottom - W.y - total);
+      stTop = W.y + (verse || banner ? spare / 2 : spare);
+      st = { ...st, svg: `<g transform="translate(0 ${f1(stTop - W.y)})">${st.svg}</g>` };
     }
-    over += `<g transform="translate(0 ${f1(stackTop - firstTop)})">${st.svg}</g>`;
-    if (info) over += info.draw(words.x, stackTop + st.h + infoGap);
-    wordsTop = stackTop;
-  } else {
-    const bottom = words.y + words.h;
-    const st = stack(c, { ...words, h: Math.max(0, bottom - infoH - words.y) }, u, fl, m, {
-      label,
-      titleMax,
-      body: withBody,
-      // On a cover's short strip a time change's date says which Sunday; the kicker goes.
-      kicker: !(banner && c.kind === 'time-change'),
-    });
-    warnings.push(...st.warnings);
-    const total = st.h + infoH;
-    // The words sit together on the information; a verse and a banner are centred.
-    const spare = Math.max(0, bottom - words.y - total);
-    const top = words.y + (verse || banner ? spare / 2 : spare);
-    over += `<g transform="translate(0 ${f1(top - words.y)})">${st.svg}</g>`;
-    if (info) over += info.draw(words.x, top + st.h + infoGap);
+    out.push({ name: 'title', rank: 100, box: { x: W.x, y: stTop, w: W.w, h: st.h }, svg: st.svg });
+    if (info) {
+      const iy = stTop + st.h + infoGap;
+      out.push({
+        name: c.kind === 'sunday' || c.kind === 'welcome' ? 'times' : 'date and times',
+        rank: 50,
+        box: { x: W.x, y: iy, w: W.w, h: info.h },
+        svg: info.draw(W.x, iy),
+      });
+    }
+    const second = Math.max(info?.size ?? 0, st.bodySize);
+    return { out, wTop, p, st, info, ok: st.titleSize >= 1.2 * second };
+  };
+
+  // The title is never smaller than the lines under it: the body goes first, then the
+  // timetable becomes one plain line, then a photo that leads gives up some room, then the
+  // information goes (a verse keeps its reference). Secondary lines go before a title shrinks.
+  const tries: [boolean, Piece | null, number?][] = [[withBody, infoFull]];
+  if (withBody) tries.push([false, infoFull]);
+  if (infoLine && infoLine !== infoFull) tries.push([false, infoLine]);
+  // A photo that leads gives up some of its room before the information goes.
+  if (photoLeads) {
+    tries.push([false, infoFull, 0.65]);
+    if (infoLine && infoLine !== infoFull) tries.push([false, infoLine, 0.65]);
   }
+  if (!verse && infoFull) tries.push([false, null]);
+  let laid = lay(...tries[0]);
+  for (let i = 1; i < tries.length && !laid.ok; i++) laid = lay(...tries[i]);
+  warnings.push(...laid.st.warnings, ...(laid.info?.warnings ?? []));
+  if (withBody && laid.st.bodySize === 0 && cleanText(c.body))
+    warnings.push(`The sentence under the title is left off ${label} to keep the title large.`);
+  if (infoFull && !laid.info)
+    warnings.push(`The date and times are left off ${label} to keep the title large.`);
+  pic = laid.p;
+  const wordsTop = laid.wTop;
+  // The guard: nothing set over the band or over other words.
+  const keepOut = noBand ? [] : bandBoxes(L, R, bandTop, B, sw, sh);
+  over += settle(laid.out, keepOut, label, warnings);
 
   // The picture: the photo, warm and hard edged, or the building sketch cut into the auburn.
   if (pic && pic.h < 0.6 * dpi && hanger) pic = null;
@@ -1704,7 +2102,7 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   const m = ctx.measure;
   const measure: Measure = (t, font) => m(t.split(GLUE).join(' '), font);
   const r = draw(c, f, { ...ctx, measure });
-  return { ...r, svg: r.svg.split(GLUE).join(' ') };
+  return { svg: r.svg.split(GLUE).join(' '), warnings: [...new Set(r.warnings)] };
 }
 
 export const press: Direction = {
