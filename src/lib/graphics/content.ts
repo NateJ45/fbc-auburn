@@ -140,7 +140,10 @@ export function sermonContent(s: SermonLike, siteUrl: string): Content {
     title: s.title || 'Sermon title',
     reference: s.passage || undefined,
     speaker: s.preacher || undefined,
-    ...linkFor(siteUrl, s.slug ? `/sermons/${s.slug}/` : '/sermons/'),
+    ...{
+      link: linkFor(siteUrl, '/sermons/').link,
+      qr: linkFor(siteUrl, s.slug ? `/sermons/${s.slug}/` : '/sermons/').qr,
+    },
   };
 }
 
@@ -157,7 +160,10 @@ export function seriesContent(s: SeriesLike, siteUrl: string): Content {
     kicker: 'Sermon series',
     title: s.title || 'Series title',
     reference: s.book || undefined,
-    ...linkFor(siteUrl, s.slug ? `/sermons/series/${s.slug}/` : '/sermons/'),
+    ...{
+      link: linkFor(siteUrl, '/sermons/').link,
+      qr: linkFor(siteUrl, s.slug ? `/sermons/series/${s.slug}/` : '/sermons/').qr,
+    },
   };
 }
 

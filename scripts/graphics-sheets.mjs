@@ -17,7 +17,7 @@ const dirs = (
 ).split(',');
 const kinds = ['sunday', 'event', 'sermon', 'verse', 'announcement', 'time-change', 'welcome'];
 const b = await chromium.launch();
-const p = await b.newPage({ viewport: { width: 1800, height: 1000 } });
+const p = await b.newPage({ viewport: { width: 1800, height: 6000 } });
 for (const d of dirs)
   for (const k of kinds)
     for (const ph of ['0', '1']) {

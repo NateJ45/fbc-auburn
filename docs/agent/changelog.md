@@ -1,5 +1,16 @@
 # Change history
 
+_2026-10-27: Make a graphic._ A Studio tool (`src/sanity/graphics/`, engine `src/lib/graphics/`,
+`docs/agent/graphics.md`) that draws the church's posts, stories, Facebook and YouTube covers, the
+Sunday slide and print (flyer, bulletin insert, connect card, postcard, door hanger, yard sign) in
+the browser as PNGs, or prints a print size to PDF. Seven kinds, words from Church facts
+(`dayPlan()`), sermons, series and event pages; times read-only, pre-launch notes never printed,
+unconfirmed times flagged. Two fixed looks, Light and Bold, picked over three review rounds by a
+designer, a pastor and slop auditor, and a UX reviewer (`docs/design-directions/2026-10-27-graphics/`);
+the first direction, Night, was retired. Also a "Make a graphic" document action on sermons, series
+and pages, a Site Guide entry, the wall `/styleguide/graphics/`, `scripts/shoot-graphics.mjs` and
+`scripts/graphics-sheets.mjs`, and `src/lib/graphics.test.ts`. No new dependency.
+
 _2026-10-27: no blue brick left._ The Bible verse panel (`.cb-verse`) is the red wall (`tile-wall.svg`,
 pale quote mark `#F1D3C6`). Sermon art with no picture (`.c-art--blank`, three navy tones) and the
 play card (`.cb-play`) are flat navy, and the Stone look (`.surface-stone`) and sign-up panel

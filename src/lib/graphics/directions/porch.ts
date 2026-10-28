@@ -123,6 +123,15 @@ function fitLine(
   return { size: min, w: measure(text, { ...font, size: min }), over: true };
 }
 
+/**
+ * Times stay whole on a line: "11:00 am" never breaks before the "am". The space becomes a word joiner (not whitespace, so the
+ * line breaker keeps the pair) and goes back to a space when drawn.
+ */
+const GLUE = '⁠';
+const glue = (s: string) =>
+  s.replace(/(\d)\s+(am|pm|a\.m\.|p\.m\.)(?=\W|$)/gi, (_, d: string, ap: string) => d + GLUE + ap);
+const unglue = (ls: string[]) => ls.map((l) => l.split(GLUE).join(' '));
+
 /** "Sunday School, 9:45 am" to ["9:45 am", "Sunday School"]: the time leads its row. */
 function splitWhen(s: string): { a: string; b: string } {
   const t = cleanText(s);
@@ -422,11 +431,13 @@ function words(c: Content, f: Format, x: number, w: number, k: Ctx2, o: WordOpts
       ? f.shape === 'tall'
         ? 84
         : 74
-      : f.shape === 'tall'
-        ? 150
-        : f.shape === 'square'
-          ? 112
-          : 128) * u;
+      : f.id === 'story'
+        ? 196
+        : f.shape === 'tall'
+          ? 150
+          : f.shape === 'square'
+            ? 112
+            : 128) * u;
   const min = verse ? k.m.verse : k.m.title;
   return {
     before,
@@ -720,16 +731,32 @@ function footPaper(
     items.push({ text: church.address, weight: 400, fill: C.inkMuted });
   const showQr = o.qrSize > 0;
   if (!items.length && !showQr) return { svg: '', h: 0 };
-  const textW = w - (showQr ? o.qrSize + 40 * u : 0);
+  // The text column ends well clear of the code (at least 40px), and a line that does
+  // not fit at the floor breaks onto a second line rather than running under the code
+  // (round two, 2026-10-27: "Worship 11:" was cut off on the door hanger).
+  const textW = w - (showQr ? o.qrSize + Math.max(40 * u, 48) : 0);
   const size = m.body;
   let svg = '';
   const fits = items.map((it) =>
-    fitLine(it.text, { family: 'sans', weight: it.weight }, textW, size, size * 0.85, measure),
+    fitText(
+      glue(it.text),
+      {
+        family: 'sans',
+        weight: it.weight,
+        maxW: textW,
+        maxH: size * 1.35 * 3,
+        maxLines: 3,
+        max: size,
+        min: size,
+        leading: 1.35,
+      },
+      measure,
+    ),
   );
-  const textH = fits.reduce((s, ft) => s + ft.size * 1.35, 0);
+  const textH = fits.reduce((s, ft) => s + ft.height, 0);
   let y = bottom - textH;
   items.forEach((it, i) => {
-    svg += lines([it.text], {
+    svg += lines(unglue(fits[i].lines), {
       family: 'sans',
       weight: it.weight,
       size: fits[i].size,
@@ -738,7 +765,7 @@ function footPaper(
       y,
       fill: it.fill,
     });
-    y += fits[i].size * 1.35;
+    y += fits[i].height;
   });
   if (items.length) svg += rect(x, bottom - textH - 24 * u, textW, Math.max(1.5, 2 * u), C.border);
   if (showQr) svg += qr(c.qr!, x + w - o.qrSize, bottom - o.qrSize, o.qrSize, C.ink, C.ground);
@@ -912,6 +939,12 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   // A little more margin than the safe line: a notice breathes.
   const pad = f.print ? 0.12 * dpi : f.shape === 'banner' ? 0 : 18 * u;
   const b: Box = { x: safe.x + pad, y: safe.y + pad, w: safe.w - 2 * pad, h: safe.h - 2 * pad };
+  // The yard sign keeps a wide margin (1.2 in from the canvas edge, 180px at 150 dpi) on
+  // every side, the band included, so nothing sits at the trim (round two, 2026-10-27).
+  if (yard) {
+    const ym = Math.max(180, Math.round(1.2 * dpi));
+    Object.assign(b, { x: ym, y: ym, w: f.w - 2 * ym, h: f.h - 2 * ym });
+  }
   let defs = '';
   let body = rect(0, 0, f.w, f.h, C.ground);
   // The door hanger's hole: the words start below it (it ends 1 5/8 in from the trim).
@@ -923,7 +956,10 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   }
   const tall = f.shape === 'tall' || f.shape === 'portrait' || f.shape === 'square';
   const card = f.id === 'connect-card';
-  const useBand = !!f.print && !card;
+  // The story names the church in the navy band at its foot, like paper: the band runs
+  // on below the safe line, so the piece fills its height top to bottom (round two).
+  const story = f.id === 'story';
+  const useBand = (!!f.print && !card) || story;
   const qrSize =
     f.print && c.qr && !yard
       ? Math.min((f.id === 'flyer' ? 1.15 : card ? 0.75 : 0.85) * dpi, b.w * 0.24)
@@ -987,7 +1023,8 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
       // whatever room the words leave.
       const drop = 26 * u;
       const gap = 56 * u;
-      const maxPh = region * (f.shape === 'square' ? 0.42 : f.shape === 'tall' ? 0.5 : 0.48);
+      const maxPh =
+        region * (f.shape === 'square' ? 0.42 : story ? 0.36 : f.shape === 'tall' ? 0.5 : 0.48);
       let minPh = 0;
       let w0 = { h: 0, warnings: [] as string[], size: 0, goal: 0 };
       for (const share of [0.38, 0.32, 0.26, 0.2, 0.15, 0.11]) {
@@ -1001,7 +1038,30 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
         w0 = fitWords(c, f, ctx, u, m, box0, { align: 'bottom', leaders });
         if (!w0.warnings.length && w0.size >= w0.goal - 0.5) break;
       }
-      const ph = Math.max(minPh, Math.min(maxPh, region - w0.h - drop - gap));
+      let ph = Math.max(minPh, Math.min(maxPh, region - w0.h - drop - gap));
+      const wordsUnder = (h: number) => {
+        const wTop = top + h + drop + gap;
+        return fitWords(
+          c,
+          f,
+          ctx,
+          u,
+          m,
+          { x: b.x, y: wTop, w: b.w, h: bottom - wTop },
+          { align: hanger ? 'top' : 'middle', leaders },
+        );
+      };
+      let ws = wordsUnder(ph);
+      // When the words would lose a line, the photo gives up a fifth of its height first
+      // (round two: the square post dropped its sentence with room to spare).
+      if (ws.warnings.length) {
+        const ph2 = Math.max(region * 0.11, ph * 0.8);
+        const ws2 = wordsUnder(ph2);
+        if (ws2.warnings.length < ws.warnings.length) {
+          ph = ph2;
+          ws = ws2;
+        }
+      }
       const pw = b.w * 0.9;
       defs += tilePattern('slab', ctx.assets.tileWall, 300 * u);
       body += rect(
@@ -1018,16 +1078,6 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
         gable(pw, ph),
         pitchOf(pw, ph),
       );
-      const wTop = top + ph + drop + gap;
-      const ws = fitWords(
-        c,
-        f,
-        ctx,
-        u,
-        m,
-        { x: b.x, y: wTop, w: b.w, h: bottom - wTop },
-        { align: hanger ? 'top' : 'middle', leaders },
-      );
       body += ws.svg;
       return done(ws.warnings);
     }
@@ -1039,17 +1089,123 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
       u,
       m,
       { x: b.x, y: top, w: b.w, h: region },
-      { align: 'top', leaders, spare: sketchMax + 40 * u },
+      { align: story ? 'bottom' : 'top', leaders, spare: sketchMax + 40 * u },
     );
     body += ws.svg;
-    const free = bottom - (ws.top + ws.h + 48 * u);
+    // The sketch takes the room the words leave. On the story the words sit on the foot
+    // and the sketch stands above them, centred in the room; on the door hanger it sits
+    // halfway between the words and the foot, so the space is shared evenly (round two:
+    // 600px lay dead between them). Elsewhere it stands on the foot.
+    const gapS = 48 * u;
+    const free = story ? ws.top - gapS - top : bottom - (ws.top + ws.h + gapS);
     if (free > sketchMax * 0.45) {
       const sh = Math.min(free, sketchMax);
-      const sk = sketch(ctx, { x: b.x, y: bottom - sh, w: b.w, h: sh }, u);
+      const sy = story
+        ? top + (free - sh) / 2
+        : hanger
+          ? ws.top + ws.h + gapS + (free - sh) / 2
+          : bottom - sh;
+      const sk = sketch(ctx, { x: b.x, y: sy, w: b.w, h: sh }, u);
       defs += sk.defs;
       body += sk.body;
     }
     return done(ws.warnings);
+  }
+
+  // The YouTube channel art (round two, 2026-10-27). Every device shows only the middle
+  // 1546 x 423 strip, so it holds two things, both large: the title at the left, as tall
+  // as the strip allows, and the mark over the church's name in a column at the right.
+  // Above the strip, where a TV shows more, the photo runs to the edges (or the sketch
+  // stands on the strip's left edge).
+  if (f.id === 'youtube-banner') {
+    const s = safeBox(f);
+    const warnings: string[] = [];
+    const k: Ctx2 = {
+      u,
+      m,
+      measure: ctx.measure,
+      warn: (t) => void (warnings.includes(t) || warnings.push(t)),
+      label: f.label,
+    };
+    const aboveH = s.y - 0.16 * s.h;
+    if (c.photo) {
+      body += shapedPhoto(c.photo, 'ph', { x: 0, y: 0, w: f.w, h: aboveH }, [
+        [0, 0],
+        [f.w, 0],
+        [f.w, aboveH],
+        [0, aboveH],
+      ]);
+    } else if (c.kind !== 'verse') {
+      const sh = aboveH * 0.82;
+      const sk = sketch(ctx, { x: s.x, y: aboveH - sh, w: sh / SKETCH_RATIO, h: sh }, u * 1.6);
+      defs += sk.defs;
+      body += sk.body;
+    }
+    // The name column.
+    const colW = s.w * 0.26;
+    const colX = s.x + s.w - colW;
+    const n1 = fitLine(
+      ctx.church.line1,
+      { family: 'serif' },
+      colW,
+      0.17 * s.h,
+      m.body,
+      ctx.measure,
+    );
+    const n2font = { family: 'sans' as const, weight: 700, tracking: 0.12, caps: true };
+    const n2 = fitLine(
+      ctx.church.line2,
+      n2font,
+      colW,
+      Math.max(0.08 * s.h, m.small),
+      m.small,
+      ctx.measure,
+    );
+    if (n1.over || n2.over) k.warn(`The church's name is too long for ${f.label}.`);
+    const ms = Math.min(0.42 * s.h, colW * 0.5);
+    const colH = ms + 0.12 * s.h + n1.size * 1.1 + 0.06 * s.h + n2.size;
+    let y = s.y + (s.h - colH) / 2;
+    body += image(ctx.assets.markColor, colX, y, ms, ms);
+    y += ms + 0.12 * s.h;
+    body += lines([ctx.church.line1], {
+      family: 'serif',
+      size: n1.size,
+      leading: 1.1,
+      x: colX,
+      y,
+      fill: C.navy,
+    });
+    y += n1.size * 1.1 + 0.06 * s.h;
+    body += lines([ctx.church.line2], {
+      ...n2font,
+      size: n2.size,
+      leading: 1,
+      x: colX,
+      y,
+      fill: C.navy,
+    });
+    // The title: as large as the strip's height and the left column allow.
+    const verse = c.kind === 'verse';
+    const tw = s.w - colW - 0.06 * s.w;
+    const st = stack(
+      {
+        before: [],
+        after: [],
+        title: {
+          text: verse ? `“${cleanText(c.title)}”` : cleanText(c.title),
+          max: s.h / 1.04,
+          min: Math.max(m.body, (verse ? 0.1 : 0.15) * s.h),
+          maxLines: verse ? 5 : 3,
+          leading: verse ? 1.18 : 1.04,
+        },
+      },
+      { x: s.x, y: s.y, w: tw, h: s.h },
+      k,
+      'middle',
+      0,
+    );
+    body += st.svg;
+    return done(warnings);
   }
 
   // Banners (a page cover, the channel art): the strip every screen shows holds the

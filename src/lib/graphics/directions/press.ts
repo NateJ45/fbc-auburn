@@ -9,10 +9,9 @@
 //   paper   a warm white border all round, the sheet the notice is printed on.
 //           The border and the calm margins are what keep a red sheet a church
 //           notice and not a sale flyer.
-//   auburn  the first ink: a flat field. A very light scatter of paper flecks
-//           shows through it (a third of the mark's own density), only in the
-//           field: never on type, photos or the navy band. Every word on it is
-//           cream Young Serif or cream Familjen Grotesk (6.3:1).
+//   auburn  the first ink: a flat field, no texture (round two, 2026-10-27: the
+//           speck layer was generic grain, from no Auburn source). Every word on
+//           it is cream Young Serif or cream Familjen Grotesk (6.3:1).
 //   navy    the second ink: the imprint band at the foot (the mark, the name,
 //           the web address, the regular Sunday times on other kinds, the QR
 //           code on print). Its top edge steps up three bricks at the right,
@@ -29,7 +28,6 @@
 // hanger's hole have their own rules below.
 // =============================================================================
 
-import { printMask } from '../../../../scripts/lib/brick-print.mjs';
 import { safeBox, unit, type Format } from '../formats.ts';
 import { C, doc, image, lines, qr, rect } from '../svg.ts';
 import { cleanText, fitText, type FitResult, type FontSpec, type Measure } from '../text.ts';
@@ -78,33 +76,26 @@ const WARM =
   `<feColorMatrix type="matrix" values="1.04 0 0 0 0.012 0 1 0 0 0.006 0 0 0.92 0 0 0 0 0 1 0"/>` +
   `</filter>`;
 
-/** A photo cropped around its hotspot into a box, hard edged. */
+/**
+ * A photo cropped into a box, hard edged. With a hotspot the crop is centred on it.
+ * Without one it leans to the upper part: the point 40% down the photo is centred, as
+ * in the Light look, because heads sit high in a picture and a short band centred on
+ * the middle crops them (round two, 2026-10-27; a crop anchored 20% from the top showed
+ * only the wall above the heads on the sample photo).
+ */
 function photoIn(p: Photo, id: string, b: Box): string {
   const s = Math.max(b.w / p.w, b.h / p.h);
   const dw = p.w * s;
   const dh = p.h * s;
   const fx = p.focus?.x ?? 0.5;
-  const fy = p.focus?.y ?? 0.5;
   const ox = Math.min(0, Math.max(b.w - dw, b.w / 2 - fx * dw));
+  const fy = p.focus?.y ?? 0.4;
   const oy = Math.min(0, Math.max(b.h - dh, b.h / 2 - fy * dh));
   return (
     `<clipPath id="${id}"><rect x="${f1(b.x)}" y="${f1(b.y)}" width="${f1(b.w)}" height="${f1(b.h)}"/></clipPath>` +
     `<g clip-path="url(#${id})"><image href="${p.src}" x="${f1(b.x + ox)}" y="${f1(b.y + oy)}" ` +
     `width="${f1(dw)}" height="${f1(dh)}" preserveAspectRatio="none" filter="url(#warm)"/></g>`
   );
-}
-
-/** The light paper flecks in the auburn field only (a third of the mark's density). */
-function fleckMask(f: Format, u: number): string {
-  return printMask('ink', {
-    x: 0,
-    y: 0,
-    w: f.w,
-    h: f.h,
-    u: 40 * u,
-    seed: 23,
-    density: 0.7,
-  }).replace(/^<defs>|<\/defs>$/g, '');
 }
 
 /**
@@ -220,9 +211,35 @@ function infoPiece(
     const when = (c.when ?? []).map(cleanText).filter(Boolean).map(splitWhen);
     const bare = when.filter(([l]) => !l).map(([, t]) => t);
     const rows = when.filter(([l]) => l);
+    // The date phrase stays on one line ("Wednesday, December 24, 6:00 pm"), stepping
+    // down to the floor first; past that it breaks only between the date and the time.
+    const dateOpts = {
+      family: 'sans' as const,
+      weight: 700,
+      max: 40 * u,
+      min: 26 * u,
+      leading: 1.25,
+    };
+    const oneLine = [cleanText(c.date), ...bare].filter(Boolean).join(', ');
+    const fitsOne =
+      oneLine &&
+      !fitText(
+        glue(oneLine),
+        {
+          ...dateOpts,
+          max: Math.max(dateOpts.max, fl),
+          min: fl,
+          maxLines: 1,
+          maxW: w,
+          maxH: Math.max(dateOpts.max, fl) * 1.3,
+        },
+        m,
+      ).overflow;
     textPart(
-      [cleanText(c.date), ...bare].filter(Boolean).join(', '),
-      { family: 'sans', weight: 700, maxLines: 2, max: 40 * u, min: 26 * u, leading: 1.25 },
+      fitsOne
+        ? glue(oneLine)
+        : [cleanText(c.date).replace(/\s+/g, GLUE), ...bare.map(glue)].filter(Boolean).join(', '),
+      { ...dateOpts, maxLines: fitsOne ? 1 : 2 },
       'date',
     );
     if (rows.length) {
@@ -641,7 +658,7 @@ function connectCard(c: Content, f: Format, ctx: Ctx): Rendered {
   const safe = safeBox(f);
   const m = ctx.measure;
   const label = f.label;
-  const defs = fleckMask(f, u);
+  const defs = '';
   let body = rect(0, 0, f.w, f.h, C.ground);
 
   const bw = Math.round(f.w * 0.47);
@@ -662,7 +679,7 @@ function connectCard(c: Content, f: Format, ctx: Ctx): Rendered {
     [R + 3 * sw, B],
     [0, B],
   ];
-  body += `<path d="${poly(blockPts)}" fill="${C.auburn}" mask="url(#ink)"/>`;
+  body += `<path d="${poly(blockPts)}" fill="${C.auburn}"/>`;
 
   // Left: the words, then the code and the web address (or the mark) at the foot.
   const x = safe.x;
@@ -808,7 +825,7 @@ function yardSign(c: Content, f: Format, ctx: Ctx): Rendered {
     [R, T],
     [R, bandTop],
     [L, bandTop],
-  ])}" fill="${C.auburn}" mask="url(#ink)"/>`;
+  ])}" fill="${C.auburn}"/>`;
   body += `<path d="${poly(steppedPts({ x: L, y: bandTop, w: R - L, h: B - bandTop }, sw, sh))}" fill="${C.navy}"/>`;
   const ly = contentBottom - M;
   body += image(ctx.assets.markWhite, cx, ly, M, M);
@@ -868,11 +885,116 @@ function yardSign(c: Content, f: Format, ctx: Ctx): Rendered {
     leading: 1.0,
     fill: C.ground,
   });
-  return { svg: doc(f, ctx.assets, fleckMask(f, dpi / 120), body), warnings };
+  return { svg: doc(f, ctx.assets, '', body), warnings };
+}
+
+/**
+ * The YouTube channel art (round two, 2026-10-27). Every device shows only the middle
+ * 1546 x 423 strip, so the strip holds just two things, both large: the title at the
+ * left, as tall as the strip allows (two lines at about 40% of its height), and the mark
+ * with the church's name in a column at the right. Outside the strip, where a TV shows
+ * more, the auburn runs on to the paper border and the picture (the photo, or the
+ * building sketch cut into the auburn) fills the room above the strip.
+ */
+function channelArt(c: Content, f: Format, ctx: Ctx): Rendered {
+  const m = ctx.measure;
+  const s = safeBox(f);
+  const fl = floorPx(f);
+  const warnings: string[] = [];
+  const mg = Math.round(34 * unit(f));
+  const verse = c.kind === 'verse';
+  const photo = verse ? undefined : c.photo;
+  let defs = photo ? WARM : '';
+  let body = rect(0, 0, f.w, f.h, C.ground) + rect(mg, mg, f.w - 2 * mg, f.h - 2 * mg, C.auburn);
+
+  // The picture, above the strip: seen on a TV, cropped away on a phone or a laptop.
+  const above = { x: mg, y: mg, w: f.w - 2 * mg, h: s.y - 0.16 * s.h - mg };
+  if (photo) body += photoIn(photo, 'ph', above);
+  else if (!verse) {
+    const sk = carvedSketch(
+      ctx,
+      { x: s.x, y: mg + 0.12 * above.h, w: s.w * 0.62, h: above.h * 0.88 },
+      unit(f) * 1.45,
+    );
+    defs += sk.defs.replace('xMidYMax', 'xMinYMax');
+    body += sk.body;
+  }
+
+  // The name column at the right of the strip: the mark over the two lines of the name.
+  const colW = s.w * 0.26;
+  const colX = s.x + s.w - colW;
+  const n2s = Math.max(fl, 0.1 * s.h);
+  const n1 = fitText(
+    ctx.church.line1,
+    {
+      family: 'serif',
+      maxLines: 1,
+      max: 0.17 * s.h,
+      min: n2s,
+      leading: 1.15,
+      maxW: colW,
+      maxH: s.h,
+    },
+    m,
+  );
+  const n2: FontSpec = { family: 'sans', size: n2s, weight: 600 };
+  if (n1.overflow || m(ctx.church.line2, n2) > colW)
+    warnings.push(`The church's name is too long for ${f.label}.`);
+  const M = Math.min(0.42 * s.h, colW * 0.5);
+  const colH = M + 0.12 * s.h + n1.size * 1.15 + n2s * 1.3;
+  let y = s.y + (s.h - colH) / 2;
+  body += image(ctx.assets.markWhite, colX, y, M, M);
+  y += M + 0.12 * s.h;
+  body += lines([ctx.church.line1], {
+    family: 'serif',
+    size: n1.size,
+    x: colX,
+    y,
+    leading: 1.15,
+    fill: C.ground,
+  });
+  body += lines([ctx.church.line2], {
+    ...n2,
+    x: colX,
+    y: y + n1.size * 1.15,
+    leading: 1.3,
+    fill: C.tint,
+  });
+
+  // The title: as large as the strip's height and the left column allow.
+  const tw = s.w - colW - 0.06 * s.w;
+  const text = verse ? `“${cleanText(c.title)}”` : cleanText(c.title);
+  const topts = {
+    family: 'serif' as const,
+    tracking: -0.014,
+    maxLines: verse ? 5 : 3,
+    max: s.h / 1.02,
+    min: Math.max(fl, (verse ? 0.1 : 0.15) * s.h),
+    leading: verse ? 1.13 : 1.02,
+    maxW: tw,
+    maxH: s.h,
+  };
+  // The strip is short, so a short word alone on a line ("Trunk / or Treat") is the
+  // better trade when keeping it whole would cost a fifth of the title's size.
+  let t = fitTitle(text, topts, m);
+  const plain = fitText(glue(text), topts, m);
+  if (!plain.overflow && plain.size > t.size * 1.2) t = { ...plain, lines: unglue(plain.lines) };
+  if (t.overflow) warnings.push(`The title is too long for ${f.label}. Try fewer words.`);
+  body += lines(t.lines, {
+    family: 'serif',
+    size: t.size,
+    tracking: -0.014,
+    x: s.x,
+    y: s.y + Math.max(0, (s.h - t.height) / 2),
+    leading: verse ? 1.13 : 1.02,
+    fill: C.ground,
+  });
+  return { svg: doc(f, ctx.assets, defs, body), warnings };
 }
 
 function render(c: Content, f: Format, ctx: Ctx): Rendered {
   if (c.kind === 'welcome' && f.id === 'connect-card') return connectCard(c, f, ctx);
+  if (f.id === 'youtube-banner') return channelArt(c, f, ctx);
   if (f.id === 'yard-sign') return yardSign(c, f, ctx);
   const banner = f.shape === 'banner';
   // A banner's safe strip is short, so its type scale is set a step larger.
@@ -885,7 +1007,7 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   const verse = c.kind === 'verse';
   // A verse stands alone on the plain field: no photo, no sketch.
   const photo = verse ? undefined : c.photo;
-  let defs = fleckMask(f, u) + (photo ? WARM : '');
+  let defs = photo ? WARM : '';
   let pics = '';
   let over = '';
   const warnings: string[] = [];
@@ -916,13 +1038,15 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   const titleMax =
     (banner
       ? 150
-      : f.shape === 'tall'
-        ? 200
-        : f.shape === 'portrait'
-          ? 180
-          : vertical
-            ? 150
-            : 170) * u;
+      : f.id === 'story'
+        ? 240
+        : f.shape === 'tall'
+          ? 200
+          : f.shape === 'portrait'
+            ? 180
+            : vertical
+              ? 150
+              : 170) * u;
   const withBody = !banner && f.id !== 'youtube-thumb';
 
   // The band at the foot: its size comes first, so the words know their room.
@@ -977,7 +1101,7 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
           H * (photo ? (hanger ? 0.3 : 0.26) : f.shape === 'square' ? 0.13 : 0.17),
           holeBottom ? holeBottom + 0.3 * dpi - T : 0,
         );
-    const maxPic = verse ? 0 : H * (photo ? (hanger ? 0.35 : 0.5) : 0.3);
+    const maxPic = verse ? 0 : H * (photo ? (hanger ? 0.35 : 0.5) : f.id === 'story' ? 0.36 : 0.3);
     const firstTop = Math.max(safe.y, T + minPic + pad, holeBottom ? holeBottom + pad : 0);
     const bottom = words.y + words.h;
     const st = stack(
@@ -1056,7 +1180,7 @@ function render(c: Content, f: Format, ctx: Ctx): Rendered {
   const band = poly(steppedPts({ x: L, y: bandTop, w: R - L, h: B - bandTop }, sw, sh));
   let body =
     rect(0, 0, f.w, f.h, C.ground) +
-    `<path d="${field}" fill="${C.auburn}" mask="url(#ink)"/>` +
+    `<path d="${field}" fill="${C.auburn}"/>` +
     pics +
     (noBand ? '' : `<path d="${band}" fill="${C.navy}"/>`) +
     over;

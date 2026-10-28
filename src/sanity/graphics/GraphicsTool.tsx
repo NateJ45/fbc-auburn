@@ -972,7 +972,7 @@ const CSS = `
 .gfx-sizes legend{font-weight:600;font-size:14px;margin-bottom:6px;padding:0}
 .gfx-size{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:6px;cursor:pointer;min-height:44px}
 .gfx-size:hover{background:var(--card-muted-bg-color,#F4EFE7)}
-.gfx-size input{margin-top:3px;width:18px;height:18px;accent-color:#1F3A5F;flex:none}
+.gfx-size input{appearance:auto;-webkit-appearance:checkbox;opacity:1;position:static;margin:3px 0 0;width:20px;height:20px;accent-color:#1F3A5F;flex:none;cursor:pointer}
 .gfx-size__name{display:block;font-size:15px;font-weight:600}
 .gfx-size__hint{display:block;font-size:13px;opacity:.75;line-height:1.35}
 .gfx-grid{display:grid;gap:24px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));align-items:start}
