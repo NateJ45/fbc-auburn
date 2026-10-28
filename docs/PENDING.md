@@ -16,6 +16,21 @@ sequence).
 
 ## Waiting on a human
 
+### 1zp. Make a graphic: try it signed in, and the real photos (opened 2026-10-27)
+
+The graphics maker (`docs/agent/graphics.md`) was driven through the kit harness (a mock sign-in that
+reads the live dataset), not yet in the live Studio signed in. Left:
+
+- **Signed in, live:** make one of each kind, download on a phone (iPhone Safari saves through the
+  share sheet), print a Letter flyer to PDF, upload a photo, and open the tool from a sermon's
+  `Make a graphic` action.
+- **Photos:** every kind works without one; the real photos from the photo Sunday (1x shot list) will
+  make them better. Pick two or three as defaults for each kind once they exist.
+- **Print shop check:** the 6 x 11 postcard size and bleed for Every Door Direct Mail, and the yard
+  sign's 150 dpi, with whichever printer the church uses.
+- **At cutover:** QR codes and printed web addresses follow `site.url`; anything printed before the
+  domain moves points at the workers.dev address. Print nothing for the public until then.
+
 ### 1zq. Every main page a page builder: Jacob's two asks and a signed-in look (opened 2026-10-26)
 
 Contact, Privacy, News and notes and Sermons are page builders, and Give and This week's bulletin

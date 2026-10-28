@@ -855,6 +855,41 @@ const allGuides: Guide[] = [
     ],
   },
 
+  // Make a graphic (2026-10-27, docs/agent/graphics.md).
+  {
+    slug: 'make-a-graphic',
+    category: 'Pictures',
+    title: 'Make a post, a slide or a flyer',
+    icon: 'image',
+    lead: 'Finished graphics in the church’s own look, from what you already keep here.',
+    diy: 'self',
+    body: [
+      { kind: 'path', items: ['Make a graphic'], link: { tool: 'graphics' } },
+      {
+        kind: 'p',
+        text: 'Make a graphic draws Facebook and Instagram posts and stories, the Facebook event picture, YouTube thumbnails, the Sunday screen, and things to print: flyers, bulletin inserts, connect cards, neighborhood postcards, door hangers and a yard sign. The colors, letters and layout are the church’s own and are done for you. You only check the words and, if you like, pick a photo.',
+      },
+      {
+        kind: 'steps',
+        items: [
+          'Open `Make a graphic` in the top bar and pick what it is for: this Sunday, an event, a sermon, a Bible verse, an announcement, a different Sunday, or New here.',
+          'Check the words. Times and dates come from `Church facts` and your pages, so they always match the website. To change one, change it there.',
+          'Tick the sizes you want. A preview of each shows straight away.',
+          'Pick a photo if you like. A real photo of your church and people beats any stock picture.',
+          'Press `Download` under each one, or `Download all`. For print sizes, `Print or save as PDF` opens the print window at the right paper size.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: 'You can also start from a sermon, a series or an event page: open it, then choose `Make a graphic` from the menu beside Publish.',
+      },
+      {
+        kind: 'p',
+        text: 'If a headline is too long for a size, the preview says so. Fewer words read bigger and better.',
+      },
+    ],
+  },
+
   // A different Sunday (2026-10-26, docs/agent/church-data.md).
   {
     slug: 'a-different-sunday',
@@ -1989,7 +2024,14 @@ export const GUIDES_FOR_TYPE: Record<string, string[]> = {
   ],
   sectionPreset: ['seasonal-patterns', 'reuse-sections', 'synced-sections'],
   // The collections (guides/collections.ts, 2026-10-18).
-  sermon: ['add-sermon', 'sermon-series', 'quick-update', 'schedule-publish', 'writing-help'],
+  sermon: [
+    'add-sermon',
+    'sermon-series',
+    'make-a-graphic',
+    'quick-update',
+    'schedule-publish',
+    'writing-help',
+  ],
   sermonSeries: ['sermon-series', 'add-sermon'],
   sermonsPage: ['podcast', 'add-sermon'],
   person: ['add-person'],

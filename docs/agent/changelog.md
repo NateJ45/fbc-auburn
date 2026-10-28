@@ -1,5 +1,15 @@
 # Change history
 
+_2026-10-27: Make a graphic._ A Studio tool (`src/sanity/graphics/`, engine `src/lib/graphics/`,
+`docs/agent/graphics.md`) that draws the church's posts, stories, Facebook and YouTube covers, the
+Sunday slide and print (flyer, bulletin insert, connect card, postcard, door hanger, yard sign) in
+the browser as PNGs, or prints a print size to PDF. Seven kinds, words from Church facts
+(`dayPlan()`), sermons, series and event pages; times read-only, pre-launch notes never printed,
+unconfirmed times flagged. Two fixed looks, Light and Bold, picked over three review rounds by a
+designer, a pastor and slop auditor, and a UX reviewer (`docs/design-directions/2026-10-27-graphics/`);
+the first direction, Night, was retired. Also a "Make a graphic" document action on sermons, series
+and pages, a Site Guide entry, the wall `/styleguide/graphics/`, `scripts/shoot-graphics.mjs` and
+`scripts/graphics-sheets.mjs`, and `src/lib/graphics.test.ts`. No new dependency.
 _2026-10-27: Auburn takes the starter's copies of the pieces it gave the family (PORTS.md cards 186 to
 198), nothing visible changed._ `npm run sync-check` is all SAME (405 marked files). Adopted:
 `sync-check.mjs` (186); `cta-budget.ts` replaces `red-budget.ts`, `cta-href.ts` with

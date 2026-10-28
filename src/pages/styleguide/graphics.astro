@@ -1,0 +1,174 @@
+---
+// Safe to edit by hand
+//
+// THE GRAPHICS WALL (2026-10-27): every graphics-maker design direction, drawing every kind of
+// graphic in every size, from the sample words in src/lib/graphics/samples.ts. Drawn in the
+// browser by the same code the Studio's "Make a graphic" tool uses, so what is reviewed here is
+// what Jacob downloads. Filter with ?d=<direction>&kind=<kind>&format=<id>&photo=1 (comma lists).
+// window.__graphics exposes render and png for scripts/shoot-graphics.mjs.
+// noindex, out of the sitemap ('/styleguide' is filtered in astro.config.mjs). docs/agent/graphics.md.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Graphics wall" description="The graphics maker's sizes and directions." noindex>
+  <main class="gw">
+    <h1>Graphics wall</h1>
+    <p class="gw-note">
+      Sample words. Filter with <code>?d=</code>, <code>?kind=</code>, <code>?format=</code>,{' '}
+      <code>?photo=1</code>.
+    </p>
+    <div id="gw-root" aria-live="polite">
+      Drawing...
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .gw {
+    padding: 32px 16px 96px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .gw h1 {
+    font-size: 2rem;
+  }
+  .gw-note {
+    color: #4a5a73;
+    margin: 8px 0 24px;
+  }
+  :global(.gw-dir) {
+    margin: 48px 0 0;
+  }
+  :global(.gw-dir > h2) {
+    font-size: 1.5rem;
+  }
+  :global(.gw-kind) {
+    margin: 24px 0 0;
+  }
+  :global(.gw-kind > h3) {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #4a5a73;
+  }
+  :global(.gw-grid) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+    margin-top: 12px;
+  }
+  :global(.gw-item) {
+    margin: 0;
+  }
+  :global(.gw-item img) {
+    display: block;
+    height: 300px;
+    width: auto;
+    max-width: 100%;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+  }
+  :global(.gw-item figcaption) {
+    font-size: 0.8rem;
+    margin-top: 4px;
+    color: #4a5a73;
+  }
+  :global(.gw-warn) {
+    color: #9a3b2a;
+  }
+</style>
+
+<script>
+  import { FORMATS, FORMAT_BY_ID } from '@/lib/graphics/formats';
+  import { DIRECTIONS } from '@/lib/graphics/directions';
+  import { SAMPLES, SAMPLE_CHURCH } from '@/lib/graphics/samples';
+  import { ASSETS } from '@/lib/graphics/assets';
+  import { canvasMeasure, loadFonts, svgToPng, svgUrl } from '@/lib/graphics/raster';
+  import type { Content, Ctx, Kind, Photo } from '@/lib/graphics/types';
+
+  const q = new URLSearchParams(location.search);
+  const list = (k: string) => (q.get(k) ? q.get(k)!.split(',') : null);
+
+  // A sample photo for ?photo=1: the shot-list stand-in of the sanctuary, fetched to a data URI.
+  async function samplePhoto(): Promise<Photo | undefined> {
+    if (q.get('photo') !== '1') return undefined;
+    const res = await fetch('/shot-examples/' + (q.get('photoFile') ?? 'worship-wide.webp'));
+    if (!res.ok) return undefined;
+    const blob = await res.blob();
+    const src: string = await new Promise((r) => {
+      const fr = new FileReader();
+      fr.onload = () => r(String(fr.result));
+      fr.readAsDataURL(blob);
+    });
+    const img = new Image();
+    img.src = src;
+    await img.decode();
+    return { src, w: img.naturalWidth, h: img.naturalHeight };
+  }
+
+  async function main() {
+    await loadFonts(ASSETS);
+    const ctx: Ctx = { measure: canvasMeasure(), assets: ASSETS, church: SAMPLE_CHURCH };
+    const ph = await samplePhoto();
+    const content = (kind: Kind): Content => ({ ...SAMPLES[kind], photo: ph });
+    const render = (d: string, kind: Kind, format: string) => {
+      const dir = DIRECTIONS.find((x) => x.id === d) ?? DIRECTIONS[0];
+      return dir.render(content(kind), FORMAT_BY_ID[format], ctx);
+    };
+    (window as unknown as { __graphics: unknown }).__graphics = {
+      render,
+      png: async (d: string, kind: Kind, format: string) => {
+        const { svg } = render(d, kind, format);
+        const blob = await svgToPng(svg, FORMAT_BY_ID[format]);
+        return await new Promise<string>((r) => {
+          const fr = new FileReader();
+          fr.onload = () => r(String(fr.result));
+          fr.readAsDataURL(blob);
+        });
+      },
+      directions: DIRECTIONS.map((d) => d.id),
+      kinds: Object.keys(SAMPLES),
+      formats: FORMATS.map((f) => f.id),
+    };
+    const root = document.getElementById('gw-root')!;
+    root.textContent = '';
+    const dirs = DIRECTIONS.filter((d) => !list('d') || list('d')!.includes(d.id));
+    const kinds = (Object.keys(SAMPLES) as Kind[]).filter(
+      (k) => !list('kind') || list('kind')!.includes(k),
+    );
+    const formats = FORMATS.filter((f) => !list('format') || list('format')!.includes(f.id));
+    for (const d of dirs) {
+      const sec = document.createElement('section');
+      sec.className = 'gw-dir';
+      sec.innerHTML = `<h2>${d.name}</h2><p>${d.summary}</p>`;
+      for (const k of kinds) {
+        const ks = document.createElement('div');
+        ks.className = 'gw-kind';
+        ks.innerHTML = `<h3>${k}</h3>`;
+        const grid = document.createElement('div');
+        grid.className = 'gw-grid';
+        for (const f of formats) {
+          const { svg, warnings } = d.render(content(k), f, ctx);
+          const fig = document.createElement('figure');
+          fig.className = 'gw-item';
+          fig.dataset.id = `${d.id}/${k}/${f.id}`;
+          const img = document.createElement('img');
+          img.src = svgUrl(svg);
+          img.alt = `${d.name}, ${k}, ${f.label}`;
+          const cap = document.createElement('figcaption');
+          cap.innerHTML = `${f.label} (${f.w} x ${f.h})${warnings.length ? `<br><span class="gw-warn">${warnings.join(' ')}</span>` : ''}`;
+          fig.append(img, cap);
+          grid.append(fig);
+        }
+        ks.append(grid);
+        sec.append(ks);
+      }
+      root.append(sec);
+    }
+    document.documentElement.dataset.graphicsReady = 'true';
+  }
+  main().catch((err) => {
+    document.getElementById('gw-root')!.textContent = `Could not draw: ${err?.message ?? err}`;
+    console.error(err);
+  });
+</script>
