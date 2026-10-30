@@ -653,8 +653,8 @@ and the tour, checked signed in at `/studio` in light and dark. Still to do:
 - **Nathan to review the Studio icons, redrawn in brick on 2026-10-24 (round 25), plus seven new ones (padlock, signpost, compass, telephone, stack of pages, code, tag).** Older note: Eight icons (guide, page, camera, home, eye, search, link, checkup) are in `brandIconArt.tsx`; eight more (help, restore, quick, mail, settings, trash, calendar, palette) followed. The restore stone has no meaning key yet (a `restore` meaning in the starter's `BRAND_ICON_KEYS` would use it).
 - **The editor's Sanity user id in `kitConfig.staff`** once he has accepted the invitation. Until then the staff
   view goes by role, and he is an administrator, so he would see the full Studio.
-- **`PUBLIC_STUDIO_HELP_EMAIL`** as a build variable (`.env` and the deploy workflow) so Home's Ask card shows its
-  email button.
+- ~~`PUBLIC_STUDIO_HELP_EMAIL` as a build variable~~ Done 2026-10-30: set in `.env` and in `deploy.yml`'s Build env,
+  so Home's Ask card shows its email button. Other local builds and CI leave it unset (no button), by design.
 - **The rest of the Worker half**: the Ask form through Cloudflare Email Sending once the church's domain is on
   Cloudflare, an external link check, and the monthly report with its cron. `src/lib/studio-auth.ts` and deploy status
   landed with card 111 (item 1k); visitors (Cloudflare Web Analytics, not GA4) with card 115 (item 1l).
