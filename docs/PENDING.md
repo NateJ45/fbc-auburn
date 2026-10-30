@@ -16,6 +16,12 @@ sequence).
 
 ## Waiting on a human
 
+### 1zs. The e2e job is pinned to ubuntu-24.04 (opened 2026-10-30)
+
+`ubuntu-latest` moved to 26.04, where Playwright's WebKit will not launch, so every
+`[webkit-iphone]` test failed in shard 3. `ci.yml`'s `e2e` job now says `runs-on: ubuntu-24.04`.
+Unpin it once a Playwright release supports 26.04 (try it on a branch first).
+
 ### 1zp. Make a graphic: try it signed in, and the real photos (opened 2026-10-27)
 
 The graphics maker (`docs/agent/graphics.md`) is live (fbc-auburn#251). Checked signed in on the live
