@@ -161,6 +161,9 @@ jobs:
           # no-op everywhere, so those builds simply ship no tag.
           PUBLIC_GA_ID: ${{ vars.PUBLIC_GA_ID }}
           PUBLIC_CF_ANALYTICS_TOKEN: ${{ vars.PUBLIC_CF_ANALYTICS_TOKEN }}
+          # The Studio's "Ask" card email button (src/sanity/kit.config.ts, 2026-10-30).
+          # A public address, so it is written here, not held as a secret.
+          PUBLIC_STUDIO_HELP_EMAIL: nathan@nixoncreativestudio.com
         run: |
           if [ -z "$PUBLIC_SANITY_PROJECT_ID" ]; then
             echo "::error::PUBLIC_SANITY_PROJECT_ID is not set. The build would ship empty pages over the live site."
