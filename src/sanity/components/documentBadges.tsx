@@ -31,7 +31,6 @@ const SEO_PAGE_TYPES = new Set<string>([
   'faqPage', // scaffold: faq
   'contactPage',
   'journalPage', // scaffold: journal
-  'eDesignPage',
   'shopPage',
   'giftPage',
   'resourcesPage',

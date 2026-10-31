@@ -1,5 +1,7 @@
 # Change history
 
+_2026-10-30: CI reads Node from `.nvmrc` (starter card 209)._ Every `actions/setup-node` step asked for `node-version: 22` and took whatever 22.x the runner image had cached, and Astro 7.4.4 refuses anything below 22.23.4. A repo-root `.nvmrc` now pins 22.23.4, every workflow reads it with `node-version-file: .nvmrc`, and `engines.node` rises to match. `docs/agent/studio-kit.md` is resynced with the starter in the same change (card 210's Inbox section), so `sync-check` reads SAME.
+
 _2026-10-28: Make a graphic, new capabilities (from the graphics research report)._ A caption and
 alt text written from the same words (`captionFor`, `altTextFor` in `src/lib/graphics/content.ts`),
 each with a Copy button in the tool; a second print path, "Save a PDF for the print shop", at the

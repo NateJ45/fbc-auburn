@@ -878,7 +878,9 @@ Email Sending).** Run these in PowerShell from the repo root:
    administrator in the Studio (below); with neither, its forms go to `office`, then to `CONTACT_TO`.
 5. In `wrangler.jsonc`, uncomment the `d1_databases` block (name `fbc-auburn-contact`, the id
    from step 1) and `send_email`, commit and deploy.
-6. Send one labelled test through a live form, then read it back:
+6. Nothing to do for the studio dashboard: `SITE_DATA` is already bound (key `auburn`, starter card 210),
+   so from the first stored submission each form reports a short preview to studio-status `/inbox`.
+7. Send one labelled test through a live form, then read it back:
    `npx wrangler d1 execute fbc-auburn-contact --remote --command "SELECT id, form_id, notified, notify_error, cleared FROM form_submissions ORDER BY id DESC LIMIT 1"`.
    `notified = 1` is the proof.
 
