@@ -46,6 +46,7 @@ import { runPageCheck } from './actions/checkPage';
 import { PAGE_BUILDER_TYPES } from './pageBuilderConfig';
 import { slugify } from '../lib/slugify';
 import { OWN_NEWSLETTER, OWN_NEWSLETTER_JOBS } from './ownNewsletter';
+import { boardConfig } from '../config/board';
 
 const PUBLISHED = '!(_id in path("drafts.**"))';
 
@@ -88,6 +89,8 @@ const expiredNotices: CheckupRule = {
 };
 
 export const kitConfig: KitConfig = {
+  // The Report tool's parts and words (card 218).
+  board: boardConfig,
   siteName: 'the church website',
 
   helper: {
@@ -103,6 +106,8 @@ export const kitConfig: KitConfig = {
   // People tool; no deploy needed). The list ADDS to the role rule.
   staff: [],
 
+  // The Report is left off so only administrators see it; add 'report' here
+  // when the client should have it (PORTS.md card 218).
   staffTools: [
     'home',
     'quick-update',
@@ -116,6 +121,7 @@ export const kitConfig: KitConfig = {
   ],
   toolOrder: [
     'home',
+    'report',
     'quick-update',
     'structure',
     'presentation',
@@ -814,6 +820,10 @@ export const kitConfig: KitConfig = {
     publishPanel: true,
     // Card 176: the People tool, for administrators (docs/agent/studio-people.md).
     people: true,
+    // The Report tool (card 218): on when the build has PUBLIC_BOARD_REPORT=true
+    // (deploy.yml passes the repository variable). Its parts are src/config/board.ts.
+    // Off until the church's Google Analytics property exists (docs/agent/analytics.md).
+    report: envVal('PUBLIC_BOARD_REPORT') === 'true',
   },
 
   // The People tool (starter card 176). Free for good (Nathan, 2026-10-26):

@@ -97,6 +97,7 @@ const who = form?.recipientName || 'the church office';
         novalidate
         data-cb-form
         data-form-id={form.id}
+        data-track-form={form.title}
         data-success={form.successMessage}
       >
         <div class="cb-hp" aria-hidden="true">
@@ -292,6 +293,8 @@ const who = form?.recipientName || 'the church office';
 )}
 
 <script>
+  import { track } from '@/lib/track';
+
   type Answer = string | boolean | string[];
 
   const show = (el: Element | null, on: boolean) => {
@@ -431,6 +434,11 @@ const who = form?.recipientName || 'the church office';
           errors?: Record<string, string>;
         };
         if (res.ok && body.ok) {
+          // The form's name only, never what was typed (PORTS.md card 217).
+          track('generate_lead', {
+            form_name: form.dataset.trackForm || 'form',
+            form_location: 'page_form',
+          });
           form.reset();
           show(form, false);
           show(done, true);

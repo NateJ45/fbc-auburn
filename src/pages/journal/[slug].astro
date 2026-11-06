@@ -285,7 +285,8 @@ const schemas = [
         </div>
       </aside>
 
-      <div class="art-body">
+      {/* data-article-body: reading depth and time for the GA4 events (card 217). */}
+      <div class="art-body" data-article-body>
         {/* Server-rendered either way. Hydrated (`client:visible`) only when the post has a
             before/after slider, the one part that needs React; the photo viewer is Lightbox below. */}
         {bodyNeedsJs ? (

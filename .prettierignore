@@ -80,3 +80,8 @@ public/textures/
 
 # Saved real Church Trac pages (docs/agent/church-trac.md): kept byte-for-byte as Church Trac served them.
 tests/fixtures/churchtrac-*.html
+
+# The chart kit (PORTS.md card 218): the same bytes the WordPress themes carry,
+# pinned by a hash in src/lib/studio-board.test.ts. Prettier must never rewrite them.
+src/sanity/kit/board/ncs-charts.js
+src/sanity/kit/board/ncs-charts.css
