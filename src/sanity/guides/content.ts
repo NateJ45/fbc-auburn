@@ -1994,6 +1994,38 @@ guides.push(
       { kind: 'seealso', items: ['Help for this page', 'Get help with the words'] },
     ],
   },
+  {
+    slug: 'reading-your-report',
+    category: 'Housekeeping',
+    title: 'Reading your Report',
+    icon: 'i',
+    lead: 'How many people came to the website and what they did, set against the same time a year before.',
+    diy: 'self',
+    body: [
+      {
+        kind: 'p',
+        text: "The Report is the website administrator's tool, so it only shows in the bar at the top of the Studio for them, and only once the website is counting visits. If you do not see the Report, nothing is wrong.",
+      },
+      { kind: 'h', text: 'Choosing a period' },
+      {
+        kind: 'p',
+        text: 'Pick **Month**, **Quarter** or **Year**, then choose which one from the list beside it. A period that is not over yet says **so far**. It counts through yesterday and is set against the same days a year before, so a half-finished month is never measured against a whole one.',
+      },
+      { kind: 'h', text: 'What the words mean' },
+      {
+        kind: 'bullets',
+        items: [
+          '**Up 13%** compares this period with the same period a year before.',
+          '**Not tracked yet** means the website was not counting then. The new website begins counting when it opens, so there is nothing to compare with until a year later.',
+          'The small **i** beside a number says how it is counted.',
+        ],
+      },
+      {
+        kind: 'p',
+        text: "**Give clicks are clicks, not gifts.** The website sees someone press Give. It cannot see whether a gift was made or how much it was, so the church's giving records are the true count.",
+      },
+    ],
+  },
 );
 
 // ── The Studio app and earlier versions (PORTS.md card 125) ──────────────────

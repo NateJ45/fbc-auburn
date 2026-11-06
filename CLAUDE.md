@@ -136,6 +136,7 @@ Reference (`docs/claude/`, read when the task needs it):
 - `safe-to-edit.md`: files safe to edit by hand, script accent opt-in.
 - `visual-verification.md`: the screenshot loop.
 - `communication-style.md`: style rules and site copy voice.
+- GA4 events, the Report and the launch steps for both: `docs/agent/analytics.md` (the Report is off until `PUBLIC_BOARD_REPORT` is set; the bench is `/styleguide/report/`).
 - `topic-index.md`: index of the `docs/agent/` deep-dives (stack, theme, components, SEO, performance, Sanity, deployment, the Studio kit).
 
 See `OPERATIONS.md` for the tactical playbook (deploy, patch content, run audits, common gotchas).

@@ -10,6 +10,8 @@
 // being true the day GA4 became available. See src/lib/analytics-config.ts.
 import PortableTextStatic from '@/components/PortableTextStatic.astro';
 import { hasCfAnalytics, hasGa } from '@/lib/analytics-config';
+import { eventsConfig } from '@/config/events';
+import { eventsSentence } from '@/lib/event-kinds';
 import { site } from '@/data/site';
 import { formatDate } from '@/lib/format-date';
 import type { PortableTextBlock } from '@portabletext/types';
@@ -69,8 +71,9 @@ const hasSanityBody = Array.isArray(body) && body.length > 0;
               <p class="mt-s text-foreground/80">
                 Page visits are {hasCfAnalytics ? 'also ' : ''}measured with Google Analytics, which
                 sets cookies (named <code>_ga</code> and <code>_ga_</code> followed by a stream id)
-                so returning visits are recognized. It is not used for advertising. You can block
-                these cookies in your browser and the site works the same.
+                so returning visits are recognized. {eventsSentence(eventsConfig)} It is not used
+                for advertising. You can block these cookies in your browser and the site works the
+                same.
               </p>
             )}
           </div>

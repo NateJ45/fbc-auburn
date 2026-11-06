@@ -33,6 +33,7 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | Studio links: short links, QR codes, paste-and-go embeds (this site only)                                | `docs/agent/studio-links.md`                                         |
 | Deployment + env vars + rebuild model                                                                    | `docs/agent/deployment.md`                                           |
 | Studio kit (Home, Site Guide, Checkup, staff view, Trash)                                                | `docs/agent/studio-kit.md`                                           |
+| GA4 events (what is tracked, the settings, how to verify), the Report, and turning both on at launch     | `docs/agent/analytics.md`                                            |
 | People: invite a Helper or an Administrator from the Studio, roles by plan, the members secret           | `docs/agent/studio-people.md`                                        |
 | Logo and icon uploads, build-time share cards, popups (site-only)                                        | `docs/agent/studio-brand.md`                                         |
 | Studio plan (who edits, weekly jobs, which surface)                                                      | `docs/agent/studio-plan.md`                                          |

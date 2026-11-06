@@ -27,6 +27,7 @@ import ClientNotes from '@/components/ClientNotes.astro';
 import SitePopup from '@/components/SitePopup.astro';
 import LiveBanner from '@/components/church/LiveBanner.astro';
 import Analytics from '@/components/Analytics.astro';
+import SiteEvents from '@/components/analytics/SiteEvents.astro';
 // The text fonts' Latin files, as the same hashed URLs auburn.css's @font-face rules use, so the
 // preloads below fetch the files the page draws with (DEV-M7, 2026-10-25).
 import youngSerifLatin from '@/assets/fonts/young-serif-latin-400.woff2?url';
@@ -327,6 +328,9 @@ const announcementStyle = ANNOUNCEMENT_STYLES[announcement?.style ?? 'info'] ?? 
       consent decision. See src/components/Analytics.astro.
     */}
     <Analytics />
+
+    {/* What visitors do (clicks, forms, reading), sent through the tag above. PORTS.md card 217. */}
+    <SiteEvents />
 
     {/* Site settings' "Code for the page head" (PORTS.md card 121). Public
         pages only: never /studio or /preview. Runs directly on the page. */}

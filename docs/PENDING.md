@@ -211,6 +211,10 @@ section size (`JournalPortableText.tsx`), the `.c-facts` `margin: 0` cancelling 
 behind by a block that renders nothing (`board.css`). **Live preview:** the brand stylesheet also loads in the
 Studio's Live preview, so the new body size and type are there too; check it once signed in after the deploy.
 
+### 1za. GA4 events and the Report: switch on at launch (opened 2026-11-06)
+
+Built and inert (starter cards 217 and 218): with no `PUBLIC_GA_ID` nothing is sent and the privacy page claims no Google Analytics; the Report is off while `PUBLIC_BOARD_REPORT` is unset. The launch steps, in order, are in `docs/agent/analytics.md`, "Turning it on": the GA4 property and stream, the service account on the property and Search Console, the **stored privacy copy** (Sanity, not code), `PUBLIC_GA_ID`, studio-status `src/site-data.ts`, `PUBLIC_BOARD_REPORT`, then GA4 Realtime in a real browser. If the planned launch date (2026-11-25) moves, correct `src/config/board.ts`.
+
 ### 1z. Card 136: Search Console on Home, once the church's domain is chosen (opened 2026-10-19)
 
 **Blocker: the domain cutover, then a Google service account.** Card 136 came in with the starter: the Visitors card can
