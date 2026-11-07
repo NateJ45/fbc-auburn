@@ -120,7 +120,7 @@ git push -u origin fix/short-description
 gh pr create --base main
 ```
 
-Once the PR merges, Cloudflare detects the push to `main`, runs `npm run build` in their CI, and deploys the resulting `dist/` to the Worker. Takes about 1 to 2 minutes. Watch in the Cloudflare dashboard under Workers → [your-worker-name] → Deployments.
+Once the PR merges, `deploy.yml` runs on the push to `main` (a push that only touches docs is ignored), builds the site and runs `wrangler deploy -c dist/server/wrangler.json`. Takes a few minutes. Watch it with `gh run list --workflow deploy.yml` or the Actions tab on GitHub.
 
 **Verify a deploy landed:**
 
@@ -139,7 +139,7 @@ npm run deploy
 # = npm run build && wrangler deploy
 ```
 
-Only needed if you're testing a config change locally before committing, or if the auto-deploy webhook is broken.
+Only needed if you're testing a config change locally before committing, or if the Deploy workflow is broken.
 
 ### Sanity publish → GitHub → live (the publish webhook)
 
