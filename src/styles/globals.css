@@ -987,11 +987,6 @@ html.motion .img-curtain.is-revealed {
    Astro respects prefers-reduced-motion automatically — no extra rule needed. ---- */
 main#main {
   view-transition-name: main-content;
-  /* A view-transition-name makes <main> a stacking context, so a fixed control inside it (the
-     journal chip, z-40) is capped at <main>'s level, and the footer, named too and later in the
-     page, painted over it: the chip took focus while hidden behind the footer (WCAG 2.4.11,
-     2026-11-08). <main> is a flex item of <body>, so z-index alone lifts it above the footer. */
-  z-index: 1;
 }
 .site-header {
   view-transition-name: site-header;
