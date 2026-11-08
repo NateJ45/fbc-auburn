@@ -75,6 +75,13 @@ html {
     scroll-padding-bottom: 6rem;
   }
 }
+/* Under 1024px the Find your place index (/ministries/) is a sticky row of 44px chips, about 64px
+   tall, pinned under the header: add it to the top padding on pages that have one. */
+@media (max-width: 63.99rem) {
+  html:has(.fyp__index) {
+    scroll-padding-top: 10.25rem;
+  }
+}
 /* The journal chip sits 88px up from the bottom and is about 48px tall. */
 html:has([data-sticky-chip][data-chip-visible]) {
   scroll-padding-bottom: 9.5rem;
