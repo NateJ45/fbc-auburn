@@ -47,10 +47,19 @@ test('the journal chip stays showing while one of its links has focus', async ({
   test.skip(!href, 'no journal entries in this build');
   await page.goto(href!, { waitUntil: 'domcontentloaded' });
   await settle(page);
-  const chip = page.locator('[data-sticky-chip]');
-  test.skip((await chip.count()) === 0, 'this entry has no chip');
+  // The chip mounts into <body> after hydration (client:idle), so wait for it rather than count it.
+  const chip = page.locator('body > [data-sticky-chip]');
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect(chip).toHaveCount(1, { timeout: 10_000 });
   await expect(chip).toHaveAttribute('data-chip-visible', '');
+  await page.waitForTimeout(400);
+  // At the foot of the page the chip sits over the footer: it must paint on top of it, not under.
+  const onTop = await chip.evaluate((c) => {
+    const r = c.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return !!hit && c.contains(hit);
+  });
+  expect(onTop, 'the chip is painted above the footer').toBe(true);
   await chip.locator('a').focus();
   // Scroll back above the threshold: the chip would normally hide here.
   await page.evaluate(() => window.scrollTo(0, 0));
