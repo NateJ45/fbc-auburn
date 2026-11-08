@@ -51,6 +51,14 @@ test('the journal chip stays showing while one of its links has focus', async ({
   test.skip((await chip.count()) === 0, 'this entry has no chip');
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect(chip).toHaveAttribute('data-chip-visible', '');
+  await page.waitForTimeout(400);
+  // At the foot of the page the chip sits over the footer: it must paint on top of it, not under.
+  const onTop = await chip.evaluate((c) => {
+    const r = c.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return !!hit && c.contains(hit);
+  });
+  expect(onTop, 'the chip is painted above the footer').toBe(true);
   await chip.locator('a').focus();
   // Scroll back above the threshold: the chip would normally hide here.
   await page.evaluate(() => window.scrollTo(0, 0));
