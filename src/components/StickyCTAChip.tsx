@@ -22,8 +22,12 @@ interface Props {
 const SESSION_KEY = 'sticky-cta-dismissed';
 
 export default function StickyCTAChip({ label, href = '/contact/', threshold = 0.5 }: Props) {
-  const [visible, setVisible] = useState(false);
+  const [scrolledIn, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // Keyboard focus keeps the chip showing: scrolling past the threshold while a chip link holds
+  // focus must not fade it out from under the focus ring (WCAG 2.4.7 and 2.4.11).
+  const [focusInside, setFocusInside] = useState(false);
+  const visible = scrolledIn || focusInside;
 
   useEffect(() => {
     // Respect session-level dismissal so re-visiting the page in the same
@@ -122,6 +126,10 @@ export default function StickyCTAChip({ label, href = '/contact/', threshold = 0
       // Read by html:has() in the stylesheet: scroll-padding-bottom while the chip shows.
       data-sticky-chip
       data-chip-visible={visible ? '' : undefined}
+      onFocus={() => setFocusInside(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocusInside(false);
+      }}
     >
       {/* Width sizing:
            - mobile: cap at 92vw so the chip never blows past the viewport
