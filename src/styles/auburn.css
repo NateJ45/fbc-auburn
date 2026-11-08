@@ -49,6 +49,37 @@ html {
   font-variant-numeric: lining-nums tabular-nums;
 }
 
+/* Focus Not Obscured (WCAG 2.4.11, 2026-11-08). The header is sticky and the Sunday bar and the
+   journal chip are fixed, so a focused link scrolled to the very edge of the viewport sat under
+   one of them (Shift+Tab put it at y=0 under the 73px header). scroll-padding keeps the browser
+   from scrolling a focus target into the covered strip. The top values are the header's height
+   at each breakpoint (73px under 768, 77px at 768, 86px at 1024, 99px from 1280) plus about
+   12px; they are constants because the bar never grows past them. Bottom padding is added only
+   while the bar or chip is actually showing. */
+html {
+  scroll-padding-top: 5.75rem;
+}
+@media (min-width: 64rem) {
+  html {
+    scroll-padding-top: 6.25rem;
+  }
+}
+@media (min-width: 80rem) {
+  html {
+    scroll-padding-top: 7rem;
+  }
+}
+@media (max-width: 47.99rem) {
+  /* The Sunday bar is 67px to 80px tall (a long service label wraps to two lines). */
+  html:has(.sundaybar:not([hidden])) {
+    scroll-padding-bottom: 6rem;
+  }
+}
+/* The journal chip sits 88px up from the bottom and is about 48px tall. */
+html:has([data-sticky-chip][data-chip-visible]) {
+  scroll-padding-bottom: 9.5rem;
+}
+
 :root {
   /* Brand colours the semantic tokens do not carry. Red is for the cross and the one main
      button per page; gold and sky are accents only, never text on white. */
