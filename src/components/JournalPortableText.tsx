@@ -116,26 +116,17 @@ function makeComponents(headingIds: Record<string, string> = {}): PortableTextCo
       // Headings inside a post sit one step below the page's own section headings (2026-10-24):
       // a body H2 was the full 48px section size with 140px above it.
       h2: ({ children, value }) => (
-        <h2
-          id={idOf(value)}
-          className="mt-l mb-s scroll-mt-24 font-display text-h3 text-foreground"
-        >
+        <h2 id={idOf(value)} className="mt-l mb-s font-display text-h3 text-foreground">
           {children}
         </h2>
       ),
       h3: ({ children, value }) => (
-        <h3
-          id={idOf(value)}
-          className="mt-l mb-xs scroll-mt-24 font-display text-h4 text-foreground"
-        >
+        <h3 id={idOf(value)} className="mt-l mb-xs font-display text-h4 text-foreground">
           {children}
         </h3>
       ),
       h4: ({ children, value }) => (
-        <h4
-          id={idOf(value)}
-          className="mt-m mb-xs scroll-mt-24 font-display text-h5 text-foreground"
-        >
+        <h4 id={idOf(value)} className="mt-m mb-xs font-display text-h5 text-foreground">
           {children}
         </h4>
       ),

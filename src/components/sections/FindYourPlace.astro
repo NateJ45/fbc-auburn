@@ -476,12 +476,12 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
 
   /* ---- Groups ---- */
   .fyp__group {
-    /* A jump lands the group's name just under the header and the chip row. */
-    scroll-margin-top: calc(var(--fyp-header, 4rem) + 4.5rem);
+    /* A jump lands the group's name just under the chip row (the header is the root's scroll-padding-top). */
+    scroll-margin-top: 4.5rem;
   }
   @media (min-width: 64rem) {
     .fyp__group {
-      scroll-margin-top: 7rem;
+      scroll-margin-top: 1rem;
     }
   }
   .fyp__group + .fyp__group {
@@ -613,7 +613,7 @@ const whenWhere = (day?: string, place?: string, title?: string): string =>
   /* ---- Each card's action, the "More" toggle, and the phone rows (audit 2026-10-25) ---- */
   /* A link to one card (from Events) lands it under the header and the chip row. */
   .fyp-card {
-    scroll-margin-top: calc(var(--fyp-header, 4rem) + 5rem);
+    scroll-margin-top: 5rem;
   }
   .fyp-card__text {
     display: flex;
