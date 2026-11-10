@@ -317,6 +317,17 @@ wall checks `tests/builder-blocks.spec.ts`.
   words show as the inline action link). Plain `.shape-step` frames at 4:3 with `.shape-zoom` (the stepped corner
   is retired from card photos, `docs/agent/shapes.md`). Columns from the count: two or four make pairs, three,
   five and six rows of three; one a row on a phone, two from 40rem.
+- **Candlelight (a row of candles)**, `candlelightSection` (2026-11-09), under "Dates and notices". A heading
+  (starts as, and falls back to, "Light a candle"), an optional line, and how many candles (5 to 9, default 7, a
+  number radio; in `NON_STEGA_FIELDS` anyway). Drawn by `CandlelightBlock.astro`: a cream band (`--muted`'s
+  `#F4EFE7`) with the candles flat in SVG (cream wax with a navy edge, a gold `#E8A93A` flame over a light auburn
+  core, heights fixed by `candleHeights()`), and one "Lights down" switch, a real `<button aria-pressed>`. Down,
+  the band (only the band; rule 3 stands) eases to the ink navy `#16263D` and the flames light left to right 120ms
+  apart (`LIGHT_STEP_MS`) with a small scale and opacity flicker; up again, cream and the flames go out. Reduced
+  motion: all at once, no flicker. No JavaScript: lit candles on cream, the switch stays `hidden` (the script sets
+  `data-cl-ready`). It draws its own band, so it has no look and is in `SELF_CONTAINED_TYPES`. Colours live in
+  `src/lib/candlelight.ts`; `candlelight.test.ts` measures both states to AA and pins the `--cl-*` hexes in
+  `builder-blocks.css` to them. In the "Christmas Eve candlelight" saved section between the schedule and the verse.
 - **The opening banner's Style** (`heroSection.heroStyle`, hidden on Home): "Arch (standard)" or "Photo behind the
   words", which draws Home's photo hero on any page when it has a background photo (`PageHeroPhoto.astro` in the
   shared frame `PhotoHero.astro`, a little shorter: `.hb-hero--page`). HomeHero uses the same frame; the hero's

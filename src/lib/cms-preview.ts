@@ -114,6 +114,8 @@ const NON_STEGA_FIELDS = new Set([
   'heroStyle',
   'startTime',
   'endTime',
+  // 2026-11-09: the Candlelight band's candle count (a number dropdown; src/lib/candlelight.ts).
+  'candles',
   // 2026-10-26: a popup's "Which pages" and "How often" (src/lib/popup.ts compares both).
   'where',
   'frequency',
