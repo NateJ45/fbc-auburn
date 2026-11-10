@@ -1,5 +1,7 @@
 # Change history
 
+_2026-11-09: one brick for a section label; the stepped three stay with the page head._ `SectionLabel` takes `marker`: `steps` (the three stepped bricks, passed only by `BoardPageHead`) or `brick`, the default, which draws the marker's bottom brick alone at 27 by 10px (`.hb-marker--brick`). Home had five stepped markers down the page and they read as wallpaper; an inner page keeps its one in the head.
+
 _2026-11-09: four borrowed page shapes, as marked drafts._ `scripts/content/borrowed-shapes.mjs` added By age cards to Plan your visit, How to begin (Admit, Believe, Confess) and Questions about baptism (six new `faq-baptism-*` questions) to What we believe, and Our story so far (a timeline with blank years) to About. All are existing blocks, so no schema change; the "For Jacob" pill names each one.
 
 _2026-11-09: best-guess drafts in place of empty asks._ `scripts/content/best-guess-drafts.mjs` replaced 60 `[Jacob: ...]` asks in 14 documents with `[Placeholder: ...]` drafts Pastor Jacob can edit: the gospel and the nine beliefs (from the Baptist Faith and Message 2000, King James verses), baptism, what it means to be Baptist, what worship is like, kids and the child safety sentence, access, giving, how the church is led, pastoral care and next steps. All still show yellow, and each guessed fact keeps a short ask naming what to check. The rule change (belief may be drafted, marked, never launched unconfirmed) is in `docs/agent/content-pages.md`; the "For Jacob" pill says so on Home and What we believe.
