@@ -180,7 +180,7 @@
 .ev__ghost:focus-visible {
   outline: 3px solid #ffffff;
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: var(--radius-tag);
 }
 
 /* ---- Schedule ------------------------------------------------------------------------------- */
@@ -347,5 +347,197 @@
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .pcard--link:hover .pcard__arrow {
     transform: translateX(5px);
+  }
+}
+
+/* ---- Candlelight (candlelightSection, 2026-11-09) ------------------------------------------
+   A band of candles with a "Lights down" switch (CandlelightBlock.astro). The band, and only the
+   band, dims: cream to deep navy, the candles lighting left to right a step apart (--cl-step), a
+   small flicker on each flame. These hexes are CANDLELIGHT in src/lib/candlelight.ts;
+   candlelight.test.ts pins the two together and measures every pair (all AA). Without the
+   script there is no data-cl-ready, so the flames stay lit on cream and the switch stays hidden.
+   Prefixed cl- so nothing here can reach another block. */
+.cl {
+  --cl-up-ground: #f4efe7;
+  --cl-up-heading: #1f3a5f;
+  --cl-up-text: #4a5a73;
+  --cl-up-control: #1f3a5f;
+  --cl-down-ground: #16263d;
+  --cl-down-heading: #fbf8f3;
+  --cl-down-text: #dbe3ee;
+  --cl-down-control: #fbf8f3;
+  --cl-ground: var(--cl-up-ground);
+  --cl-heading: var(--cl-up-heading);
+  --cl-text: var(--cl-up-text);
+  --cl-control: var(--cl-up-control);
+  background: var(--cl-ground);
+  transition: background-color 700ms ease;
+}
+.cl[data-lights='down'] {
+  --cl-ground: var(--cl-down-ground);
+  --cl-heading: var(--cl-down-heading);
+  --cl-text: var(--cl-down-text);
+  --cl-control: var(--cl-down-control);
+}
+.cl .cl__head h2 {
+  color: var(--cl-heading);
+  transition: color 700ms ease;
+}
+.cl__text {
+  max-width: 38rem;
+  margin-top: 0.8rem;
+  font-size: var(--fs-lead);
+  line-height: 1.55;
+  color: var(--cl-text);
+  transition: color 700ms ease;
+}
+
+/* The head and the switch: stacked on a phone, side by side when there is room, one left edge. */
+.cl__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+}
+.cl__head {
+  max-width: 44rem;
+}
+
+/* The switch: a real button (aria-pressed), outlined in the band's own text colour, with a small
+   track whose knob slides across when the lights are down. 44px tall at least. */
+.cl__switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.125rem 0.5rem 0.875rem;
+  border: 2px solid var(--cl-control);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--cl-control);
+  font: inherit;
+  font-size: var(--fs-button);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color 700ms ease,
+    border-color 700ms ease,
+    background-color 160ms ease;
+}
+.cl__switch[hidden] {
+  display: none;
+}
+.cl__switch:hover {
+  background: color-mix(in srgb, var(--cl-control) 10%, transparent);
+}
+.cl__switch:focus-visible {
+  outline: 3px solid var(--cl-control);
+  outline-offset: 3px;
+}
+.cl__track {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 2.25rem;
+  height: 1.25rem;
+  border: 2px solid currentColor;
+  border-radius: var(--radius-pill);
+}
+.cl__knob {
+  position: absolute;
+  top: 50%;
+  left: 0.1875rem;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  transform: translateY(-50%);
+  transition: transform 240ms ease;
+}
+.cl__switch[aria-pressed='true'] .cl__knob {
+  transform: translate(1rem, -50%);
+}
+
+/* The candles: one row, never wrapping, each at most 4rem wide and narrowing to fit a 320px
+   phone (nine candles and their gaps fit in 280px). */
+.cl__row {
+  display: grid;
+  grid-template-columns: repeat(var(--cl-count), minmax(0, 4rem));
+  justify-content: center;
+  align-items: end;
+  gap: clamp(0.25rem, 2vw, 1.25rem);
+  margin: clamp(2rem, 5vw, 3rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cl__candle svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* The flames. Lit by default (no script); out once the script is ready and the lights are up;
+   lit again one after another when they go down. */
+.cl__flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition:
+    opacity 260ms ease,
+    transform 260ms ease;
+}
+.cl[data-cl-ready]:not([data-lights='down']) .cl__flame {
+  opacity: 0;
+  transform: scale(0.2);
+}
+.cl[data-lights='down'] .cl__flame {
+  transition-duration: 420ms;
+  transition-delay: calc(var(--i) * var(--cl-step));
+}
+.cl__flicker {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.cl[data-lights='down'] .cl__flicker {
+  /* Each flame starts once it is lit, and keeps a slightly different beat from its neighbours. */
+  animation: cl-flicker calc(1.3s + var(--i) * 0.17s) ease-in-out
+    calc(var(--i) * var(--cl-step) + 420ms) infinite alternate;
+}
+@keyframes cl-flicker {
+  0% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  35% {
+    transform: scale(0.94, 1.05);
+    opacity: 0.88;
+  }
+  70% {
+    transform: scale(1.03, 0.96);
+    opacity: 0.96;
+  }
+  100% {
+    transform: scale(0.97, 1.02);
+    opacity: 0.9;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cl,
+  .cl .cl__head h2,
+  .cl__text,
+  .cl__switch {
+    transition-duration: 0s;
+  }
+  .cl__flame,
+  .cl[data-lights='down'] .cl__flame {
+    transition: opacity 160ms ease;
+    transition-delay: 0s;
+  }
+  .cl[data-cl-ready]:not([data-lights='down']) .cl__flame {
+    transform: none;
+  }
+  .cl[data-lights='down'] .cl__flicker {
+    animation: none;
   }
 }

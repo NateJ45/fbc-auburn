@@ -386,6 +386,23 @@ export function seriesSpan(first?: string | null, last?: string | null): string 
   return a === b ? a : `${a} to ${b}`;
 }
 
+/** "6 sermons", "1 sermon", or "Coming soon" for a series with none yet. */
+export function seriesCountLabel(count?: number | null): string {
+  const n = count ?? 0;
+  return n ? `${n} ${n === 1 ? 'sermon' : 'sermons'}` : 'Coming soon';
+}
+
+/**
+ * The series list with one large picture beside it (2026-11-09, SermonSeriesGrid.astro) needs at
+ * least this many series; one or two rows read thin, so a shorter list keeps the cards.
+ */
+export const SERIES_PREVIEW_MIN = 3;
+
+/** Whether a series block draws the list-with-preview layout on a wide screen. */
+export function seriesUsesPreview(list: readonly unknown[]): boolean {
+  return list.length >= SERIES_PREVIEW_MIN;
+}
+
 // ── People ───────────────────────────────────────────────────────────────────
 
 export interface PersonDoc {

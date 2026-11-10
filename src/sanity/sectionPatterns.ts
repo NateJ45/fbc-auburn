@@ -31,6 +31,7 @@
 import { freshKeys } from '../lib/authoring.ts';
 import {
   button,
+  candlelight,
   card,
   countdown,
   eventDate,
@@ -218,6 +219,11 @@ export const candlelightSections = (): Rec[] => [
       slot('19:00', example('Cookies and cocoa'), example('In the fellowship hall afterward.')),
     ),
   ]),
+  // The candle band (2026-11-09): visitors press "Lights down" and the candles light one by one.
+  candlelight(
+    'Light a candle',
+    example('At the end of the service we pass the light from candle to candle.'),
+  ),
   scripture('Glory to God in the highest, and on earth peace, good will toward men.', 'Luke 2:14'),
 ];
 
@@ -464,7 +470,7 @@ export const SECTION_PATTERNS: SectionPattern[] = [
   {
     id: 'christmas-eve-candlelight',
     title: 'Christmas Eve candlelight',
-    note: 'The candlelight service with a calendar link and directions, the evening’s times and a verse.',
+    note: 'The candlelight service with a calendar link and directions, the evening’s times, a row of candles and a verse.',
     sections: () => list(...candlelightSections()),
   },
   {

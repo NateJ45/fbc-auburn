@@ -239,7 +239,7 @@ const external = /^https?:\/\//i.test(href);
     border-radius: var(--radius-card, 20px);
     background: var(--background, #fbf8f3);
     color: var(--foreground, #16263d);
-    box-shadow: 0 24px 60px rgb(15 34 56 / 0.35);
+    box-shadow: var(--shadow-overlay, 0 24px 60px rgb(15 34 56 / 0.35));
     overflow: auto;
   }
   .site-popup::backdrop {
@@ -286,10 +286,10 @@ const external = /^https?:\/\//i.test(href);
     width: 44px;
     height: 44px;
     border: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: var(--background, #fbf8f3);
     color: var(--foreground, #16263d);
-    box-shadow: 0 1px 4px rgb(15 34 56 / 0.25);
+    box-shadow: 0 1px 4px rgb(15 34 56 / 0.25); /* off-scale: lifts the close button off a photo */
     cursor: pointer;
   }
   .site-popup__close:hover {

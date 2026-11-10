@@ -490,6 +490,14 @@ export const photoCards = (heading: string, cards: Rec[], intro?: string): Rec =
   cards,
 });
 
+/** The Candlelight band (2026-11-09): a heading, an optional line and seven candles. */
+export const candlelight = (heading: string, text?: string): Rec => ({
+  _type: 'candlelightSection',
+  heading,
+  ...(text ? { text } : {}),
+  candles: 7,
+});
+
 /**
  * A progress bar. The goal and the amount raised are the church's own numbers,
  * so neither is filled in: the Studio asks for both before Publish.

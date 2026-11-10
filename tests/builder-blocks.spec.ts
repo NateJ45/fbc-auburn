@@ -66,6 +66,76 @@ test.describe('event and holiday page blocks', () => {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
+  test('Candlelight: the switch dims the band and lights the candles in turn', async ({ page }) => {
+    await openWall(page);
+    const band = page.locator('[data-section-type="candlelightSection"] [data-cl]');
+    // No heading typed in the fixture: the default reads.
+    await expect(band.locator('h2')).toHaveText('Light a candle');
+    await expect(band.locator('.cl__candle')).toHaveCount(7);
+    const button = band.getByRole('button', { name: 'Lights down' });
+    await expect(button).toHaveAttribute('aria-pressed', 'false');
+    // Lights up with the script ready: cream, flames out.
+    const ground = () => band.evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(await ground()).toBe('rgb(244, 239, 231)');
+    const flame = (i: number) =>
+      band
+        .locator('.cl__flame')
+        .nth(i)
+        .evaluate((el) => getComputedStyle(el).opacity);
+    expect(await flame(0)).toBe('0');
+    await button.click();
+    await expect(button).toHaveAttribute('aria-pressed', 'true');
+    await expect(band).toHaveAttribute('data-lights', 'down');
+    // The last candle lights after the first: 6 steps of 120ms plus its own fade.
+    await expect.poll(ground, { timeout: 3000 }).toBe('rgb(22, 38, 61)');
+    await expect.poll(() => flame(6), { timeout: 3000 }).toBe('1');
+    // Only the band dims: the page ground stays light.
+    const body = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    expect(body).not.toBe('rgb(22, 38, 61)');
+    await button.click();
+    await expect(band).toHaveAttribute('data-lights', 'up');
+    await expect.poll(() => flame(0), { timeout: 3000 }).toBe('0');
+    // The nine-candle variant draws nine, under its own heading.
+    const nine = page.locator('[data-builder-checks] [data-cl]');
+    await expect(nine.locator('.cl__candle')).toHaveCount(9);
+    await expect(nine.locator('h2')).toHaveText('Pass the light');
+  });
+
+  test('Candlelight: reduced motion lights every candle at once, without a flicker', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await openWall(page);
+    const band = page.locator('[data-section-type="candlelightSection"] [data-cl]');
+    await band.getByRole('button', { name: 'Lights down' }).click();
+    const delays = await band
+      .locator('.cl__flame')
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).transitionDelay));
+    expect(new Set(delays)).toEqual(new Set(['0s']));
+    const anim = await band
+      .locator('.cl__flicker')
+      .first()
+      .evaluate((el) => getComputedStyle(el).animationName);
+    expect(anim).toBe('none');
+  });
+
+  test('Candlelight without JavaScript: lit candles on cream, no switch', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.route('**/cdn.sanity.io/**', (r) =>
+      r.fulfill({ path: IMAGE, contentType: 'image/jpeg' }),
+    );
+    await page.goto(WALL, { waitUntil: 'domcontentloaded' });
+    const band = page.locator('[data-section-type="candlelightSection"] [data-cl]');
+    await expect(band.getByRole('button', { name: 'Lights down' })).toHaveCount(0);
+    const opacity = await band
+      .locator('.cl__flame')
+      .first()
+      .evaluate((el) => getComputedStyle(el).opacity);
+    expect(opacity).toBe('1');
+    await context.close();
+  });
+
   test('axe finds nothing in the blocks', async ({ page }) => {
     await openWall(page);
     const results = await new AxeBuilder({ page })

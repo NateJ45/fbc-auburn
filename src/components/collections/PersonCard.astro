@@ -7,6 +7,8 @@
 // name in Young Serif, the role in small caps grey, a few sentences, and the email or the place
 // they serve only when the Studio says so (the GROQ leaves them out otherwise;
 // src/lib/collection-arms.ts). Docs: docs/agent/shapes.md ("People").
+// The photo carries data-flow-portrait (2026-11-09): it opens in brick courses as it scrolls in (the
+// flow layer's portrait unit, docs/agent/animation.md). The blank tile is not a person, so it does not.
 import '@/styles/shapes.css';
 import '@/styles/shapes-auburn.css';
 import { Image } from 'astro:assets';
@@ -26,7 +28,7 @@ const photo = (p.photo as SanityImageObject | null)?.asset ? (p.photo as SanityI
 
 <li class="c-person">
   {photo ? (
-    <div class="c-photo shape-step">
+    <div class="c-photo shape-step" data-flow-portrait>
       <SanityImage
         source={photo}
         width={480}

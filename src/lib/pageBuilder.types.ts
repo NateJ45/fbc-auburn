@@ -385,6 +385,10 @@ export interface ProjectedFypCard {
   place?: string;
   body?: string;
   link?: ProjectedCtaBlock | null;
+  /** "Who it suits" tick list (src/lib/fyp-filter.ts FYP_AUDIENCE); drives the filter chips. */
+  audience?: string[] | null;
+  /** "When it meets" tick list (FYP_WHEN). */
+  when?: string[] | null;
 }
 export interface ProjectedFypGroup {
   _key?: string;
