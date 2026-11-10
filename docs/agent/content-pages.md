@@ -40,6 +40,11 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
   the Prayer page (`pr-crisis`) and Need the pastor? (`pc-crisis`); backups of both pages were kept.
   Notices can still make 988 and 911 tap-to-call if one is added back.
 
+The four sections named with a key above were added 2026-11-09 by
+`scripts/content/borrowed-shapes.mjs`, shapes borrowed from a large church's site and filled with
+marked drafts. A stepping-stone step takes one of eight icons only (the list in
+`auburnMotionSections.ts`); `npm run audit:data` says so if another is used.
+
 ## Named anchors
 
 A section whose block key is in `src/lib/church-anchors.ts` gets that name as its heading id
@@ -68,14 +73,15 @@ A section whose block key is in `src/lib/church-anchors.ts` gets that name as it
   `/sermons/`), Meet Pastor Jacob, Other ways in (giving says Sunday or by mail until online giving
   is live).
 - **Plan your visit**: page head with the Sunday times band (times, address, Directions), Good to
-  know (what to wear, about an hour, nobody puts you on the spot), Your kids, Walk in with us (no
+  know (what to wear, about an hour, nobody puts you on the spot), Your kids, By age (`pyv-kids-ages`, three age-band cards), Walk in with us (no
   exact minutes; Sunday School invited as optional), What worship is like (asks), Getting in and
   getting around (access asks), Find us (map), Look for the sign, Questions people ask (only what
   the page does not already answer), the closing band.
-- **About**: Who we are (plus an ask for something only Auburn could say), **A Sunday here** (asks
+- **About**: Who we are (plus an ask for something only Auburn could say), Our story so far (`about-timeline`, a timeline with blank years), **A Sunday here** (asks
   and a photo slot), Our building, the mark in one line, Come and see.
-- **What we believe**: The gospel, first (`#the-gospel`), the beliefs, Baptism (`#baptism`, the card
-  links to it), **What it means to be Baptist** (asks only), the confession, the closing band.
+- **What we believe**: The gospel, first (`#the-gospel`), How to begin (`wwb-abc`: Admit, Believe,
+  Confess), the beliefs, Baptism (`#baptism`, the card links to it), Questions about baptism
+  (`wwb-baptism-faq`, six `faq-baptism-*` questions), **What it means to be Baptist** (asks only), the confession, the closing band.
 - **Next steps**: **Know Jesus** set apart above the rail (Jacob's verse, a link to the gospel, "Tell
   Pastor Jacob"), then baptism, membership, a group and serving, each "Ask about ..." prefilled.
 - **Leadership**: the pastor (photo slot, a hello-video ask, his TikTok named as his), How we are

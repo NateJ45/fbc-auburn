@@ -86,6 +86,11 @@ const NOTES: Record<string, ClientNote[]> = {
   ],
   '/about/': [
     {
+      title: 'New: our story so far, as a timeline.',
+      detail:
+        'Five steps with blank years (18__, 19__, 20__) and a guessed line each. Give us the real year and one true sentence for the moments that matter, and we will drop the rest.',
+    },
+    {
       title: 'How the church began.',
       detail:
         'Two or three sentences on its start and the season it is in now. Was it founded in 1959?',
@@ -131,6 +136,11 @@ const NOTES: Record<string, ClientNote[]> = {
       title: 'The full statement of faith.',
       detail:
         'The page says, in yellow brackets, that the church affirms the Baptist Faith and Message 2000 and links to it. Confirm that, or send the church’s own statement instead.',
+    },
+    {
+      title: 'New: How to begin, and Questions about baptism.',
+      detail:
+        'Two new sections, both our drafts. "How to begin" sets the gospel out as Admit, Believe, Confess with a verse each. "Questions about baptism" answers what people from other churches ask (does it save, why immersion, babies, an earlier baptism). Rewrite, reorder or remove any of them.',
     },
     {
       title: 'Baptism.',
@@ -208,6 +218,11 @@ const NOTES: Record<string, ClientNote[]> = {
     {
       title: 'Anything people often ask you?',
       detail: 'Send us the questions and we will add them.',
+    },
+    {
+      title: 'New: your kids, by age.',
+      detail:
+        'Three cards under "Your kids" guess at your age groups (babies and toddlers, children, students) and what each does on a Sunday. Correct the ages and the details, or remove a card you do not have.',
     },
     {
       title: 'Your kids: the details.',
