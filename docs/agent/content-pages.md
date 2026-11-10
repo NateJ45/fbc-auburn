@@ -7,9 +7,16 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
 
 ## Rules every content page keeps
 
-- **Doctrine is Jacob's.** No statement of belief (the gospel, baptism, the Lord's Supper, what makes
-  the church Baptist) is ever drafted for him: the page carries a `[Jacob: ...]` ask listing what
-  to cover, and nothing else. A `[Placeholder: ...]` draft is only for warm, non-factual copy.
+- **Doctrine is Jacob's, and until he has written it the page holds a marked draft** (changed
+  2026-11-09; before that, belief was asked for and never drafted). Empty asks gave him nothing to
+  edit, so `scripts/content/best-guess-drafts.mjs` put a `[Placeholder: ...]` draft wherever one
+  could be guessed: beliefs as plain-word summaries of the Baptist Faith and Message 2000 (the
+  confession the page says the church affirms), verses in the King James wording its Facebook page
+  quotes, and practice (music, the invitation, the Lord's Supper, joining, the offering) as is usual
+  for a Southern Baptist church its size. Every draft stays in brackets, with a short `[Jacob: ...]`
+  naming what to check, and none is settled until he rewrites or approves it. **No bracket survives
+  launch:** a draft he has not confirmed comes out, it is not unwrapped. Still asks only: his own
+  story and family, leaders' names, email and office hours, and yes-or-no questions.
 - **Facts are never typed.** Times, the address and the phone come from Church facts through
   blocks: the Sunday times band (`heroSection.showTimes`), Contact details (`contactCardSection`),
   Map and directions (`mapSection`), This Sunday. The Plan your visit walk keeps two loose times
@@ -20,9 +27,10 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
   `&about=<a few words>`, which the form puts at the start of the message) and "Tell us you are
   coming" (`/contact/?visit=sunday-11`, which also becomes the Church Trac connection card once
   one is set, `src/lib/church-links.ts`).
-- **One child safety ask, worded the same everywhere** (`SAFETY_ASK` in the content script): Plan
-  your visit's Your kids, and the Kids and The children's room cards on Ministries. When Jacob
-  answers, put the same sentence in all three.
+- **One child safety sentence, worded the same everywhere**: Plan your visit's Your kids, and the
+  Kids and The children's room cards on Ministries. Since 2026-11-09 all three hold the same GUESS
+  (`SAFETY_DRAFT` in `best-guess-drafts.mjs`: background checks, two adults, sign-in and pick-up).
+  It must be made exactly true before launch; when Jacob answers, put his sentence in all three.
 - **One prayer path.** Prayer requests go through the Prayer page's form (`form-prayer`, mode
   `prayer`): emailed to the pastor, and the website deletes its copy once the email has gone
   (`src/pages/api/form.ts`). The form says so once, beside the button (`FormBlock.astro`). Contact

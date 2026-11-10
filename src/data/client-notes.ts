@@ -40,6 +40,11 @@ const CHURCH_TRAC: ClientNote = {
 const NOTES: Record<string, ClientNote[]> = {
   '/': [
     {
+      title: 'Yellow brackets are our best guesses now.',
+      detail:
+        'On every page, wording in yellow that starts "[Placeholder:" is our guess at what a church like yours would say, so you can edit instead of starting from nothing. Change anything that is not true of Auburn. A "[Jacob:" note beside it names what to check.',
+    },
+    {
       title: 'Meet Pastor Jacob: a few lines.',
       detail: 'Three or four sentences about you for the block near the bottom of the page.',
     },
@@ -108,9 +113,9 @@ const NOTES: Record<string, ClientNote[]> = {
   ],
   '/what-we-believe/': [
     {
-      title: 'What we believe is yours to write.',
+      title: 'What we believe: our drafts, yours to rewrite.',
       detail:
-        'We have not drafted any beliefs. Each card asks for two to four plain sentences and one verse, in your words.',
+        'So you have something to edit, every belief on this page now holds our draft in yellow brackets: plain-word summaries of the Baptist Faith and Message, each with one verse. None of it is settled until you have rewritten or approved it.',
     },
     {
       title: 'The gospel, first.',
