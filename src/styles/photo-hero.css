@@ -103,7 +103,7 @@
   min-height: 44px;
   padding: 0 14px;
   border: 1px solid rgb(255 255 255 / 0.55);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgb(15 34 56 / 0.6);
   color: #ffffff;
   font-family: var(--font-body);
@@ -261,7 +261,7 @@
   z-index: 1;
   margin: 0;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgb(15 34 56 / 0.72);
   font-size: var(--fs-tag);
   font-weight: 600;
