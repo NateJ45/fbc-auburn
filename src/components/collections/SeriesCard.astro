@@ -3,18 +3,14 @@
 // One sermon series as a card: its picture (or the stones with its title), the title, when it ran
 // and how many sermons, worked out from the sermons themselves (rule 15), and a line about it.
 import SermonArt from './SermonArt.astro';
-import { seriesHref, seriesSpan, type SeriesDoc } from '@/lib/sermons';
+import { seriesCountLabel, seriesHref, seriesSpan, type SeriesDoc } from '@/lib/sermons';
 
 interface Props {
   series: SeriesDoc;
   as?: 'h2' | 'h3';
 }
 const { series: s, as: Title = 'h3' } = Astro.props;
-const count = s.count ?? 0;
-const meta = [
-  seriesSpan(s.firstDate, s.lastDate),
-  count ? `${count} ${count === 1 ? 'sermon' : 'sermons'}` : 'Coming soon',
-]
+const meta = [seriesSpan(s.firstDate, s.lastDate), seriesCountLabel(s.count)]
   .filter(Boolean)
   .join(' · ');
 ---

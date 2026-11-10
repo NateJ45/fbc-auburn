@@ -22,7 +22,9 @@ import {
   sermonFilters,
   sermonSunday,
   sermonVideo,
+  seriesCountLabel,
   seriesSpan,
+  seriesUsesPreview,
   sortSeries,
   sortSermons,
   watchSermon,
@@ -185,6 +187,16 @@ describe('series', () => {
     assert.equal(seriesSpan('2026-10-04', '2027-01-10'), 'Oct 2026 to Jan 2027');
     assert.equal(seriesSpan('2026-10-04', '2026-10-25'), 'Oct 2026');
     assert.equal(seriesSpan(null, null), '');
+  });
+  it('counts the sermons, or says one is coming', () => {
+    assert.equal(seriesCountLabel(6), '6 sermons');
+    assert.equal(seriesCountLabel(1), '1 sermon');
+    assert.equal(seriesCountLabel(0), 'Coming soon');
+    assert.equal(seriesCountLabel(null), 'Coming soon');
+  });
+  it('keeps the cards for fewer than three series', () => {
+    assert.equal(seriesUsesPreview([1, 2]), false);
+    assert.equal(seriesUsesPreview([1, 2, 3]), true);
   });
 });
 

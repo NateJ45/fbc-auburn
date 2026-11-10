@@ -49,6 +49,12 @@ export interface Shot {
    * video; ffmpeg, CRF 30, no sound, fast start, about 270 KB).
    */
   video?: { file: string; credit: string; phone?: boolean };
+  /**
+   * The slot holds a person's photo, head and shoulders (2026-11-09). It opens in brick courses as
+   * it scrolls in (the flow layer's portrait unit, docs/agent/animation.md), before launch and
+   * after: `isPortraitSlot()` reads it whatever CLIENT_NOTES_ON says.
+   */
+  person?: true;
 }
 
 /** The public path of an example's photo, video (.mp4) or video poster. */
@@ -122,6 +128,7 @@ const SHOTS: Record<string, Shot[]> = {
   '/|Meet Pastor Jacob': [
     {
       title: 'You, head and shoulders',
+      person: true,
       detail: 'Natural light by a window or outside the front door. A phone is fine.',
       orientation: 'portrait',
       example: { file: 'pastor-portrait', credit: 'Susmit Sam on Unsplash' },
@@ -254,6 +261,7 @@ const SHOTS: Record<string, Shot[]> = {
   '/leadership/|Jacob Wysong': [
     {
       title: 'You, head and shoulders',
+      person: true,
       detail: 'The same photo as on Home works here. Natural light, a phone is fine.',
       orientation: 'portrait',
       example: { file: 'pastor-portrait', credit: 'Susmit Sam on Unsplash' },
@@ -314,6 +322,18 @@ export function shotFor(path: string, heading: string | undefined, index: number
   if (!shot) return null;
   const hasPhoto = Boolean((img as { asset?: unknown } | null | undefined)?.asset);
   return !hasPhoto || isStandInPhoto(img) ? shot : null;
+}
+
+/**
+ * True when a picture slot holds a person's portrait (`person` on its first shot), so the slot's
+ * photo or its Photo needed box opts into the flow layer's brick-course reveal. Unlike `shotFor` it
+ * ignores launch and what fills the slot: the slot is a portrait either way. Keyed by page and
+ * heading like the shots, so renaming the heading drops the reveal (the photo then fades in like
+ * any other).
+ */
+export function isPortraitSlot(path: string, heading: string | undefined): boolean {
+  if (!heading) return false;
+  return SHOTS[keyOf(path, heading)]?.[0]?.person === true;
 }
 
 /** A post's cover slot: the request while the cover is empty or a stand-in, before launch. */

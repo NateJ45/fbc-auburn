@@ -47,6 +47,11 @@ interface Props {
    * its own heuristics for everything else.
    */
   fetchpriority?: 'high' | 'low' | 'auto';
+  /**
+   * FBC Auburn: a person's photo. Sets `data-flow-portrait`, so the flow layer opens it in brick
+   * courses as it scrolls in (src/scripts/flow.ts, docs/agent/animation.md). Nothing else changes.
+   */
+  portrait?: boolean;
 }
 
 const {
@@ -60,6 +65,7 @@ const {
   quality = 75,
   format = 'auto',
   fetchpriority,
+  portrait = false,
 } = Astro.props;
 
 // Build the URL. If source is null/undefined we render nothing — pages should handle absence explicitly.
@@ -126,4 +132,5 @@ const objectPosition =
   sizes={sizes ?? `(max-width: ${width}px) 100vw, ${width}px`}
   class={className}
   style={objectPosition}
+  data-flow-portrait={portrait ? '' : undefined}
 />

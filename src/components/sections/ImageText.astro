@@ -10,7 +10,7 @@ import MarkBuild from '@/components/motion/MarkBuild.astro';
 import BaptismGraphic from '@/components/motion/BaptismGraphic.astro';
 import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
-import { shotFor } from '@/data/shot-list';
+import { isPortraitSlot, shotFor } from '@/data/shot-list';
 import { splitStega } from '@/lib/preview-stega';
 // Auburn's shape system (2026-10-24): a photo here is cut to the building's gable and set over a
 // navy brick slab that runs to the page edge on the photo's side (src/styles/shapes.css).
@@ -60,6 +60,10 @@ const markImg = await getImage({ src: markPrint, widths: [150, 300], format: 'we
 // (src/data/shot-list.ts, keyed by page and heading). Drawings ('mark', 'baptism', 'building') never.
 const shot =
   art === 'photo' ? shotFor(Astro.url.pathname, splitStega(heading ?? '').cleaned, 0, image) : null;
+// A person's photo (Meet Pastor Jacob, the leadership page's Jacob Wysong; `person` in the shot
+// list) opens in brick courses as it scrolls in, the flow layer's portrait unit (2026-11-09).
+const portrait =
+  art === 'photo' && isPortraitSlot(Astro.url.pathname, splitStega(heading ?? '').cleaned);
 const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebrow ? 'mt-m' : ''}`;
 ---
 
@@ -141,7 +145,12 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
           // A photo (or its Photo needed request): the gable over the brick slab.
           <div class:list={['shape-slab', imageFirst && 'shape-slab--left']}>
             {shot ? (
-              <ShotRequest shot={shot} class="auburn-arch shape-gable" priority={isFirst} />
+              <ShotRequest
+                shot={shot}
+                class="auburn-arch shape-gable"
+                priority={isFirst}
+                portrait={portrait}
+              />
             ) : (
               <SanityImage
                 source={image}
@@ -151,6 +160,7 @@ const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebr
                 loading={isFirst ? 'eager' : 'lazy'}
                 fetchpriority={isFirst ? 'high' : undefined}
                 class="auburn-arch shape-gable h-auto w-full object-cover"
+                portrait={portrait}
               />
             )}
           </div>
