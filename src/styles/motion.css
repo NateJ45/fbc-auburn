@@ -87,9 +87,6 @@ html.motion .reveal:not(.in) {
   flex-direction: column;
   align-items: center;
 }
-.rail__step:not(:last-child) .rail__body {
-  padding-bottom: clamp(3.5rem, 8vw, 5rem);
-}
 .rail__stone {
   width: 98px;
   height: 98px;
@@ -167,22 +164,21 @@ html.motion .reveal:not(.in) {
   margin-block: 0.75rem;
   background: var(--step-dash-y);
 }
-/* Step 1 set apart (audit 2026-10-25, P-9 and GD-M4): a white card, a bigger title. */
-.rail__step:first-child .rail__body {
+/* Every step on the same white card (2026-11-09). Step 1 alone had one, to set "Know Jesus" apart
+   (audit 2026-10-25, P-9); Know Jesus is now its own section above the rail, so the steps are
+   peers and a lone card read as the others missing theirs. The gap between steps is the card's
+   margin, so the dashed trail still walks the whole way to the next icon. */
+.rail__step .rail__body {
   align-self: start;
-  margin-bottom: clamp(3.5rem, 8vw, 5rem);
   padding: var(--pad-card);
   border-radius: var(--radius-card);
   background: #ffffff;
   box-shadow: var(--shadow-card);
 }
-.rail__step:first-child:not(:last-child) .rail__body {
-  padding-bottom: var(--pad-card);
+.rail__step:not(:last-child) .rail__body {
+  margin-bottom: clamp(3.5rem, 8vw, 5rem);
 }
-.rail__step:first-child .rail__title {
-  font-size: var(--text-h2);
-}
-.rail__step:first-child .rail__text {
+.rail__step .rail__text {
   color: var(--foreground);
 }
 /* The path's last stop: the church mark at the icon column's size, the closing line beside it, on
@@ -254,7 +250,7 @@ html.motion .reveal:not(.in) {
     height: 48px;
   }
   .rail__step:not(:last-child) .rail__body {
-    padding-bottom: 2rem;
+    margin-bottom: 2rem;
   }
   .rail__trail {
     min-height: 4rem;

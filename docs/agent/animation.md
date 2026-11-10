@@ -330,7 +330,7 @@ only; one moving moment per page; the cross never rotates or tilts; reduced moti
   `animation-timeline: view()` where supported (Chrome, Edge, Safari 26), an IntersectionObserver adding `.in`
   elsewhere. Used by the rail's icons and stones and the stone dividers; the icon cards and page icons can opt in with
   the same class.
-- **The rail** (`stepsRailSection`): the site's one step connector, a 2px dashed light-navy line (`--step-dash-y`, auburn.css), runs down the icon column from each icon to the next and fills whatever height the text takes (2026-10-25, audit GD-M4; it was a winding laid-brick path that read as a worm). Step 1 sits on a white card. The path ends at the church mark as its last stop, at the icon column's size (72px, 48px on a phone), which builds itself in story order beside the closing line.
+- **The rail** (`stepsRailSection`): the site's one step connector, a 2px dashed light-navy line (`--step-dash-y`, auburn.css), runs down the icon column from each icon to the next and fills whatever height the text takes (2026-10-25, audit GD-M4; it was a winding laid-brick path that read as a worm). Every step sits on the same white card (2026-11-09; only step 1 had one before). The path ends at the church mark as its last stop, at the icon column's size (72px, 48px on a phone), which builds itself in story order beside the closing line.
 - **The mark build** (`MarkBuild.astro`, 2026-10-24): once 45% of the brick print is on screen the wall is laid
   one brick at a time, bottom course first and back and forth like a mason, each brick dropping with weight and
   settling, about two and a half seconds in all (five until 2026-10-25), until the last course seals the top of the cross; then the mark gives one
