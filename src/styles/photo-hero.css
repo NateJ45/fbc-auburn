@@ -153,7 +153,15 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
+}
+/* With the note above the welcome the hero opens closer to the header, so the welcome, its buttons
+   and the top of the This Sunday card stay in a laptop's first screen (2026-11-09: the note open in
+   full made the hero 1,031px tall at 1280 by 800 and cut the headline at the fold). */
+@media (min-width: 961px) {
+  .hb-hero:has(.hb-hero__shot) {
+    padding-top: 64px;
+  }
 }
 .hb-hero__inner {
   position: relative;
