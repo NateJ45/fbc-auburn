@@ -353,6 +353,9 @@ export type PrivatePage = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -1278,12 +1281,22 @@ export type SectionPreset = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & FaqSection)
     | ({
         _key: string;
       } & DynamicListSection)
   >;
   note?: string;
+};
+
+export type CandlelightSection = {
+  _type: 'candlelightSection';
+  heading?: string;
+  text?: string;
+  candles?: 5 | 6 | 7 | 8 | 9;
 };
 
 export type PhotoCardsSection = {
@@ -2608,6 +2621,9 @@ export type PrivacyPage = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & SyncedSection)
     | ({
         _key: string;
@@ -2820,6 +2836,9 @@ export type PrivacyPage = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -2989,6 +3008,9 @@ export type Page = {
     | ({
         _key: string;
       } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & CandlelightSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3343,6 +3365,9 @@ export type SermonsPage = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & SyncedSection)
     | ({
         _key: string;
@@ -3535,6 +3560,9 @@ export type SermonsPage = {
     | ({
         _key: string;
       } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & CandlelightSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -3839,6 +3867,9 @@ export type JournalPage = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & SyncedSection)
     | ({
         _key: string;
@@ -4041,6 +4072,9 @@ export type JournalPage = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -4208,6 +4242,9 @@ export type ContactPage = {
     | ({
         _key: string;
       } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & CandlelightSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -4440,6 +4477,9 @@ export type ContactPage = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -4647,6 +4687,9 @@ export type FaqPage = {
       } & PhotoCardsSection)
     | ({
         _key: string;
+      } & CandlelightSection)
+    | ({
+        _key: string;
       } & SyncedSection)
   >;
 };
@@ -4814,6 +4857,9 @@ export type AboutPage = {
     | ({
         _key: string;
       } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & CandlelightSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -5090,6 +5136,9 @@ export type HomePage = {
     | ({
         _key: string;
       } & PhotoCardsSection)
+    | ({
+        _key: string;
+      } & CandlelightSection)
     | ({
         _key: string;
       } & SyncedSection)
@@ -5419,6 +5468,7 @@ export type AllSanitySchemaTypes =
   | SectionPresetReference
   | SyncedSection
   | SectionPreset
+  | CandlelightSection
   | PhotoCardsSection
   | ScheduleSection
   | EventDetailsSection

@@ -960,11 +960,18 @@ const SECTIONS: Record<string, unknown>[] = [
       },
     ],
   },
+  {
+    _type: 'candlelightSection',
+    _key: 'bb-candlelight',
+    // No heading typed: it reads "Light a candle".
+    text: 'At the end of the service we pass the light from candle to candle, the way the good news passed from person to person.',
+    candles: 7,
+  },
 ];
 
 // Variants of the event-page blocks for tests/builder-blocks.spec.ts: the photo opening banner, an
 // event with no photo and a typed place, a one-day schedule on the Feature look and two cards on
-// Stone. NOT shot by the thumbnails script (it shoots [data-section-type] boxes only).
+// Stone, and a nine-candle Candlelight band. NOT shot by the thumbnails script (it shoots [data-section-type] boxes only).
 const BUILDER_CHECKS: Record<string, unknown>[] = [
   {
     _type: 'heroSection',
@@ -1037,6 +1044,13 @@ const BUILDER_CHECKS: Record<string, unknown>[] = [
         link: cta('Read more'),
       },
     ],
+  },
+  // Candlelight with the most candles, its own heading and no line.
+  {
+    _type: 'candlelightSection',
+    _key: 'bb-candlelight-nine',
+    heading: 'Pass the light',
+    candles: 9,
   },
 ];
 ---
