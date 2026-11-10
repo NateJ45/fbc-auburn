@@ -16,6 +16,15 @@ sequence).
 
 ## Waiting on a human
 
+### 1zt. Best-guess drafts: every one confirmed or removed before launch (opened 2026-11-09)
+
+`scripts/content/best-guess-drafts.mjs` filled 60 asks with `[Placeholder: ...]` guesses so Pastor
+Jacob has wording to edit (`docs/agent/content-pages.md`). They are guesses about belief, practice
+and policy. Launch gate: no `[Placeholder:` or `[Jacob:` text left in the dataset, each draft
+rewritten or approved by him, and an unconfirmed one taken out, not unwrapped. First to settle: the
+child safety sentence (three places, must be exactly true), the Lord's Supper (how often, who may
+take part), the Bible translation, the nursery ages and the access list on Plan your visit.
+
 ### 1zs. The e2e job is pinned to ubuntu-24.04 (opened 2026-10-30)
 
 `ubuntu-latest` moved to 26.04, where Playwright's WebKit will not launch, so every
