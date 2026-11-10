@@ -16,6 +16,12 @@ sequence).
 
 ## Waiting on a human
 
+### 1zt2. Ministries filter chips: Jacob tags the cards (opened 2026-11-09)
+
+The Find your place cards have "Who it suits" and "When it meets" tick lists (`docs/agent/shapes.md`, "Filter
+chips"). No card is tagged in the dataset yet, so `/ministries/` shows no chip row. Once Jacob ticks a few cards and
+publishes, check the chips at 375 and 1280 on the live page (only the chips for tags in use appear).
+
 ### 1zt. Best-guess drafts: every one confirmed or removed before launch (opened 2026-11-09)
 
 `scripts/content/best-guess-drafts.mjs` filled 60 asks with `[Placeholder: ...]` guesses so Pastor

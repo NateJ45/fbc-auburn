@@ -64,6 +64,19 @@ A page-builder block, in the Studio as "Find your place (groups of cards)" under
   in an "Every age" group instead (Sunday School, 2026-10-25); a repeated title links to the first one.
 - **Photos before launch.** Cards are keyed in `src/data/shot-list.ts` by title (`/ministries/|Kids`), so an empty or
   stand-in photo shows its Photo needed example.
+- **Filter chips** (2026-11-09, `src/lib/fyp-filter.ts`). Each card has two optional tick lists, "Who it suits"
+  (`audience`: Kids, Students, Adults, Families) and "When it meets" (`when`: Sunday, Weeknight). Above the groups a
+  "Show me" row offers All plus one chip per tag at least one card carries, in that fixed order; with no tags anywhere
+  there is no row, so nothing changes until the pastor tags a card. Chips are pills from the scale (`--radius-pill`,
+  `--fs-small`, cream `--muted` with a navy line, navy filled when pressed), real buttons with `aria-pressed`, and
+  they wrap on a phone. One chip at a time; pressing the pressed chip, or All, resets. A chip hides the cards without
+  its tag (`hidden`), a group left empty collapses and its index entry hides, and the cards still showing glide from
+  where they were (a FLIP with the Web Animations API, 250ms; cards coming back fade up; nothing moves under
+  `prefers-reduced-motion`). A polite live region says "4 ministries". The row is rendered `hidden` and shown by the
+  script, so without JavaScript every card shows and there are no dead chips. Both field names are on
+  `NON_STEGA_FIELDS`; since they are arrays of strings, the stega filter in `cms-preview.ts` checks the last named
+  segment of the path, not the trailing index, and `cardTags()` also cleans each value with `plain()`. The
+  `/styleguide/sections/` fixture carries tags and `tests/fyp-filter.spec.ts` pins the behavior there.
 
 The Ministries content was moved onto the block by `scripts/content/ministries-find-your-place.mjs` (dry by default,
 backs the page up first, carries every card's words over, and writes the "after" page for a look). The page head reads
