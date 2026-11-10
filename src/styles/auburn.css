@@ -2030,28 +2030,66 @@ html.motion .sill.is-laid .sill-brick {
     padding-inline: 20px;
   }
 }
-/* The building sketch, faint, behind the footer's top area (2026-10-24): anchored bottom right, it
-   takes no space, so the compact footer keeps its height. Under everything that is clickable. */
 .sf-top {
   position: relative;
   isolation: isolate;
 }
-.sf-sketch {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-  width: min(560px, 50%);
-  opacity: 0.16;
+
+/* ---- The footer scene (2026-11-09) ----
+   The building sketch standing on its lawn under a low sky, between the links and the bottom bar
+   (Footer.astro). It replaced the faint copy that sat behind the links at 16%. Everything is sized
+   from the drawing's width, --scene-w (the sketch is 2:1): the band crops the empty paper above the
+   steeple and below the lawn hatching, the sky runs down to the drawing's horizon, and the lawn
+   strokes start there and run out to both edges, so the drawing's own ground carries on across the
+   footer. The sky is the light navy (--auburn-sky) mixed into the ink, one soft two-stop band from
+   nothing to 13%: a dusk, not a glow. Phones keep the band about 140px tall. */
+.sf-scene {
+  --scene-w: clamp(330px, 36vw, 500px);
+  --scene-ink: #7f98b8;
+  /* Where the drawing's ground meets the sky, and how much of the drawing shows. */
+  --scene-horizon: calc(var(--scene-w) * 0.265);
+  position: relative;
+  height: calc(var(--scene-w) * 0.42);
+  overflow: hidden;
   pointer-events: none;
+  background: linear-gradient(
+      to bottom,
+      transparent 0,
+      color-mix(in srgb, var(--auburn-sky) 13%, #16263d) var(--scene-horizon),
+      transparent var(--scene-horizon)
+    )
+    no-repeat;
 }
-.sf-sketch__art {
+.sf-scene__lawn {
+  position: absolute;
+  /* Starts a few pixels under the sky's edge, so the first stroke does not double it. */
+  inset: calc(var(--scene-horizon) + 4px) 0 0;
   width: 100%;
+  height: calc(100% - var(--scene-horizon) - 4px);
+  fill: none;
+  stroke: var(--scene-ink);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  opacity: 0.4;
 }
-@media (max-width: 960px) {
-  .sf-sketch {
-    width: 92%;
-    opacity: 0.12;
+.sf-scene__lawn path {
+  vector-effect: non-scaling-stroke;
+}
+.sf-scene__inner {
+  position: relative;
+  height: 100%;
+}
+.sf-scene__art {
+  width: var(--scene-w);
+  max-width: 100%;
+  margin-left: auto;
+  /* Lift the drawing so its top margin of empty paper sits above the band. */
+  margin-top: calc(var(--scene-w) * -0.035);
+  opacity: 0.6;
+}
+@media (max-width: 767px) {
+  .sf-scene {
+    --scene-w: min(340px, 100vw - 40px);
   }
 }
 

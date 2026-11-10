@@ -211,7 +211,8 @@ const hasCalendar =
       Under the sill, the verse: one line of scripture in big type that slides across as the
       reader scrolls into the footer (src/scripts/flow.ts; at rest, or with reduced motion, it
       simply wraps).
-      Behind 2, the building sketch at low opacity, bottom right.
+      Between 2 and 3, the scene (2026-11-09): the church building on a few strokes of lawn under
+      a low band of sky. Decoration only.
       The whole footer is ink: .site-footer redefines the colour tokens (src/styles/auburn.css),
       so the starter's link grid below turns light-on-ink without touching its classes. */}
   <Sill class="site-footer__sill" />
@@ -233,11 +234,6 @@ const hasCalendar =
   )}
 
   <div class="sf-top mx-auto max-w-content px-l">
-    {/* The building, faint, behind the footer's own content (2026-10-24): it takes no room of its
-        own, so the compact footer stays compact. Decorative; CSS in auburn.css (.sf-sketch). */}
-    <div class="sf-sketch" aria-hidden="true">
-      <BuildingSketch ink="#7F98B8" class="sf-sketch__art" draw={false} />
-    </div>
     <div class="sf-invite">
       {/* The mark with the church's name beside it (2026-10-24): the mark alone did not say whose
           footer this is. */}
@@ -702,6 +698,37 @@ const hasCalendar =
       </div>
     </div>
   )}
+
+  {/* The scene (2026-11-09): the building on its lawn under a low sky, the last thing before the
+      bottom bar, so it never pushes a link down (every link comes before it). It replaced the
+      faint copy of the sketch that sat behind the links. The sky is a soft two-stop band of the
+      light navy; the lawn is a few hand-drawn strokes in the sketch's own ink, running out to both
+      edges from the drawing's horizon. Decoration: aria-hidden, no motion, not printed. CSS in
+      auburn.css ("The footer scene"). */}
+  <div class="sf-scene" aria-hidden="true">
+    {/* The lawn: loose pencil strokes, longest near the horizon and nearest the building, thinning
+        out toward the edge and the bottom, like the hatching in the drawing itself. */}
+    <svg class="sf-scene__lawn" viewBox="0 0 1000 100" preserveAspectRatio="none" focusable="false">
+      <path d="M40 6 q75 -2 150 -2 M230 7 q45 -1 90 -1 M360 5 q85 -2 170 -2 M570 6 q60 -2 120 -2 M940 6 q28 -1 55 -1"></path>
+      <path d="M120 17 q55 -2 110 -3 M270 16 q30 -1 60 -1 M420 18 q70 -2 140 -3 M610 16 q45 -1 90 -2 M905 15 q35 -1 70 -2"></path>
+      <path
+        d="M20 30 q40 -1 80 -2 M180 31 q65 -2 130 -3 M500 29 q50 -1 100 -2 M660 31 q30 -1 60 -1"
+        stroke-opacity="0.8"
+      ></path>
+      <path
+        d="M90 44 q60 -2 120 -3 M330 45 q35 -1 70 -2 M560 43 q45 -2 90 -3"
+        stroke-opacity="0.65"
+      ></path>
+      <path d="M220 60 q50 -1 100 -2 M460 61 q30 -1 60 -1" stroke-opacity="0.5"></path>
+      <path
+        d="M60 78 q40 -1 80 -2 M340 77 q45 -1 90 -2 M150 93 q25 -1 50 -1"
+        stroke-opacity="0.4"
+      ></path>
+    </svg>
+    <div class="sf-scene__inner mx-auto max-w-content px-l">
+      <BuildingSketch ink="#7F98B8" class="sf-scene__art" draw={false} />
+    </div>
+  </div>
 
   <div class="sf-bottom">
     <div class="sf-bottom__inner mx-auto max-w-content px-l">
