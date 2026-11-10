@@ -2119,6 +2119,8 @@ export type FindYourPlaceSection = {
       place?: string;
       body?: string;
       link?: CtaBlock;
+      audience?: Array<string>;
+      when?: Array<string>;
       _type: 'fypCard';
       _key: string;
     }>;

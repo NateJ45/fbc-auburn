@@ -16,6 +16,12 @@ sequence).
 
 ## Waiting on a human
 
+### 1zt2. Ministries filter chips: Jacob tags the cards (opened 2026-11-09)
+
+The Find your place cards have "Who it suits" and "When it meets" tick lists (`docs/agent/shapes.md`, "Filter
+chips"). No card is tagged in the dataset yet, so `/ministries/` shows no chip row. Once Jacob ticks a few cards and
+publishes, check the chips at 375 and 1280 on the live page (only the chips for tags in use appear).
+
 ### 1zt. Best-guess drafts: every one confirmed or removed before launch (opened 2026-11-09)
 
 `scripts/content/best-guess-drafts.mjs` filled 60 asks with `[Placeholder: ...]` guesses so Pastor
@@ -213,7 +219,10 @@ signature photo if he likes), and photos for the cards on the shot list.
 
 Two loose ends from fbc-auburn#112. **Ports:** several fixes are in starter components, not church ones, and
 belong in `ncs-astro-sanity-starter` with a port card: FAQ questions rendering at 16px (tailwind-merge drops
-`text-h3` beside `text-foreground`; `FaqAccordion.tsx`), the stats labels at 0.62rem (`StatsCounter.tsx`),
+`text-h3` beside `text-foreground`; `FaqAccordion.tsx`), the corner and shadow gate
+(`src/lib/corner-shadow-scale.test.ts`, 2026-11-09; it skips PORTABLE files and `globals.css`, so the
+starter's own copies, such as `SiteSearch.astro`'s dialog shadow and the `.card-lift` grey hover, are
+unchecked until it is ported), the stats labels at 0.62rem (`StatsCounter.tsx`),
 the logo strip's row hiding its first logo when it overflows (`justify-center-safe`, `LogoStrip.astro`),
 `rounded-md` (8px) on content cards and photos in the section components, the journal body's headings at full
 section size (`JournalPortableText.tsx`), the `.c-facts` `margin: 0` cancelling `mt-l`, and a board rule left

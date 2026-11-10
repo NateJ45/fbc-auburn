@@ -206,7 +206,19 @@ const NON_STEGA_FIELDS = new Set([
   // times branch on and `date` is compared with the build's day. `service` and `time` are above.
   'change',
   'date',
+  // Find your place filter tags, 2026-11-09 (src/lib/fyp-filter.ts): tick lists whose values are
+  // compared to pick a card's chips. They are arrays of strings, so the path ends in an index;
+  // the filter below looks at the last NAMED segment for that reason.
+  'audience',
+  'when',
 ]);
+
+/** The field a stega path ends in: `['groups', 0, 'cards', 1, 'audience', 0]` -> 'audience'. */
+const lastFieldName = (path: readonly (string | number | object)[]): string => {
+  for (let i = path.length - 1; i >= 0; i--)
+    if (typeof path[i] === 'string') return String(path[i]);
+  return '';
+};
 
 export function getPreviewClient(draftMode: boolean): SanityClient {
   return createClient({
@@ -222,7 +234,7 @@ export function getPreviewClient(draftMode: boolean): SanityClient {
       // Encode display strings (click-to-edit) but skip the dropdown fields
       // above, whose exact values are used in rendering logic.
       filter: (props) =>
-        NON_STEGA_FIELDS.has(String(props.sourcePath.at(-1))) ? false : props.filterDefault(props),
+        NON_STEGA_FIELDS.has(lastFieldName(props.sourcePath)) ? false : props.filterDefault(props),
     },
   });
 }
