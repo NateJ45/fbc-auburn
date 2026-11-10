@@ -40,6 +40,11 @@
   width: 52px;
   height: 24px;
 }
+/* One brick, for a section inside the page (2026-11-09): the stepped three stay with the page head. */
+.hb-marker--brick {
+  width: 27px;
+  height: 10px;
+}
 
 /* ---- The gutter: one value for the page head, the rules and every section's container ------- */
 main:is(:has(.board-head), :has(> .hb)) {
