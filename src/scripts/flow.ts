@@ -54,7 +54,14 @@ const LINE_UNITS = 'h1, h2, blockquote > p, [data-flow="lines"]';
 // Things that already move in their own way, and everything inside them.
 const SKIP =
   '[data-flow="off"], .reveal, .mark-build, .mark-lay, .hb-photo, .hb-path, .bgpath, .sr-only, ' +
-  '[data-sundaybar], .fj, .shot__example';
+  '[data-sundaybar], .fj, .shot__example, [data-flow-portrait]';
+
+// A person's photo opts in with data-flow-portrait (PersonCard, ImageText's portrait slots, the
+// signer's face on Home, FounderSection). It is its own unit, kind 'portrait': revealed in four
+// brick courses from the bottom up, each offset half a brick (flow.css). It is SKIPped above, so it
+// never also zooms or drifts as a photo unit; a card around it still fades as one piece.
+const PORTRAIT = '[data-flow-portrait]';
+const PORTRAIT_MS = 600;
 
 // Timings (audit 2026-10-25: gentle and quick). FULL is Home and the 404; CALM is every other page,
 // where a unit only fades in (200ms, 8px; flow.css) and nothing is split, zoomed or laid.
@@ -86,7 +93,7 @@ export function initFlow() {
   // words inside it do not fade again.
   const units: {
     el: HTMLElement;
-    kind: 'lines' | 'lay' | 'up' | 'photo' | 'side';
+    kind: 'lines' | 'lay' | 'up' | 'photo' | 'side' | 'portrait';
     par?: boolean;
   }[] = [];
   const taken = new Set<Element>();
@@ -137,6 +144,13 @@ export function initFlow() {
     units.length = 0;
     units.push(...kept, { el: sundayCard, kind: 'side' });
   }
+  // Portraits, on both levels: the people pages (Leadership) are calm, and the courses are the one
+  // thing that marks a photo as a person. Same first-screen rule as every other unit.
+  for (const el of main.querySelectorAll<HTMLElement>(PORTRAIT)) {
+    if (el.closest('[data-flow="off"]') || el.dataset.flowOn) continue;
+    if (!el.getClientRects().length || inFirstScreen(el)) continue;
+    units.push({ el, kind: 'portrait' });
+  }
 
   // ---- 2. Arm them: each holds its first frame until it reaches the reader ----------------
   for (const { el, kind, par } of units) {
@@ -160,6 +174,7 @@ export function initFlow() {
       'flow--up',
       'flow--photo',
       'flow--side',
+      'flow--portrait',
       'flow-go',
     );
     el.style.removeProperty('--flow-delay');
@@ -173,17 +188,20 @@ export function initFlow() {
     const lines = el.querySelectorAll('.flow-line__in').length;
     const laid = Number(el.dataset.layMs ?? 0);
     const kind = el.dataset.flowOn;
-    const own = !full
-      ? CALM.up
-      : laid
-        ? laid + 250
-        : lines
-          ? (lines - 1) * LINE_STAGGER_MS + FULL.lines
-          : kind === 'photo'
-            ? FULL.photo
-            : kind === 'side'
-              ? FULL.side
-              : FULL.up;
+    const own =
+      kind === 'portrait'
+        ? PORTRAIT_MS
+        : !full
+          ? CALM.up
+          : laid
+            ? laid + 250
+            : lines
+              ? (lines - 1) * LINE_STAGGER_MS + FULL.lines
+              : kind === 'photo'
+                ? FULL.photo
+                : kind === 'side'
+                  ? FULL.side
+                  : FULL.up;
     const total = delayMs + own;
     const t = window.setTimeout(() => land(el), total + 80);
     disposers.push(() => window.clearTimeout(t));

@@ -124,6 +124,59 @@ html.motion .flow--lines .flow-line__in {
     both paused;
 }
 
+/* ---- Portraits open in brick courses (2026-11-09) -------------------------------------------
+   A person's photo ([data-flow-portrait], flow.ts kind 'portrait') is uncovered from the bottom
+   up in four courses, three bricks to a course, laid the mason's way: the bottom course left to
+   right, the next right to left starting with a half brick, so the joints run in running bond.
+   Each course starts 120ms after the one below and takes 240ms, 600ms in all, on both levels
+   (the people pages are calm). It is a mask on the photo's own frame, which composes with the
+   frame's own clip-path (the gable) or rounded corners in shapes.css, so the shape stays and
+   nothing in the layout moves. --pr is the progress; it RESTS AT 1, every course whole, so with
+   the animation off (reduced motion has no html.motion; tests that settle; :focus-within below)
+   the mask covers the whole frame and the photo is simply there. */
+@property --pr {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+@keyframes flow-portrait {
+  from {
+    --pr: 0;
+  }
+  to {
+    --pr: 1;
+  }
+}
+html.motion .flow--portrait {
+  /* Each course's progress, 0 to 1. */
+  --p0: clamp(0, var(--pr) / 0.4, 1);
+  --p1: clamp(0, (var(--pr) - 0.2) / 0.4, 1);
+  --p2: clamp(0, (var(--pr) - 0.4) / 0.4, 1);
+  --p3: clamp(0, (var(--pr) - 0.6) / 0.4, 1);
+  /* How much of each course is laid: whole bricks of a third on the straight courses, a half
+     brick first and last on the offset ones. */
+  --w0: calc(round(up, var(--p0) * 3, 1) / 3 * 100%);
+  --w1: calc(clamp(0, (round(up, var(--p1) * 4, 1) - 0.5) / 3, 1) * 100%);
+  --w2: calc(round(up, var(--p2) * 3, 1) / 3 * 100%);
+  --w3: calc(clamp(0, (round(up, var(--p3) * 4, 1) - 0.5) / 3, 1) * 100%);
+  --course: calc(25% + 1px);
+  mask-image:
+    linear-gradient(#000, #000), linear-gradient(#000, #000), linear-gradient(#000, #000),
+    linear-gradient(#000, #000);
+  mask-repeat: no-repeat;
+  mask-size:
+    var(--w0) var(--course),
+    var(--w1) var(--course),
+    var(--w2) var(--course),
+    var(--w3) var(--course);
+  mask-position:
+    0% 100%,
+    100% 66.667%,
+    0% 33.333%,
+    100% 0%;
+  animation: flow-portrait 600ms linear var(--flow-delay, 0ms) both paused;
+}
+
 html.motion .flow.flow-go,
 html.motion .flow-go .flow-line__in {
   animation-play-state: running;

@@ -35,6 +35,8 @@ interface Props {
   class?: string;
   /** The page's first photo, in the phone's first screen: load the example eagerly, at high priority. */
   priority?: boolean;
+  /** A person's portrait slot: the box opens in brick courses like the photo it stands in for (flow layer). */
+  portrait?: boolean;
 }
 const {
   shot,
@@ -43,6 +45,7 @@ const {
   collapse = false,
   class: className,
   priority = false,
+  portrait = false,
 } = Astro.props;
 const fold = collapse && variant === 'tag' && !inLink;
 const hold =
@@ -61,6 +64,7 @@ const tag = shot.video ? 'Example video' : shot.example ? 'Example photo' : 'Pho
   class:list={['shot', `shot--${variant}`, example && 'shot--example', className]}
   data-shot={shot.orientation}
   data-pagefind-ignore="all"
+  data-flow-portrait={portrait ? '' : undefined}
 >
   {example ? (
     <>
