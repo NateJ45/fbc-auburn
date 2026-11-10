@@ -17,6 +17,9 @@
 //                    cover a slot that already has a size (Home's mosaic tiles).
 //   tag              a pinned note for a picture that sits behind words (the Home hero, the Last
 //                    Sunday card). The slot itself draws the example behind it (HomeHero, HomeWeekWatch).
+//                    `collapse` (the Home hero, 2026-11-09) folds the detail under a "What to send
+//                    us" toggle: open, the note was tall enough to push the welcome and the Sunday
+//                    times off the first screen at both widths.
 // `inLink` drops the toggle for a slot inside a link (a News and notes card): a <details> inside an
 // <a> is not allowed, so the note keeps the request only.
 // Never indexed by site search.
@@ -27,11 +30,21 @@ interface Props {
   shot: Shot;
   variant?: 'frame' | 'tag';
   inLink?: boolean;
+  /** Tag look only: fold the detail under a toggle, so the note stays a few lines tall. */
+  collapse?: boolean;
   class?: string;
   /** The page's first photo, in the phone's first screen: load the example eagerly, at high priority. */
   priority?: boolean;
 }
-const { shot, variant = 'frame', inLink = false, class: className, priority = false } = Astro.props;
+const {
+  shot,
+  variant = 'frame',
+  inLink = false,
+  collapse = false,
+  class: className,
+  priority = false,
+} = Astro.props;
+const fold = collapse && variant === 'tag' && !inLink;
 const hold =
   shot.orientation === 'portrait'
     ? 'Hold the phone upright'
@@ -106,29 +119,39 @@ const tag = shot.video ? 'Example video' : shot.example ? 'Example photo' : 'Pho
           {variant === 'tag' && shot.example && ' · yours goes here'}
         </p>
         <p class="shot__title">{shot.title}</p>
-        <p class="shot__detail">{shot.detail}</p>
-        <p class="shot__hold">
-          <svg
-            width={pw}
-            height={ph}
-            viewBox={`0 0 ${pw} ${ph}`}
-            aria-hidden="true"
-            focusable="false"
-            class="shot__phone"
-          >
-            <rect
-              x="1"
-              y="1"
-              width={pw - 2}
-              height={ph - 2}
-              rx="3"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            />
-          </svg>
-          {hold}
-        </p>
+        {fold ? (
+          <details class="shot__how">
+            <summary>What to send us</summary>
+            <p class="shot__detail">{shot.detail}</p>
+            <p class="shot__hold">{hold}</p>
+          </details>
+        ) : (
+          <>
+            <p class="shot__detail">{shot.detail}</p>
+            <p class="shot__hold">
+              <svg
+                width={pw}
+                height={ph}
+                viewBox={`0 0 ${pw} ${ph}`}
+                aria-hidden="true"
+                focusable="false"
+                class="shot__phone"
+              >
+                <rect
+                  x="1"
+                  y="1"
+                  width={pw - 2}
+                  height={ph - 2}
+                  rx="3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+              </svg>
+              {hold}
+            </p>
+          </>
+        )}
       </div>
     </>
   )}

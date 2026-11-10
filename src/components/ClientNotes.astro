@@ -12,6 +12,14 @@
 // the page's words ("[Jacob: ...]" or "[Placeholder: ...]") is highlighted yellow, so nothing
 // unfinished can be mistaken for the real thing. Turn CLIENT_NOTES_ON off at launch and both go.
 //
+// The clean view (2026-11-09): "See it as a visitor would" in the panel hides everything this layer
+// adds, so the pastor can see the site, not the to-do list. Drafts in "[Placeholder: ...]" read as
+// plain words without their brackets, "[Jacob: ...]" asks and the "To confirm" tags go, and each
+// "Example photo" note leaves its example picture. It is `html[data-clean-view]`, kept for the
+// browser tab (sessionStorage) and set from a link with `?clean=1` (`?clean=0` clears it); a small
+// "Show notes" button brings everything back. Nothing changes for visitors after launch: the whole
+// layer is off then.
+//
 // A <details> element, so it opens without JavaScript; the highlighter is a few lines that wrap the
 // bracketed text in <mark>. Neither is indexed by site search.
 import { CLIENT_NOTES_ACTIVE, CLIENT_NAME, MARKERS, notesFor } from '@/data/client-notes';
@@ -39,6 +47,12 @@ const pattern = markerPattern(MARKERS);
       {notes.length > 0 && `: ${notes.length} thing${notes.length === 1 ? '' : 's'} we need`}
     </summary>
     <div class="fj__panel">
+      <p class="fj__clean">
+        <button type="button" class="fj__clean-btn" data-clean-view="on">
+          See it as a visitor would
+        </button>
+        <span>Hides the yellow notes and photo requests on every page.</span>
+      </p>
       <p class="fj__lede">
         This is a preview. Anything <mark class="fj-mark">in yellow brackets</mark> is placeholder
         wording we wrote to show the idea, and each "Photo needed" box names a photo we would love
@@ -58,6 +72,11 @@ const pattern = markerPattern(MARKERS);
       )}
     </div>
   </details>
+)}
+{CLIENT_NOTES_ACTIVE && (
+  <button type="button" class="fj-back" data-clean-view="off" data-pagefind-ignore="all">
+    Show notes
+  </button>
 )}
 
 {CLIENT_NOTES_ACTIVE && <script>
@@ -87,9 +106,24 @@ const pattern = markerPattern(MARKERS);
       RE.lastIndex = 0;
       for (let m = RE.exec(t.data); m; m = RE.exec(t.data)) {
         frag.append(t.data.slice(last, m.index));
+        // The mark keeps the same words; its brackets and label sit in their own spans so the
+        // clean view can drop them, and an ask (anything but a Placeholder draft) is flagged so
+        // the clean view can drop it whole.
         const el = document.createElement('mark');
-        el.className = 'fj-mark';
-        el.textContent = m[0];
+        const open = /^\[([A-Za-z ]+):\s*/.exec(m[0]);
+        const isDraft = open?.[1] === 'Placeholder';
+        el.className = isDraft ? 'fj-mark' : 'fj-mark fj-mark--ask';
+        if (open && m[0].endsWith(']')) {
+          const edge = (text: string) => {
+            const span = document.createElement('span');
+            span.className = 'fj-edge';
+            span.textContent = text;
+            return span;
+          };
+          el.append(edge(open[0]), m[0].slice(open[0].length, -1), edge(']'));
+        } else {
+          el.textContent = m[0];
+        }
         frag.append(el);
         last = m.index + m[0].length;
       }
@@ -103,8 +137,70 @@ const pattern = markerPattern(MARKERS);
       if (!OPEN.test(el.textContent ?? '')) return;
       if (el.querySelector('.fj-mark')) return;
       el.classList.add('fj-block');
+      // Its opening "[Placeholder: " and closing "]" get the same spans as a mark's, so the clean
+      // view can drop them here too (the simple case: one draft filling the element).
+      const texts: Text[] = [];
+      const inner = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      for (let n = inner.nextNode(); n; n = inner.nextNode()) texts.push(n as Text);
+      const wrap = (t: Text) => {
+        const span = document.createElement('span');
+        span.className = 'fj-edge';
+        t.replaceWith(span);
+        span.append(t);
+      };
+      const first = texts[0];
+      const start = first ? /^\s*\[Placeholder:\s*/.exec(first.data) : null;
+      if (!first || !start) return;
+      const afterStart = first.splitText(start[0].length);
+      wrap(first);
+      const last = texts.length > 1 ? texts[texts.length - 1] : afterStart;
+      const close = last.data.lastIndexOf(']');
+      if (close >= 0 && last.data.slice(close + 1).trim() === '') wrap(last.splitText(close));
+    });
+    // A paragraph, item or note that holds nothing but asks is flagged, so the clean view does not
+    // leave an empty gap where it stood.
+    root.querySelectorAll<HTMLElement>('.fj-mark--ask').forEach((ask) => {
+      const box = ask.parentElement;
+      if (!box || box.classList.contains('fj-askonly')) return;
+      const rest = [...box.childNodes].some(
+        (n) =>
+          !(n instanceof HTMLElement && n.classList.contains('fj-mark--ask')) &&
+          (n.textContent ?? '').trim() !== '',
+      );
+      if (!rest) box.classList.add('fj-askonly');
     });
   };
+  // The clean view: on from the panel's button or a ?clean=1 link, remembered for this tab. The
+  // router swaps the <html> attributes on each page change, so it is set again after every swap.
+  const KEY = 'fj-clean-view';
+  const stored = () => {
+    try {
+      return sessionStorage.getItem(KEY) === '1';
+    } catch {
+      return false;
+    }
+  };
+  const setClean = (on: boolean) => {
+    try {
+      if (on) sessionStorage.setItem(KEY, '1');
+      else sessionStorage.removeItem(KEY);
+    } catch {
+      // Storage is blocked: the view still changes for this page.
+    }
+    document.documentElement.toggleAttribute('data-clean-view', on);
+    if (on) document.querySelector<HTMLDetailsElement>('.fj')?.removeAttribute('open');
+  };
+  const applyClean = () => {
+    const asked = new URLSearchParams(location.search).get('clean');
+    setClean(asked === '1' ? true : asked === '0' ? false : stored());
+  };
+  applyClean();
+  document.addEventListener('astro:after-swap', applyClean);
+  document.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-clean-view]');
+    if (!button || button === document.documentElement) return;
+    setClean(button.dataset.cleanView === 'on');
+  });
   mark();
   document.addEventListener('astro:page-load', mark);
   // Text that arrives later (an accordion answer drawn when it opens, an island that hydrates)
@@ -234,8 +330,76 @@ const pattern = markerPattern(MARKERS);
       padding-right: 230px; /* the pill is about 200px wide, 12px from the edge */
     }
   }
+  .fj__clean {
+    display: grid;
+    gap: 6px;
+    margin: 0 0 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgb(22 38 61 / 0.25);
+    font-size: 13px;
+  }
+  .fj__clean-btn,
+  .fj-back {
+    min-height: 44px;
+    padding: 6px 16px;
+    border: 2px solid #16263d;
+    border-radius: 999px;
+    background: #16263d;
+    color: #ffffff;
+    font: 700 14px var(--font-body);
+    cursor: pointer;
+  }
+  .fj__clean-btn {
+    justify-self: start;
+  }
+  .fj__clean-btn:focus-visible,
+  .fj-back:focus-visible {
+    outline: 3px solid #ffe46b;
+    outline-offset: 3px;
+  }
+  /* "Show notes": the only thing this layer draws in the clean view, small and out of the way. */
+  .fj-back {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 60;
+    display: none;
+    min-height: 36px;
+    padding: 4px 12px;
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  /* ---- The clean view: the site without this layer ---------------------------------------- */
+  html[data-clean-view] .fj {
+    display: none;
+  }
+  html[data-clean-view] .fj-back {
+    display: inline-flex;
+    align-items: center;
+  }
+  body:has([role='dialog'][data-state='open'], dialog[open]) .fj-back {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    body:has(.sundaybar:not([hidden])) .fj-back {
+      bottom: 84px;
+    }
+  }
+  html[data-clean-view] .fj-mark,
+  html[data-clean-view] .fj-block {
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    color: inherit;
+  }
+  html[data-clean-view] :is(.fj-edge, .fj-mark--ask, .fj-askonly),
+  html[data-clean-view] :is([data-not-confirmed], [data-unconfirmed]),
+  html[data-clean-view] :is(.shot__note, .shot--tag, .hb-hero__shot, .hb-watch__shot) {
+    display: none;
+  }
   @media print {
-    .fj {
+    .fj,
+    .fj-back {
       display: none;
     }
   }

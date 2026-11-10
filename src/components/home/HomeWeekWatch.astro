@@ -166,7 +166,7 @@ const CardTag = cardHref ? 'a' : 'div';
           </ul>
           {(anyUnconfirmed || facts.calendarPageUrl || more > 0) && (
             <p class="hb-week-foot">
-              {anyUnconfirmed && 'Times to confirm. '}
+              {anyUnconfirmed && <span data-unconfirmed>Times to confirm. </span>}
               {more > 0 && `And ${more} more this week. `}
               {facts.calendarPageUrl && (
                 <a href={facts.calendarPageUrl} rel="noopener" target="_blank">

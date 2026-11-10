@@ -62,7 +62,11 @@ const streamHref = stream?.watchUrl ?? live?.href;
       <h2 class="hb-sunday__title" id="hb-sunday-title">
         {sunday.isToday ? 'Today' : 'This Sunday'}
       </h2>
-      {pill && <span class="hb-pill">{pill}</span>}
+      {pill && (
+        <span class="hb-pill" data-unconfirmed>
+          {pill}
+        </span>
+      )}
     </div>
     <p class="hb-sunday__date">
       <time datetime={sunday.date}>{sunday.dateLabel.replace(/^Sunday, /, '')}</time>
