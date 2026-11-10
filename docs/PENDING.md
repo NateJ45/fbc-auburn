@@ -213,7 +213,10 @@ signature photo if he likes), and photos for the cards on the shot list.
 
 Two loose ends from fbc-auburn#112. **Ports:** several fixes are in starter components, not church ones, and
 belong in `ncs-astro-sanity-starter` with a port card: FAQ questions rendering at 16px (tailwind-merge drops
-`text-h3` beside `text-foreground`; `FaqAccordion.tsx`), the stats labels at 0.62rem (`StatsCounter.tsx`),
+`text-h3` beside `text-foreground`; `FaqAccordion.tsx`), the corner and shadow gate
+(`src/lib/corner-shadow-scale.test.ts`, 2026-11-09; it skips PORTABLE files and `globals.css`, so the
+starter's own copies, such as `SiteSearch.astro`'s dialog shadow and the `.card-lift` grey hover, are
+unchecked until it is ported), the stats labels at 0.62rem (`StatsCounter.tsx`),
 the logo strip's row hiding its first logo when it overflows (`justify-center-safe`, `LogoStrip.astro`),
 `rounded-md` (8px) on content cards and photos in the section components, the journal body's headings at full
 section size (`JournalPortableText.tsx`), the `.c-facts` `margin: 0` cancelling `mt-l`, and a board rule left

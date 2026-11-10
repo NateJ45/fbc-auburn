@@ -152,9 +152,13 @@ html:has([data-sticky-chip][data-chip-visible]) {
   --gap-open-col: clamp(1.5rem, 3vw, 2.5rem);
   --gap-heading: clamp(1rem, 0.8rem + 0.6vw, 1.5rem); /* a section heading to its content */
 
-  /* Shadows (2026-10-24): three, where there were ten recipes. Soft and navy-tinted, never grey. */
+  /* Shadows (2026-10-24): three, where there were ten recipes. Soft and navy-tinted, never grey.
+     Lift and overlay were named on 2026-11-09, when src/lib/corner-shadow-scale.test.ts started
+     failing on typed-in shadows: the lift was already copied into three files. */
   --shadow-card: 0 18px 40px -32px rgb(22 38 61 / 0.4); /* a card sitting on the page */
+  --shadow-lift: 0 26px 48px -30px rgb(22 38 61 / 0.5); /* a linked card, hovered or focused */
   --shadow-raised: 0 30px 60px -36px rgb(22 38 61 / 0.6); /* a panel over another layer */
+  --shadow-overlay: 0 24px 60px rgb(15 34 56 / 0.35); /* a dialog over the dimmed page */
   --shadow-button: 0 10px 24px -12px rgb(15 25 38 / 0.6); /* a round play button on a photo */
 
   /* Audit 2026-10-25 (GD-H3, GD-M4). One brick course, 12px, for the top edge of a plain navy
@@ -309,7 +313,7 @@ h6 {
   aspect-ratio: 4 / 4.2;
   max-height: 440px;
   width: 100%;
-  border-radius: 999px 999px 18px 18px;
+  border-radius: 999px 999px 18px 18px; /* off-scale: the arch, round top, card-ish foot */
   background: var(--muted);
 }
 @media (min-width: 54rem) {
@@ -547,6 +551,17 @@ html[data-cards='soft'] .card-lift {
   border-radius: var(--radius-card);
 }
 
+/* The white card (2026-11-09): one recipe for a card on the page, so a new card cannot come out
+   with a different corner, shadow or padding. Add the class; set only layout (margins, grid) in
+   the component's own styles. The Next steps rail uses it. Cards on a white band, or a sheet that
+   needs an edge against the cream, add `border: 1px solid var(--border)` themselves. */
+.auburn-card {
+  padding: var(--pad-card);
+  border-radius: var(--radius-card);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+}
+
 /* The search dialog is a panel, so it takes the card corner. */
 html .site-search-dialog {
   border-radius: var(--radius-card);
@@ -765,7 +780,7 @@ html .site-search-dialog {
   aspect-ratio: 4 / 5;
   max-height: 600px;
   width: 100%;
-  border-radius: 999px 999px 18px 18px;
+  border-radius: 999px 999px 18px 18px; /* off-scale: the arch, as the hero */
 }
 /* No photo yet (2026-10-24): the Stone tint with the brick-cross print in the middle, and a shorter
    slot than a photo gets, so a missing picture is a quiet mark rather than a tall empty shape
@@ -927,7 +942,7 @@ html .site-search-dialog {
   min-height: 44px;
   padding: 0.45rem 1.05rem;
   border: 1.5px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-weight: 600;
   font-size: var(--fs-button);
   color: var(--foreground);
@@ -971,7 +986,7 @@ html .site-search-dialog {
   height: 44px;
   flex: none;
   border: 1.5px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--foreground);
   background: var(--background);
   transition: background-color 160ms ease;
@@ -1416,7 +1431,7 @@ html:has(.auburn-menu[open]) {
   width: 9px;
   height: 9px;
   flex: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--auburn-sky);
 }
 .auburn-menu__watch a[data-live] .auburn-menu__live-dot {
@@ -1551,7 +1566,7 @@ html:has(.auburn-menu[open]) {
   width: 44px;
   height: 44px;
   border: 1.5px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--foreground);
   transition: background-color 160ms ease;
 }
