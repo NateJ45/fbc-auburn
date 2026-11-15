@@ -4,7 +4,7 @@ The website for First Baptist Church of Auburn (Hamilton, Ohio): a simple, welco
 
 - **For Claude sessions:** see `CLAUDE.md`.
 - **Stack:** Astro 7, Sanity v6 (Studio embedded at `/studio`) and a Cloudflare Worker, forked from `ncs-astro-sanity-starter` on 2026-10-17.
-- **Status:** set up, not designed yet. The pages still show the starter's default content until the church's brand and content go in.
+- **Status:** designed and built, not launched. The church is reviewing draft content (marked `[Placeholder: ...]` in the CMS) before the site goes live.
 
 ## What exists
 
