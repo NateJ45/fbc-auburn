@@ -30,6 +30,7 @@ The site serves on http://localhost:4321 and the Studio on http://localhost:4321
 - **Deploy** (`deploy.yml`): ships production on a push to `main`, on the Sanity publish webhook and on manual dispatch.
 - **Lighthouse** and **Visual regression**: run on pull requests and `main`.
 - **Sanity backup** (`sanity-backup.yml`): encrypted dataset exports.
+- **Dependabot lockfile repair** (`dependabot-lockfile.yml`): on Dependabot's PRs only, rebuilds a lockfile that CI's npm rejects, commits it and re-runs `ci.yml` (starter PORTS.md card 226).
 - **Dependabot**: weekly dependency updates.
 
 How to deploy, patch content and run audits: `OPERATIONS.md`. Open loops: `docs/PENDING.md`.
