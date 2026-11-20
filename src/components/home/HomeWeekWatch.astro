@@ -10,7 +10,9 @@
 // the Watch block's poster card: its link label as the title, its text underneath, lifting on
 // hover. Before launch, a stand-in poster gives way to a pinned "Photo needed" note on the card's
 // ink ground (src/data/shot-list.ts).
-import SectionLabel from './SectionLabel.astro';
+//
+// One tinted band (2026-11-20, the Home rhythm pass): no eyebrow over the two titles, and a quiet
+// week shows just its weekly rhythm (the old 'Nothing extra on the calendar' line read as empty).
 import LastSunday from '@/components/church/LastSunday.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
@@ -64,7 +66,6 @@ const more = dated.length - rows.length;
 const anyUnconfirmed = rhythm.some((r) => !r.confirmed);
 const weekHeading = week?.heading || 'This week';
 const watchHeading = watch?.heading || 'Last Sunday';
-const label = [week && weekHeading, watch && watchHeading].filter(Boolean).join(' and ');
 // Last Sunday's message (Home audit research, 2026-10-17): while the entry is under 8 days old
 // the card names it (title, passage, date) and links to its video; otherwise it shows the
 // block's own words. Derived from the entry's date at build time (daily rebuilds), never stale.
@@ -125,9 +126,8 @@ const cardSub = sermon
 const CardTag = cardHref ? 'a' : 'div';
 ---
 
-<section class="hb-section" aria-labelledby={headingId}>
+<section class="hb-band hb-weekband" aria-labelledby={headingId}>
   <div class="hb-wrap">
-    <SectionLabel text={label} as="p" />
     <div class="hb-pair">
       {week && (
         <div>
@@ -141,9 +141,6 @@ const CardTag = cardHref ? 'a' : 'div';
                 </li>
               ))}
             </ul>
-          )}
-          {rows.length === 0 && (
-            <p class="hb-week-empty">Nothing extra on the calendar this week.</p>
           )}
           <ul class="hb-week hb-num" hidden={rows.length === 0}>
             {rows.map((r) => (
@@ -297,10 +294,6 @@ const CardTag = cardHref ? 'a' : 'div';
   }
   .hb-rhythm strong {
     color: var(--hb-ink);
-  }
-  .hb-week-empty {
-    margin: 0 0 12px;
-    color: var(--hb-muted);
   }
   /* A cancelled event stays in the list, struck through, so nobody wonders where it went. */
   .hb-week li.is-cancelled .hb-week__what,

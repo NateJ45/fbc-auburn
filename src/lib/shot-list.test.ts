@@ -46,8 +46,8 @@ test('an unlisted slot, heading or index asks for nothing', () => {
   assert.equal(shotFor('/', 'A place to belong', 9, facebook), null);
 });
 
-test('Home lists the hero, the three Who we are photos, Last Sunday and Meet Pastor Jacob', () => {
-  assert.equal(shotsForPage('/').length, 6);
+test('Home lists the hero, the four walk steps, the three Who we are photos, Last Sunday, Meet Pastor Jacob and the kids', () => {
+  assert.equal(shotsForPage('/').length, 11);
   assert.equal(shotsForPage('/no-such-page/').length, 0);
 });
 

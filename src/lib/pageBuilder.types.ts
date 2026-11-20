@@ -568,6 +568,8 @@ export interface ProjectedRailStep {
   icon?: string;
   title?: string;
   body?: string;
+  /** Home draws the step as a panel with this photo (2026-11-20). */
+  image?: ProjectedImage | null;
   times?: { _key: string; _type?: 'railTime'; time?: string; label?: string }[];
   /** Which Sunday gathering the step is; its time comes from Church facts. */
   gathering?: 'none' | 'first' | 'second';

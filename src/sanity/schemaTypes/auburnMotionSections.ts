@@ -21,6 +21,7 @@
 import { defineType, defineField, defineArrayMember } from 'sanity';
 import { ArrowDownIcon } from '@sanity/icons/ArrowDown';
 import { PinIcon } from '@sanity/icons/Pin';
+import { imageWithAlt } from './_imageWithAlt';
 import { checkLinkBox, isUnknownToken, linkTokenOf } from '../../lib/church-links.ts';
 
 /**
@@ -101,6 +102,14 @@ export const stepsRailSection = defineType({
               validation: (R) => R.required().max(80),
             }),
             defineField({ name: 'body', title: 'Text (optional)', type: 'text', rows: 3 }),
+            // 2026-11-20: Home draws each step as a panel with its photo (HomeWalk.astro). Optional:
+            // a step with no photo is a text panel, and other pages ignore it.
+            imageWithAlt({
+              name: 'image',
+              title: 'Photo (optional)',
+              description:
+                'Shown beside this step on Home: what a visitor sees at this moment, like the front door or the classroom.',
+            }),
             // Home audit research (2026-10-17): on Home this block is "Your first Sunday". A step
             // that IS one of the Sunday gatherings takes its time from Site settings > Church
             // facts, so the time is typed once (rule 15). Logic-driving, so it is in

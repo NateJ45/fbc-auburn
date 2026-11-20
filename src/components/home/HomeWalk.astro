@@ -1,18 +1,30 @@
 ---
 // Safe to edit by hand
-// "Your first Sunday" on Home (Home audit research, 2026-10-17): the steps a first-time visitor
-// takes on a Sunday morning, drawn from a Home "Stepping-stone steps" block. HomeBoard draws the
-// first such block here, straight after the hero, so the page answers "what is it like?" before
-// anything else. Modelled on the best visit walk-throughs found (Jasper's First Baptist's
-// timeline, Reynolda's before / during / after): a few short steps, each with a time or place.
+// "Your first Sunday" on Home: the steps a first-time visitor takes on a Sunday morning, drawn
+// from a Home "Stepping-stone steps" block. HomeBoard draws the first such block here, straight
+// after the hero, so the page answers "what is it like?" before anything else.
 //
-// - Each step is a numbered stone in the path's colours (the water, the green ring, the gold
-//   steps, the red cross), joined by gold stepping-stone dashes: across on desktop, down a rail on
-//   phones. Editors choose words, not layout; the stone icon field is not used here.
+// PANELS (2026-11-20, the Home rhythm pass; Details reference: Vault "Stacked Scroll Panels" and
+// Teamway's stacked step panels). Each step is a wide panel with its photo: the numbered red
+// brick, the time, the title and the words on the left, the step's photo on the right (the site's
+// `.split`, rule 17). From 1024px the panels stack as you scroll: each one holds a little lower
+// than the last under the header while the next slides over it, so the four steps pile up like
+// courses of brick. Phones and tablets get a plain column, photo first. Before this the steps
+// were four text columns on white, the plainest band on the page.
+//
+// - Photos come from each step's "Photo (optional)" field. Before launch an empty or stand-in
+//   slot shows its "Photo needed" request with an example (src/data/shot-list.ts, keyed by the
+//   block's heading); a step with no photo and no request is a text panel across the full width.
 // - A step marked as a Sunday gathering takes its time from Site settings > Church facts (rule
-//   15), so the time is typed once; the This Sunday card above carries the "To confirm" tag.
+//   15), so the time is typed once.
+// - The block's Heading ("Your first Sunday") names it in the Studio and keys its shot list; the
+//   page shows only the Intro as the section title (no eyebrow over it, 2026-11-20). With no
+//   Intro the Heading is the title.
 // - Everything is in the HTML: no reveal hides text until a script runs.
-import SectionLabel from './SectionLabel.astro';
+import SanityImage from '@/components/SanityImage.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { shotFor } from '@/data/shot-list';
+import { splitStega } from '@/lib/preview-stega';
 import { getChurchFacts } from '@/lib/church-data';
 import { ctaHref } from '@/lib/church-cta-href';
 import type { ProjectedRailStep, ProjectedStepsRailSection } from '@/lib/pageBuilder.types';
@@ -30,51 +42,69 @@ const gatheringOf = (g?: string) =>
 // "9:45" reads cleanly beside a place; an afternoon time keeps its "pm".
 const short = (label: string) => label.replace(/ am$/, '');
 const cta = block.primaryCta?.label ? block.primaryCta : null;
+const title = block.intro || block.heading || 'Your first Sunday';
+const shotKey = splitStega(block.heading || 'Your first Sunday').cleaned;
+const path = Astro.url.pathname;
+const panels = steps.map((s, i) => {
+  const g = gatheringOf(s.gathering);
+  const photo = s.image?.asset ? s.image : null;
+  return {
+    step: s,
+    when: [g && short(g.timeLabel), s.place].filter(Boolean).join(' · '),
+    shot: shotFor(path, shotKey, i, s.image),
+    photo,
+  };
+});
 ---
 
-{steps.length > 0 && (
+{panels.length > 0 && (
   <section class="hb-section hb-walk" id="first-sunday" aria-labelledby={headingId}>
     <div class="hb-wrap">
-      {/* The label names the section; the intro is its display headline, the same pairing as
-          "Who we are" over "A place to belong" (Home critic, 2026-10-17). */}
-      {block.intro ? (
-        <>
-          <SectionLabel text={block.heading || 'Your first Sunday'} as="p" />
-          <h2 class="hb-walk__heading" id={headingId}>
-            {block.intro}
-          </h2>
-        </>
-      ) : (
-        <SectionLabel text={block.heading || 'Your first Sunday'} id={headingId} />
-      )}
-      <ol class="hb-walk__steps" style={`--hb-walk-n: ${Math.min(steps.length, 4)}`}>
-        {steps.map((s, i) => {
-          const g = gatheringOf(s.gathering);
-          const eyebrow = [g && short(g.timeLabel), s.place].filter(Boolean).join(' · ');
-          return (
-            <li class="hb-walk__step">
+      <h2 class="hb-walk__heading" id={headingId}>
+        {title}
+      </h2>
+      {/* Below 1024px the list scrolls sideways, so it takes keyboard focus and a name. */}
+      <ol
+        class="hb-walk__panels"
+        tabindex="0"
+        aria-label={`Your first Sunday, ${panels.length} steps`}
+      >
+        {panels.map(({ step: s, when, shot, photo }, i) => (
+          <li
+            class:list={['hb-walk__panel', (shot || photo) && 'split']}
+            style={`--hb-walk-i: ${i}`}
+          >
+            <div class="hb-walk__text">
               <span class:list={['hb-walk__stone', `hb-walk__stone--${i % 4}`]} aria-hidden="true">
                 {i + 1}
               </span>
-              <div class="hb-walk__text">
-                {/* Every step keeps the time line, empty or not, so the titles line up. */}
-                <p
-                  class:list={['hb-walk__when hb-num', !eyebrow && 'is-empty']}
-                  aria-hidden={eyebrow ? undefined : 'true'}
-                >
-                  {eyebrow || '\u00a0'}
-                </p>
-                <h3 class="hb-walk__title">{s.title}</h3>
-                {s.body && <p class="hb-walk__body">{s.body}</p>}
-                {s.linkLabel && s.linkHref && (
-                  <a class="hb-walk__link" href={s.linkHref}>
-                    {s.linkLabel}
-                  </a>
-                )}
-              </div>
-            </li>
-          );
-        })}
+              {when && <p class="hb-walk__when hb-num">{when}</p>}
+              <h3 class="hb-walk__title">{s.title}</h3>
+              {s.body && <p class="hb-walk__body">{s.body}</p>}
+              {s.linkLabel && s.linkHref && (
+                <a class="hb-walk__link" href={s.linkHref}>
+                  {s.linkLabel}
+                </a>
+              )}
+            </div>
+            {shot ? (
+              <figure class="hb-walk__ph">
+                <ShotRequest shot={shot} class="shot--fill" />
+              </figure>
+            ) : (
+              photo && (
+                <figure class="hb-walk__ph">
+                  <SanityImage
+                    source={photo as never}
+                    width={900}
+                    sizes="(max-width: 1023px) 100vw, 45vw"
+                    quality={70}
+                  />
+                </figure>
+              )
+            )}
+          </li>
+        ))}
       </ol>
       {cta && (
         <div class="hb-walk__end">

@@ -5,13 +5,12 @@
 //
 //   board  the first card block: "Through the week", a three-column white board on the sky tile,
 //          104px stone icons, each card's link after its text.
-//   ways   the next one: "Other ways in", three white link cards on the green tile, 112px icons,
+//   ways   the next one: "Other ways in", white link cards (two columns for two or four) on the green tile, 112px icons,
 //          the whole card is the link and lifts on hover.
 //
 // TIMES ARE NEVER TYPED. A card whose title starts with a weekday ("Wednesdays") gets that day's
 // gathering times from Site settings > Church facts appended: "Wednesdays, 6:00 pm". The Studio
 // field description says so.
-import SectionLabel from './SectionLabel.astro';
 import StoneIcon from '@/components/StoneIcon.astro';
 import { getChurchFacts } from '@/lib/church-data';
 import { dayWithTimes } from '@/lib/church-facts';
@@ -35,7 +34,12 @@ const titleWithTime = (title: string): string => dayWithTimes(title, facts.servi
   aria-labelledby={block.heading ? headingId : undefined}
 >
   <div class="hb-wrap">
-    {block.heading && <SectionLabel text={block.heading} id={headingId} />}
+    {/* A real section title since 2026-11-20 (it was a 13px label, the only band on Home without one). */}
+    {block.heading && (
+      <h2 class="hb-band__title" id={headingId}>
+        {block.heading}
+      </h2>
+    )}
     {variant === 'board' ? (
       <div class="hb-board">
         {cards.map((c) => (
@@ -57,7 +61,7 @@ const titleWithTime = (title: string): string => dayWithTimes(title, facts.servi
         ))}
       </div>
     ) : (
-      <div class="hb-ways">
+      <div class="hb-ways" data-count={cards.length}>
         {cards.map((c) => {
           const Tag = c.link ? 'a' : 'div';
           return (

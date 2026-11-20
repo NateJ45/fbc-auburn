@@ -70,11 +70,11 @@ A section whose block key is in `src/lib/church-anchors.ts` gets that name as it
 - **Home** (`homePage`, drawn by HomeBoard): hero (the welcome is the one "Come as you are"; the
   subhead is the church's Facebook bio, "everyone is family and loves the Lord"; second button
   "Watch a sermon" to `/sermons/`; an optional silent Background video plays over the photo, see
-  `docs/agent/animation.md`), Your first Sunday (Sunday School explained and optional; Worship links
+  `docs/agent/animation.md`), Your first Sunday (four photo panels since 2026-11-20, each step's optional Photo; Sunday School explained and optional; Worship links
   to `#kids`), **The good news** (`home-gospel`, since 2026-11-19 a Cards with stone icons block in
   the Brick wall look: four numbered stones on the navy brick wall, the finished gospel of
   `wwb-short` in four parts with a verse each, the last stone linking to `#the-gospel`; drawn by
-  IconCards through SectionRenderer, not as a Home band), A place to belong, This week and Last
+  IconCards through SectionRenderer, not as a Home band), **Bring the kids** (`home-kids`, 2026-11-20: only what Plan your visit says, linking to `#kids`), A place to belong, This week and Last
   Sunday (to `/sermons/`), Meet Pastor Jacob (his hello in the first person), Other ways in (giving
   says Sunday or by mail until online giving is live).
 - **Plan your visit**: page head with the Sunday times band (times, address, Directions), Good to
