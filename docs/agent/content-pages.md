@@ -71,10 +71,12 @@ A section whose block key is in `src/lib/church-anchors.ts` gets that name as it
   subhead is the church's Facebook bio, "everyone is family and loves the Lord"; second button
   "Watch a sermon" to `/sermons/`; an optional silent Background video plays over the photo, see
   `docs/agent/animation.md`), Your first Sunday (Sunday School explained and optional; Worship links
-  to `#kids`), **The good news** (`home-gospel`, a Text block drawn by SectionRenderer inside the
-  board, a link to `#the-gospel`; the one block finished-copy.mjs leaves alone, see PENDING 1zt),
-  A place to belong, This week and Last Sunday (to `/sermons/`), Meet Pastor Jacob (his hello in
-  the first person), Other ways in (giving says Sunday or by mail until online giving is live).
+  to `#kids`), **The good news** (`home-gospel`, since 2026-11-19 a Cards with stone icons block in
+  the Brick wall look: four numbered stones on the navy brick wall, the finished gospel of
+  `wwb-short` in four parts with a verse each, the last stone linking to `#the-gospel`; drawn by
+  IconCards through SectionRenderer, not as a Home band), A place to belong, This week and Last
+  Sunday (to `/sermons/`), Meet Pastor Jacob (his hello in the first person), Other ways in (giving
+  says Sunday or by mail until online giving is live).
 - **Plan your visit**: page head with the Sunday times band (times, address, Directions), Good to
   know (what to wear, about an hour, nobody puts you on the spot), Your kids (the nursery and the
   child safety sentence are asks), By age (`pyv-kids-ages`: a nursery ask, children, students), Walk

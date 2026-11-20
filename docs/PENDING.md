@@ -38,9 +38,9 @@ the Baptist Faith and Message (`docs/agent/content-pages.md`). Launch gate:
   inside the building, office hours and email (Leadership, Need the pastor?), deacons and leaders with
   permission, who counts the offering and the budget vote (Give), a music team (Ministries), the
   example sermon (replace or delete), and the /christmas/ page's times.
-- **Home's good news** (`home-gospel`) still holds its `[Placeholder:` draft: PR fbc-auburn#299
-  rebuilds it as four stones. After #299 merges and its script has run, rewrite the four stones in
-  the church's words (as on What we believe, `wwb-short`) with a guarded script like finished-copy.
+- **Home's good news** (`home-gospel`, 2026-11-19): four stones in the church's words, split from
+  What we believe's finished gospel with a verse each (`scripts/content/home-good-news-bricks.mjs`).
+  Jacob approves it with What we believe above.
 
 ### 1zs. The e2e job is pinned to ubuntu-24.04 (opened 2026-10-30)
 
@@ -170,7 +170,8 @@ Publisher "Save as PDF", or a scanner's "searchable PDF" option). Also tune
 All seven audit PRs (#170 to #174, #176, #177) are merged and their content applied (changelog,
 2026-10-25). Open:
 
-- **Jacob's answers.** Every `[Jacob: ...]` placeholder the audit added (the gospel on Home, size and
+- **Jacob's answers.** Every `[Jacob: ...]` placeholder the audit added (the gospel on Home, told
+  since 2026-11-19 as four short stones, size and
   music, kids and the child safety policy, what worship is like, access, Baptist distinctives,
   governance, who reads prayer requests, Need the pastor?, giving accountability, and more) is
   collected in the studio's discovery pack for him. Each answer replaces its placeholder; the same

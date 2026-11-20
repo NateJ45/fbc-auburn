@@ -2181,7 +2181,7 @@ export type IconCardsSection = {
     _type: 'iconCard';
     _key: string;
   }>;
-  look?: 'standard' | 'stone';
+  look?: 'standard' | 'stone' | 'bricks';
 };
 
 export type EmbedSection = {

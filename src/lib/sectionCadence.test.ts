@@ -292,6 +292,23 @@ test('two bands of the same look never touch; different looks may', () => {
   assert.deepEqual(looks(rows), ['stone', 'standard', 'feature', 'standard', 'stone']);
 });
 
+test('the Brick wall look paints the Feature navy and obeys the dark-band rule (2026-11-19)', () => {
+  const rows = classifySections([
+    block('richTextSection'),
+    block('iconCardsSection', { look: 'bricks' }), // the brick wall: Feature surface
+    block('richTextSection'),
+    block('quoteSection', { look: 'feature' }), // fine: a light band between them
+    block('iconCardsSection', { look: 'bricks' }), // touches a Feature band: Standard
+  ]);
+  assert.equal(rows[1].look, 'bricks');
+  assert.equal(rows[1].surface, 'feature');
+  assert.equal(rows[3].look, 'feature');
+  assert.equal(rows[4].look, 'standard');
+  // Only the cards block offers it: anywhere else it falls back to Standard.
+  const other = classifySections([block('quoteSection', { look: 'bricks' })]);
+  assert.equal(other[0].look, 'standard');
+});
+
 test('a Feature band never touches a dark band, and Auburn closes light without a photo', () => {
   const photo = { backgroundImage: { asset: { _ref: 'image-a' } } };
   const rows = classifySections([

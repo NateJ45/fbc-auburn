@@ -6,7 +6,8 @@
 // through the real SectionRenderer so the cadence resolves them exactly as it
 // would on a live page. FBC Auburn's looks: Standard (the white board), Feature
 // (the church blue) and Stone (the pale stepping-stone tiles), with a second Stone
-// in a row shown falling back to Standard.
+// in a row shown falling back to Standard, and Brick wall (2026-11-19), which only
+// the cards block offers: numbered cream stones on the navy brick.
 //
 // It is also the fixture tests/lightbox.spec.ts drives: a gallery with
 // captions, a second gallery on the Feature band, and nothing else that opens
@@ -112,6 +113,19 @@ const SECTIONS: Record<string, unknown>[] = [
     look: 'stone',
     quote: 'The pale stones can sit right beside the church blue.',
     attribution: 'Stone look',
+  },
+  // Brick wall (2026-11-19): the cards block only, numbered cream stones on the navy brick.
+  {
+    _type: 'iconCardsSection',
+    _key: 'bricks-cards',
+    look: 'bricks',
+    eyebrow: 'Brick wall look',
+    heading: 'Something told in order',
+    cards: [
+      { _key: 'k1', _type: 'iconCard', icon: 'crown', title: 'First', body: 'One stone.' },
+      { _key: 'k2', _type: 'iconCard', icon: 'cracked-heart', title: 'Then', body: 'The next.' },
+      { _key: 'k3', _type: 'iconCard', icon: 'cross', title: 'Last', body: 'The end.' },
+    ],
   },
   {
     _type: 'ctaBandSection',

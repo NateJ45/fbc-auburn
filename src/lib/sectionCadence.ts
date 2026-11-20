@@ -192,12 +192,16 @@ export function classifySections<T extends { _type: string }>(
     if (CONTENT_TYPES.has(block._type)) {
       look = resolveLook(block._type, block.look);
       if (look !== 'standard' && look === prevBand) look = 'standard';
-      if (look === 'feature' && (prevDark || isDarkSelfContained(list[i + 1]))) {
+      // Brick wall (2026-11-19) paints the Feature navy, so it obeys the same dark-band rule.
+      if (
+        (look === 'feature' || look === 'bricks') &&
+        (prevDark || isDarkSelfContained(list[i + 1]))
+      ) {
         look = 'standard';
       }
 
-      if (look === 'feature' || look === 'stone') {
-        surface = look;
+      if (look === 'feature' || look === 'stone' || look === 'bricks') {
+        surface = look === 'bricks' ? 'feature' : look;
         // Out of the alternation: no counter step, and no divider either side.
         prevContentSurface = null;
       } else {
@@ -206,7 +210,7 @@ export function classifySections<T extends { _type: string }>(
       }
     }
     const dark = surface === 'feature' || isDarkSelfContained(block);
-    const band = look === 'feature' || look === 'stone' ? look : null;
+    const band = look === 'feature' || look === 'stone' || look === 'bricks' ? look : null;
 
     // Insert a divider before this row when:
     //   - Both this and the previous content block are content blocks.

@@ -350,6 +350,28 @@ const SECTIONS: Record<string, unknown>[] = [
       },
     ],
   },
+  // The Brick wall look (2026-11-19): numbered cream stones on the navy brick wall.
+  {
+    _type: 'iconCardsSection',
+    _key: 'iconcards-bricks',
+    eyebrow: 'The good news',
+    heading: 'Told in four stones',
+    intro: 'Something told in order, one stone at a time.',
+    look: 'bricks',
+    cards: [
+      { _key: 'b1', _type: 'iconCard', icon: 'crown', title: 'First', body: 'The first part.' },
+      { _key: 'b2', _type: 'iconCard', icon: 'cracked-heart', title: 'Second', body: 'The next.' },
+      { _key: 'b3', _type: 'iconCard', icon: 'cross', title: 'Third', body: 'And then.' },
+      {
+        _key: 'b4',
+        _type: 'iconCard',
+        icon: 'broken-chain',
+        title: 'Fourth',
+        body: 'The last part, with a link.',
+        link: cta('Read more'),
+      },
+    ],
+  },
   {
     _type: 'letterSection',
     _key: 'letter',
