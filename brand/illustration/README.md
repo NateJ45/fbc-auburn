@@ -21,7 +21,8 @@ three places:
 
 - **About, "Our building":** the Image and text block with the picture set to "The building drawing
   (a wide band)", full width on a brick sill.
-- **The footer:** faint and pale on the right, standing on the brick "Auburn".
+- **The footer:** the scene at the foot of every page (2026-11-09), pale navy on a few pencil
+  strokes of lawn under a low band of sky, between the links and the bottom bar.
 - **Plan your visit:** the opener of the walk, with the front door pinned as the place to start
   (the pin's position is `DOOR` in the component; move it if the drawing is replaced).
 

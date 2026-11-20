@@ -1,0 +1,72 @@
+---
+// Safe to edit by hand
+// The sermon series as a typographic list with one large picture beside it (2026-11-09). Drawn by
+// SermonSeriesGrid.astro next to the cards when there are three or more series; CSS shows it ONLY on
+// a wide screen with a fine pointer and scripting on (`(min-width: 64rem) and (hover: hover) and
+// (scripting: enabled)`, src/styles/collections.css "Series list with a preview"), so phones,
+// tablets, touch screens and no-JS visitors keep the cards exactly as they were.
+//
+// Each row is a plain link to its series page: title, sermon count and date range, the same
+// derived numbers as the cards (rule 15, src/lib/sermons.ts). The panel holds every series' art
+// (SermonArt) stacked in one 16:9 frame, so its size is reserved and nothing shifts; the script
+// below marks the hovered or keyboard-focused row's picture active and CSS cross-fades it in about
+// 200ms (an instant swap under reduced motion). The panel is aria-hidden: the links carry the meaning.
+import SermonArt from './SermonArt.astro';
+import { seriesCountLabel, seriesHref, seriesSpan, type SeriesDoc } from '@/lib/sermons';
+
+interface Props {
+  list: SeriesDoc[];
+}
+const { list } = Astro.props;
+---
+
+<div class="c-slist" data-series-preview>
+  <ul class="c-slist__rows" role="list">
+    {list.map((s, i) => (
+      <li class="c-slist__row">
+        <a href={seriesHref(s.slug)} data-series-index={i} data-active={i === 0 ? '' : undefined}>
+          <h3 class="c-slist__title">{s.title}</h3>
+          <span class="c-slist__count">{seriesCountLabel(s.count)}</span>
+          <span class="c-slist__span">{seriesSpan(s.firstDate, s.lastDate)}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <div class="c-slist__panel" aria-hidden="true">
+    {list.map((s, i) => (
+      <div class="c-slist__art" data-series-art={i} data-active={i === 0 ? '' : undefined}>
+        <SermonArt
+          art={s.art}
+          word={s.book || s.title}
+          seed={s.title}
+          width={1200}
+          sizes="(min-width: 64rem) 46vw, 1px"
+        />
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  // Hover or keyboard focus on a row shows that series' picture. Delegated on each list, bound
+  // again after every page swap (the page router), and once per element.
+  function initSeriesPreview(): void {
+    document.querySelectorAll<HTMLElement>('[data-series-preview]').forEach((root) => {
+      if (root.dataset.bound) return;
+      root.dataset.bound = '1';
+      const arts = root.querySelectorAll<HTMLElement>('[data-series-art]');
+      const rows = root.querySelectorAll<HTMLElement>('[data-series-index]');
+      const show = (target: EventTarget | null): void => {
+        const row = (target as Element | null)?.closest?.<HTMLElement>('[data-series-index]');
+        if (!row) return;
+        const i = row.dataset.seriesIndex;
+        arts.forEach((a) => a.toggleAttribute('data-active', a.dataset.seriesArt === i));
+        rows.forEach((r) => r.toggleAttribute('data-active', r === row));
+      };
+      root.addEventListener('pointerover', (e) => show(e.target));
+      root.addEventListener('focusin', (e) => show(e.target));
+    });
+  }
+  initSeriesPreview();
+  document.addEventListener('astro:page-load', initSeriesPreview);
+</script>

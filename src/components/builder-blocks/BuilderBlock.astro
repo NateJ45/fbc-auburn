@@ -10,6 +10,7 @@ import type { BuilderPageBlock } from '@/lib/builderBlocks.types';
 import type { CadenceSurface } from '@/lib/surfaces';
 import EventDetailsBlock from './EventDetailsBlock.astro';
 import ScheduleBlock from './ScheduleBlock.astro';
+import CandlelightBlock from './CandlelightBlock.astro';
 import PhotoCardsBlock from './PhotoCardsBlock.astro';
 
 interface Props {
@@ -44,4 +45,6 @@ const {
   <ScheduleBlock block={b} surface={surface} headingId={headingId} />
 ) : b._type === 'photoCardsSection' ? (
   <PhotoCardsBlock block={b} surface={surface} headingId={headingId} isFirst={isFirst} />
+) : b._type === 'candlelightSection' ? (
+  <CandlelightBlock block={b} headingId={headingId} />
 ) : null}

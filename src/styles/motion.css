@@ -167,13 +167,10 @@ html.motion .reveal:not(.in) {
 /* Every step on the same white card (2026-11-09). Step 1 alone had one, to set "Know Jesus" apart
    (audit 2026-10-25, P-9); Know Jesus is now its own section above the rail, so the steps are
    peers and a lone card read as the others missing theirs. The gap between steps is the card's
-   margin, so the dashed trail still walks the whole way to the next icon. */
+   margin, so the dashed trail still walks the whole way to the next icon. The card itself is the
+   shared .auburn-card (auburn.css); only its place in the grid is set here. */
 .rail__step .rail__body {
   align-self: start;
-  padding: var(--pad-card);
-  border-radius: var(--radius-card);
-  background: #ffffff;
-  box-shadow: var(--shadow-card);
 }
 .rail__step:not(:last-child) .rail__body {
   margin-bottom: clamp(3.5rem, 8vw, 5rem);

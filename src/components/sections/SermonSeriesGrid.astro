@@ -4,8 +4,9 @@
 // ordered by each series' first sermon (derived, rule 15), three across on a wide screen like the
 // stone-icon cards. A content block: the surface comes from the cadence.
 import SeriesCard from '@/components/collections/SeriesCard.astro';
+import SeriesPreviewList from '@/components/collections/SeriesPreviewList.astro';
 import { surfaceClass } from '@/lib/surfaces';
-import { sortSeries, type SeriesDoc } from '@/lib/sermons';
+import { seriesUsesPreview, sortSeries, type SeriesDoc } from '@/lib/sermons';
 import { getAllPageSlugs } from '@/lib/queries';
 
 // The Watch page is made in the Studio: link it only while it is published, so a build without
@@ -34,6 +35,9 @@ const {
 const list = sortSeries(
   (series ?? []).filter((s) => s?.title && s?.slug && (!hideWhenEmpty || (s.count ?? 0) > 0)),
 ).slice(0, Math.max(1, Math.min(24, limit ?? 6)));
+// Three or more series: a wide screen with a mouse also gets the list with one large picture
+// (SeriesPreviewList.astro, 2026-11-09); CSS picks which of the two shows, the cards everywhere else.
+const preview = seriesUsesPreview(list);
 ---
 
 {!(hideWhenEmpty && list.length === 0) && (
@@ -47,11 +51,12 @@ const list = sortSeries(
       </div>
       {list.length > 0 ? (
         <>
-          <ul class="c-grid" role="list">
+          <ul class:list={['c-grid', preview && 'c-grid--has-preview']} role="list">
             {list.map((s) => (
               <SeriesCard series={s} />
             ))}
           </ul>
+          {preview && <SeriesPreviewList list={list} />}
           <p class="c-more">
             <a class="c-link" href="/sermons/">
               Every sermon

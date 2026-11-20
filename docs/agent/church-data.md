@@ -230,6 +230,16 @@ a Live stream link or a YouTube channel id).
 - A sermon with no picture, series picture or YouTube thumbnail gets the stones art (`SermonArt.astro`) with the
   church sketch faint in cream and the series, else the book, else its own title. `shapes.css` used to paint the
   Watch band's art beige over that ground; the tint now skips `.c-art--blank`.
+- The series band (`sermonSeriesSection`, `SermonSeriesGrid.astro`) draws cards. With three or more series
+  (`seriesUsesPreview`, `SERIES_PREVIEW_MIN` in `src/lib/sermons.ts`) it also draws a typographic list beside one
+  large 16:9 picture (`SeriesPreviewList.astro`, 2026-11-09): title, sermon count (`seriesCountLabel`, shared with
+  the cards) and date range (`seriesSpan`) per row, each row a plain link to its series page. Hovering or tabbing to
+  a row cross-fades the panel to that series' `SermonArt` in 200ms (instant under reduced motion); every picture
+  sits stacked in the one frame, so nothing shifts, and the panel is `aria-hidden`. CSS picks which shows
+  (`collections.css`, "Series list with a preview"): the list only under
+  `(min-width: 64rem) and (hover: hover) and (scripting: enabled)`, the cards everywhere else (phones, tablets,
+  touch, no JS, browsers without `scripting`). No inline script, so the CSP hash list is unchanged. The CI snapshot
+  has no series, so `tests/series-preview.spec.ts` runs on the three-series fixture on `/styleguide/sections/`.
 - Each sermon page lists Passage, Preacher, Series and Length; before launch a missing one shows a `[Jacob: ...]`
   line in its place (`CLIENT_NOTES_ON`). YouTube plays in place; Facebook opens Facebook.
 - `/bulletin/` shows `bulletinToShow` (`src/lib/sermons.ts`): the newest current Bulletin, else the newest one even

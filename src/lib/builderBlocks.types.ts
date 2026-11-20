@@ -49,14 +49,27 @@ export interface ProjectedPhotoCardsSection {
   look?: string;
 }
 
+/** The Candlelight band (2026-11-09): plain fields only, so the projection's `...` is its shape. */
+export interface ProjectedCandlelightSection {
+  _type: 'candlelightSection';
+  _key: string;
+  heading?: string;
+  text?: string;
+  candles?: number | null;
+}
+
 export type BuilderPageBlock =
-  ProjectedEventDetailsSection | ProjectedScheduleSection | ProjectedPhotoCardsSection;
+  | ProjectedEventDetailsSection
+  | ProjectedScheduleSection
+  | ProjectedPhotoCardsSection
+  | ProjectedCandlelightSection;
 
 /** Every builder block type; SectionRenderer hands these to BuilderBlock.astro. */
 export const BUILDER_BLOCK_TYPES: ReadonlySet<string> = new Set<BuilderPageBlock['_type']>([
   'eventDetailsSection',
   'scheduleSection',
   'photoCardsSection',
+  'candlelightSection',
 ]);
 
 /** Narrow a page-builder block to a builder block. */

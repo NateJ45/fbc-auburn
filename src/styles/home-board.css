@@ -332,7 +332,7 @@
 .hb-lift:hover,
 .hb-lift:focus-visible {
   transform: translateY(-4px);
-  box-shadow: 0 26px 48px -30px rgb(22 38 61 / 0.5);
+  box-shadow: var(--shadow-lift);
 }
 .hb-lift:focus-visible {
   outline: 3px solid var(--auburn-gold);
@@ -530,7 +530,7 @@
   left: 14px;
   bottom: 12px;
   padding: 3px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: #16263d;
   color: #ffffff;
   font-size: var(--fs-tag);
@@ -717,7 +717,7 @@
   display: inline-block;
   margin-bottom: 4px;
   padding: 2px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: #9a3b2a;
   color: #ffffff;
   font-size: var(--fs-tag);
@@ -741,7 +741,7 @@
   justify-content: center;
   width: 60px;
   height: 60px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: #ffffff;
 }
 .hb-watch__title {

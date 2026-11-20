@@ -198,6 +198,7 @@ ScrollTrigger, SplitText and Barba, driven by Alpine components. What it does, a
 | Photos and arches drift with the scroll (scrubbed parallax)                                                                                                       | Big framed photos drift inside their frame                                                                                          | `.flow-par`, CSS view timeline (Chrome, Edge, Safari 26; still elsewhere)                                                |
 | Hero text slides away as you scroll out; hero image slides in from the side on load                                                                               | Home: the photo sinks and zooms, the words lift and fade; the This Sunday card slides in from the right                             | view timeline on `.hb-hero` (`--hero-p` fallback in Firefox), `.flow--side`                                              |
 | Footer: a big line of text slides sideways with the scroll                                                                                                        | The footer verse (Site settings > Social and footer > "Footer: the verse"; Matthew 11:28 by default), on Home only since 2026-10-25 | `scrubVerse()` in `flow.ts`, ends as the verse nears the top of the screen; from 768px. Phones show it wrapped and still |
+| (ours only)                                                                                                                                                       | A person's photo opens in four brick courses, bottom up, in running bond (opt-in, below)                                            | `.flow--portrait`, a mask on the frame, 600ms on both levels                                                             |
 | (ours only)                                                                                                                                                       | The building sketch draws itself in: the pen lines sweep across, the shading follows 35% behind                                     | `sketch-draw` in `flow.css`, view timeline; finished drawing elsewhere                                                   |
 | Buttons lean toward the mouse (magnetic)                                                                                                                          | Primary buttons and the header's Plan your visit, mouse only                                                                        | `translate` from the pointer, 14px at most                                                                               |
 | Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main lifts out (120ms), the new page rises in (260ms); header and footer stay put                                                   | `::view-transition-*(main-content)` in `flow.css`                                                                        |
@@ -270,7 +271,7 @@ effects, which Lighthouse reports as "unsupported timing parameters". Headings a
 batch (`splitAll` in `flow.ts`: every read of a phase before any write of the next), so the page is
 laid out a handful of times for all of them rather than three times per heading (Lighthouse's
 "forced reflow"). Only `opacity`, `translate`,
-`scale`, (for the parallax) `transform` and (for the sketch) a mask sweep move. The sketch's
+`scale`, (for the parallax) `transform` and (for the sketch and the portraits) a mask move. The sketch's
 sweep, `--sketch-draw`, rests at 150%, every sweep past the right edge, so it too is the finished
 drawing whenever the animation does not run. The starter's `[data-reveal]`,
 `[data-stagger-grid]` and `.img-curtain` stand down once the flow layer has armed a page.
@@ -295,8 +296,38 @@ squashed, settles).
   2026-10-25: `BoardRule` is whitespace now) have one path per brick, so each brick gets the
   tap in turn; `src/lib/brick-lay.ts` works out the turns from the paths (a face and its rim
   share one).
-- The clip on the letters is the one place this layer animates something other than a transform
-  or opacity: it steps a handful of times per course and never touches layout.
+- The clip on the letters and the portraits' course mask (below) are the places this layer
+  animates something other than a transform or opacity: each steps a handful of times per course
+  and never touches layout.
+
+**Portraits open in brick courses (2026-11-09).** A person's photo is its own unit, kind
+`portrait`: as it scrolls in it is uncovered from the bottom up in four horizontal courses, three
+bricks to a course, the mason's way (the bottom course left to right, the next right to left
+starting with a half brick, so the joints run in running bond), each course 120ms after the one
+below, 600ms in all.
+
+- **Opt-in, never automatic.** Only elements carrying `data-flow-portrait` take it: `PersonCard`'s
+  photo frame (`.c-photo`; the blank mark tile does not), the signer's face on Home (`HomeBelong`),
+  `FounderSection`'s portrait, and ImageText's photo or Photo needed box when its slot is a
+  person's (`person: true` in `src/data/shot-list.ts`, read by `isPortraitSlot()` whatever
+  `CLIENT_NOTES_ON` says: Home's "Meet Pastor Jacob" and the leadership page's "Jacob Wysong";
+  renaming the heading drops the reveal and the photo fades in like any other). `SanityImage` and
+  `ShotRequest` take a `portrait` prop that writes the attribute. Contact details have no photo.
+- **How.** `flow.ts` puts `[data-flow-portrait]` in `SKIP`, so a portrait is never also a photo
+  unit (no zoom, no `.flow-par` drift on the same element), then arms each one as `flow--portrait`.
+  A card around it (a `PersonCard`'s `li`) still fades as one piece. `flow.css` draws the courses
+  as a four-layer `mask` on the frame itself, driven by one registered number, `--pr`; a mask
+  composes with the frame's own clip-path (the gable) and rounded corners, so the shapes in
+  `shapes.css` are untouched and nothing in the layout moves. Never put it on the `.shape-slab`
+  holder: a mask hides everything outside the box, the slab included.
+- **Safety.** `--pr` rests at 1 (every course whole), so with the animation off (no `html.motion`
+  under reduced motion, `?still` or no JS; tests that settle; a focused unit) the photo is simply
+  there; the mask only exists while the class is on. Runs once per element, re-arms on every
+  `astro:page-load` like the other units, and follows the first-screen rule: a portrait already on
+  screen when the page arrives is left as it is (the leadership page's, at both widths today).
+- **Both levels.** Unlike every other unit it runs at the same 600ms on calm pages too, since the
+  people pages are calm. `tests/portrait-reveal.spec.ts` pins the reduced-motion, no-JS,
+  first-screen and once-only states.
 
 **Rule change.** The stone path's "one moving moment per page" (below) still holds for the stone
 drawings (the mark build, the baptism ring, the walk). The flow layer is the page's general

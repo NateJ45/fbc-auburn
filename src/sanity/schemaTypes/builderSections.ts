@@ -5,6 +5,8 @@
 // Three blocks so the pastor can build an event or holiday page himself, the way a Squarespace
 // page is put together: Event details (dates, times, place, a sign-up button and an automatic
 // "Add to my calendar"), a Schedule (times and what happens, by day) and Cards with photos.
+// A fourth, Candlelight (2026-11-09), is a band of candles with a "Lights down" switch for
+// Christmas Eve; it draws its own band, so it has no look (src/lib/candlelight.ts).
 //
 // Spread into pageSectionSchemas (sections.ts), so every page builder offers them, and grouped in
 // the "+ Add" menu by BUILDER_INSERT_GROUPS below. Drawn by src/components/builder-blocks/
@@ -26,9 +28,17 @@ import { defineArrayMember, defineField, defineType } from 'sanity';
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { ClockIcon } from '@sanity/icons/Clock';
 import { ImagesIcon } from '@sanity/icons/Images';
+import { MoonIcon } from '@sanity/icons/Moon';
 import { imageWithAlt } from './_imageWithAlt';
 import { lookField } from './_appearanceFields';
 import { TIME_OPTIONS } from '../../lib/builder-blocks';
+import {
+  CANDLE_DEFAULT,
+  CANDLE_MAX,
+  CANDLE_MIN,
+  CANDLE_OPTIONS,
+  CANDLELIGHT_HEADING,
+} from '../../lib/candlelight';
 
 const timeField = (name: string, title: string, description?: string) =>
   defineField({
@@ -324,14 +334,71 @@ export const photoCardsSection = defineType({
   },
 });
 
-export const builderSectionSchemas = [eventDetailsSection, scheduleSection, photoCardsSection];
+// ── Candlelight (2026-11-09) ─────────────────────────────────────────────────
+// A short band with a row of candles and a "Lights down" switch, for Christmas Eve. It draws its
+// own band (cream, and deep navy with the lights down), so it takes no look and sits outside the
+// cadence (SELF_CONTAINED_TYPES in sectionCadence.ts). No colour field (rule 9): the two states
+// are fixed in src/lib/candlelight.ts and measured to AA. `candles` is a number dropdown, which
+// stega never encodes; it is in NON_STEGA_FIELDS anyway (rule 8b), since it picks the drawing.
+export const candlelightSection = defineType({
+  name: 'candlelightSection',
+  title: 'Candlelight (a row of candles)',
+  type: 'object',
+  icon: MoonIcon,
+  description:
+    'A short band with a row of candles. Visitors can press "Lights down" to dim the band and watch the candles light one by one. Made for Christmas Eve.',
+  fields: [
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      initialValue: CANDLELIGHT_HEADING,
+      description: `Left empty, it reads "${CANDLELIGHT_HEADING}".`,
+      validation: (R) => R.max(60),
+    }),
+    defineField({
+      name: 'text',
+      title: 'A line under the heading (optional)',
+      type: 'text',
+      rows: 2,
+      description: 'Like "At the end of the service we pass the light from candle to candle."',
+      validation: (R) => R.max(200),
+    }),
+    defineField({
+      name: 'candles',
+      title: 'How many candles',
+      type: 'number',
+      initialValue: CANDLE_DEFAULT,
+      options: { list: CANDLE_OPTIONS, layout: 'radio', direction: 'horizontal' },
+      validation: (R) => R.integer().min(CANDLE_MIN).max(CANDLE_MAX),
+    }),
+  ],
+  preview: {
+    select: { title: 'heading', candles: 'candles' },
+    prepare: ({ title, candles }) => ({
+      title: title || CANDLELIGHT_HEADING,
+      subtitle: `Candlelight, ${typeof candles === 'number' ? candles : CANDLE_DEFAULT} candles`,
+    }),
+  },
+});
+
+export const builderSectionSchemas = [
+  eventDetailsSection,
+  scheduleSection,
+  photoCardsSection,
+  candlelightSection,
+];
 
 /**
  * Where these blocks sit in the "+ Add" menu. sections.ts merges these into its groups by name,
- * like CHURCH_INSERT_GROUPS: the event blocks join "Dates and notices" beside the countdown and
- * the notice, and the photo cards join Basics beside the stone-icon cards.
+ * like CHURCH_INSERT_GROUPS: the event blocks and the candlelight band join "Dates and notices"
+ * beside the countdown and the notice, and the photo cards join Basics beside the stone-icon cards.
  */
 export const BUILDER_INSERT_GROUPS: { name: string; title: string; of: string[] }[] = [
   { name: 'basics', title: 'Basics', of: ['photoCardsSection'] },
-  { name: 'dates', title: 'Dates and notices', of: ['eventDetailsSection', 'scheduleSection'] },
+  {
+    name: 'dates',
+    title: 'Dates and notices',
+    of: ['eventDetailsSection', 'scheduleSection', 'candlelightSection'],
+  },
 ];

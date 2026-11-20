@@ -1,0 +1,136 @@
+---
+// Safe to edit by hand
+// Candlelight (candlelightSection, 2026-11-09): a short band for Christmas Eve with a heading
+// (default "Light a candle"), an optional line, a row of 5 to 9 candles drawn flat in SVG, and one
+// "Lights down" switch. The switch dims THIS band only (rule 3: the site is light only, this is
+// not a dark mode): its ground eases from cream to deep navy and the candles light left to right,
+// LIGHT_STEP_MS apart, with a small flicker on each flame. Pressing it again lifts the band and
+// puts the flames out. Under prefers-reduced-motion the flames light at once and keep still.
+//
+// With no JavaScript the band shows lit candles on cream and no switch: the button ships
+// `hidden`, and the script below shows it and sets `data-cl-ready`, which is what puts the
+// flames out until the lights go down. Colours: src/lib/candlelight.ts (measured to AA in
+// candlelight.test.ts), declared as the `--cl-*` properties in src/styles/builder-blocks.css.
+// The band draws its own ground, so it sits outside the cadence (SELF_CONTAINED_TYPES).
+import SectionHeading from '@/components/SectionHeading.astro';
+import {
+  CANDLE_ART,
+  CANDLELIGHT_HEADING,
+  LIGHT_STEP_MS,
+  candleCount,
+  candleHeights,
+} from '@/lib/candlelight';
+import type { ProjectedCandlelightSection } from '@/lib/builderBlocks.types';
+
+interface Props {
+  block: ProjectedCandlelightSection;
+  headingId: string;
+}
+const { block, headingId } = Astro.props;
+
+const heading = block.heading?.trim() || CANDLELIGHT_HEADING;
+const text = block.text?.trim();
+const heights = candleHeights(candleCount(block.candles));
+
+// One candle in a 40 by 132 box: the wax stands on the bottom edge, the wick and flame above it.
+const BOX_H = 132;
+const candles = heights.map((h, i) => {
+  const top = BOX_H - 2 - h; // the wax's top edge (2 units of room for the outline)
+  const wickTop = top - 6;
+  const base = wickTop + 1; // the flame's foot sits on the wick's tip
+  return {
+    i,
+    top,
+    h,
+    wickTop,
+    outer: `M20 ${base} C12.5 ${base - 4} 13.5 ${base - 13} 20 ${base - 24} C26.5 ${base - 13} 27.5 ${base - 4} 20 ${base} Z`,
+    inner: `M20 ${base - 1} C16.6 ${base - 3} 17.2 ${base - 8} 20 ${base - 13} C22.8 ${base - 8} 23.4 ${base - 3} 20 ${base - 1} Z`,
+  };
+});
+---
+
+<section
+  class="cl"
+  data-cl
+  data-builder-block="candlelightSection"
+  aria-labelledby={headingId}
+  style={`--cl-step: ${LIGHT_STEP_MS}ms; --cl-count: ${candles.length};`}
+>
+  <div class="mx-auto max-w-content px-m py-section-md" data-reveal>
+    <div class="cl__top">
+      <div class="cl__head">
+        <SectionHeading headline={heading} headingId={headingId} />
+        {text && <p class="cl__text">{text}</p>}
+      </div>
+      <button type="button" class="cl__switch" aria-pressed="false" data-cl-switch hidden>
+        <span class="cl__track" aria-hidden="true">
+          <span class="cl__knob"></span>
+        </span>
+        <span>Lights down</span>
+      </button>
+    </div>
+    <ul class="cl__row" role="list" aria-hidden="true" data-flow-item>
+      {candles.map((c) => (
+        <li class="cl__candle" style={`--i: ${c.i};`}>
+          <svg viewBox={`0 0 40 ${BOX_H}`} focusable="false">
+            <g class="cl__flame">
+              <g class="cl__flicker">
+                <path d={c.outer} fill={CANDLE_ART.flameOuter} />
+                <path d={c.inner} fill={CANDLE_ART.flameInner} />
+              </g>
+            </g>
+            <line
+              x1="20"
+              y1={c.top}
+              x2="20"
+              y2={c.wickTop}
+              stroke={CANDLE_ART.outline}
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <rect
+              x="8"
+              y={c.top}
+              width="24"
+              height={c.h}
+              rx="3"
+              fill={CANDLE_ART.wax}
+              stroke={CANDLE_ART.outline}
+              stroke-width="1.5"
+            />
+            <rect
+              x="25"
+              y={c.top + 4}
+              width="4"
+              height={c.h - 8}
+              rx="2"
+              fill={CANDLE_ART.waxShade}
+            />
+          </svg>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<script>
+  // Show the switch and wire it. Runs on the first load and after every page swap (the site's
+  // client router); a band already wired is skipped.
+  function initCandlelight() {
+    for (const band of document.querySelectorAll<HTMLElement>('[data-cl]')) {
+      if (band.hasAttribute('data-cl-ready')) continue;
+      const button = band.querySelector<HTMLButtonElement>('[data-cl-switch]');
+      if (!button) continue;
+      band.setAttribute('data-cl-ready', '');
+      band.dataset.lights = 'up';
+      button.hidden = false;
+      button.addEventListener('click', () => {
+        const down = button.getAttribute('aria-pressed') !== 'true';
+        button.setAttribute('aria-pressed', String(down));
+        band.dataset.lights = down ? 'down' : 'up';
+      });
+    }
+  }
+  initCandlelight();
+  document.addEventListener('astro:page-load', initCandlelight);
+</script>

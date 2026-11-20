@@ -8,6 +8,7 @@ import { PlayIcon } from '@sanity/icons/Play';
 import { UsersIcon } from '@sanity/icons/Users';
 import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { STONE_ICONS } from '../../lib/stone-icons';
+import { FYP_AUDIENCE, FYP_WHEN } from '../../lib/fyp-filter';
 import { imageWithAlt } from './_imageWithAlt';
 import { lookField } from './_appearanceFields';
 
@@ -191,6 +192,31 @@ export const findYourPlaceSection = defineType({
                       rows: 3,
                     }),
                     defineField({ name: 'link', title: 'Link (optional)', type: 'ctaBlock' }),
+                    // The filter chips (2026-11-09, src/lib/fyp-filter.ts): a chip shows only
+                    // when at least one card carries its tag. Both names are on NON_STEGA_FIELDS.
+                    defineField({
+                      name: 'audience',
+                      title: 'Who it suits (optional)',
+                      type: 'array',
+                      of: [{ type: 'string' }],
+                      options: {
+                        list: FYP_AUDIENCE.map((t) => ({ title: t.title, value: t.value })),
+                        layout: 'grid',
+                      },
+                      description:
+                        'Tick everyone it suits. Visitors can then tap "Kids" or "Adults" above the cards to see just these.',
+                    }),
+                    defineField({
+                      name: 'when',
+                      title: 'When it meets (optional)',
+                      type: 'array',
+                      of: [{ type: 'string' }],
+                      options: {
+                        list: FYP_WHEN.map((t) => ({ title: t.title, value: t.value })),
+                        layout: 'grid',
+                      },
+                      description: 'Tick Sunday, a weeknight, or both. This adds a filter chip.',
+                    }),
                   ],
                   preview: {
                     select: { title: 'title', day: 'day', forWho: 'forWho', media: 'image' },
