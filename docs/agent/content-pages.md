@@ -7,16 +7,19 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
 
 ## Rules every content page keeps
 
-- **Doctrine is Jacob's, and until he has written it the page holds a marked draft** (changed
-  2026-11-09; before that, belief was asked for and never drafted). Empty asks gave him nothing to
-  edit, so `scripts/content/best-guess-drafts.mjs` put a `[Placeholder: ...]` draft wherever one
-  could be guessed: beliefs as plain-word summaries of the Baptist Faith and Message 2000 (the
-  confession the page says the church affirms), verses in the King James wording its Facebook page
-  quotes, and practice (music, the invitation, the Lord's Supper, joining, the offering) as is usual
-  for a Southern Baptist church its size. Every draft stays in brackets, with a short `[Jacob: ...]`
-  naming what to check, and none is settled until he rewrites or approves it. **No bracket survives
-  launch:** a draft he has not confirmed comes out, it is not unwrapped. Still asks only: his own
-  story and family, leaders' names, email and office hours, and yes-or-no questions.
+- **The copy is finished, and the beliefs wait on the pastor's yes** (2026-11-19,
+  `scripts/content/finished-copy.mjs`; it replaced the marked `[Placeholder: ...]` drafts of
+  2026-11-09). Facts and voice come from the church's own public posts (its Facebook page and the
+  pastor's sermon clips: the times, the Wednesday meal and studies, Easter, the movie nights, the
+  coat giveaway, the Christmas gifts and program, the road sign, the ramp). Belief comes from the
+  Baptist Faith and Message 2000 (the confession the page says the church affirms), with verses in
+  the King James wording the posts quote, and practice the posts do not show (the invitation, who
+  takes the Lord's Supper, joining) is written the usual Southern Baptist way. What we believe and
+  those practice lines read as settled, so they must not launch until Jacob has approved them
+  (`docs/PENDING.md` 1zt). **A fact no post gives stays a `[Jacob: ...]` ask, never a guess**:
+  the child safety sentence, the nursery, access inside the building, office hours and email, who
+  counts the offering, the budget vote, a music team, leaders' names. **No bracket survives launch.**
+  The sources read are listed in the studio's private notes, not here.
 - **Facts are never typed.** Times, the address and the phone come from Church facts through
   blocks: the Sunday times band (`heroSection.showTimes`), Contact details (`contactCardSection`),
   Map and directions (`mapSection`), This Sunday. The Plan your visit walk keeps two loose times
@@ -28,9 +31,9 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
   coming" (`/contact/?visit=sunday-11`, which also becomes the Church Trac connection card once
   one is set, `src/lib/church-links.ts`).
 - **One child safety sentence, worded the same everywhere**: Plan your visit's Your kids, and the
-  Kids and The children's room cards on Ministries. Since 2026-11-09 all three hold the same GUESS
-  (`SAFETY_DRAFT` in `best-guess-drafts.mjs`: background checks, two adults, sign-in and pick-up).
-  It must be made exactly true before launch; when Jacob answers, put his sentence in all three.
+  Kids and The children's room cards on Ministries. Since 2026-11-19 all three hold the same ASK
+  (`SAFETY_ASK` in `finished-copy.mjs`), not a guess: it must be exactly true, so only Jacob can
+  give it. When he answers, put his sentence in all three.
 - **One prayer path.** Prayer requests go through the Prayer page's form (`form-prayer`, mode
   `prayer`): emailed to the pastor, and the website deletes its copy once the email has gone
   (`src/pages/api/form.ts`). The form says so once, beside the button (`FormBlock.astro`). Contact
@@ -42,7 +45,7 @@ write). Edit the words in the Studio, but keep the block keys: anchors hang off 
 
 The four sections named with a key above were added 2026-11-09 by
 `scripts/content/borrowed-shapes.mjs`, shapes borrowed from a large church's site and filled with
-marked drafts. A stepping-stone step takes one of eight icons only (the list in
+marked drafts, finished on 2026-11-19. A stepping-stone step takes one of eight icons only (the list in
 `auburnMotionSections.ts`); `npm run audit:data` says so if another is used.
 
 ## Named anchors
@@ -65,40 +68,44 @@ A section whose block key is in `src/lib/church-anchors.ts` gets that name as it
 ## The pages, in order
 
 - **Home** (`homePage`, drawn by HomeBoard): hero (the welcome is the one "Come as you are"; the
-  subhead asks Jacob for one honest line about size, music and who comes; second button "Watch a
-  sermon" to `/sermons/`; an optional silent Background video plays over the photo, see
+  subhead is the church's Facebook bio, "everyone is family and loves the Lord"; second button
+  "Watch a sermon" to `/sermons/`; an optional silent Background video plays over the photo, see
   `docs/agent/animation.md`), Your first Sunday (Sunday School explained and optional; Worship links
   to `#kids`), **The good news** (`home-gospel`, a Text block drawn by SectionRenderer inside the
-  board, an ask plus a link to `#the-gospel`), A place to belong, This week and Last Sunday (to
-  `/sermons/`), Meet Pastor Jacob, Other ways in (giving says Sunday or by mail until online giving
-  is live).
+  board, a link to `#the-gospel`; the one block finished-copy.mjs leaves alone, see PENDING 1zt),
+  A place to belong, This week and Last Sunday (to `/sermons/`), Meet Pastor Jacob (his hello in
+  the first person), Other ways in (giving says Sunday or by mail until online giving is live).
 - **Plan your visit**: page head with the Sunday times band (times, address, Directions), Good to
-  know (what to wear, about an hour, nobody puts you on the spot), Your kids, By age (`pyv-kids-ages`, three age-band cards), Walk in with us (no
-  exact minutes; Sunday School invited as optional), What worship is like (asks), Getting in and
-  getting around (access asks), Find us (map), Look for the sign, Questions people ask (only what
-  the page does not already answer), the closing band.
-- **About**: Who we are (plus an ask for something only Auburn could say), Our story so far (`about-timeline`, a timeline with blank years), **A Sunday here** (asks
-  and a photo slot), Our building, the mark in one line, Come and see.
+  know (what to wear, about an hour, nobody puts you on the spot), Your kids (the nursery and the
+  child safety sentence are asks), By age (`pyv-kids-ages`: a nursery ask, children, students), Walk
+  in with us (no exact minutes; Sunday School invited as optional), What worship is like, Getting in
+  and getting around (the ramp; access inside is an ask), Find us (map; the note names the road
+  sign, which reads "Auburn Baptist Church"), Questions people ask (only what the page does not
+  already answer), the closing band.
+- **About**: Who we are, A year with us (`about-timeline`: Easter, summer, fall, Christmas and
+  every week, from the church's posts; it had blank years until 2026-11-19), **A Sunday here** (and
+  a photo slot), Our building, the mark in one line, Come and see.
 - **What we believe**: The gospel, first (`#the-gospel`), How to begin (`wwb-abc`: Admit, Believe,
   Confess), the beliefs, Baptism (`#baptism`, the card links to it), Questions about baptism
-  (`wwb-baptism-faq`, six `faq-baptism-*` questions), **What it means to be Baptist** (asks only), the confession, the closing band.
-- **Next steps**: **Know Jesus** set apart above the rail (Jacob's verse, a link to the gospel, "Tell
+  (`wwb-baptism-faq`, six `faq-baptism-*` questions), **What it means to be Baptist**, the
+  confession, the closing band. The whole page waits on the pastor's approval (PENDING 1zt).
+- **Next steps**: **Know Jesus** set apart above the rail (Romans 10:9, a link to the gospel, "Tell
   Pastor Jacob"), then baptism, membership, a group and serving, each "Ask about ..." prefilled.
-- **Leadership**: the pastor (photo slot, a hello-video ask, his TikTok named as his), How we are
-  led (congregational government ask, deacons with permission), Contact details (office email and
-  hours once they are in Church facts).
+- **Leadership**: the pastor (photo slot, his TikTok named as his), How we are led (congregational;
+  names Pastor Rick; deacons only with permission, an ask), Contact details (office email and hours
+  once they are in Church facts).
 - **Prayer requests**: page head (who reads it), the form (prayer chain box off by
   default, "call me" box and an optional phone), and a band to Need the pastor?.
 - **Need the pastor?** (`page-pastoral-care`, `/pastoral-care/`, new): Call and Text first, How to reach
-  him (after-hours and office asks), Contact details, When life happens (hospital and home, the
-  Lord's Supper at home, a funeral, a wedding, a hand when you need it), and a band to the Prayer
-  page. Contact's "When life happens" now holds two cards that lead here and to Prayer, and
-  Ministries' "When life happens" card links here.
+  him (office hours are an ask), Contact details, When life happens (hospital and home, the Lord's
+  Supper at home, a funeral, a wedding, a hand when you need it), and a band to the Prayer page.
+  Contact's "When life happens" now holds two cards that lead here and to Prayer, and Ministries'
+  "When life happens" card links here.
 - **Contact**: on phones a "Call or text" line leads the form (`src/components/sections/ContactFormSection.astro`, from
-  Church facts); the intro note asks Jacob how fast a text is answered.
-- **Give** (a Studio page since 2026-10-26, `page-give`): How gifts are cared for, Jacob's asks on
-  counting, statements, the budget vote and the Cooperative Program, as a text section. Answer them
-  in the section before launch, or remove it.
+  Church facts).
+- **Give** (a Studio page since 2026-10-26, `page-give`): How gifts are cared for, as a text
+  section: giving as worship, the Cooperative Program, and two asks (counting and statements, the
+  budget vote). Answer them in the section before launch, or remove them.
 
 Each page's asks are also in its "For Jacob" pill (`src/data/client-notes.ts`); photo slots are in
 `src/data/shot-list.ts`, keyed by the heading, so a renamed heading needs its key renamed too.
