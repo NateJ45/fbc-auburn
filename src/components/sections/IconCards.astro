@@ -5,12 +5,17 @@
 // two on a tablet, one on a phone. A content block: the surface comes from the cadence.
 // A card with a photo (the bold home pass, 2026-10-17) shows a rounded photo in place of the icon,
 // like the Kids / Youth / Adults cards in the Gemini comp.
+// The Brick wall look (2026-11-19, from the fbcbremen.org comparison; src/lib/section-looks.ts):
+// the band is the navy brick wall and each card is a cream stone laid on it, numbered in order
+// (One, Two, ...), four across on a wide screen. Home's good news is told this way. The cadence
+// already paints the Feature navy behind it; this file adds the bricks and the stones.
 import CtaLink from '@/components/CtaLink.astro';
 import type { CadenceSurface } from '@/lib/surfaces';
 import StoneIcon from '@/components/StoneIcon.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import { surfaceClass } from '@/lib/surfaces';
 import type { ProjectedIconCard } from '@/lib/pageBuilder.types';
+import tileNavy from '@/assets/textures/tile-navy.svg?url';
 
 interface Props {
   eyebrow?: string;
@@ -18,16 +23,46 @@ interface Props {
   intro?: string;
   cards?: ProjectedIconCard[];
   surface?: CadenceSurface;
+  /** The Brick wall look: numbered cream stones on the navy brick wall. */
+  bricks?: boolean;
   headingId: string;
 }
-const { eyebrow, heading, intro, cards = [], surface = 'background', headingId } = Astro.props;
+const {
+  eyebrow,
+  heading,
+  intro,
+  cards = [],
+  surface = 'background',
+  bricks = false,
+  headingId,
+} = Astro.props;
+// The stones' numbers, as words (a card past twelve, which validation forbids, gets the digit).
+const NUMBER_WORDS = [
+  'One',
+  'Two',
+  'Three',
+  'Four',
+  'Five',
+  'Six',
+  'Seven',
+  'Eight',
+  'Nine',
+  'Ten',
+  'Eleven',
+  'Twelve',
+];
+const numberWord = (i: number) => NUMBER_WORDS[i] ?? String(i + 1);
 // The card titles sit one level under the band's heading; a band with no heading (Ministries'
 // first band, straight under the page title) has its titles at h2, so the outline never skips a
 // level (visitor audit, 2026-10-18).
 const CardTitle = heading ? 'h3' : 'h2';
 ---
 
-<section class={surfaceClass(surface)} aria-labelledby={heading ? headingId : undefined}>
+<section
+  class:list={[surfaceClass(surface), bricks && 'icon-cards-wall']}
+  style={bricks ? `--wall-tile: url('${tileNavy}')` : undefined}
+  aria-labelledby={heading ? headingId : undefined}
+>
   <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>
     {(eyebrow || heading || intro) && (
       <div class="icon-cards__head">
@@ -40,9 +75,12 @@ const CardTitle = heading ? 'h3' : 'h2';
         {intro && <p class="icon-cards__intro">{intro}</p>}
       </div>
     )}
-    <ul class="icon-cards" role="list">
-      {cards.map((card) => (
-        <li class:list={['icon-card', card.image?.asset && 'icon-card--photo']}>
+    <ul class:list={['icon-cards', bricks && 'icon-cards--stones']} role="list">
+      {cards.map((card, i) => (
+        <li
+          class:list={['icon-card', card.image?.asset && 'icon-card--photo']}
+          data-light-surface={bricks ? '' : undefined}
+        >
           {card.image?.asset ? (
             <div class="icon-card__photo">
               <SanityImage
@@ -55,6 +93,11 @@ const CardTitle = heading ? 'h3' : 'h2';
             </div>
           ) : (
             <StoneIcon name={card.icon} size={96} class="icon-card__icon reveal" />
+          )}
+          {bricks && (
+            <p class="icon-card__count" aria-hidden="true">
+              {numberWord(i)}
+            </p>
           )}
           <CardTitle class="icon-card__title">{card.title}</CardTitle>
           {card.body && <p class="icon-card__body">{card.body}</p>}
@@ -168,5 +211,81 @@ const CardTitle = heading ? 'h3' : 'h2';
   }
   .icon-card__link {
     margin-top: 1rem;
+  }
+
+  /* ---- The Brick wall look (2026-11-19) ----------------------------------------------------
+     The Feature navy (from the cadence) with the church's navy brick laid over it; white text
+     on it measures 9:1 or more, the same as flat Feature. Each card is a cream stone: inside it
+     the page's light tokens come back, so titles, text and links read as they do on the page. */
+  .icon-cards-wall {
+    background-image: var(--wall-tile);
+    background-size: 420px;
+  }
+  .icon-cards-wall .icon-cards__head :global(.arch-hero__eyebrow) {
+    color: var(--feature-foreground);
+  }
+  .icon-cards--stones {
+    gap: var(--gap-open-col);
+  }
+  @media (min-width: 64rem) {
+    /* Four stones sit in one course; three or five or more wrap to rows of up to four. */
+    .icon-cards--stones {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    }
+  }
+  .icon-cards--stones > .icon-card {
+    /* The page's own light pair, which the Feature band re-pointed. */
+    --background: var(--color-bg);
+    /* The Stone surface's ink (globals.css): the same light-page pair, and nothing re-points it. */
+    --foreground: var(--stone-foreground);
+    --heading-solid: var(--auburn-deep);
+    --muted-foreground: var(--stone-muted-foreground);
+    --link: var(--auburn-deep);
+    --primary: var(--auburn-deep);
+    --primary-foreground: #ffffff;
+    --ring: var(--auburn-deep);
+    --border: #d3dce8;
+    background: var(--background);
+    color: var(--foreground);
+    border-radius: var(--radius-card);
+    padding: clamp(1.25rem, 2.2vw, 1.75rem);
+    box-shadow: 0 14px 30px -18px rgb(0 0 0 / 0.6);
+  }
+  .icon-card__count {
+    font-size: var(--fs-tag);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--auburn-red);
+    margin-bottom: 0.35rem;
+  }
+  .icon-cards--stones :global(.icon-card__icon) {
+    width: 72px;
+    height: 72px;
+  }
+  @media (max-width: 39.99rem) {
+    .icon-cards--stones {
+      row-gap: 1rem;
+    }
+    /* Phones: the number sits under the icon's row, beside the title like the title does. */
+    .icon-cards--stones > .icon-card:has(> :global(.icon-card__icon)) {
+      grid-template-columns: 52px minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      align-items: end;
+    }
+    .icon-cards--stones :global(.icon-card__icon) {
+      width: 52px;
+      height: 52px;
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+    .icon-cards--stones > .icon-card:has(> :global(.icon-card__icon)) > .icon-card__count {
+      grid-column: 2;
+      margin-bottom: 0;
+    }
+    .icon-cards--stones > .icon-card:has(> :global(.icon-card__icon)) > .icon-card__title {
+      grid-column: 2;
+      align-self: start;
+    }
   }
 </style>

@@ -19,6 +19,7 @@
 // carrying its data-sanity attribute (the in-canvas insert / move / remove controls), exactly as
 // SectionRenderer does. The live site never passes it, and the wrapper is then a Fragment.
 import '@/styles/home-board.css';
+import { resolveLook } from '@/lib/section-looks';
 import HomeHero from './HomeHero.astro';
 import HomeWalk from './HomeWalk.astro';
 import HomeBand from './HomeBand.astro';
@@ -77,7 +78,12 @@ for (let i = 0; i < blocks.length; i++) {
   } else if ((b as { _type: string })._type === 'stepsRailSection' && !seenWalk) {
     seenWalk = true;
     rows.push({ kind: 'walk', key, block: b as unknown as ProjectedStepsRailSection });
-  } else if (b._type === 'iconCardsSection') {
+  } else if (
+    b._type === 'iconCardsSection' &&
+    // A Brick wall card band (2026-11-19, Home's good news) is drawn by IconCards itself through
+    // SectionRenderer, not as a Home band, and does not count as Home's first card band.
+    resolveLook('iconCardsSection', (b as { look?: unknown }).look) !== 'bricks'
+  ) {
     rows.push({
       kind: 'band',
       key,

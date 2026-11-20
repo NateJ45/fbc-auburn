@@ -31,7 +31,7 @@
 import type { SurfaceValue } from './surfaces.ts';
 
 /** Every look this template knows. A block offers a subset (LOOKS_BY_TYPE). */
-export type SectionLook = 'standard' | 'feature' | 'stone';
+export type SectionLook = 'standard' | 'feature' | 'stone' | 'bricks';
 
 export interface LookOption {
   value: SectionLook;
@@ -65,6 +65,15 @@ export const SECTION_LOOKS: LookOption[] = [
     hint: 'A pale blue band of stepping stones, with dark text. A gentle way to set a section apart.',
     surface: 'stone',
   },
+  // 2026-11-19 (the fbcbremen.org comparison): the cards block's one big moment. The navy brick
+  // wall with the cards laid on it as numbered cream stones, for something told in order (Home's
+  // good news). It paints the Feature surface, so the cadence treats it as a dark band.
+  {
+    value: 'bricks',
+    title: 'Brick wall',
+    hint: 'The church blue brick wall with the cards as numbered cream stones. Once a page, for something told in steps, like the good news.',
+    surface: 'feature',
+  },
 ];
 
 export const LOOK_BY_VALUE: Record<string, LookOption> = Object.fromEntries(
@@ -72,6 +81,8 @@ export const LOOK_BY_VALUE: Record<string, LookOption> = Object.fromEntries(
 );
 
 const ALL: SectionLook[] = ['standard', 'feature', 'stone'];
+// The cards block's own look set: Stone, or the numbered brick wall (2026-11-19).
+const CARDS: SectionLook[] = ['standard', 'stone', 'bricks'];
 // Blocks whose cards or buttons are drawn on the white board: Stone sets them apart on pale tiles,
 // but the Feature navy would swallow their navy buttons and white cards (2026-10-26).
 const STONE_ONLY: SectionLook[] = ['standard', 'stone'];
@@ -96,7 +107,7 @@ export const LOOKS_BY_TYPE: Record<string, SectionLook[]> = {
   // event page stacks (builderSections.ts, churchSections.ts, auburnSections.ts).
   columnsSection: ALL,
   scheduleSection: ALL,
-  iconCardsSection: STONE_ONLY,
+  iconCardsSection: CARDS,
   buttonRowSection: STONE_ONLY,
   photoCardsSection: STONE_ONLY,
   eventDetailsSection: STONE_ONLY,

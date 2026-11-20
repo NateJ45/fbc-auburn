@@ -153,7 +153,8 @@ Publisher "Save as PDF", or a scanner's "searchable PDF" option). Also tune
 All seven audit PRs (#170 to #174, #176, #177) are merged and their content applied (changelog,
 2026-10-25). Open:
 
-- **Jacob's answers.** Every `[Jacob: ...]` placeholder the audit added (the gospel on Home, size and
+- **Jacob's answers.** Every `[Jacob: ...]` placeholder the audit added (the gospel on Home, told
+  since 2026-11-19 as four short stones he rewrites one by one, size and
   music, kids and the child safety policy, what worship is like, access, Baptist distinctives,
   governance, who reads prayer requests, Need the pastor?, giving accountability, and more) is
   collected in the studio's discovery pack for him. Each answer replaces its placeholder; the same

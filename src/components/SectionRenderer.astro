@@ -222,7 +222,7 @@ const editKeyOf = (block: unknown) => {
 };
 ---
 
-{rows.map(({ block: s, surface, headingId }, rowIndex) => (
+{rows.map(({ block: s, surface, look, headingId }, rowIndex) => (
   <>
     {ruled[rowIndex] && <BoardRule />}
 
@@ -392,6 +392,7 @@ const editKeyOf = (block: unknown) => {
           intro={s.intro}
           cards={s.cards ?? []}
           surface={blockSurface(s._type, surface)}
+          bricks={look === 'bricks'}
           headingId={headingId}
         />
       ) : s._type === 'letterSection' ? (
