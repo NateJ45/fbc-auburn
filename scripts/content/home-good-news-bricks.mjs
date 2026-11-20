@@ -8,9 +8,11 @@
 //   NCS_PRODUCTION_WRITE=yes node scripts/content/home-good-news-bricks.mjs <backup-folder> --apply
 // homePage is written to <backup-folder> first. Keep that folder outside the repo.
 //
-// The words are our draft of the gospel split into four, each still marked [Placeholder: ...],
-// with one [Jacob: ...] ask in the intro: doctrine is Jacob's (docs/agent/content-pages.md). The
-// block keeps the key home-gospel, so the section and its heading id stay where they were.
+// The words are the finished gospel from What we believe ("The gospel, first", wwb-short, written by
+// finished-copy.mjs from the church's posts and the Baptist Faith and Message) split into four, each
+// with its verse (KJV, as the church quotes). Like the rest of What we believe, Pastor Jacob approves
+// them before launch (docs/PENDING.md 1zt). The block keeps the key home-gospel, so the section and
+// its heading id stay where they were.
 
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -39,12 +41,13 @@ if (old._type === 'iconCardsSection') {
   process.exit(0);
 }
 
-const stone = (key, icon, title, body, link) => ({
+const stone = (key, icon, title, body, note, link) => ({
   _type: 'iconCard',
   _key: key,
   icon,
   title,
-  body: `[Placeholder: ${body}]`,
+  body,
+  note,
   ...(link ? { link } : {}),
 });
 
@@ -53,28 +56,36 @@ const goodNews = {
   _key: 'home-gospel',
   eyebrow: 'The good news',
   heading: 'Why we open the Bible every Sunday',
-  intro:
-    '[Jacob: our draft of the good news in four short stones, for you to rewrite in your own words. This is the first place on the site a visitor meets the gospel.]',
+  intro: 'The heart of what we believe, in four parts.',
   look: 'bricks',
   cards: [
-    stone('gn-made', 'crown', 'Made to know him', 'God made us to know him and be known by him.'),
     stone(
-      'gn-turned',
+      'gn-made',
+      'crown',
+      'Made to know him',
+      'God made us to know him and to walk with him.',
+      'John 17:3',
+    ),
+    stone(
+      'gn-sinned',
       'cracked-heart',
-      'We turned away',
-      'Every one of us has turned away, and that sin separates us from him.',
+      'We have all sinned',
+      'Every one of us has sinned, and sin separates us from a holy God. We cannot clean ourselves up.',
+      'Romans 3:23',
     ),
     stone(
       'gn-jesus',
       'cross',
-      'Jesus in our place',
-      'Jesus, God’s own Son, lived the life we could not, died on the cross in our place and rose again on the third day.',
+      'Christ died for us',
+      'While we were yet sinners, Jesus, the sinless Son of God, shed his blood on the cross to pay for our sin, and on the third day he rose from the grave.',
+      'Romans 5:8',
     ),
     stone(
       'gn-new',
       'broken-chain',
       'Made new',
-      'Anyone who turns from sin and trusts him is forgiven, made new and welcomed into God’s family for good.',
+      'Turn from your sin and trust him, and you will be forgiven and made new.',
+      '2 Corinthians 5:17',
       {
         _type: 'ctaBlock',
         linkType: 'external',

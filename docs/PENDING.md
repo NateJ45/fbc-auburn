@@ -22,14 +22,25 @@ The Find your place cards have "Who it suits" and "When it meets" tick lists (`d
 chips"). No card is tagged in the dataset yet, so `/ministries/` shows no chip row. Once Jacob ticks a few cards and
 publishes, check the chips at 375 and 1280 on the live page (only the chips for tags in use appear).
 
-### 1zt. Best-guess drafts: every one confirmed or removed before launch (opened 2026-11-09)
+### 1zt. Finished copy: the pastor approves it, and answers the last asks (opened 2026-11-09, rewritten 2026-11-19)
 
-`scripts/content/best-guess-drafts.mjs` filled 60 asks with `[Placeholder: ...]` guesses so Pastor
-Jacob has wording to edit (`docs/agent/content-pages.md`). They are guesses about belief, practice
-and policy. Launch gate: no `[Placeholder:` or `[Jacob:` text left in the dataset, each draft
-rewritten or approved by him, and an unconfirmed one taken out, not unwrapped. First to settle: the
-child safety sentence (three places, must be exactly true), the Lord's Supper (how often, who may
-take part), the Bible translation, the nursery ages and the access list on Plan your visit.
+`scripts/content/finished-copy.mjs` (2026-11-19) replaced every `[Placeholder: ...]` draft with
+finished copy: facts and voice from the church's own Facebook posts, belief and usual practice from
+the Baptist Faith and Message (`docs/agent/content-pages.md`). Launch gate:
+
+- **Pastor Jacob approves What we believe** (the gospel, How to begin, the nine beliefs, baptism and
+  its six questions, What it means to be Baptist, the confession line) and the practice lines written
+  the usual Southern Baptist way: the time to respond at the close of worship, who takes the Lord's
+  Supper, joining by a vote, an earlier infant baptism, the Cooperative Program on Give. They read as
+  settled, so they must not launch unread.
+- **No `[Jacob:` text left in the dataset.** Left on 2026-11-19, each a fact no post gave: the child
+  safety sentence (three places, word for word), the nursery (Plan your visit twice, the FAQ), access
+  inside the building, office hours and email (Leadership, Need the pastor?), deacons and leaders with
+  permission, who counts the offering and the budget vote (Give), a music team (Ministries), the
+  example sermon (replace or delete), and the /christmas/ page's times.
+- **Home's good news** (`home-gospel`, 2026-11-19): four stones in the church's words, split from
+  What we believe's finished gospel with a verse each (`scripts/content/home-good-news-bricks.mjs`).
+  Jacob approves it with What we believe above.
 
 ### 1zs. The e2e job is pinned to ubuntu-24.04 (opened 2026-10-30)
 
@@ -160,7 +171,7 @@ All seven audit PRs (#170 to #174, #176, #177) are merged and their content appl
 2026-10-25). Open:
 
 - **Jacob's answers.** Every `[Jacob: ...]` placeholder the audit added (the gospel on Home, told
-  since 2026-11-19 as four short stones he rewrites one by one, size and
+  since 2026-11-19 as four short stones, size and
   music, kids and the child safety policy, what worship is like, access, Baptist distinctives,
   governance, who reads prayer requests, Need the pastor?, giving accountability, and more) is
   collected in the studio's discovery pack for him. Each answer replaces its placeholder; the same

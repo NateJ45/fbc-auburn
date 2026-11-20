@@ -26,7 +26,12 @@ import { CLIENT_NOTES_ACTIVE } from './client-notes.ts';
 import { publicPath } from '../lib/page-path.ts';
 import { splitStega } from '../lib/preview-stega.ts';
 
-/** Uploaded files named like this are stand-ins: the church's Facebook photos and `stand-in-*` uploads. */
+/**
+ * Uploaded files named like this are stand-ins: `fbca-fb-*` Facebook photos and `stand-in-*` uploads.
+ * Since 2026-11-19 the six Facebook photos the site uses (the building, the road sign, the sanctuary,
+ * the fellowship hall and two of Christmas gifts; no people) are renamed `fbca-church-*`, so they
+ * count as the church's own and fill their slots (scripts/content/finished-copy.mjs).
+ */
 export const STAND_IN_FILE = /^(fbca-fb-|stand-in-)/i;
 
 export interface Shot {

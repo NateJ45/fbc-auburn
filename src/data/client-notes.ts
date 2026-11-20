@@ -37,26 +37,26 @@ const CHURCH_TRAC: ClientNote = {
     'Send us your Church Trac address and the links to your connection card, a general contact form if you have one, and your prayer request form. Each goes in one box and the website swaps its own form for yours, so every message lands in Church Trac. In Church Trac, each form’s "Embed Domain" setting needs this website’s address.',
 };
 
+// Since 2026-11-19 (scripts/content/finished-copy.mjs) the pages hold finished copy, written from
+// the church's own Facebook posts and, for belief and usual practice, the Baptist Faith and
+// Message. The notes below are now what is left to approve or confirm, page by page. Yellow
+// "[Jacob: ...]" text on a page is a fact no post gave us.
 const NOTES: Record<string, ClientNote[]> = {
   '/': [
     {
-      title: 'Yellow brackets are our best guesses now.',
+      title: 'The pages are written now: please read and approve.',
       detail:
-        'On every page, wording in yellow that starts "[Placeholder:" is our guess at what a church like yours would say, so you can edit instead of starting from nothing. Change anything that is not true of Auburn. A "[Jacob:" note beside it names what to check.',
+        'We filled every page from your own Facebook posts (your times, the Wednesday meal, Easter, the movie nights, the coat giveaway, the Christmas gifts and program) and, for beliefs, from the Baptist Faith and Message. Read it as a visitor would and tell us anything that is not true of Auburn. Yellow "[Jacob: ...]" text is a fact we could not find anywhere, so only you can give it.',
     },
     {
-      title: 'Meet Pastor Jacob: a few lines.',
-      detail: 'Three or four sentences about you for the block near the bottom of the page.',
-    },
-    {
-      title: 'Your welcome, in your words.',
+      title: 'Your welcome and your hello.',
       detail:
-        'The line under "Come as you are." and the note signed by you are our drafts in brackets: rewrite them or tell us what to change.',
+        'The line under "Come as you are." uses your Facebook bio ("everyone is family and loves the Lord"). The note signed by you, near the bottom, is written in your voice and mentions Kassie. Change any word you would not say.',
     },
     {
       title: 'The verse in the footer.',
       detail:
-        'Home now ends with Hebrews 13:8, "Jesus Christ the same yesterday, and to day, and for ever.", the verse on your Facebook page, in the King James wording it quotes. Is that the one you want to keep here, and is the King James the translation the church reads from?',
+        'Home ends with Hebrews 13:8, "Jesus Christ the same yesterday, and to day, and for ever.", the verse on your Facebook page, in the King James wording it quotes. Keep it?',
     },
     {
       title: 'Your TikTok in the footer.',
@@ -64,99 +64,65 @@ const NOTES: Record<string, ClientNote[]> = {
         '[Jacob: the footer links to the auburn.pastor TikTok, labeled "Pastor Jacob on TikTok" so visitors read it as yours, not the church speaking. Does the church want it in the footer on every page, or would you rather it came out (or a church YouTube channel took its place)?]',
     },
     {
-      title: 'Confirm the Sunday and Wednesday times.',
+      title: 'The times are confirmed from your posts and sign.',
       detail:
-        'Your road sign says adult Bible study at 6:30 and youth at 6:00 on Wednesdays; the site says 6:00. Which is right today?',
-    },
-    {
-      title: 'Three different Sunday times are out there.',
-      detail:
-        'The site says Sunday School 9:45 and worship 11:00. Your Google listing shows the building open 9:30 am to 1 pm, and a Facebook post from the spring says Sunday School 9:15 and 10:30. What are the times today? Once we know, the Google hours may want a tidy too.',
-    },
-    {
-      title: 'One honest line about a Sunday.',
-      detail:
-        'Under "Come as you are.": about how many come, the music, and who comes (families, retirees, both). Visitors told us this decides which church they try.',
-    },
-    {
-      title: 'The good news, near the top.',
-      detail:
-        'A new block after "Your first Sunday" asks for two or three sentences of the gospel in plain words. It links to "The gospel, first" on What we believe. Your words only; we have not drafted it.',
+        'Sunday School 9:45 and worship 11:00; on Wednesday, dinner at 6:00, adult Bible study at 6:30 and children and youth at 6:00. If any of that changes, update it once in Site settings > Church facts and the whole site follows.',
     },
   ],
   '/about/': [
     {
-      title: 'New: our story so far, as a timeline.',
+      title: 'A year with us.',
       detail:
-        'Five steps with blank years (18__, 19__, 20__) and a guessed line each. Give us the real year and one true sentence for the moments that matter, and we will drop the rest.',
+        'The blank-years timeline is now the church year as your posts show it: Easter, summer movie nights and haircuts, the fall coat giveaway and bonfire, Christmas, and every week. If you would rather tell the church’s history with dates, send us the years and we will add them.',
     },
     {
-      title: 'How the church began.',
+      title: 'When did the church begin?',
       detail:
-        'Two or three sentences on its start and the season it is in now. Was it founded in 1959?',
-    },
-    {
-      title: '"Who we are" is in your own words now.',
-      detail:
-        'We took it from the description the church wrote for its Google listing, including "know Christ, make Him known, and glorify God". Change anything that no longer fits.',
+        'Site settings has 1959 as the founding year, not confirmed. Is that right? Nothing on the page depends on it yet.',
     },
     {
       title: 'Which name should the site use?',
       detail:
-        'The building says First Baptist Church of Auburn and the road sign says Auburn Baptist Church. One, or both?',
-    },
-    {
-      title: 'A Sunday here.',
-      detail:
-        'A new section: the music, how you preach and for about how long, and who comes. Visitors want this more than the story of the logo, which is now one line at the end.',
-    },
-    {
-      title: 'Something only Auburn could say.',
-      detail:
-        '"Who we are" reads like many church websites. One or two sentences about this church in particular would help most.',
+        'The building says First Baptist Church of Auburn and the road sign says Auburn Baptist Church. The site uses the first and mentions the sign by name on Plan your visit. Is that right?',
     },
   ],
   '/what-we-believe/': [
     {
-      title: 'What we believe: our drafts, yours to rewrite.',
+      title: 'Please approve this page before launch.',
       detail:
-        'So you have something to edit, every belief on this page now holds our draft in yellow brackets: plain-word summaries of the Baptist Faith and Message, each with one verse. None of it is settled until you have rewritten or approved it.',
+        'Every belief here is written out in full now, in plain words from the Baptist Faith and Message 2000, with the King James verses your posts quote, and the gospel at the top is in the words of your own sermon clips. It reads as settled, so it must not go live until you have read it and said yes, or changed it.',
     },
     {
-      title: 'The gospel, first.',
+      title: 'The Baptist Faith and Message as written?',
       detail:
-        'The page now opens with the good news in your words, then nine short topics, the order the largest SBC church sites use.',
+        'The page says the church affirms it as its full statement of faith and links to it. The SBC page notes a later change to Article VI, on the office of pastor. Confirm you are happy with its current wording, or send the church’s own statement instead.',
+    },
+    {
+      title: 'The end times.',
+      detail:
+        'The "Jesus will return" card keeps to what the Baptist Faith and Message says: Jesus will return in person, and he will judge everyone rightly. Your sermon clips teach a pre-tribulation rapture. Would you like the page to say so?',
+    },
+    {
+      title: 'Your association.',
+      detail:
+        'The page says the church works with sister churches in Ohio and gives through the Cooperative Program. Is that right, and would you like the association named, or any missionaries the church supports?',
     },
     {
       title: 'The pictures beside each belief.',
       detail:
         'Each topic has a small brick picture: a crown for God, the cross, a dove, a cracked heart for sin, a broken chain for salvation, the cup and bread over water, the church, and light through the clouds. Tell us if any of them says the wrong thing.',
     },
-    {
-      title: 'The full statement of faith.',
-      detail:
-        'The page says, in yellow brackets, that the church affirms the Baptist Faith and Message 2000 and links to it. Confirm that, or send the church’s own statement instead.',
-    },
-    {
-      title: 'New: How to begin, and Questions about baptism.',
-      detail:
-        'Two new sections, both our drafts. "How to begin" sets the gospel out as Admit, Believe, Confess with a verse each. "Questions about baptism" answers what people from other churches ask (does it save, why immersion, babies, an earlier baptism). Rewrite, reorder or remove any of them.',
-    },
-    {
-      title: 'Baptism.',
-      detail: 'What it means here, and what someone should do if they would like to be baptized.',
-    },
-    {
-      title: 'What it means to be Baptist.',
-      detail:
-        'A new section after the beliefs: what makes Auburn Baptist (baptism by immersion, the Lord’s Supper, how the church is governed, the local church, the priesthood of believers, soul liberty) and how Auburn works with other Southern Baptists. Your words; we have not drafted any.',
-    },
   ],
   '/leadership/': [
     {
-      title: 'A few sentences about you.',
+      title: 'About you.',
       detail:
-        'How you came to Auburn, family if you would like to share it, and what you love about the church.',
+        'Written from your posts: you and Kassie, several years here, another job through the week, preaching passage by passage, and Kassie leading the women’s Bible study and teaching the kids. Correct anything, or add how you came to Auburn.',
+    },
+    {
+      title: 'Pastor Rick, by name.',
+      detail:
+        'How we are led names Dr. Richard Rhodus (Pastor Rick) as preaching and leading the Wednesday study, as your posts do. Is he happy to be named here?',
     },
     {
       title: 'Deacons and ministry leaders, with their permission.',
@@ -164,24 +130,14 @@ const NOTES: Record<string, ClientNote[]> = {
         'Names and roles of anyone you would like introduced, and only once each of them has said yes.',
     },
     {
-      title: 'How decisions are made.',
+      title: 'A 30-second hello video?',
       detail:
-        'One sentence: does the church vote on members, the budget and calling a pastor, and what do the deacons do?',
-    },
-    {
-      title: 'A 30-second hello video.',
-      detail:
-        'Filmed on a phone, saying hello. It would sit beside your photo. Visitors say a real voice is what makes them trust a pastor before they visit.',
-    },
-    {
-      title: 'Your TikTok, on this page.',
-      detail:
-        'The page now says you post short videos on TikTok and links to @auburn.pastor. Happy for it to be here as yours?',
+        'Filmed on a phone, saying hello, it would sit beside your photo. The ask came off the page; send one any time and it goes in.',
     },
     {
       title: 'An email for you and the office, and office hours.',
       detail:
-        'Put them in Site settings and they show in the new contact card on this page and on Need the pastor?.',
+        'Put them in Site settings and they show in the contact card on this page and on Need the pastor?.',
     },
   ],
   '/plan-your-visit/': [
@@ -196,107 +152,57 @@ const NOTES: Record<string, ClientNote[]> = {
         'The sketch at the top of the walk pins it as the place to start. If guests come in another way, tell us which.',
     },
     {
-      title: 'Check the walk-through of a first Sunday.',
-      detail:
-        'Parking, the greeter, coffee, children and worship: anything marked "to be confirmed" or in brackets is our guess.',
-    },
-    {
-      title: 'The Questions page now lives here.',
-      detail:
-        'To shorten the menu, the questions moved to the bottom of this page, and the old Questions address comes here. The notes below came with them.',
-    },
-    {
-      title: 'Check the answers.',
-      detail:
-        'What to wear, parking, children and the rest are our drafts in brackets. Change anything that is not how Auburn does it.',
-    },
-    {
-      title: 'Communion and baptism.',
-      detail:
-        'Those two answers are yours to write: how often you share the Lord’s Supper, and how to ask about baptism.',
-    },
-    {
-      title: 'Anything people often ask you?',
-      detail: 'Send us the questions and we will add them.',
-    },
-    {
-      title: 'New: your kids, by age.',
-      detail:
-        'Three cards under "Your kids" guess at your age groups (babies and toddlers, children, students) and what each does on a Sunday. Correct the ages and the details, or remove a card you do not have.',
-    },
-    {
-      title: 'Your kids: the details.',
-      detail:
-        'Nursery ages, where children check in and how parents pick them up, whether it is the whole service, and what a five-year-old does in worship.',
-    },
-    {
       title: 'Your child safety policy, in one sentence.',
       detail:
-        'Background checks, two adults in every room, check-in and pick-up. It shows in the same words here and on Ministries, so say it once and we use it everywhere.',
+        'Background checks, how many adults in a room, check-in and pick-up. It shows in the same words here and twice on Ministries, so say it once and we use it everywhere. It must be exactly true.',
     },
     {
-      title: 'What worship is like.',
+      title: 'Is there a nursery?',
       detail:
-        'Hymns or newer songs, piano or organ, your Bible translation and pew Bibles, how you preach and for how long, the invitation, and how often you share the Lord’s Supper and whether visitors may take part.',
+        'The Nursery card and two lines ask: the ages, where children are signed in and picked up, and whether it runs the whole service. If there is none, the card comes out.',
     },
     {
-      title: 'Getting in and getting around.',
+      title: 'What worship is like: three to check.',
       detail:
-        'An accessible restroom, wheelchair spaces, steps inside, a hearing loop, large print. Five short answers.',
+        'We kept to what your posts show, and wrote three things the usual Southern Baptist way: a time to respond at the close of the service, the Lord’s Supper open to anyone who has trusted Jesus (your posts show it at Easter and Christmas), and someone baptized as a baby being invited to be baptized as a believer. Tell us if any is not how Auburn does it.',
+    },
+    {
+      title: 'Getting around inside.',
+      detail:
+        'Is everything on one level, where is the accessible restroom, and is there a step-free way downstairs?',
     },
   ],
   '/ministries/': [
     {
-      title: 'Is this list right?',
-      detail:
-        'Kids, Youth, Sunday School, Bible study, music, prayer and fellowship are our drafts. Add, remove or rename any of them, with days and times.',
+      title: 'Is there a music team or choir?',
+      detail: 'Two cards ask. If there is not, they come out.',
     },
     {
-      title: 'Who leads each one, and where it meets.',
+      title: 'Your child safety policy.',
       detail:
-        'A name and a room on every card turns this into something members use week to week. Only names of people who have said yes.',
-    },
-    {
-      title: 'Youth on Wednesdays.',
-      detail:
-        'Your road sign mentions youth at 6:00, so we added a Youth card. What ages, what happens, and who leads it?',
-    },
-    {
-      title: 'Children: ages, nursery and safety.',
-      detail:
-        'Parents look for this first. Is there a nursery, from what age, and what is your child safety policy (background checks, two adults in every room)?',
-    },
-    {
-      title: 'Ways to serve.',
-      detail:
-        'Greeters, the children’s room, music, the food pantry, workdays and a prayer team are our guesses. Which teams are real, and who should people ask?',
-    },
-    {
-      title: 'How the church serves its neighbors.',
-      detail:
-        'One or two real examples. Does the food pantry run through the year, and when is it open?',
+        'The Kids card and the children’s room card both ask for it, word for word the same as Plan your visit.',
     },
     {
       title: 'One person to ask for each ministry.',
       detail:
-        'Every card now has an "Ask about ..." link to the contact form, with the ministry named in the message. Tell us who should get each one (a first name is enough), so it reaches the right person.',
+        'Every card has an "Ask about ..." link to the contact form, with the ministry named in the message. Tell us who should get each one (a first name is enough), so it reaches the right person.',
+    },
+    {
+      title: 'Ms. Kassie and Matthew 25 Ministries, by name.',
+      detail:
+        'The Kids card names Ms. Kassie as your posts do, and Serving our neighbors thanks Matthew 25 Ministries. Happy for both to be named?',
     },
   ],
   '/sermons/': [
     {
       title: 'Do you want a Sermons page?',
       detail:
-        'It lists each Sunday’s message with the passage and a video or audio link, and can be a podcast too. The one there now is an example.',
+        'It lists each Sunday’s message with the passage and a video or audio link, and can be a podcast too. The one there now is an example, marked in yellow: replace it with a real one or we delete it before launch.',
     },
     {
       title: 'Where would the recordings come from?',
       detail:
-        'A YouTube link, an audio file, or both. Whoever posts them would add each one in the editor.',
-    },
-    {
-      title: 'The Watch page now lives here.',
-      detail:
-        'The live stream and the latest message sit at the top of this page, and the old Watch address comes here. The notes below came with it.',
+        'A Facebook or YouTube link, an audio file, or both. Whoever posts them would add each one in the editor.',
     },
     {
       title: 'Facebook live, and YouTube?',
@@ -304,19 +210,9 @@ const NOTES: Record<string, ClientNote[]> = {
         'The Watch band points to your Facebook page for the live stream. If you have or want a YouTube channel, the latest message can show here automatically.',
     },
     {
-      title: 'What time does the stream start?',
-      detail:
-        'The live button says "Next live: Sunday 11:00 am", from the worship time in Site settings. Is that when the stream starts?',
-    },
-    {
-      title: 'The passage, preacher and series on each sermon.',
-      detail:
-        'Each sermon page shows all three, and people can browse by series and book of the Bible once there are a few. The example sermon has none yet; the yellow lines on its page show where they go.',
-    },
-    {
       title: 'An audio recording, for the podcast.',
       detail:
-        'The podcast fills itself from any sermon with an MP3 attached. If you can record Sunday’s message, people can listen in the car. A YouTube link also lets the video play right on the page.',
+        'The podcast fills itself from any sermon with an MP3 attached. If you can record Sunday’s message, people can listen in the car.',
     },
   ],
   '/prayer/': [
@@ -326,19 +222,9 @@ const NOTES: Record<string, ClientNote[]> = {
         'If you take prayer requests in Church Trac, send us that form’s link and this page shows it instead, so requests land with your prayer list there.',
     },
     {
-      title: 'Who should prayer requests go to?',
+      title: 'Who sees a request.',
       detail:
-        'Right now they would go to you alone, and the website keeps no copy. Should a prayer team see them too?',
-    },
-    {
-      title: 'The prayer chain, and a call back.',
-      detail:
-        'The form now has two checkboxes: "You may share this with the prayer chain" (off unless someone checks it) and "I would like Pastor Jacob to call me". Is there a prayer chain, and who is on it?',
-    },
-    {
-      title: 'Is a request ever read aloud or printed?',
-      detail:
-        'The page should say exactly where a request goes, so tell us if any are shared on a Sunday or in the bulletin.',
+        'The page now says a request goes to you, and to the church family only if the box is ticked. Is that right, and is there a prayer chain the box should name?',
     },
   ],
   '/events/': [
@@ -348,14 +234,9 @@ const NOTES: Record<string, ClientNote[]> = {
         'Send us the calendar (iCal) link from Church Trac and every event you add there shows up here, with a button to add it to a phone.',
     },
     {
-      title: 'Confirm the weekly times.',
-      detail:
-        'The Sunday and Wednesday times here come from the same list as the rest of the site. We added Youth on Wednesday at 6:00 from your road sign. Each one gets an "Add to calendar" link once its time is confirmed.',
-    },
-    {
       title: 'Put the big days in Church Trac early.',
       detail:
-        'Homecoming, revival, VBS, Christmas Eve, Easter, the Thanksgiving meal and baptism Sundays. Added a month or two ahead, they show under "Coming up" here and on Home, and the church looks as busy as it is.',
+        'The Christmas program, Easter, the movie nights, the coat giveaway and the bonfire. Added a month or two ahead, they show under "Coming up" here and on Home, and the church looks as busy as it is.',
     },
   ],
   '/give/': [
@@ -368,31 +249,21 @@ const NOTES: Record<string, ClientNote[]> = {
       detail: 'If people can mail a check, who should it be made out to and where should it go?',
     },
     {
-      title: 'How gifts are cared for.',
+      title: 'How gifts are cared for: two facts.',
       detail:
-        'How the offering is counted, giving statements each January, whether the church votes on the budget, and a line on the Cooperative Program. A new section asks for each.',
+        'Who counts the offering and whether givers get a statement each January, and whether the church votes on a yearly budget. The Cooperative Program line assumes the church gives through it: is that right?',
     },
   ],
   '/next-steps/': [
     {
-      title: 'A new page: what comes after a first Sunday.',
+      title: 'Joining the church.',
       detail:
-        'Knowing Jesus, baptism, membership, a group and a place to serve, one step at a time. Most church sites have a page like this; it is in the menu and the footer.',
+        'Written the usual Southern Baptist way: talk with you about how they came to faith and their baptism, then a vote of the members. Is that how it works here, and is there a class?',
     },
     {
-      title: 'Baptism and membership, in your words.',
+      title: 'Coffee with the pastor.',
       detail:
-        'How someone is baptized here, and how they join the church: a class, a talk with you, a vote? Two or three sentences each.',
-    },
-    {
-      title: 'Coffee with the pastor?',
-      detail:
-        'An easy first step some churches offer: a coffee to ask anything. Would you like to offer it? If not, we will drop the line.',
-    },
-    {
-      title: 'Know Jesus: your verse.',
-      detail:
-        'Step one now stands on its own above the others. Which verse would you like there (Romans 10:9, or another), in the church’s translation?',
+        'The page and the Ministries card now say "call or text the church, and Pastor Jacob will be glad to sit down with you". Happy to offer that?',
     },
   ],
   '/contact/': [
@@ -401,16 +272,6 @@ const NOTES: Record<string, ClientNote[]> = {
       title: 'The church’s WhatsApp link.',
       detail:
         '[Jacob: you listed WhatsApp as one of the church’s accounts, with Facebook and TikTok. Do you want it on the website? If so, send us the link: a group invite (it starts https://chat.whatsapp.com/) or a number link (https://wa.me/ and the number). It then shows as a WhatsApp button beside Facebook here, in the footer and in the phone menu. You can add it yourself too: Site settings > Social and footer > Social links, paste the link.]',
-    },
-    {
-      title: 'When life happens.',
-      detail:
-        'Hospital visits, funerals, weddings and a hand when someone is struggling now live on the Need the pastor? page, which this page links to. Tell us how each works here, and how to reach you in an emergency, in the notes on that page.',
-    },
-    {
-      title: 'Can people text the church phone?',
-      detail:
-        'The site now says "Call or text" beside the number. If it cannot take texts, untick "This number takes texts" in Site settings > Church facts.',
     },
     {
       title: 'A member sign-in link.',
@@ -423,42 +284,27 @@ const NOTES: Record<string, ClientNote[]> = {
         'Where messages from the contact form should go, and the address to show on the site.',
     },
     {
-      title: 'Is (513) 863-3500 still the church line?',
+      title: 'The church phone.',
       detail:
-        'It is the number on your Google listing and the local directories, so the site shows it with a "To confirm" tag. A Facebook post from the spring gave (513) 868-1412 instead. Which should people call, and who answers it?',
-    },
-    {
-      title: 'Who reads prayer requests?',
-      detail:
-        'Contact now sends prayer requests to the prayer request page, which says Pastor Jacob reads every one. Should anyone else?',
-    },
-    {
-      title: 'How quickly is a text answered?',
-      detail:
-        'Visitors said they would text before they called. A line like "Someone usually replies the same day, even Saturday" would help, if it is true.',
+        'The site shows (513) 863-3500, the number on your Facebook page, and says "Call or text". If it cannot take texts, untick "This number takes texts" in Site settings > Church facts.',
     },
   ],
   '/pastoral-care/': [
     {
-      title: 'A new page: Need the pastor?',
+      title: 'Need the pastor?: check the promises.',
       detail:
-        'For a hard day: how to reach you after hours, hospital and homebound visits, funerals, weddings, the Lord’s Supper at home and help with a bill. Every line in brackets is yours to answer.',
+        'Hospital and home visits, the Lord’s Supper at home, funerals, weddings and help with a bill are written as offers. Take out any the church cannot keep.',
     },
     {
-      title: 'After hours.',
-      detail:
-        'Say Mom is taken to the hospital on a Saturday night: who should someone call, and may that number be on the site? A deacon is fine too.',
+      title: 'Office hours and email.',
+      detail: 'If there are any, they go in Site settings and show in the card on this page.',
     },
   ],
   '/journal/': [
     {
-      title: 'Do you want a News and notes page?',
+      title: 'A first real post.',
       detail:
-        'Short posts from you or the church: news, dates, a thought from Sunday. The post there now is an example.',
-    },
-    {
-      title: 'Who would write them, and how often?',
-      detail: 'If nobody has time, we can hide the page until there is.',
+        'The example is now the Children’s Christmas Program on December 2, from your Facebook invitation. Short posts like it keep the site alive: who would write them, and how often?',
     },
   ],
   '/bulletin/': [
