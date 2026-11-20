@@ -53,6 +53,15 @@ export type LastMessage = {
   videoUrl?: string;
 };
 
+export type RailStepImage = {
+  asset?: SanityImageAssetReference;
+  media?: unknown; // Unable to locate the referenced type "railStep.image.media" in schema
+  hotspot?: SanityImageHotspot;
+  crop?: SanityImageCrop;
+  alt?: string;
+  _type: 'image';
+};
+
 export type TimelineEntryImage = {
   asset?: SanityImageAssetReference;
   media?: unknown; // Unable to locate the referenced type "timelineEntry.image.media" in schema
@@ -2016,6 +2025,7 @@ export type StepsRailSection = {
       | 'blocks';
     title?: string;
     body?: string;
+    image?: RailStepImage;
     gathering?: 'none' | 'first' | 'second';
     place?: string;
     times?: Array<{
@@ -5420,6 +5430,7 @@ export type AllSanitySchemaTypes =
   | IconCardImage
   | FypCardImage
   | LastMessage
+  | RailStepImage
   | TimelineEntryImage
   | Logo
   | PhotoCardImage

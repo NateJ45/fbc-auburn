@@ -249,10 +249,22 @@
   margin: 0 0 40px;
   background: #e9eef5;
 }
-.hb-band--green {
+.hb-band--green,
+.hb-weekband {
   background: #e9eef5;
 }
 
+/* The band's title, the same H2 as every other Home section (2026-11-20). */
+.hb-band__title {
+  margin: 0 0 var(--gap-heading);
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--auburn-deep);
+}
 /* Through the week: a three-column board on a white panel. */
 .hb-board {
   display: grid;
@@ -294,6 +306,12 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--gap-grid);
+}
+/* Two or four cards take two columns, so none is left alone on a row (2026-11-20: Prayer requests
+   sat by itself under three). */
+.hb-ways[data-count='2'],
+.hb-ways[data-count='4'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .hb-way {
   display: flex;
@@ -348,9 +366,11 @@
   }
 }
 
-/* ---- Your first Sunday: the walk (Home audit research, 2026-10-17) ------------------------------
-   Numbered stones in the path's colours joined by gold stepping-stone dashes: across on desktop,
-   down a rail on phones. */
+/* ---- Your first Sunday: the walk, as stacked photo panels (2026-11-20) ------------------------
+   Each step is a panel: the numbered brick and words, then the step's photo (.split, rule 17).
+   From 1024px the panels stack under the header as the page scrolls, each held a little lower
+   than the one before, so the steps pile up like courses. White and #E9EEF5 alternate, two of the
+   page's three surfaces. Below 1024px: one plain column, photo first. */
 .hb-walk__heading {
   max-width: 30ch;
   margin: 0 0 var(--gap-heading);
@@ -358,33 +378,62 @@
   font-size: var(--text-h2);
   font-weight: 400;
   line-height: 1.08;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   color: var(--auburn-deep); /* navy, the one H2 colour (audit 2026-10-25, GD-H6) */
 }
-.hb-walk__steps {
+.hb-walk__panels {
   display: grid;
-  grid-template-columns: repeat(var(--hb-walk-n, 4), minmax(0, 1fr));
-  gap: 28px 36px;
+  gap: 20px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.hb-walk__step {
+.hb-walk__panel {
+  --split-text: 1fr;
+  --split-media: 1fr;
+  --split-gutter: clamp(24px, 4vw, 56px);
+  align-items: center;
+  padding: clamp(20px, 3.5vw, 40px);
+  border-radius: var(--hb-radius);
+  background: #ffffff;
+  box-shadow: var(--shadow-card);
+}
+.hb-walk__panel:nth-child(even) {
+  background: #e9eef5;
+}
+@media (width >= 64rem) {
+  .hb-walk__panel {
+    position: sticky;
+    top: calc(96px + var(--hb-walk-i, 0) * 18px);
+    min-height: 380px;
+  }
+}
+.hb-walk__text {
+  max-width: 34rem;
+}
+.hb-walk__ph {
   position: relative;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  border-radius: calc(var(--hb-radius) - 6px);
+  background: var(--hb-ink);
+}
+.hb-walk__ph img,
+.hb-walk__ph .shot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 /* Numbered bricks (2026-10-21, the brick brand): the mark's course with a numeral on it,
-   in two tones of red brick. Printed like every brick since 2026-10-23: a darker rim all round,
-   heavier along the bottom, and the linocut flecks (src/assets/textures/print-flecks.svg, from
-   npm run gen:stones) over the colour. */
+   in two tones of red brick, printed with a darker rim and the linocut flecks. */
 .hb-walk__stone {
-  position: relative;
-  z-index: 1;
   display: grid;
   place-items: center;
   width: 64px;
   height: 44px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   border-radius: 2px;
   background-image: url('../assets/textures/print-flecks.svg');
   background-size: 64px 44px;
@@ -396,9 +445,8 @@
   line-height: 1;
   color: #ffffff;
 }
-/* Red bricks, two tones from the slab's wall (2026-10-27: brick is red wherever it is drawn as
-   brick; navy from the 2026-10-25 audit until then). A step darker than the auburn button, so the
-   button stays the one red action. White numerals: 10.6 and 9.0 to 1. */
+/* Red bricks, a step darker than the auburn button so the button stays the one red action. White
+   numerals: 10.6 and 9.0 to 1. */
 .hb-walk__stone--0,
 .hb-walk__stone--2 {
   background-color: #6a2b20;
@@ -406,16 +454,6 @@
 .hb-walk__stone--1,
 .hb-walk__stone--3 {
   background-color: #7a3326;
-}
-/* The site's one step connector (GD-M4): a 2px dashed line, 10px dashes, in light navy. */
-.hb-walk__step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  top: 21px;
-  left: 80px;
-  right: -24px;
-  height: 2px;
-  background: var(--step-dash-x);
 }
 .hb-walk__when {
   margin: 0 0 6px;
@@ -425,19 +463,22 @@
   text-transform: uppercase;
   color: var(--auburn-deep);
 }
+/* The step titles are the page's card-title size scaled up: they carry a whole panel now. */
 .hb-walk__title {
-  margin: 0 0 8px;
+  margin: 0 0 12px;
   text-wrap: balance;
   font-family: var(--font-display);
-  font-size: var(--fs-title);
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem);
   font-weight: 400;
-  line-height: 1.15;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
   color: var(--hb-ink);
 }
 .hb-walk__body {
   margin: 0;
   font-size: var(--fs-body);
   line-height: 1.55;
+  text-wrap: pretty;
   color: var(--hb-body);
 }
 .hb-walk__link {
@@ -461,34 +502,44 @@
   font-size: var(--fs-title);
   color: var(--hb-ink);
 }
-@media (max-width: 960px) {
-  .hb-walk__steps {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
+/* Below 1024px the four panels are a row you swipe through, the next one peeking in at the edge:
+   stacked, they doubled the walk's height on a phone (1,117 to 2,385px). The row runs to the
+   screen's edges and snaps each panel to the text column. */
+@media (width < 64rem) {
+  .hb-walk__panels {
+    grid-auto-flow: column;
+    grid-auto-columns: min(84%, 26rem);
+    gap: 12px;
+    margin-inline: calc(-1 * var(--hb-gutter));
+    padding: 4px var(--hb-gutter) 16px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--hb-gutter);
+    scrollbar-width: none;
   }
-  .hb-walk__step {
-    display: grid;
-    grid-template-columns: 60px minmax(0, 1fr);
-    gap: 0 18px;
-    padding-bottom: 28px;
+  .hb-walk__panels::-webkit-scrollbar {
+    display: none;
+  }
+  .hb-walk__panels:focus-visible {
+    outline: 3px solid var(--auburn-deep);
+    outline-offset: -3px;
+  }
+  .hb-walk__panel {
+    align-content: start;
+    padding: 16px;
+    scroll-snap-align: start;
+  }
+  /* Photo first: the picture says where you are before the words do. */
+  .hb-walk__ph {
+    order: -1;
+    aspect-ratio: 3 / 2;
   }
   .hb-walk__stone {
-    margin-bottom: 0;
-  }
-  .hb-walk__step:not(:last-child)::after {
-    top: 66px;
-    bottom: 6px;
-    right: auto;
-    width: 2px;
-    height: auto;
-    left: 31px;
-    background: var(--step-dash-y);
-  }
-  .hb-walk__when {
-    margin-top: 4px;
-  }
-  .hb-walk__when.is-empty {
-    display: none;
+    width: 52px;
+    height: 36px;
+    margin-bottom: 14px;
+    background-size: 52px 36px;
   }
 }
 
@@ -794,7 +845,8 @@
     grid-row: span 1;
     min-height: 240px;
   }
-  .hb-ways {
+  .hb-ways,
+  .hb-ways[data-count] {
     grid-template-columns: minmax(0, 1fr);
   }
   /* The line saying where it streams stays on phones too (it was hidden). */

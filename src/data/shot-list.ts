@@ -139,6 +139,43 @@ const SHOTS: Record<string, Shot[]> = {
       example: { file: 'pastor-portrait', credit: 'Susmit Sam on Unsplash' },
     },
   ],
+  // Home's Sunday walk (2026-11-20): one photo per step panel, in step order (HomeWalk.astro).
+  '/|Your first Sunday': [
+    {
+      title: 'The front door on a Sunday morning',
+      detail: 'From the parking lot, door open, ideally with a greeter standing by it.',
+      orientation: 'landscape',
+      example: { file: 'front-door', credit: 'Roger Starnes Sr on Unsplash' },
+    },
+    {
+      title: 'A Sunday School class around the table',
+      detail: 'Adults with open Bibles, taken from the side so faces read as friendly, not posed.',
+      orientation: 'landscape',
+      example: { file: 'bible-study', credit: 'Mitchell Leach on Unsplash' },
+    },
+    {
+      title: 'The sanctuary during worship',
+      detail: 'From the back, people standing to sing, the front of the room in view.',
+      orientation: 'landscape',
+      example: { file: 'worship-wide', credit: 'Natalya Ukolova on Unsplash' },
+    },
+    {
+      title: 'People talking after the service',
+      detail: 'Coffee cups and conversation in the fellowship hall or by the door.',
+      orientation: 'landscape',
+      example: { file: 'after-service', credit: 'Connor Olson on Unsplash' },
+    },
+  ],
+  // Home's word to parents (2026-11-20).
+  '/|Bring the kids': [
+    {
+      title: 'The children’s room, ready for Sunday',
+      detail:
+        'The room itself with toys and books out, no children’s faces unless parents have signed a release.',
+      orientation: 'landscape',
+      example: { file: 'nursery', credit: 'Atikah Akhtar on Unsplash' },
+    },
+  ],
   '/about/|Who we are': [
     {
       title: 'The church family together',

@@ -140,6 +140,7 @@ const SECTION_ARMS = `
     // scaffold:end
     _type == "stepsRailSection" => {
       ...,
+      steps[]{ ..., image${IMAGE_PROJECTION} },
       primaryCta${CTA_PROJECTION},
       secondaryCta${CTA_PROJECTION}
     },
