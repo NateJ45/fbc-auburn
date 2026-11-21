@@ -148,8 +148,19 @@ const { entries } = Astro.props;
       transition:
         width 220ms ease,
         background-color 220ms ease,
-        box-shadow 220ms ease;
+        box-shadow 220ms ease,
+        opacity 220ms ease,
+        visibility 0s linear 0s;
       width: 30px;
+    }
+    /* Away while the footer is on screen (the script sets data-otp-away). */
+    .otp[data-otp-away] {
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        opacity 220ms ease,
+        visibility 0s linear 220ms;
     }
     .otp__title {
       position: absolute;
@@ -252,11 +263,14 @@ const { entries } = Astro.props;
   import { INDEX_MIN } from '@/lib/page-index';
 
   let observer: IntersectionObserver | null = null;
+  let footerObserver: IntersectionObserver | null = null;
   let onScroll: (() => void) | null = null;
 
   function stop() {
     observer?.disconnect();
     observer = null;
+    footerObserver?.disconnect();
+    footerObserver = null;
     if (onScroll) window.removeEventListener('scroll', onScroll);
     onScroll = null;
   }
@@ -313,6 +327,16 @@ const { entries } = Astro.props;
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
+
+    // The wide-screen rail is pinned to the screen, so it would sit over the dark footer at the
+    // bottom of the page (review 2026-11-21). It steps away while any of the footer is in view.
+    const footer = document.querySelector('body > footer, footer.site-footer, footer');
+    if (footer) {
+      footerObserver = new IntersectionObserver(([entry]) => {
+        for (const l of lists) l.toggleAttribute('data-otp-away', entry.isIntersecting);
+      });
+      footerObserver.observe(footer);
+    }
 
     // A tap in the phone list closes it, so the section is not hidden under the open list.
     for (const a of document.querySelectorAll<HTMLAnchorElement>('.otp-m__link')) {

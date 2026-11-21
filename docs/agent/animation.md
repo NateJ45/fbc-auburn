@@ -201,7 +201,7 @@ ScrollTrigger, SplitText and Barba, driven by Alpine components. What it does, a
 | (ours only)                                                                                                                                                       | A person's photo opens in four brick courses, bottom up, in running bond (opt-in, below)                                            | `.flow--portrait`, a mask on the frame, 600ms on both levels                                                             |
 | (ours only)                                                                                                                                                       | The building sketch draws itself in: the pen lines sweep across, the shading follows 35% behind                                     | `sketch-draw` in `flow.css`, view timeline; finished drawing elsewhere                                                   |
 | Buttons lean toward the mouse (magnetic)                                                                                                                          | Primary buttons and the header's Plan your visit, mouse only                                                                        | `translate` from the pointer, 14px at most                                                                               |
-| Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main fades out into a 7px blur and the new page comes in from it (0.5s each); header and footer stay put                            | `::view-transition-*(main-content)` in `flow.css`                                                                        |
+| Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main fades out into a 7px blur and the new page comes in from it (180ms out, 320ms in); header and footer stay put                  | `::view-transition-*(main-content)` in `flow.css`                                                                        |
 
 Left out on purpose: the loading curtain and its wait (slow on every click), anything that
 rotates (the cross rule), scroll-jacking or pinning.
@@ -230,9 +230,9 @@ mark's hidden bricks). Reduced motion and `?still` still switch all of it off: n
 **Page changes: fade and blur** (2026-11-21, the inner-page rhythm pass; the effect of the Details vault's
 "Fade Page Transition", rebuilt on Astro's view transitions, so no Swup and the ClientRouter in
 `BaseLayout.astro` is unchanged, which keeps `astro:page-load` re-init and the preview stack as they were).
-The old `<main>` fades out and blurs to 7px over 0.5s with `cubic-bezier(0.25, 0.46, 0.45, 0.94)`; the new one
-runs the same curve back from that state at the same time, so the swap reads as one soft dissolve and
-takes half a second in all. Header and footer are pinned (`animation: none`). Reduced motion: Astro skips
+The old `<main>` fades out and blurs to 7px over 180ms with `cubic-bezier(0.25, 0.46, 0.45, 0.94)`; the new one
+runs the same curve back from that state over 320ms, starting at the same time, so the swap reads as one
+soft dissolve and is done in about a third of a second. Header and footer are pinned (`animation: none`). Reduced motion: Astro skips
 view transitions, and `flow.css` sets the two pseudo-elements to `animation: none` as well. Before this it
 was the lift-and-rise of UX-L7 (120ms out, 260ms in).
 

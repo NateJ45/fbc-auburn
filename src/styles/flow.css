@@ -426,7 +426,8 @@ html.motion .flow-magnetic:not(.btn-auburn) {
    BaseLayout stays as it is, so astro:page-load still re-inits every script.) Only <main>
    moves: the header and footer stay pinned (globals.css). Off with reduced motion: Astro skips
    view transitions then, and the media query below makes sure. It replaced the lift-and-rise of
-   2026-10-24 (120ms out, 260ms in). */
+   2026-10-24 (120ms out, 260ms in). Timing kept near that audit's (UX-L7: a tap must never feel
+   missed): 180ms out, 320ms in, not the reference's 0.5s each way, which felt slow on a phone. */
 @keyframes flow-vt-out {
   to {
     opacity: 0;
@@ -441,10 +442,10 @@ html.motion .flow-magnetic:not(.btn-auburn) {
 }
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(main-content) {
-    animation: flow-vt-out 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    animation: flow-vt-out 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   }
   ::view-transition-new(main-content) {
-    animation: flow-vt-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    animation: flow-vt-in 320ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   }
 }
 @media (prefers-reduced-motion: reduce) {
