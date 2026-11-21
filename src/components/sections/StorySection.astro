@@ -51,9 +51,7 @@ const bg = surface === 'muted' ? 'bg-muted' : 'bg-background';
       ) : (
         <div class="aspect-[4/5] rounded-[var(--radius-card)] bg-muted" aria-hidden="true" />
       )}
-      {attribution && (
-        <p class="mt-s text-xs tracking-widest text-foreground/80 uppercase">{attribution}</p>
-      )}
+      {attribution && <p class="mt-s text-xs text-foreground/80">{attribution}</p>}
     </div>
 
     <div>
@@ -67,17 +65,13 @@ const bg = surface === 'muted' ? 'bg-muted' : 'bg-background';
         <div class="mt-section-md space-y-m border-t border-border-soft pt-l text-foreground/80">
           {credentialLine && (
             <p>
-              <span class="mb-xs block text-xs tracking-widest text-foreground/80 uppercase">
-                Background
-              </span>
+              <span class="mb-xs block text-xs text-foreground/80">Background</span>
               {credentialLine}
             </p>
           )}
           {serviceAreaLine && (
             <p>
-              <span class="mb-xs block text-xs tracking-widest text-foreground/80 uppercase">
-                Service area
-              </span>
+              <span class="mb-xs block text-xs text-foreground/80">Service area</span>
               {serviceAreaLine}
             </p>
           )}

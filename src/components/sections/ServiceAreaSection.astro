@@ -51,7 +51,7 @@ const fees = showTravelFees ? travelFees : [];
 
       {fees.length > 0 && (
         <div class="rounded-[var(--radius-card)] bg-muted p-l">
-          <p class="mb-m text-xs tracking-widest text-foreground/80 uppercase">Travel fee tiers</p>
+          <p class="mb-m text-xs text-foreground/80">Travel fee tiers</p>
           <dl class="divide-y divide-border-soft">
             {fees.map((tier) => (
               <div class="flex items-baseline justify-between gap-m py-s">

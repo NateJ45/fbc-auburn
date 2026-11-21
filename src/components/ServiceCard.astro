@@ -64,9 +64,7 @@ const hasImage = !!service.featuredImage?.asset;
   <div class="flex flex-1 flex-col p-l">
     <header>
       <h3 class="font-display text-h3 text-foreground">{service.name}</h3>
-      {service.price && (
-        <p class="mt-xs font-mono text-sm tracking-eyebrow text-link uppercase">{service.price}</p>
-      )}
+      {service.price && <p class="mt-xs font-mono text-sm text-link">{service.price}</p>}
     </header>
 
     {service.shortDescription && (
@@ -90,7 +88,7 @@ const hasImage = !!service.featuredImage?.asset;
 
     {!compact && service.bestFor && (
       <div class="mt-m border-t border-border-soft pt-m">
-        <p class="mb-xs text-xs tracking-eyebrow text-foreground/80 uppercase">Best for</p>
+        <p class="mb-xs text-xs text-foreground/80">Best for</p>
         <p class="text-sm text-foreground/80 italic">{service.bestFor}</p>
       </div>
     )}
@@ -98,7 +96,7 @@ const hasImage = !!service.featuredImage?.asset;
     <div class="mt-l flex flex-1 items-end pt-m">
       <a
         href="/contact/"
-        class="inline-flex min-h-[44px] items-center py-s text-xs font-semibold tracking-eyebrow text-link uppercase transition-colors hover:text-primary-dark"
+        class="inline-flex min-h-[44px] items-center py-s text-xs font-semibold text-link transition-colors hover:text-primary-dark"
       >
         {ctaLabel}
         <span aria-hidden="true" class="ml-xs">

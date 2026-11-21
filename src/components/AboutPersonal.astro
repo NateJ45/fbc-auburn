@@ -83,9 +83,7 @@ const cardClass =
                   <dl class="mt-m divide-y divide-border-soft">
                     {currently.map((row) => (
                       <div class="flex items-baseline justify-between gap-m py-s">
-                        <dt class="shrink-0 text-xs tracking-eyebrow text-foreground/80 uppercase">
-                          {row.label}
-                        </dt>
+                        <dt class="shrink-0 text-xs text-foreground/80">{row.label}</dt>
                         <dd class="text-right text-foreground">{row.value}</dd>
                       </div>
                     ))}
@@ -128,9 +126,7 @@ const cardClass =
                   <dl class="mt-m grid grid-cols-1 gap-m sm:grid-cols-2">
                     {rapid.map((row) => (
                       <div>
-                        <dt class="text-xs tracking-eyebrow text-foreground/80 uppercase">
-                          {row.prompt}
-                        </dt>
+                        <dt class="text-xs text-foreground/80">{row.prompt}</dt>
                         <dd class="mt-xs text-foreground">{row.answer}</dd>
                       </div>
                     ))}

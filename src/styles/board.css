@@ -31,8 +31,7 @@
   font-size: var(--fs-tag);
   font-weight: 600;
   line-height: 1.3;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--hb-label-color, var(--heading-solid));
 }
 .hb-marker {

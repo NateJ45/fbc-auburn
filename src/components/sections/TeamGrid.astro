@@ -82,11 +82,7 @@ const validMembers = members.filter((m) => m?.name);
 
             <h3 class="font-display text-h3 text-foreground">{member.name}</h3>
 
-            {member.role && (
-              <p class="mt-xs text-sm tracking-eyebrow text-foreground/70 uppercase">
-                {member.role}
-              </p>
-            )}
+            {member.role && <p class="mt-xs text-sm text-foreground/70">{member.role}</p>}
 
             {member.bio && (
               <p class="mt-s text-base leading-relaxed text-foreground/80">{member.bio}</p>

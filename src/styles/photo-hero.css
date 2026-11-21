@@ -181,23 +181,23 @@
   font-family: var(--font-body);
   font-size: var(--fs-small);
   font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: #ffffff;
 }
 .hb-name__town {
   font-weight: 600;
   color: #ffffff;
 }
-/* A dot between the name and the town, so the two caps runs do not read as one (2026-10-24). */
+/* A dot between the name and the town (2026-10-24). */
 .hb-name__town::before {
   content: '·';
   margin-right: 14px;
   font-weight: 700;
 }
-/* On a phone the town wraps to its own line, where a leading dot would dangle. */
-@media (max-width: 600px) {
-  .hb-name__town::before {
+/* Not on a phone (Track A1, 2026-11-20): the header's lockup already says the name and town, and
+   the two lines pushed the This Sunday times below the first screen. */
+@media (max-width: 767px) {
+  .hb-name {
     display: none;
   }
 }

@@ -37,11 +37,7 @@ if (logoItems.length === 0) return null;
     editorial accent, not a main content section. */}
 <div class="border-y border-border-soft bg-muted" aria-label="Press coverage">
   <div class="mx-auto max-w-content px-m py-m">
-    {eyebrow && (
-      <p class="mb-m text-center text-xs tracking-eyebrow text-foreground/80 uppercase">
-        {eyebrow}
-      </p>
-    )}
+    {eyebrow && <p class="mb-m text-center text-xs text-foreground/80">{eyebrow}</p>}
 
     {/* Logo row — flexbox wraps gracefully on narrow viewports. Each logo is
         either a link (when url is set) or a plain img (when not). Logos render

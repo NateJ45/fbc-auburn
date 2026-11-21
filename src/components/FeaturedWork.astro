@@ -136,7 +136,7 @@ const heroHref = hero?.slug?.current ? `/portfolio/${hero.slug.current}/` : '#';
             {/* Room-type chip top-left — same chip pattern as ProjectCard. */}
             {heroRoomLabel && (
               <span
-                class="absolute top-m left-m z-[2] inline-flex items-center rounded-full bg-bg/85 px-2.5 py-1 text-xs font-semibold tracking-eyebrow text-primary-dark uppercase backdrop-blur-sm"
+                class="absolute top-m left-m z-[2] inline-flex items-center rounded-full bg-bg/85 px-2.5 py-1 text-xs font-semibold text-primary-dark backdrop-blur-sm"
                 aria-hidden="true"
               >
                 {heroRoomLabel}
@@ -146,7 +146,7 @@ const heroHref = hero?.slug?.current ? `/portfolio/${hero.slug.current}/` : '#';
             {/* Featured pin — only when this project is flagged as featured. */}
             {hero?.featured && (
               <span
-                class="absolute top-m right-m z-[2] inline-flex items-center gap-1 rounded-full bg-primary-dark px-2.5 py-1 text-xs font-semibold tracking-eyebrow text-white uppercase"
+                class="absolute top-m right-m z-[2] inline-flex items-center gap-1 rounded-full bg-primary-dark px-2.5 py-1 text-xs font-semibold text-white"
                 aria-hidden="true"
               >
                 ★ Featured
@@ -158,7 +158,7 @@ const heroHref = hero?.slug?.current ? `/portfolio/${hero.slug.current}/` : '#';
                 ★ Featured pill at top-right so a long title never wraps
                 into the pill's column. */}
             <div class="absolute inset-x-0 bottom-0 z-[3] p-l pr-28 md:p-section-md md:pr-36">
-              <p class="text-xs tracking-widest text-white/80 uppercase">
+              <p class="text-xs text-white/80">
                 {hero?.location}
                 {hero?.location && hero?.year ? ' · ' : ''}
                 {hero?.year}
@@ -171,7 +171,7 @@ const heroHref = hero?.slug?.current ? `/portfolio/${hero.slug.current}/` : '#';
                   {hero.briefSummary}
                 </p>
               )}
-              <span class="mt-m inline-flex items-center text-sm font-semibold tracking-eyebrow text-white uppercase transition-colors group-hover:text-primary">
+              <span class="mt-m inline-flex items-center text-sm font-semibold text-white transition-colors group-hover:text-primary">
                 See the project
                 <span
                   class="ml-2 transition-transform duration-300 group-hover:translate-x-1"
@@ -224,15 +224,11 @@ const heroHref = hero?.slug?.current ? `/portfolio/${hero.slug.current}/` : '#';
                   </div>
 
                   <div class="flex min-w-0 flex-1 flex-col justify-center py-m pr-m">
-                    {cRoom && (
-                      <p class="text-xs font-semibold tracking-eyebrow text-link uppercase">
-                        {cRoom}
-                      </p>
-                    )}
+                    {cRoom && <p class="text-xs font-semibold text-link">{cRoom}</p>}
                     <h4 class="mt-1 line-clamp-2 font-display text-h4 leading-tight text-foreground transition-colors group-hover/row:text-primary-dark">
                       {p.title}
                     </h4>
-                    <p class="mt-1 truncate text-xs tracking-widest text-foreground/80 uppercase">
+                    <p class="mt-1 truncate text-xs text-foreground/80">
                       {p.location}
                       {p.location && p.year ? ' · ' : ''}
                       {p.year}

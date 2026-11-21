@@ -505,8 +505,7 @@ a:focus-visible > .c-art .c-art__play,
   font-family: var(--font-body);
   font-size: var(--fs-small);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--heading-solid);
 }
 .c-photo {
@@ -539,8 +538,7 @@ a:focus-visible > .c-art .c-art__play,
   margin-top: 0.3rem;
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--muted-foreground);
 }
 .c-person__bio {
@@ -603,8 +601,7 @@ a:focus-visible > .c-art .c-art__play,
   gap: 12px;
   font-size: var(--fs-small);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--heading-solid);
 }
 .c-feature__title {
@@ -657,8 +654,7 @@ a:focus-visible > .c-art .c-art__play,
   text-align: center;
   color: #fff;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   font-size: var(--fs-tag);
   text-shadow: 0 1px 6px rgb(0 0 0 / 0.5);
 }

@@ -269,10 +269,7 @@ const hasCalendar =
         {useCustomFooterColumns ? (
           sanityFooterColumns.map((col, colIdx) => (
             <nav aria-labelledby={`footer-custom-${colIdx}`}>
-              <p
-                id={`footer-custom-${colIdx}`}
-                class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
-              >
+              <p id={`footer-custom-${colIdx}`} class="mb-s text-xs text-foreground/80">
                 {col.title}
               </p>
               <ul class="list-none p-0 text-sm">
@@ -295,10 +292,7 @@ const hasCalendar =
 
             {/* STUDIO */}
             <nav aria-labelledby="footer-studio">
-              <p
-                id="footer-studio"
-                class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
-              >
+              <p id="footer-studio" class="mb-s text-xs text-foreground/80">
                 Our church
               </p>
               <ul class="list-none p-0 text-sm">
@@ -337,10 +331,7 @@ const hasCalendar =
 
             {/* WORK */}
             <nav aria-labelledby="footer-work">
-              <p
-                id="footer-work"
-                class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
-              >
+              <p id="footer-work" class="mb-s text-xs text-foreground/80">
                 Read
               </p>
               <ul class="list-none p-0 text-sm">
@@ -405,10 +396,7 @@ const hasCalendar =
               visible.guides ||
               visible.resources) && (
               <nav aria-labelledby="footer-tools">
-                <p
-                  id="footer-tools"
-                  class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
-                >
+                <p id="footer-tools" class="mb-s text-xs text-foreground/80">
                   Free tools &amp; guides
                 </p>
                 <ul class="list-none p-0 text-sm">
@@ -461,10 +449,7 @@ const hasCalendar =
         {/* LATEST PROJECTS — only when portfolio is visible. */}
         {visible.portfolio ? (
           <nav aria-labelledby="footer-latest">
-            <p
-              id="footer-latest"
-              class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase"
-            >
+            <p id="footer-latest" class="mb-s text-xs text-foreground/80">
               Latest projects
             </p>
             {latestProjects.length > 0 ? (
@@ -482,7 +467,7 @@ const hasCalendar =
                 <li class="pt-xs">
                   <a
                     href="/portfolio/"
-                    class="inline-flex min-h-[44px] items-center gap-xs text-xs font-semibold tracking-eyebrow text-link uppercase transition-colors hover:text-primary-dark"
+                    class="inline-flex min-h-[44px] items-center gap-xs text-xs font-semibold text-link transition-colors hover:text-primary-dark"
                   >
                     View all <span aria-hidden="true">→</span>
                   </a>
@@ -505,7 +490,7 @@ const hasCalendar =
         {/* GET IN TOUCH: email, phone, the live stream, Facebook, socials. Skipped when there is none. */}
         {hasTouch && (
           <div class="sf-touch">
-            <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">Contact</p>
+            <p class="mb-s text-xs text-foreground/80">Contact</p>
             <div class="sf-touch__rows space-y-1 text-sm">
               {email && (
                 <p>

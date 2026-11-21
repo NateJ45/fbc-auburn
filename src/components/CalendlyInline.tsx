@@ -58,9 +58,7 @@ export default function CalendlyInline({ url, loadLabel = 'Open the scheduler' }
           onClick={() => setLoaded(true)}
           className="press-tactile group w-full rounded-md border border-border-soft bg-muted/60 px-l py-section-md text-left transition-colors hover:bg-muted"
         >
-          <p className="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">
-            Or pick a time directly
-          </p>
+          <p className="mb-s text-xs text-foreground/80">Or pick a time directly</p>
           <p className="font-display text-h3 text-foreground transition-colors group-hover:text-primary-dark">
             {loadLabel}{' '}
             <span

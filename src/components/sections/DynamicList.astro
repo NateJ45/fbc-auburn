@@ -130,7 +130,7 @@ const fallbackLabel: Record<string, string> = {
                   )}
                   <div class="p-m">
                     {item.meta && (
-                      <p class="mb-xs text-xs tracking-eyebrow text-foreground/70 uppercase">
+                      <p class="mb-xs text-xs text-foreground/70">
                         {formatDate(item.meta, SHORT_DATE)}
                       </p>
                     )}
@@ -211,11 +211,7 @@ const fallbackLabel: Record<string, string> = {
             <li>
               <div class="h-full rounded-[var(--radius-card)] border border-border-soft bg-card p-m">
                 <h3 class="font-display text-h4 text-foreground">{item.title}</h3>
-                {item.meta && (
-                  <p class="mt-xs text-xs font-semibold tracking-eyebrow text-link uppercase">
-                    {item.meta}
-                  </p>
-                )}
+                {item.meta && <p class="mt-xs text-xs font-semibold text-link">{item.meta}</p>}
                 {item.summary && (
                   <p class="mt-s line-clamp-3 text-sm leading-relaxed text-foreground/80">
                     {item.summary}

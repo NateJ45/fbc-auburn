@@ -132,7 +132,7 @@ const heroDate = formatDate(hero?.publishedAt);
 
             {hero?.featured && (
               <span
-                class="absolute top-m right-m inline-flex items-center gap-1 rounded-full bg-primary-dark px-2.5 py-1 text-xs font-semibold tracking-eyebrow text-white uppercase"
+                class="absolute top-m right-m inline-flex items-center gap-1 rounded-full bg-primary-dark px-2.5 py-1 text-xs font-semibold text-white"
                 aria-hidden="true"
               >
                 ★ Featured
@@ -147,15 +147,12 @@ const heroDate = formatDate(hero?.publishedAt);
             <div class="absolute inset-x-0 bottom-0 p-l pr-28 md:p-section-md md:pr-36">
               <div class="flex flex-wrap items-center gap-x-m gap-y-xs">
                 {heroPrimaryCategory?.title && (
-                  <span class="inline-flex items-center rounded-full bg-bg/85 px-2.5 py-1 text-xs font-semibold tracking-eyebrow text-primary-dark uppercase backdrop-blur-sm">
+                  <span class="inline-flex items-center rounded-full bg-bg/85 px-2.5 py-1 text-xs font-semibold text-primary-dark backdrop-blur-sm">
                     {heroPrimaryCategory.title}
                   </span>
                 )}
                 {heroDate && (
-                  <time
-                    datetime={hero?.publishedAt}
-                    class="text-xs tracking-widest text-white/85 uppercase"
-                  >
+                  <time datetime={hero?.publishedAt} class="text-xs text-white/85">
                     {heroDate}
                   </time>
                 )}
@@ -175,7 +172,7 @@ const heroDate = formatDate(hero?.publishedAt);
                 </p>
               )}
 
-              <span class="mt-m inline-flex items-center text-sm font-semibold tracking-eyebrow text-white uppercase transition-colors group-hover:text-primary">
+              <span class="mt-m inline-flex items-center text-sm font-semibold text-white transition-colors group-hover:text-primary">
                 Read the article
                 <span
                   class="ml-2 transition-transform duration-300 group-hover:translate-x-1"
@@ -226,18 +223,12 @@ const heroDate = formatDate(hero?.publishedAt);
 
                   <div class="flex min-w-0 flex-1 flex-col justify-center py-m pr-m">
                     {cCat?.title && (
-                      <p class="truncate text-xs font-semibold tracking-eyebrow text-link uppercase">
-                        {cCat.title}
-                      </p>
+                      <p class="truncate text-xs font-semibold text-link">{cCat.title}</p>
                     )}
                     <h4 class="mt-1 line-clamp-2 font-display text-h4 leading-tight text-foreground transition-colors group-hover/row:text-primary-dark">
                       {p.title}
                     </h4>
-                    {cDate && (
-                      <p class="mt-1 truncate text-xs tracking-widest text-foreground/80 uppercase">
-                        {cDate}
-                      </p>
-                    )}
+                    {cDate && <p class="mt-1 truncate text-xs text-foreground/80">{cDate}</p>}
                   </div>
                 </a>
               );

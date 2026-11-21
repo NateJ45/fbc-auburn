@@ -66,7 +66,7 @@
      components — drift from ad-hoc arbitrary values (tracking-[0.22em],
      leading-[1.05]) into shared tokens. */
   --leading-headline-tight: 1.05; /* Hero H1 and any oversized display type */
-  --tracking-eyebrow: 0.18em; /* Uppercase eyebrow labels above headings */
+  --tracking-eyebrow: 0.18em; /* Retired 2026-11-20: labels are sentence case now (DESIGN.md) */
 
   /* Fluid spacing.
      Note: the larger section-padding sizes use a `--spacing-section-*`
@@ -185,8 +185,7 @@
 
 /* ---------- Typographic utilities ------------------------------------- */
 /* Expose the micro-rule tokens above as utility classes.
-   Use tracking-eyebrow everywhere we render an uppercase eyebrow label,
-   and leading-headline-tight on hero-scale display type. */
+   tracking-eyebrow is retired (sentence-case labels since 2026-11-20); leading-headline-tight on hero-scale display type. */
 
 @utility leading-headline-tight {
   line-height: var(--leading-headline-tight);
@@ -834,8 +833,7 @@ html.motion [data-reveal].is-visible {
   display: block;
   font-size: 0.65rem;
   font-style: normal;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-eyebrow);
+  letter-spacing: 0;
   color: var(--primary);
   margin-top: 0.5rem;
 }

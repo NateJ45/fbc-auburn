@@ -252,8 +252,7 @@ h6 {
 .arch-hero__eyebrow {
   font-size: var(--fs-tag);
   font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--link);
 }
 /* Home: the church's name huge, in colour, sized to its own column so it never runs into the
@@ -724,8 +723,7 @@ html .site-search-dialog {
   .site-header__note-times {
     font-size: var(--fs-tag);
     font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    letter-spacing: 0;
     color: var(--heading-solid);
   }
   .site-header__note-where {
@@ -1288,8 +1286,7 @@ html:has(.auburn-menu[open]) {
   padding: 0 var(--menu-gutter) 0.6rem;
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--auburn-red);
 }
 @media (min-width: 64rem) {
@@ -1347,8 +1344,7 @@ html:has(.auburn-menu[open]) {
   margin: 0;
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   white-space: nowrap;
   color: var(--auburn-red);
 }
@@ -1361,8 +1357,7 @@ html:has(.auburn-menu[open]) {
   font-size: var(--fs-tag);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 .auburn-menu__card-date {
@@ -1396,8 +1391,7 @@ html:has(.auburn-menu[open]) {
   margin: 0;
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
 }
 .auburn-menu__where {
   margin: 1rem 0 1.1rem;
@@ -1778,8 +1772,7 @@ html.motion .sill.is-laid .sill-brick {
   margin: 0;
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: #7f98b8;
 }
 .sf-sunday__date {
@@ -2394,8 +2387,7 @@ body:has(main :is([data-this-sunday], [data-service-times], .times-band-wrap)) .
 .c-person__role {
   font-size: var(--fs-tag);
   font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--heading-solid);
 }
 
