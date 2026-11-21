@@ -281,6 +281,7 @@ const MAX_LENGTH: Record<string, Record<string, number>> = {
   scheduleItem: { title: 80, note: 140 },
   photoCard: { title: 60, body: 240 },
   candlelightSection: { heading: 60, text: 200 },
+  photoBreakSection: { line: 80 },
 };
 const COUNT: Record<string, [string, number, number]> = {
   buttonRowSection: ['links', 2, 6],

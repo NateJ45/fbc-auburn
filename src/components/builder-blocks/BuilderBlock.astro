@@ -12,6 +12,7 @@ import EventDetailsBlock from './EventDetailsBlock.astro';
 import ScheduleBlock from './ScheduleBlock.astro';
 import CandlelightBlock from './CandlelightBlock.astro';
 import PhotoCardsBlock from './PhotoCardsBlock.astro';
+import PhotoBreakBlock from './PhotoBreakBlock.astro';
 
 interface Props {
   block: BuilderPageBlock;
@@ -47,4 +48,6 @@ const {
   <PhotoCardsBlock block={b} surface={surface} headingId={headingId} isFirst={isFirst} />
 ) : b._type === 'candlelightSection' ? (
   <CandlelightBlock block={b} headingId={headingId} />
+) : b._type === 'photoBreakSection' ? (
+  <PhotoBreakBlock block={b} headingId={headingId} isFirst={isFirst} />
 ) : null}

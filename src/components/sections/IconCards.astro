@@ -15,6 +15,7 @@ import StoneIcon from '@/components/StoneIcon.astro';
 import SanityImage from '@/components/SanityImage.astro';
 import { surfaceClass } from '@/lib/surfaces';
 import type { ProjectedIconCard } from '@/lib/pageBuilder.types';
+import { cardHeadingId } from '@/lib/page-index';
 import tileNavy from '@/assets/textures/tile-navy.svg?url';
 
 interface Props {
@@ -99,7 +100,14 @@ const CardTitle = heading ? 'h3' : 'h2';
               {numberWord(i)}
             </p>
           )}
-          <CardTitle class="icon-card__title">{card.title}</CardTitle>
+          {/* With no section heading the card titles are the page's H2s, so each carries the id the
+            "On this page" index links to (src/lib/page-index.ts). */}
+          <CardTitle
+            class="icon-card__title"
+            id={heading ? undefined : cardHeadingId(card.title ?? '') || undefined}
+          >
+            {card.title}
+          </CardTitle>
           {card.body && <p class="icon-card__body">{card.body}</p>}
           {card.note && <p class="icon-card__note">{card.note}</p>}
           {card.link?.label && (

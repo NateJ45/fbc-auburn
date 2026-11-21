@@ -94,6 +94,9 @@ export const SECTION_SURFACES: SurfacePair[] = [
   {
     value: 'muted',
     title: 'Soft paper',
+    // FBC Auburn's inner pages paint this band white (--card, board.css, 2026-11-21): ink on
+    // white is higher contrast than on this pair's #F4EFE7, so the pair measured here is the
+    // stricter of the two.
     hint: 'The alternating band. The cadence puts it between two Paper sections.',
     className: 'bg-muted',
     dot: '#F4EFE7',

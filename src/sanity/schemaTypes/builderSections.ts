@@ -29,6 +29,7 @@ import { CalendarIcon } from '@sanity/icons/Calendar';
 import { ClockIcon } from '@sanity/icons/Clock';
 import { ImagesIcon } from '@sanity/icons/Images';
 import { MoonIcon } from '@sanity/icons/Moon';
+import { ExpandIcon } from '@sanity/icons/Expand';
 import { imageWithAlt } from './_imageWithAlt';
 import { lookField } from './_appearanceFields';
 import { TIME_OPTIONS } from '../../lib/builder-blocks';
@@ -382,11 +383,60 @@ export const candlelightSection = defineType({
   },
 });
 
+// ── Photo break (2026-11-21) ─────────────────────────────────────────────────
+// A full-width photograph between two long text bands, with one short line over it in Young
+// Serif (white, on a navy shade). The inner-page rhythm pass: the inner pages were one cream band
+// after another with almost no pictures. It draws its own band (the photo), so it takes no look
+// and sits outside the cadence (SELF_CONTAINED_TYPES). No colour field (rule 9): the shade is fixed
+// in builder-blocks.css. The motion (inset frame to full bleed as it scrolls in) is CSS only:
+// docs/agent/animation.md, "Photo break".
+export const PHOTO_BREAK_LINE_MAX = 80;
+export const photoBreakSection = defineType({
+  name: 'photoBreakSection',
+  title: 'Photo break (a wide photo with a line)',
+  type: 'object',
+  icon: ExpandIcon,
+  description:
+    'A wide photo across the whole page, with one short line over it. Put one between two long text sections so the page can breathe.',
+  fields: [
+    imageWithAlt({
+      name: 'image',
+      title: 'Photo',
+      description:
+        'A wide photo, at least 2000px across. People, the building or the sanctuary all work. Keep the bottom left fairly calm: the line sits there.',
+      validation: (R: { required: () => unknown }) => R.required(),
+    }),
+    defineField({
+      name: 'line',
+      title: 'A short line over the photo (optional)',
+      type: 'string',
+      description:
+        'A few words from the page, like "Come as you are." Leave it empty for the photo alone.',
+      validation: (R) => R.max(PHOTO_BREAK_LINE_MAX),
+    }),
+    defineField({
+      name: 'link',
+      title: 'Link under the line (optional)',
+      type: 'ctaBlock',
+      description: 'Shown as a small white link under the line, not as a button.',
+    }),
+  ],
+  preview: {
+    select: { title: 'line', media: 'image' },
+    prepare: ({ title, media }) => ({
+      title: title || 'Photo break',
+      subtitle: 'Photo break',
+      media,
+    }),
+  },
+});
+
 export const builderSectionSchemas = [
   eventDetailsSection,
   scheduleSection,
   photoCardsSection,
   candlelightSection,
+  photoBreakSection,
 ];
 
 /**
@@ -396,6 +446,7 @@ export const builderSectionSchemas = [
  */
 export const BUILDER_INSERT_GROUPS: { name: string; title: string; of: string[] }[] = [
   { name: 'basics', title: 'Basics', of: ['photoCardsSection'] },
+  { name: 'media', title: 'Media', of: ['photoBreakSection'] },
   {
     name: 'dates',
     title: 'Dates and notices',

@@ -56,7 +56,11 @@ import {
   lookField,
   richTwin,
 } from './_appearanceFields';
-import { sideOptions } from '../../lib/layout-variants';
+import {
+  IMAGE_TEXT_LAYOUT_FALLBACK,
+  IMAGE_TEXT_LAYOUT_OPTIONS,
+  sideOptions,
+} from '../../lib/layout-variants';
 import {
   findYourPlaceSection,
   iconCardsSection,
@@ -347,6 +351,19 @@ export const imageTextSection = defineType({
       // labels come from the shared registry so both halves of a media pair
       // read the same way. See src/lib/layout-variants.ts.
       options: { list: sideOptions('Image'), layout: 'radio' },
+    }),
+    // The inner-page rhythm pass (2026-11-21): the photo edge to edge beside a navy panel.
+    // Logic-driving, so 'layout' is in NON_STEGA_FIELDS (rule 8b). Unset means side by side.
+    defineField({
+      name: 'layout',
+      title: 'Layout',
+      type: 'string',
+      initialValue: IMAGE_TEXT_LAYOUT_FALLBACK,
+      description:
+        'Panel suits a short paragraph and one button. On a phone the photo sits above the panel.',
+      options: { list: IMAGE_TEXT_LAYOUT_OPTIONS, layout: 'radio' },
+      hidden: ({ parent }: { parent?: { art?: string } }) =>
+        Boolean(parent?.art && parent.art !== 'photo'),
     }),
     defineField({
       name: 'eyebrow',

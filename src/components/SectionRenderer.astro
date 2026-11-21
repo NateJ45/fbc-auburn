@@ -70,6 +70,8 @@ import { resolveSiteSettings } from '@/lib/siteSettings';
 import { ctaHref, type CtaTarget } from '@/lib/church-cta-href';
 import { repeatsHeaderCta } from '@/lib/cta-budget';
 import type { CadenceSurface } from '@/lib/surfaces';
+import OnThisPage from '@/components/OnThisPage.astro';
+import { pageIndex, showsIndex } from '@/lib/page-index';
 
 interface Props {
   sections?: unknown[];
@@ -102,6 +104,12 @@ interface Props {
    * service (src/lib/embed-providers.ts). Never set for Sanity content.
    */
   trustedCode?: boolean;
+  /**
+   * True on the live pages built from these sections (Custom pages, About): when they draw five
+   * or more H2s, the "On this page" index goes under the page head (OnThisPage.astro, the list
+   * from src/lib/page-index.ts; 2026-11-21). Off for the preview and the styleguide walls.
+   */
+  pageIndex?: boolean;
 }
 
 const {
@@ -110,6 +118,7 @@ const {
   editDoc,
   leadImage = false,
   trustedCode = false,
+  pageIndex: wantsIndex = false,
 } = Astro.props as Props;
 // Synced sections (the authoring kit, PORTS.md card 109) are swapped for the
 // sections their saved copy holds BEFORE the cadence runs, so a synced band
@@ -132,6 +141,12 @@ const rows = classifySections<PageBuilderBlock>(
   ...row,
   headingId: anchorFor((row.block as { _key?: string })._key, row.headingId),
 }));
+
+// "On this page" (2026-11-21): the page's H2s, worked out from the rows (rule 13). It sits right
+// after the opening banner, or before everything when the page does not open with one.
+const indexEntries = wantsIndex ? pageIndex(rows) : [];
+const withIndex = showsIndex(indexEntries);
+const indexAfter = rows[0]?.block._type === 'heroSection' ? 0 : -1;
 
 // FBC Auburn, board E on the inner pages (2026-10-17). Every section after the hero opens with a
 // rule of three stepping stones and a hairline (BoardRule), which replaced the gold-stone divider
@@ -222,8 +237,12 @@ const editKeyOf = (block: unknown) => {
 };
 ---
 
+{withIndex && indexAfter === -1 && <OnThisPage entries={indexEntries} />}
 {rows.map(({ block: s, surface, look, headingId }, rowIndex) => (
   <>
+    {withIndex && rowIndex === indexAfter + 1 && indexAfter >= 0 && (
+      <OnThisPage entries={indexEntries} />
+    )}
     {ruled[rowIndex] && <BoardRule />}
 
     <Wrap {...wrapAttrs(editKeyOf(s))}>
@@ -300,6 +319,7 @@ const editKeyOf = (block: unknown) => {
           surface={surface ?? 'background'}
           headingId={headingId}
           isFirst={rowIndex === leadRow}
+          layout={s.layout}
         />
       ) : s._type === 'gallerySection' ? (
         <GalleryGrid

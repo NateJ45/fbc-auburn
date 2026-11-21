@@ -989,6 +989,14 @@ const SECTIONS: Record<string, unknown>[] = [
     text: 'At the end of the service we pass the light from candle to candle, the way the good news passed from person to person.',
     candles: 7,
   },
+  // The photo break (2026-11-21): a wide photo with one short line and a small link.
+  {
+    _type: 'photoBreakSection',
+    _key: 'bb-photo-break',
+    image: image('The congregation singing a hymn'),
+    line: 'Come as you are.',
+    link: cta('Plan your visit'),
+  },
 ];
 
 // Variants of the event-page blocks for tests/builder-blocks.spec.ts: the photo opening banner, an
@@ -1073,6 +1081,20 @@ const BUILDER_CHECKS: Record<string, unknown>[] = [
     _key: 'bb-candlelight-nine',
     heading: 'Pass the light',
     candles: 9,
+  },
+  // The inner-page rhythm pass (2026-11-21): a photo break with no photo yet (before launch it
+  // names the shot; after launch it draws nothing), and Image + text in the panel layout, photo
+  // on the right.
+  { _type: 'photoBreakSection', _key: 'bb-photo-break-empty', line: 'A line with no photo' },
+  {
+    _type: 'imageTextSection',
+    _key: 'bb-imagetext-panel',
+    layout: 'panel',
+    imageSide: 'right',
+    heading: 'A photo beside a navy panel',
+    body: [para('ip1', 'A short paragraph on the navy, with one button under it.')],
+    image: image('The front doors on a Sunday morning'),
+    cta: cta('Find out more'),
   },
 ];
 ---

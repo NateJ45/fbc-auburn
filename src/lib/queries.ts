@@ -193,6 +193,8 @@ const SECTION_ARMS = `
       ...,
       cards[]{ ..., image${IMAGE_PROJECTION}, link${CTA_PROJECTION} }
     },
+    // The photo break (2026-11-21): its photo and the small link under its line.
+    _type == "photoBreakSection" => { ..., image${IMAGE_PROJECTION}, link${CTA_PROJECTION} },
     // The form's words only. The recipient's NAME is looked up for the page; its address is
     // never in the dataset (src/lib/church-form.ts).
     // The RSVP form names its event "<document id>:<block key>" (card 127).

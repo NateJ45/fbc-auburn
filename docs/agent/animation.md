@@ -137,7 +137,7 @@ before the first frame. hppres.org's 54 MB hero works the same way (a fast-start
 
 ## View-transition cross-fade
 
-On FBC Auburn the cross-fade below is replaced by the flow layer's lift-and-rise (see "The flow layer").
+On FBC Auburn the cross-fade below is replaced by the flow layer's fade-and-blur (2026-11-21; see "The flow layer").
 
 `<main id="main">` carries `view-transition-name: main-content` and cross-fades on every navigation (`vt-fade-out` 150ms -> `vt-fade-in` 200ms). The header and footer are named (`site-header` / `site-footer`) and pinned with `animation: none` so they stay put through the swap instead of flashing. Astro respects `prefers-reduced-motion` automatically -- reduced-motion users get an instant cut. Pure CSS, no JS.
 
@@ -201,7 +201,7 @@ ScrollTrigger, SplitText and Barba, driven by Alpine components. What it does, a
 | (ours only)                                                                                                                                                       | A person's photo opens in four brick courses, bottom up, in running bond (opt-in, below)                                            | `.flow--portrait`, a mask on the frame, 600ms on both levels                                                             |
 | (ours only)                                                                                                                                                       | The building sketch draws itself in: the pen lines sweep across, the shading follows 35% behind                                     | `sketch-draw` in `flow.css`, view timeline; finished drawing elsewhere                                                   |
 | Buttons lean toward the mouse (magnetic)                                                                                                                          | Primary buttons and the header's Plan your visit, mouse only                                                                        | `translate` from the pointer, 14px at most                                                                               |
-| Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main lifts out (120ms), the new page rises in (260ms); header and footer stay put                                                   | `::view-transition-*(main-content)` in `flow.css`                                                                        |
+| Page change: a full-screen curtain with the logo and a forced 1.2s wait                                                                                           | Main fades out into a 7px blur and the new page comes in from it (0.5s each); header and footer stay put                            | `::view-transition-*(main-content)` in `flow.css`                                                                        |
 
 Left out on purpose: the loading curtain and its wait (slow on every click), anything that
 rotates (the cross rule), scroll-jacking or pinning.
@@ -227,8 +227,14 @@ where it must apply before the script runs (the first-screen hold, the verse's o
 mark's hidden bricks). Reduced motion and `?still` still switch all of it off: no `html.motion`, no
 `data-flow`.
 
-**Page changes are quick** (UX-L7): the old page lifts out in 120ms (8px) and the new one rises into
-place in 260ms (12px) with no wait between; it was 220ms out, then 700ms in after a 60ms delay.
+**Page changes: fade and blur** (2026-11-21, the inner-page rhythm pass; the effect of the Details vault's
+"Fade Page Transition", rebuilt on Astro's view transitions, so no Swup and the ClientRouter in
+`BaseLayout.astro` is unchanged, which keeps `astro:page-load` re-init and the preview stack as they were).
+The old `<main>` fades out and blurs to 7px over 0.5s with `cubic-bezier(0.25, 0.46, 0.45, 0.94)`; the new one
+runs the same curve back from that state at the same time, so the swap reads as one soft dissolve and
+takes half a second in all. Header and footer are pinned (`animation: none`). Reduced motion: Astro skips
+view transitions, and `flow.css` sets the two pseudo-elements to `animation: none` as well. Before this it
+was the lift-and-rise of UX-L7 (120ms out, 260ms in).
 
 **Printing** (DEV-H1): `src/styles/print.css` puts every unit at rest in print (animations off,
 opacity 1, no clip), hides the chrome and textures and prints black on white; `motion.ts` also drops
@@ -343,6 +349,27 @@ and their line, brick and marker pieces, the first screen's hold, the stone `.re
 `.is-visible`), so it does not replay once focus moves on. A new layer that hides something must
 add itself to that rule. `tests/reaudit.spec.ts` tabs through `/404.html` and `/` with motion on and
 fails on any focused element whose effective opacity (its own times its ancestors') is under 0.99.
+
+## Photo break (2026-11-21)
+
+The Photo break block (`photoBreakSection`, `PhotoBreakBlock.astro`, `builder-blocks.css`) opens as it
+scrolls in: the frame starts as an inset rounded card (side margin = the page gutter, `--board-gutter`;
+corners `--radius-card`) and widens to full bleed between `entry 10%` and `cover 45%` of the band's
+crossing, animated as a `clip-path: inset(...)` so nothing reflows; the picture drifts from -5% to +5%
+inside it over the whole crossing (`cover 0%` to `cover 100%`). Both follow one named view timeline on
+the section (`view-timeline: --pbreak block`); the frame is `overflow: clip`, not `hidden`, because a
+hidden box is a scroll container and a view timeline inside it would never move. CSS only, inside
+`@supports (animation-timeline: view())` and `@media (prefers-reduced-motion: no-preference)` (rule 5:
+no scroll library); without either, in print and under the tests' `settle` it is the settled state, full
+bleed with square corners. The block carries `data-flow="off"`, so the flow layer's photo zoom never
+fights it.
+
+## "On this page" (2026-11-21)
+
+`OnThisPage.astro` marks the heading you are reading with one IntersectionObserver (a line 30% down
+the screen) plus a once-a-frame passive scroll check for jumps the observer cannot see. The rail's
+open and close is a 220ms width and colour change, off with reduced motion. No scrolling of its own:
+the links are plain anchors, and the site's `data-smooth-scroll` press listener glides them.
 
 ## The stone path (FBC Auburn, 2026-10-17)
 

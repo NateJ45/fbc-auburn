@@ -1,0 +1,86 @@
+---
+// Safe to edit by hand
+// Photo break (photoBreakSection, 2026-11-21): a full-width photograph between two long text
+// bands, with one short line in Young Serif over it (white, on a navy shade) and an optional small
+// link. The inner-page rhythm pass: the inner pages were cream band after cream band with almost
+// no pictures. The idea came from a farm site's wide photo bands (Details reference, Agrumea Farm).
+//
+// Motion (builder-blocks.css, "Photo break"; docs/agent/animation.md): as the band scrolls in the
+// photo widens from an inset rounded frame (side margin = the page gutter, the card radius) to
+// full bleed, and the picture drifts a little inside it. CSS scroll-driven animation only, inside
+// @supports (animation-timeline: view()) and prefers-reduced-motion: no-preference; everywhere
+// else the band is the settled full-bleed state. No script.
+//
+// No photo: before launch the slot names the shot (ShotRequest, src/data/shot-list.ts
+// photoBreakShot); after launch the block draws nothing at all, never a grey box.
+import SanityImage from '@/components/SanityImage.astro';
+import ShotRequest from '@/components/ShotRequest.astro';
+import { ctaHref } from '@/lib/church-cta-href';
+import { photoBreakShot } from '@/data/shot-list';
+import type { ProjectedPhotoBreakSection } from '@/lib/builderBlocks.types';
+
+interface Props {
+  block: ProjectedPhotoBreakSection;
+  headingId: string;
+  /** True for the first section under the page head: its photo loads first. */
+  isFirst?: boolean;
+}
+const { block, headingId, isFirst = false } = Astro.props;
+
+const shot = photoBreakShot(block.image);
+const hasPhoto = Boolean(block.image?.asset);
+const line = block.line?.trim();
+const link = block.link?.label ? block.link : null;
+const newTab = link?.openInNewTab || link?.linkType === 'external';
+const href = link ? ctaHref(link) : '';
+// A link to another site opens in a new tab; one inside this site does not.
+const external = newTab && /^https?:/i.test(href);
+---
+
+{(shot || hasPhoto) && (
+  <section
+    class:list={['pbreak', line && 'pbreak--words']}
+    data-builder-block="photoBreakSection"
+    data-flow="off"
+    aria-labelledby={line ? headingId : undefined}
+    aria-label={line ? undefined : 'Photo'}
+  >
+    <div class="pbreak__frame">
+      <div class="pbreak__media">
+        {shot ? (
+          <ShotRequest shot={shot} class="shot--fill" priority={isFirst} />
+        ) : (
+          <SanityImage
+            source={block.image}
+            width={2400}
+            sizes="100vw"
+            quality={70}
+            loading={isFirst ? 'eager' : 'lazy'}
+            fetchpriority={isFirst ? 'high' : undefined}
+            class="pbreak__img"
+          />
+        )}
+      </div>
+      {line && !shot && (
+        <>
+          <div class="pbreak__shade" aria-hidden="true" />
+          <div class="pbreak__words">
+            <p class="pbreak__line" id={headingId}>
+              {line}
+            </p>
+            {link && (
+              <a
+                class="pbreak__link"
+                href={href}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+              >
+                {link.label} <span aria-hidden="true">→</span>
+              </a>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  </section>
+)}

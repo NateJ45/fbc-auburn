@@ -222,6 +222,23 @@ main:is(:has(.board-head), :has(> .hb))
 main:is(:has(.board-head), :has(> .hb)) section.bg-muted {
   background-color: var(--background);
 }
+/* The inner-page rhythm pass (2026-11-21): on the inner pages the cadence's alternate band is
+   white (--card, #FFFFFF), one of the three surfaces (DESIGN.md), so two text bands in a row read
+   as two bands instead of one cream sheet. Home is untouched (its ground is already white, and
+   `.hb` is not a board-head page). The words stay the ground's ink: #16263D on white is 15.4:1.
+   The tint (#E9EEF5) stays the Stone look's, so the two never mean the same thing. A white band
+   keeps its full top padding like a look band, so its edge sits clear of the words. */
+main:has(.board-head) section.bg-muted:not(.final-cta--light) {
+  background-color: var(--card);
+}
+main:has(.board-head) .board-rule-wrap + section.bg-muted:not(.final-cta--light) > :first-child,
+main:has(.board-head)
+  .board-rule-wrap
+  + *
+  > section.bg-muted:not(.final-cta--light)
+  > :first-child {
+  padding-top: var(--spacing-section-md);
+}
 /* Home's ground is white (.hb), not the inner pages' warm white, so a section an editor adds there,
    and its rule, paint no ground of their own. */
 .hb > section:is(.bg-background, .bg-muted),
@@ -320,14 +337,14 @@ main:is(:has(.board-head), :has(> .hb)) > svg.bgpath {
      the rule's 24px). A band with a look (Feature, Stone) keeps its own edge, and the page head
      keeps its own spacing. */
   main:has(.board-head)
-    section:not(.board-head, .surface-feature, .surface-stone):has(+ .board-rule-wrap)
+    section:not(.board-head, .surface-feature, .surface-stone, .bg-muted):has(+ .board-rule-wrap)
     > [class*='py-section'],
   main:has(.board-head)
     :has(+ .board-rule-wrap)
-    > section:not(.board-head, .surface-feature, .surface-stone)
+    > section:not(.board-head, .surface-feature, .surface-stone, .bg-muted)
     > [class*='py-section'],
   main:has(.board-head)
-    section[class*='py-section']:not(.board-head, .surface-feature, .surface-stone):has(
+    section[class*='py-section']:not(.board-head, .surface-feature, .surface-stone, .bg-muted):has(
       + .board-rule-wrap
     ) {
     padding-bottom: 16px;

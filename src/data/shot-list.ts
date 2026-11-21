@@ -319,6 +319,17 @@ const JOURNAL_COVER: Shot = {
   example: { file: 'news-cover', credit: 'Ray Kim on Unsplash' },
 };
 
+// The photo break (photoBreakSection, 2026-11-21): a wide photo across the page. Its photo is
+// required in the Studio, so an empty one only happens between adding the block and picking the
+// photo. Before launch that slot names the shot; after launch an empty photo break draws nothing.
+const PHOTO_BREAK: Shot = {
+  title: 'A wide photo of Sunday morning',
+  detail:
+    'The sanctuary from the back during a hymn, or the building from across the road. Wide, with a calm patch in the lower left for the line of words.',
+  orientation: 'landscape',
+  example: { file: 'worship-wide', credit: 'Natalya Ukolova on Unsplash' },
+};
+
 interface AssetLike {
   originalFilename?: string | null;
   source?: { name?: string | null } | null;
@@ -383,4 +394,11 @@ export function journalCoverShot(img: unknown): Shot | null {
   if (!CLIENT_NOTES_ACTIVE) return null;
   const hasPhoto = Boolean((img as { asset?: unknown } | null | undefined)?.asset);
   return hasPhoto && isStandInPhoto(img) ? JOURNAL_COVER : null;
+}
+
+/** A photo break's slot: the request while it is empty or a stand-in, before launch. */
+export function photoBreakShot(img: unknown): Shot | null {
+  if (!CLIENT_NOTES_ACTIVE) return null;
+  const hasPhoto = Boolean((img as { asset?: unknown } | null | undefined)?.asset);
+  return !hasPhoto || isStandInPhoto(img) ? PHOTO_BREAK : null;
 }

@@ -121,6 +121,7 @@ const NON_STEGA_FIELDS = new Set([
   'frequency',
   'heightHint',
   'imageSide',
+  // 2026-11-21: also imageTextSection's split or navy panel (src/lib/layout-variants.ts).
   'layout',
   'linkType',
   // 2026-10-18: a content block's look (src/lib/section-looks.ts). The cadence
