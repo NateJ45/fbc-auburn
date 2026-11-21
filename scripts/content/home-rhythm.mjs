@@ -7,14 +7,16 @@
 //   2. Gives two of the four Sunday walk steps a photo the church already owns: the building for
 //      "Come to the front door" and the sanctuary for "Worship". The other two keep their
 //      "Photo needed" request until the photo Sunday (src/data/shot-list.ts).
-//   3. Adds "Bring the kids" after the good news: Home said almost nothing to parents. Its words
+//   3. Adds "Bring the kids" after A place to belong: Home said almost nothing to parents. It must
+//      come AFTER that block: HomeBoard draws the first Image + text block on Home as the Who we
+//      are photo mosaic, so a kids block placed earlier took its place (found live 2026-11-20). Its words
 //      are only what the finished copy already says on Plan your visit (no nursery, no safety
 //      sentence: those are still Pastor Jacob's to give) and it links there.
 //
 // Dry by default. Production needs --apply AND NCS_PRODUCTION_WRITE=yes (.claude/rules/data-scripts.md):
 //   node scripts/content/home-rhythm.mjs <backup-folder>
 //   NCS_PRODUCTION_WRITE=yes node scripts/content/home-rhythm.mjs <backup-folder> --apply
-// The Home document is written to <backup-folder>/home-before-rhythm.json first. Keep that folder
+// The Home document is written to <backup-folder>/home-before-rhythm-<time>.json first (one per run). Keep that folder
 // outside the repo. Run it only after the deploy that adds the steps' Photo field, or the Studio
 // shows the new value as an unknown field.
 
@@ -33,8 +35,9 @@ if (!home?.pageBuilder?.length) throw new Error('homePage has no page layout; re
 if (await client.getDocument('drafts.homePage')) {
   throw new Error('Home has an unpublished draft. Publish or discard it in the Studio first.');
 }
-writeFileSync(join(dir, 'home-before-rhythm.json'), JSON.stringify(home, null, 2));
-console.log(`Backed up homePage to ${join(dir, 'home-before-rhythm.json')}`);
+const backup = join(dir, `home-before-rhythm-${Date.now()}.json`);
+writeFileSync(backup, JSON.stringify(home, null, 2));
+console.log(`Backed up homePage to ${backup}`);
 
 const byKey = Object.fromEntries(home.pageBuilder.map((b) => [b._key, b]));
 for (const k of ['home-first-sunday', 'home-gospel', 'home-belong', 'home-pastor']) {
@@ -89,7 +92,7 @@ for (const b of home.pageBuilder) {
     const { eyebrow: _drop, ...rest } = b;
     pageBuilder.push(rest);
   } else pageBuilder.push(b);
-  if (b._key === 'home-gospel') pageBuilder.push(kids);
+  if (b._key === 'home-belong') pageBuilder.push(kids);
 }
 
 console.log('\nNew Home order:');
