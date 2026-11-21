@@ -58,11 +58,21 @@ export interface ProjectedCandlelightSection {
   candles?: number | null;
 }
 
+/** The photo break (2026-11-21): a wide photo with one short line and an optional small link. */
+export interface ProjectedPhotoBreakSection {
+  _type: 'photoBreakSection';
+  _key: string;
+  image?: ProjectedImage | null;
+  line?: string;
+  link?: ProjectedCtaBlock | null;
+}
+
 export type BuilderPageBlock =
   | ProjectedEventDetailsSection
   | ProjectedScheduleSection
   | ProjectedPhotoCardsSection
-  | ProjectedCandlelightSection;
+  | ProjectedCandlelightSection
+  | ProjectedPhotoBreakSection;
 
 /** Every builder block type; SectionRenderer hands these to BuilderBlock.astro. */
 export const BUILDER_BLOCK_TYPES: ReadonlySet<string> = new Set<BuilderPageBlock['_type']>([
@@ -70,6 +80,7 @@ export const BUILDER_BLOCK_TYPES: ReadonlySet<string> = new Set<BuilderPageBlock
   'scheduleSection',
   'photoCardsSection',
   'candlelightSection',
+  'photoBreakSection',
 ]);
 
 /** Narrow a page-builder block to a builder block. */

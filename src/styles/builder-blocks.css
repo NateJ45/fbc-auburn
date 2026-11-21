@@ -539,3 +539,127 @@
     animation: none;
   }
 }
+
+/* ---- Photo break (photoBreakSection, 2026-11-21) -------------------------------------------
+   A wide photo across the page with one short line over it. At rest (no scroll-driven animation
+   support, reduced motion, print, the test suite's `settle`) it is the settled state: full bleed,
+   square corners, the picture centred. White text on a navy shade (#0F2238, the ink band) that is
+   at least 78% under the words, so the line clears AA even over a white sky (white on white
+   shaded 78% with #0F2238 measures about 5:1), and the text shadow adds to it. */
+.pbreak {
+  --pb-inset: var(--board-gutter, 20px);
+  --pb-radius: var(--radius-card, 20px);
+  --pb-shade: 15 34 56;
+  position: relative;
+  padding: 0;
+  /* The named timeline both animations below follow: the band crossing the screen. */
+  view-timeline: --pbreak block;
+}
+.pbreak__frame {
+  position: relative;
+  /* clip, not hidden: a hidden box is a scroll container, and a view timeline inside it would
+     never move. */
+  overflow: clip;
+  height: clamp(20rem, 72svh, 44rem);
+  background: #16263d;
+  clip-path: inset(0 0 round 0);
+}
+.pbreak__media {
+  position: absolute;
+  inset: -6% 0;
+}
+.pbreak__media img,
+.pbreak__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pbreak__media .shot--fill {
+  border-radius: 0;
+}
+.pbreak__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(var(--pb-shade) / 0.82) 0%,
+    rgb(var(--pb-shade) / 0.78) 30%,
+    rgb(var(--pb-shade) / 0) 72%
+  );
+  pointer-events: none;
+}
+.pbreak__words {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  max-width: var(--container-content);
+  margin-inline: auto;
+  /* On the page's one left edge, plus the inset so the words never touch the frame's edge. */
+  padding: 0 calc(var(--board-gutter, 20px) + var(--pb-inset)) clamp(2rem, 6vw, 4rem);
+  color: #ffffff;
+}
+.pbreak__line {
+  max-width: 20ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.1rem + 3.4vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: 0;
+  color: #ffffff;
+  text-wrap: balance;
+  text-shadow: 0 1px 18px rgb(var(--pb-shade) / 0.55);
+}
+.pbreak__link {
+  display: inline-flex;
+  gap: 0.4em;
+  margin-top: var(--spacing-m);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+.pbreak__link:hover {
+  text-decoration-thickness: 2px;
+}
+.pbreak__link:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
+  border-radius: var(--radius-tag);
+}
+
+/* The motion: the frame opens from an inset rounded card to full bleed while the band rises into
+   view, and the picture drifts 10% of its height over the whole crossing. Scroll-driven CSS only
+   (rule 5: no scroll library); anywhere without it the band is the settled state above. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .pbreak__frame {
+      animation: pbreak-widen linear both;
+      animation-timeline: --pbreak;
+      animation-range: entry 10% cover 45%;
+    }
+    .pbreak__media {
+      animation: pbreak-drift linear both;
+      animation-timeline: --pbreak;
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+@keyframes pbreak-widen {
+  from {
+    clip-path: inset(0 var(--pb-inset) round var(--pb-radius));
+  }
+  to {
+    clip-path: inset(0 0 round 0);
+  }
+}
+@keyframes pbreak-drift {
+  from {
+    transform: translateY(-5%);
+  }
+  to {
+    transform: translateY(5%);
+  }
+}

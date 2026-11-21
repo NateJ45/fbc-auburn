@@ -93,7 +93,8 @@ If you ever suspect this regressed, the diagnostic is: open the page in the dev 
 See `theme-and-color.md` for the full palette reference, the `--tint-rgb` token, and the light/dark discipline. A short summary of what to use in component code:
 
 - Body text and headings: `text-foreground`
-- Page and card surfaces: `bg-background`, `bg-card`, `bg-muted`
+- Page and card surfaces: `bg-background`, `bg-card`, `bg-muted` (on the inner pages `board.css` paints a
+  `section.bg-muted` white, `--card`, so the cadence alternates ground and white; 2026-11-21)
 - Brand action color: `bg-primary`, `text-primary-foreground`
 - Tinted overlays (polish layer): `rgba(var(--tint-rgb), <opacity>)`
 - Borders: `border-border`

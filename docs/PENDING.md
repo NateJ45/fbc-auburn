@@ -16,6 +16,16 @@ sequence).
 
 ## Waiting on a human
 
+### 1zt3. Inner-page rhythm: apply the content script (opened 2026-11-21)
+
+The code (Photo break block, Image + text panel layout, white alternate band, "On this page", the fade-and-blur
+page change) is on the `worktree-agent-a1794607cbcd592bb` branch. After it is deployed, run
+`scripts/content/inner-rhythm.mjs` under the write protocol (backup folder outside the repo, dry run, then
+`--apply` with `NCS_PRODUCTION_WRITE=yes`): one photo break each on Plan your visit, What we believe, About and
+Ministries, and "Getting in and getting around" as a panel. Then check those four pages at 390 and 1280. The
+church's photos are 1440 to 1600px wide, soft at full bleed on a big screen; a wider photo from the photo Sunday
+should replace them.
+
 ### 1zt2. Ministries filter chips: Jacob tags the cards (opened 2026-11-09)
 
 The Find your place cards have "Who it suits" and "When it meets" tick lists (`docs/agent/shapes.md`, "Filter

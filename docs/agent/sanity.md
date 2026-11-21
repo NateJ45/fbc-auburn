@@ -328,6 +328,20 @@ wall checks `tests/builder-blocks.spec.ts`.
   `data-cl-ready`). It draws its own band, so it has no look and is in `SELF_CONTAINED_TYPES`. Colours live in
   `src/lib/candlelight.ts`; `candlelight.test.ts` measures both states to AA and pins the `--cl-*` hexes in
   `builder-blocks.css` to them. In the "Christmas Eve candlelight" saved section between the schedule and the verse.
+- **Photo break (a wide photo with a line)**, `photoBreakSection` (2026-11-21), under Media. A required
+  photo (with its description), an optional short line (80 characters at most) and an optional link
+  (`ctaBlock`, drawn as a small white text link, never a button, so it takes no part in the one-red-button
+  rule). Drawn by `PhotoBreakBlock.astro`: the photo across the whole page, 20rem to 44rem tall, the line
+  in Young Serif in white on a navy shade at the page's left edge. It draws its own band, so it has no look
+  and is in `SELF_CONTAINED_TYPES`; its line is a `<p>`, not a heading, so the "On this page" index leaves
+  it out. No photo: before launch the slot names the shot (`photoBreakShot()` in `src/data/shot-list.ts`);
+  after launch it draws nothing. Motion: `docs/agent/animation.md`, "Photo break". Put one between two long
+  text sections; `scripts/content/inner-rhythm.mjs` places the first four.
+- **Image + text, Layout** (`imageTextSection.layout`, 2026-11-21): "Side by side" (the default; unset
+  means it) or "Panel": the photo fills one half edge to edge and the words sit on the Feature navy in the
+  other, equal heights, no gap; below 1024px the photo stacks above. Photos only (hidden for a drawing or no
+  picture). Options and `imageTextLayout()` in `src/lib/layout-variants.ts`; `layout` is in
+  `NON_STEGA_FIELDS` (rule 8b). The button draws as the white outline on the navy.
 - **The opening banner's Style** (`heroSection.heroStyle`, hidden on Home): "Arch (standard)" or "Photo behind the
   words", which draws Home's photo hero on any page when it has a background photo (`PageHeroPhoto.astro` in the
   shared frame `PhotoHero.astro`, a little shorter: `.hb-hero--page`). HomeHero uses the same frame; the hero's

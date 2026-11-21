@@ -54,6 +54,8 @@ export const SELF_CONTAINED_TYPES = new Set([
   'noticeSection',
   // The Candlelight band draws its own cream (navy with the lights down), 2026-11-09.
   'candlelightSection',
+  // The photo break is a photo across the page, so it draws its own band (2026-11-21).
+  'photoBreakSection',
   // Every main page a page builder (2026-10-26): each draws the white band its page drew.
   'contactFormSection',
   'privacyPolicySection',

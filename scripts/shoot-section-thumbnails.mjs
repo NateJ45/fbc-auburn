@@ -180,7 +180,9 @@ try {
   );
   let shot = 0;
   for (const type of types) {
-    const box = page.locator(`[data-section-type="${type}"]`);
+    // .first(): a type can have two fixtures on the wall (Cards with stone icons does, a second
+    // one for a test); the thumbnail is the first, and Playwright's strict mode would stop at two.
+    const box = page.locator(`[data-section-type="${type}"]`).first();
     await box.scrollIntoViewIfNeeded();
     await page.waitForTimeout(150);
     await hidePinned();

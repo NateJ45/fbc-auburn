@@ -12,6 +12,7 @@ import BuildingSketch from '@/components/church/BuildingSketch.astro';
 import ShotRequest from '@/components/ShotRequest.astro';
 import { isPortraitSlot, shotFor } from '@/data/shot-list';
 import { splitStega } from '@/lib/preview-stega';
+import { imageTextLayout } from '@/lib/layout-variants';
 // Auburn's shape system (2026-10-24): a photo here is cut to the building's gable and set over a
 // navy brick slab that runs to the page edge on the photo's side (src/styles/shapes.css).
 import '@/styles/shapes.css';
@@ -34,6 +35,8 @@ interface Props {
   headingId: string;
   /** The page's first section (SectionRenderer leadImage): the photo loads eagerly, at high priority. */
   isFirst?: boolean;
+  /** 'panel' (2026-11-21): the photo edge to edge in one half, the words on navy in the other. */
+  layout?: string | null;
 }
 
 const {
@@ -47,7 +50,10 @@ const {
   surface = 'background',
   headingId,
   isFirst = false,
+  layout: layoutValue,
 } = Astro.props as Props;
+// The panel layout (src/lib/layout-variants.ts): photos only; a drawing or no picture keeps its own.
+const panel = imageTextLayout(layoutValue, art) === 'panel';
 
 // Surface classes come from src/lib/surfaces.ts (the measured pairs). Same
 // strings as the ternary that was here for 'background' and 'muted'.
@@ -67,7 +73,51 @@ const portrait =
 const bodyClass = `text-foreground/85 text-lg leading-relaxed ${heading || eyebrow ? 'mt-m' : ''}`;
 ---
 
-{art === 'none' ? (
+{panel && (shot || image?.asset) ? (
+  // THE PANEL (2026-11-21, the inner-page rhythm pass; the idea from an airfield site's photo and
+  // panel bands, Details reference Airfield La Caminera): the photo fills one half edge to edge,
+  // the words sit on a solid navy panel (the Feature look's measured pair, .surface-feature) in
+  // the other, equal heights and no gap. Below 1024px the photo stacks above the panel. The side
+  // follows "Which side is the image on?". Entrance: the flow layer's own fade-up, nothing new.
+  <section
+    class:list={[bg, 'itp', imageFirst ? 'itp--media-left' : 'itp--media-right']}
+    aria-labelledby={heading ? headingId : undefined}
+  >
+    <div class="itp__grid" data-reveal>
+      <div class="itp__media">
+        {shot ? (
+          <ShotRequest shot={shot} class="shot--fill" priority={isFirst} />
+        ) : (
+          <SanityImage
+            source={image}
+            width={1400}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            quality={72}
+            loading={isFirst ? 'eager' : 'lazy'}
+            fetchpriority={isFirst ? 'high' : undefined}
+            class="itp__img"
+          />
+        )}
+      </div>
+      <div class="itp__panel surface-feature">
+        <div class="itp__words">
+          {eyebrow && <SectionLabel text={eyebrow} as="p" />}
+          {heading && (
+            <h2 id={headingId} class="font-display text-h2 auburn-h2">
+              {heading}
+            </h2>
+          )}
+          {body && <PortableText value={body} className={bodyClass} />}
+          {cta?.label && (
+            <div class="mt-l">
+              <CtaLink cta={cta} variant="secondary" onDark />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+) : art === 'none' ? (
   // No picture (2026-10-25, the site audit): the words alone, on the page's reading measure.
   <section class={bg} aria-labelledby={heading ? headingId : undefined}>
     <div class="mx-auto max-w-content px-m py-section-lg" data-reveal>

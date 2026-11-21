@@ -140,6 +140,27 @@ export function columnFallback(type: string): number | undefined {
  * bare "Left / Right" that does not say what moves. Labels are Studio-only and
  * touch no rendered markup.
  */
+/**
+ * The image + text block's layout (2026-11-21, the inner-page rhythm pass). `split` is the shared
+ * split with the gable photo over the brick slab, what every block in the dataset renders (an
+ * unset field means `split`). `panel` puts the photo edge to edge in one half and the words on a
+ * solid navy panel in the other, equal heights and no gap; below 1024px the photo stacks above
+ * the panel. Photos only: a drawing or "No picture" ignores it. Logic-driving, so `layout` is in
+ * NON_STEGA_FIELDS (src/lib/cms-preview.ts, rule 8b).
+ */
+export type ImageTextLayout = 'split' | 'panel';
+export const IMAGE_TEXT_LAYOUT_FALLBACK: ImageTextLayout = 'split';
+export const IMAGE_TEXT_LAYOUT_OPTIONS: Array<{ title: string; value: ImageTextLayout }> = [
+  { title: 'Side by side (the arch photo beside the words)', value: 'split' },
+  { title: 'Panel (the photo fills one half, the words on navy in the other)', value: 'panel' },
+];
+
+/** The layout an image + text block renders: anything but a known value is the standard split. */
+export function imageTextLayout(value: unknown, art?: string | null): ImageTextLayout {
+  if ((art ?? 'photo') !== 'photo') return 'split';
+  return value === 'panel' ? 'panel' : IMAGE_TEXT_LAYOUT_FALLBACK;
+}
+
 export function sideOptions(noun: string): Array<{ title: string; value: string }> {
   return [
     { title: `${noun} on the left`, value: 'left' },

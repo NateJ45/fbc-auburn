@@ -72,7 +72,10 @@ Young Serif were each used at every opportunity, so none of them was special. No
   red brick on 2026-10-27 (see Colors).
 - **Less brick**: one sill per page (the footer's); the cream brick wall, the sky and navy tiles behind text and
   the This Sunday card's tile are gone (the card is plain navy with one 12px brick course on top); at most two
-  brick surfaces in view. **Three surfaces**: the ground, white, and one tint `#E9EEF5`.
+  brick surfaces in view. **Three surfaces**: the ground, white, and one tint `#E9EEF5`. On the inner pages the
+  cadence alternates ground and white (2026-11-21: the alternate band, `bg-muted`, paints white there, so two
+  text bands in a row read as two); the tint is the Stone look's alone, and the closing band stays on the ground.
+  A long page also gets photo breaks (a wide photo with one line) and the navy panel layout of Image + text.
 - **Markers only beside words**: the brick marker leads a worded eyebrow and nothing else; the section break
   is whitespace, and the hairline under the header is gone. The big brick cross is About's alone.
 - **Page heads**: shorter (about 350px on desktop), H1 max 88px (64px for a sermon or a post); the page photo
