@@ -251,9 +251,13 @@ const { entries } = Astro.props;
       transition: none;
     }
   }
+  /* Not on paper. The descendants too: the rail's labels sit at opacity 0 until hover, and the
+     print check (tests/print.spec.ts) reads each element's own display, not its ancestors'. */
   @media print {
     .otp,
-    .otp-m-wrap {
+    .otp *,
+    .otp-m-wrap,
+    .otp-m-wrap * {
       display: none;
     }
   }
