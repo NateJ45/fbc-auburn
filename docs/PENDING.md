@@ -16,15 +16,14 @@ sequence).
 
 ## Waiting on a human
 
-### 1zt3. Inner-page rhythm: apply the content script (opened 2026-11-21)
+### 1zt3. Photo breaks need photos of people (opened 2026-11-21)
 
-The code (Photo break block, Image + text panel layout, white alternate band, "On this page", the fade-and-blur
-page change) is on the `worktree-agent-a1794607cbcd592bb` branch. After it is deployed, run
-`scripts/content/inner-rhythm.mjs` under the write protocol (backup folder outside the repo, dry run, then
-`--apply` with `NCS_PRODUCTION_WRITE=yes`): one photo break each on Plan your visit, What we believe, About and
-Ministries, and "Getting in and getting around" as a panel. Then check those four pages at 390 and 1280. The
-church's photos are 1440 to 1600px wide, soft at full bleed on a big screen; a wider photo from the photo Sunday
-should replace them.
+The inner-page rhythm pass is live (#307; `scripts/content/inner-rhythm.mjs` applied 2026-11-21 under the
+write protocol, backup in the vault). The four photo breaks (Plan your visit, What we believe, About,
+Ministries) use the church's own building and room photos, the only ones it has: an empty pulpit under "Wear
+whatever you like.", pantry tables under the About line. They break up the text but say little. After the
+photo Sunday, swap each for a candid photo of people (the block's Photo field), at least 2000px wide: today's
+are 1440 to 1600px and soft at full width on a big screen.
 
 ### 1zt2. Ministries filter chips: Jacob tags the cards (opened 2026-11-09)
 
