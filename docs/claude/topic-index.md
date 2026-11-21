@@ -47,3 +47,32 @@ Read these on demand. They are NOT auto-loaded, and they are referenced as plain
 | New-project setup runbook + pre-launch checklist                                                         | `docs/bootstrap/NEW-PROJECT.md`, `docs/bootstrap/setup-checklist.md` |
 | Per-module enable guides (`events`, `resources`)                                                         | `docs/modules/<module-name>.md`                                      |
 | The eleven archived modules: what they are and how to bring one back                                     | `archive/README.md`                                                  |
+
+## Docs map (moved from CLAUDE.md)
+
+Path-scoped rules (`.claude/rules/`, load when matching files are touched):
+
+- `preview-stack.md`: the live draft preview stack.
+- `dependencies.md`: rule 8, the matched dependency set.
+- `sanity-schema.md`: rules 1, 8b, 9, 10, 15.
+- `brand-reskin.md`: rules 11 to 13 and 18 (layout variants).
+- `scaffold.md`: rule 14, seeding, scaffold, modules and archive.
+- `data-scripts.md`: rule 16 and the production write gate.
+- `ui-grammar.md`: rule 17.
+- `foundation-files.md`: the edit-with-care file list.
+- `library-of-record.md`: PORTS.md, PORTABLE markers, sync-check.
+- `design-flow.md`: brief, references, design-directions, reskin.
+
+Reference (`docs/claude/`, read when the task needs it):
+
+- `family-conventions.md`: PORTABLE, imported above; the text shared by every site repo.
+- `overview.md`: full about and stack essentials.
+- `build-and-scripts.md`: every npm script and test suite.
+- `routes.md`: the routes table.
+- `safe-to-edit.md`: files safe to edit by hand, script accent opt-in.
+- `visual-verification.md`: the screenshot loop.
+- `communication-style.md`: style rules and site copy voice.
+- GA4 events, the Report and the launch steps for both: `docs/agent/analytics.md` (the Report is off until `PUBLIC_BOARD_REPORT` is set; the bench is `/styleguide/report/`).
+- `topic-index.md`: index of the `docs/agent/` deep-dives (stack, theme, components, SEO, performance, Sanity, deployment, the Studio kit).
+
+See `OPERATIONS.md` for the tactical playbook (deploy, patch content, run audits, common gotchas).

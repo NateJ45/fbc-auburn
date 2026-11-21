@@ -49,3 +49,12 @@ Standalone scripts:
 ## Share pictures (PORTS.md card 215)
 
 `scripts/finish-share-cards.mjs` (PORTABLE) runs at the end of `npm run build`. It recompresses PNG share cards in `dist/client/og/` and `og-default.png` losslessly, because some link previews drop a picture over about 600 KB, and warns about any page whose share picture is missing or still over 600 KB. It never fails a build. The Studio page gets its share tags from its PORTABLE page, using the brand name and `/og-default.png`.
+
+## Command detail moved from CLAUDE.md
+
+- `npm run build`: `node scripts/with-workerd.mjs astro build`, then `scripts/purge-page-css.mjs` (drops each page's unused inline CSS, 2026-10-25; a class a script builds from pieces needs a KEEP prefix there), then `scripts/build-brand-icons.mjs` (the Site settings icon becomes the favicon set) and `scripts/build-og-cards.mjs` (every page, sermon and post gets its own share card, JPEG, hash-cached; nothing committed), then `scripts/build-csp.mjs` (writes the public pages' `script-src` into `dist/client/_headers`, 2026-10-24; the line must stay under Cloudflare's 2,000 characters; `docs/agent/deployment.md`, "Security headers"), then `scripts/build-search-index.mjs` (writes the Pagefind index only when `site.search.enabled`, reading the PDF, Word and text files indexed pages link to, plus `words.json` for typo correction; cards 126 and 154, `docs/agent/site-search.md`). Does NOT chain typegen.
+
+- `npm run parity list | capture | compare [page] [--exclude globs]`: rendered-HTML parity. Build first. Use on any render-neutral change. `npm run test:scripts` tests the helpers in `scripts/lib/` (also run at the end of `test:unit`, so CI and deploy cover it).
+
+- `npm run references -- <urls>` (reference screenshots into `docs/references/`), `npm run directions:shoot -- <folder>` (390/768/1280 shots of design-direction mockups), and the `/design-directions` command: see "Design flow" below.
+- `npm run apply-brand`, `npm run seed` (dry by default), `npm run scaffold`, `npm run audit:studio`, `npm run audit:data` (live data against the compiled schema, card 95), `npm run thumbnails` (the Studio block-picker pictures, card 109), `npm run og`, `npm run sync-check [site-repo]`, `npm run free-dist`: see `docs/claude/build-and-scripts.md` (seed and scaffold detail in `.claude/rules/scaffold.md`).

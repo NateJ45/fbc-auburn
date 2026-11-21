@@ -277,3 +277,7 @@ The starter ships in an effectively zero-cookie posture until a site sets `PUBLI
 - **Web3Forms** contact-form submissions go server-side via `fetch`; no cookies set.
 
 **`/privacy` page:** a real privacy policy page ships, driven by the `privacyPage` singleton in Sanity with a plain-voice static fallback. Linked from the footer on every page and from every capture form's consent note. Update this page to reflect your actual data practices before going live.
+
+## CI never reads live content (moved from CLAUDE.md)
+
+- **CI never reads live content** (2026-10-19, starter card 138): the `site` build in `ci.yml`, `lighthouse.yml` and `visual.yml` run as `node scripts/snapshot.mjs run -- <cmd>` over the committed `ci/sanity-snapshot.ndjson.gz`, so a church edit (a renamed slug) cannot turn a check red. Refresh on purpose with `node scripts/snapshot.mjs export` and update whatever names the page in the same PR. A new build-time `createClient` read must spread `...snapshotClientOptions(process.env)`. `deploy.yml` still builds live. `live-watch.yml` (daily, not required, never on a PR) checks the real site via the `SITE_URL` variable.
