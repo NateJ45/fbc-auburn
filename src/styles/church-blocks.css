@@ -80,8 +80,7 @@
   font-size: var(--fs-tag);
   font-weight: 700;
   line-height: 1.4;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--heading-solid);
 }
 
@@ -254,8 +253,7 @@
   margin: 0 0 0.85rem;
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: #dbe3ee;
 }
 /* One time column for the whole card: the rows share the list's grid (display: contents), so

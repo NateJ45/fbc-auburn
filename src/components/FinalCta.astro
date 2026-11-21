@@ -165,14 +165,7 @@ const mark = hasBackground
       />
     )}
     {eyebrow && (
-      <p
-        class:list={[
-          'text-xs tracking-[0.22em] uppercase',
-          hasBackground ? 'text-bg/75' : 'text-link',
-        ]}
-      >
-        {eyebrow}
-      </p>
+      <p class:list={['text-xs', hasBackground ? 'text-bg/75' : 'text-link']}>{eyebrow}</p>
     )}
     {/* Cream hairline accent beneath the eyebrow that matches SectionHeading's
         inverse-tone treatment so headings carry the same editorial signature

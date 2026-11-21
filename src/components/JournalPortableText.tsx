@@ -186,7 +186,7 @@ function makeComponents(headingIds: Record<string, string> = {}): PortableTextCo
           <span className="text-foreground/90 italic">
             {children}
             {label && (
-              <span className="ml-1 align-baseline text-[0.72em] tracking-[0.15em] text-secondary uppercase not-italic">
+              <span className="ml-1 align-baseline text-[0.72em] text-secondary not-italic">
                 · {label}
               </span>
             )}
@@ -274,7 +274,7 @@ function makeComponents(headingIds: Record<string, string> = {}): PortableTextCo
               {value.quote}
             </blockquote>
             {value.attribution && (
-              <figcaption className="mt-l text-xs tracking-widest text-foreground/80 uppercase">
+              <figcaption className="mt-l text-xs text-foreground/80">
                 {value.attribution}
               </figcaption>
             )}
@@ -316,7 +316,7 @@ function makeComponents(headingIds: Record<string, string> = {}): PortableTextCo
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Source</p>
+              <p className="mb-xs text-xs text-foreground/80">Source</p>
               <p className="font-display text-h4 leading-tight text-foreground">{value.itemName}</p>
               {(value.vendor || value.price) && (
                 <p className="mt-xs text-sm text-foreground/80">
@@ -336,7 +336,7 @@ function makeComponents(headingIds: Record<string, string> = {}): PortableTextCo
                     href={value.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-xs font-semibold tracking-widest text-link uppercase hover:text-primary-dark"
+                    className="inline-flex items-center text-xs font-semibold text-link hover:text-primary-dark"
                   >
                     View source{' '}
                     <span aria-hidden="true" className="ml-xs">
@@ -359,7 +359,7 @@ function makeComponents(headingIds: Record<string, string> = {}): PortableTextCo
             className="my-section-md rounded-r-[var(--radius-card)] border-l-4 border-tertiary bg-muted/70 p-l"
             aria-label={value.label ?? 'Note'}
           >
-            <p className="mb-s text-xs font-semibold tracking-widest text-foreground/80 uppercase">
+            <p className="mb-s text-xs font-semibold text-foreground/80">
               {value.label ?? "Designer's note"}
             </p>
             <div className="text-foreground/90 [&_a]:text-link [&_a]:underline [&_a]:underline-offset-2 [&_p]:my-s [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_ul]:my-s [&_ul]:list-disc [&_ul]:pl-l">

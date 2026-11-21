@@ -102,7 +102,7 @@ function makeComponents(): PortableTextComponents {
           <span className="text-foreground/85 italic">
             {children}
             {label && (
-              <span className="ml-1 align-baseline text-[0.72em] tracking-[0.15em] text-secondary uppercase not-italic">
+              <span className="ml-1 align-baseline text-[0.72em] text-secondary not-italic">
                 · {label}
               </span>
             )}
@@ -152,7 +152,7 @@ function makeComponents(): PortableTextComponents {
             {(value.decisionLine || value.caption) && (
               <figcaption className="mt-s px-m md:px-0">
                 {value.decisionLine && (
-                  <span className="mb-xs block text-xs tracking-eyebrow text-foreground/80 uppercase">
+                  <span className="mb-xs block text-xs text-foreground/80">
                     {value.decisionLine}
                   </span>
                 )}

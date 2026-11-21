@@ -37,7 +37,7 @@ if (validSteps.length === 0) return null;
 
 <section aria-labelledby="roadmap-heading" class="mt-section-lg border-t border-border-soft pt-l">
   {/* Eyebrow + headline — left-aligned in the form column context. */}
-  {eyebrow && <p class="mb-s text-xs tracking-eyebrow text-foreground/80 uppercase">{eyebrow}</p>}
+  {eyebrow && <p class="mb-s text-xs text-foreground/80">{eyebrow}</p>}
   {headline && (
     <h2 id="roadmap-heading" class="font-display text-h3 text-foreground">
       {headline}
@@ -71,7 +71,7 @@ if (validSteps.length === 0) return null;
             {/* Time estimate — rendered as a quiet badge when present.
                 Helps visitors calibrate expectations ("within 48 hours"). */}
             {step.timeEstimate && (
-              <p class="mt-s inline-flex items-center gap-xs rounded-full bg-muted px-s py-0.5 text-xs tracking-eyebrow text-foreground/80 uppercase">
+              <p class="mt-s inline-flex items-center gap-xs rounded-full bg-muted px-s py-0.5 text-xs text-foreground/80">
                 <span aria-hidden="true">&#128337;</span>
                 {step.timeEstimate}
               </p>

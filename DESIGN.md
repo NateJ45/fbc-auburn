@@ -129,8 +129,9 @@ printed into `src/assets/brand/`). The old seven colours are gone from the CSS, 
 ## Typography
 
 - **Young Serif** for display and H3 and below where a serif heading is wanted; one weight (400).
-- **Familjen Grotesk** for body, UI, labels and the tracked caps of the place line ("FIRST BAPTIST
-  CHURCH OF").
+- **Familjen Grotesk** for body, UI, labels and the place line ("First Baptist Church of"). No caps labels anywhere since
+  2026-11-20 (Track A2): every eyebrow, tag, step label and footer heading is sentence case with
+  normal letter spacing.
 - **Brick finish** (2026-10-23): every brick on the site is printed like the logo, the linocut
   print traced from Gemini. Each brick has chipped edges and an uneven darker rim, heavier along the
   bottom, and white flecks and scratches show the ground through it (a mask of one repeating fleck

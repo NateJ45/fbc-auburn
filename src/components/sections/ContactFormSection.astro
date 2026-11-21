@@ -209,9 +209,7 @@ const hasRoadmap = roadmapSteps.length > 0;
       page?.whatToExpectContent && (
         <div class="mt-section-lg border-t border-border-soft pt-l">
           {page.whatToExpectEyebrow && (
-            <p class="mb-s text-xs tracking-[0.22em] text-foreground/80 uppercase">
-              {page.whatToExpectEyebrow}
-            </p>
+            <p class="mb-s text-xs text-foreground/80">{page.whatToExpectEyebrow}</p>
           )}
           {page.whatToExpectHeadline && (
             <h2 class="font-display text-h3 auburn-h2">{page.whatToExpectHeadline}</h2>
@@ -242,7 +240,7 @@ const hasRoadmap = roadmapSteps.length > 0;
 
       {email && (
         <div>
-          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Email</p>
+          <p class="mb-xs text-xs text-foreground/80">Email</p>
           <CopyEmailButton email={email.display} variant="link" />
           <NotConfirmed confirmed={email.confirmed} />
         </div>
@@ -250,9 +248,7 @@ const hasRoadmap = roadmapSteps.length > 0;
 
       {phone && (
         <div>
-          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">
-            {phone.sms ? 'Call or text' : 'Call'}
-          </p>
+          <p class="mb-xs text-xs text-foreground/80">{phone.sms ? 'Call or text' : 'Call'}</p>
           {/* 44px tall links on phones; the tag stays beside the Text link (phone polish, 2026-10-24). */}
           <a
             href={phone.tel}
@@ -277,9 +273,7 @@ const hasRoadmap = roadmapSteps.length > 0;
 
       {schedulingLink && (
         <div>
-          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">
-            Prefer to schedule?
-          </p>
+          <p class="mb-xs text-xs text-foreground/80">Prefer to schedule?</p>
           <a
             href={schedulingLink}
             target="_blank"
@@ -293,7 +287,7 @@ const hasRoadmap = roadmapSteps.length > 0;
 
       {siteSettings?.serviceAreas && siteSettings.serviceAreas.length > 0 && (
         <div>
-          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Service area</p>
+          <p class="mb-xs text-xs text-foreground/80">Service area</p>
           <ul class="space-y-0.5 text-sm text-foreground">
             {siteSettings.serviceAreas.slice(0, 8).map((area: string) => (
               <li>{area}</li>
@@ -304,13 +298,13 @@ const hasRoadmap = roadmapSteps.length > 0;
 
       <div>
         {/* FBC Auburn: the church address and directions (Site settings > Church facts) in place of the starter map. */}
-        <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase">Find us</p>
+        <p class="mb-xs text-xs text-foreground/80">Find us</p>
         <ChurchAddress />
       </div>
 
       {socials.length > 0 && (
         <div>
-          <p class="mb-xs text-xs tracking-widest text-foreground/80 uppercase" id="contact-social">
+          <p class="mb-xs text-xs text-foreground/80" id="contact-social">
             Follow along
           </p>
           <ul class="flex list-none flex-wrap gap-s p-0" aria-labelledby="contact-social">

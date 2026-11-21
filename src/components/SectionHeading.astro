@@ -124,7 +124,7 @@ const toneSub = tone === 'inverse' ? 'text-bg/80' : 'text-muted-foreground';
       label, 13px navy caps. On a dark band it keeps the old light caps, with no marker. */}
   {eyebrow &&
     (tone === 'inverse' ? (
-      <p class:list={['text-xs tracking-eyebrow uppercase mb-m', toneEyebrow]}>{eyebrow}</p>
+      <p class:list={['text-xs mb-m', toneEyebrow]}>{eyebrow}</p>
     ) : (
       <SectionLabel text={eyebrow} as="p" />
     ))}

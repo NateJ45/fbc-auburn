@@ -145,8 +145,7 @@
   font-family: var(--font-body);
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: #dbe3ee;
 }
 /* The "To confirm" tag in NotConfirmed.astro's own shape and colours (2026-10-24: it was a white
@@ -159,8 +158,7 @@
   font-size: var(--fs-tag);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0;
 }
 .hb-sunday__date {
   margin: 6px 0 4px;
@@ -459,8 +457,7 @@
   margin: 0 0 6px;
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--auburn-deep);
 }
 /* The step titles are the page's card-title size scaled up: they carry a whole panel now. */
@@ -773,8 +770,7 @@
   color: #ffffff;
   font-size: var(--fs-tag);
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0;
 }
 .hb-watch__text {
   position: absolute;

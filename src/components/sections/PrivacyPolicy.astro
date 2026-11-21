@@ -34,11 +34,7 @@ const hasSanityBody = Array.isArray(body) && body.length > 0;
   {/* The text column sits on the page's left edge like every other band (rule 17). */}
   <div class="mx-auto max-w-content px-m py-section-lg">
     <div class="max-w-3xl">
-      {lastUpdated && (
-        <p class="mb-l text-xs tracking-eyebrow text-foreground/80 uppercase">
-          Last updated: {lastUpdated}
-        </p>
-      )}
+      {lastUpdated && <p class="mb-l text-xs text-foreground/80">Last updated: {lastUpdated}</p>}
 
       {hasSanityBody ? (
         <PortableTextStatic value={body as never} className="prose-friendly" />

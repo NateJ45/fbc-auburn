@@ -73,7 +73,7 @@ const titleClass = featured
     )}
     <div class="img-tint img-tint-light" aria-hidden="true"></div>
     {entry.featured && (
-      <span class="absolute top-m left-m inline-flex items-center rounded-full bg-primary-dark px-s py-1 text-xs font-semibold tracking-[0.2em] text-white uppercase">
+      <span class="absolute top-m left-m inline-flex items-center rounded-full bg-primary-dark px-s py-1 text-xs font-semibold text-white">
         ★ Featured
       </span>
     )}
@@ -86,10 +86,7 @@ const titleClass = featured
         <JournalCategoryChip title={primaryCategory.title} tooltip={primaryCategory.description} />
       )}
       {dateLabel && (
-        <time
-          datetime={entry.publishedAt}
-          class="text-xs tracking-widest text-foreground/80 uppercase"
-        >
+        <time datetime={entry.publishedAt} class="text-xs text-foreground/80">
           {dateLabel}
         </time>
       )}

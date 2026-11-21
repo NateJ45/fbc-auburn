@@ -59,7 +59,7 @@ const roomLabel = humanizeRoom(project.roomType);
         project doesn't have a roomType set so the image stays clean. */}
     {roomLabel && (
       <span
-        class="absolute top-s left-s inline-flex items-center rounded-full bg-bg/85 px-2.5 py-1 text-xs font-semibold tracking-eyebrow text-primary-dark uppercase backdrop-blur-sm"
+        class="absolute top-s left-s inline-flex items-center rounded-full bg-bg/85 px-2.5 py-1 text-xs font-semibold text-primary-dark backdrop-blur-sm"
         aria-hidden="true"
       >
         {roomLabel}
@@ -71,7 +71,7 @@ const roomLabel = humanizeRoom(project.roomType);
     <h3 class="font-display text-h4 text-foreground transition-colors group-hover:text-primary-dark">
       {project.title}
     </h3>
-    <p class="mt-xs text-xs tracking-widest text-foreground/80 uppercase">
+    <p class="mt-xs text-xs text-foreground/80">
       {project.location}
       {project.location && project.year ? ' · ' : ''}
       {project.year}

@@ -68,7 +68,7 @@ export default function CaseStudyTOC({ headings }: Props) {
 
   return (
     <nav aria-label="Table of contents" className="sticky top-24 hidden self-start lg:block">
-      <p className="mb-s text-xs tracking-widest text-foreground/80 uppercase">On this page</p>
+      <p className="mb-s text-xs text-foreground/80">On this page</p>
       <ul className="space-y-1 border-l border-border-soft text-sm">
         {headings.map((h) => {
           const isActive = h.id === activeId;

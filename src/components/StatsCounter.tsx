@@ -113,9 +113,7 @@ export default function StatsCounter({ stats }: Props) {
                 run={visible}
               />
             </span>
-            <span className="mt-2 block text-xs tracking-eyebrow text-muted-foreground uppercase">
-              {stat.label}
-            </span>
+            <span className="mt-2 block text-xs text-muted-foreground">{stat.label}</span>
           </div>
         </React.Fragment>
       ))}
